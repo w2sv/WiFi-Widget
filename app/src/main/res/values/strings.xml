@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">IPAddressWidget</string>
+    <string name="app_widget_description">This Widget displays your current local WiFi IP Address</string>
+    <string name="no_wifi_connection">No WiFi connection</string>
+</resources>
