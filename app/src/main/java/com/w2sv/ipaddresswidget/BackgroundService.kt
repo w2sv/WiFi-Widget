@@ -21,7 +21,7 @@ class BackgroundService: Service(){
             IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
         )
 
-        return super.onStartCommand(intent, flags, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {
@@ -39,7 +39,7 @@ class BackgroundService: Service(){
     class RestartBroadcastReceiver: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             with(context!!){
-                startService(Intent(this, BackgroundService::class.java))
+                startService(Intent(applicationContext, BackgroundService::class.java))
             }
         }
     }

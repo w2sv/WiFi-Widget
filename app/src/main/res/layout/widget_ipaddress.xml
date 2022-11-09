@@ -10,7 +10,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
 
         android:textSize="@dimen/size_text"/>
 
@@ -20,10 +19,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
 
         android:text="@string/no_wifi_connection"
         android:textStyle="italic"
         android:textSize="@dimen/size_text"/>
+
+    <TextView
+        android:id="@+id/last_updated_tv"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/no_wifi_connection_tv"
+        android:layout_marginTop="40dp"
+        android:layout_alignParentEnd="true"
+
+        android:textSize="12sp"
+        android:textStyle="italic"
+        android:text="@string/updated"/>
 
 </RelativeLayout>

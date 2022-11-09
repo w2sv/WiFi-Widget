@@ -11,6 +11,8 @@ import android.widget.RemoteViews
 import androidx.core.text.color
 import androidx.core.text.italic
 import slimber.log.i
+import java.text.DateFormat
+import java.util.Date
 
 class IPAddressWidget : AppWidgetProvider() {
     override fun onUpdate(
@@ -35,24 +37,32 @@ internal fun updateAppWidget(
         appWidgetId,
         RemoteViews(context.packageName, R.layout.widget_ipaddress)
             .apply {
-                if (context.wifiEnabled()){
+                if (context.wifiEnabled()) {
                     setTextViewText(
                         R.id.ip_tv,
                         SpannableStringBuilder()
                             .italic {
-                                color(context.resources.getColor(R.color.purple_500, context.theme)) {
-                                    append(("IP Address: "))
+                                color(context.getColor(R.color.purple_500)) {
+                                    append((context.getString(R.string.ip_address)))
                                 }
                             }
                             .append(context.ipAddress())
                     )
                     setViewVisibility(R.id.ip_tv, View.VISIBLE)
                     setViewVisibility(R.id.no_wifi_connection_tv, View.INVISIBLE)
-                }
-                else{
+                } else {
                     setViewVisibility(R.id.ip_tv, View.INVISIBLE)
                     setViewVisibility(R.id.no_wifi_connection_tv, View.VISIBLE)
                 }
+
+                setTextViewText(
+                    R.id.last_updated_tv,
+                    context.getString(
+                        R.string.updated,
+                        DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
+                            .format(Date())
+                    )
+                )
             }
     )
 }
