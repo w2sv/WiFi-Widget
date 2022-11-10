@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.w2sv.ipaddresswidget'
+    namespace 'com.w2sv.wifiwidget'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.w2sv.ipaddresswidget"
+        applicationId "com.w2sv.wifiwidget"
         minSdk 24
         targetSdk 33
         versionCode 1

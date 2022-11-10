@@ -7,14 +7,14 @@
     <application
         android:name=".Application"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/logo_round"
         android:theme="@style/Theme.AppCompat"
         android:supportsRtl="true">
 
         <activity
-            android:name="com.w2sv.ipaddresswidget.MainActivity"
+            android:name="com.w2sv.wifiwidget.MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".IPAddressWidgetProvider"
+            android:name=".WidgetProvider"
             android:exported="false">
 
             <intent-filter>
@@ -33,7 +33,7 @@
 
             <meta-data
                 android:name="android.appwidget.provider"
-                android:resource="@xml/ip_address_widget_info" />
+                android:resource="@xml/widget_info" />
         </receiver>
     </application>
 </manifest>

@@ -1,4 +1,4 @@
-package com.w2sv.ipaddresswidget
+package com.w2sv.wifiwidget
 
 import android.app.Application
 import timber.log.Timber

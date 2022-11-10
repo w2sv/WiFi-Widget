@@ -1,4 +1,4 @@
-package com.w2sv.ipaddresswidget
+package com.w2sv.wifiwidget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -17,19 +17,19 @@ import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
 
-class IPAddressWidgetProvider : AppWidgetProvider() {
+class WidgetProvider : AppWidgetProvider() {
 
     companion object {
         fun restartPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
                 69,
-                Intent(context, IPAddressWidgetProvider::class.java)
+                Intent(context, AppWidgetProvider::class.java)
                     .setAction(ACTION_RESTART),
                 PendingIntent.FLAG_IMMUTABLE
             )
 
-        private const val ACTION_RESTART = "com.w2sb.ipaddresswidget.ACTION_RESTART"
+        private const val ACTION_RESTART = "com.w2sv.wifiwidget.ACTION_RESTART"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -49,7 +49,7 @@ class IPAddressWidgetProvider : AppWidgetProvider() {
                     appWidgetManager.getAppWidgetIds(
                         ComponentName(
                             packageName,
-                            this@IPAddressWidgetProvider::class.java.name
+                            this@WidgetProvider::class.java.name
                         )
                     )
                 )
@@ -84,12 +84,12 @@ internal fun updateAppWidget(
 
     appWidgetManager.updateAppWidget(
         appWidgetId,
-        RemoteViews(context.packageName, R.layout.widget_ipaddress)
+        RemoteViews(context.packageName, R.layout.widget)
             .apply {
                 // set onClickListener
                 setOnClickPendingIntent(
                     R.id.widget_layout,
-                    IPAddressWidgetProvider.restartPendingIntent(context)
+                    WidgetProvider.restartPendingIntent(context)
                 )
 
                 if (context.wifiEnabled()) {

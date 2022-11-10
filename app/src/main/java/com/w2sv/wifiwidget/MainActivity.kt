@@ -1,4 +1,4 @@
-package com.w2sv.ipaddresswidget
+package com.w2sv.wifiwidget
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -95,7 +95,7 @@ fun PinAppWidgetButton() {
                     requestPinAppWidget(
                         ComponentName(
                             context,
-                            IPAddressWidgetProvider::class.java
+                            WidgetProvider::class.java
                         ),
                         null,
                         null
