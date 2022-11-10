@@ -30,11 +30,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 
 class MainActivity : ComponentActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun MainScreen() {
     ScaffoldWithTopAppBar {
@@ -70,13 +72,13 @@ fun ScaffoldWithTopAppBar(content: @Composable (PaddingValues) -> Unit) {
                 { Text(stringResource(id = R.string.app_name)) },
                 colors = TopAppBarDefaults.smallTopAppBarColors(
                     containerColor = colorResource(
-                        id = R.color.purple_500
+                        id = R.color.blue_chill_dark
                     ),
                     titleContentColor = Color.White
                 )
             )
         },
-        containerColor = Color.DarkGray
+        containerColor = Color.White
     ) {
         content(it)
     }
@@ -104,7 +106,7 @@ fun PinAppWidgetButton() {
             }
         },
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
-        colors = ButtonDefaults.buttonColors(),
+        colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue_chill_dark)),
         content = {
             Text(
                 stringResource(R.string.pin_widget),

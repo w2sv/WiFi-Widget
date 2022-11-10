@@ -43,8 +43,7 @@ class WidgetProvider : AppWidgetProvider() {
 
                 val appWidgetManager = AppWidgetManager.getInstance(this)
 
-                updateAppWidgets(
-                    applicationContext,
+                updateWidgets(
                     appWidgetManager,
                     appWidgetManager.getAppWidgetIds(
                         ComponentName(
@@ -61,47 +60,45 @@ class WidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        updateAppWidgets(context, appWidgetManager, appWidgetIds)
-    }
-
-    private fun updateAppWidgets(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
-    ) {
-        for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
-        }
+        context.updateWidgets(appWidgetManager, appWidgetIds)
     }
 }
 
-internal fun updateAppWidget(
-    context: Context,
+private fun Context.updateWidgets(
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+) {
+    for (appWidgetId in appWidgetIds) {
+        updateWidget(appWidgetManager, appWidgetId)
+    }
+}
+
+private fun Context.updateWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int
 ) {
-    i { "updateAppWidget" }
+    i { "updateWidget" }
 
     appWidgetManager.updateAppWidget(
         appWidgetId,
-        RemoteViews(context.packageName, R.layout.widget)
+        RemoteViews(packageName, R.layout.widget)
             .apply {
                 // set onClickListener
                 setOnClickPendingIntent(
                     R.id.widget_layout,
-                    WidgetProvider.restartPendingIntent(context)
+                    WidgetProvider.restartPendingIntent(this@updateWidget)
                 )
 
-                if (context.wifiEnabled()) {
+                if (wifiEnabled()) {
                     setTextViewText(
                         R.id.ip_tv,
                         SpannableStringBuilder()
                             .italic {
-                                color(context.getColor(R.color.purple_500)) {
-                                    append((context.getString(R.string.ip_address)))
+                                color(getColor(R.color.mischka)) {
+                                    append((getString(R.string.ip_address)))
                                 }
                             }
-                            .append(context.ipAddress())
+                            .append(ipAddress())
                     )
                     setViewVisibility(R.id.ip_tv, View.VISIBLE)
                     setViewVisibility(R.id.no_wifi_connection_tv, View.INVISIBLE)
@@ -112,7 +109,7 @@ internal fun updateAppWidget(
 
                 setTextViewText(
                     R.id.last_updated_tv,
-                    context.getString(
+                    getString(
                         R.string.updated,
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
                     )
