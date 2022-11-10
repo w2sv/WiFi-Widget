@@ -2,7 +2,6 @@ package com.w2sv.ipaddresswidget
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -96,7 +95,7 @@ fun PinAppWidgetButton() {
                     requestPinAppWidget(
                         ComponentName(
                             context,
-                            IPAddressWidget::class.java
+                            IPAddressWidgetProvider::class.java
                         ),
                         null,
                         null

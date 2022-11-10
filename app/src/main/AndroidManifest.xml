@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".IPAddressWidget"
+            android:name=".IPAddressWidgetProvider"
             android:exported="false">
 
             <intent-filter>
@@ -35,10 +35,5 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/ip_address_widget_info" />
         </receiver>
-
-        <receiver android:name="com.w2sv.ipaddresswidget.WifiStateChangeListener" />
-        <receiver android:name="com.w2sv.ipaddresswidget.BackgroundService$RestartBroadcastReceiver" />
-
-        <service android:name="com.w2sv.ipaddresswidget.BackgroundService" />
     </application>
 </manifest>
