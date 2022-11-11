@@ -5,33 +5,96 @@
     android:layout_height="match_parent"
     android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer">
 
-    <TextView
-        android:id="@+id/ip_tv"
+    <RelativeLayout
+        android:id="@+id/content_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        <LinearLayout
+            android:id="@+id/property_layout"
 
-        android:textSize="@dimen/size_text"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
 
-    <TextView
-        android:id="@+id/no_wifi_connection_tv"
+            android:orientation="vertical">
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+            <TextView
+                android:id="@+id/ssid_tv"
 
-        android:text="@string/no_wifi_connection"
-        android:textStyle="italic"
-        android:textSize="@dimen/size_text"/>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/logged_in_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/ip_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/frequency_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/gateway_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/subnet_mask_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/dns_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+            <TextView
+                android:id="@+id/dhcp_tv"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:textSize="@dimen/size_text"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/no_wifi_connection_tv"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+
+            android:text="@string/no_wifi_connection"
+            android:textStyle="italic"
+            android:textSize="@dimen/size_text"/>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/last_updated_tv"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@id/no_wifi_connection_tv"
-        android:layout_marginTop="40dp"
+        android:layout_alignBottom="@id/content_layout"
+        android:layout_marginBottom="-40dp"
         android:layout_alignParentEnd="true"
 
         android:textSize="12sp"

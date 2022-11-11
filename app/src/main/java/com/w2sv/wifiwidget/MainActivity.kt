@@ -1,11 +1,13 @@
 package com.w2sv.wifiwidget
 
+import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,6 +45,14 @@ class MainActivity : ComponentActivity() {
             MainScreen()
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){}
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.text.format.Formatter
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.StringRes
 import androidx.core.text.color
 import androidx.core.text.italic
 import slimber.log.i
@@ -92,23 +93,16 @@ private fun Context.updateWidget(
                 val wifiManager = getSystemService(WifiManager::class.java)
 
                 if (wifiManager.isWifiEnabled) {
-                    setTextViewText(
-                        R.id.ip_tv,
-                        SpannableStringBuilder()
-                            .italic {
-                                color(getColor(R.color.mischka)) {
-                                    append((getString(R.string.ip_address)))
-                                }
-                            }
-                            .append(wifiManager.ipAddress())
-                    )
-                    setViewVisibility(R.id.ip_tv, View.VISIBLE)
-                    setViewVisibility(R.id.no_wifi_connection_tv, View.INVISIBLE)
+                    populatePropertiesLayout(this@updateWidget, wifiManager)
+
+                    setViewVisibility(R.id.property_layout, View.VISIBLE)
+                    setViewVisibility(R.id.no_wifi_connection_tv, View.GONE)
                 } else {
-                    setViewVisibility(R.id.ip_tv, View.INVISIBLE)
+                    setViewVisibility(R.id.property_layout, View.GONE)
                     setViewVisibility(R.id.no_wifi_connection_tv, View.VISIBLE)
                 }
 
+                // set last_updated_tv
                 setTextViewText(
                     R.id.last_updated_tv,
                     getString(
@@ -120,10 +114,36 @@ private fun Context.updateWidget(
     )
 }
 
+/**
+ * dhcpInfo: 'ipaddr 192.168.1.233 gateway 192.168.1.1 netmask 0.0.0.0 dns1 192.168.1.1 dns2 0.0.0.0 DHCP server 192.168.1.1 lease 28800 seconds'
+ * connectionInfo: 'connection info: SSID: , BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -47, Link speed: 433Mbps, Tx Link speed: 433Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5180MHz, Net ID: -1, Metered hint: false, score: 60'
+ */
 @Suppress("DEPRECATION")
-fun WifiManager.ipAddress(): String =
-    Formatter
-        .formatIpAddress(
-            connectionInfo
-                .ipAddress
-        )
+private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager){
+    arrayOf(
+        Triple(R.id.ssid_tv, R.string.ssid) { wifiManager.connectionInfo.ssid.replace("\"", "") },
+        Triple(R.id.logged_in_tv, R.string.logged_in) {""},
+        Triple(R.id.ip_tv, R.string.ipv4) {wifiManager.connectionInfo.ipAddress.asFormattedIpAddress()},
+        Triple(R.id.frequency_tv, R.string.frequency) {"${wifiManager.connectionInfo.frequency}Hz"},
+        Triple(R.id.gateway_tv, R.string.gateway) {wifiManager.dhcpInfo.gateway.asFormattedIpAddress()},
+        Triple(R.id.subnet_mask_tv, R.string.subnet_mask) {wifiManager.dhcpInfo.netmask.asFormattedIpAddress()},
+        Triple(R.id.dns_tv, R.string.dns) {wifiManager.dhcpInfo.dns1.asFormattedIpAddress()},
+        Triple(R.id.dhcp_tv, R.string.dhcp) {wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress()},
+    )
+        .forEach {
+            setTextViewText(it.first, context.propertyRow(it.second, it.third()))
+        }
+}
+
+private fun Context.propertyRow(@StringRes propertyStringId: Int, value: String): SpannableStringBuilder =
+    SpannableStringBuilder()
+        .italic {
+            color(getColor(R.color.mischka)) {
+                append((getString(propertyStringId)))
+            }
+        }
+        .append(value)
+
+@Suppress("DEPRECATION")
+private fun Int.asFormattedIpAddress(): String =
+    Formatter.formatIpAddress(this)
