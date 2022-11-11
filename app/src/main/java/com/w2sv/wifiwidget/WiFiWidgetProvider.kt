@@ -18,16 +18,16 @@ import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
 
-class WidgetProvider : AppWidgetProvider() {
+class WiFiWidgetProvider : AppWidgetProvider() {
 
     companion object {
         fun restartPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
-                61,
-                Intent(context, AppWidgetProvider::class.java)
+                69,
+                Intent(context, WiFiWidgetProvider::class.java)
                     .setAction(ACTION_RESTART),
-                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
 
         private const val ACTION_RESTART = "com.w2sv.wifiwidget.ACTION_RESTART"
@@ -42,14 +42,14 @@ class WidgetProvider : AppWidgetProvider() {
             with(context!!) {
                 i { "onReceive.ACTION_RESTART" }
 
-                val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+                val appWidgetManager = AppWidgetManager.getInstance(this)
 
                 updateWidgets(
                     appWidgetManager,
                     appWidgetManager.getAppWidgetIds(
                         ComponentName(
                             packageName,
-                            WidgetProvider::class.java.name
+                            WiFiWidgetProvider::class.java.name
                         )
                     )
                 )
@@ -107,9 +107,8 @@ private fun Context.updateWidget(
 
                 // set onClickListener
                 setOnClickPendingIntent(
-                    R.id.widget_layout,
-                    WidgetProvider.restartPendingIntent(this@updateWidget)
-                        .also { i{"Made pending intent"} }
+                    R.id.refresh_button,
+                    WiFiWidgetProvider.restartPendingIntent(this@updateWidget)
                 )
             }
     )

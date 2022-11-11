@@ -107,7 +107,7 @@ fun PinAppWidgetButton() {
                     requestPinAppWidget(
                         ComponentName(
                             context,
-                            WidgetProvider::class.java
+                            WiFiWidgetProvider::class.java
                         ),
                         null,
                         null
