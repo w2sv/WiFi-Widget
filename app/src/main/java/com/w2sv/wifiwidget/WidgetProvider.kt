@@ -89,7 +89,9 @@ private fun Context.updateWidget(
                     WidgetProvider.restartPendingIntent(this@updateWidget)
                 )
 
-                if (wifiEnabled()) {
+                val wifiManager = getSystemService(WifiManager::class.java)
+
+                if (wifiManager.isWifiEnabled) {
                     setTextViewText(
                         R.id.ip_tv,
                         SpannableStringBuilder()
@@ -98,7 +100,7 @@ private fun Context.updateWidget(
                                     append((getString(R.string.ip_address)))
                                 }
                             }
-                            .append(ipAddress())
+                            .append(wifiManager.ipAddress())
                     )
                     setViewVisibility(R.id.ip_tv, View.VISIBLE)
                     setViewVisibility(R.id.no_wifi_connection_tv, View.INVISIBLE)
@@ -119,14 +121,9 @@ private fun Context.updateWidget(
 }
 
 @Suppress("DEPRECATION")
-fun Context.ipAddress(): String =
+fun WifiManager.ipAddress(): String =
     Formatter
         .formatIpAddress(
-            getSystemService(WifiManager::class.java)
-                .connectionInfo
+            connectionInfo
                 .ipAddress
         )
-
-fun Context.wifiEnabled(): Boolean =
-    getSystemService(WifiManager::class.java)
-        .isWifiEnabled
