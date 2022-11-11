@@ -26,13 +26,6 @@
 
                 android:textSize="@dimen/size_text"/>
             <TextView
-                android:id="@+id/logged_in_tv"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:textSize="@dimen/size_text"/>
-            <TextView
                 android:id="@+id/ip_tv"
 
                 android:layout_width="wrap_content"
@@ -88,13 +81,24 @@
             android:textSize="@dimen/size_text"/>
     </RelativeLayout>
 
+    <ImageButton
+        android:id="@+id/refresh_button"
+
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@id/content_layout"
+        android:layout_marginBottom="-35dp"
+
+        android:background="@drawable/round_refresh_24"
+        android:contentDescription="@string/refresh_data" />
+
     <TextView
         android:id="@+id/last_updated_tv"
 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/content_layout"
-        android:layout_marginBottom="-40dp"
+        android:layout_marginBottom="-23dp"
         android:layout_alignParentEnd="true"
 
         android:textSize="12sp"

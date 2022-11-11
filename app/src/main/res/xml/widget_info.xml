@@ -3,8 +3,8 @@
     android:description="@string/app_widget_description"
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
-    android:minWidth="120dp"
-    android:minHeight="40dp"
+    android:minWidth="160dp"
+    android:minHeight="100dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

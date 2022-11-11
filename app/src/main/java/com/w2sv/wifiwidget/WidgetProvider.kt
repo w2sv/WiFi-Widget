@@ -24,10 +24,10 @@ class WidgetProvider : AppWidgetProvider() {
         fun restartPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
-                69,
+                61,
                 Intent(context, AppWidgetProvider::class.java)
                     .setAction(ACTION_RESTART),
-                PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_CANCEL_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
 
         private const val ACTION_RESTART = "com.w2sv.wifiwidget.ACTION_RESTART"
@@ -42,14 +42,14 @@ class WidgetProvider : AppWidgetProvider() {
             with(context!!) {
                 i { "onReceive.ACTION_RESTART" }
 
-                val appWidgetManager = AppWidgetManager.getInstance(this)
+                val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
 
                 updateWidgets(
                     appWidgetManager,
                     appWidgetManager.getAppWidgetIds(
                         ComponentName(
                             packageName,
-                            this@WidgetProvider::class.java.name
+                            WidgetProvider::class.java.name
                         )
                     )
                 )
@@ -84,12 +84,6 @@ private fun Context.updateWidget(
         appWidgetId,
         RemoteViews(packageName, R.layout.widget)
             .apply {
-                // set onClickListener
-                setOnClickPendingIntent(
-                    R.id.widget_layout,
-                    WidgetProvider.restartPendingIntent(this@updateWidget)
-                )
-
                 val wifiManager = getSystemService(WifiManager::class.java)
 
                 if (wifiManager.isWifiEnabled) {
@@ -110,6 +104,13 @@ private fun Context.updateWidget(
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
                     )
                 )
+
+                // set onClickListener
+                setOnClickPendingIntent(
+                    R.id.widget_layout,
+                    WidgetProvider.restartPendingIntent(this@updateWidget)
+                        .also { i{"Made pending intent"} }
+                )
             }
     )
 }
@@ -122,7 +123,6 @@ private fun Context.updateWidget(
 private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager){
     arrayOf(
         Triple(R.id.ssid_tv, R.string.ssid) { wifiManager.connectionInfo.ssid.replace("\"", "") },
-        Triple(R.id.logged_in_tv, R.string.logged_in) {""},
         Triple(R.id.ip_tv, R.string.ipv4) {wifiManager.connectionInfo.ipAddress.asFormattedIpAddress()},
         Triple(R.id.frequency_tv, R.string.frequency) {"${wifiManager.connectionInfo.frequency}Hz"},
         Triple(R.id.gateway_tv, R.string.gateway) {wifiManager.dhcpInfo.gateway.asFormattedIpAddress()},
@@ -138,7 +138,7 @@ private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: 
 private fun Context.propertyRow(@StringRes propertyStringId: Int, value: String): SpannableStringBuilder =
     SpannableStringBuilder()
         .italic {
-            color(getColor(R.color.mischka)) {
+            color(getColor(R.color.blue_chill_dark)) {
                 append((getString(propertyStringId)))
             }
         }
