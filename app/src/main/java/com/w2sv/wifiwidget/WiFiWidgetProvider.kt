@@ -14,8 +14,7 @@ import android.widget.RemoteViews
 import androidx.annotation.StringRes
 import androidx.core.text.color
 import androidx.core.text.italic
-import com.w2sv.wifiwidget.utils.AppPreferences.booleanPreferenceFromResourceId
-import com.w2sv.wifiwidget.utils.appPreferences
+import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
@@ -122,8 +121,6 @@ private fun Context.updateWidget(
  */
 @Suppress("DEPRECATION")
 private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager){
-    val appPreferences = context.appPreferences()
-
     arrayOf(
         Triple(R.id.ssid_tv, R.string.ssid) { wifiManager.connectionInfo.ssid.replace("\"", "") },
         Triple(R.id.ip_tv, R.string.ipv4) {wifiManager.connectionInfo.ipAddress.asFormattedIpAddress()},
@@ -134,7 +131,7 @@ private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: 
         Triple(R.id.dhcp_tv, R.string.dhcp) {wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress()},
     )
         .forEach {
-            if (appPreferences.booleanPreferenceFromResourceId(it.first) == false)
+            if (BooleanPreferences.fromResourceId(it.first) == false)
                 setViewVisibility(it.first, View.GONE)
             else{
                 setTextViewText(it.first, context.propertyRow(it.second, it.third()))

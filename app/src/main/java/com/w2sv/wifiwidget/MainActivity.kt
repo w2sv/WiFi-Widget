@@ -32,12 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.w2sv.wifiwidget.utils.AppPreferences.locationPermissionDialogShown
-import com.w2sv.wifiwidget.utils.AppPreferences.showSSID
-import com.w2sv.wifiwidget.utils.appPreferences
+import com.w2sv.typedpreferences.extensions.appPreferences
+import com.w2sv.wifiwidget.preferences.BooleanPreferences
 
 class MainActivity : ComponentActivity() {
 
@@ -49,7 +49,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainScreen(pinAppWidgetButton = {
                 PinAppWidgetButton {
-                    if (!appPreferences().locationPermissionDialogShown)
+                    if (!BooleanPreferences.locationPermissionDialogShown)
                         LocationPermissionDialog(
                             {
                                 locationPermissionRequestLauncher.launch(
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                 onLocationPermissionDialogClosed(it)
                             },
                             {
-                                appPreferences().showSSID = false
+                                BooleanPreferences.showSSID = false
                                 requestPinWidget()
                                 onLocationPermissionDialogClosed(it)
                             }
@@ -99,6 +99,25 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             requestPinWidget()
         }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        BooleanPreferences.writeChangedValues(appPreferences())
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+@Preview
+fun MainScreenPreview(){
+    MainScreen {
+        PinAppWidgetButton {
+            LocationPermissionDialog(onConfirm = { /*TODO*/ }) {
+                
+            }
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
