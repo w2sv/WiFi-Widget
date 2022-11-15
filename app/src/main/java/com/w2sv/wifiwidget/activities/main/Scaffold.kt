@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.activities.main
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.AlertDialog
@@ -42,7 +40,6 @@ fun ScaffoldWithTopAppBar(content: @Composable (PaddingValues) -> Unit) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LocationPermissionDialog(
     onConfirm: () -> Unit,
@@ -72,7 +69,6 @@ fun LocationPermissionDialog(
     )
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PinAppWidgetButton(
     triggerOnClickListener: MutableState<Boolean>,

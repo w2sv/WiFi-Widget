@@ -3,13 +3,11 @@ package com.w2sv.wifiwidget.activities.main
 import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -42,7 +40,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -59,7 +56,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun requestPinWidget() {
         with(getSystemService(AppWidgetManager::class.java)) {
             if (isRequestPinAppWidgetSupported) {
@@ -75,14 +71,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private val locationPermissionRequestLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             requestPinWidget()
         }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview
 fun MainScreenPreview() {
@@ -90,7 +84,6 @@ fun MainScreenPreview() {
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(
