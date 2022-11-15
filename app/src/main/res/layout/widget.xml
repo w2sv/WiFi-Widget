@@ -26,7 +26,7 @@
 
                 android:textSize="@dimen/size_text"/>
             <TextView
-                android:id="@+id/ip_tv"
+                android:id="@+id/ipv4_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

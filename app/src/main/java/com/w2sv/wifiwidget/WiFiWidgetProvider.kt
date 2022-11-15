@@ -11,6 +11,7 @@ import android.text.SpannableStringBuilder
 import android.text.format.Formatter
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.text.color
 import androidx.core.text.italic
@@ -120,31 +121,69 @@ private fun Context.updateWidget(
  * connectionInfo: 'connection info: SSID: , BSSID: 02:00:00:00:00:00, MAC: 02:00:00:00:00:00, Supplicant state: COMPLETED, Wi-Fi standard: 5, RSSI: -47, Link speed: 433Mbps, Tx Link speed: 433Mbps, Max Supported Tx Link speed: 433Mbps, Rx Link speed: -1Mbps, Max Supported Rx Link speed: 433Mbps, Frequency: 5180MHz, Net ID: -1, Metered hint: false, score: 60'
  */
 @Suppress("DEPRECATION")
-private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager){
+private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager) {
     arrayOf(
-        Triple(R.id.ssid_tv, R.string.ssid) { wifiManager.connectionInfo.ssid.replace("\"", "") },
-        Triple(R.id.ip_tv, R.string.ipv4) {wifiManager.connectionInfo.ipAddress.asFormattedIpAddress()},
-        Triple(R.id.frequency_tv, R.string.frequency) {"${wifiManager.connectionInfo.frequency}Hz"},
-        Triple(R.id.gateway_tv, R.string.gateway) {wifiManager.dhcpInfo.gateway.asFormattedIpAddress()},
-        Triple(R.id.subnet_mask_tv, R.string.subnet_mask) {wifiManager.dhcpInfo.netmask.asFormattedIpAddress()},
-        Triple(R.id.dns_tv, R.string.dns) {wifiManager.dhcpInfo.dns1.asFormattedIpAddress()},
-        Triple(R.id.dhcp_tv, R.string.dhcp) {wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress()},
+        PropertyRow(
+            R.id.ssid_tv,
+            R.string.ssid,
+            BooleanPreferences.showSSID
+        ) { wifiManager.connectionInfo.ssid.replace("\"", "") },
+        PropertyRow(
+            R.id.ipv4_tv,
+            R.string.ipv4,
+            BooleanPreferences.showIPv4
+        ) { wifiManager.connectionInfo.ipAddress.asFormattedIpAddress() },
+        PropertyRow(
+            R.id.frequency_tv,
+            R.string.frequency,
+            BooleanPreferences.showFrequency
+        ) { "${wifiManager.connectionInfo.frequency}Hz" },
+        PropertyRow(
+            R.id.gateway_tv,
+            R.string.gateway,
+            BooleanPreferences.showGateway
+        ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() },
+        PropertyRow(
+            R.id.subnet_mask_tv,
+            R.string.subnet_mask,
+            BooleanPreferences.showSubnetMask
+        ) { wifiManager.dhcpInfo.netmask.asFormattedIpAddress() },
+        PropertyRow(
+            R.id.dns_tv,
+            R.string.dns,
+            BooleanPreferences.showDNS
+        ) { wifiManager.dhcpInfo.dns1.asFormattedIpAddress() },
+        PropertyRow(
+            R.id.dhcp_tv,
+            R.string.dhcp,
+            BooleanPreferences.showDHCP
+        ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() },
     )
         .forEach {
-            if (BooleanPreferences.fromResourceId(it.first) == false)
-                setViewVisibility(it.first, View.GONE)
-            else{
-                setTextViewText(it.first, context.propertyRow(it.second, it.third()))
-                setViewVisibility(it.first, View.VISIBLE)
+            if (it.show) {
+                setTextViewText(it.textViewId, context.propertyRow(it.stringId, it.getValue()))
+                setViewVisibility(it.textViewId, View.VISIBLE)
+            } else {
+                setViewVisibility(it.textViewId, View.GONE)
             }
         }
 }
 
-private fun Context.propertyRow(@StringRes propertyStringId: Int, value: String): SpannableStringBuilder =
+private data class PropertyRow(
+    @IdRes val textViewId: Int,
+    @StringRes val stringId: Int,
+    val show: Boolean,
+    val getValue: () -> String
+)
+
+private fun Context.propertyRow(
+    @StringRes propertyStringId: Int,
+    value: String
+): SpannableStringBuilder =
     SpannableStringBuilder()
         .italic {
             color(getColor(R.color.blue_chill_dark)) {
-                append((getString(propertyStringId)))
+                append("${getString(propertyStringId)} ")
             }
         }
         .append(value)
