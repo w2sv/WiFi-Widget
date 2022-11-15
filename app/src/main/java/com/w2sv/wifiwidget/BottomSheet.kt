@@ -8,6 +8,7 @@ import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Divider
@@ -24,26 +25,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
 
-@Preview
-@Composable
-fun BottomSheetPreview() {
-    BottomSheetLayout {}
-}
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetLayout(content: @Composable () -> Unit) {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.HalfExpanded,
-    )
-
-    val showModalSheet = rememberSaveable {
-        mutableStateOf(false)
-    }
-
+fun BottomSheetLayout(sheetState: ModalBottomSheetState, content: @Composable () -> Unit) {
     ModalBottomSheetLayout(
         sheetContent = { WifiPropertyConfigurationList() },
-        sheetShape = RoundedCornerShape(50.dp, 50.dp),
+        sheetShape = RoundedCornerShape(40.dp, 40.dp),
         sheetState = sheetState,
         sheetBackgroundColor = colorResource(id = R.color.blue_dianne)
     ) {
@@ -75,7 +62,6 @@ fun WifiPropertyConfigurationList() {
                     )
                     Checkbox(
                         checked = preferenceProperty.get(),
-                        colors = CheckboxDefaults.colors(checkedColor = colorResource(id = R.color.blue_chill)),
                         onCheckedChange = { preferenceProperty.set(it) }
                     )
                 }

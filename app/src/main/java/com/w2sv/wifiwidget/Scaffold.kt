@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,8 +55,7 @@ fun LocationPermissionDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
             }
         },
         onDismissRequest = {},
-        text = { Text(text = "If you want your SSID to be displayed, you'll have to grant location access") },
-        properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
+        text = { Text(text = "If you want your SSID to be displayed, you'll have to grant location access") }
     )
 }
 
