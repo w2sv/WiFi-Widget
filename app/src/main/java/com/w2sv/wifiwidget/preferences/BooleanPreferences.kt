@@ -11,7 +11,7 @@ object BooleanPreferences : BooleanPreferences(
     "showSubnetMask" to true,
     "showDNS" to true,
     "showDHCP" to true,
-    "locationPermissionDialogShown" to false
+    "locationPermissionDialogAnswered" to false
 ) {
     var showSSID by this
     var showIPv4 by this
@@ -21,5 +21,5 @@ object BooleanPreferences : BooleanPreferences(
     var showDNS by this
     var showDHCP by this
 
-    var locationPermissionDialogShown by this
+    var locationPermissionDialogAnswered by this
 }

@@ -24,6 +24,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,35 +47,35 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MainScreen(pinAppWidgetButton = {
-                PinAppWidgetButton {
-                    if (!BooleanPreferences.locationPermissionDialogShown)
-                        LocationPermissionDialog(
-                            {
-                                locationPermissionRequestLauncher.launch(
-                                    arrayOf(
-                                        Manifest.permission.ACCESS_FINE_LOCATION,
-                                        Manifest.permission.ACCESS_COARSE_LOCATION
-                                    )
-                                )
-                                onLocationPermissionDialogClosed(it)
-                            },
-                            {
-                                BooleanPreferences.showSSID = false
-                                requestPinWidget()
-                                onLocationPermissionDialogClosed(it)
-                            }
-                        )
-                    else
-                        requestPinWidget()
-                }
-            })
-        }
-    }
+            val triggerPinAppWidgetButtonOnClickListener = remember {
+                mutableStateOf(false)
+            }
 
-    private fun onLocationPermissionDialogClosed(onClosed: () -> Unit) {
-//        appPreferences().locationPermissionDialogShown = true
-        onClosed()
+            MainScreen(triggerPinAppWidgetButtonOnClickListener) {
+                if (!BooleanPreferences.locationPermissionDialogAnswered)
+                    LocationPermissionDialog(
+                        {
+                            locationPermissionRequestLauncher.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+
+                            onLocationPermissionDialogAnswered()
+                            triggerPinAppWidgetButtonOnClickListener.value = false
+                        },
+                        {
+                            BooleanPreferences.showSSID = false
+                            requestPinWidget()
+                            onLocationPermissionDialogAnswered()
+                            triggerPinAppWidgetButtonOnClickListener.value = false
+                        }
+                    )
+                else
+                    requestPinWidget()
+            }
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -108,15 +111,17 @@ class MainActivity : ComponentActivity() {
 @Composable
 @Preview
 fun MainScreenPreview() {
-    MainScreen {
-        PinAppWidgetButton {}
+    MainScreen(remember{ mutableStateOf(false) }) {
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(pinAppWidgetButton: @Composable () -> Unit) {
+fun MainScreen(
+    triggerPinAppWidgetButtonOnClickListener: MutableState<Boolean>,
+    pinAppWidgetButtonOnClickListener: @Composable () -> Unit
+) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
@@ -137,7 +142,12 @@ fun MainScreen(pinAppWidgetButton: @Composable () -> Unit) {
                 Arrangement.Center,
                 Alignment.CenterHorizontally
             ) {
-                pinAppWidgetButton()
+                PinAppWidgetButton(triggerPinAppWidgetButtonOnClickListener)
+
+                if (triggerPinAppWidgetButtonOnClickListener.value) {
+                    pinAppWidgetButtonOnClickListener()
+                }
+
                 IconButton(onClick = {
                     coroutineScope.launch {
                         with(sheetState) {

@@ -13,13 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.w2sv.wifiwidget.preferences.BooleanPreferences
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,15 +59,15 @@ fun LocationPermissionDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
     )
 }
 
+fun onLocationPermissionDialogAnswered(){
+    BooleanPreferences.locationPermissionDialogAnswered = true
+}
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PinAppWidgetButton(onClickListener: @Composable (() -> Unit) -> Unit) {
-    val openDialog = remember {
-        mutableStateOf(false)
-    }
-
+fun PinAppWidgetButton(triggerOnClickListener: MutableState<Boolean>) {
     ElevatedButton(
-        { openDialog.value = true },
+        { triggerOnClickListener.value = true },
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue_chill_dark)),
         content = {
@@ -77,8 +77,4 @@ fun PinAppWidgetButton(onClickListener: @Composable (() -> Unit) -> Unit) {
             )
         }
     )
-
-    if (openDialog.value) {
-        onClickListener { openDialog.value = false }
-    }
 }
