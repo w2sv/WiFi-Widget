@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget
+package com.w2sv.wifiwidget.activities.main
 
 import android.Manifest
 import android.appwidget.AppWidgetManager
@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,7 +34,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.w2sv.typedpreferences.extensions.appPreferences
+import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.WiFiWidgetProvider
+import com.w2sv.wifiwidget.extensions.disable
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import kotlinx.coroutines.launch
 
@@ -47,33 +48,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val triggerPinAppWidgetButtonOnClickListener = remember {
-                mutableStateOf(false)
-            }
-
-            MainScreen(triggerPinAppWidgetButtonOnClickListener) {
-                if (!BooleanPreferences.locationPermissionDialogAnswered)
-                    LocationPermissionDialog(
-                        {
-                            locationPermissionRequestLauncher.launch(
-                                arrayOf(
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.ACCESS_COARSE_LOCATION
-                                )
-                            )
-
-                            onLocationPermissionDialogAnswered()
-                            triggerPinAppWidgetButtonOnClickListener.value = false
-                        },
-                        {
-                            BooleanPreferences.showSSID = false
-                            requestPinWidget()
-                            onLocationPermissionDialogAnswered()
-                            triggerPinAppWidgetButtonOnClickListener.value = false
-                        }
+            MainScreen(::requestPinWidget) {
+                locationPermissionRequestLauncher.launch(
+                    arrayOf(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION
                     )
-                else
-                    requestPinWidget()
+                )
             }
         }
     }
@@ -99,29 +80,19 @@ class MainActivity : ComponentActivity() {
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
             requestPinWidget()
         }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        BooleanPreferences.writeChangedValues(appPreferences())
-    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 @Preview
 fun MainScreenPreview() {
-    MainScreen(remember{ mutableStateOf(false) }) {
-    }
+    MainScreen({}, {})
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(
-    triggerPinAppWidgetButtonOnClickListener: MutableState<Boolean>,
-    pinAppWidgetButtonOnClickListener: @Composable () -> Unit
-) {
+fun MainScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
     val sheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
     )
@@ -142,10 +113,29 @@ fun MainScreen(
                 Arrangement.Center,
                 Alignment.CenterHorizontally
             ) {
-                PinAppWidgetButton(triggerPinAppWidgetButtonOnClickListener)
+                val triggerPinAppWidgetButtonOnClickListener = remember {
+                    mutableStateOf(false)
+                }
 
-                if (triggerPinAppWidgetButtonOnClickListener.value) {
-                    pinAppWidgetButtonOnClickListener()
+                PinAppWidgetButton(triggerPinAppWidgetButtonOnClickListener) {
+                    if (!BooleanPreferences.locationPermissionDialogAnswered)
+                        LocationPermissionDialog(
+                            onConfirm = {
+                                launchLocationPermissionRequest()
+                            },
+                            onDismiss = {
+                                BooleanPreferences.showSSID = false
+                                requestPinWidget()
+                            },
+                            onButtonPress = {
+                                BooleanPreferences.locationPermissionDialogAnswered = true
+                            },
+                            onDismissRequest = {
+                                triggerPinAppWidgetButtonOnClickListener.disable()
+                            }
+                        )
+                    else
+                        requestPinWidget()
                 }
 
                 IconButton(onClick = {

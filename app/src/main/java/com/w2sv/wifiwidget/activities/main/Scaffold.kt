@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget
+package com.w2sv.wifiwidget.activities.main
 
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -19,7 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,28 +44,40 @@ fun ScaffoldWithTopAppBar(content: @Composable (PaddingValues) -> Unit) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun LocationPermissionDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+fun LocationPermissionDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    onButtonPress: () -> Unit,
+    onDismissRequest: () -> Unit
+) {
     AlertDialog(
         confirmButton = {
-            ElevatedButton(onConfirm) { Text(text = "Go ahead") }
+            ElevatedButton({
+                onConfirm()
+                onButtonPress()
+                onDismiss()
+            }) { Text(text = "Go ahead") }
         },
         dismissButton = {
-            ElevatedButton(onDismiss) {
+            ElevatedButton({
+                onDismiss()
+                onButtonPress()
+                onDismiss()
+            }) {
                 Text(text = "Ignore SSID")
             }
         },
-        onDismissRequest = {},
+        onDismissRequest = onDismissRequest,
         text = { Text(text = "If you want your SSID to be displayed, you'll have to grant location access") }
     )
 }
 
-fun onLocationPermissionDialogAnswered(){
-    BooleanPreferences.locationPermissionDialogAnswered = true
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun PinAppWidgetButton(triggerOnClickListener: MutableState<Boolean>) {
+fun PinAppWidgetButton(
+    triggerOnClickListener: MutableState<Boolean>,
+    onClickListener: @Composable () -> Unit
+) {
     ElevatedButton(
         { triggerOnClickListener.value = true },
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
@@ -77,4 +89,7 @@ fun PinAppWidgetButton(triggerOnClickListener: MutableState<Boolean>) {
             )
         }
     )
+
+    if (triggerOnClickListener.value)
+        onClickListener()
 }

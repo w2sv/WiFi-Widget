@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.preferences
 
 import com.w2sv.typedpreferences.descendants.BooleanPreferences
-import com.w2sv.wifiwidget.R
 
 object BooleanPreferences : BooleanPreferences(
     "showSSID" to true,
