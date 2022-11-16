@@ -137,7 +137,7 @@ private fun WifiPropertyConfigurationList() {
                         color = Color.White,
                         modifier = Modifier.weight(1f, fill = true)
                     )
-                    val checked = remember(key1 = preferenceKey.hashCode()) {
+                    val checked = remember(key1 = preferenceKey) {
                         mutableStateOf(WidgetPreferences.getValue(preferenceKey))
                     }
                     Checkbox(
