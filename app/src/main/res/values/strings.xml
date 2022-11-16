@@ -13,4 +13,6 @@
     <string name="dhcp">"DHCP"</string>
     <string name="refresh_data">Refresh data</string>
     <string name="configure_widget">Configure widget</string>
+    <string name="displayed_properties">Displayed Properties</string>
+    <string name="uncheck_all_properties_toast">You need to leave at least one property checked!</string>
 </resources>

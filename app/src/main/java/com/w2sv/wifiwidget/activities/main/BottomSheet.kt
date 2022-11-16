@@ -99,7 +99,7 @@ private fun SheetContent() {
             modifier = Modifier.padding(vertical = 12.dp)
         ) {
             Text(
-                text = "Displayed Properties",
+                text = stringResource(R.string.displayed_properties),
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
                 fontStyle = FontStyle.Italic,
@@ -109,13 +109,13 @@ private fun SheetContent() {
                     )
                 )
             )
-            WifiPropertyConfigurationList()
+            WidgetPropertyColumn()
         }
     }
 }
 
 @Composable
-private fun WifiPropertyConfigurationList() {
+private fun WidgetPropertyColumn() {
     val context = LocalContext.current
 
     Column(modifier = Modifier.padding(horizontal = 26.dp)) {
@@ -147,7 +147,7 @@ private fun WifiPropertyConfigurationList() {
                                 Toast
                                     .makeText(
                                         context,
-                                        "You need to leave at least one property checked!",
+                                        context.getString(R.string.uncheck_all_properties_toast),
                                         Toast.LENGTH_SHORT
                                     )
                                     .show()
