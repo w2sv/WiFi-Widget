@@ -40,7 +40,7 @@ fun BottomSheetScaffold(
     BottomSheetScaffold(
         topBar = { TopBar() },
         scaffoldState = scaffoldState,
-        sheetContent = { BottomSheet(scaffoldState = scaffoldState) },
+        sheetContent = { BottomSheet(sheetState = scaffoldState.bottomSheetState) },
         sheetElevation = 0.dp,
         sheetBackgroundColor = Color.Transparent,
         sheetPeekHeight = 48.dp,

@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.BottomSheetScaffoldState
+import androidx.compose.material.BottomSheetState
 import androidx.compose.material.Checkbox
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
@@ -41,32 +41,32 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheet(scaffoldState: BottomSheetScaffoldState) {
+fun BottomSheet(sheetState: BottomSheetState) {
     val coroutineScope = rememberCoroutineScope()
 
-    BackHandler(scaffoldState.bottomSheetState.isExpanded) {
-        coroutineScope.launch { scaffoldState.bottomSheetState.collapse() }
+    BackHandler(sheetState.isExpanded) {
+        coroutineScope.launch { sheetState.collapse() }
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ToggleButton(scaffoldState, coroutineScope)
+        ToggleButton(sheetState, coroutineScope)
         SheetContent()
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun ToggleButton(scaffoldState: BottomSheetScaffoldState, coroutineScope: CoroutineScope) {
+private fun ToggleButton(sheetState: BottomSheetState, coroutineScope: CoroutineScope) {
     IconButton(
         onClick = {
             coroutineScope.launch {
-                if (scaffoldState.bottomSheetState.isExpanded)
-                    scaffoldState.bottomSheetState.collapse()
+                if (sheetState.isExpanded)
+                    sheetState.collapse()
                 else
-                    scaffoldState.bottomSheetState.expand()
+                    sheetState.expand()
             }
         },
         colors = IconButtonDefaults.iconButtonColors(
@@ -76,7 +76,7 @@ private fun ToggleButton(scaffoldState: BottomSheetScaffoldState, coroutineScope
         )
     ) {
         Icon(
-            imageVector = if (scaffoldState.bottomSheetState.isExpanded)
+            imageVector = if (sheetState.isExpanded)
                 Icons.Filled.KeyboardArrowDown
             else
                 Icons.Filled.KeyboardArrowUp,
@@ -89,6 +89,7 @@ private fun ToggleButton(scaffoldState: BottomSheetScaffoldState, coroutineScope
 @Composable
 private fun SheetContent() {
     Surface(
+        modifier = Modifier.padding(horizontal = 30.dp),
         color = colorResource(id = R.color.mischka_dark),
         shape = RoundedCornerShape(40.dp, 40.dp)
     ) {
