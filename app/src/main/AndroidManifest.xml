@@ -16,7 +16,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name="com.w2sv.wifiwidget.MainActivity"
+            android:name=".activities.main.MainActivity"
             android:exported="true">
 
             <intent-filter>

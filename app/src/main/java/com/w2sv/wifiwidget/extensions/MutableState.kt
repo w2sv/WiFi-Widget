@@ -8,3 +8,7 @@ fun MutableState<Boolean>.disable(){
 fun MutableState<Boolean>.enable(){
     value = true
 }
+
+fun MutableState<Boolean>.toggle(){
+    value = !value
+}
