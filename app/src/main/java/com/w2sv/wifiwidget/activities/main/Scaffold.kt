@@ -1,12 +1,18 @@
 package com.w2sv.wifiwidget.activities.main
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.material.BottomSheetScaffold
+import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.rememberBottomSheetScaffoldState
+import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -19,25 +25,43 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ScaffoldWithTopAppBar(content: @Composable (PaddingValues) -> Unit) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                { Text(stringResource(id = R.string.app_name)) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = colorResource(
-                        id = R.color.blue_chill_dark
-                    ),
-                    titleContentColor = Color.White
-                )
-            )
-        },
+fun BottomSheetScaffold(
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(
+            BottomSheetValue.Collapsed,
+            animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy)
+        )
+    )
+
+    BottomSheetScaffold(
+        topBar = { TopBar() },
+        scaffoldState = scaffoldState,
+        sheetContent = { BottomSheet(scaffoldState = scaffoldState) },
+        sheetElevation = 0.dp,
+        sheetBackgroundColor = Color.Transparent,
+        sheetPeekHeight = 48.dp,
         contentColor = Color.White
     ) {
         content(it)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar() {
+    TopAppBar(
+        { Text(stringResource(id = R.string.app_name)) },
+        colors = TopAppBarDefaults.smallTopAppBarColors(
+            containerColor = colorResource(
+                id = R.color.blue_chill_dark
+            ),
+            titleContentColor = Color.White
+        )
+    )
 }
 
 @Composable

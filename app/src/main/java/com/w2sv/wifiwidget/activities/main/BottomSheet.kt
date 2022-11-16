@@ -1,20 +1,18 @@
 package com.w2sv.wifiwidget.activities.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.Checkbox
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,51 +36,37 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.extensions.toggle
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-@Preview(showSystemUi = true)
-fun BottomSheetPreview() {
-    BottomSheetLayout(
-        sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Expanded)
-    ) {}
-}
+fun BottomSheet(scaffoldState: BottomSheetScaffoldState) {
+    val coroutineScope = rememberCoroutineScope()
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun BottomSheetLayout(sheetState: ModalBottomSheetState, content: @Composable () -> Unit) {
-    ModalBottomSheetLayout(
-        sheetContent = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                SheetToggleButton(sheetState)
-                SheetContent()
-            }
-        },
-        sheetElevation = 0.dp,
-        sheetShape = RoundedCornerShape(40.dp, 40.dp),
-        sheetState = sheetState,
-        sheetBackgroundColor = Color.Transparent
+    BackHandler(scaffoldState.bottomSheetState.isExpanded) {
+        coroutineScope.launch { scaffoldState.bottomSheetState.collapse() }
+    }
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        content()
+        ToggleButton(scaffoldState, coroutineScope)
+        SheetContent()
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SheetToggleButton(sheetState: ModalBottomSheetState) {
-    val scope = rememberCoroutineScope()
-
+private fun ToggleButton(scaffoldState: BottomSheetScaffoldState, coroutineScope: CoroutineScope) {
     IconButton(
         onClick = {
-            scope.launch {
-                if (sheetState.isVisible)
-                    sheetState.hide()
+            coroutineScope.launch {
+                if (scaffoldState.bottomSheetState.isExpanded)
+                    scaffoldState.bottomSheetState.collapse()
                 else
-                    sheetState.show()
+                    scaffoldState.bottomSheetState.expand()
             }
         },
         colors = IconButtonDefaults.iconButtonColors(
@@ -92,7 +76,7 @@ fun SheetToggleButton(sheetState: ModalBottomSheetState) {
         )
     ) {
         Icon(
-            imageVector = if (sheetState.isVisible)
+            imageVector = if (scaffoldState.bottomSheetState.isExpanded)
                 Icons.Filled.KeyboardArrowDown
             else
                 Icons.Filled.KeyboardArrowUp,
@@ -103,26 +87,33 @@ fun SheetToggleButton(sheetState: ModalBottomSheetState) {
 
 @Preview
 @Composable
-fun SheetContent() {
-    Surface(color = colorResource(id = R.color.mischka_dark)) {
-        Text(
-            text = "Configure displayed properties",
-            textAlign = TextAlign.Center,
-            fontSize = 18.sp,
-            fontStyle = FontStyle.Italic,
-            style = TextStyle(
-                color = colorResource(
-                    id = R.color.blue_chill_dark
+private fun SheetContent() {
+    Surface(
+        color = colorResource(id = R.color.mischka_dark),
+        shape = RoundedCornerShape(40.dp, 40.dp)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(vertical = 12.dp)
+        ) {
+            Text(
+                text = "Displayed Properties",
+                textAlign = TextAlign.Center,
+                fontSize = 18.sp,
+                fontStyle = FontStyle.Italic,
+                style = TextStyle(
+                    color = colorResource(
+                        id = R.color.blue_chill_dark
+                    )
                 )
             )
-        )
-        WifiPropertyConfigurationList()
+            WifiPropertyConfigurationList()
+        }
     }
 }
 
-@Preview(showSystemUi = true)
 @Composable
-fun WifiPropertyConfigurationList() {
+private fun WifiPropertyConfigurationList() {
     Column(modifier = Modifier.padding(horizontal = 26.dp)) {
         mapOf(
             R.string.ssid to BooleanPreferences::showSSID,

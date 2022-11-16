@@ -77,50 +77,38 @@ fun MainScreenPreview() {
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
-    val sheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Expanded,
-    )
+    BottomSheetScaffold {
+        Column(
+            Modifier
+                .padding(it)
+                .fillMaxHeight()
+                .fillMaxWidth(),
+            Arrangement.Center,
+            Alignment.CenterHorizontally
+        ) {
+            val triggerPinAppWidgetButtonOnClickListener = remember {
+                mutableStateOf(false)
+            }
 
-    val coroutineScope = rememberCoroutineScope()
-
-    BackHandler(sheetState.isVisible) {
-        coroutineScope.launch { sheetState.hide() }
-    }
-
-    BottomSheetLayout(sheetState) {
-        ScaffoldWithTopAppBar {
-            Column(
-                Modifier
-                    .padding(it)
-                    .fillMaxHeight()
-                    .fillMaxWidth(),
-                Arrangement.Center,
-                Alignment.CenterHorizontally
-            ) {
-                val triggerPinAppWidgetButtonOnClickListener = remember {
-                    mutableStateOf(false)
-                }
-
-                PinAppWidgetButton(triggerPinAppWidgetButtonOnClickListener) {
-                    if (!BooleanPreferences.locationPermissionDialogAnswered)
-                        LocationPermissionDialog(
-                            onConfirm = {
-                                launchLocationPermissionRequest()
-                            },
-                            onDismiss = {
-                                BooleanPreferences.showSSID = false
-                                requestPinWidget()
-                            },
-                            onButtonPress = {
-                                BooleanPreferences.locationPermissionDialogAnswered = true
-                            },
-                            onDismissRequest = {
-                                triggerPinAppWidgetButtonOnClickListener.disable()
-                            }
-                        )
-                    else
-                        requestPinWidget()
-                }
+            PinAppWidgetButton(triggerPinAppWidgetButtonOnClickListener) {
+                if (!BooleanPreferences.locationPermissionDialogAnswered)
+                    LocationPermissionDialog(
+                        onConfirm = {
+                            launchLocationPermissionRequest()
+                        },
+                        onDismiss = {
+                            BooleanPreferences.showSSID = false
+                            requestPinWidget()
+                        },
+                        onButtonPress = {
+                            BooleanPreferences.locationPermissionDialogAnswered = true
+                        },
+                        onDismissRequest = {
+                            triggerPinAppWidgetButtonOnClickListener.disable()
+                        }
+                    )
+                else
+                    requestPinWidget()
             }
         }
     }
