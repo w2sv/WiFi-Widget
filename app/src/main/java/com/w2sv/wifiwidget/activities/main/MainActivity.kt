@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.w2sv.wifiwidget.AppTheme
 import com.w2sv.wifiwidget.WiFiWidgetProvider
 
 class MainActivity : ComponentActivity() {
@@ -26,13 +27,15 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MainScreen(::requestPinWidget) {
-                locationPermissionRequestLauncher.launch(
-                    arrayOf(
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.ACCESS_FINE_LOCATION
+            AppTheme {
+                MainScreen(::requestPinWidget) {
+                    locationPermissionRequestLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
                     )
-                )
+                }
             }
         }
     }

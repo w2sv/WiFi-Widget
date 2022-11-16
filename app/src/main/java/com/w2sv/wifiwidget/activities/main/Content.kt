@@ -12,7 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.w2sv.wifiwidget.AppTheme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.extensions.disable
 import com.w2sv.wifiwidget.extensions.enable
@@ -88,4 +90,16 @@ private fun LocationPermissionDialog(
         onDismissRequest = onClose,
         text = { Text(text = "If you want your SSID to be displayed, you'll have to grant location access") }
     )
+}
+
+@Composable
+@Preview(showSystemUi = true)
+fun LocationPermissionDialogPreview() {
+    AppTheme {
+        LocationPermissionDialog(
+            onConfirm = { /*TODO*/ },
+            onDismiss = { /*TODO*/ },
+            onButtonPress = { /*TODO*/ }) {
+        }
+    }
 }
