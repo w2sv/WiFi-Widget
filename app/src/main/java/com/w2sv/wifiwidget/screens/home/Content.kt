@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.activities.main
+package com.w2sv.wifiwidget.screens.home
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.AlertDialog

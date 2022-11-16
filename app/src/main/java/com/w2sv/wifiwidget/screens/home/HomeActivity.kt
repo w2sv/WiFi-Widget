@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.activities.main
+package com.w2sv.wifiwidget.screens.home
 
 import android.Manifest
 import android.appwidget.AppWidgetManager
@@ -20,7 +20,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.AppTheme
 import com.w2sv.wifiwidget.WiFiWidgetProvider
 
-class MainActivity : ComponentActivity() {
+class HomeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme {
-                MainScreen(::requestPinWidget) {
+                HomeScreen(::requestPinWidget) {
                     locationPermissionRequestLauncher.launch(
                         arrayOf(
                             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
             if (isRequestPinAppWidgetSupported) {
                 requestPinAppWidget(
                     ComponentName(
-                        this@MainActivity,
+                        this@HomeActivity,
                         WiFiWidgetProvider::class.java
                     ),
                     null,
@@ -63,12 +63,12 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 @Preview
-fun MainScreenPreview() {
-    MainScreen({}, {})
+fun HomeScreenPreview() {
+    HomeScreen({}, {})
 }
 
 @Composable
-fun MainScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
+fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
     BottomSheetScaffold {
         Column(
             Modifier

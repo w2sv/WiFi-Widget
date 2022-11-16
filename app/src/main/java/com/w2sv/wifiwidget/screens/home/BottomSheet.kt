@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.activities.main
+package com.w2sv.wifiwidget.screens.home
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler

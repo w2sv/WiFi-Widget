@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.activities
+package com.w2sv.wifiwidget
 
 import androidx.activity.ComponentActivity
 import com.w2sv.typedpreferences.extensions.appPreferences

@@ -16,7 +16,7 @@
         android:supportsRtl="true">
 
         <activity
-            android:name=".activities.main.MainActivity"
+            android:name=".screens.home.HomeActivity"
             android:exported="true">
 
             <intent-filter>
