@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.activities.main
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -34,8 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.extensions.toggle
-import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -115,17 +116,19 @@ private fun SheetContent() {
 
 @Composable
 private fun WifiPropertyConfigurationList() {
+    val context = LocalContext.current
+
     Column(modifier = Modifier.padding(horizontal = 26.dp)) {
         mapOf(
-            R.string.ssid to BooleanPreferences::showSSID,
-            R.string.ipv4 to BooleanPreferences::showIPv4,
-            R.string.frequency to BooleanPreferences::showFrequency,
-            R.string.gateway to BooleanPreferences::showGateway,
-            R.string.subnet_mask to BooleanPreferences::showSubnetMask,
-            R.string.dns to BooleanPreferences::showDNS,
-            R.string.dhcp to BooleanPreferences::showDHCP
+            R.string.ssid to "showSSID",
+            R.string.ipv4 to "showIPv4",
+            R.string.frequency to "showFrequency",
+            R.string.gateway to "showGateway",
+            R.string.subnet_mask to "showSubnetMask",
+            R.string.dns to "showDNS",
+            R.string.dhcp to "showDHCP"
         )
-            .forEach { (stringId, preferenceProperty) ->
+            .forEach { (stringId, preferenceKey) ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -134,14 +137,24 @@ private fun WifiPropertyConfigurationList() {
                         color = Color.White,
                         modifier = Modifier.weight(1f, fill = true)
                     )
-                    val checked = remember(preferenceProperty.hashCode()) {
-                        mutableStateOf(preferenceProperty.get())
+                    val checked = remember(key1 = preferenceKey.hashCode()) {
+                        mutableStateOf(WidgetPreferences.getValue(preferenceKey))
                     }
                     Checkbox(
                         checked = checked.value,
                         onCheckedChange = {
-                            checked.toggle()
-                            preferenceProperty.set(it)
+                            if (!it && WidgetPreferences.all { (k, v) -> k == preferenceKey || !v })
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "You need to leave at least one property checked!",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
+                            else {
+                                checked.value = it
+                                WidgetPreferences[preferenceKey] = it
+                            }
                         }
                     )
                 }

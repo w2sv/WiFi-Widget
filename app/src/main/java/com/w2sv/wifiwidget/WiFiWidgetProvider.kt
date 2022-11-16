@@ -15,7 +15,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.text.color
 import androidx.core.text.italic
-import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
@@ -126,37 +126,37 @@ private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: 
         PropertyRow(
             R.id.ssid_tv,
             R.string.ssid,
-            BooleanPreferences.showSSID
+            WidgetPreferences.showSSID
         ) { wifiManager.connectionInfo.ssid.replace("\"", "") },
         PropertyRow(
             R.id.ipv4_tv,
             R.string.ipv4,
-            BooleanPreferences.showIPv4
+            WidgetPreferences.showIPv4
         ) { wifiManager.connectionInfo.ipAddress.asFormattedIpAddress() },
         PropertyRow(
             R.id.frequency_tv,
             R.string.frequency,
-            BooleanPreferences.showFrequency
+            WidgetPreferences.showFrequency
         ) { "${wifiManager.connectionInfo.frequency}Hz" },
         PropertyRow(
             R.id.gateway_tv,
             R.string.gateway,
-            BooleanPreferences.showGateway
+            WidgetPreferences.showGateway
         ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() },
         PropertyRow(
             R.id.subnet_mask_tv,
             R.string.subnet_mask,
-            BooleanPreferences.showSubnetMask
+            WidgetPreferences.showSubnetMask
         ) { wifiManager.dhcpInfo.netmask.asFormattedIpAddress() },
         PropertyRow(
             R.id.dns_tv,
             R.string.dns,
-            BooleanPreferences.showDNS
+            WidgetPreferences.showDNS
         ) { wifiManager.dhcpInfo.dns1.asFormattedIpAddress() },
         PropertyRow(
             R.id.dhcp_tv,
             R.string.dhcp,
-            BooleanPreferences.showDHCP
+            WidgetPreferences.showDHCP
         ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() },
     )
         .forEach {

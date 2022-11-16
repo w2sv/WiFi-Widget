@@ -27,6 +27,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.WiFiWidgetProvider
 import com.w2sv.wifiwidget.extensions.disable
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -97,7 +98,7 @@ fun MainScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: ()
                             launchLocationPermissionRequest()
                         },
                         onDismiss = {
-                            BooleanPreferences.showSSID = false
+                            WidgetPreferences.showSSID = false
                             requestPinWidget()
                         },
                         onButtonPress = {
