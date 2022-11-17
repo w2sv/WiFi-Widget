@@ -12,9 +12,17 @@ import androidx.core.text.color
 import androidx.core.text.italic
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
+import slimber.log.i
 
+/**
+ * connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!! -> {InterfaceName: wlan0 LinkAddresses: [ fe80::ac57:89ff:fe22:9f70/64,192.168.1.233/24,2a02:3036:20a:9df2:ac57:89ff:fe22:9f70/64,2a02:3036:20a:9df2:79d9:9c65:ad9e:81ab/64 ] DnsAddresses: [ /192.168.1.1 ] Domains: null MTU: 1500 ServerAddress: /192.168.1.1 TcpBufferSizes: 1730560,3461120,6922240,524288,1048576,4525824 Routes: [ fe80::/64 -> :: wlan0 mtu 0,::/0 -> fe80::49c8:81bb:cfd2:ce7a wlan0 mtu 0,2a02:3036:20a:9df2::/64 -> :: wlan0 mtu 0,192.168.1.0/24 -> 0.0.0.0 wlan0 mtu 0,0.0.0.0/0 -> 192.168.1.1 wlan0 mtu 0 ]}
+ */
 fun RemoteViews.setWifiDependentContent(context: Context) {
     val wifiManager = context.getSystemService(WifiManager::class.java)
+    val connectivityManager = context.getSystemService(ConnectivityManager::class.java)
+
+    val prop = connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!!
+    i{"linkProperties: ${prop.routes.first { it.isDefaultRoute }}"}
 
     if (wifiManager.isWifiEnabled) {
         if (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
@@ -60,9 +68,9 @@ private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: 
         PropertyRow(
             WidgetPreferences.showSubnetMask,
             R.id.subnet_mask_tv,
-            R.string.subnet_mask,
+            R.string.netmask,
             R.id.subnet_mask_value_tv
-        ) { wifiManager.dhcpInfo.netmask.asFormattedIpAddress() },
+        ) { netmask() },
         PropertyRow(
             WidgetPreferences.showDNS,
             R.id.dns_tv,

@@ -124,7 +124,7 @@ private fun WidgetPropertyColumn() {
             R.string.ipv4 to "showIPv4",
             R.string.frequency to "showFrequency",
             R.string.gateway to "showGateway",
-            R.string.subnet_mask to "showSubnetMask",
+            R.string.netmask to "showSubnetMask",
             R.string.dns to "showDNS",
             R.string.dhcp to "showDHCP"
         )

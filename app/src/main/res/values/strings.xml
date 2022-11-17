@@ -6,7 +6,7 @@
     <string name="ssid">SSID</string>
     <string name="frequency">Frequency</string>
     <string name="gateway">Gateway</string>
-    <string name="subnet_mask">Subnet Mask</string>
+    <string name="netmask">Netmask</string>
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
     <string name="refresh_data">Refresh data</string>
