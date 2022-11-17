@@ -91,7 +91,7 @@ private data class PropertyRow(
     fun setOnRemoteViews(remoteViews: RemoteViews, context: Context) {
         if (show) {
             remoteViews.setTextViewText(propertyTextViewId, propertyText(context))
-            remoteViews.setTextViewText(valueTextViewId, getValue())
+            remoteViews.setTextViewText(valueTextViewId, valueText(context))
 
             remoteViews.setViewVisibility(propertyTextViewId, View.VISIBLE)
             remoteViews.setViewVisibility(valueTextViewId, View.VISIBLE)
@@ -104,9 +104,15 @@ private data class PropertyRow(
     private fun propertyText(context: Context): SpannableStringBuilder =
         SpannableStringBuilder()
             .italic {
-                color(context.getColor(R.color.blue_chill_dark)) {
+                color(context.getColor(R.color.blue_chill)) {
                     append(context.getString(propertyStringId))
                 }
+            }
+
+    private fun valueText(context: Context): SpannableStringBuilder =
+        SpannableStringBuilder()
+            .color(context.getColor(R.color.mischka_dark)){
+                append(getValue())
             }
 }
 
