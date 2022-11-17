@@ -26,7 +26,7 @@
         </activity>
 
         <receiver
-            android:name=".WiFiWidgetProvider"
+            android:name=".widget.WiFiWidgetProvider"
             android:exported="false">
 
             <intent-filter>

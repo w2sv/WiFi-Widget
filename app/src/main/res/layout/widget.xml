@@ -76,7 +76,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/no_wifi_connection_tv"
+            android:id="@+id/wifi_status_tv"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -107,7 +107,6 @@
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="-23dp"
 
-        android:text="@string/updated"
         android:textSize="12sp"
         android:textStyle="italic" />
 

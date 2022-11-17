@@ -9,7 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ui.AppTheme
-import com.w2sv.wifiwidget.WiFiWidgetProvider
+import com.w2sv.wifiwidget.widget.WiFiWidgetProvider
 
 class HomeActivity : ComponentActivity() {
 
