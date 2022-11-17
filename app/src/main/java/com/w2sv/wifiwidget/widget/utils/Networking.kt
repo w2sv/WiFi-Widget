@@ -1,19 +1,11 @@
-package com.w2sv.wifiwidget.widget
+package com.w2sv.wifiwidget.widget.utils
 
 import android.Manifest
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.text.format.Formatter
-import android.view.View
-import android.widget.RemoteViews
-import androidx.annotation.IdRes
 import androidx.annotation.RequiresPermission
 import java.net.NetworkInterface
-
-internal fun RemoteViews.crossVisualize(@IdRes showView: Int, @IdRes hideView: Int) {
-    setViewVisibility(showView, View.VISIBLE)
-    setViewVisibility(hideView, View.GONE)
-}
 
 @Suppress("DEPRECATION")
 internal fun Int.asFormattedIpAddress(): String =
