@@ -21,9 +21,9 @@ fun RemoteViews.setWifiDependentContent(context: Context) {
             populatePropertiesLayout(context, wifiManager)
             crossVisualize(R.id.property_layout, R.id.wifi_status_tv)
         } else
-            onNoWifiConnection(context.getString(R.string.no_wifi_connection))
+            onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
     } else
-        onNoWifiConnection(context.getString(R.string.wifi_disabled))
+        onNoWifiConnectionAvailable(context.getString(R.string.wifi_disabled))
 }
 
 /**
@@ -95,7 +95,7 @@ private data class PropertyRow(
             .append(getValue())
 }
 
-private fun RemoteViews.onNoWifiConnection(statusTvText: String) {
+private fun RemoteViews.onNoWifiConnectionAvailable(statusTvText: String) {
     setTextViewText(R.id.wifi_status_tv, statusTvText)
     crossVisualize(R.id.wifi_status_tv, R.id.property_layout)
 }
