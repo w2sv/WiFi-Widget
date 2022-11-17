@@ -7,15 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.AppTheme
 import com.w2sv.wifiwidget.WiFiWidgetProvider
@@ -61,24 +52,3 @@ class HomeActivity : ComponentActivity() {
         }
 }
 
-@Composable
-@Preview
-fun HomeScreenPreview() {
-    HomeScreen({}, {})
-}
-
-@Composable
-fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
-    BottomSheetScaffold {
-        Column(
-            Modifier
-                .padding(it)
-                .fillMaxHeight()
-                .fillMaxWidth(),
-            Arrangement.Center,
-            Alignment.CenterHorizontally
-        ) {
-            PinAppWidgetButton(requestPinWidget, launchLocationPermissionRequest)
-        }
-    }
-}

@@ -28,11 +28,11 @@ class WiFiWidgetProvider : AppWidgetProvider() {
                 context,
                 69,
                 Intent(context, WiFiWidgetProvider::class.java)
-                    .setAction(ACTION_RESTART),
+                    .setAction(ACTION_REFRESH_DATA),
                 PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
 
-        private const val ACTION_RESTART = "com.w2sv.wifiwidget.ACTION_RESTART"
+        private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.ACTION_REFRESH_DATA"
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -40,22 +40,21 @@ class WiFiWidgetProvider : AppWidgetProvider() {
 
         i { "onReceive" }
 
-        if (intent?.action == ACTION_RESTART)
-            with(context!!) {
-                i { "onReceive.ACTION_RESTART" }
+        if (intent?.action == ACTION_REFRESH_DATA) {
+            i { "onReceive.ACTION_REFRESH_DATA" }
 
-                val appWidgetManager = AppWidgetManager.getInstance(this)
+            val appWidgetManager = AppWidgetManager.getInstance(context!!)
 
-                updateWidgets(
-                    appWidgetManager,
-                    appWidgetManager.getAppWidgetIds(
-                        ComponentName(
-                            packageName,
-                            WiFiWidgetProvider::class.java.name
-                        )
+            context.updateWidgets(
+                appWidgetManager,
+                appWidgetManager.getAppWidgetIds(
+                    ComponentName(
+                        context.packageName,
+                        this::class.java.name
                     )
                 )
-            }
+            )
+        }
     }
 
     override fun onUpdate(
