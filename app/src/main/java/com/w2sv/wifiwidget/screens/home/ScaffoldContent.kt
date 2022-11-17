@@ -14,7 +14,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.wifiwidget.AppTheme
+import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.extensions.disable
 import com.w2sv.wifiwidget.extensions.enable

@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widget_layout"
-    style="@style/Widget.IPAddressWidget.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer">
+    android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer"
+    style="@style/Widget.IPAddressWidget.AppWidget.Container">
 
     <RelativeLayout
         android:id="@+id/content_layout"
@@ -24,49 +24,55 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/ipv4_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/frequency_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/gateway_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/subnet_mask_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/dns_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
+
             <TextView
                 android:id="@+id/dhcp_tv"
 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:textSize="@dimen/size_text"/>
+                android:textSize="@dimen/size_text" />
         </LinearLayout>
 
         <TextView
@@ -77,8 +83,8 @@
             android:layout_centerInParent="true"
 
             android:text="@string/no_wifi_connection"
-            android:textStyle="italic"
-            android:textSize="@dimen/size_text"/>
+            android:textSize="@dimen/size_text"
+            android:textStyle="italic" />
     </RelativeLayout>
 
     <ImageButton
@@ -98,11 +104,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/content_layout"
-        android:layout_marginBottom="-23dp"
         android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-23dp"
 
+        android:text="@string/updated"
         android:textSize="12sp"
-        android:textStyle="italic"
-        android:text="@string/updated"/>
+        android:textStyle="italic" />
 
 </RelativeLayout>
