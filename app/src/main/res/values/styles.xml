@@ -8,13 +8,18 @@
 
     <style name="Theme.App.Main" parent="Theme.AppCompat"/>
 
-    <style name="Widget.IPAddressWidget.AppWidget.Container" parent="android:Widget">
-        <item name="android:id">@android:id/background</item>
-        <item name="android:background">@android:color/holo_red_dark</item>
-    </style>
+    <resources>
 
-    <style name="Widget.IPAddressWidget.AppWidget.InnerView" parent="android:Widget">
-        <item name="android:background">@android:color/holo_red_dark</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
+        <style name="Widget.IPAddressWidget.AppWidget.Container" parent="android:Widget">
+            <item name="android:id">@android:id/background</item>
+            <item name="android:padding">?attr/appWidgetPadding</item>
+            <item name="android:background">@drawable/widget_background</item>
+        </style>
+
+        <style name="Widget.IPAddressWidget.AppWidget.InnerView" parent="android:Widget">
+            <item name="android:padding">?attr/appWidgetPadding</item>
+            <item name="android:background">@drawable/widget_inner_view_background</item>
+            <item name="android:textColor">?android:attr/textColorPrimary</item>
+        </style>
+    </resources>
 </resources>

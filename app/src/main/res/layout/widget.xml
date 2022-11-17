@@ -89,7 +89,7 @@
         android:layout_alignBottom="@id/content_layout"
         android:layout_marginBottom="-35dp"
 
-        android:background="@drawable/round_refresh_24"
+        android:background="@drawable/ic_round_refresh_24"
         android:contentDescription="@string/refresh_data" />
 
     <TextView
