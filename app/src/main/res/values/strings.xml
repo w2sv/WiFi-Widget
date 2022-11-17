@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">WiFi Widget</string>
-    <string name="app_widget_description">Monitor your WiFi connection properties</string>
+    <string name="app_widget_description">Monitor your WiFi connection details</string>
     <string name="pin_widget">Pin Widget</string>
     <string name="ipv4">IPv4</string>
     <string name="ssid">SSID</string>

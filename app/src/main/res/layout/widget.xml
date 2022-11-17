@@ -1,17 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_layout"
+    style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer"
-    style="@style/Widget.WiFiWidget.AppWidget.Container">
+    android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer">
 
     <RelativeLayout
         android:id="@+id/content_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/widget_wifi_properties"/>
+        <include layout="@layout/widget_wifi_properties" />
 
         <TextView
             android:id="@+id/wifi_status_tv"
@@ -28,11 +28,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/content_layout"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="-35dp"
-        android:layout_marginStart="6dp"
 
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|end"
         android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/last_updated_tv"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+
+            android:textColor="@color/widget_bottom_row_elements"
+            android:textSize="14sp"
+            android:textStyle="italic"
+            tools:ignore="RelativeOverlap" />
 
         <ImageButton
             android:id="@+id/refresh_button"
@@ -43,18 +55,6 @@
             android:background="@drawable/ic_round_refresh_24"
             android:backgroundTint="@color/widget_bottom_row_elements"
             android:contentDescription="@string/refresh_data" />
-
-        <TextView
-            android:id="@+id/last_updated_tv"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:textColor="@color/widget_bottom_row_elements"
-            tools:ignore="RelativeOverlap" />
 
     </LinearLayout>
 
