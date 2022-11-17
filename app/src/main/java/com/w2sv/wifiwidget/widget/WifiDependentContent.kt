@@ -34,65 +34,80 @@ fun RemoteViews.setWifiDependentContent(context: Context) {
 private fun RemoteViews.populatePropertiesLayout(context: Context, wifiManager: WifiManager) {
     arrayOf(
         PropertyRow(
+            WidgetPreferences.showSSID,
             R.id.ssid_tv,
             R.string.ssid,
-            WidgetPreferences.showSSID
+            R.id.ssid_value_tv
         ) { wifiManager.connectionInfo.ssid.replace("\"", "") },
         PropertyRow(
+            WidgetPreferences.showIPv4,
             R.id.ipv4_tv,
             R.string.ipv4,
-            WidgetPreferences.showIPv4
+            R.id.ipv4_value_tv
         ) { wifiManager.connectionInfo.ipAddress.asFormattedIpAddress() },
         PropertyRow(
+            WidgetPreferences.showFrequency,
             R.id.frequency_tv,
             R.string.frequency,
-            WidgetPreferences.showFrequency
+            R.id.frequency_value_tv
         ) { "${wifiManager.connectionInfo.frequency}Hz" },
         PropertyRow(
+            WidgetPreferences.showGateway,
             R.id.gateway_tv,
             R.string.gateway,
-            WidgetPreferences.showGateway
+            R.id.gateway_value_tv
         ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() },
         PropertyRow(
+            WidgetPreferences.showSubnetMask,
             R.id.subnet_mask_tv,
             R.string.subnet_mask,
-            WidgetPreferences.showSubnetMask
+            R.id.subnet_mask_value_tv
         ) { wifiManager.dhcpInfo.netmask.asFormattedIpAddress() },
         PropertyRow(
+            WidgetPreferences.showDNS,
             R.id.dns_tv,
             R.string.dns,
-            WidgetPreferences.showDNS
+            R.id.dns_value_tv
         ) { wifiManager.dhcpInfo.dns1.asFormattedIpAddress() },
         PropertyRow(
+            WidgetPreferences.showDHCP,
             R.id.dhcp_tv,
             R.string.dhcp,
-            WidgetPreferences.showDHCP
+            R.id.dhcp_value_tv
         ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() },
     )
         .forEach {
-            if (it.show) {
-                setTextViewText(it.textViewId, it.render(context))
-                setViewVisibility(it.textViewId, View.VISIBLE)
-            } else {
-                setViewVisibility(it.textViewId, View.GONE)
-            }
+            it.setOnRemoteViews(this, context)
         }
 }
 
 private data class PropertyRow(
-    @IdRes val textViewId: Int,
-    @StringRes val stringId: Int,
     val show: Boolean,
+    @IdRes val propertyTextViewId: Int,
+    @StringRes val propertyStringId: Int,
+    @IdRes val valueTextViewId: Int,
     val getValue: () -> String
 ) {
-    fun render(context: Context): SpannableStringBuilder =
+    fun setOnRemoteViews(remoteViews: RemoteViews, context: Context) {
+        if (show) {
+            remoteViews.setTextViewText(propertyTextViewId, propertyText(context))
+            remoteViews.setTextViewText(valueTextViewId, getValue())
+
+            remoteViews.setViewVisibility(propertyTextViewId, View.VISIBLE)
+            remoteViews.setViewVisibility(valueTextViewId, View.VISIBLE)
+        } else {
+            remoteViews.setViewVisibility(propertyTextViewId, View.GONE)
+            remoteViews.setViewVisibility(valueTextViewId, View.GONE)
+        }
+    }
+
+    private fun propertyText(context: Context): SpannableStringBuilder =
         SpannableStringBuilder()
             .italic {
                 color(context.getColor(R.color.blue_chill_dark)) {
-                    append("${context.getString(stringId)} ")
+                    append(context.getString(propertyStringId))
                 }
             }
-            .append(getValue())
 }
 
 private fun RemoteViews.onNoWifiConnectionAvailable(statusTvText: String) {

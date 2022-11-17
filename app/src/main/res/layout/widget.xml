@@ -18,61 +18,159 @@
 
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/ssid_tv"
-
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/ssid_tv"
 
-            <TextView
-                android:id="@+id/ipv4_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/ssid_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/ipv4_tv"
 
-            <TextView
-                android:id="@+id/frequency_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/ipv4_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/frequency_tv"
 
-            <TextView
-                android:id="@+id/gateway_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/frequency_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/gateway_tv"
 
-            <TextView
-                android:id="@+id/subnet_mask_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/gateway_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/subnet_mask_tv"
 
-            <TextView
-                android:id="@+id/dns_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/subnet_mask_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/dns_tv"
 
-            <TextView
-                android:id="@+id/dhcp_tv"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
 
-                android:layout_width="wrap_content"
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/dns_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-                android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/dhcp_tv"
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+
+                    android:textSize="@dimen/size_text" />
+                <TextView
+                    android:id="@+id/dhcp_value_tv"
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:textSize="@dimen/size_text" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
