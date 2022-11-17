@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Theme.IPAddressWidget.AppWidgetContainer"
-    style="@style/Widget.IPAddressWidget.AppWidget.Container">
+    style="@style/Widget.WiFiWidget.AppWidget.Container">
 
     <RelativeLayout
         android:id="@+id/content_layout"
