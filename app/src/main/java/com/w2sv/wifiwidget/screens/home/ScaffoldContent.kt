@@ -6,42 +6,42 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.wifiwidget.ui.AppTheme
+import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.extensions.disable
-import com.w2sv.wifiwidget.extensions.enable
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
+import com.w2sv.wifiwidget.ui.AppTheme
 
 @Composable
 fun PinAppWidgetButton(
     requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit
 ) {
-    val triggerOnClickListener = remember {
+    var triggerOnClickListener by remember {
         mutableStateOf(false)
     }
 
     ElevatedButton(
-        triggerOnClickListener::enable,
+        {triggerOnClickListener = true},
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue_chill_dark)),
         content = {
             Text(
-                stringResource(R.string.pin_widget),
-                color = Color.White
+                text = stringResource(R.string.pin_widget),
             )
         }
     )
 
-    if (triggerOnClickListener.value) {
+    if (triggerOnClickListener) {
         if (!BooleanPreferences.locationPermissionDialogAnswered)
             LocationPermissionDialog(
                 onConfirm = {
@@ -54,12 +54,19 @@ fun PinAppWidgetButton(
                 onButtonPress = {
                     BooleanPreferences.locationPermissionDialogAnswered = true
                 },
-                onClose = triggerOnClickListener::disable
+                onClose = {triggerOnClickListener = false}
             )
         else {
             requestPinWidget()
-            triggerOnClickListener.disable()
+            triggerOnClickListener = false
         }
+    }
+}
+
+@Preview
+@Composable
+fun PinAppWidgetButtonPreview() {
+    PinAppWidgetButton(requestPinWidget = { /*TODO*/ }) {
     }
 }
 
@@ -94,7 +101,7 @@ private fun LocationPermissionDialog(
 
 @Composable
 @Preview(showSystemUi = true)
-fun LocationPermissionDialogPreview() {
+private fun LocationPermissionDialogPreview() {
     AppTheme {
         LocationPermissionDialog(
             onConfirm = { /*TODO*/ },

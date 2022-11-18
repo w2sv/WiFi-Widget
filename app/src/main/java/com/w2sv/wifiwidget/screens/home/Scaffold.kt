@@ -1,5 +1,7 @@
 package com.w2sv.wifiwidget.screens.home
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
@@ -24,7 +26,8 @@ fun BottomSheetScaffold(
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
-            BottomSheetValue.Collapsed
+            BottomSheetValue.Collapsed,
+            animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
         )
     )
 

@@ -5,8 +5,8 @@ import com.w2sv.typedpreferences.extensions.appPreferences
 import com.w2sv.wifiwidget.preferences.preferenceObjects
 
 abstract class ApplicationActivity : ComponentActivity() {
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
 
         writePreferenceChanges()
     }

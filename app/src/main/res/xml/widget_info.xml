@@ -4,6 +4,7 @@
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
     android:minWidth="160dp"
-    android:minHeight="100dp"
+    android:minHeight="40dp"
+    android:resizeMode="vertical"
     android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />

@@ -5,6 +5,7 @@
     <color name="blue_dianne">#243c54</color>
     <color name="blue_chill">#1EA8B5</color>
     <color name="blue_chill_dark">#158a92</color>
+    <color name="magenta">#9E0C99</color>
 
     <color name="app_icon_background">@color/blue_chill</color>
     <color name="widget_bottom_row_elements">@android:color/white</color>

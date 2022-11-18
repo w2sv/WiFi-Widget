@@ -12,17 +12,26 @@ import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
 
-class WiFiWidgetProvider : AppWidgetProvider() {
+class WifiWidgetProvider : AppWidgetProvider() {
 
     companion object {
-        fun restartPendingIntent(context: Context): PendingIntent =
+        fun refreshDataPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
                 69,
-                Intent(context, WiFiWidgetProvider::class.java)
-                    .setAction(ACTION_REFRESH_DATA),
+                refreshDataIntent(context),
                 PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
+
+        fun refreshData(context: Context){
+            with(context){
+                sendBroadcast(refreshDataIntent(this))
+            }
+        }
+
+        private fun refreshDataIntent(context: Context): Intent =
+            Intent(context, WifiWidgetProvider::class.java)
+                .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.ACTION_REFRESH_DATA"
     }
@@ -88,7 +97,7 @@ private fun AppWidgetManager.updateWidget(
                 // set refresh_button onClickListener
                 setOnClickPendingIntent(
                     R.id.refresh_button,
-                    WiFiWidgetProvider.restartPendingIntent(context)
+                    WifiWidgetProvider.refreshDataPendingIntent(context)
                 )
             }
     )
