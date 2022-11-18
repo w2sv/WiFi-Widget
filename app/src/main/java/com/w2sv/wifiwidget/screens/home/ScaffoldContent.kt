@@ -11,12 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
@@ -31,7 +29,7 @@ fun PinAppWidgetButton(
     }
 
     ElevatedButton(
-        {triggerOnClickListener = true},
+        { triggerOnClickListener = true },
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue_chill_dark)),
         content = {
@@ -54,7 +52,7 @@ fun PinAppWidgetButton(
                 onButtonPress = {
                     BooleanPreferences.locationPermissionDialogAnswered = true
                 },
-                onClose = {triggerOnClickListener = false}
+                onClose = { triggerOnClickListener = false }
             )
         else {
             requestPinWidget()

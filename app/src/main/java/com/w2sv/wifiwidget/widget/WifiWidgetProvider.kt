@@ -23,8 +23,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
             )
 
-        fun refreshData(context: Context){
-            with(context){
+        fun refreshData(context: Context) {
+            with(context) {
                 sendBroadcast(refreshDataIntent(this))
             }
         }

@@ -2,13 +2,14 @@ package com.w2sv.wifiwidget.extensions
 
 import androidx.compose.runtime.MutableState
 
-fun MutableState<Boolean>.disable(){
+fun MutableState<Boolean>.disable() {
     value = false
 }
-fun MutableState<Boolean>.enable(){
+
+fun MutableState<Boolean>.enable() {
     value = true
 }
 
-fun MutableState<Boolean>.toggle(){
+fun MutableState<Boolean>.toggle() {
     value = !value
 }

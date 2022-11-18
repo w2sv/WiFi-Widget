@@ -118,7 +118,7 @@ private data class PropertyRow(
 
     private fun valueText(context: Context): SpannableStringBuilder =
         SpannableStringBuilder()
-            .color(context.getColor(R.color.mischka_dark)){
+            .color(context.getColor(R.color.mischka_dark)) {
                 append(getValue())
             }
 }
