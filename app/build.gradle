@@ -16,12 +16,29 @@ android {
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
+    signingConfigs {
+        // create release signingConfig from keystore.properties file, if present
+        release {
+            rootProject.file("keystore.properties").with { file ->
+                if (file.exists()) {
+                    apply from: "$rootDir/utils.gradle"
+                    def keystoreProperties = loadProperties(file)
 
+                    storeFile rootProject.file("keys.jks")
+                    storePassword keystoreProperties["storePassword"]
+                    keyAlias keystoreProperties["keyAlias"]
+                    keyPassword keystoreProperties["keyPassword"]
+                } else
+                    println("WARNING: Failed to create release signing configuration; $file.path not present")
+            }
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -51,7 +68,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'com.github.w2sv:TypedPreferences:0.0.4'
-    implementation 'com.github.w2sv:KotlinUtils:0.0.2.1'
 
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
