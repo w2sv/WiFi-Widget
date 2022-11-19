@@ -52,7 +52,7 @@ fun BottomSheetScaffold(content: @Composable (PaddingValues) -> Unit) {
                 AppSnackbar(snackbarData = snackbarData)
             }
         },
-        sheetContent = { BottomSheet(sheetState = scaffoldState.bottomSheetState) },
+        sheetContent = { BottomSheet(scaffoldState = scaffoldState) },
         sheetElevation = 0.dp,
         sheetBackgroundColor = Color.Transparent,
         sheetPeekHeight = 48.dp,

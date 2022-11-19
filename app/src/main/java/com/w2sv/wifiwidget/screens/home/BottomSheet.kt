@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.screens.home
 
-import android.content.Context
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,10 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetState
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,12 +33,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,19 +47,19 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheet(sheetState: BottomSheetState) {
+fun BottomSheet(scaffoldState: BottomSheetScaffoldState) {
     val coroutineScope = rememberCoroutineScope()
 
-    BackHandler(sheetState.isExpanded) {
-        coroutineScope.launch { sheetState.collapse() }
+    BackHandler(scaffoldState.bottomSheetState.isExpanded) {
+        coroutineScope.launch { scaffoldState.bottomSheetState.collapse() }
     }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        ToggleButton(sheetState, coroutineScope)
-        SheetContent()
+        ToggleButton(scaffoldState.bottomSheetState, coroutineScope)
+        SheetContent(scaffoldState.snackbarHostState)
     }
 }
 
@@ -91,9 +90,8 @@ private fun ToggleButton(sheetState: BottomSheetState, coroutineScope: Coroutine
     }
 }
 
-@Preview
 @Composable
-private fun SheetContent() {
+private fun SheetContent(snackbarHostState: SnackbarHostState) {
     Surface(
         modifier = Modifier.padding(horizontal = 40.dp),
         color = colorResource(id = R.color.mischka_dark),
@@ -113,13 +111,20 @@ private fun SheetContent() {
                     )
                 )
             )
-            WidgetPropertyColumn()
+            WidgetPropertyColumn(snackbarHostState)
         }
     }
 }
 
 @Composable
-private fun WidgetPropertyColumn(viewModel: HomeScreenViewModel = viewModel(), context: Context = LocalContext.current) {
+private fun WidgetPropertyColumn(
+    snackbarHostState: SnackbarHostState,
+    viewModel: HomeScreenViewModel = viewModel()
+) {
+    var showSnackbar by remember {
+        mutableStateOf(false)
+    }
+
     Column(
         modifier = Modifier
             .padding(horizontal = 26.dp)
@@ -151,7 +156,14 @@ private fun WidgetPropertyColumn(viewModel: HomeScreenViewModel = viewModel(), c
                         Checkbox(
                             checked = checked,
                             onCheckedChange = {
-                                if (!blockUpdateIfEverythingUnchecked(it, preferenceKey, context, WidgetPreferences + viewModel.updatedWidgetProperties)) {
+                                if (unchecksEverything(
+                                        it,
+                                        preferenceKey,
+                                        WidgetPreferences + viewModel.updatedWidgetProperties,
+                                    )
+                                )
+                                    showSnackbar = true
+                                else {
                                     checked = it
                                     viewModel.updatedWidgetProperties[preferenceKey] = it
                                 }
@@ -165,23 +177,19 @@ private fun WidgetPropertyColumn(viewModel: HomeScreenViewModel = viewModel(), c
                 }
             }
     }
+
+    if (showSnackbar) {
+        stringResource(id = R.string.uncheck_all_properties_toast).let {
+            LaunchedEffect(key1 = it) {
+                snackbarHostState.showSnackbar(it)
+                showSnackbar = false
+            }
+        }
+    }
 }
 
-private fun blockUpdateIfEverythingUnchecked(
+private fun unchecksEverything(
     newCheckValue: Boolean,
     preferenceKey: String,
-    context: Context,
-    currentPreferences: Map<String, Boolean>
-): Boolean {
-    if (!newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v }) {
-        Toast
-            .makeText(
-                context,
-                context.getString(R.string.uncheck_all_properties_toast),
-                Toast.LENGTH_SHORT
-            )
-            .show()
-        return true
-    }
-    return false
-}
+    currentPreferences: Map<String, Boolean>,
+): Boolean = !newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v }

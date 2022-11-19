@@ -12,21 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
 
 @Composable
 fun AppSnackbar(snackbarData: SnackbarData) {
     Snackbar(
-        modifier = Modifier
-            .padding(horizontal = 50.dp),
+        modifier = Modifier.padding(horizontal = 50.dp),
         shape = RoundedCornerShape(30.dp),
         backgroundColor = colorResource(
-            id = R.color.mischka_dark
+            id = R.color.mischka
         )
     ) {
         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
-            Text(text = snackbarData.message, color = Color.White)
+            Text(
+                text = snackbarData.message,
+                color = Color.DarkGray,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
