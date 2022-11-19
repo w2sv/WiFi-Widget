@@ -3,11 +3,11 @@ package com.w2sv.wifiwidget.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.widget.utils.getWifiWidgetIds
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
@@ -47,12 +47,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             val appWidgetManager = AppWidgetManager.getInstance(context!!)
 
             appWidgetManager.updateWidgets(
-                appWidgetManager.getAppWidgetIds(
-                    ComponentName(
-                        context.packageName,
-                        this::class.java.name
-                    )
-                ),
+                appWidgetManager.getWifiWidgetIds(context),
                 context
             )
         }

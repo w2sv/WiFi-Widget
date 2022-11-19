@@ -40,9 +40,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
-import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -119,9 +119,7 @@ private fun SheetContent() {
 }
 
 @Composable
-private fun WidgetPropertyColumn() {
-    val context = LocalContext.current
-
+private fun WidgetPropertyColumn(viewModel: HomeScreenViewModel = viewModel(), context: Context = LocalContext.current) {
     Column(
         modifier = Modifier
             .padding(horizontal = 26.dp)
@@ -153,10 +151,9 @@ private fun WidgetPropertyColumn() {
                         Checkbox(
                             checked = checked,
                             onCheckedChange = {
-                                if (!blockUpdateIfEverythingUnchecked(it, preferenceKey, context)) {
+                                if (!blockUpdateIfEverythingUnchecked(it, preferenceKey, context, WidgetPreferences + viewModel.updatedWidgetProperties)) {
                                     checked = it
-                                    WidgetPreferences[preferenceKey] = it
-                                    WifiWidgetProvider.refreshData(context)
+                                    viewModel.updatedWidgetProperties[preferenceKey] = it
                                 }
                             },
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
@@ -173,9 +170,10 @@ private fun WidgetPropertyColumn() {
 private fun blockUpdateIfEverythingUnchecked(
     newCheckValue: Boolean,
     preferenceKey: String,
-    context: Context
+    context: Context,
+    currentPreferences: Map<String, Boolean>
 ): Boolean {
-    if (!newCheckValue && WidgetPreferences.all { (k, v) -> k == preferenceKey || !v }) {
+    if (!newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v }) {
         Toast
             .makeText(
                 context,
