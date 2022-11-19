@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.extensions
+package com.w2sv.wifiwidget.utils.extensions
 
 import androidx.compose.runtime.MutableState
 
