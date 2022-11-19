@@ -97,13 +97,15 @@ private fun LocationPermissionDialog(
             Text(
                 text = buildAnnotatedString {
                     append("If you want your SSID to be displayed amongst the widget properties, you'll have to ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)){
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("grant the app location access")
                     }
                     append(". Furthermore, you'll have to ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)){
-                        append("enable your location service.\n\n" +
-                                "This is entirely optional, so feel free to decline.")
+                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append(
+                            "enable your location service.\n\n" +
+                                    "This is entirely optional, so feel free to decline."
+                        )
                     }
                 }
             )

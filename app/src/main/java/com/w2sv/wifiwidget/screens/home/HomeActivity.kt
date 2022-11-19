@@ -6,10 +6,8 @@ import android.content.ComponentName
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.ApplicationActivity
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme

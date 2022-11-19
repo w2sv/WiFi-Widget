@@ -3,11 +3,11 @@
     android:description="@string/app_widget_description"
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
+    android:maxResizeHeight="100dp"
     android:minWidth="160dp"
     android:minHeight="100dp"
     android:minResizeHeight="40dp"
     android:resizeMode="vertical"
     android:updatePeriodMillis="1800000"
-    android:widgetCategory="home_screen"
 
-    android:maxResizeHeight="100dp" />
+    android:widgetCategory="home_screen" />
