@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -150,23 +150,13 @@ private fun WidgetPropertyColumn(
                             color = Color.White,
                             fontSize = 14.sp
                         )
-                        var checked by remember(key1 = preferenceKey) {
-                            mutableStateOf(WidgetPreferences.getValue(preferenceKey))
-                        }
                         Checkbox(
-                            checked = checked,
+                            checked = viewModel.propertyStates.getValue(preferenceKey).value,
                             onCheckedChange = {
-                                if (unchecksEverything(
-                                        it,
-                                        preferenceKey,
-                                        WidgetPreferences + viewModel.updatedWidgetProperties,
-                                    )
-                                )
+                                if (unchecksEverything(it, preferenceKey, viewModel.propertyStates))
                                     showSnackbar = true
-                                else {
-                                    checked = it
-                                    viewModel.updatedWidgetProperties[preferenceKey] = it
-                                }
+                                else
+                                    viewModel.propertyStates[preferenceKey]!!.value = it
                             },
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                         )
@@ -191,5 +181,5 @@ private fun WidgetPropertyColumn(
 private fun unchecksEverything(
     newCheckValue: Boolean,
     preferenceKey: String,
-    currentPreferences: Map<String, Boolean>,
-): Boolean = !newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v }
+    currentPreferences: Map<String, MutableState<Boolean>>,
+): Boolean = !newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v.value }
