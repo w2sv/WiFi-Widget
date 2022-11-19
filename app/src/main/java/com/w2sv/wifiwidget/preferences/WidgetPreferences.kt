@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.preferences
 import com.w2sv.typedpreferences.descendants.BooleanPreferences
 
 object WidgetPreferences : BooleanPreferences(
-    "showSSID" to true,
+    "showSSID" to false,
     "showIPv4" to true,
     "showFrequency" to true,
     "showGateway" to true,

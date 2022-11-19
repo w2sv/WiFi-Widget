@@ -1,9 +1,12 @@
 package com.w2sv.wifiwidget.screens.home
 
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,11 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.preferences.BooleanPreferences
-import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 
 @Composable
@@ -40,17 +43,13 @@ fun PinAppWidgetButton(
     )
 
     if (triggerOnClickListener) {
-        if (!BooleanPreferences.locationPermissionDialogAnswered)
+        if (!BooleanPreferences.locationPermissionDialogShown)
             LocationPermissionDialog(
                 onConfirm = {
                     launchLocationPermissionRequest()
                 },
-                onDismiss = {
-                    WidgetPreferences.showSSID = false
-                    requestPinWidget()
-                },
                 onButtonPress = {
-                    BooleanPreferences.locationPermissionDialogAnswered = true
+                    BooleanPreferences.locationPermissionDialogShown = true
                 },
                 onClose = { triggerOnClickListener = false }
             )
@@ -64,29 +63,21 @@ fun PinAppWidgetButton(
 @Composable
 private fun LocationPermissionDialog(
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
     onButtonPress: () -> Unit,
     onClose: () -> Unit
 ) {
     AlertDialog(
+        icon = { Icon(imageVector = Icons.Outlined.Info, contentDescription = "")},
+        title = { Text(text = "SSID Display requires Location Access", textAlign = TextAlign.Center)},
         confirmButton = {
             ElevatedButton({
                 onConfirm()
                 onButtonPress()
                 onClose()
-            }) { Text(text = "Go ahead") }
-        },
-        dismissButton = {
-            ElevatedButton({
-                onDismiss()
-                onButtonPress()
-                onClose()
-            }) {
-                Text(text = "Ignore SSID")
-            }
+            }) { Text(text = "Got it!") }
         },
         onDismissRequest = onClose,
-        text = { Text(text = "If you want your SSID to be displayed, you'll have to grant location access") }
+        text = { Text(text = "If you want your SSID to be displayed amongst the widget properties, you'll have to grant the app location access. Furthermore, you'll have to enable your location service.\nThis is entirely optional, so you're free to decline.") }
     )
 }
 
@@ -96,7 +87,6 @@ private fun LocationPermissionDialogPreview() {
     AppTheme {
         LocationPermissionDialog(
             onConfirm = { /*TODO*/ },
-            onDismiss = { /*TODO*/ },
             onButtonPress = { /*TODO*/ }) {
         }
     }

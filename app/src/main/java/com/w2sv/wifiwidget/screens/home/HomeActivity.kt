@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ApplicationActivity
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 
@@ -48,6 +49,7 @@ class HomeActivity : ApplicationActivity() {
 
     private val locationPermissionRequestLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            WidgetPreferences.showSSID = it.values.contains(true)
             requestPinWidget()
         }
 }
