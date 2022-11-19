@@ -61,13 +61,6 @@ fun PinAppWidgetButton(
     }
 }
 
-@Preview
-@Composable
-fun PinAppWidgetButtonPreview() {
-    PinAppWidgetButton(requestPinWidget = { /*TODO*/ }) {
-    }
-}
-
 @Composable
 private fun LocationPermissionDialog(
     onConfirm: () -> Unit,

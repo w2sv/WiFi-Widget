@@ -9,7 +9,6 @@ import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material.BottomSheetValue
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,11 +32,17 @@ import com.w2sv.wifiwidget.widget.utils.anyAppWidgetInUse
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetScaffold(content: @Composable (PaddingValues) -> Unit) {
+fun BottomSheetScaffold(
+    context: Context = LocalContext.current,
+    content: @Composable (PaddingValues) -> Unit
+) {
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
             BottomSheetValue.Collapsed,
-            animationSpec = spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium)
+            animationSpec = spring(
+                Spring.DampingRatioMediumBouncy,
+                Spring.StiffnessMedium
+            )
         )
     )
 
@@ -57,35 +62,15 @@ fun BottomSheetScaffold(content: @Composable (PaddingValues) -> Unit) {
         sheetBackgroundColor = Color.Transparent,
         sheetPeekHeight = 48.dp,
         contentColor = Color.White
-    ) {
-        content(it)
+    ) { paddingValues ->
+        content(paddingValues)
 
-        if (scaffoldState.bottomSheetState.isCollapsed)
-            OnBottomSheetCollapsed(scaffoldState.snackbarHostState)
-    }
-}
-
-@Composable
-private fun OnBottomSheetCollapsed(
-    snackbarHostState: SnackbarHostState,
-    context: Context = LocalContext.current,
-    viewModel: HomeScreenViewModel = viewModel()
-) {
-    var updatedAnyProperty = false
-    viewModel.updatedWidgetProperties.forEach { (k, v) ->
-        if (v != WidgetPreferences.getValue(k)) {
-            WidgetPreferences[k] = v
-            updatedAnyProperty = true
-        }
-    }
-    if (updatedAnyProperty && context.anyAppWidgetInUse()) {
-        viewModel.updatedWidgetProperties.clear()
-        WifiWidgetProvider.refreshData(context)
-        context.getString(R.string.updated_widget).let {
-            LaunchedEffect(key1 = it) {
-                snackbarHostState.showSnackbar(it)
+        if (scaffoldState.bottomSheetState.isCollapsed && context.neededWidgetUpdate(viewModel()))
+            stringResource(R.string.updated_widget).let { text ->
+                LaunchedEffect(key1 = text) {
+                    scaffoldState.snackbarHostState.showSnackbar(text)
+                }
             }
-        }
     }
 }
 
@@ -101,4 +86,21 @@ fun TopBar() {
             titleContentColor = Color.White
         )
     )
+}
+
+private fun Context.neededWidgetUpdate(viewModel: HomeScreenViewModel): Boolean {
+    var updatedAnyProperty = false
+    viewModel.updatedWidgetProperties.forEach { (k, v) ->
+        if (v != WidgetPreferences.getValue(k)) {
+            WidgetPreferences[k] = v
+            updatedAnyProperty = true
+        }
+    }
+
+    if (updatedAnyProperty && anyAppWidgetInUse()) {
+        viewModel.updatedWidgetProperties.clear()
+        WifiWidgetProvider.refreshData(this)
+    }
+
+    return updatedAnyProperty
 }
