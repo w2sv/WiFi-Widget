@@ -1,14 +1,19 @@
 package com.w2sv.wifiwidget.screens.home
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.os.Bundle
+import android.view.View
+import android.view.animation.AnticipateInterpolator
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ApplicationActivity
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
@@ -42,7 +47,7 @@ class HomeScreenActivity : ApplicationActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
+        installSplashScreen().setExitAnimation()
         super.onCreate(savedInstanceState)
 
         setContent {
@@ -58,6 +63,23 @@ class HomeScreenActivity : ApplicationActivity() {
                         )
                     }
                 )
+            }
+        }
+    }
+
+    private fun SplashScreen.setExitAnimation() {
+        setOnExitAnimationListener { splashScreenViewProvider ->
+            val splashScreenView = splashScreenViewProvider.view
+            ObjectAnimator.ofFloat(
+                splashScreenView,
+                View.TRANSLATION_Y,
+                0f,
+                -splashScreenView.height.toFloat()
+            ).apply {
+                interpolator = AnticipateInterpolator()
+                duration = 200L
+                doOnEnd { splashScreenViewProvider.remove() }
+                start()
             }
         }
     }
