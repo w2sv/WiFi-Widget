@@ -20,7 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.AppSnackbar
+import com.w2sv.wifiwidget.ui.shared.AppSnackbar
 import com.w2sv.wifiwidget.ui.shared.AppTopBar
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.widget.utils.anyAppWidgetInUse

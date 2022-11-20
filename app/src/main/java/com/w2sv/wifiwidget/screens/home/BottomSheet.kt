@@ -3,10 +3,13 @@ package com.w2sv.wifiwidget.screens.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetState
 import androidx.compose.material.Checkbox
@@ -116,7 +119,7 @@ private fun SheetContent(snackbarHostState: SnackbarHostState) {
 }
 
 @Composable
-private fun WidgetPropertyColumn(
+private fun ColumnScope.WidgetPropertyColumn(
     snackbarHostState: SnackbarHostState,
     viewModel: HomeScreenActivity.ViewModel = viewModel()
 ) {
@@ -128,6 +131,8 @@ private fun WidgetPropertyColumn(
         modifier = Modifier
             .padding(horizontal = 26.dp)
             .padding(top = 12.dp)
+            .verticalScroll(rememberScrollState())
+            .weight(1f, fill = false)
     ) {
         mapOf(
             R.string.ssid to "showSSID",
