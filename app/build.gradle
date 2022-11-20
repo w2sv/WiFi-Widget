@@ -1,28 +1,31 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
+    id "com.android.application"
+    id "org.jetbrains.kotlin.android"
 }
 
 android {
-    namespace 'com.w2sv.wifiwidget'
-    compileSdk 33
+    def PACKAGE_NAME = "com.w2sv.wifiwidget"
+    def TARGET_SDK = 33
+
+    namespace PACKAGE_NAME
+    compileSdk TARGET_SDK
 
     defaultConfig {
-        applicationId 'com.w2sv.wifiwidget'
+        applicationId PACKAGE_NAME
         minSdk 26
-        targetSdk 33
+        targetSdk TARGET_SDK
         versionCode 1
-        versionName '1.0.0'
+        versionName "1.0.0"
 
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         // create release signingConfig from keystore.properties file, if present
         release {
             rootProject.file("keystore.properties").with { file ->
                 if (file.exists()) {
-                    apply from: "$rootDir/utils.gradle"
-                    def keystoreProperties = loadProperties(file)
+                    def keystoreProperties = new Properties()
+                    keystoreProperties.load(new FileInputStream(file))
 
                     storeFile rootProject.file("keys.jks")
                     storePassword keystoreProperties["storePassword"]
@@ -36,8 +39,8 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false  // TODO: figure out why altering colors when set to true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
     }
@@ -46,17 +49,17 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.3.2'
+        kotlinCompilerExtensionVersion "1.3.2"
     }
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
 }
@@ -64,10 +67,10 @@ android {
 dependencies {
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.github.PaulWoitaschek:Slimber:2.0.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation 'androidx.core:core-splashscreen:1.0.0'
     implementation 'com.github.w2sv:TypedPreferences:0.0.4'
+    implementation 'com.github.PaulWoitaschek:Slimber:2.0.0'
 
     implementation 'androidx.activity:activity-compose:1.6.1'
     implementation platform('androidx.compose:compose-bom:2022.10.00')
