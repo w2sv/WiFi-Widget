@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -151,12 +150,17 @@ private fun WidgetPropertyColumn(
                             fontSize = 14.sp
                         )
                         Checkbox(
-                            checked = viewModel.propertyStates.getValue(preferenceKey).value,
+                            checked = viewModel.propertyKey2State.getValue(preferenceKey),
                             onCheckedChange = {
-                                if (unchecksEverything(it, preferenceKey, viewModel.propertyStates))
+                                if (unchecksEverything(
+                                        it,
+                                        preferenceKey,
+                                        viewModel.propertyKey2State
+                                    )
+                                )
                                     showSnackbar = true
                                 else
-                                    viewModel.propertyStates[preferenceKey]!!.value = it
+                                    viewModel.propertyKey2State[preferenceKey] = it
                             },
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                         )
@@ -179,7 +183,8 @@ private fun WidgetPropertyColumn(
 }
 
 private fun unchecksEverything(
-    newCheckValue: Boolean,
+    newValue: Boolean,
     preferenceKey: String,
-    currentPreferences: Map<String, MutableState<Boolean>>,
-): Boolean = !newCheckValue && currentPreferences.all { (k, v) -> k == preferenceKey || !v.value }
+    currentProperties: Map<String, Boolean>
+): Boolean =
+    !newValue && currentProperties.all { (k, v) -> k == preferenceKey || !v }

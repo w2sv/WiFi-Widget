@@ -21,24 +21,27 @@ class HomeActivity : ApplicationActivity() {
 
         setContent {
             AppTheme {
-                HomeScreen(::requestPinWidget) {
-                    locationPermissionRequestLauncher.launch(
-                        arrayOf(
-                            Manifest.permission.ACCESS_COARSE_LOCATION,
-                            Manifest.permission.ACCESS_FINE_LOCATION
+                HomeScreen(
+                    requestPinWidget = { requestPinWidget() },
+                    launchLocationPermissionRequest = {
+                        locationPermissionRequestLauncher.launch(
+                            arrayOf(
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                            )
                         )
-                    )
-                }
+                    }
+                )
             }
         }
     }
 
     private fun requestPinWidget() {
-        with(getSystemService(AppWidgetManager::class.java)) {
-            if (isRequestPinAppWidgetSupported) {
-                requestPinAppWidget(
+        getSystemService(AppWidgetManager::class.java).let {
+            if (it.isRequestPinAppWidgetSupported) {
+                it.requestPinAppWidget(
                     ComponentName(
-                        this@HomeActivity,
+                        this,
                         WifiWidgetProvider::class.java
                     ),
                     null,
@@ -50,9 +53,11 @@ class HomeActivity : ApplicationActivity() {
 
     private val locationPermissionRequestLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            val permissionGranted = it.values.contains(true)
-            viewModel.propertyStates.getValue("showSSID").value = permissionGranted
-            WidgetPreferences.showSSID = permissionGranted
+            // sync permission grant result with "showSSID" states
+            it.values.contains(true).let { permissionGranted ->
+                viewModel.propertyKey2State["showSSID"] = permissionGranted
+                WidgetPreferences.showSSID = permissionGranted
+            }
 
             requestPinWidget()
         }

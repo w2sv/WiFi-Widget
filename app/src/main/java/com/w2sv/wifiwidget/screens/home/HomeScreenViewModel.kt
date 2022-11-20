@@ -1,21 +1,27 @@
 package com.w2sv.wifiwidget.screens.home
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
 
 class HomeScreenViewModel : ViewModel() {
-    val propertyStates =
-        WidgetPreferences
+    val propertyKey2State: SnapshotStateMap<String, Boolean> = mutableStateMapOf(
+        *WidgetPreferences
             .keys
-            .associateWith { mutableStateOf(WidgetPreferences.getValue(it)) }
-            .toMutableMap()
+            .map { it to WidgetPreferences.getValue(it) }.toTypedArray()
+    )
 
-    fun anyWidgetPropertiesChanged(): Boolean {
+    /**
+     * @return flag indicating whether any property has been updated
+     */
+    fun syncWidgetProperties(): Boolean {
         var updatedProperty = false
-        propertyStates.forEach { (k, v) ->
-            if (v.value != WidgetPreferences.getValue(k)) {
-                WidgetPreferences[k] = v.value
+        propertyKey2State.forEach { (k, v) ->
+            if (v != WidgetPreferences.getValue(k)) {
+                WidgetPreferences[k] = v
                 updatedProperty = true
             }
         }
