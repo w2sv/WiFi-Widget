@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheet(scaffoldState: BottomSheetScaffoldState) {
+internal fun BottomSheet(scaffoldState: BottomSheetScaffoldState) {
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler(scaffoldState.bottomSheetState.isExpanded) {
@@ -118,7 +118,7 @@ private fun SheetContent(snackbarHostState: SnackbarHostState) {
 @Composable
 private fun WidgetPropertyColumn(
     snackbarHostState: SnackbarHostState,
-    viewModel: HomeScreenViewModel = viewModel()
+    viewModel: HomeScreenActivity.ViewModel = viewModel()
 ) {
     var showSnackbar by remember {
         mutableStateOf(false)
