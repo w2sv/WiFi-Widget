@@ -27,9 +27,9 @@ import com.w2sv.wifiwidget.widget.utils.anyAppWidgetInUse
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetScaffold(
+internal fun BottomSheetScaffold(
     context: Context = LocalContext.current,
-    viewModel: HomeScreenViewModel = viewModel(),
+    viewModel: HomeScreenActivity.ViewModel = viewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(

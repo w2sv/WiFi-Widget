@@ -7,13 +7,39 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ApplicationActivity
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 
-class HomeActivity : ApplicationActivity() {
+class HomeScreenActivity : ApplicationActivity() {
+
+    class ViewModel : androidx.lifecycle.ViewModel() {
+        val propertyKey2State: SnapshotStateMap<String, Boolean> = mutableStateMapOf(
+            *WidgetPreferences
+                .keys
+                .map { it to WidgetPreferences.getValue(it) }
+                .toTypedArray()
+        )
+
+        /**
+         * @return flag indicating whether any property has been updated
+         */
+        fun syncWidgetProperties(): Boolean {
+            var updatedProperty = false
+            propertyKey2State.forEach { (k, v) ->
+                if (v != WidgetPreferences.getValue(k)) {
+                    WidgetPreferences[k] = v
+                    updatedProperty = true
+                }
+            }
+
+            return updatedProperty
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -62,6 +88,5 @@ class HomeActivity : ApplicationActivity() {
             requestPinWidget()
         }
 
-    private val viewModel by viewModels<HomeScreenViewModel>()
+    private val viewModel by viewModels<ViewModel>()
 }
-

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
+internal fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
     BottomSheetScaffold {
         Column(
             Modifier

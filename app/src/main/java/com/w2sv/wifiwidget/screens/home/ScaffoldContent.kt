@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 
 @Composable
-fun PinAppWidgetButton(
+internal fun PinAppWidgetButton(
     requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit
 ) {
     var triggerOnClickListener by remember {
