@@ -57,9 +57,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    @Inject
-    lateinit var widgetPreferences: WidgetPreferences
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -103,4 +100,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 }
         )
     }
+
+    @Inject
+    lateinit var widgetPreferences: WidgetPreferences
 }

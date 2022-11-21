@@ -1,19 +1,20 @@
 package com.w2sv.wifiwidget.preferences
 
+import android.content.SharedPreferences
 import com.w2sv.typedpreferences.descendants.BooleanPreferences
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class WidgetPreferences @Inject constructor() : BooleanPreferences(
-    "showSSID" to false,
-    "showIPv4" to true,
-    "showFrequency" to true,
-    "showGateway" to true,
-    "showSubnetMask" to true,
-    "showDNS" to true,
-    "showDHCP" to true
-) {
+class WidgetPreferences(sharedPreferences: SharedPreferences) :
+    BooleanPreferences(
+        "showSSID" to false,
+        "showIPv4" to true,
+        "showFrequency" to true,
+        "showGateway" to true,
+        "showSubnetMask" to true,
+        "showDNS" to true,
+        "showDHCP" to true,
+        sharedPreferences = sharedPreferences
+    ) {
     var showSSID by this
     var showIPv4 by this
     var showFrequency by this
