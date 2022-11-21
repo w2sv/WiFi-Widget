@@ -7,11 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.widget.utils.getWifiWidgetIds
+import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WifiWidgetProvider : AppWidgetProvider() {
 
     companion object {
@@ -53,6 +57,9 @@ class WifiWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    @Inject
+    lateinit var widgetPreferences: WidgetPreferences
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -60,40 +67,40 @@ class WifiWidgetProvider : AppWidgetProvider() {
     ) {
         appWidgetManager.updateWidgets(appWidgetIds, context)
     }
-}
 
-private fun AppWidgetManager.updateWidgets(
-    appWidgetIds: IntArray,
-    context: Context
-) {
-    for (appWidgetId in appWidgetIds) {
-        updateWidget(appWidgetId, context)
+    private fun AppWidgetManager.updateWidgets(
+        appWidgetIds: IntArray,
+        context: Context
+    ) {
+        for (appWidgetId in appWidgetIds) {
+            updateWidget(appWidgetId, context)
+        }
     }
-}
 
-private fun AppWidgetManager.updateWidget(
-    appWidgetId: Int,
-    context: Context
-) {
-    i { "updateWidget" }
+    private fun AppWidgetManager.updateWidget(
+        appWidgetId: Int,
+        context: Context
+    ) {
+        i { "updateWidget" }
 
-    updateAppWidget(
-        appWidgetId,
-        RemoteViews(context.packageName, R.layout.widget)
-            .apply {
-                setWifiDependentContent(context)
+        updateAppWidget(
+            appWidgetId,
+            RemoteViews(context.packageName, R.layout.widget)
+                .apply {
+                    setWifiDependentContent(context, widgetPreferences)
 
-                // set last_updated_tv text
-                setTextViewText(
-                    R.id.last_updated_tv,
-                    DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-                )
+                    // set last_updated_tv text
+                    setTextViewText(
+                        R.id.last_updated_tv,
+                        DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+                    )
 
-                // set refresh_button onClickListener
-                setOnClickPendingIntent(
-                    R.id.refresh_button,
-                    WifiWidgetProvider.refreshDataPendingIntent(context)
-                )
-            }
-    )
+                    // set refresh_button onClickListener
+                    setOnClickPendingIntent(
+                        R.id.refresh_button,
+                        refreshDataPendingIntent(context)
+                    )
+                }
+        )
+    }
 }

@@ -24,13 +24,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 
 @Composable
 internal fun PinAppWidgetButton(
-    requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit
+    requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit,
+    viewModel: HomeScreenActivity.ViewModel = viewModel()
 ) {
     var triggerOnClickListener by remember {
         mutableStateOf(false)
@@ -48,13 +49,13 @@ internal fun PinAppWidgetButton(
     )
 
     if (triggerOnClickListener) {
-        if (!BooleanPreferences.locationPermissionDialogShown)
+        if (!viewModel.booleanPreferences.locationPermissionDialogShown)
             LocationPermissionDialog(
                 onConfirm = {
                     launchLocationPermissionRequest()
                 },
                 onButtonPress = {
-                    BooleanPreferences.locationPermissionDialogShown = true
+                    viewModel.booleanPreferences.locationPermissionDialogShown = true
                 },
                 onClose = { triggerOnClickListener = false }
             )

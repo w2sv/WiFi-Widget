@@ -16,19 +16,30 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ApplicationActivity
+import com.w2sv.wifiwidget.preferences.BooleanPreferences
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 class HomeScreenActivity : ApplicationActivity() {
 
-    class ViewModel : androidx.lifecycle.ViewModel() {
-        val propertyKey2State: SnapshotStateMap<String, Boolean> = mutableStateMapOf(
-            *WidgetPreferences
-                .keys
-                .map { it to WidgetPreferences.getValue(it) }
-                .toTypedArray()
-        )
+    @HiltViewModel
+    class ViewModel @Inject constructor() : androidx.lifecycle.ViewModel() {
+        @Inject
+        lateinit var widgetPreferences: WidgetPreferences
+        @Inject
+        lateinit var booleanPreferences: BooleanPreferences
+
+        val propertyKey2State: SnapshotStateMap<String, Boolean> by lazy {
+            mutableStateMapOf(
+                *widgetPreferences
+                    .keys
+                    .map { it to widgetPreferences.getValue(it) }
+                    .toTypedArray()
+            )
+        }
 
         /**
          * @return flag indicating whether any property has been updated
@@ -36,8 +47,8 @@ class HomeScreenActivity : ApplicationActivity() {
         fun syncWidgetProperties(): Boolean {
             var updatedProperty = false
             propertyKey2State.forEach { (k, v) ->
-                if (v != WidgetPreferences.getValue(k)) {
-                    WidgetPreferences[k] = v
+                if (v != widgetPreferences.getValue(k)) {
+                    widgetPreferences[k] = v
                     updatedProperty = true
                 }
             }
@@ -104,7 +115,7 @@ class HomeScreenActivity : ApplicationActivity() {
             // sync permission grant result with "showSSID" states
             it.values.contains(true).let { permissionGranted ->
                 viewModel.propertyKey2State["showSSID"] = permissionGranted
-                WidgetPreferences.showSSID = permissionGranted
+                widgetPreferences.showSSID = permissionGranted
             }
 
             requestPinWidget()

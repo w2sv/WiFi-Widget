@@ -2,9 +2,19 @@ package com.w2sv.wifiwidget
 
 import androidx.activity.ComponentActivity
 import com.w2sv.typedpreferences.extensions.appPreferences
-import com.w2sv.wifiwidget.preferences.preferenceObjects
+import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.preferences.WidgetPreferences
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 abstract class ApplicationActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var booleanPreferences: BooleanPreferences
+    @Inject
+    lateinit var widgetPreferences: WidgetPreferences
+
     /**
      * Write changed preferences.
      *
@@ -16,7 +26,7 @@ abstract class ApplicationActivity : ComponentActivity() {
 
         val sharedPreferences = appPreferences()
 
-        preferenceObjects()
+        listOf(booleanPreferences, widgetPreferences)
             .forEach {
                 it.writeChangedValues(sharedPreferences)
             }
