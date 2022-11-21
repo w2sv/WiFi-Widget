@@ -88,7 +88,7 @@ class HomeScreenActivity : ApplicationActivity() {
                 -splashScreenView.height.toFloat()
             ).apply {
                 interpolator = AnticipateInterpolator()
-                duration = 200L
+                duration = 400L
                 doOnEnd { splashScreenViewProvider.remove() }
                 start()
             }
