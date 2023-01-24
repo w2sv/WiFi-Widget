@@ -49,13 +49,13 @@ internal fun PinAppWidgetButton(
     )
 
     if (triggerOnClickListener) {
-        if (!viewModel.booleanPreferences.locationPermissionDialogShown)
+        if (!viewModel.globalFlags.locationPermissionDialogShown)
             LocationPermissionDialog(
                 onConfirm = {
                     launchLocationPermissionRequest()
                 },
                 onButtonPress = {
-                    viewModel.booleanPreferences.locationPermissionDialogShown = true
+                    viewModel.globalFlags.locationPermissionDialogShown = true
                 },
                 onClose = { triggerOnClickListener = false }
             )

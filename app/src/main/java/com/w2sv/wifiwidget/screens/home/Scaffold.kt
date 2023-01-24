@@ -20,10 +20,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.shared.AppSnackbar
-import com.w2sv.wifiwidget.ui.shared.AppTopBar
+import com.w2sv.wifiwidget.ui.AppSnackbar
+import com.w2sv.wifiwidget.ui.AppTopBar
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
-import com.w2sv.wifiwidget.widget.utils.anyAppWidgetInUse
+import com.w2sv.wifiwidget.widget.anyWifiWidgetInUse
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -61,7 +61,7 @@ internal fun BottomSheetScaffold(
     ) { paddingValues ->
         content(paddingValues)
 
-        if (scaffoldState.bottomSheetState.isCollapsed && viewModel.syncWidgetProperties() && context.anyAppWidgetInUse()) {
+        if (scaffoldState.bottomSheetState.isCollapsed && viewModel.syncWidgetProperties() && anyWifiWidgetInUse(context)) {
             WifiWidgetProvider.refreshData(context)
             stringResource(R.string.updated_widget).let { text ->
                 LaunchedEffect(key1 = text) {

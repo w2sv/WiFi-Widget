@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.shared
+package com.w2sv.wifiwidget.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

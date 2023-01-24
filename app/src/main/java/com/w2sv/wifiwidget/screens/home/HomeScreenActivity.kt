@@ -16,7 +16,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.wifiwidget.ApplicationActivity
-import com.w2sv.wifiwidget.preferences.BooleanPreferences
+import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetPreferences
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
@@ -26,11 +26,10 @@ import javax.inject.Inject
 class HomeScreenActivity : ApplicationActivity() {
 
     @HiltViewModel
-    class ViewModel @Inject constructor() : androidx.lifecycle.ViewModel() {
-        @Inject
-        lateinit var widgetPreferences: WidgetPreferences
-        @Inject
-        lateinit var booleanPreferences: BooleanPreferences
+    class ViewModel @Inject constructor(
+        private val widgetPreferences: WidgetPreferences,
+        val globalFlags: GlobalFlags
+    ) : androidx.lifecycle.ViewModel() {
 
         val propertyKey2State: SnapshotStateMap<String, Boolean> by lazy {
             mutableStateMapOf(

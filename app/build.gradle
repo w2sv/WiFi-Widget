@@ -1,25 +1,25 @@
 plugins {
-    id "com.android.application"
-    id "org.jetbrains.kotlin.android"
-    id "com.google.dagger.hilt.android"
-    id "kotlin-kapt"
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 android {
-    def PACKAGE_NAME = "com.w2sv.wifiwidget"
-    def TARGET_SDK = 33
+    def PACKAGE_NAME = 'com.w2sv.wifiwidget'
 
     namespace PACKAGE_NAME
-    compileSdk TARGET_SDK
+    compileSdk rootProject.ext.compileSdk
 
     defaultConfig {
         applicationId PACKAGE_NAME
-        minSdk 26
-        targetSdk TARGET_SDK
-        versionCode 2
-        versionName "1.0.1"
+        minSdk rootProject.ext.minSdk
+        targetSdk rootProject.ext.compileSdk
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode 2
+        versionName '1.0.1'
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
         // create release signingConfig from keystore.properties file, if present
@@ -47,53 +47,55 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = '17'
     }
     buildFeatures {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.3.2"
+        kotlinCompilerExtensionVersion '1.4.0'
     }
     packagingOptions {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0'
-    implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
-    implementation 'androidx.core:core-splashscreen:1.0.0'
-    implementation 'com.github.w2sv:TypedPreferences:feature~lifecycle-observer-SNAPSHOT'
-    implementation 'com.github.PaulWoitaschek:Slimber:2.0.0'
-
-    // hilt
-    implementation "com.google.dagger:hilt-android:2.42"
-    kapt "com.google.dagger:hilt-android-compiler:2.42"
-
-    // compose
-    implementation 'androidx.activity:activity-compose:1.6.1'
+    // androidx
+    implementation libs.androidx.core
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.lifecycle.runtime
+    implementation libs.androidx.splashscreen
+    // .compose
+    implementation libs.androidx.compose.activity
+    implementation libs.androidx.compose.viewmodel
     implementation platform('androidx.compose:compose-bom:2022.10.00')
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.material:material:1.4.0-alpha02'  // TODO: Remove as soon as BottomSheet available for material3
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.5.1'
+    implementation 'androidx.compose.material:material:1.4.0-alpha04'  // TODO: Remove as soon as BottomSheet available for material3
 
-    testImplementation 'junit:junit:4.13.2'
+    // hilt
+    implementation libs.google.hilt
+    kapt libs.google.hilt.kapt
 
-    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
-    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    // other
+    implementation libs.typedpreferences
+    implementation libs.slimber
+
+//    testImplementation 'junit:junit:4.13.2'
+
+//    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+//    androidTestImplementation platform('androidx.compose:compose-bom:2022.10.00')
+//    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
 
     debugImplementation 'androidx.compose.ui:ui-tooling'
     debugImplementation 'androidx.compose.ui:ui-test-manifest'
