@@ -23,14 +23,18 @@ import com.w2sv.wifiwidget.widget.utils.netmask
 fun RemoteViews.setWifiDependentContent(context: Context, widgetPreferences: WidgetPreferences) {
     val wifiManager = context.getSystemService(WifiManager::class.java)
 
-    if (wifiManager.isWifiEnabled) {
-        if (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
-            populatePropertiesLayout(context, wifiManager, widgetPreferences)
-            crossVisualize(R.id.property_layout, R.id.wifi_status_tv)
-        } else
-            onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
-    } else
-        onNoWifiConnectionAvailable(context.getString(R.string.wifi_disabled))
+    when(wifiManager.isWifiEnabled){
+        true -> {
+            when(context.getSystemService(ConnectivityManager::class.java).isWifiConnected){
+                true -> {
+                    populatePropertiesLayout(context, wifiManager, widgetPreferences)
+                    crossVisualize(R.id.property_layout, R.id.wifi_status_tv)
+                }
+                false -> onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
+            }
+        }
+        false -> onNoWifiConnectionAvailable(context.getString(R.string.wifi_disabled))
+    }
 }
 
 /**

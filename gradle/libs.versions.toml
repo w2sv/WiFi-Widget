@@ -1,0 +1,23 @@
+[versions]
+kotlin = '1.8.0'
+hilt = '2.44.2'
+junit = '5.9.2'
+
+[libraries]
+# owned
+typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.0'
+
+# androidx
+androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha01'
+androidx-core = 'androidx.core:core-ktx:1.10.0-alpha01'
+androidx-lifecycle-runtime = 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03'
+androidx-compose-viewmodel = 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0-alpha03'  # alpha04 causing buggy AS error notifications
+androidx-compose-activity = 'androidx.activity:activity-compose:1.7.0-alpha03'
+androidx-splashscreen = 'androidx.core:core-splashscreen:1.0.0'
+
+# google
+google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
+google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
+
+# other
+slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'

@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.w2sv.typedpreferences.extensions.appPreferences
+import com.w2sv.typedpreferences.extensions.getAppPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,5 +15,5 @@ object PreferencesModule{
 
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences =
-        context.appPreferences()
+        context.getAppPreferences()
 }

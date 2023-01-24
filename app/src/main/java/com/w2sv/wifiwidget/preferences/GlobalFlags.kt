@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BooleanPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
+class GlobalFlags @Inject constructor(sharedPreferences: SharedPreferences) :
     BooleanPreferences(
         "locationPermissionDialogShown" to false,
         sharedPreferences = sharedPreferences
