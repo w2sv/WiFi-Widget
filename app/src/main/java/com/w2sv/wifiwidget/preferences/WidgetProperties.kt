@@ -6,7 +6,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WidgetPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
+class WidgetProperties @Inject constructor(sharedPreferences: SharedPreferences) :
     BooleanPreferences(
         "showSSID" to false,
         "showIPv4" to true,

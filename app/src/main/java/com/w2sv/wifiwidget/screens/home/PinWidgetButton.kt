@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -27,14 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.AppTheme
+import com.w2sv.wifiwidget.utils.requireCastActivity
 
 @Composable
-internal fun PinAppWidgetButton(
-    requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit,
-    viewModel: HomeScreenActivity.ViewModel = viewModel()
-) {
+internal fun PinWidgetButton() {
     var triggerOnClickListener by remember {
         mutableStateOf(false)
+    }
+
+    if (triggerOnClickListener) {
+        OnClickListener { triggerOnClickListener = false }
     }
 
     ElevatedButton(
@@ -47,29 +50,32 @@ internal fun PinAppWidgetButton(
             )
         }
     )
+}
 
-    if (triggerOnClickListener) {
-        if (!viewModel.globalFlags.locationPermissionDialogShown)
-            LocationPermissionDialog(
-                onConfirm = {
-                    launchLocationPermissionRequest()
-                },
-                onButtonPress = {
-                    viewModel.globalFlags.locationPermissionDialogShown = true
-                },
-                onClose = { triggerOnClickListener = false }
-            )
-        else {
-            requestPinWidget()
-            triggerOnClickListener = false
-        }
+@Composable
+private fun OnClickListener(resetTrigger: () -> Unit) {
+    val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
+    val viewModel: HomeActivity.ViewModel = viewModel()
+
+    if (!viewModel.locationPermissionDialogShown)
+        LocationPermissionDialog(
+            onConfirm = {
+                homeActivity.launchLocationPermissionRequest()
+                viewModel.onLocationPermissionDialogShown()
+            },
+            onClose = {
+                resetTrigger()
+            }
+        )
+    else {
+        homeActivity.requestWidgetPin()
+        resetTrigger()
     }
 }
 
 @Composable
 private fun LocationPermissionDialog(
     onConfirm: () -> Unit,
-    onButtonPress: () -> Unit,
     onClose: () -> Unit
 ) {
     AlertDialog(
@@ -89,7 +95,6 @@ private fun LocationPermissionDialog(
         confirmButton = {
             ElevatedButton({
                 onConfirm()
-                onButtonPress()
                 onClose()
             }) { Text(text = "Got it!") }
         },
@@ -120,7 +125,7 @@ private fun LocationPermissionDialogPreview() {
     AppTheme {
         LocationPermissionDialog(
             onConfirm = { /*TODO*/ },
-            onButtonPress = { /*TODO*/ }) {
-        }
+            onClose = { /*TODO*/ }
+        )
     }
 }
