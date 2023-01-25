@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.widget.anyWifiWidgetInUse
 @Composable
 internal fun BottomSheetScaffold(
     context: Context = LocalContext.current,
-    viewModel: HomeScreenActivity.ViewModel = viewModel(),
+    viewModel: HomeActivity.ViewModel = viewModel(),
     content: @Composable (PaddingValues) -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState(

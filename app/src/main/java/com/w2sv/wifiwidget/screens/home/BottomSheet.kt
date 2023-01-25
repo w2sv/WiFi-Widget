@@ -121,7 +121,7 @@ private fun SheetContent(snackbarHostState: SnackbarHostState) {
 @Composable
 private fun ColumnScope.WidgetPropertyColumn(
     snackbarHostState: SnackbarHostState,
-    viewModel: HomeScreenActivity.ViewModel = viewModel()
+    viewModel: HomeActivity.ViewModel = viewModel()
 ) {
     var showSnackbar by remember {
         mutableStateOf(false)
@@ -155,17 +155,17 @@ private fun ColumnScope.WidgetPropertyColumn(
                             fontSize = 14.sp
                         )
                         Checkbox(
-                            checked = viewModel.propertyKey2State.getValue(preferenceKey),
+                            checked = viewModel.widgetPropertyStates.getValue(preferenceKey),
                             onCheckedChange = {
                                 if (unchecksEverything(
                                         it,
                                         preferenceKey,
-                                        viewModel.propertyKey2State
+                                        viewModel.widgetPropertyStates
                                     )
                                 )
                                     showSnackbar = true
                                 else
-                                    viewModel.propertyKey2State[preferenceKey] = it
+                                    viewModel.widgetPropertyStates[preferenceKey] = it
                             },
                             colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
                         )

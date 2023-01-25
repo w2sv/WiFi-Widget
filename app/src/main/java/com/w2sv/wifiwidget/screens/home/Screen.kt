@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-internal fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRequest: () -> Unit) {
+internal fun HomeScreen() {
     BottomSheetScaffold {
         Column(
             Modifier
@@ -21,7 +21,7 @@ internal fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRe
             Arrangement.Center,
             Alignment.CenterHorizontally
         ) {
-            PinAppWidgetButton(requestPinWidget, launchLocationPermissionRequest)
+            PinWidgetButton()
         }
     }
 }
@@ -29,5 +29,5 @@ internal fun HomeScreen(requestPinWidget: () -> Unit, launchLocationPermissionRe
 @Composable
 @Preview
 private fun HomeScreenPreview() {
-    HomeScreen({}, {})
+    HomeScreen()
 }

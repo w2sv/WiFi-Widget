@@ -8,7 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.preferences.WidgetPreferences
+import com.w2sv.wifiwidget.preferences.WidgetProperties
 import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
 import java.text.DateFormat
@@ -53,7 +53,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
     }
 
     @Inject
-    lateinit var widgetPreferences: WidgetPreferences
+    lateinit var widgetProperties: WidgetProperties
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
@@ -89,7 +89,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             appWidgetId,
             RemoteViews(context.packageName, R.layout.widget)
                 .apply {
-                    setWifiDependentContent(context, widgetPreferences)
+                    setWifiDependentContent(context, widgetProperties)
 
                     // set last_updated_tv text
                     setTextViewText(
