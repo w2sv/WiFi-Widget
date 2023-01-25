@@ -38,5 +38,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
+
+        <receiver android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WidgetPinnedReceiver"
+            android:enabled="true"/>
+
     </application>
 </manifest>

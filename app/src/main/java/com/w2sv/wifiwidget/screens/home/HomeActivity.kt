@@ -2,11 +2,16 @@ package com.w2sv.wifiwidget.screens.home
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -15,16 +20,22 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
-import com.w2sv.wifiwidget.ApplicationActivity
+import androidx.lifecycle.LifecycleObserver
+import com.w2sv.androidutils.ActivityCallContractAdministrator
+import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.utils.getMutableStateMap
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
+import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import slimber.log.i
 import javax.inject.Inject
 
-class HomeActivity : ApplicationActivity() {
+@AndroidEntryPoint
+class HomeActivity : AppActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(
@@ -54,10 +65,18 @@ class HomeActivity : ApplicationActivity() {
 
         val locationPermissionDialogShown: Boolean by globalFlags::locationPermissionDialogShown
 
-        fun onLocationPermissionDialogShown(){
+        fun onLocationPermissionDialogShown() {
             globalFlags.locationPermissionDialogShown = true
         }
     }
+
+    @Inject
+    lateinit var globalFlags: GlobalFlags
+    @Inject
+    lateinit var widgetProperties: WidgetProperties
+
+    override val lifecycleObservers: List<LifecycleObserver>
+        get() = listOf(globalFlags, widgetProperties, locationAccessPermissionRequestLauncher)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
@@ -73,15 +92,6 @@ class HomeActivity : ApplicationActivity() {
         }
     }
 
-    fun launchLocationPermissionRequest(){
-        locationPermissionRequestLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        )
-    }
-
     fun requestWidgetPin() {
         getSystemService(AppWidgetManager::class.java).let {
             if (it.isRequestPinAppWidgetSupported) {
@@ -91,25 +101,60 @@ class HomeActivity : ApplicationActivity() {
                         WifiWidgetProvider::class.java
                     ),
                     null,
-                    null  // add toast callback
+                    PendingIntent.getBroadcast(
+                        this,
+                        77,
+                        Intent(this, WidgetPinnedReceiver::class.java),
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
                 )
-            }
+                showToast("Pinned widget")
+            } else
+                showToast("Widget pinning not supported by your launcher")
         }
     }
 
-    private val locationPermissionRequestLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissionGrantedMap ->
-            // sync permission grant result with "showSSID" states
-            if (permissionGrantedMap.containsValue(true)){
+    class WidgetPinnedReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            i { "WidgetPinnedReceiver.onReceive" }
+
+            context?.showToast("Pinned widget")
+        }
+    }
+
+    val locationAccessPermissionRequestLauncher by lazy {
+        LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
+            if (permissionGrantedMap.containsValue(true)) {
                 widgetProperties.showSSID = true
-                viewModels<ViewModel>().value.widgetPropertyStates[widgetProperties::showSSID.name] = true
+                viewModels<ViewModel>().value.widgetPropertyStates[widgetProperties::showSSID.name] =
+                    true
             }
 
             requestWidgetPin()
         }
+    }
 }
 
-private class SwipeUpAnimation: SplashScreen.OnExitAnimationListener{
+class LocationAccessPermissionRequestLauncher(
+    activity: ComponentActivity,
+    override val activityResultCallback: (Map<String, Boolean>) -> Unit
+) :
+    ActivityCallContractAdministrator.Impl<Array<String>, Map<String, Boolean>>(
+        activity,
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) {
+
+    fun launch() {
+        activityResultLauncher.launch(
+            arrayOf(
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        )
+    }
+}
+
+private class SwipeUpAnimation : SplashScreen.OnExitAnimationListener {
     override fun onSplashScreenExit(splashScreenViewProvider: SplashScreenViewProvider) {
         val splashScreenView = splashScreenViewProvider.view
         ObjectAnimator.ofFloat(

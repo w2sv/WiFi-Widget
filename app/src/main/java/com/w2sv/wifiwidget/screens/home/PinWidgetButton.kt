@@ -60,7 +60,7 @@ private fun OnClickListener(resetTrigger: () -> Unit) {
     if (!viewModel.locationPermissionDialogShown)
         LocationPermissionDialog(
             onConfirm = {
-                homeActivity.launchLocationPermissionRequest()
+                homeActivity.locationAccessPermissionRequestLauncher.launch()
                 viewModel.onLocationPermissionDialogShown()
             },
             onClose = {

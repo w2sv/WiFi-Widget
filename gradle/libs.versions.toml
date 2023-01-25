@@ -6,6 +6,7 @@ junit = '5.9.2'
 [libraries]
 # owned
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.0'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.13'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha01'
