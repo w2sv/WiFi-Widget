@@ -88,6 +88,7 @@ dependencies {
 
     // other
     implementation libs.typedpreferences
+    implementation libs.androidutils
     implementation libs.slimber
 
 //    testImplementation 'junit:junit:4.13.2'
