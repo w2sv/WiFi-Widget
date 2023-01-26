@@ -15,4 +15,18 @@
         <item name="android:padding">?attr/appWidgetPadding</item>
         <item name="android:background">@drawable/widget_background</item>
     </style>
+
+    <style name="Widget.Wifi.Property.TextView" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_size_widget_wifi_property</item>
+    </style>
+
+    <style name="Widget.Wifi.Property.Label" parent="Widget.Wifi.Property.TextView">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textColor">@color/blue_chill</item>
+    </style>
+
+    <style name="Widget.Wifi.Property.Value" parent="Widget.Wifi.Property.TextView">
+        <item name="android:textColor">@color/mischka_dark</item>
+    </style>
+
 </resources>
