@@ -31,6 +31,8 @@ import com.w2sv.wifiwidget.utils.getMutableStateMap
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import slimber.log.i
 import javax.inject.Inject
 
@@ -69,15 +71,18 @@ class HomeActivity : AppActivity() {
             return updatedAnyProperty
         }
 
-        val locationPermissionDialogShown: Boolean by globalFlags::locationPermissionDialogShown
+        val lapDialogShown: Boolean by globalFlags::locationPermissionDialogShown
 
-        fun onLocationPermissionDialogShown() {
+        fun onLapDialogShown() {
             globalFlags.locationPermissionDialogShown = true
         }
+
+        val lapJustGranted = MutableStateFlow(false)
     }
 
     @Inject
     lateinit var globalFlags: GlobalFlags
+
     @Inject
     lateinit var widgetProperties: WidgetProperties
 
@@ -131,9 +136,13 @@ class HomeActivity : AppActivity() {
     val locationAccessPermissionRequestLauncher by lazy {
         LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
             if (permissionGrantedMap.containsValue(true)) {
-                widgetProperties.SSID = true
-                viewModels<ViewModel>().value.widgetPropertyStates[widgetProperties::SSID.name] =
-                    true
+                with(viewModels<ViewModel>().value) {
+                    widgetPropertyStates[widgetProperties::SSID.name] = true
+                    syncWidgetProperties()
+                    lapJustGranted.update {
+                        true
+                    }
+                }
             }
 
             requestWidgetPin()

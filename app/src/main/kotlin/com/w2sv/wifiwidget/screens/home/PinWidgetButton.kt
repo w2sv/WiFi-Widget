@@ -8,7 +8,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,11 +57,11 @@ private fun OnClickListener(resetTrigger: () -> Unit) {
     val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
     val viewModel: HomeActivity.ViewModel = viewModel()
 
-    if (!viewModel.locationPermissionDialogShown)
-        LocationPermissionDialog(
+    if (!viewModel.lapDialogShown)
+        LocationPermissionAccessDialog(
             onConfirm = {
                 homeActivity.locationAccessPermissionRequestLauncher.launch()
-                viewModel.onLocationPermissionDialogShown()
+                viewModel.onLapDialogShown()
             },
             onClose = {
                 resetTrigger()
@@ -75,7 +74,7 @@ private fun OnClickListener(resetTrigger: () -> Unit) {
 }
 
 @Composable
-private fun LocationPermissionDialog(
+private fun LocationPermissionAccessDialog(
     onConfirm: () -> Unit,
     onClose: () -> Unit
 ) {
@@ -83,30 +82,24 @@ private fun LocationPermissionDialog(
         icon = {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "Information Icon",
+                contentDescription = "@null",
                 tint = MaterialTheme.colorScheme.primary
             )
         },
         title = {
-            Text(
-                text = "SSID Display requires Location Access",
+            JostText(
+                text = "SSID Retrieval requires Location Access",
                 textAlign = TextAlign.Center
             )
         },
         text = {
-            Text(
+            JostText(
                 text = buildAnnotatedString {
-                    append("If you want your SSID to be displayed amongst the widget properties, you'll have to ")
+                    append("If you want your SSID to be displayed amongst the WiFi properties, you'll have to grant the app")
                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("grant the app location access")
+                        append(" location access")
                     }
-                    append(". Furthermore, you'll have to ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(
-                            "enable your location service.\n\n" +
-                                    "This is entirely optional, so feel free to decline."
-                        )
-                    }
+                    append(".")
                 }
             )
         },
@@ -114,7 +107,12 @@ private fun LocationPermissionDialog(
             ElevatedButton({
                 onConfirm()
                 onClose()
-            }) { Text(text = "Got it!") }
+            }) { JostText(text = "Let's do it") }
+        },
+        dismissButton = {
+            ElevatedButton({
+                onClose()
+            }) { JostText(text = "Proceed without SSID") }
         },
         onDismissRequest = onClose
     )
@@ -124,7 +122,7 @@ private fun LocationPermissionDialog(
 @Preview(showSystemUi = true)
 private fun LocationPermissionDialogPreview() {
     AppTheme {
-        LocationPermissionDialog(
+        LocationPermissionAccessDialog(
             onConfirm = { /*TODO*/ },
             onClose = { /*TODO*/ }
         )

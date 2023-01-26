@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -16,7 +15,7 @@ import com.w2sv.wifiwidget.R
 @Composable
 fun AppTopBar() {
     TopAppBar(
-        { Text(stringResource(id = R.string.app_name)) },
+        { JostText(stringResource(id = R.string.app_name)) },
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = colorResource(
                 id = R.color.blue_chill_dark
