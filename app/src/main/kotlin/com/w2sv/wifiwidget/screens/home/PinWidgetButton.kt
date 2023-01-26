@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -26,13 +26,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.AppTheme
-import com.w2sv.wifiwidget.utils.requireCastActivity
+import com.w2sv.wifiwidget.ui.JostText
 
 @Composable
 internal fun PinWidgetButton() {
-    var triggerOnClickListener by remember {
+    var triggerOnClickListener by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -45,8 +46,8 @@ internal fun PinWidgetButton() {
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.blue_chill_dark)),
         content = {
-            Text(
-                text = stringResource(R.string.pin_widget),
+            JostText(
+                text = stringResource(R.string.pin_widget)
             )
         }
     )
@@ -92,13 +93,6 @@ private fun LocationPermissionDialog(
                 textAlign = TextAlign.Center
             )
         },
-        confirmButton = {
-            ElevatedButton({
-                onConfirm()
-                onClose()
-            }) { Text(text = "Got it!") }
-        },
-        onDismissRequest = onClose,
         text = {
             Text(
                 text = buildAnnotatedString {
@@ -115,7 +109,14 @@ private fun LocationPermissionDialog(
                     }
                 }
             )
-        }
+        },
+        confirmButton = {
+            ElevatedButton({
+                onConfirm()
+                onClose()
+            }) { Text(text = "Got it!") }
+        },
+        onDismissRequest = onClose
     )
 }
 

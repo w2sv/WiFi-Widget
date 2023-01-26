@@ -21,7 +21,7 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
-import com.w2sv.androidutils.ActivityCallContractAdministrator
+import com.w2sv.androidutils.ActivityCallContractHandler
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
@@ -46,6 +46,12 @@ class HomeActivity : AppActivity() {
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
         }
+
+        fun unchecksEverything(
+            newValue: Boolean,
+            preferenceKey: String
+        ): Boolean =
+            !newValue && widgetPropertyStates.all { (k, v) -> k == preferenceKey || !v }
 
         /**
          * @return flag indicating whether any property has been updated
@@ -125,8 +131,8 @@ class HomeActivity : AppActivity() {
     val locationAccessPermissionRequestLauncher by lazy {
         LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
             if (permissionGrantedMap.containsValue(true)) {
-                widgetProperties.showSSID = true
-                viewModels<ViewModel>().value.widgetPropertyStates[widgetProperties::showSSID.name] =
+                widgetProperties.SSID = true
+                viewModels<ViewModel>().value.widgetPropertyStates[widgetProperties::SSID.name] =
                     true
             }
 
@@ -137,15 +143,15 @@ class HomeActivity : AppActivity() {
 
 class LocationAccessPermissionRequestLauncher(
     activity: ComponentActivity,
-    override val activityResultCallback: (Map<String, Boolean>) -> Unit
+    override val resultCallback: (Map<String, Boolean>) -> Unit
 ) :
-    ActivityCallContractAdministrator.Impl<Array<String>, Map<String, Boolean>>(
+    ActivityCallContractHandler.Impl<Array<String>, Map<String, Boolean>>(
         activity,
         ActivityResultContracts.RequestMultiplePermissions()
     ) {
 
     fun launch() {
-        activityResultLauncher.launch(
+        resultLauncher.launch(
             arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_FINE_LOCATION

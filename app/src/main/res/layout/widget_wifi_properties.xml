@@ -6,163 +6,156 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ssid_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/ssid_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/ssid_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ip_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/ipv4_tv"
+            android:id="@+id/ip_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/ipv4_value_tv"
+            android:id="@+id/ip_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/frequency_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/frequency_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/frequency_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/gateway_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/gateway_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/gateway_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/netmask_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/subnet_mask_tv"
+            android:id="@+id/netmask_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/subnet_mask_value_tv"
+            android:id="@+id/netmask_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/dns_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/dns_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/dns_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/dhcp_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
             android:id="@+id/dhcp_tv"
+            style="@style/Widget.Wifi.Property.Label"
 
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/dhcp_value_tv"
+            style="@style/Widget.Wifi.Property.Value"
 
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-
-            android:textSize="@dimen/size_text" />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 </LinearLayout>

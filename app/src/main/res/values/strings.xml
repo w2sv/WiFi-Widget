@@ -2,7 +2,7 @@
     <string name="app_name">WiFi Widget</string>
     <string name="app_widget_description">Monitor your WiFi connection details</string>
     <string name="pin_widget">Pin Widget</string>
-    <string name="ipv4">IP</string>
+    <string name="ip">IP</string>
     <string name="ssid">SSID</string>
     <string name="frequency">Frequency</string>
     <string name="gateway">Gateway</string>
@@ -16,4 +16,13 @@
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
     <string name="updated_widget">Updated Widget!</string>
+    <string-array name="widget_properties">
+        <item>@string/ip</item>
+        <item>@string/ssid</item>
+        <item>@string/frequency</item>
+        <item>@string/gateway</item>
+        <item>@string/netmask</item>
+        <item>@string/dns</item>
+        <item>@string/dhcp</item>
+    </string-array>
 </resources>

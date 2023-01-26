@@ -8,28 +8,10 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.preferences.WidgetProperties
-import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
-import javax.inject.Inject
 
-fun anyWifiWidgetInUse(context: Context): Boolean =
-    AppWidgetManager
-        .getInstance(context)
-        .getWifiWidgetIds(context)
-        .isNotEmpty()
-
-private fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
-    getAppWidgetIds(
-        ComponentName(
-            context.packageName,
-            WifiWidgetProvider::class.java.name
-        )
-    )
-
-@AndroidEntryPoint
 class WifiWidgetProvider : AppWidgetProvider() {
 
     companion object {
@@ -50,10 +32,15 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
-    }
 
-    @Inject
-    lateinit var widgetProperties: WidgetProperties
+        private fun AppWidgetManager.widgetIds(context: Context): IntArray =
+            getAppWidgetIds(
+                ComponentName(
+                    context.packageName,
+                    WifiWidgetProvider::class.java.name
+                )
+            )
+    }
 
     override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent)
@@ -64,7 +51,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             i { "onReceive.ACTION_REFRESH_DATA" }
 
             with(AppWidgetManager.getInstance(context!!)) {
-                onUpdate(context, this, getWifiWidgetIds(context))
+                onUpdate(context, this, widgetIds(context))
             }
         }
     }
@@ -89,7 +76,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             appWidgetId,
             RemoteViews(context.packageName, R.layout.widget)
                 .apply {
-                    setWifiDependentContent(context, widgetProperties)
+                    WifiConnectionDependentWidgetLayoutSetter.getInstance(context).setOn(this)
 
                     // set last_updated_tv text
                     setTextViewText(
