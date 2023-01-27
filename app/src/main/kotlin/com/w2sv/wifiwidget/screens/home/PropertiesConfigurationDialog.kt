@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,9 +56,9 @@ fun PropertiesConfigurationDialogInflationButton() {
     if (triggerOnClickListener)
         PropertiesConfigurationDialog {
             triggerOnClickListener = false
-            if (viewModel.syncWidgetProperties()){
+            if (viewModel.syncWidgetProperties()) {
                 WifiWidgetProvider.refreshData(context)
-                context.showToast("Updated widget properties")
+                context.showToast(context.getString(R.string.updated_widget_properties))
             }
         }
 
@@ -93,7 +94,7 @@ private fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
                 )
             ) {
                 JostText(
-                    text = "Configure properties",
+                    text = stringResource(id = R.string.configure_properties),
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     modifier = Modifier.padding(
@@ -138,7 +139,7 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn(
                         checked = viewModel.widgetPropertyStates.getValue(widgetProperty),
                         onCheckedChange = {
                             if (viewModel.unchecksAllProperties(it, widgetProperty))
-                                context.showToast("You have to leave at least one property checked!")
+                                context.showToast(context.getString(R.string.uncheck_all_properties_toast))
                             else
                                 viewModel.widgetPropertyStates[widgetProperty] = it
                         },
