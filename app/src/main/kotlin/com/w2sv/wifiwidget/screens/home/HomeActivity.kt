@@ -28,6 +28,7 @@ import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.utils.getMutableStateMap
+import com.w2sv.wifiwidget.widget.PendingIntentCode
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,7 +50,7 @@ class HomeActivity : AppActivity() {
             widgetProperties.getMutableStateMap()
         }
 
-        fun unchecksEverything(
+        fun unchecksAllProperties(
             newValue: Boolean,
             preferenceKey: String
         ): Boolean =
@@ -114,14 +115,14 @@ class HomeActivity : AppActivity() {
                     null,
                     PendingIntent.getBroadcast(
                         this,
-                        77,
+                        PendingIntentCode.BroadcastToWidgetPinnedReceiver.ordinal,
                         Intent(this, WidgetPinnedReceiver::class.java),
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                 )
                 showToast("Pinned widget")
             } else
-                showToast("Widget pinning not supported by your launcher")
+                showToast("Widget pinning not supported by your device launcher")
         }
     }
 

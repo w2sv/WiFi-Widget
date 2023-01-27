@@ -3,11 +3,12 @@ package com.w2sv.wifiwidget.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.screens.home.HomeActivity
+import com.w2sv.wifiwidget.widget.utils.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
@@ -18,9 +19,9 @@ class WifiWidgetProvider : AppWidgetProvider() {
         fun getRefreshDataPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
-                69,
+                PendingIntentCode.RefreshWidget.ordinal,
                 getRefreshDataIntent(context),
-                PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE
             )
 
         fun refreshData(context: Context) {
@@ -32,14 +33,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
-
-        private fun AppWidgetManager.widgetIds(context: Context): IntArray =
-            getAppWidgetIds(
-                ComponentName(
-                    context.packageName,
-                    WifiWidgetProvider::class.java.name
-                )
-            )
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -50,8 +43,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
         if (intent?.action == ACTION_REFRESH_DATA) {
             i { "onReceive.ACTION_REFRESH_DATA" }
 
-            with(AppWidgetManager.getInstance(context!!)) {
-                onUpdate(context, this, widgetIds(context))
+            AppWidgetManager.getInstance(context!!).let {
+                onUpdate(context, it, it.getAppWidgetIds(context, this::class.java))
             }
         }
     }
@@ -70,13 +63,14 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetId: Int,
         context: Context
     ) {
-        i { "updateWidget" }
+        i { "update widget $appWidgetId" }
 
         updateAppWidget(
             appWidgetId,
             RemoteViews(context.packageName, R.layout.widget)
                 .apply {
-                    WifiConnectionDependentWidgetLayoutSetter.getInstance(context).setOn(this)
+                    // populate wifi dependent layout
+                    WifiConnectionDependentWidgetLayoutSetter.getInstance(context).populate(this)
 
                     // set last_updated_tv text
                     setTextViewText(
@@ -88,6 +82,17 @@ class WifiWidgetProvider : AppWidgetProvider() {
                     setOnClickPendingIntent(
                         R.id.refresh_button,
                         getRefreshDataPendingIntent(context)
+                    )
+
+                    // set layout onClickListener
+                    setOnClickPendingIntent(
+                        R.id.widget_layout,
+                        PendingIntent.getActivity(
+                            context,
+                            PendingIntentCode.LaunchActivity.ordinal,
+                            Intent(context, HomeActivity::class.java),
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
                     )
                 }
         )

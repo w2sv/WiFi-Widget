@@ -137,7 +137,7 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn(
                     Checkbox(
                         checked = viewModel.widgetPropertyStates.getValue(widgetProperty),
                         onCheckedChange = {
-                            if (viewModel.unchecksEverything(it, widgetProperty))
+                            if (viewModel.unchecksAllProperties(it, widgetProperty))
                                 context.showToast("You have to leave at least one property checked!")
                             else
                                 viewModel.widgetPropertyStates[widgetProperty] = it
