@@ -18,10 +18,4 @@ class WidgetProperties @Inject constructor(sharedPreferences: SharedPreferences)
         sharedPreferences = sharedPreferences
     ) {
     var SSID by this
-    var IP by this
-    var Frequency by this
-    var Gateway by this
-    var Netmask by this
-    var DNS by this
-    var DHCP by this
 }

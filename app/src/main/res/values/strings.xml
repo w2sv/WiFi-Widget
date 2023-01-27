@@ -10,12 +10,12 @@
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
     <string name="refresh_data">Refresh data</string>
-    <string name="configure_widget">Configure widget</string>
-    <string name="sheet_title">Configure Properties</string>
+    <string name="configure_properties">Configure Properties</string>
     <string name="uncheck_all_properties_toast">You need to leave at least one property checked!</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
-    <string name="updated_widget">Updated Widget!</string>
+    <string name="updated_widget_properties">Updated widget properties</string>
+    <string name="pinned_widget">Pinned widget</string>
     <string-array name="widget_properties">
         <item>@string/ip</item>
         <item>@string/ssid</item>

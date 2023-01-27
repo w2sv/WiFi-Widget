@@ -2,7 +2,8 @@ package com.w2sv.wifiwidget.utils
 
 import android.content.Context
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.wifiwidget.R
 
 fun Context.showPinnedWidgetToast(){
-    showToast("Pinned widget")
+    showToast(getString(R.string.pinned_widget))
 }
