@@ -1,13 +1,8 @@
 package com.w2sv.wifiwidget.screens.home
 
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,28 +12,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.ui.JostText
 
 @Composable
 internal fun PinWidgetButton() {
+    val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
+
     var triggerOnClickListener by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var showLocationAccessServiceInformationDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
     if (triggerOnClickListener) {
-        OnClickListener { triggerOnClickListener = false }
+        OnClickListener(
+            { triggerOnClickListener = false },
+            { showLocationAccessServiceInformationDialog = true }
+        )
     }
+    if (showLocationAccessServiceInformationDialog) {
+        LocationAccessServiceInformationDialog {
+            homeActivity.lapRequestLauncher.launch()
+            showLocationAccessServiceInformationDialog = false
+        }
+    }
+
 
     ElevatedButton(
         { triggerOnClickListener = true },
@@ -53,78 +56,30 @@ internal fun PinWidgetButton() {
 }
 
 @Composable
-private fun OnClickListener(resetTrigger: () -> Unit) {
+private fun OnClickListener(
+    resetTrigger: () -> Unit,
+    showLocationAccessServiceInformationDialog: () -> Unit
+) {
     val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
     val viewModel: HomeActivity.ViewModel = viewModel()
 
-    if (!viewModel.lapDialogShown)
-        LocationPermissionAccessDialog(
-            onConfirm = {
-                homeActivity.locationAccessPermissionRequestLauncher.launch()
-                viewModel.onLapDialogShown()
+    if (!viewModel.lapDialogAnswered)
+        LocationAccessPermissionDialog(
+            onConfirmButtonPressed = {
+                showLocationAccessServiceInformationDialog()
             },
-            onClose = {
+            onDismissButtonPressed = {
+                homeActivity.requestWidgetPin()
+            },
+            onDialogAnswered = {
+                viewModel.onLapDialogAnswered()
+            },
+            onDismissRequest = {
                 resetTrigger()
             }
         )
     else {
         homeActivity.requestWidgetPin()
         resetTrigger()
-    }
-}
-
-@Composable
-private fun LocationPermissionAccessDialog(
-    onConfirm: () -> Unit,
-    onClose: () -> Unit
-) {
-    AlertDialog(
-        icon = {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = "@null",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        title = {
-            JostText(
-                text = "SSID Retrieval requires Location Access",
-                textAlign = TextAlign.Center
-            )
-        },
-        text = {
-            JostText(
-                text = buildAnnotatedString {
-                    append("If you want your SSID to be displayed amongst the WiFi properties, you'll have to grant the app")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(" location access")
-                    }
-                    append(".")
-                }
-            )
-        },
-        confirmButton = {
-            ElevatedButton({
-                onConfirm()
-                onClose()
-            }) { JostText(text = "Let's do it") }
-        },
-        dismissButton = {
-            ElevatedButton({
-                onClose()
-            }) { JostText(text = "Proceed without SSID") }
-        },
-        onDismissRequest = onClose
-    )
-}
-
-@Composable
-@Preview(showSystemUi = true)
-private fun LocationPermissionDialogPreview() {
-    AppTheme {
-        LocationPermissionAccessDialog(
-            onConfirm = { /*TODO*/ },
-            onClose = { /*TODO*/ }
-        )
     }
 }

@@ -34,8 +34,6 @@ internal fun HomeScreen() {
             Box(Modifier.weight(1f)){
                 PropertiesConfigurationDialogInflationButton()
             }
-
-            EventualLocationAccessServiceInformationDialog()
         }
     }
 }

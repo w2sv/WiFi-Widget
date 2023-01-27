@@ -28,12 +28,11 @@ import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.utils.getMutableStateMap
+import com.w2sv.wifiwidget.utils.showPinnedWidgetToast
 import com.w2sv.wifiwidget.widget.PendingIntentCode
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
 import slimber.log.i
 import javax.inject.Inject
 
@@ -72,13 +71,15 @@ class HomeActivity : AppActivity() {
             return updatedAnyProperty
         }
 
-        val lapDialogShown: Boolean by globalFlags::locationPermissionDialogShown
+        /**
+         * lap := Location Access Permission
+         */
 
-        fun onLapDialogShown() {
-            globalFlags.locationPermissionDialogShown = true
+        val lapDialogAnswered: Boolean by globalFlags::locationPermissionDialogAnswered
+
+        fun onLapDialogAnswered() {
+            globalFlags.locationPermissionDialogAnswered = true
         }
-
-        val lapJustGranted = MutableStateFlow(false)
     }
 
     @Inject
@@ -88,7 +89,7 @@ class HomeActivity : AppActivity() {
     lateinit var widgetProperties: WidgetProperties
 
     override val lifecycleObservers: List<LifecycleObserver>
-        get() = listOf(globalFlags, widgetProperties, locationAccessPermissionRequestLauncher)
+        get() = listOf(globalFlags, widgetProperties, lapRequestLauncher)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
@@ -120,7 +121,6 @@ class HomeActivity : AppActivity() {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                 )
-                showToast("Pinned widget")
             } else
                 showToast("Widget pinning not supported by your device launcher")
         }
@@ -130,19 +130,16 @@ class HomeActivity : AppActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             i { "WidgetPinnedReceiver.onReceive" }
 
-            context?.showToast("Pinned widget")
+            context?.showPinnedWidgetToast()
         }
     }
 
-    val locationAccessPermissionRequestLauncher by lazy {
+    val lapRequestLauncher by lazy {
         LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
             if (permissionGrantedMap.containsValue(true)) {
                 with(viewModels<ViewModel>().value) {
                     widgetPropertyStates[widgetProperties::SSID.name] = true
                     syncWidgetProperties()
-                    lapJustGranted.update {
-                        true
-                    }
                 }
             }
 

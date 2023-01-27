@@ -8,8 +8,8 @@ import javax.inject.Singleton
 @Singleton
 class GlobalFlags @Inject constructor(sharedPreferences: SharedPreferences) :
     BooleanPreferences(
-        "locationPermissionDialogShown" to false,
+        "locationPermissionDialogAnswered" to false,
         sharedPreferences = sharedPreferences
     ) {
-    var locationPermissionDialogShown by this
+    var locationPermissionDialogAnswered by this
 }
