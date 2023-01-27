@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.utils
+package com.w2sv.wifiwidget.widget.utils
 
 import android.content.Context
 import com.w2sv.androidutils.extensions.showToast

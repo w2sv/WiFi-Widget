@@ -8,7 +8,7 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.screens.home.HomeActivity
-import com.w2sv.wifiwidget.utils.showPinnedWidgetToast
+import com.w2sv.wifiwidget.widget.utils.showPinnedWidgetToast
 import com.w2sv.wifiwidget.widget.utils.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
@@ -20,7 +20,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         fun getRefreshDataPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
-                PendingIntentCode.RefreshWidget.ordinal,
+                PendingIntentCode.RefreshWidgetData.ordinal,
                 getRefreshDataIntent(context),
                 PendingIntent.FLAG_IMMUTABLE
             )
@@ -94,7 +94,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                         R.id.widget_layout,
                         PendingIntent.getActivity(
                             context,
-                            PendingIntentCode.LaunchActivity.ordinal,
+                            PendingIntentCode.LaunchHomeActivity.ordinal,
                             Intent(context, HomeActivity::class.java),
                             PendingIntent.FLAG_IMMUTABLE
                         )
