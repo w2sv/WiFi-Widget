@@ -28,7 +28,7 @@ import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.utils.getMutableStateMap
-import com.w2sv.wifiwidget.utils.showPinnedWidgetToast
+import com.w2sv.wifiwidget.widget.utils.showPinnedWidgetToast
 import com.w2sv.wifiwidget.widget.PendingIntentCode
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint

@@ -41,7 +41,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources false  // TODO: figure out why altering colors when set to true
+            shrinkResources true  // TODO: figure out why altering colors when set to true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
@@ -75,11 +75,11 @@ dependencies {
     // .compose
     implementation libs.androidx.compose.activity
     implementation libs.androidx.compose.viewmodel
-    implementation platform('androidx.compose:compose-bom:2022.10.00')
-    implementation 'androidx.compose.ui:ui'
-    implementation 'androidx.compose.ui:ui-graphics'
-    implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
+    implementation platform('androidx.compose:compose-bom:2023.01.00')
+    implementation "androidx.compose.ui:ui:${libs.versions.compose.tooling}"
+    implementation "androidx.compose.ui:ui-graphics:${libs.versions.compose.tooling}"
+    implementation "androidx.compose.ui:ui-tooling-preview:${libs.versions.compose.tooling}"
+    implementation 'androidx.compose.material3:material3:1.0.1'
 
 //    debugImplementation "androidx.customview:customview:1.2.0-alpha02"
 //    debugImplementation "androidx.customview:customview-poolingcontainer:1.0.0"
@@ -93,6 +93,6 @@ dependencies {
     implementation libs.androidutils
     implementation libs.slimber
 
-    debugImplementation 'androidx.compose.ui:ui-tooling'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+    debugImplementation "androidx.compose.ui:ui-tooling:${libs.versions.compose.tooling}"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:${libs.versions.compose.tooling}"
 }

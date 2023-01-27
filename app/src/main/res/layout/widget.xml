@@ -37,7 +37,7 @@
             android:layout_marginHorizontal="10dp"
 
             android:textColor="@color/widget_bottom_row_elements"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="italic"
             tools:ignore="RelativeOverlap" />
 
