@@ -67,7 +67,7 @@ fun PropertiesConfigurationDialogInflationButton() {
             imageVector = Icons.Default.Settings,
             contentDescription = "Inflate widget properties selection dialog",
             modifier = Modifier.size(32.dp),
-            tint = colorResource(id = R.color.blue_chill)
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }
@@ -103,7 +103,7 @@ private fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
                         start = 18.dp,
                         end = 18.dp
                     ),
-                    color = colorResource(id = R.color.blue_chill_dark)
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Divider(Modifier.padding(horizontal = 22.dp, vertical = 12.dp), color = Color.White)
                 WidgetPropertiesSelectionColumn()

@@ -11,7 +11,7 @@ import com.w2sv.wifiwidget.R
 fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = lightColorScheme(
-            primary = colorResource(id = R.color.blue_chill_dark),
+            primary = colorResource(id = R.color.primary),
             onPrimary = Color.White,
             surface = Color.White,
             background = Color.White
