@@ -74,43 +74,43 @@ internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
     private fun RemoteViews.populatePropertiesLayout() {
         val wifiManager = context.getSystemService(WifiManager::class.java)
 
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.ssid_row,
             R.string.ssid,
             R.id.ssid_tv,
             R.id.ssid_value_tv
         ) { wifiManager.connectionInfo.ssid.replace("\"", "") }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.ip_row,
             R.string.ip,
             R.id.ip_tv,
             R.id.ip_value_tv
         ) { wifiManager.connectionInfo.ipAddress.asFormattedIpAddress() }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.frequency_row,
             R.string.frequency,
             R.id.frequency_tv,
             R.id.frequency_value_tv
         ) { "${wifiManager.connectionInfo.frequency}Hz" }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.gateway_row,
             R.string.gateway,
             R.id.gateway_tv,
             R.id.gateway_value_tv
         ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.netmask_row,
             R.string.netmask,
             R.id.netmask_tv,
             R.id.netmask_value_tv
         ) { netmask() }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.dns_row,
             R.string.dns,
             R.id.dns_tv,
             R.id.dns_value_tv
         ) { wifiManager.dhcpInfo.dns1.asFormattedIpAddress() }
-        setPropertyRow(
+        setWifiPropertyRow(
             R.id.dhcp_row,
             R.string.dhcp,
             R.id.dhcp_tv,
@@ -118,7 +118,7 @@ internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
         ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() }
     }
 
-    private fun RemoteViews.setPropertyRow(
+    private fun RemoteViews.setWifiPropertyRow(
         @IdRes layout: Int,
         @StringRes property: Int,
         @IdRes labelTV: Int,
@@ -135,8 +135,8 @@ internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
         }
     }
 
-    private fun RemoteViews.onNoWifiConnectionAvailable(statusTvText: String) {
-        setTextViewText(R.id.wifi_status_tv, statusTvText)
+    private fun RemoteViews.onNoWifiConnectionAvailable(statusText: String) {
+        setTextViewText(R.id.wifi_status_tv, statusText)
         crossVisualize(R.id.wifi_status_tv, R.id.wifi_properties_layout)
     }
 }

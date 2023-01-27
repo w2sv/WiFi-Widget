@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!--System Permissions-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--Non-System Permissions-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:name=".Application"
         android:allowBackup="true"
+        android:appCategory="productivity"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo_round"
@@ -26,6 +29,8 @@
             </intent-filter>
         </activity>
 
+        <!--Receivers-->
+
         <receiver
             android:name=".widget.WifiWidgetProvider"
             android:exported="false">
@@ -39,8 +44,9 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WidgetPinnedReceiver"
-            android:enabled="true"/>
+        <receiver
+            android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WidgetPinnedReceiver"
+            android:enabled="true" />
 
     </application>
 </manifest>
