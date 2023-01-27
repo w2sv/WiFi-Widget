@@ -54,7 +54,7 @@ internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
                     when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
                         true -> {
                             populatePropertiesLayout()
-                            crossVisualize(R.id.property_layout, R.id.wifi_status_tv)
+                            crossVisualize(R.id.wifi_properties_layout, R.id.wifi_status_tv)
                         }
 
                         false -> onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
@@ -137,6 +137,6 @@ internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
 
     private fun RemoteViews.onNoWifiConnectionAvailable(statusTvText: String) {
         setTextViewText(R.id.wifi_status_tv, statusTvText)
-        crossVisualize(R.id.wifi_status_tv, R.id.property_layout)
+        crossVisualize(R.id.wifi_status_tv, R.id.wifi_properties_layout)
     }
 }

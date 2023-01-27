@@ -8,7 +8,7 @@
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
     <include
-        android:id="@+id/property_layout"
+        android:id="@+id/wifi_properties_layout"
         layout="@layout/widget_wifi_properties" />
 
     <TextView
@@ -37,7 +37,7 @@
             android:layout_marginHorizontal="10dp"
 
             android:textColor="@color/widget_bottom_row_elements"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="italic"
             tools:ignore="RelativeOverlap" />
 
@@ -47,7 +47,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
 
-            android:background="@drawable/ic_round_refresh_24"
+            android:background="@drawable/ic_refresh_24"
             android:backgroundTint="@color/widget_bottom_row_elements"
             android:contentDescription="@string/refresh_data" />
 
