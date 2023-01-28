@@ -22,7 +22,6 @@
     </style>
 
     <style name="Widget.Wifi.Property.Label" parent="Widget.Wifi.Property.TextView">
-<!--        <item name="android:textStyle">italic</item>-->
         <item name="android:textColor">@color/blue_chill</item>
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_weight">1</item>
