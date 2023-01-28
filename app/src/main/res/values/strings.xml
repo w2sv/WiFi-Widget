@@ -16,6 +16,7 @@
     <string name="wifi_disabled">WiFi Disabled</string>
     <string name="updated_widget_properties">Updated Widget Properties</string>
     <string name="pinned_widget">Pinned Widget</string>
+    <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string-array name="widget_properties">
         <item>@string/ip</item>
         <item>@string/ssid</item>
