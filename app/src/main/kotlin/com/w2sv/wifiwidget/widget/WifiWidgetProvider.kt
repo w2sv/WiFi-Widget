@@ -8,7 +8,6 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.screens.home.HomeActivity
-import com.w2sv.wifiwidget.widget.utils.showPinnedWidgetToast
 import com.w2sv.wifiwidget.widget.utils.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
@@ -37,19 +36,19 @@ class WifiWidgetProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)
-
         i { "onReceive | ${intent?.action} | ${intent?.extras?.keySet()?.toList()}" }
 
-        intent?.let {
-            when{
-                it.action == AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED && it.extras?.containsKey("appWidgetId") == true ->
-                    context?.showPinnedWidgetToast()
-                it.action == ACTION_REFRESH_DATA -> AppWidgetManager.getInstance(context!!).let { manager ->
-                    onUpdate(context, manager, manager.getAppWidgetIds(context, this::class.java))
+        when (intent?.action) {
+            ACTION_REFRESH_DATA -> AppWidgetManager.getInstance(context!!)
+                .let { manager ->
+                    onUpdate(
+                        context,
+                        manager,
+                        manager.getAppWidgetIds(context, this::class.java)
+                    )
                 }
-                else -> Unit
-            }
+
+            else -> super.onReceive(context, intent)
         }
     }
 
@@ -59,6 +58,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetIds: IntArray
     ) {
         i { "onUpdate ${appWidgetIds.toList()}" }
+
         appWidgetIds.forEach {
             appWidgetManager.updateWidget(it, context)
         }

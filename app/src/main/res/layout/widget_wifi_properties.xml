@@ -6,9 +6,7 @@
 
     <LinearLayout
         android:id="@+id/ssid_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/ssid_tv"
@@ -21,9 +19,7 @@
 
     <LinearLayout
         android:id="@+id/ip_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/ip_tv"
@@ -36,9 +32,7 @@
 
     <LinearLayout
         android:id="@+id/frequency_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/frequency_tv"
@@ -51,9 +45,7 @@
 
     <LinearLayout
         android:id="@+id/gateway_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/gateway_tv"
@@ -66,9 +58,7 @@
 
     <LinearLayout
         android:id="@+id/netmask_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/netmask_tv"
@@ -81,9 +71,7 @@
 
     <LinearLayout
         android:id="@+id/dns_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/dns_tv"
@@ -96,9 +84,7 @@
 
     <LinearLayout
         android:id="@+id/dhcp_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        style="@style/PropertyRow">
 
         <TextView
             android:id="@+id/dhcp_tv"
