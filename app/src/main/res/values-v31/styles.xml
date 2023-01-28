@@ -6,4 +6,5 @@
         <item name="android:background">@drawable/shape_widget_background</item>
         <item name="android:clipToOutline">true</item>
     </style>
+
 </resources>
