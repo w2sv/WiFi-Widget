@@ -2,7 +2,7 @@
 <resources>
     <color name="mischka">#dee0e6</color>
     <color name="mischka_dark">#9FA1A5</color>
-    <color name="blue_dianne">#243c54</color>
+<!--    <color name="blue_dianne">#243c54</color>-->
     <color name="blue_chill">#1EA8B5</color>
     <color name="blue_chill_dark">#158a92</color>
 
