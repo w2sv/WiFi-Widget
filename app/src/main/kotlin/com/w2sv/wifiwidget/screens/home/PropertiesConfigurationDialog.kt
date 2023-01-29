@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringArrayResource
@@ -50,7 +49,7 @@ fun PropertiesConfigurationDialogInflationButton() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
     var triggerOnClickListener by rememberSaveable {
-        mutableStateOf(viewModel.openPropertiesConfigurationDialog.value)
+        mutableStateOf(viewModel.openPropertiesConfigurationDialog)
     }
 
     if (triggerOnClickListener)
@@ -105,7 +104,7 @@ private fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
                     ),
                     color = MaterialTheme.colorScheme.primary
                 )
-                Divider(Modifier.padding(horizontal = 22.dp, vertical = 12.dp), color = Color.White)
+                Divider(Modifier.padding(horizontal = 22.dp, vertical = 12.dp), color = MaterialTheme.colorScheme.onPrimary)
                 WidgetPropertiesSelectionColumn()
             }
         }
@@ -132,7 +131,7 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn(
                     JostText(
                         text = widgetProperty,
                         modifier = Modifier.weight(1f, fill = true),
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 14.sp
                     )
                     Checkbox(

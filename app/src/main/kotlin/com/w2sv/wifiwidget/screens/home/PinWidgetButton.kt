@@ -44,7 +44,6 @@ internal fun PinWidgetButton() {
         }
     }
 
-
     ElevatedButton(
         { triggerOnClickListener = true },
         modifier = Modifier.defaultMinSize(140.dp, 60.dp),

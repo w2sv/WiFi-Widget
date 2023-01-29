@@ -34,7 +34,6 @@ import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.widget.extensions.showPinnedWidgetToast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import slimber.log.i
 import javax.inject.Inject
 
@@ -53,10 +52,9 @@ class HomeActivity : AppActivity() {
         savedStateHandle: SavedStateHandle
     ) : androidx.lifecycle.ViewModel() {
 
-        val openPropertiesConfigurationDialog = MutableStateFlow(
+        val openPropertiesConfigurationDialog =
             savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG)
-                .also { i{"openPropertiesConfigurationDialog: $it"} }
-        )
+                .also { i { "openPropertiesConfigurationDialog: $it" } }
 
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
