@@ -5,10 +5,11 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.screens.home.HomeActivity
-import com.w2sv.wifiwidget.widget.utils.getAppWidgetIds
+import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
 import java.util.Date
@@ -89,13 +90,26 @@ class WifiWidgetProvider : AppWidgetProvider() {
                         getRefreshDataPendingIntent(context)
                     )
 
+                    setOnClickPendingIntent(
+                        R.id.settings_button,
+                        PendingIntent.getActivity(
+                            context,
+                            PendingIntentCode.LaunchHomeActivity.ordinal,
+                            Intent(context, HomeActivity::class.java)
+                                .setMakeUniqueActivityFlags()
+                                .putExtra(HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG, true),
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
+                    )
+
                     // set layout onClickListener
                     setOnClickPendingIntent(
                         R.id.widget_layout,
                         PendingIntent.getActivity(
                             context,
                             PendingIntentCode.LaunchHomeActivity.ordinal,
-                            Intent(context, HomeActivity::class.java),
+                            Intent(Settings.ACTION_WIFI_SETTINGS)
+                                .setMakeUniqueActivityFlags(),
                             PendingIntent.FLAG_IMMUTABLE
                         )
                     )
@@ -103,3 +117,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
         )
     }
 }
+
+private fun Intent.setMakeUniqueActivityFlags(): Intent =
+    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

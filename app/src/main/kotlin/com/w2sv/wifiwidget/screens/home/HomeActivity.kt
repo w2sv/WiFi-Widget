@@ -21,6 +21,7 @@ import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.SavedStateHandle
 import com.w2sv.androidutils.ActivityCallContractHandler
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.AppActivity
@@ -28,22 +29,34 @@ import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.utils.getMutableStateMap
-import com.w2sv.wifiwidget.widget.utils.showPinnedWidgetToast
 import com.w2sv.wifiwidget.widget.PendingIntentCode
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
+import com.w2sv.wifiwidget.widget.extensions.showPinnedWidgetToast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeActivity : AppActivity() {
 
+    companion object {
+        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG =
+            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG"
+    }
+
     @HiltViewModel
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
-        private val globalFlags: GlobalFlags
+        private val globalFlags: GlobalFlags,
+        savedStateHandle: SavedStateHandle
     ) : androidx.lifecycle.ViewModel() {
+
+        val openPropertiesConfigurationDialog = MutableStateFlow(
+            savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG)
+                .also { i{"openPropertiesConfigurationDialog: $it"} }
+        )
 
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
@@ -169,17 +182,17 @@ class LocationAccessPermissionRequestLauncher(
 
 private class SwipeUpAnimation : SplashScreen.OnExitAnimationListener {
     override fun onSplashScreenExit(splashScreenViewProvider: SplashScreenViewProvider) {
-        val splashScreenView = splashScreenViewProvider.view
         ObjectAnimator.ofFloat(
-            splashScreenView,
+            splashScreenViewProvider.view,
             View.TRANSLATION_Y,
             0f,
-            -splashScreenView.height.toFloat()
-        ).apply {
-            interpolator = AnticipateInterpolator()
-            duration = 400L
-            doOnEnd { splashScreenViewProvider.remove() }
-            start()
-        }
+            -splashScreenViewProvider.view.height.toFloat()
+        )
+            .apply {
+                interpolator = AnticipateInterpolator()
+                duration = 400L
+                doOnEnd { splashScreenViewProvider.remove() }
+            }
+            .start()
     }
 }

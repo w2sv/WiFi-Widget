@@ -10,7 +10,7 @@ import androidx.annotation.StringRes
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.widget.utils.asFormattedIpAddress
-import com.w2sv.wifiwidget.widget.utils.crossVisualize
+import com.w2sv.wifiwidget.widget.extensions.crossVisualize
 import com.w2sv.wifiwidget.widget.utils.isWifiConnected
 import com.w2sv.wifiwidget.widget.utils.netmask
 import dagger.hilt.EntryPoint

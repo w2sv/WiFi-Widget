@@ -26,30 +26,48 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
 
-        android:gravity="center_vertical|end"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <TextView
             android:id="@+id/last_updated_tv"
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
+            android:layout_marginStart="4dp"
 
             android:textColor="@color/widget_bottom_row_elements"
             android:textSize="14sp"
             android:textStyle="italic"
             tools:ignore="RelativeOverlap" />
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="UselessLeaf" />
+
         <ImageButton
             android:id="@+id/refresh_button"
 
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="@dimen/size_image_button_icon"
+            android:layout_height="@dimen/size_image_button_icon"
+            android:layout_marginHorizontal="8dp"
 
             android:background="@drawable/ic_refresh_24"
             android:backgroundTint="@color/widget_bottom_row_elements"
             android:contentDescription="@string/refresh_data" />
+
+        <ImageButton
+            android:id="@+id/settings_button"
+
+            android:layout_width="@dimen/size_image_button_icon"
+            android:layout_height="@dimen/size_image_button_icon"
+
+            android:background="@drawable/ic_settings_24"
+            android:backgroundTint="@color/widget_bottom_row_elements"
+            android:contentDescription="@string/configure_widget" />
 
     </LinearLayout>
 
