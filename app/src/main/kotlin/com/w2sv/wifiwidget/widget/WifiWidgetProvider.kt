@@ -13,6 +13,7 @@ import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.screens.home.HomeActivity
+import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
 import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
@@ -147,6 +148,3 @@ class WifiWidgetProvider : AppWidgetProvider() {
         )
     }
 }
-
-private fun Intent.setMakeUniqueActivityFlags(): Intent =
-    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

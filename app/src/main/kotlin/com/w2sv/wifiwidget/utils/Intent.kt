@@ -9,3 +9,6 @@ fun Intent.getIntExtraOrNull(name: String, defaultValue: Int): Int? =
         else
             this
     }
+
+fun Intent.setMakeUniqueActivityFlags(): Intent =
+    setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
