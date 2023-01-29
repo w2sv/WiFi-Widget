@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!--System Permissions-->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -45,8 +46,10 @@
         </receiver>
 
         <receiver
-            android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WidgetPinnedReceiver"
+            android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WifiWidgetPinnedReceiver"
             android:enabled="true" />
+        <receiver android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WifiWidgetOptionsChangedReceiver"
+            tools:ignore="Instantiatable" />
 
     </application>
 </manifest>

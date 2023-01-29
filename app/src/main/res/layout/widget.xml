@@ -35,7 +35,7 @@
 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="6dp"
 
             android:textColor="@color/widget_bottom_row_elements"
             android:textSize="14sp"

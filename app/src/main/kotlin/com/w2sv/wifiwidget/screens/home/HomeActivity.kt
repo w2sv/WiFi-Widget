@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
@@ -22,7 +23,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.ActivityCallContractHandler
+import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
@@ -34,6 +37,7 @@ import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.widget.extensions.showPinnedWidgetToast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
 import javax.inject.Inject
 
@@ -41,20 +45,32 @@ import javax.inject.Inject
 class HomeActivity : AppActivity() {
 
     companion object {
-        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG =
-            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG"
+        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START =
+            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START"
     }
 
     @HiltViewModel
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
         private val globalFlags: GlobalFlags,
-        savedStateHandle: SavedStateHandle
+        savedStateHandle: SavedStateHandle,
+        @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
 
         val openPropertiesConfigurationDialog =
-            savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG)
+            savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
                 .also { i { "openPropertiesConfigurationDialog: $it" } }
+
+        private val widgetIds: MutableSet<Int> =
+            WifiWidgetProvider.getWidgetIds(context).toMutableSet()
+
+        fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
+            if (!widgetIds.contains(widgetId)) {
+                i { "New widgetId: $widgetId" }
+                widgetIds.add(widgetId)
+                context.showPinnedWidgetToast()
+            }
+        }
 
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
@@ -93,6 +109,8 @@ class HomeActivity : AppActivity() {
         }
     }
 
+    private val viewModel by viewModels<ViewModel>()
+
     @Inject
     lateinit var globalFlags: GlobalFlags
 
@@ -100,7 +118,19 @@ class HomeActivity : AppActivity() {
     lateinit var widgetProperties: WidgetProperties
 
     override val lifecycleObservers: List<LifecycleObserver>
-        get() = listOf(globalFlags, widgetProperties, lapRequestLauncher)
+        get() = listOf(
+            globalFlags,
+            widgetProperties,
+            lapRequestLauncher,
+            WifiWidgetOptionsChangedReceiver(
+                LocalBroadcastManager.getInstance(this)
+            ) { intent ->
+                intent?.getIntExtra(WifiWidgetProvider.EXTRA_WIDGET_ID, -1).let {
+                    if (it != null && it != -1)
+                        viewModel.onWidgetOptionsUpdated(it, this)
+                }
+            }
+        )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
@@ -128,7 +158,7 @@ class HomeActivity : AppActivity() {
                     PendingIntent.getBroadcast(
                         this,
                         PendingIntentCode.BroadcastToWidgetPinnedReceiver.ordinal,
-                        Intent(this, WidgetPinnedReceiver::class.java),
+                        Intent(this, WifiWidgetPinnedReceiver::class.java),
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                 )
@@ -137,7 +167,7 @@ class HomeActivity : AppActivity() {
         }
     }
 
-    class WidgetPinnedReceiver : BroadcastReceiver() {
+    class WifiWidgetPinnedReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             i { "WidgetPinnedReceiver.onReceive" }
 
@@ -145,10 +175,24 @@ class HomeActivity : AppActivity() {
         }
     }
 
+    class WifiWidgetOptionsChangedReceiver(
+        broadcastManager: LocalBroadcastManager,
+        private val onReceiveListener: (Intent?) -> Unit
+    ) : SelfManagingLocalBroadcastReceiver(
+        broadcastManager,
+        IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED)
+    ) {
+
+        override fun onReceive(context: Context?, intent: Intent?) {
+            i { "WifiWidgetOptionsChangedReceiver.onReceive" }
+            onReceiveListener(intent)
+        }
+    }
+
     val lapRequestLauncher by lazy {
         LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
             if (permissionGrantedMap.containsValue(true)) {
-                with(viewModels<ViewModel>().value) {
+                with(viewModel) {
                     widgetPropertyStates[widgetProperties::SSID.name] = true
                     syncWidgetProperties()
                 }

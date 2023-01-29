@@ -5,8 +5,10 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.provider.Settings
 import android.widget.RemoteViews
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.screens.home.HomeActivity
 import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
@@ -17,6 +19,17 @@ import java.util.Date
 class WifiWidgetProvider : AppWidgetProvider() {
 
     companion object {
+        const val ACTION_WIDGET_OPTIONS_CHANGED =
+            "com.w2sv.wifiwidget.action.WIDGET_OPTIONS_CHANGED"
+        const val EXTRA_WIDGET_ID = "com.w2sv.wifiwidget.EXTRA_WIDGET_ID"
+
+        fun getWidgetIds(appWidgetManager: AppWidgetManager, context: Context): IntArray =
+            appWidgetManager.getAppWidgetIds(context, WifiWidgetProvider::class.java)
+
+        fun getWidgetIds(context: Context): IntArray =
+            AppWidgetManager.getInstance(context)
+                .getAppWidgetIds(context, WifiWidgetProvider::class.java)
+
         fun getRefreshDataPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
@@ -36,6 +49,22 @@ class WifiWidgetProvider : AppWidgetProvider() {
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
     }
 
+    override fun onAppWidgetOptionsChanged(
+        context: Context?,
+        appWidgetManager: AppWidgetManager?,
+        appWidgetId: Int,
+        newOptions: Bundle?
+    ) {
+        context?.let {
+            LocalBroadcastManager.getInstance(it).sendBroadcast(
+                Intent(ACTION_WIDGET_OPTIONS_CHANGED)
+                    .putExtra(EXTRA_WIDGET_ID, appWidgetId)
+            )
+        }
+
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+    }
+
     override fun onReceive(context: Context?, intent: Intent?) {
         i { "onReceive | ${intent?.action} | ${intent?.extras?.keySet()?.toList()}" }
 
@@ -45,7 +74,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                     onUpdate(
                         context,
                         manager,
-                        manager.getAppWidgetIds(context, this::class.java)
+                        getWidgetIds(manager, context)
                     )
                 }
 
@@ -97,7 +126,10 @@ class WifiWidgetProvider : AppWidgetProvider() {
                             PendingIntentCode.LaunchHomeActivity.ordinal,
                             Intent(context, HomeActivity::class.java)
                                 .setMakeUniqueActivityFlags()
-                                .putExtra(HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG, true),
+                                .putExtra(
+                                    HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
+                                    true
+                                ),
                             PendingIntent.FLAG_IMMUTABLE
                         )
                     )
