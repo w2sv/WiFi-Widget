@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.widget.utils
+package com.w2sv.wifiwidget.widget.extensions
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider

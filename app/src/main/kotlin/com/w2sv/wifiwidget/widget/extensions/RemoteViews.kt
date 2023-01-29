@@ -1,10 +1,10 @@
-package com.w2sv.wifiwidget.widget.utils
+package com.w2sv.wifiwidget.widget.extensions
 
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
 
-internal fun RemoteViews.crossVisualize(@IdRes showView: Int, @IdRes hideView: Int) {
+fun RemoteViews.crossVisualize(@IdRes showView: Int, @IdRes hideView: Int) {
     setViewVisibility(showView, View.VISIBLE)
     setViewVisibility(hideView, View.GONE)
 }
