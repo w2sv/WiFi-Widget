@@ -45,9 +45,6 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver
-            android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WifiWidgetPinnedReceiver"
-            android:enabled="true" />
         <receiver android:name="com.w2sv.wifiwidget.screens.home.HomeActivity$WifiWidgetOptionsChangedReceiver"
             tools:ignore="Instantiatable" />
 
