@@ -72,6 +72,8 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.lifecycle.runtime
     implementation libs.androidx.splashscreen
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+
     // .compose
     implementation libs.androidx.compose.activity
     implementation libs.androidx.compose.viewmodel
