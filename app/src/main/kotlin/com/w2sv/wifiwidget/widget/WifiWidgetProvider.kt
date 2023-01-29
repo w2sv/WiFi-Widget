@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.w2sv.wifiwidget.widget
 
 import android.app.PendingIntent
@@ -22,9 +24,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
         const val ACTION_WIDGET_OPTIONS_CHANGED =
             "com.w2sv.wifiwidget.action.WIDGET_OPTIONS_CHANGED"
         const val EXTRA_WIDGET_ID = "com.w2sv.wifiwidget.EXTRA_WIDGET_ID"
-
-        fun getWidgetIds(appWidgetManager: AppWidgetManager, context: Context): IntArray =
-            appWidgetManager.getAppWidgetIds(context, WifiWidgetProvider::class.java)
 
         fun getWidgetIds(context: Context): IntArray =
             AppWidgetManager.getInstance(context)
@@ -69,14 +68,13 @@ class WifiWidgetProvider : AppWidgetProvider() {
         i { "onReceive | ${intent?.action} | ${intent?.extras?.keySet()?.toList()}" }
 
         when (intent?.action) {
-            ACTION_REFRESH_DATA -> AppWidgetManager.getInstance(context!!)
-                .let { manager ->
-                    onUpdate(
-                        context,
-                        manager,
-                        getWidgetIds(manager, context)
-                    )
-                }
+            ACTION_REFRESH_DATA -> context?.let {
+                onUpdate(
+                    it,
+                    AppWidgetManager.getInstance(it),
+                    getWidgetIds(it)
+                )
+            }
 
             else -> super.onReceive(context, intent)
         }

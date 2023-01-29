@@ -1,10 +1,10 @@
+@file:Suppress("DEPRECATION")
+
 package com.w2sv.wifiwidget.screens.home
 
 import android.Manifest
 import android.animation.ObjectAnimator
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -31,10 +31,9 @@ import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.AppTheme
+import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap
-import com.w2sv.wifiwidget.widget.PendingIntentCode
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
-import com.w2sv.wifiwidget.widget.extensions.showPinnedWidgetToast
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -57,7 +56,7 @@ class HomeActivity : AppActivity() {
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
 
-        val openPropertiesConfigurationDialog =
+        val openPropertiesConfigurationDialogOnStart =
             savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
                 .also { i { "openPropertiesConfigurationDialog: $it" } }
 
@@ -65,10 +64,9 @@ class HomeActivity : AppActivity() {
             WifiWidgetProvider.getWidgetIds(context).toMutableSet()
 
         fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
-            if (!widgetIds.contains(widgetId)) {
+            if (widgetIds.add(widgetId)) {
                 i { "New widgetId: $widgetId" }
-                widgetIds.add(widgetId)
-                context.showPinnedWidgetToast()
+                context.showToast("Pinned Widget")
             }
         }
 
@@ -124,10 +122,9 @@ class HomeActivity : AppActivity() {
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver(
                 LocalBroadcastManager.getInstance(this)
-            ) { intent ->
-                intent?.getIntExtra(WifiWidgetProvider.EXTRA_WIDGET_ID, -1).let {
-                    if (it != null && it != -1)
-                        viewModel.onWidgetOptionsUpdated(it, this)
+            ) {
+                intent?.getIntExtraOrNull(WifiWidgetProvider.EXTRA_WIDGET_ID, -1)?.let {
+                    viewModel.onWidgetOptionsUpdated(it, this)
                 }
             }
         )
@@ -155,29 +152,16 @@ class HomeActivity : AppActivity() {
                         WifiWidgetProvider::class.java
                     ),
                     null,
-                    PendingIntent.getBroadcast(
-                        this,
-                        PendingIntentCode.BroadcastToWidgetPinnedReceiver.ordinal,
-                        Intent(this, WifiWidgetPinnedReceiver::class.java),
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
+                    null
                 )
             } else
                 showToast("Widget pinning not supported by your device launcher")
         }
     }
 
-    class WifiWidgetPinnedReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            i { "WidgetPinnedReceiver.onReceive" }
-
-            context?.showPinnedWidgetToast()
-        }
-    }
-
     class WifiWidgetOptionsChangedReceiver(
         broadcastManager: LocalBroadcastManager,
-        private val onReceiveListener: (Intent?) -> Unit
+        private val callback: (Intent?) -> Unit
     ) : SelfManagingLocalBroadcastReceiver(
         broadcastManager,
         IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED)
@@ -185,7 +169,7 @@ class HomeActivity : AppActivity() {
 
         override fun onReceive(context: Context?, intent: Intent?) {
             i { "WifiWidgetOptionsChangedReceiver.onReceive" }
-            onReceiveListener(intent)
+            callback(intent)
         }
     }
 

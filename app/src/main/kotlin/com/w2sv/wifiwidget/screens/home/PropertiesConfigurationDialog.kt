@@ -49,7 +49,7 @@ fun PropertiesConfigurationDialogInflationButton() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
     var triggerOnClickListener by rememberSaveable {
-        mutableStateOf(viewModel.openPropertiesConfigurationDialog)
+        mutableStateOf(viewModel.openPropertiesConfigurationDialogOnStart)
     }
 
     if (triggerOnClickListener)
