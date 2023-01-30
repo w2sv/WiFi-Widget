@@ -56,6 +56,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         newOptions: Bundle?
     ) {
         context?.let {
+            i { "Sending ACTION_WIDGET_OPTIONS_CHANGED with EXTRA_WIDGET_ID=$appWidgetId" }
             LocalBroadcastManager.getInstance(it).sendBroadcast(
                 Intent(ACTION_WIDGET_OPTIONS_CHANGED)
                     .putExtra(EXTRA_WIDGET_ID, appWidgetId)
@@ -112,39 +113,44 @@ class WifiWidgetProvider : AppWidgetProvider() {
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
                     )
 
-                    // set refresh_button onClickListener
-                    setOnClickPendingIntent(
-                        R.id.refresh_button,
-                        getRefreshDataPendingIntent(context)
-                    )
-
-                    setOnClickPendingIntent(
-                        R.id.settings_button,
-                        PendingIntent.getActivity(
-                            context,
-                            PendingIntentCode.LaunchHomeActivity.ordinal,
-                            Intent(context, HomeActivity::class.java)
-                                .setMakeUniqueActivityFlags()
-                                .putExtra(
-                                    HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
-                                    true
-                                ),
-                            PendingIntent.FLAG_IMMUTABLE
-                        )
-                    )
-
-                    // set layout onClickListener
-                    setOnClickPendingIntent(
-                        R.id.widget_layout,
-                        PendingIntent.getActivity(
-                            context,
-                            PendingIntentCode.LaunchHomeActivity.ordinal,
-                            Intent(Settings.ACTION_WIFI_SETTINGS)
-                                .setMakeUniqueActivityFlags(),
-                            PendingIntent.FLAG_IMMUTABLE
-                        )
-                    )
+                    setOnClickPendingIntents(context)
                 }
         )
     }
+}
+
+private fun RemoteViews.setOnClickPendingIntents(context: Context) {
+    // refresh_button
+    setOnClickPendingIntent(
+        R.id.refresh_button,
+        WifiWidgetProvider.getRefreshDataPendingIntent(context)
+    )
+
+    // settings_button
+    setOnClickPendingIntent(
+        R.id.settings_button,
+        PendingIntent.getActivity(
+            context,
+            PendingIntentCode.LaunchHomeActivity.ordinal,
+            Intent(context, HomeActivity::class.java)
+                .setMakeUniqueActivityFlags()
+                .putExtra(
+                    HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
+                    true
+                ),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    )
+
+    // widget_layout
+    setOnClickPendingIntent(
+        R.id.widget_layout,
+        PendingIntent.getActivity(
+            context,
+            PendingIntentCode.LaunchHomeActivity.ordinal,
+            Intent(Settings.ACTION_WIFI_SETTINGS)
+                .setMakeUniqueActivityFlags(),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+    )
 }

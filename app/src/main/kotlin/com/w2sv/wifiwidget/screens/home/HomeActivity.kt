@@ -122,9 +122,9 @@ class HomeActivity : AppActivity() {
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver(
                 LocalBroadcastManager.getInstance(this)
-            ) {
-                intent?.getIntExtraOrNull(WifiWidgetProvider.EXTRA_WIDGET_ID, -1)?.let {
-                    viewModel.onWidgetOptionsUpdated(it, this)
+            ) { intent ->
+                intent?.getIntExtraOrNull(WifiWidgetProvider.EXTRA_WIDGET_ID, -1)?.let { widgetId ->
+                    viewModel.onWidgetOptionsUpdated(widgetId, this)
                 }
             }
         )
@@ -168,7 +168,6 @@ class HomeActivity : AppActivity() {
     ) {
 
         override fun onReceive(context: Context?, intent: Intent?) {
-            i { "WifiWidgetOptionsChangedReceiver.onReceive" }
             callback(intent)
         }
     }
