@@ -23,23 +23,25 @@ import java.util.Calendar
 @Preview
 @Composable
 internal fun HomeScreen() {
-    Scaffold(topBar = { AppTopBar() }) { paddingValues ->
-        Column(
-            Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
-            Arrangement.SpaceBetween,
-            Alignment.CenterHorizontally
-        ) {
-            Spacer(Modifier.weight(1.5f))
-            Box(Modifier.weight(0.5f)) {
-                PinWidgetButton()
+    NavigationDrawer {
+        Scaffold(topBar = { AppTopBar() }) { paddingValues ->
+            Column(
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
+                Arrangement.SpaceBetween,
+                Alignment.CenterHorizontally
+            ) {
+                Spacer(Modifier.weight(1.5f))
+                Box(Modifier.weight(0.5f)) {
+                    PinWidgetButton()
+                }
+                Spacer(Modifier.weight(0.5f))
+                Box(Modifier.weight(1f)) {
+                    PropertiesConfigurationDialogInflationButton()
+                }
+                CopyrightText(modifier = Modifier.padding(bottom = 8.dp))
             }
-            Spacer(Modifier.weight(0.5f))
-            Box(Modifier.weight(1f)) {
-                PropertiesConfigurationDialogInflationButton()
-            }
-            CopyrightText(modifier = Modifier.padding(bottom = 8.dp))
         }
     }
 }
