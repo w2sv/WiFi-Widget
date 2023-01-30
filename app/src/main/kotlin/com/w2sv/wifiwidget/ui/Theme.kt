@@ -15,7 +15,8 @@ fun AppTheme(content: @Composable () -> Unit) {
             onPrimary = Color.White,
             surface = Color.White,
             background = Color.White,
-            secondary = colorResource(id = R.color.mischka_dark)
+            secondary = colorResource(id = R.color.mischka_dark),
+            tertiary = colorResource(id = R.color.mischka)
         )
     ) {
         content()
