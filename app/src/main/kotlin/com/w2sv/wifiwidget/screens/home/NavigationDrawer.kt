@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +31,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.utils.playStoreLink
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -43,8 +46,10 @@ private fun NavigationDrawerPreview() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
+    val scope = rememberCoroutineScope()
+
     val drawerState = rememberDrawerState(DrawerValue.Open)
-    val properties = NavigationListItemProperties.get(LocalContext.current)
+    val properties = NavigationDrawerItemProperties.get(LocalContext.current)
 
     ModalNavigationDrawer(
         drawerContent = {
@@ -55,7 +60,7 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
                     Column(modifier = Modifier.padding(vertical = 32.dp)) {
                         Image(
                             painterResource(id = R.drawable.logo_foreground),
-                            "",
+                            null,
                             modifier = Modifier
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.primary)
@@ -73,7 +78,11 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
                             .padding(bottom = 12.dp)
                     )
                     properties.forEach {
-                        NavigationListItem(properties = it)
+                        NavigationDrawerItem(properties = it){
+                            scope.launch {
+                                drawerState.close()
+                            }
+                        }
                     }
                 }
             }
@@ -84,22 +93,22 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
     }
 }
 
-private data class NavigationListItemProperties(
+private data class NavigationDrawerItemProperties(
     @DrawableRes val icon: Int,
     val label: String,
     val callback: () -> Unit
 ) {
     companion object {
-        fun get(context: Context): List<NavigationListItemProperties> =
+        fun get(context: Context): List<NavigationDrawerItemProperties> =
             listOf(
-                NavigationListItemProperties(R.drawable.ic_share_24, "Share") {
+                NavigationDrawerItemProperties(R.drawable.ic_share_24, "Share") {
                     ShareCompat.IntentBuilder(context)
                         .setType("text/plain")
                         .setText("Check out WiFi Widget! \n\n ${context.playStoreLink}")
                         .setChooserTitle("Choose an app")
                         .startChooser()
                 },
-                NavigationListItemProperties(R.drawable.ic_star_rate_24, "Rate") {
+                NavigationDrawerItemProperties(R.drawable.ic_star_rate_24, "Rate") {
                     try {
                         context.startActivity(
                             Intent(
@@ -112,7 +121,7 @@ private data class NavigationListItemProperties(
                         context.showToast("You're not signed into the Play Store \uD83E\uDD14")
                     }
                 },
-                NavigationListItemProperties(R.drawable.ic_github_24, "Code") {
+                NavigationDrawerItemProperties(R.drawable.ic_github_24, "Code") {
                     context
                         .goToWebpage("https://github.com/w2sv/WiFi-Widget")
                 }
@@ -121,19 +130,20 @@ private data class NavigationListItemProperties(
 }
 
 @Composable
-private fun NavigationListItem(properties: NavigationListItemProperties) {
+private fun NavigationDrawerItem(properties: NavigationDrawerItemProperties, closeDrawer: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
                 properties.callback()
+                closeDrawer()
             }
             .padding(horizontal = 24.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
-                .size(size = 28.dp),
+                .size(size = dimensionResource(id = R.dimen.size_icon)),
             painter = painterResource(id = properties.icon),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary

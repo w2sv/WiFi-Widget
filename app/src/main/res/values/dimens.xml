@@ -6,4 +6,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="text_size_widget_wifi_property">14sp</dimen>
     <dimen name="size_image_button_icon">26dp</dimen>
+    <dimen name="size_icon">28dp</dimen>
 </resources>
