@@ -48,6 +48,7 @@ import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 fun PropertiesConfigurationDialogInflationButton() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
+
     var triggerOnClickListener by rememberSaveable {
         mutableStateOf(viewModel.openPropertiesConfigurationDialogOnStart)
     }
