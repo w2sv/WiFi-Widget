@@ -105,7 +105,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             RemoteViews(context.packageName, R.layout.widget)
                 .apply {
                     // populate wifi dependent layout
-                    WifiConnectionDependentWidgetLayoutSetter.getInstance(context).populate(this)
+                    ConnectionDependentWidgetLayoutSetter.getInstance(context).populate(this)
 
                     // set last_updated_tv text
                     setTextViewText(
@@ -142,9 +142,9 @@ private fun RemoteViews.setOnClickPendingIntents(context: Context) {
         )
     )
 
-    // widget_layout
+    // connection_dependent_layout
     setOnClickPendingIntent(
-        R.id.widget_layout,
+        R.id.connection_dependent_layout,
         PendingIntent.getActivity(
             context,
             PendingIntentCode.LaunchHomeActivity.ordinal,

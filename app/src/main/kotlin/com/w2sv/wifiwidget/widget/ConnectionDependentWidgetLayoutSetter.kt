@@ -20,16 +20,16 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
 
-internal class WifiConnectionDependentWidgetLayoutSetter @Inject constructor() {
+internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint
     interface EntryPointInterface {
-        fun getInstance(): WifiConnectionDependentWidgetLayoutSetter
+        fun getInstance(): ConnectionDependentWidgetLayoutSetter
     }
 
     companion object {
-        fun getInstance(context: Context): WifiConnectionDependentWidgetLayoutSetter =
+        fun getInstance(context: Context): ConnectionDependentWidgetLayoutSetter =
             EntryPointAccessors.fromApplication(
                 context,
                 EntryPointInterface::class.java

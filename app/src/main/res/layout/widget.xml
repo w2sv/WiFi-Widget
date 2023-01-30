@@ -7,19 +7,26 @@
     style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
-    <include
-        android:id="@+id/wifi_properties_layout"
-        layout="@layout/widget_wifi_properties" />
+    <FrameLayout
+        android:id="@+id/connection_dependent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/wifi_status_tv"
+        <include
+            android:id="@+id/wifi_properties_layout"
+            layout="@layout/widget_wifi_properties" />
 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        <TextView
+            android:id="@+id/wifi_status_tv"
 
-        android:textSize="16sp"
-        android:textStyle="italic" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+
+            android:textSize="16sp"
+            android:textStyle="italic" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
