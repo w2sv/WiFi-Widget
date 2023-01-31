@@ -8,11 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.wifiwidget.ui.AppTopBar
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.WifiWidgetTopBar
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -24,7 +25,7 @@ internal fun HomeScreen() {
 
     NavigationDrawer { drawerState ->
         Scaffold(topBar = {
-            AppTopBar {
+            WifiWidgetTopBar {
                 coroutineScope.launch {
                     drawerState.open()
                 }
@@ -45,7 +46,7 @@ internal fun HomeScreen() {
                 Box(Modifier.weight(1f)) {
                     PropertiesConfigurationDialogInflationButton()
                 }
-                CopyrightText(modifier = Modifier.padding(bottom = 8.dp))
+                CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
         }
     }

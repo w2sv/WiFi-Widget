@@ -1,24 +1,15 @@
 package com.w2sv.wifiwidget.screens.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -38,12 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.androidutils.extensions.goToWebpage
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 
-@Preview
 @Composable
 fun PropertiesConfigurationDialogInflationButton() {
     val viewModel: HomeActivity.ViewModel = viewModel()
@@ -65,7 +58,7 @@ fun PropertiesConfigurationDialogInflationButton() {
     IconButton(onClick = { triggerOnClickListener = true }) {
         Icon(
             imageVector = Icons.Default.Settings,
-            contentDescription = "Inflate widget properties selection dialog",
+            contentDescription = "Inflate widget properties configuration dialog",
             modifier = Modifier.size(32.dp),
             tint = MaterialTheme.colorScheme.primary
         )
@@ -105,7 +98,10 @@ private fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
                     ),
                     color = MaterialTheme.colorScheme.primary
                 )
-                Divider(Modifier.padding(horizontal = 22.dp, vertical = 12.dp), color = MaterialTheme.colorScheme.onPrimary)
+                Divider(
+                    Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
                 WidgetPropertiesSelectionColumn()
             }
         }
@@ -113,10 +109,28 @@ private fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
 }
 
 @Composable
-private fun ColumnScope.WidgetPropertiesSelectionColumn(
-) {
+private fun ColumnScope.WidgetPropertiesSelectionColumn() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
+
+    var infoDialogProperty by rememberSaveable {
+        mutableStateOf<String?>(null)
+    }
+
+    val propertyInfoMap = stringArrayResource(id = R.array.widget_properties)
+        .zip(
+            stringArrayResource(id = R.array.property_info)
+                .zip(stringArrayResource(id = R.array.property_urls))
+        )
+        .toMap()
+
+    infoDialogProperty?.let {
+        propertyInfoMap.getValue(it).run {
+            PropertyInfoDialog(label = it, text = first, url = second) {
+                infoDialogProperty = null
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -143,9 +157,87 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn(
                             else
                                 viewModel.widgetPropertyStates[widgetProperty] = it
                         },
-                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = MaterialTheme.colorScheme.primary,
+                            uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     )
+                    IconButton(onClick = {
+                        infoDialogProperty = widgetProperty
+                    }) {
+                        Icon(
+                            imageVector = Icons.Outlined.Info,
+                            contentDescription = "Click to toggle the property info dialog",
+                            modifier = Modifier.size(
+                                dimensionResource(id = R.dimen.size_icon)
+                            ),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
                 }
             }
+    }
+}
+
+@Composable
+private fun PropertyInfoDialog(
+    label: String,
+    text: String,
+    url: String,
+    onDismissRequest: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            ElevatedButton(
+                onClick = onDismissRequest,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
+            ) {
+                JostText(text = "Close")
+            }
+        },
+        title = {
+            JostText(
+                text = label,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        },
+        text = {
+            Column(
+                Modifier
+                    .sizeIn(maxHeight = 520.dp)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                Arrangement.Center,
+                Alignment.CenterHorizontally
+            ) {
+                JostText(text = text, textAlign = TextAlign.Center)
+                ElevatedButton(
+                    onClick = {
+                        context.goToWebpage(url)
+                        onDismissRequest()
+                    },
+                    modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+                    elevation = ButtonDefaults.elevatedButtonElevation(8.dp)
+                ) {
+                    JostText(text = "Learn more")
+                }
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun Preview() {
+    WifiWidgetTheme {
+        PropertyInfoDialog(label = "IP", text = "Some Text", "") {
+
+        }
     }
 }

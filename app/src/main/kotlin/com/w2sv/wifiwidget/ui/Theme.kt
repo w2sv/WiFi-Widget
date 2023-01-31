@@ -8,7 +8,7 @@ import androidx.compose.ui.res.colorResource
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun AppTheme(content: @Composable () -> Unit) {
+fun WifiWidgetTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = lightColorScheme(
             primary = colorResource(id = R.color.primary),
