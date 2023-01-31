@@ -76,5 +76,6 @@ fun LocationAccessServiceInformationDialog(onDismissRequest: () -> Unit) {
             ElevatedButton(onClick = onDismissRequest) {
                 JostText(text = "Got it!")
             }
-        })
+        }
+    )
 }
