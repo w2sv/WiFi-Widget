@@ -23,8 +23,26 @@
         <item>@string/ssid</item>
         <item>@string/frequency</item>
         <item>@string/gateway</item>
-        <item>@string/netmask</item>
         <item>@string/dns</item>
         <item>@string/dhcp</item>
+        <item>@string/netmask</item>
+    </string-array>
+    <string-array name="property_info">
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. WiFi Widget displays the IPv4 representation, which corresponds to a 32-bit number, as opposed to the IPv6 format, which corresponds to a 128-bit number. The displayed address is your internal one, meaning that it\'s merely visible from within your network.</item>
+        <item>Service Set Identifier. Your network\'s name.</item>
+        <item>The frequency band employed for WiFi signal transmission. Usually one of 2.4G or 5G.</item>
+        <item>A Gateway is a device uniting the functionality of a modem, i.e., communicating with your ISP (Internet Service Provider), and a router, i.e., translating the data received by the modem and distributing it as WiFi signal to the client devices being present in the network.</item>
+        <item>Domain Name System. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</item>
+        <item>Dynamic Host Configuration Protocol. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</item>
+        <item>Also referred to as subnet mask. A bitmask determining the subnetwork within which the DHCP may operate.</item>
+    </string-array>
+    <string-array name="property_urls">
+        <item>https://en.wikipedia.org/wiki/IP_address</item>
+        <item>https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID</item>
+        <item>https://en.wikipedia.org/wiki/List_of_WLAN_channels</item>
+        <item>https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway</item>
+        <item>https://en.wikipedia.org/wiki/Domain_Name_System</item>
+        <item>https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol</item>
+        <item>https://en.wikipedia.org/wiki/Subnetwork</item>
     </string-array>
 </resources>

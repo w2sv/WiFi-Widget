@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -28,8 +26,8 @@ import com.w2sv.androidutils.extensions.goToWebpage
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.AppTheme
 import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.playStoreLink
 import kotlinx.coroutines.launch
 
@@ -37,7 +35,7 @@ import kotlinx.coroutines.launch
 @Preview
 @Composable
 private fun NavigationDrawerPreview() {
-    AppTheme {
+    WifiWidgetTheme {
         NavigationDrawer {
         }
     }
@@ -48,13 +46,16 @@ private fun NavigationDrawerPreview() {
 fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
     val scope = rememberCoroutineScope()
 
-    val drawerState = rememberDrawerState(DrawerValue.Open)
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
     val properties = NavigationDrawerItemProperties.get(LocalContext.current)
 
     ModalNavigationDrawer(
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.secondary) {
                 Column(
+                    modifier = Modifier
+                        .padding(bottom = 32.dp)
+                        .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Column(modifier = Modifier.padding(vertical = 32.dp)) {
@@ -78,7 +79,7 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
                             .padding(bottom = 12.dp)
                     )
                     properties.forEach {
-                        NavigationDrawerItem(properties = it){
+                        NavigationDrawerItem(properties = it) {
                             scope.launch {
                                 drawerState.close()
                             }
@@ -104,7 +105,7 @@ private data class NavigationDrawerItemProperties(
                 NavigationDrawerItemProperties(R.drawable.ic_share_24, "Share") {
                     ShareCompat.IntentBuilder(context)
                         .setType("text/plain")
-                        .setText("Check out WiFi Widget! \n\n ${context.playStoreLink}")
+                        .setText("Check out WiFi Widget!\n${context.playStoreLink}")
                         .setChooserTitle("Choose an app")
                         .startChooser()
                 },
@@ -130,7 +131,10 @@ private data class NavigationDrawerItemProperties(
 }
 
 @Composable
-private fun NavigationDrawerItem(properties: NavigationDrawerItemProperties, closeDrawer: () -> Unit) {
+private fun NavigationDrawerItem(
+    properties: NavigationDrawerItemProperties,
+    closeDrawer: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

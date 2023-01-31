@@ -30,7 +30,7 @@ import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
-import com.w2sv.wifiwidget.ui.AppTheme
+import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
@@ -137,7 +137,7 @@ class HomeActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppTheme {
+            WifiWidgetTheme {
                 HomeScreen()
             }
         }

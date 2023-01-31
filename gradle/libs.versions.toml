@@ -15,7 +15,7 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.re
 
 # owned
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.0'
-androidutils = 'com.github.w2sv:AndroidUtils:0.0.15-rc1'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.15-rc2'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.6.0'

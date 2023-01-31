@@ -64,8 +64,6 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar', '*.aar'], dir: 'libs')
-
     implementation libs.kotlin.stdlib
     // androidx
     implementation libs.androidx.core
@@ -89,6 +87,6 @@ dependencies {
 
     // other
     implementation libs.typedpreferences
-//    implementation libs.androidutils
+    implementation libs.androidutils
     implementation libs.slimber
 }
