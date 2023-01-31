@@ -21,7 +21,7 @@ import com.w2sv.wifiwidget.ui.JostText
 
 @Preview
 @Composable
-internal fun PinWidgetButton() {
+fun PinWidgetButton() {
     val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
 
     var triggerOnClickListener by rememberSaveable {
