@@ -5,14 +5,11 @@ compileSdk = '33'
 compose-compiler = '1.4.0'
 gradle-plugin = '7.4.0'
 kotlin = '1.8.0'
-
 hilt = '2.44.2'
 junit = '5.9.2'
 lifecycle = '2.6.0-alpha05'
 
 [libraries]
-kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
-
 # owned
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.0'
 androidutils = 'com.github.w2sv:AndroidUtils:0.0.15-rc2'
