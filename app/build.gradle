@@ -64,7 +64,10 @@ android {
 }
 
 dependencies {
-    implementation libs.kotlin.stdlib
+    // owned
+    implementation libs.typedpreferences
+    implementation libs.androidutils
+
     // androidx
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
@@ -87,7 +90,5 @@ dependencies {
     kapt libs.google.hilt.kapt
 
     // other
-    implementation libs.typedpreferences
-    implementation libs.androidutils
     implementation libs.slimber
 }
