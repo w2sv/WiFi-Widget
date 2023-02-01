@@ -12,12 +12,11 @@ import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
 import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
-import java.util.Date
+import java.util.*
 
 class WifiWidgetProvider : AppWidgetProvider() {
 
@@ -126,25 +125,9 @@ private fun RemoteViews.setOnClickPendingIntents(context: Context) {
         WifiWidgetProvider.getRefreshDataPendingIntent(context)
     )
 
-    // settings_button
-    setOnClickPendingIntent(
-        R.id.settings_button,
-        PendingIntent.getActivity(
-            context,
-            PendingIntentCode.LaunchHomeActivity.ordinal,
-            Intent(context, HomeActivity::class.java)
-                .setMakeUniqueActivityFlags()
-                .putExtra(
-                    HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
-                    true
-                ),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-        )
-    )
-
     // connection_dependent_layout
     setOnClickPendingIntent(
-        R.id.connection_dependent_layout,
+        R.id.widget_layout,
         PendingIntent.getActivity(
             context,
             PendingIntentCode.LaunchHomeActivity.ordinal,

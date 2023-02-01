@@ -7,4 +7,5 @@
     <color name="blue_chill_dark">#158a92</color>
 
     <color name="primary">@color/blue_chill_dark</color>
+    <color name="widget_bottom_row">@color/mischka_dark</color>
 </resources>
