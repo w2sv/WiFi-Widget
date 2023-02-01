@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home
+package com.w2sv.wifiwidget.ui.home
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -29,7 +29,7 @@ fun PropertySelectionDialogInflationButton() {
     }
 
     if (inflateDialog) {
-        PropertiesConfigurationDialog(
+        PropertySelectionDialog(
             onCancel = {
                 viewModel.resetWidgetPropertyStates()
                 inflateDialog = false
