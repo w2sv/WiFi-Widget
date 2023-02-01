@@ -37,6 +37,8 @@ import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import slimber.log.i
 import javax.inject.Inject
 
@@ -60,8 +62,9 @@ class HomeActivity : AppActivity() {
             savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
                 .also { i { "openPropertiesConfigurationDialog: $it" } }
 
-        private val widgetIds: MutableSet<Int> =
-            WifiWidgetProvider.getWidgetIds(context).toMutableSet()
+        /**
+         * Widget Creation Listening
+         */
 
         fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
             if (widgetIds.add(widgetId)) {
@@ -70,30 +73,45 @@ class HomeActivity : AppActivity() {
             }
         }
 
+        private val widgetIds: MutableSet<Int> =
+            WifiWidgetProvider.getWidgetIds(context).toMutableSet()
+
+        /**
+         * widgetPropertyStates
+         */
+
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
         }
 
-        fun unchecksAllProperties(
-            newValue: Boolean,
-            preferenceKey: String
-        ): Boolean =
-            !newValue && widgetPropertyStates.all { (k, v) -> k == preferenceKey || !v }
+        fun syncWidgetPropertyStates() {
+            widgetProperties.putAll(widgetPropertyStates)
+            _propertyStatesDissimilar.value = false
+        }
+
+        fun resetWidgetPropertyStates() {
+            widgetPropertyStates.putAll(widgetProperties)
+            _propertyStatesDissimilar.value = false
+        }
+
+        private val _propertyStatesDissimilar = MutableStateFlow(false)
+        val propertyStatesDissimilar = _propertyStatesDissimilar.asStateFlow()
 
         /**
-         * @return flag indicating whether any property has been updated
+         * @return Boolean indicating whether change has been endorsed
          */
-        fun syncWidgetProperties(): Boolean {
-            var updatedAnyProperty = false
+        fun onChangePropertyState(property: String, value: Boolean): Boolean {
+            // veto change if leading to all properties being unchecked
+            if (!value && widgetPropertyStates.values.count { true } == 1)
+                return false
 
-            widgetPropertyStates.forEach { (k, v) ->
-                if (v != widgetProperties.getValue(k)) {
-                    widgetProperties[k] = v
-                    updatedAnyProperty = true
+            // implement change and update _propertyStatesDissimilar
+            widgetPropertyStates[property] = value
+            _propertyStatesDissimilar.value =
+                widgetPropertyStates.any { (k, v) ->  // TODO: optimize
+                    v != widgetProperties.getValue(k)
                 }
-            }
-
-            return updatedAnyProperty
+            return true
         }
 
         /**
@@ -166,7 +184,6 @@ class HomeActivity : AppActivity() {
         broadcastManager,
         IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED)
     ) {
-
         override fun onReceive(context: Context?, intent: Intent?) {
             callback(intent)
         }
@@ -177,7 +194,7 @@ class HomeActivity : AppActivity() {
             if (permissionGrantedMap.containsValue(true)) {
                 with(viewModel) {
                     widgetPropertyStates[widgetProperties::SSID.name] = true
-                    syncWidgetProperties()
+                    syncWidgetPropertyStates()
                 }
             }
 

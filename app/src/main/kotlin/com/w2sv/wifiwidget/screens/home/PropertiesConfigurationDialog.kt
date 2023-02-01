@@ -23,6 +23,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -30,10 +31,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
-fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
-    Dialog(onDismissRequest = onDismissRequest) {
+fun PropertiesConfigurationDialog(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+    confirmButtonEnabled: Boolean
+) {
+    Dialog(onDismissRequest = onCancel) {
         ElevatedCard(
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.elevatedCardElevation(16.dp)
@@ -68,14 +74,27 @@ fun PropertiesConfigurationDialog(onDismissRequest: () -> Unit) {
                     Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                WidgetPropertiesSelectionColumn()
+                PropertyColumn()
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 24.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    ElevatedButton(onClick = onCancel) {
+                        JostText(text = "Cancel")
+                    }
+                    ElevatedButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
+                        JostText(text = "Confirm")
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.WidgetPropertiesSelectionColumn() {
+private fun ColumnScope.PropertyColumn() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
 
@@ -89,6 +108,26 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn() {
         }
     }
 
+    StatelessPropertyColumn(
+        propertyChecked = { property ->
+            viewModel.widgetPropertyStates.getValue(property)
+        },
+        onCheckedChange = { property, newValue ->
+            if (!viewModel.onChangePropertyState(property, newValue))
+                context.showToast(context.getString(R.string.uncheck_all_properties_toast))
+        },
+        inflateInfoDialog = { propertyIndex ->
+            infoDialogPropertyIndex = propertyIndex
+        }
+    )
+}
+
+@Composable
+private fun ColumnScope.StatelessPropertyColumn(
+    propertyChecked: (String) -> Boolean,
+    onCheckedChange: (String, Boolean) -> Unit,
+    inflateInfoDialog: (Int) -> Unit
+) {
     Column(
         modifier = Modifier
             .padding(horizontal = 26.dp)
@@ -96,31 +135,26 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn() {
             .weight(1f, fill = false)
     ) {
         stringArrayResource(id = R.array.wifi_properties)
-            .forEachIndexed { index, widgetProperty ->
+            .forEachIndexed { propertyIndex, property ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     JostText(
-                        text = widgetProperty,
+                        text = property,
                         modifier = Modifier.weight(1f, fill = true),
                         color = MaterialTheme.colorScheme.onPrimary,
                         fontSize = 14.sp
                     )
                     Checkbox(
-                        checked = viewModel.widgetPropertyStates.getValue(widgetProperty),
-                        onCheckedChange = {
-                            if (viewModel.unchecksAllProperties(it, widgetProperty))
-                                context.showToast(context.getString(R.string.uncheck_all_properties_toast))
-                            else
-                                viewModel.widgetPropertyStates[widgetProperty] = it
-                        },
+                        checked = propertyChecked(property),
+                        onCheckedChange = { onCheckedChange(property, it) },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary,
                             uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                     IconButton(onClick = {
-                        infoDialogPropertyIndex = index
+                        inflateInfoDialog(propertyIndex)
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
@@ -133,5 +167,15 @@ private fun ColumnScope.WidgetPropertiesSelectionColumn() {
                     }
                 }
             }
+    }
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    WifiWidgetTheme {
+        Column {
+            StatelessPropertyColumn({ true }, { _, _ -> }, {})
+        }
     }
 }
