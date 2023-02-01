@@ -1,7 +1,7 @@
 <resources>
     <string-array name="wifi_properties">
-        <item>@string/ip</item>
         <item>@string/ssid</item>
+        <item>@string/ip</item>
         <item>@string/frequency</item>
         <item>@string/gateway</item>
         <item>@string/dns</item>
@@ -9,15 +9,15 @@
         <item>@string/netmask</item>
     </string-array>
 
-    <string-array name="ip">
-        <item>@string/ip</item>
-        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. WiFi Widget displays the IPv4 representation, which corresponds to a 32-bit number, as opposed to the IPv6 format, which corresponds to a 128-bit number. The displayed address is your internal one, meaning that it\'s merely visible from within your network.</item>
-        <item>https://en.wikipedia.org/wiki/IP_address</item>
-    </string-array>
     <string-array name="ssid">
         <item>@string/ssid</item>
         <item>Service Set Identifier. Your network\'s name.</item>
         <item>https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID</item>
+    </string-array>
+    <string-array name="ip">
+        <item>@string/ip</item>
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. WiFi Widget displays the IPv4 representation, which corresponds to a 32-bit number, as opposed to the IPv6 format, which corresponds to a 128-bit number. The displayed address is your internal one, meaning that it\'s merely visible from within your network.</item>
+        <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>
     <string-array name="frequency">
         <item>@string/frequency</item>
