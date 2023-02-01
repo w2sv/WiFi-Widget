@@ -1,6 +1,8 @@
 package com.w2sv.wifiwidget.widget
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.view.View
@@ -8,7 +10,9 @@ import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.preferences.WidgetProperties
+import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
 import com.w2sv.wifiwidget.widget.utils.asFormattedIpAddress
 import com.w2sv.wifiwidget.widget.extensions.crossVisualize
 import com.w2sv.wifiwidget.widget.utils.isWifiConnected
@@ -54,7 +58,8 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
                     when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
                         true -> {
                             populatePropertiesLayout()
-                            crossVisualize(R.id.wifi_properties_layout, R.id.wifi_status_tv)
+                            setWidgetSettingsButton(true)
+                            setLayout(true)
                         }
 
                         false -> onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
@@ -135,8 +140,39 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
         }
     }
 
+    private fun RemoteViews.setWidgetSettingsButton(connectionAvailable: Boolean){
+        when(connectionAvailable){
+            true -> {
+                setViewVisibility(R.id.settings_button, View.VISIBLE)
+                setOnClickPendingIntent(
+                    R.id.settings_button,
+                    PendingIntent.getActivity(
+                        context,
+                        PendingIntentCode.LaunchHomeActivity.ordinal,
+                        Intent(context, HomeActivity::class.java)
+                            .setMakeUniqueActivityFlags()
+                            .putExtra(
+                                HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
+                                true
+                            ),
+                        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    )
+                )
+            }
+            false -> setViewVisibility(R.id.settings_button, View.GONE)
+        }
+    }
+
     private fun RemoteViews.onNoWifiConnectionAvailable(statusText: String) {
         setTextViewText(R.id.wifi_status_tv, statusText)
-        crossVisualize(R.id.wifi_status_tv, R.id.wifi_properties_layout)
+        setWidgetSettingsButton(false)
+        setLayout(false)
+    }
+
+    private fun RemoteViews.setLayout(connectionAvailable: Boolean){
+        when(connectionAvailable){
+            false -> crossVisualize(R.id.no_connection_available_layout, R.id.wifi_properties_layout)
+            true -> crossVisualize(R.id.wifi_properties_layout, R.id.no_connection_available_layout)
+        }
     }
 }
