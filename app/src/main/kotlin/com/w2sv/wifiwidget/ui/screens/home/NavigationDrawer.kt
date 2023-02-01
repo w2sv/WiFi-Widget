@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import android.content.ActivityNotFoundException
 import android.content.Context

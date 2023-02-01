@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -30,6 +30,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
@@ -74,7 +75,7 @@ fun PropertiesConfigurationDialog(
                     Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                PropertyColumn()
+                PropertyRows()
                 Row(
                     modifier = Modifier
                         .padding(vertical = 24.dp)
@@ -94,7 +95,7 @@ fun PropertiesConfigurationDialog(
 }
 
 @Composable
-private fun ColumnScope.PropertyColumn() {
+private fun ColumnScope.PropertyRows() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
 

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget
+package com.w2sv.wifiwidget.activities
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

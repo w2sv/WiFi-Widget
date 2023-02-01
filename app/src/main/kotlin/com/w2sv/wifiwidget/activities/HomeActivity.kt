@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.activities
 
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
@@ -23,9 +23,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.wifiwidget.AppActivity
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
+import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap
