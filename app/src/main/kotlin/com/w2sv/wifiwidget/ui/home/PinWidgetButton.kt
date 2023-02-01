@@ -24,24 +24,31 @@ import com.w2sv.wifiwidget.ui.JostText
 @Composable
 fun PinWidgetButton() {
     val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
+    val viewModel: HomeActivity.ViewModel = viewModel()
 
     var triggerOnClickListener by rememberSaveable {
         mutableStateOf(false)
     }
-    var showLocationAccessServiceInformationDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
 
     if (triggerOnClickListener) {
-        OnClickListener(
-            { triggerOnClickListener = false },
-            { showLocationAccessServiceInformationDialog = true }
-        )
-    }
-    if (showLocationAccessServiceInformationDialog) {
-        LocationAccessServiceInformationDialog {
-            homeActivity.lapRequestLauncher.launch()
-            showLocationAccessServiceInformationDialog = false
+        when (viewModel.lapDialogAnswered) {
+            false -> LocationAccessPermissionDialog(
+                onConfirmButtonPressed = {
+                    homeActivity.lapRequestLauncher.launch()
+                    viewModel.onLapDialogAnswered()
+                },
+                onDismissButtonPressed = {
+                    homeActivity.requestWidgetPin()
+                    viewModel.onLapDialogAnswered()
+                },
+                onCloseDialog = {
+                    triggerOnClickListener = false
+                }
+            )
+            true -> {
+                homeActivity.requestWidgetPin()
+                triggerOnClickListener = false
+            }
         }
     }
 
@@ -55,33 +62,4 @@ fun PinWidgetButton() {
             )
         }
     )
-}
-
-@Composable
-private fun OnClickListener(
-    resetTrigger: () -> Unit,
-    showLocationAccessServiceInformationDialog: () -> Unit
-) {
-    val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
-    val viewModel: HomeActivity.ViewModel = viewModel()
-
-    if (!viewModel.lapDialogAnswered)
-        LocationAccessPermissionDialog(
-            onConfirmButtonPressed = {
-                showLocationAccessServiceInformationDialog()
-            },
-            onDismissButtonPressed = {
-                homeActivity.requestWidgetPin()
-            },
-            onDialogAnswered = {
-                viewModel.onLapDialogAnswered()
-            },
-            onDismissRequest = {
-                resetTrigger()
-            }
-        )
-    else {
-        homeActivity.requestWidgetPin()
-        resetTrigger()
-    }
 }

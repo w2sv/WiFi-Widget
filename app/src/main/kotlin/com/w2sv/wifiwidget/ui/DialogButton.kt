@@ -7,6 +7,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -20,7 +21,10 @@ fun DialogButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+        border = if (enabled) BorderStroke(
+            Dp.Hairline,
+            MaterialTheme.colorScheme.primary
+        ) else null,
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
         content = content
     )

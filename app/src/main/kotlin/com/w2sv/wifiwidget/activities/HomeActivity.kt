@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -25,10 +26,11 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
-import com.w2sv.wifiwidget.ui.home.HomeScreen
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.home.HomeScreen
 import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap
+import com.w2sv.wifiwidget.utils.locationServicesEnabled
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,6 +68,8 @@ class HomeActivity : AppActivity() {
             if (widgetIds.add(widgetId)) {
                 i { "New widgetId: $widgetId" }
                 context.showToast("Pinned Widget")
+                if (widgetProperties.SSID && !context.locationServicesEnabled)
+                    context.showToast("SSID display requires location access!", Toast.LENGTH_LONG)
             }
         }
 
