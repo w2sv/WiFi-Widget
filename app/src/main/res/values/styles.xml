@@ -18,6 +18,7 @@
 
     <style name="Widget.Wifi.Property.TextView" parent="TextAppearance.AppCompat">
         <item name="android:textSize">@dimen/text_size_widget_wifi_property</item>
+        <item name="android:fontFamily">@font/jost</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
@@ -28,7 +29,7 @@
     </style>
 
     <style name="Widget.Wifi.Property.Value" parent="Widget.Wifi.Property.TextView">
-        <item name="android:textColor">@color/mischka_dark</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="android:layout_width">wrap_content</item>
     </style>
 
