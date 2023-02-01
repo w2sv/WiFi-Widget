@@ -2,7 +2,6 @@
 
 package com.w2sv.wifiwidget.screens.home
 
-import android.Manifest
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -12,9 +11,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.core.animation.doOnEnd
@@ -24,7 +21,6 @@ import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.w2sv.androidutils.ActivityCallContractHandler
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.AppActivity
@@ -190,7 +186,7 @@ class HomeActivity : AppActivity() {
     }
 
     val lapRequestLauncher by lazy {
-        LocationAccessPermissionRequestLauncher(this) { permissionGrantedMap ->
+        LocationAccessPermissionHandler(this) { permissionGrantedMap ->
             if (permissionGrantedMap.containsValue(true)) {
                 with(viewModel) {
                     widgetPropertyStates[widgetProperties::SSID.name] = true
@@ -200,25 +196,6 @@ class HomeActivity : AppActivity() {
 
             requestWidgetPin()
         }
-    }
-}
-
-class LocationAccessPermissionRequestLauncher(
-    activity: ComponentActivity,
-    override val resultCallback: (Map<String, Boolean>) -> Unit
-) :
-    ActivityCallContractHandler.Impl<Array<String>, Map<String, Boolean>>(
-        activity,
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) {
-
-    fun launch() {
-        resultLauncher.launch(
-            arrayOf(
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            )
-        )
     }
 }
 
