@@ -25,7 +25,7 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
-import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
+import com.w2sv.wifiwidget.ui.home.HomeScreen
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap

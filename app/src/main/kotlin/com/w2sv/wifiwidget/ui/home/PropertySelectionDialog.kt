@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home
+package com.w2sv.wifiwidget.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -31,14 +31,55 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
-fun PropertiesConfigurationDialog(
+fun PropertySelectionDialog(
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
     confirmButtonEnabled: Boolean
+) {
+    val viewModel: HomeActivity.ViewModel = viewModel()
+    val context = LocalContext.current
+
+    var infoDialogPropertyIndex by rememberSaveable {
+        mutableStateOf<Int?>(null)
+    }
+
+    infoDialogPropertyIndex?.let {
+        PropertyInfoDialog(it) {
+            infoDialogPropertyIndex = null
+        }
+    }
+
+    StatelessPropertySelectionDialog(
+        onCancel = onCancel,
+        onConfirm = onConfirm,
+        confirmButtonEnabled = confirmButtonEnabled
+    ) {
+        StatelessPropertyRows(
+            propertyChecked = { property ->
+                viewModel.widgetPropertyStates.getValue(property)
+            },
+            onCheckedChange = { property, newValue ->
+                if (!viewModel.onChangePropertyState(property, newValue))
+                    context.showToast(context.getString(R.string.uncheck_all_properties_toast))
+            },
+            inflateInfoDialog = { propertyIndex ->
+                infoDialogPropertyIndex = propertyIndex
+            }
+        )
+    }
+}
+
+@Composable
+private fun StatelessPropertySelectionDialog(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+    confirmButtonEnabled: Boolean,
+    propertyRows: @Composable ColumnScope.() -> Unit
 ) {
     Dialog(onDismissRequest = onCancel) {
         ElevatedCard(
@@ -75,56 +116,40 @@ fun PropertiesConfigurationDialog(
                     Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                PropertyRows()
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 24.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    ElevatedButton(onClick = onCancel) {
-                        JostText(text = "Cancel")
-                    }
-                    ElevatedButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
-                        JostText(text = "Confirm")
-                    }
-                }
+                propertyRows()
+                ButtonRow(onCancel, onConfirm, confirmButtonEnabled)
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.PropertyRows() {
-    val viewModel: HomeActivity.ViewModel = viewModel()
-    val context = LocalContext.current
-
-    var infoDialogPropertyIndex by rememberSaveable {
-        mutableStateOf<Int?>(null)
-    }
-
-    infoDialogPropertyIndex?.let {
-        PropertyInfoDialog(it) {
-            infoDialogPropertyIndex = null
+private fun ButtonRow(onCancel: () -> Unit, onConfirm: () -> Unit, confirmButtonEnabled: Boolean) {
+    Row(
+        modifier = Modifier
+            .padding(vertical = 24.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        DialogButton(onClick = onCancel) {
+            JostText(text = "Cancel")
+        }
+        DialogButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
+            JostText(text = "Confirm")
         }
     }
+}
 
-    StatelessPropertyColumn(
-        propertyChecked = { property ->
-            viewModel.widgetPropertyStates.getValue(property)
-        },
-        onCheckedChange = { property, newValue ->
-            if (!viewModel.onChangePropertyState(property, newValue))
-                context.showToast(context.getString(R.string.uncheck_all_properties_toast))
-        },
-        inflateInfoDialog = { propertyIndex ->
-            infoDialogPropertyIndex = propertyIndex
-        }
-    )
+@Preview
+@Composable
+private fun ButtonRowPrev() {
+    WifiWidgetTheme {
+        ButtonRow(onCancel = { /*TODO*/ }, onConfirm = { /*TODO*/ }, confirmButtonEnabled = true)
+    }
 }
 
 @Composable
-private fun ColumnScope.StatelessPropertyColumn(
+private fun ColumnScope.StatelessPropertyRows(
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     inflateInfoDialog: (Int) -> Unit
@@ -173,10 +198,10 @@ private fun ColumnScope.StatelessPropertyColumn(
 
 @Preview
 @Composable
-private fun Preview() {
+private fun StatelessPropertyRowsPrev() {
     WifiWidgetTheme {
         Column {
-            StatelessPropertyColumn({ true }, { _, _ -> }, {})
+            StatelessPropertyRows({ true }, { _, _ -> }, {})
         }
     }
 }

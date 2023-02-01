@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home
+package com.w2sv.wifiwidget.ui.home
 
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.material3.ButtonDefaults
