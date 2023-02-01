@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 
 @Composable

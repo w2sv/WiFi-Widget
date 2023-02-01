@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

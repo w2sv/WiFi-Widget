@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.screens.home
+package com.w2sv.wifiwidget.activities
 
 import android.Manifest
 import androidx.activity.ComponentActivity

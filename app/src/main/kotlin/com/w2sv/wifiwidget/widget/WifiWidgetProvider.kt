@@ -12,7 +12,7 @@ import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.screens.home.HomeActivity
+import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
 import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
 import slimber.log.i
