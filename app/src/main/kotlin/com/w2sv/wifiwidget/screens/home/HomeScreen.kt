@@ -49,7 +49,7 @@ internal fun HomeScreen() {
                 }
                 Spacer(Modifier.weight(0.5f))
                 Box(Modifier.weight(1f)) {
-                    PropertiesConfigurationDialogInflationButton()
+                    PropertySelectionDialogInflationButton()
                 }
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
@@ -58,24 +58,40 @@ internal fun HomeScreen() {
 }
 
 @Composable
-private fun PropertiesConfigurationDialogInflationButton() {
+private fun PropertySelectionDialogInflationButton() {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
 
-    var triggerOnClickListener by rememberSaveable {
+    val propertyStatesDissimilar by viewModel.propertyStatesDissimilar.collectAsState()
+
+    var inflateDialog by rememberSaveable {
         mutableStateOf(viewModel.openPropertiesConfigurationDialogOnStart)
     }
 
-    if (triggerOnClickListener)
-        PropertiesConfigurationDialog {
-            triggerOnClickListener = false
-            if (viewModel.syncWidgetProperties()) {
+    if (inflateDialog) {
+        PropertiesConfigurationDialog(
+            onCancel = {
+                viewModel.resetWidgetPropertyStates()
+                inflateDialog = false
+            },
+            onConfirm = {
+                viewModel.syncWidgetPropertyStates()
                 WifiWidgetProvider.refreshData(context)
                 context.showToast(context.getString(R.string.updated_widget_properties))
-            }
-        }
+                inflateDialog = false
+            },
+            confirmButtonEnabled = propertyStatesDissimilar
+        )
+    }
 
-    IconButton(onClick = { triggerOnClickListener = true }) {
+    StatelessPropertySelectionDialogInflationButton {
+        inflateDialog = true
+    }
+}
+
+@Composable
+private fun StatelessPropertySelectionDialogInflationButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = "Inflate widget properties configuration dialog",
