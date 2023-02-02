@@ -11,9 +11,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.w2sv.androidutils.extensions.getAppWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
-import com.w2sv.wifiwidget.widget.extensions.getAppWidgetIds
 import slimber.log.i
 import java.text.DateFormat
 import java.util.*
@@ -29,7 +29,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(context, WifiWidgetProvider::class.java)
 
-        fun getRefreshDataPendingIntent(context: Context): PendingIntent =
+        private fun getRefreshDataPendingIntent(context: Context): PendingIntent =
             PendingIntent.getBroadcast(
                 context,
                 PendingIntentCode.RefreshWidgetData.ordinal,
@@ -55,11 +55,11 @@ class WifiWidgetProvider : AppWidgetProvider() {
         newOptions: Bundle?
     ) {
         context?.let {
-            i { "Sending ACTION_WIDGET_OPTIONS_CHANGED with EXTRA_WIDGET_ID=$appWidgetId" }
             LocalBroadcastManager.getInstance(it).sendBroadcast(
                 Intent(ACTION_WIDGET_OPTIONS_CHANGED)
                     .putExtra(EXTRA_WIDGET_ID, appWidgetId)
             )
+            i { "Sent ACTION_WIDGET_OPTIONS_CHANGED Intent with EXTRA_WIDGET_ID=$appWidgetId" }
         }
 
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
@@ -103,7 +103,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
             appWidgetId,
             RemoteViews(context.packageName, R.layout.widget)
                 .apply {
-                    // populate wifi dependent layout
                     ConnectionDependentWidgetLayoutSetter.getInstance(context).populate(this)
 
                     // set last_updated_tv text
@@ -112,28 +111,24 @@ class WifiWidgetProvider : AppWidgetProvider() {
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
                     )
 
-                    setOnClickPendingIntents(context)
+                    // refresh_button
+                    setOnClickPendingIntent(
+                        R.id.refresh_button,
+                        getRefreshDataPendingIntent(context)
+                    )
+
+                    // connection_dependent_layout
+                    setOnClickPendingIntent(
+                        R.id.widget_layout,
+                        PendingIntent.getActivity(
+                            context,
+                            PendingIntentCode.LaunchHomeActivity.ordinal,
+                            Intent(Settings.ACTION_WIFI_SETTINGS)
+                                .setMakeUniqueActivityFlags(),
+                            PendingIntent.FLAG_IMMUTABLE
+                        )
+                    )
                 }
         )
     }
-}
-
-private fun RemoteViews.setOnClickPendingIntents(context: Context) {
-    // refresh_button
-    setOnClickPendingIntent(
-        R.id.refresh_button,
-        WifiWidgetProvider.getRefreshDataPendingIntent(context)
-    )
-
-    // connection_dependent_layout
-    setOnClickPendingIntent(
-        R.id.widget_layout,
-        PendingIntent.getActivity(
-            context,
-            PendingIntentCode.LaunchHomeActivity.ordinal,
-            Intent(Settings.ACTION_WIFI_SETTINGS)
-                .setMakeUniqueActivityFlags(),
-            PendingIntent.FLAG_IMMUTABLE
-        )
-    )
 }

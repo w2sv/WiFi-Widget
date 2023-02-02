@@ -12,7 +12,7 @@ lifecycle = '2.6.0-alpha05'
 
 [libraries]
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.0'
-androidutils = 'com.github.w2sv:AndroidUtils:0.0.15-rc2'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.15-rc3'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha01'

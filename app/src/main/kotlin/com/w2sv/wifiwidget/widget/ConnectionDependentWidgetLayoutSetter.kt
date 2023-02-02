@@ -9,12 +9,12 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
 import com.w2sv.wifiwidget.widget.utils.asFormattedIpAddress
-import com.w2sv.wifiwidget.widget.extensions.crossVisualize
 import com.w2sv.wifiwidget.widget.utils.isWifiConnected
 import com.w2sv.wifiwidget.widget.utils.netmask
 import dagger.hilt.EntryPoint
@@ -171,8 +171,11 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
 
     private fun RemoteViews.setLayout(connectionAvailable: Boolean){
         when(connectionAvailable){
-            false -> crossVisualize(R.id.no_connection_available_layout, R.id.wifi_properties_layout)
-            true -> crossVisualize(R.id.wifi_properties_layout, R.id.no_connection_available_layout)
+            false -> crossVisualize(
+                R.id.wifi_properties_layout,
+                R.id.no_connection_available_layout
+            )
+            true -> crossVisualize(R.id.no_connection_available_layout, R.id.wifi_properties_layout)
         }
     }
 }
