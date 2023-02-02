@@ -18,8 +18,10 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
 fun LocationAccessPermissionDialog(
+    dismissButtonText: String,
     onConfirmButtonPressed: () -> Unit,
     onDismissButtonPressed: () -> Unit,
+    onAnyButtonPressed: () -> Unit,
     onCloseDialog: () -> Unit
 ) {
     AlertDialog(
@@ -44,14 +46,16 @@ fun LocationAccessPermissionDialog(
         confirmButton = {
             DialogButton({
                 onConfirmButtonPressed()
+                onAnyButtonPressed()
                 onCloseDialog()
             }, modifier = Modifier.fillMaxWidth()) { JostText(text = "Go ahead") }
         },
         dismissButton = {
             DialogButton({
                 onDismissButtonPressed()
+                onAnyButtonPressed()
                 onCloseDialog()
-            }, modifier = Modifier.fillMaxWidth()) { JostText(text = "Proceed without SSID") }
+            }, modifier = Modifier.fillMaxWidth()) { JostText(text = dismissButtonText) }
         },
         onDismissRequest = onCloseDialog
     )
@@ -61,9 +65,6 @@ fun LocationAccessPermissionDialog(
 @Composable
 private fun LocationAccessPermissionDialogPrev() {
     WifiWidgetTheme {
-        LocationAccessPermissionDialog(
-            onConfirmButtonPressed = { /*TODO*/ },
-            onDismissButtonPressed = { /*TODO*/ }) {
-        }
+        LocationAccessPermissionDialog("Proceed without SSID", {}, {}, {}, {})
     }
 }

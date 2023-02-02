@@ -33,12 +33,24 @@ fun PinWidgetButton() {
     if (triggerOnClickListener) {
         when (viewModel.lapDialogAnswered) {
             false -> LocationAccessPermissionDialog(
+                "Proceed without SSID",
                 onConfirmButtonPressed = {
-                    homeActivity.lapRequestLauncher.launch()
-                    viewModel.onLapDialogAnswered()
+                    homeActivity.lapRequestLauncher.requestPermissionIfRequired(
+                        onGranted = {
+                            with(viewModel) {
+                                setSSIDState(true, updatePropertyStatesDissimilar = false)
+                                syncWidgetPropertyStates()
+                            }
+                        },
+                        onRequestDismissed = {
+                            homeActivity.requestWidgetPin()
+                        }
+                    )
                 },
                 onDismissButtonPressed = {
                     homeActivity.requestWidgetPin()
+                },
+                onAnyButtonPressed = {
                     viewModel.onLapDialogAnswered()
                 },
                 onCloseDialog = {

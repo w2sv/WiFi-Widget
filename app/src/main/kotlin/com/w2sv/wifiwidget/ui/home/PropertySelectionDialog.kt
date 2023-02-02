@@ -8,11 +8,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -28,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
@@ -43,6 +41,7 @@ fun PropertySelectionDialog(
 ) {
     val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
+    val homeActivity = context.requireCastActivity<HomeActivity>()
 
     var infoDialogPropertyIndex by rememberSaveable {
         mutableStateOf<Int?>(null)
@@ -54,6 +53,26 @@ fun PropertySelectionDialog(
         }
     }
 
+    var showLAPDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    fun launchLAPRequestIfRequired() {
+        homeActivity.lapRequestLauncher.requestPermissionIfRequired(
+            onDenied = { viewModel.setSSIDState(false) },
+            onGranted = { viewModel.setSSIDState(true) }
+        )
+    }
+
+    if (showLAPDialog)
+        LocationAccessPermissionDialog(
+            "Never mind",
+            onConfirmButtonPressed = { launchLAPRequestIfRequired() },
+            onDismissButtonPressed = { viewModel.setSSIDState(false) },
+            onAnyButtonPressed = { viewModel.onLapDialogAnswered() },
+            onCloseDialog = { showLAPDialog = false }
+        )
+
     StatelessPropertySelectionDialog(
         onCancel = onCancel,
         onConfirm = onConfirm,
@@ -64,7 +83,12 @@ fun PropertySelectionDialog(
                 viewModel.widgetPropertyStates.getValue(property)
             },
             onCheckedChange = { property, newValue ->
-                if (!viewModel.onChangePropertyState(property, newValue))
+                if (property == viewModel.ssidKey && newValue) {
+                    if (!viewModel.lapDialogAnswered)
+                        showLAPDialog = true
+                    else
+                        launchLAPRequestIfRequired()
+                } else if (!viewModel.onChangePropertyState(property, newValue))
                     context.showToast(context.getString(R.string.uncheck_all_properties_toast))
             },
             inflateInfoDialog = { propertyIndex ->
@@ -124,31 +148,6 @@ private fun StatelessPropertySelectionDialog(
 }
 
 @Composable
-private fun ButtonRow(onCancel: () -> Unit, onConfirm: () -> Unit, confirmButtonEnabled: Boolean) {
-    Row(
-        modifier = Modifier
-            .padding(vertical = 24.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        DialogButton(onClick = onCancel) {
-            JostText(text = "Cancel")
-        }
-        DialogButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
-            JostText(text = "Confirm")
-        }
-    }
-}
-
-@Preview
-@Composable
-private fun ButtonRowPrev() {
-    WifiWidgetTheme {
-        ButtonRow(onCancel = { /*TODO*/ }, onConfirm = { /*TODO*/ }, confirmButtonEnabled = true)
-    }
-}
-
-@Composable
 private fun ColumnScope.StatelessPropertyRows(
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
@@ -203,5 +202,30 @@ private fun StatelessPropertyRowsPrev() {
         Column {
             StatelessPropertyRows({ true }, { _, _ -> }, {})
         }
+    }
+}
+
+@Composable
+private fun ButtonRow(onCancel: () -> Unit, onConfirm: () -> Unit, confirmButtonEnabled: Boolean) {
+    Row(
+        modifier = Modifier
+            .padding(vertical = 24.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        DialogButton(onClick = onCancel) {
+            JostText(text = "Cancel")
+        }
+        DialogButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
+            JostText(text = "Confirm")
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun ButtonRowPrev() {
+    WifiWidgetTheme {
+        ButtonRow(onCancel = { /*TODO*/ }, onConfirm = { /*TODO*/ }, confirmButtonEnabled = true)
     }
 }

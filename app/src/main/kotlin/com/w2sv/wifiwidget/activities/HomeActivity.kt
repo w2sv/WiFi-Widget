@@ -60,6 +60,8 @@ class HomeActivity : AppActivity() {
             savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
                 .also { i { "openPropertiesConfigurationDialog: $it" } }
 
+        val ssidKey: String = widgetProperties::SSID.name
+
         /**
          * Widget Creation Listening
          */
@@ -82,6 +84,13 @@ class HomeActivity : AppActivity() {
 
         val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
+        }
+
+        fun setSSIDState(value: Boolean, updatePropertyStatesDissimilar: Boolean = true) {
+            when (updatePropertyStatesDissimilar) {
+                true -> onChangePropertyState(ssidKey, value)
+                false -> widgetPropertyStates[ssidKey] = value
+            }
         }
 
         fun syncWidgetPropertyStates() {
@@ -187,15 +196,7 @@ class HomeActivity : AppActivity() {
     )
 
     val lapRequestLauncher by lazy {
-        LocationAccessPermissionHandler(this) { permissionGrantedMap ->
-            if (permissionGrantedMap.containsValue(true)) {
-                with(viewModel) {
-                    widgetPropertyStates[widgetProperties::SSID.name] = true
-                    syncWidgetPropertyStates()
-                }
-            }
-            requestWidgetPin()
-        }
+        LocationAccessPermissionHandler(this)
     }
 }
 
