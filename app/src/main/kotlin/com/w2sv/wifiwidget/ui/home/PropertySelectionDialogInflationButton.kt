@@ -37,7 +37,16 @@ fun PropertySelectionDialogInflationButton() {
             onConfirm = {
                 viewModel.syncWidgetPropertyStates()
                 WifiWidgetProvider.refreshData(context)
-                context.showToast(context.getString(R.string.updated_widget_properties))
+                with(context) {
+                    showToast(
+                        getString(
+                            if (WifiWidgetProvider.getWidgetIds(this).isNotEmpty())
+                                R.string.updated_widget_properties
+                            else
+                                R.string.widget_properties_will_apply
+                        )
+                    )
+                }
                 inflateDialog = false
             },
             confirmButtonEnabled = propertyStatesDissimilar
