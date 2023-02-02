@@ -11,12 +11,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.w2sv.androidutils.extensions.getNestedStringArray
 import com.w2sv.androidutils.extensions.goToWebpage
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
-import com.w2sv.wifiwidget.utils.getNestedStringArray
 
 @Composable
 fun PropertyInfoDialog(

@@ -50,7 +50,7 @@ internal fun HomeScreen() {
 }
 
 @Composable
-private fun CopyrightText(modifier: Modifier) {
+private fun CopyrightText(modifier: Modifier = Modifier) {
     JostText(
         text = "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV",
         color = MaterialTheme.colorScheme.secondary,

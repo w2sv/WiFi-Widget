@@ -23,14 +23,14 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
+import com.w2sv.androidutils.extensions.getIntExtraOrNull
+import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.preferences.GlobalFlags
 import com.w2sv.wifiwidget.preferences.WidgetProperties
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
-import com.w2sv.wifiwidget.utils.getIntExtraOrNull
 import com.w2sv.wifiwidget.utils.getMutableStateMap
-import com.w2sv.wifiwidget.utils.locationServicesEnabled
 import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -140,7 +140,7 @@ class HomeActivity : AppActivity() {
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver(
                 LocalBroadcastManager.getInstance(this)
-            ) { intent ->
+            ) { _, intent ->
                 intent?.getIntExtraOrNull(WifiWidgetProvider.EXTRA_WIDGET_ID, -1)?.let { widgetId ->
                     viewModel.onWidgetOptionsUpdated(widgetId, this)
                 }
@@ -179,15 +179,12 @@ class HomeActivity : AppActivity() {
 
     class WifiWidgetOptionsChangedReceiver(
         broadcastManager: LocalBroadcastManager,
-        private val callback: (Intent?) -> Unit
-    ) : SelfManagingLocalBroadcastReceiver(
+        callback: (Context?, Intent?) -> Unit
+    ) : SelfManagingLocalBroadcastReceiver.Impl(
         broadcastManager,
-        IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED)
-    ) {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            callback(intent)
-        }
-    }
+        IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED),
+        callback
+    )
 
     val lapRequestLauncher by lazy {
         LocationAccessPermissionHandler(this) { permissionGrantedMap ->
@@ -197,7 +194,6 @@ class HomeActivity : AppActivity() {
                     syncWidgetPropertyStates()
                 }
             }
-
             requestWidgetPin()
         }
     }

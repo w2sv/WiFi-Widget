@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -23,18 +24,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
 import com.w2sv.androidutils.extensions.goToWebpage
+import com.w2sv.androidutils.extensions.playStoreLink
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
-import com.w2sv.wifiwidget.utils.playStoreLink
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun NavigationDrawerPreview() {
+private fun NavigationDrawerPrev() {
     WifiWidgetTheme {
         NavigationDrawer {
         }
@@ -48,6 +49,12 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val properties = NavigationDrawerItemProperties.get(LocalContext.current)
+
+    BackHandler(drawerState.isOpen) {
+        scope.launch {
+            drawerState.close()
+        }
+    }
 
     ModalNavigationDrawer(
         drawerContent = {
