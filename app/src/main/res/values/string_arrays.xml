@@ -25,7 +25,7 @@
         <item>https://en.wikipedia.org/wiki/List_of_WLAN_channels</item>
     </string-array>
     <string-array name="gateway">
-        <item>@string/frequency</item>
+        <item>@string/gateway</item>
         <item>A Gateway is a device uniting the functionality of a modem, i.e., communicating with your ISP (Internet Service Provider), and a router, i.e., translating the data received by the modem and distributing it as WiFi signal to the client devices being present in the network.</item>
         <item>https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway</item>
     </string-array>

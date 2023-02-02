@@ -16,8 +16,8 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 4
-        versionName '1.1.0'
+        versionCode 5
+        versionName '1.1.1'
 
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
@@ -69,6 +69,7 @@ android {
 dependencies {
     implementation libs.typedpreferences
     implementation libs.androidutils
+    implementation libs.permissionhandler
 
     // androidx
     implementation libs.androidx.core
