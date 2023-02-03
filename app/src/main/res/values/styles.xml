@@ -8,35 +8,4 @@
         <item name="postSplashScreenTheme">@style/Theme.AppCompat</item>
     </style>
 
-    <!-- Widget -->
-
-    <style name="Widget.WiFiWidget.AppWidget.Container" parent="android:Widget">
-        <item name="android:id">@android:id/background</item>
-        <item name="android:padding">?attr/appWidgetPadding</item>
-        <item name="android:background">@drawable/shape_widget_background</item>
-    </style>
-
-    <style name="Widget.Wifi.Property.TextView" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">@dimen/text_size_widget_wifi_property</item>
-        <item name="android:fontFamily">@font/jost</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="Widget.Wifi.Property.Label" parent="Widget.Wifi.Property.TextView">
-        <item name="android:textColor">@color/blue_chill</item>
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_weight">1</item>
-    </style>
-
-    <style name="Widget.Wifi.Property.Value" parent="Widget.Wifi.Property.TextView">
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
-        <item name="android:layout_width">wrap_content</item>
-    </style>
-
-    <style name="PropertyRow">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:orientation">horizontal</item>
-    </style>
-
 </resources>

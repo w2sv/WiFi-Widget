@@ -13,5 +13,7 @@ dependencyResolutionManagement {
         maven { url "https://jitpack.io" }
     }
 }
-rootProject.name = "WiFi Widget"
-include ":app"
+rootProject.name = 'WiFi Widget'
+include ':app'
+include ':widget'
+include ':preferences'

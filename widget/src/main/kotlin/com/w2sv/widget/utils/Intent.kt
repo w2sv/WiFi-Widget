@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.utils
+package com.w2sv.widget.utils
 
 import android.content.Intent
 

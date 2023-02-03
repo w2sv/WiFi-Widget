@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.di
+package com.w2sv.preferences
 
 import android.content.Context
 import android.content.SharedPreferences

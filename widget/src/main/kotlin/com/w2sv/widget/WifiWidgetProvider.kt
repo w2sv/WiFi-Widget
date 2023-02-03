@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.w2sv.wifiwidget.widget
+package com.w2sv.widget
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -12,8 +12,7 @@ import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
+import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import slimber.log.i
 import java.text.DateFormat
 import java.util.*
@@ -24,6 +23,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
         const val ACTION_WIDGET_OPTIONS_CHANGED =
             "com.w2sv.wifiwidget.action.WIDGET_OPTIONS_CHANGED"
         const val EXTRA_WIDGET_ID = "com.w2sv.wifiwidget.EXTRA_WIDGET_ID"
+        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START =
+            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START"
 
         fun getWidgetIds(context: Context): IntArray =
             AppWidgetManager.getInstance(context)
