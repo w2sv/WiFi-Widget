@@ -15,7 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.widget.WifiWidgetProvider
+import com.w2sv.widget.WifiWidgetProvider
 
 @Composable
 fun PropertySelectionDialogInflationButton() {
@@ -36,11 +36,11 @@ fun PropertySelectionDialogInflationButton() {
             },
             onConfirm = {
                 viewModel.syncWidgetPropertyStates()
-                WifiWidgetProvider.refreshData(context)
+                com.w2sv.widget.WifiWidgetProvider.refreshData(context)
                 with(context) {
                     showToast(
                         getString(
-                            if (WifiWidgetProvider.getWidgetIds(this).isNotEmpty())
+                            if (com.w2sv.widget.WifiWidgetProvider.getWidgetIds(this).isNotEmpty())
                                 R.string.updated_widget_properties
                             else
                                 R.string.widget_properties_will_apply

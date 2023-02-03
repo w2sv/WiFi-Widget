@@ -26,12 +26,12 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.wifiwidget.preferences.GlobalFlags
-import com.w2sv.wifiwidget.preferences.WidgetProperties
+import com.w2sv.preferences.GlobalFlags
+import com.w2sv.preferences.WidgetProperties
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
 import com.w2sv.wifiwidget.utils.getMutableStateMap
-import com.w2sv.wifiwidget.widget.WifiWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -43,11 +43,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class HomeActivity : AppActivity() {
 
-    companion object {
-        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START =
-            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START"
-    }
-
     @HiltViewModel
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
@@ -57,7 +52,7 @@ class HomeActivity : AppActivity() {
     ) : androidx.lifecycle.ViewModel() {
 
         val openPropertiesConfigurationDialogOnStart =
-            savedStateHandle.contains(EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
+            savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
                 .also { i { "openPropertiesConfigurationDialog: $it" } }
 
         val ssidKey: String = widgetProperties::SSID.name

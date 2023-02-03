@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.widget
+package com.w2sv.widget
 
 enum class PendingIntentCode{
     RefreshWidgetData,

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.preferences
+package com.w2sv.preferences
 
 import android.content.SharedPreferences
 import com.w2sv.typedpreferences.descendants.BooleanPreferences

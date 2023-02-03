@@ -67,9 +67,12 @@ android {
 }
 
 dependencies {
-    implementation libs.typedpreferences
+    implementation project(path: ':widget')
+    implementation project(path: ':preferences')
+
     implementation libs.androidutils
     implementation libs.permissionhandler
+    implementation libs.typedpreferences
 
     // androidx
     implementation libs.androidx.core
@@ -77,7 +80,6 @@ dependencies {
     implementation libs.androidx.lifecycle.runtime
     implementation libs.androidx.splashscreen
     implementation libs.androidx.localbroadcastmanager
-    implementation libs.google.material
 
     // .compose
     implementation libs.androidx.compose.activity

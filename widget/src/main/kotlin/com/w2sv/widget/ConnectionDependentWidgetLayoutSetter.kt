@@ -1,6 +1,7 @@
-package com.w2sv.wifiwidget.widget
+package com.w2sv.widget
 
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
@@ -10,13 +11,10 @@ import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import com.w2sv.androidutils.extensions.crossVisualize
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.preferences.WidgetProperties
-import com.w2sv.wifiwidget.utils.setMakeUniqueActivityFlags
-import com.w2sv.wifiwidget.widget.utils.asFormattedIpAddress
-import com.w2sv.wifiwidget.widget.utils.isWifiConnected
-import com.w2sv.wifiwidget.widget.utils.netmask
+import com.w2sv.preferences.WidgetProperties
+import com.w2sv.widget.utils.asFormattedIpAddress
+import com.w2sv.widget.utils.isWifiConnected
+import com.w2sv.widget.utils.netmask
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -140,8 +138,8 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
         }
     }
 
-    private fun RemoteViews.setWidgetSettingsButton(connectionAvailable: Boolean){
-        when(connectionAvailable){
+    private fun RemoteViews.setWidgetSettingsButton(connectionAvailable: Boolean) {
+        when (connectionAvailable) {
             true -> {
                 setViewVisibility(R.id.settings_button, View.VISIBLE)
                 setOnClickPendingIntent(
@@ -149,10 +147,9 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
                     PendingIntent.getActivity(
                         context,
                         PendingIntentCode.LaunchHomeActivity.ordinal,
-                        Intent(context, HomeActivity::class.java)
-                            .setMakeUniqueActivityFlags()
+                        Intent.makeRestartActivityTask(ComponentName(context, "com.w2sv.wifiwidget.activities.HomeActivity"))
                             .putExtra(
-                                HomeActivity.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
+                                WifiWidgetProvider.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
                                 true
                             ),
                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -169,8 +166,8 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
         setLayout(false)
     }
 
-    private fun RemoteViews.setLayout(connectionAvailable: Boolean){
-        when(connectionAvailable){
+    private fun RemoteViews.setLayout(connectionAvailable: Boolean) {
+        when (connectionAvailable) {
             false -> crossVisualize(
                 R.id.wifi_properties_layout,
                 R.id.no_connection_available_layout
