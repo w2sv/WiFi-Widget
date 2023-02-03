@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import com.w2sv.androidutils.extensions.goToWebpage
+import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.androidutils.extensions.playStoreLink
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.BuildConfig
@@ -131,7 +131,7 @@ private data class NavigationDrawerItemProperties(
                 },
                 NavigationDrawerItemProperties(R.drawable.ic_github_24, "Code") {
                     context
-                        .goToWebpage("https://github.com/w2sv/WiFi-Widget")
+                        .openUrl("https://github.com/w2sv/WiFi-Widget")
                 }
             )
     }

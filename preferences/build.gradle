@@ -1,3 +1,10 @@
+plugins{
+    alias libs.plugins.library
+    alias libs.plugins.kotlin
+    alias libs.plugins.hilt
+    id 'kotlin-kapt'
+}
+
 apply from: '../modulebase.gradle'
 
 android {
@@ -5,7 +12,7 @@ android {
 }
 
 dependencies {
-    implementation libs.typedpreferences
+    api libs.typedpreferences
 
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt

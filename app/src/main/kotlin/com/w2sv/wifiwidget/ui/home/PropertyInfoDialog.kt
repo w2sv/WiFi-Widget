@@ -12,7 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.extensions.getNestedStringArray
-import com.w2sv.androidutils.extensions.goToWebpage
+import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
@@ -29,7 +29,7 @@ fun PropertyInfoDialog(
                 title = get(0),
                 text = get(1),
                 learnMoreButtonOnClickListener = {
-                    goToWebpage(get(2))
+                    openUrl(get(2))
                     onDismissRequest()
                 },
                 onDismissRequest = onDismissRequest

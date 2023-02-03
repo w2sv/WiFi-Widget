@@ -1,3 +1,10 @@
+plugins{
+    alias libs.plugins.library
+    alias libs.plugins.kotlin
+    alias libs.plugins.hilt
+    id 'kotlin-kapt'
+}
+
 apply from: '../modulebase.gradle'
 
 android {
@@ -6,12 +13,12 @@ android {
 
 dependencies {
     implementation project(path: ':preferences')
+    implementation project(path: ':resources')
 
     implementation libs.androidx.localbroadcastmanager
     implementation libs.google.material
     implementation libs.slimber
     implementation libs.androidutils
-    implementation libs.typedpreferences
 
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt

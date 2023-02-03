@@ -4,10 +4,10 @@ import android.Manifest
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.permissionhandler.AssociatedPermissionsHandler
+import com.w2sv.permissionhandler.CoupledPermissionsHandler
 
 class LocationAccessPermissionHandler(activity: ComponentActivity) :
-    AssociatedPermissionsHandler(
+    CoupledPermissionsHandler(
         activity,
         arrayOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
