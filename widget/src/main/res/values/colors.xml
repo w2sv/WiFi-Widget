@@ -1,5 +1,3 @@
 <resources>
-    <color name="mischka_dark">#9FA1A5</color>
     <color name="widget_bottom_row">@color/mischka_dark</color>
-    <color name="blue_chill">#1EA8B5</color>
 </resources>

@@ -69,10 +69,10 @@ android {
 dependencies {
     implementation project(path: ':widget')
     implementation project(path: ':preferences')
+    implementation project(path: ':resources')
 
     implementation libs.androidutils
     implementation libs.permissionhandler
-    implementation libs.typedpreferences
 
     // androidx
     implementation libs.androidx.core

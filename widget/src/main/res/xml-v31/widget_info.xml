@@ -9,5 +9,4 @@
     android:minResizeHeight="40dp"
     android:resizeMode="vertical"
     android:updatePeriodMillis="1800000"
-
     android:widgetCategory="home_screen" />
