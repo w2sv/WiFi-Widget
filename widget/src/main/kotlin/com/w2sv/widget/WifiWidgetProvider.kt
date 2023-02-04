@@ -11,10 +11,15 @@ import android.os.Bundle
 import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
 import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import slimber.log.i
 import java.text.DateFormat
+import java.time.Duration
 import java.util.*
 
 class WifiWidgetProvider : AppWidgetProvider() {
@@ -47,6 +52,37 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
+    }
+
+    override fun onEnabled(context: Context?) {
+        super.onEnabled(context)
+
+        val refreshPeriod = Duration.ofMinutes(15L)
+
+        getWorkManager(context)
+            .enqueueUniquePeriodicWork(
+                WidgetDataRefreshWorker.UNIQUE_WORK_NAME,
+                ExistingPeriodicWorkPolicy.KEEP,
+                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiresBatteryNotLow(true)
+                            .build()
+                    )
+                    .setInitialDelay(refreshPeriod)
+                    .build()
+            )
+
+        i { "Enqueued ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
+    }
+
+    override fun onDisabled(context: Context?) {
+        super.onDisabled(context)
+
+        getWorkManager(context)
+            .cancelUniqueWork(WidgetDataRefreshWorker.UNIQUE_WORK_NAME)
+
+        i { "Cancelled unique ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -133,3 +169,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         )
     }
 }
+
+private fun getWorkManager(context: Context?): WorkManager =
+    WorkManager
+        .getInstance(context!!.applicationContext)

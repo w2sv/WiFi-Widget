@@ -15,6 +15,7 @@ dependencies {
     implementation project(path: ':preferences')
     implementation project(path: ':resources')
 
+    implementation libs.androidx.workmanager
     implementation libs.androidx.localbroadcastmanager
     implementation libs.google.material
     implementation libs.slimber
