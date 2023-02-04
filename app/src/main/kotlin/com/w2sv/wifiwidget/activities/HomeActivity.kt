@@ -145,7 +145,8 @@ class HomeActivity : AppActivity() {
             WifiWidgetOptionsChangedReceiver(
                 LocalBroadcastManager.getInstance(this)
             ) { _, intent ->
-                intent?.getIntExtraOrNull(WifiWidgetProvider.EXTRA_WIDGET_ID, -1)?.let { widgetId ->
+                i{"WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}"}
+                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)?.let { widgetId ->
                     viewModel.onWidgetOptionsUpdated(widgetId, this)
                 }
             }
@@ -186,7 +187,7 @@ class HomeActivity : AppActivity() {
         callback: (Context?, Intent?) -> Unit
     ) : SelfManagingLocalBroadcastReceiver.Impl(
         broadcastManager,
-        IntentFilter(WifiWidgetProvider.ACTION_WIDGET_OPTIONS_CHANGED),
+        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED),
         callback
     )
 
