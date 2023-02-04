@@ -3,10 +3,9 @@
     android:description="@string/widget_description"
     android:initialKeyguardLayout="@layout/widget"
     android:initialLayout="@layout/widget"
-    android:maxResizeHeight="@dimen/max_resize_height"
-    android:minWidth="@dimen/min_width"
     android:minHeight="@dimen/min_height"
     android:minResizeHeight="@dimen/min_resize_height"
-    android:resizeMode="vertical"
+    android:minWidth="@dimen/min_width"
+    android:resizeMode="vertical|horizontal"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen" />
