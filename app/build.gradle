@@ -16,10 +16,10 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 5
-        versionName '1.1.1'
+        versionCode 6
+        versionName '1.1.2'
 
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+//        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
         // create release signingConfig from keystore.properties file, if present
