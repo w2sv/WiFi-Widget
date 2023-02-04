@@ -14,7 +14,7 @@ lifecycle = '2.5.1'
 
 # owned
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.1-rc2'
-androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc1'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc2'
 permissionhandler = 'com.github.w2sv:PermissionHandler:1.0.0-rc3'
 
 # androidx

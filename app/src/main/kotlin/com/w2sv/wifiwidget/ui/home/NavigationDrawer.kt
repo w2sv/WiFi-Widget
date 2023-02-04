@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
 import com.w2sv.androidutils.extensions.openUrl
-import com.w2sv.androidutils.extensions.playStoreLink
+import com.w2sv.androidutils.extensions.playStoreUrl
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
@@ -46,60 +46,67 @@ private fun NavigationDrawerPrev() {
 @Composable
 fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (DrawerState) -> Unit) {
     val scope = rememberCoroutineScope()
-
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val properties = NavigationDrawerItemProperties.get(LocalContext.current)
 
-    BackHandler(drawerState.isOpen) {
+    val closeDrawer: () -> Unit = {
         scope.launch {
             drawerState.close()
         }
     }
 
+    BackHandler(drawerState.isOpen, closeDrawer)
+
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
-            ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.secondary) {
-                Column(
-                    modifier = Modifier
-                        .padding(bottom = 32.dp)
-                        .verticalScroll(rememberScrollState()),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Column(modifier = Modifier.padding(vertical = 32.dp)) {
-                        Image(
-                            painterResource(id = R.drawable.logo_foreground),
-                            null,
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.primary)
-                        )
-                        JostText(
-                            text = "Version: ${BuildConfig.VERSION_NAME}",
-                            modifier = Modifier.padding(top = 26.dp),
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                    Divider(
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .padding(bottom = 12.dp)
-                    )
-                    properties.forEach {
-                        NavigationDrawerItem(properties = it) {
-                            scope.launch {
-                                drawerState.close()
-                            }
-                        }
-                    }
-                }
-            }
+            NavigationDrawerContent(closeDrawer)
         },
         drawerState = drawerState
     ) {
         content(drawerState)
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
+    ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.secondary) {
+        Column(
+            modifier = Modifier
+                .padding(bottom = 32.dp)
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(modifier = Modifier.padding(vertical = 32.dp)) {
+                Image(
+                    painterResource(id = R.drawable.logo_foreground),
+                    null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary)
+                )
+                VersionText(Modifier.padding(top = 26.dp))
+            }
+            Divider(
+                color = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 12.dp)
+            )
+            NavigationDrawerItemProperties.get(LocalContext.current).forEach {
+                NavigationDrawerItem(properties = it, closeDrawer = closeDrawer)
+            }
+        }
+    }
+}
+
+@Composable
+fun VersionText(modifier: Modifier = Modifier) {
+    JostText(
+        text = "Version: ${BuildConfig.VERSION_NAME}",
+        modifier = modifier,
+        color = MaterialTheme.colorScheme.onPrimary
+    )
 }
 
 private data class NavigationDrawerItemProperties(
@@ -113,7 +120,7 @@ private data class NavigationDrawerItemProperties(
                 NavigationDrawerItemProperties(R.drawable.ic_share_24, "Share") {
                     ShareCompat.IntentBuilder(context)
                         .setType("text/plain")
-                        .setText("Check out WiFi Widget!\n${context.playStoreLink}")
+                        .setText("Check out WiFi Widget!\n${context.playStoreUrl}")
                         .setChooserTitle("Choose an app")
                         .startChooser()
                 },
@@ -122,7 +129,7 @@ private data class NavigationDrawerItemProperties(
                         context.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(context.playStoreLink)
+                                Uri.parse(context.playStoreUrl)
                             )
                                 .setPackage("com.android.vending")
                         )

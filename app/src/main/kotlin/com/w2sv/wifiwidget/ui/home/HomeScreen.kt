@@ -6,7 +6,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 internal fun HomeScreen() {
     val coroutineScope = rememberCoroutineScope()
@@ -37,12 +36,18 @@ internal fun HomeScreen() {
             ) {
                 Spacer(Modifier.weight(1.5f))
                 Box(Modifier.weight(0.5f)) {
-                    PinWidgetButton()
+                    PinWidgetButton(
+                        Modifier.defaultMinSize(140.dp, 60.dp)
+                    )
                 }
+
                 Spacer(Modifier.weight(0.5f))
                 Box(Modifier.weight(1f)) {
-                    PropertySelectionDialogInflationButton()
+                    PropertySelectionDialogInflationButton(
+                        Modifier.size(32.dp)
+                    )
                 }
+
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
         }

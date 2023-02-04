@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,19 +25,19 @@ fun PropertyInfoDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
-    with(LocalContext.current) {
-        with(resources.getNestedStringArray(R.array.wifi_property_data_arrays, propertyIndex)) {
-            StatelessPropertyInfoDialog(
-                modifier = modifier,
-                title = get(0),
-                text = get(1),
-                learnMoreButtonOnClickListener = {
-                    openUrl(get(2))
-                    onDismissRequest()
-                },
-                onDismissRequest = onDismissRequest
-            )
-        }
+    val context = LocalContext.current
+
+    with(context.resources.getNestedStringArray(R.array.wifi_property_data_arrays, propertyIndex)) {
+        StatelessPropertyInfoDialog(
+            modifier = modifier,
+            title = get(0),
+            text = get(1),
+            learnMoreButtonOnClickListener = {
+                context.openUrl(get(2))
+                onDismissRequest()
+            },
+            onDismissRequest = onDismissRequest
+        )
     }
 }
 
@@ -53,7 +54,7 @@ private fun StatelessPropertyInfoDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             DialogButton(onClick = onDismissRequest) {
-                JostText(text = "Close")
+                JostText(text = stringResource(R.string.close))
             }
         },
         title = {

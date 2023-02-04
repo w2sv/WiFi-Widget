@@ -8,11 +8,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -29,6 +26,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.DialogButton
@@ -38,12 +36,15 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 @Composable
 fun PropertySelectionDialog(
     modifier: Modifier = Modifier,
-    onCancel: () -> Unit,
-    onConfirm: () -> Unit,
-    confirmButtonEnabled: Boolean,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    viewModel: HomeActivity.ViewModel = viewModel(),
+    onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
+    val activity = context.requireCastActivity<HomeActivity>()
+
+    /**
+     * PropertyInfoDialog
+     */
 
     var infoDialogPropertyIndex by rememberSaveable {
         mutableStateOf<Int?>(null)
@@ -55,31 +56,37 @@ fun PropertySelectionDialog(
         }
     }
 
-    var showLAPDialog by rememberSaveable {
+    /**
+     * LocationAccessPermissionDialog
+     */
+
+    var showLocationAccessPermissionDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
-    fun launchLAPRequestIfRequired() {
-        context.requireCastActivity<HomeActivity>().lapRequestLauncher.requestPermissionIfRequired(
-            onDenied = { viewModel.setSSIDState(false) },
-            onGranted = { viewModel.setSSIDState(true) }
-        )
-    }
-
-    if (showLAPDialog)
-        LocationAccessPermissionDialog(
-            dismissButtonText = "Never mind",
-            onConfirmButtonPressed = { launchLAPRequestIfRequired() },
-            onDismissButtonPressed = { viewModel.setSSIDState(false) },
-            onAnyButtonPressed = { viewModel.onLapDialogAnswered() },
-            onCloseDialog = { showLAPDialog = false }
-        )
+    if (showLocationAccessPermissionDialog)
+        LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.SSIDCheck) {
+            showLocationAccessPermissionDialog = false
+        }
 
     StatelessPropertySelectionDialog(
         modifier = modifier,
-        onCancel = onCancel,
-        onConfirm = onConfirm,
-        confirmButtonEnabled = confirmButtonEnabled
+        onCancel = {
+            viewModel.resetWidgetPropertyStates()
+            onDismiss()
+        },
+        onConfirm = {
+            viewModel.syncWidgetPropertyStates()
+            WifiWidgetProvider.triggerDataRefresh(context)
+            context.showToast(
+                if (WifiWidgetProvider.getWidgetIds(context).isNotEmpty())
+                    R.string.updated_widget_properties
+                else
+                    R.string.widget_properties_will_apply
+            )
+            onDismiss()
+        },
+        confirmButtonEnabled = viewModel.propertyStatesDissimilar.collectAsState().value
     ) {
         StatelessPropertyRows(
             propertyChecked = { property ->
@@ -88,21 +95,30 @@ fun PropertySelectionDialog(
             onCheckedChange = { property, newValue ->
                 when {
                     property == viewModel.ssidKey && newValue -> {
-                        when(viewModel.lapDialogAnswered){
-                            false -> showLAPDialog = true
-                            true -> launchLAPRequestIfRequired()
+                        when (viewModel.lapDialogAnswered) {
+                            false -> showLocationAccessPermissionDialog = true
+                            true -> activity.launchLAPRequestIfRequired(viewModel)
                         }
                     }
                     !viewModel.onChangePropertyState(property, newValue) -> {
-                        context.showToast(context.getString(R.string.uncheck_all_properties_toast))
+                        with(context) {
+                            showToast(getString(R.string.uncheck_all_properties_toast))
+                        }
                     }
                 }
             },
-            inflateInfoDialog = { propertyIndex ->
+            onInfoButtonClick = { propertyIndex ->
                 infoDialogPropertyIndex = propertyIndex
             }
         )
     }
+}
+
+private fun HomeActivity.launchLAPRequestIfRequired(viewModel: HomeActivity.ViewModel) {
+    lapRequestLauncher.requestPermissionIfRequired(
+        onDenied = { viewModel.setSSIDState(false) },
+        onGranted = { viewModel.setSSIDState(true) }
+    )
 }
 
 @Composable
@@ -150,7 +166,14 @@ private fun StatelessPropertySelectionDialog(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
                 propertyRows()
-                ButtonRow(onCancel, onConfirm, confirmButtonEnabled)
+                ButtonRow(
+                    onCancel = onCancel,
+                    onConfirm = onConfirm,
+                    confirmButtonEnabled = confirmButtonEnabled,
+                    modifier = Modifier
+                        .padding(vertical = 24.dp)
+                        .fillMaxWidth()
+                )
             }
         }
     }
@@ -160,7 +183,7 @@ private fun StatelessPropertySelectionDialog(
 private fun ColumnScope.StatelessPropertyRows(
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
-    inflateInfoDialog: (Int) -> Unit
+    onInfoButtonClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -188,7 +211,7 @@ private fun ColumnScope.StatelessPropertyRows(
                         )
                     )
                     IconButton(onClick = {
-                        inflateInfoDialog(propertyIndex)
+                        onInfoButtonClick(propertyIndex)
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Info,
@@ -215,18 +238,21 @@ private fun StatelessPropertyRowsPrev() {
 }
 
 @Composable
-private fun ButtonRow(onCancel: () -> Unit, onConfirm: () -> Unit, confirmButtonEnabled: Boolean) {
+private fun ButtonRow(
+    onCancel: () -> Unit,
+    onConfirm: () -> Unit,
+    confirmButtonEnabled: Boolean,
+    modifier: Modifier = Modifier
+) {
     Row(
-        modifier = Modifier
-            .padding(vertical = 24.dp)
-            .fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         DialogButton(onClick = onCancel) {
-            JostText(text = "Cancel")
+            JostText(text = stringResource(R.string.cancel))
         }
         DialogButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
-            JostText(text = "Confirm")
+            JostText(text = stringResource(R.string.confirm))
         }
     }
 }
