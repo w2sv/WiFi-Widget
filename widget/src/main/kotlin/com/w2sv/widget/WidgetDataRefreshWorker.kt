@@ -17,7 +17,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         when (applicationContext.getSystemService(PowerManager::class.java).isInteractive) {
             false -> i { "System not interactive; Skipping Widget Data refresh" }
             true -> {
-                WifiWidgetProvider.refreshData(applicationContext)
+                WifiWidgetProvider.triggerDataRefresh(applicationContext)
                 i { "Refreshed Widget Data" }
             }
         }
