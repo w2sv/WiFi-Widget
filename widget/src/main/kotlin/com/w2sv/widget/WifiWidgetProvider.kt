@@ -7,7 +7,6 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -100,23 +99,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    override fun onAppWidgetOptionsChanged(
-        context: Context?,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetId: Int,
-        newOptions: Bundle?
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-
-        context?.let {
-            LocalBroadcastManager.getInstance(it).sendBroadcast(
-                Intent(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)
-                    .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-            )
-            i { "Sent ACTION_APPWIDGET_OPTIONS_CHANGED Intent with EXTRA_APPWIDGET_ID=$appWidgetId" }
-        }
-    }
-
     override fun onReceive(context: Context?, intent: Intent?) {
         i {
             "${this::class.java.name}.onReceive | ${intent?.action} | ${
@@ -125,16 +107,23 @@ class WifiWidgetProvider : AppWidgetProvider() {
         }
 
         when (intent?.action) {
-            ACTION_REFRESH_DATA -> context?.let {
-                onUpdate(
-                    it,
-                    AppWidgetManager.getInstance(it),
-                    getWidgetIds(it)
-                )
+            ACTION_REFRESH_DATA -> {
+                context?.let {
+                    onUpdate(
+                        it,
+                        AppWidgetManager.getInstance(it),
+                        getWidgetIds(it)
+                    )
+                }
+                return
             }
-
-            else -> super.onReceive(context, intent)
+            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> context?.let {
+                LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
+                i{"Forwarded AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED intent as local broadcast"}
+            }
         }
+
+        super.onReceive(context, intent)
     }
 
     override fun onUpdate(
