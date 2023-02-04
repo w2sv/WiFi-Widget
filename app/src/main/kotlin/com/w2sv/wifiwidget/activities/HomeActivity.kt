@@ -4,7 +4,6 @@ package com.w2sv.wifiwidget.activities
 
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -175,22 +174,6 @@ class HomeActivity : AppActivity() {
             WifiWidgetTheme {
                 HomeScreen()
             }
-        }
-    }
-
-    fun pinWidget() {
-        getSystemService(AppWidgetManager::class.java).let {
-            if (it.isRequestPinAppWidgetSupported) {
-                it.requestPinAppWidget(
-                    ComponentName(
-                        this,
-                        WifiWidgetProvider::class.java
-                    ),
-                    null,
-                    null
-                )
-            } else
-                showToast("Widget pinning not supported by your device launcher")
         }
     }
 }

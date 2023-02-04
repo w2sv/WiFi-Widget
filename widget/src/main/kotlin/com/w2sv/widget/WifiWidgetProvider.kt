@@ -5,6 +5,7 @@ package com.w2sv.widget
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
@@ -15,6 +16,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
+import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import slimber.log.i
 import java.text.DateFormat
@@ -30,6 +32,24 @@ class WifiWidgetProvider : AppWidgetProvider() {
         fun getWidgetIds(context: Context): IntArray =
             AppWidgetManager.getInstance(context)
                 .getAppWidgetIds(context, WifiWidgetProvider::class.java)
+
+        fun pinWidget(context: Context) {
+            with(context){
+                getSystemService(AppWidgetManager::class.java).let {
+                    if (it.isRequestPinAppWidgetSupported) {
+                        it.requestPinAppWidget(
+                            ComponentName(
+                                this,
+                                WifiWidgetProvider::class.java
+                            ),
+                            null,
+                            null
+                        )
+                    } else
+                        showToast("Widget pinning not supported by your device launcher")
+                }
+            }
+        }
 
         /**
          * Data Refreshing
