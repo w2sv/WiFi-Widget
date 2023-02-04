@@ -129,29 +129,39 @@ class HomeActivity : AppActivity() {
         }
     }
 
-    private val viewModel by viewModels<ViewModel>()
-
     @Inject
     lateinit var globalFlags: GlobalFlags
 
     @Inject
     lateinit var widgetProperties: WidgetProperties
 
+    inner class WifiWidgetOptionsChangedReceiver : SelfManagingLocalBroadcastReceiver(
+        LocalBroadcastManager.getInstance(this),
+        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)
+    ) {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
+
+            intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                ?.let { widgetId ->
+                    viewModels<ViewModel>().value.onWidgetOptionsUpdated(
+                        widgetId,
+                        this@HomeActivity
+                    )
+                }
+        }
+    }
+
+    val lapRequestLauncher by lazy {
+        LocationAccessPermissionHandler(this)
+    }
+
     override val lifecycleObservers: List<LifecycleObserver>
         get() = listOf(
             globalFlags,
             widgetProperties,
             lapRequestLauncher,
-            WifiWidgetOptionsChangedReceiver(
-                LocalBroadcastManager.getInstance(this)
-            ) { _, intent ->
-                i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
-
-                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                    ?.let { widgetId ->
-                        viewModel.onWidgetOptionsUpdated(widgetId, this)
-                    }
-            }
+            WifiWidgetOptionsChangedReceiver()
         )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -182,19 +192,6 @@ class HomeActivity : AppActivity() {
             } else
                 showToast("Widget pinning not supported by your device launcher")
         }
-    }
-
-    class WifiWidgetOptionsChangedReceiver(
-        broadcastManager: LocalBroadcastManager,
-        callback: (Context?, Intent?) -> Unit
-    ) : SelfManagingLocalBroadcastReceiver.Impl(
-        broadcastManager,
-        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED),
-        callback
-    )
-
-    val lapRequestLauncher by lazy {
-        LocationAccessPermissionHandler(this)
     }
 }
 
