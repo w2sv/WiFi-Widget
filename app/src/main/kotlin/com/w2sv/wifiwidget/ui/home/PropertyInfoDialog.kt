@@ -21,11 +21,13 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 @Composable
 fun PropertyInfoDialog(
     propertyIndex: Int,
+    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
     with(LocalContext.current) {
         with(resources.getNestedStringArray(R.array.wifi_property_data_arrays, propertyIndex)) {
-            PropertyInfoDialog(
+            StatelessPropertyInfoDialog(
+                modifier = modifier,
                 title = get(0),
                 text = get(1),
                 learnMoreButtonOnClickListener = {
@@ -39,13 +41,15 @@ fun PropertyInfoDialog(
 }
 
 @Composable
-private fun PropertyInfoDialog(
+private fun StatelessPropertyInfoDialog(
+    modifier: Modifier = Modifier,
     title: String,
     text: String,
     learnMoreButtonOnClickListener: () -> Unit,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
+        modifier = modifier,
         onDismissRequest = onDismissRequest,
         confirmButton = {
             DialogButton(onClick = onDismissRequest) {
@@ -84,6 +88,11 @@ private fun PropertyInfoDialog(
 @Composable
 private fun Preview() {
     WifiWidgetTheme {
-        PropertyInfoDialog("SSID", "Service Set Identifier. Your network's name.", {}, {})
+        StatelessPropertyInfoDialog(
+            Modifier,
+            "SSID",
+            "Service Set Identifier. Your network's name.",
+            {},
+            {})
     }
 }

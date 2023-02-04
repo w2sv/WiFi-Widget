@@ -44,7 +44,7 @@ private fun NavigationDrawerPrev() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
+fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (DrawerState) -> Unit) {
     val scope = rememberCoroutineScope()
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -57,6 +57,7 @@ fun NavigationDrawer(content: @Composable (DrawerState) -> Unit) {
     }
 
     ModalNavigationDrawer(
+        modifier = modifier,
         drawerContent = {
             ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.secondary) {
                 Column(

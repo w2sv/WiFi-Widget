@@ -12,7 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
@@ -20,20 +19,25 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.JostText
 
-@Preview
 @Composable
-fun PinWidgetButton() {
+fun PinWidgetButton(
+    modifier: Modifier = Modifier,
+    viewModel: HomeActivity.ViewModel = viewModel()
+) {
     val homeActivity = LocalContext.current.requireCastActivity<HomeActivity>()
-    val viewModel: HomeActivity.ViewModel = viewModel()
 
     var triggerOnClickListener by rememberSaveable {
         mutableStateOf(false)
     }
 
+    StatelessPinWidgetButton(modifier) {
+        triggerOnClickListener = true
+    }
+
     if (triggerOnClickListener) {
         when (viewModel.lapDialogAnswered) {
             false -> LocationAccessPermissionDialog(
-                "Proceed without SSID",
+                dismissButtonText = "Proceed without SSID",
                 onConfirmButtonPressed = {
                     homeActivity.lapRequestLauncher.requestPermissionIfRequired(
                         onGranted = {
@@ -43,12 +47,12 @@ fun PinWidgetButton() {
                             }
                         },
                         onRequestDismissed = {
-                            homeActivity.requestWidgetPin()
+                            homeActivity.pinWidget()
                         }
                     )
                 },
                 onDismissButtonPressed = {
-                    homeActivity.requestWidgetPin()
+                    homeActivity.pinWidget()
                 },
                 onAnyButtonPressed = {
                     viewModel.onLapDialogAnswered()
@@ -58,15 +62,18 @@ fun PinWidgetButton() {
                 }
             )
             true -> {
-                homeActivity.requestWidgetPin()
+                homeActivity.pinWidget()
                 triggerOnClickListener = false
             }
         }
     }
+}
 
+@Composable
+private fun StatelessPinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     ElevatedButton(
-        { triggerOnClickListener = true },
-        modifier = Modifier.defaultMinSize(140.dp, 60.dp),
+        onClick,
+        modifier = modifier.defaultMinSize(140.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         content = {
             JostText(

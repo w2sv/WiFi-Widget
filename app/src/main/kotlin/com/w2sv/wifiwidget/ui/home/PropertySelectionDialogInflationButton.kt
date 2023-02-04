@@ -13,12 +13,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
 
 @Composable
-fun PropertySelectionDialogInflationButton() {
-    val viewModel: HomeActivity.ViewModel = viewModel()
+fun PropertySelectionDialogInflationButton(modifier: Modifier = Modifier, viewModel: HomeActivity.ViewModel = viewModel()) {
     val context = LocalContext.current
 
     val propertyStatesDissimilar by viewModel.propertyStatesDissimilar.collectAsState()
@@ -35,11 +35,11 @@ fun PropertySelectionDialogInflationButton() {
             },
             onConfirm = {
                 viewModel.syncWidgetPropertyStates()
-                com.w2sv.widget.WifiWidgetProvider.triggerDataRefresh(context)
+                WifiWidgetProvider.triggerDataRefresh(context)
                 with(context) {
                     showToast(
                         getString(
-                            if (com.w2sv.widget.WifiWidgetProvider.getWidgetIds(this).isNotEmpty())
+                            if (WifiWidgetProvider.getWidgetIds(this).isNotEmpty())
                                 R.string.updated_widget_properties
                             else
                                 R.string.widget_properties_will_apply
@@ -52,18 +52,18 @@ fun PropertySelectionDialogInflationButton() {
         )
     }
 
-    StatelessPropertySelectionDialogInflationButton {
+    StatelessPropertySelectionDialogInflationButton(modifier) {
         inflateDialog = true
     }
 }
 
 @Composable
-private fun StatelessPropertySelectionDialogInflationButton(onClick: () -> Unit) {
+private fun StatelessPropertySelectionDialogInflationButton(modifier: Modifier, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = "Inflate widget properties configuration dialog",
-            modifier = Modifier.size(32.dp),
+            modifier = modifier.size(32.dp),
             tint = MaterialTheme.colorScheme.primary
         )
     }
