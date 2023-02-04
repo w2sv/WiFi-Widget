@@ -145,10 +145,12 @@ class HomeActivity : AppActivity() {
             WifiWidgetOptionsChangedReceiver(
                 LocalBroadcastManager.getInstance(this)
             ) { _, intent ->
-                i{"WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}"}
-                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)?.let { widgetId ->
-                    viewModel.onWidgetOptionsUpdated(widgetId, this)
-                }
+                i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
+
+                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                    ?.let { widgetId ->
+                        viewModel.onWidgetOptionsUpdated(widgetId, this)
+                    }
             }
         )
 
