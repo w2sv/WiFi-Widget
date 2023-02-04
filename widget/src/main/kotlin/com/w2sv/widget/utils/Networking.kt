@@ -8,10 +8,10 @@ import androidx.annotation.RequiresPermission
 import java.net.NetworkInterface
 
 @Suppress("DEPRECATION")
-internal fun Int.asFormattedIpAddress(): String =
+fun Int.asFormattedIpAddress(): String =
     Formatter.formatIpAddress(this)
 
-internal val ConnectivityManager.isWifiConnected: Boolean
+val ConnectivityManager.isWifiConnected: Boolean
     get() =
         getNetworkCapabilities(activeNetwork)
             ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
@@ -19,7 +19,7 @@ internal val ConnectivityManager.isWifiConnected: Boolean
 /**
  * Reference: https://stackoverflow.com/a/33094601/12083276
  */
-internal fun netmask(): String {
+fun netmask(): String {
     networkPrefixLength()?.let {
         val shift = 0xffffffff shl (32 - it)
         return "${((shift and 0xff000000) shr 24) and 0xff}" +
@@ -40,9 +40,9 @@ private fun networkPrefixLength(): Short? {
     while (interfaces.hasMoreElements()) {
         interfaces.nextElement().run {
             if (!isLoopback)
-                interfaceAddresses.forEach {
-                    if (it.broadcast != null)
-                        return it.networkPrefixLength
+                interfaceAddresses.forEach { interfaceAddress ->
+                    if (interfaceAddress.broadcast != null)
+                        return interfaceAddress.networkPrefixLength
                 }
         }
     }
