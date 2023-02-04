@@ -178,7 +178,7 @@ class HomeActivity : AppActivity() {
         }
     }
 
-    fun requestWidgetPin() {
+    fun pinWidget() {
         getSystemService(AppWidgetManager::class.java).let {
             if (it.isRequestPinAppWidgetSupported) {
                 it.requestPinAppWidget(

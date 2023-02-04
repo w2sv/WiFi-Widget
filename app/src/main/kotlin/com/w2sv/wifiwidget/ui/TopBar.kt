@@ -14,7 +14,7 @@ import com.w2sv.wifiwidget.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WifiWidgetTopBar(onNavigationIconClick: () -> Unit) {
+fun WifiWidgetTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
     TopAppBar(
         title = {
             JostText(
@@ -22,6 +22,7 @@ fun WifiWidgetTopBar(onNavigationIconClick: () -> Unit) {
                 modifier = Modifier.padding(horizontal = dimensionResource(id = R.dimen.margin_minimal))
             )
         },
+        modifier = modifier,
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary
@@ -30,7 +31,7 @@ fun WifiWidgetTopBar(onNavigationIconClick: () -> Unit) {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = "Open navigation drawer",
+                    contentDescription = stringResource(R.string.open_navigation_drawer),
                     modifier = Modifier.size(dimensionResource(id = R.dimen.size_icon)),
                     tint = MaterialTheme.colorScheme.onPrimary
                 )

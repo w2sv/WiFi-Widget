@@ -37,13 +37,13 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
 fun PropertySelectionDialog(
+    modifier: Modifier = Modifier,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
-    confirmButtonEnabled: Boolean
+    confirmButtonEnabled: Boolean,
+    viewModel: HomeActivity.ViewModel = viewModel()
 ) {
-    val viewModel: HomeActivity.ViewModel = viewModel()
     val context = LocalContext.current
-    val homeActivity = context.requireCastActivity<HomeActivity>()
 
     var infoDialogPropertyIndex by rememberSaveable {
         mutableStateOf<Int?>(null)
@@ -60,7 +60,7 @@ fun PropertySelectionDialog(
     }
 
     fun launchLAPRequestIfRequired() {
-        homeActivity.lapRequestLauncher.requestPermissionIfRequired(
+        context.requireCastActivity<HomeActivity>().lapRequestLauncher.requestPermissionIfRequired(
             onDenied = { viewModel.setSSIDState(false) },
             onGranted = { viewModel.setSSIDState(true) }
         )
@@ -68,7 +68,7 @@ fun PropertySelectionDialog(
 
     if (showLAPDialog)
         LocationAccessPermissionDialog(
-            "Never mind",
+            dismissButtonText = "Never mind",
             onConfirmButtonPressed = { launchLAPRequestIfRequired() },
             onDismissButtonPressed = { viewModel.setSSIDState(false) },
             onAnyButtonPressed = { viewModel.onLapDialogAnswered() },
@@ -76,6 +76,7 @@ fun PropertySelectionDialog(
         )
 
     StatelessPropertySelectionDialog(
+        modifier = modifier,
         onCancel = onCancel,
         onConfirm = onConfirm,
         confirmButtonEnabled = confirmButtonEnabled
@@ -85,13 +86,17 @@ fun PropertySelectionDialog(
                 viewModel.widgetPropertyStates.getValue(property)
             },
             onCheckedChange = { property, newValue ->
-                if (property == viewModel.ssidKey && newValue) {
-                    if (!viewModel.lapDialogAnswered)
-                        showLAPDialog = true
-                    else
-                        launchLAPRequestIfRequired()
-                } else if (!viewModel.onChangePropertyState(property, newValue))
-                    context.showToast(context.getString(R.string.uncheck_all_properties_toast))
+                when {
+                    property == viewModel.ssidKey && newValue -> {
+                        when(viewModel.lapDialogAnswered){
+                            false -> showLAPDialog = true
+                            true -> launchLAPRequestIfRequired()
+                        }
+                    }
+                    !viewModel.onChangePropertyState(property, newValue) -> {
+                        context.showToast(context.getString(R.string.uncheck_all_properties_toast))
+                    }
+                }
             },
             inflateInfoDialog = { propertyIndex ->
                 infoDialogPropertyIndex = propertyIndex
@@ -102,6 +107,7 @@ fun PropertySelectionDialog(
 
 @Composable
 private fun StatelessPropertySelectionDialog(
+    modifier: Modifier = Modifier,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,
     confirmButtonEnabled: Boolean,
@@ -109,6 +115,7 @@ private fun StatelessPropertySelectionDialog(
 ) {
     Dialog(onDismissRequest = onCancel) {
         ElevatedCard(
+            modifier = modifier,
             shape = RoundedCornerShape(12.dp),
             elevation = CardDefaults.elevatedCardElevation(16.dp)
         ) {

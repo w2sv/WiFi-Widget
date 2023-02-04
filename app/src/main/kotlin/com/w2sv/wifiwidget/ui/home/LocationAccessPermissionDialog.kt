@@ -18,6 +18,7 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
 fun LocationAccessPermissionDialog(
+    modifier: Modifier = Modifier,
     dismissButtonText: String,
     onConfirmButtonPressed: () -> Unit,
     onDismissButtonPressed: () -> Unit,
@@ -25,6 +26,7 @@ fun LocationAccessPermissionDialog(
     onCloseDialog: () -> Unit
 ) {
     AlertDialog(
+        modifier = modifier,
         icon = {
             Icon(
                 imageVector = Icons.Outlined.Info,
@@ -34,13 +36,14 @@ fun LocationAccessPermissionDialog(
         },
         title = {
             JostText(
-                text = "SSID Retrieval requires Location Access Permission",
+                text = stringResource(R.string.lapd_title),
                 textAlign = TextAlign.Center
             )
         },
         text = {
             JostText(
-                text = stringResource(id = R.string.lap_dialog_text), textAlign = TextAlign.Center
+                text = stringResource(id = R.string.lap_dialog_text),
+                textAlign = TextAlign.Center
             )
         },
         confirmButton = {
@@ -48,7 +51,7 @@ fun LocationAccessPermissionDialog(
                 onConfirmButtonPressed()
                 onAnyButtonPressed()
                 onCloseDialog()
-            }, modifier = Modifier.fillMaxWidth()) { JostText(text = "Go ahead") }
+            }, modifier = Modifier.fillMaxWidth()) { JostText(text = stringResource(R.string.go_ahead)) }
         },
         dismissButton = {
             DialogButton({
@@ -65,6 +68,6 @@ fun LocationAccessPermissionDialog(
 @Composable
 private fun LocationAccessPermissionDialogPrev() {
     WifiWidgetTheme {
-        LocationAccessPermissionDialog("Proceed without SSID", {}, {}, {}, {})
+        LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {}, {}, {})
     }
 }
