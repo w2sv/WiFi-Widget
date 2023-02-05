@@ -6,18 +6,21 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -93,9 +96,12 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 12.dp)
             )
-            NavigationDrawerItemProperties.get(LocalContext.current).forEach {
-                NavigationDrawerItem(properties = it, closeDrawer = closeDrawer)
+            rememberSaveable {
+                NavigationDrawerItemProperties.get()
             }
+                .forEach {
+                    NavigationDrawerItem(properties = it, closeDrawer = closeDrawer)
+                }
         }
     }
 }
@@ -111,34 +117,34 @@ fun VersionText(modifier: Modifier = Modifier) {
 
 private data class NavigationDrawerItemProperties(
     @DrawableRes val icon: Int,
-    val label: String,
-    val callback: () -> Unit
+    @StringRes val label: Int,
+    val callback: (Context) -> Unit
 ) {
     companion object {
-        fun get(context: Context): List<NavigationDrawerItemProperties> =
+        fun get(): List<NavigationDrawerItemProperties> =
             listOf(
-                NavigationDrawerItemProperties(R.drawable.ic_share_24, "Share") {
-                    ShareCompat.IntentBuilder(context)
+                NavigationDrawerItemProperties(R.drawable.ic_share_24, R.string.share) {
+                    ShareCompat.IntentBuilder(it)
                         .setType("text/plain")
-                        .setText("Check out WiFi Widget!\n${context.playStoreUrl}")
+                        .setText("Check out WiFi Widget!\n${it.playStoreUrl}")
                         .setChooserTitle("Choose an app")
                         .startChooser()
                 },
-                NavigationDrawerItemProperties(R.drawable.ic_star_rate_24, "Rate") {
+                NavigationDrawerItemProperties(R.drawable.ic_star_rate_24, R.string.rate) {
                     try {
-                        context.startActivity(
+                        it.startActivity(
                             Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(context.playStoreUrl)
+                                Uri.parse(it.playStoreUrl)
                             )
                                 .setPackage("com.android.vending")
                         )
                     } catch (e: ActivityNotFoundException) {
-                        context.showToast("You're not signed into the Play Store \uD83E\uDD14")
+                        it.showToast("You're not signed into the Play Store \uD83E\uDD14")
                     }
                 },
-                NavigationDrawerItemProperties(R.drawable.ic_github_24, "Code") {
-                    context
+                NavigationDrawerItemProperties(R.drawable.ic_github_24, R.string.code) {
+                    it
                         .openUrl("https://github.com/w2sv/WiFi-Widget")
                 }
             )
@@ -150,11 +156,13 @@ private fun NavigationDrawerItem(
     properties: NavigationDrawerItemProperties,
     closeDrawer: () -> Unit
 ) {
+    val context = LocalContext.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                properties.callback()
+                properties.callback(context)
                 closeDrawer()
             }
             .padding(horizontal = 24.dp, vertical = 14.dp),
@@ -169,7 +177,7 @@ private fun NavigationDrawerItem(
         )
 
         JostText(
-            text = properties.label,
+            text = stringResource(id = properties.label),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
