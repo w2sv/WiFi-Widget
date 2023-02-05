@@ -2,10 +2,12 @@
 minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
-compose-compiler = '1.4.0'
-compose-tooling = '1.3.3'
 agp = '7.4.1'
 kotlin = '1.8.0'
+java = '11'
+
+compose-compiler = '1.4.0'
+compose-tooling = '1.3.3'
 hilt = '2.44.2'
 junit = '5.9.2'
 lifecycle = '2.5.1'
@@ -14,8 +16,8 @@ lifecycle = '2.5.1'
 
 # owned
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.1-rc2'
-androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc2'
-permissionhandler = 'com.github.w2sv:PermissionHandler:1.0.0-rc3'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc3'
+permissionhandler = 'com.github.w2sv:PermissionHandler:1.0.0-rc4'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha01'

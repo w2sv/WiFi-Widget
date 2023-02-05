@@ -1,8 +1,12 @@
 plugins {
-    id 'com.android.application'
-    id 'org.jetbrains.kotlin.android'
-    id 'com.google.dagger.hilt.android'
+    alias libs.plugins.application
+    alias libs.plugins.kotlin
+    alias libs.plugins.hilt
     id 'kotlin-kapt'
+}
+
+kotlin.jvmToolchain {
+    languageVersion = JavaLanguageVersion.of(libs.versions.java.get())
 }
 
 android {
@@ -45,13 +49,6 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = '11'
     }
     buildFeatures {
         compose true
