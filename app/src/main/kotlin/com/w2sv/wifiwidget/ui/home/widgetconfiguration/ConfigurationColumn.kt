@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,7 +71,8 @@ private fun SubHeader(text: String, modifier: Modifier = Modifier) {
         text = text,
         modifier = modifier,
         fontSize = 18.sp,
-        color = MaterialTheme.colorScheme.inversePrimary
+        fontWeight = FontWeight.Medium,
+        color = colorResource(id = com.w2sv.common.R.color.blue_ocean)
     )
 }
 
