@@ -8,7 +8,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.provider.Settings
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.work.Constraints
@@ -17,9 +16,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import slimber.log.i
-import java.text.DateFormat
 import java.time.Duration
 import java.util.*
 
@@ -34,7 +31,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 .getAppWidgetIds(context, WifiWidgetProvider::class.java)
 
         fun pinWidget(context: Context) {
-            with(context){
+            with(context) {
                 getSystemService(AppWidgetManager::class.java).let {
                     if (it.isRequestPinAppWidgetSupported) {
                         it.requestPinAppWidget(
@@ -121,7 +118,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         i {
-            "${this::class.java.name}.onReceive | ${intent?.action} | ${
+            "${this::class.java.simpleName}.onReceive | ${intent?.action} | ${
                 intent?.extras?.keySet()?.toList()
             }"
         }
@@ -137,9 +134,10 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 }
                 return
             }
+
             AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> context?.let {
                 LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
-                i{"Forwarded AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED intent as local broadcast"}
+                i { "Forwarded AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED intent as local broadcast" }
             }
         }
 
@@ -167,37 +165,8 @@ private fun AppWidgetManager.updateWidget(
 
     updateAppWidget(
         appWidgetId,
-        RemoteViews(context.packageName, R.layout.widget)
-            .apply {
-                ConnectionDependentWidgetLayoutSetter.getInstance(context).populate(this)
-
-                // set last_updated_tv text
-                setTextViewText(
-                    R.id.last_updated_tv,
-                    DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-                )
-
-                /**
-                 * OnClickPendingIntents
-                 */
-
-                // refresh_button
-                setOnClickPendingIntent(
-                    R.id.refresh_button,
-                    WifiWidgetProvider.getRefreshDataPendingIntent(context)
-                )
-
-                // connection_dependent_layout
-                setOnClickPendingIntent(
-                    R.id.widget_layout,
-                    PendingIntent.getActivity(
-                        context,
-                        PendingIntentCode.LaunchHomeActivity.ordinal,
-                        Intent(Settings.ACTION_WIFI_SETTINGS)
-                            .setMakeUniqueActivityFlags(),
-                        PendingIntent.FLAG_IMMUTABLE
-                    )
-                )
-            }
+        WidgetLayoutSetter
+            .getInstance(context)
+            .populated(RemoteViews(context.packageName, R.layout.widget))
     )
 }

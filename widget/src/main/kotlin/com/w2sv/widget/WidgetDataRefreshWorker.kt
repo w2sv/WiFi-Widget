@@ -6,7 +6,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import slimber.log.i
 
-class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) :
+internal class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     companion object {

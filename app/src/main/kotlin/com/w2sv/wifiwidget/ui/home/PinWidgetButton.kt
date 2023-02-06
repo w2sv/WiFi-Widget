@@ -35,6 +35,7 @@ fun PinWidgetButton(
             false -> LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.PinWidgetButtonPress) {
                 triggerOnClickListener = false
             }
+
             true -> {
                 WifiWidgetProvider.pinWidget(LocalContext.current)
                 triggerOnClickListener = false

@@ -1,9 +1,0 @@
-plugins{
-    alias libs.plugins.library
-}
-
-android {
-    namespace 'com.w2sv.resources'
-
-    compileSdk libs.versions.compileSdk.get().toInteger()
-}

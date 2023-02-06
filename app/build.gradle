@@ -10,7 +10,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions{
+    kotlinOptions {
         jvmTarget = '17'
     }
     def PACKAGE_NAME = 'com.w2sv.wifiwidget'
@@ -69,7 +69,7 @@ android {
 dependencies {
     implementation project(path: ':widget')
     implementation project(path: ':preferences')
-    implementation project(path: ':resources')
+    implementation project(path: ':common')
 
     implementation libs.androidutils
     implementation libs.permissionhandler

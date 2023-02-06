@@ -1,4 +1,4 @@
-plugins{
+plugins {
     alias libs.plugins.library
     alias libs.plugins.kotlin
     alias libs.plugins.hilt
@@ -12,6 +12,8 @@ android {
 }
 
 dependencies {
+    implementation project(path: ':common')
+
     api libs.typedpreferences
 
     implementation libs.google.hilt

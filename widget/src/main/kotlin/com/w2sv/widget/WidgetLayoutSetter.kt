@@ -4,34 +4,42 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import android.provider.Settings
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.ColorRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import com.w2sv.androidutils.extensions.crossVisualize
+import com.w2sv.common.Theme
+import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.utils.asFormattedIpAddress
 import com.w2sv.widget.utils.isWifiConnected
 import com.w2sv.widget.utils.netmask
+import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.text.DateFormat
+import java.util.Date
 import javax.inject.Inject
 
-internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
+internal class WidgetLayoutSetter @Inject constructor() {
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint
     interface EntryPointInterface {
-        fun getInstance(): ConnectionDependentWidgetLayoutSetter
+        fun getInstance(): WidgetLayoutSetter
     }
 
     companion object {
-        fun getInstance(context: Context): ConnectionDependentWidgetLayoutSetter =
+        fun getInstance(context: Context): WidgetLayoutSetter =
             EntryPointAccessors.fromApplication(
                 context,
                 EntryPointInterface::class.java
@@ -46,27 +54,105 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
     @Inject
     lateinit var widgetProperties: WidgetProperties
 
+    @Inject
+    lateinit var intPreferences: IntPreferences
+
     /**
      * connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!! -> {InterfaceName: wlan0 LinkAddresses: [ fe80::ac57:89ff:fe22:9f70/64,192.168.1.233/24,2a02:3036:20a:9df2:ac57:89ff:fe22:9f70/64,2a02:3036:20a:9df2:79d9:9c65:ad9e:81ab/64 ] DnsAddresses: [ /192.168.1.1 ] Domains: null MTU: 1500 ServerAddress: /192.168.1.1 TcpBufferSizes: 1730560,3461120,6922240,524288,1048576,4525824 Routes: [ fe80::/64 -> :: wlan0 mtu 0,::/0 -> fe80::49c8:81bb:cfd2:ce7a wlan0 mtu 0,2a02:3036:20a:9df2::/64 -> :: wlan0 mtu 0,192.168.1.0/24 -> 0.0.0.0 wlan0 mtu 0,0.0.0.0/0 -> 192.168.1.1 wlan0 mtu 0 ]}
      */
-    fun populate(remoteViews: RemoteViews) {
-        with(remoteViews) {
-            when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
-                true -> {
-                    when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
-                        true -> {
-                            populatePropertiesLayout()
-                            setWidgetSettingsButton(true)
-                            setLayout(true)
-                        }
+    fun populated(remoteViews: RemoteViews): RemoteViews =
+        remoteViews.apply {
+            setColors(Theme[intPreferences.widgetTheme])
+            setConnectionDependentLayout()
+            setConnectionIndependentLayout()
+        }
 
-                        false -> onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
-                    }
+    private fun RemoteViews.setColors(theme: Theme) {
+        when (theme) {
+            Theme.Dark -> setColors(
+                android.R.color.background_dark,
+                androidx.appcompat.R.color.foreground_material_dark
+            )
+
+            Theme.Light -> setColors(
+                android.R.color.background_light,
+                androidx.appcompat.R.color.foreground_material_light
+            )
+
+            Theme.SystemDefault -> {
+                when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                    Configuration.UI_MODE_NIGHT_NO -> setColors(Theme.Light)
+                    Configuration.UI_MODE_NIGHT_YES -> setColors(Theme.Dark)
                 }
-
-                false -> onNoWifiConnectionAvailable(context.getString(R.string.wifi_disabled))
             }
         }
+    }
+
+    private fun RemoteViews.setColors(@ColorRes backgroundColor: Int, @ColorRes textColor: Int) {
+        listOf(
+            R.id.ssid_value_tv,
+            R.id.ip_value_tv,
+            R.id.frequency_value_tv,
+            R.id.gateway_value_tv,
+            R.id.dhcp_value_tv,
+            R.id.dns_value_tv,
+            R.id.netmask_value_tv,
+
+            R.id.wifi_status_tv,
+            R.id.go_to_wifi_settings_tv
+        )
+            .forEach {
+                setInt(it, "setTextColor", context.getColor(textColor))
+            }
+        setInt(R.id.widget_layout, "setBackgroundColor", context.getColor(backgroundColor))
+    }
+
+    private fun RemoteViews.setConnectionDependentLayout() {
+        when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
+            true -> {
+                when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
+                    true -> {
+                        populatePropertiesLayout()
+                        setWidgetSettingsButton(true)
+                        setLayout(true)
+                    }
+
+                    false -> onNoWifiConnectionAvailable(context.getString(R.string.no_wifi_connection))
+                }
+            }
+
+            false -> onNoWifiConnectionAvailable(context.getString(R.string.wifi_disabled))
+        }
+    }
+
+    private fun RemoteViews.setConnectionIndependentLayout() {
+        // set last_updated_tv text
+        setTextViewText(
+            R.id.last_updated_tv,
+            DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
+        )
+
+        /**
+         * OnClickPendingIntents
+         */
+
+        // refresh_button
+        setOnClickPendingIntent(
+            R.id.refresh_button,
+            WifiWidgetProvider.getRefreshDataPendingIntent(context)
+        )
+
+        // connection_dependent_layout
+        setOnClickPendingIntent(
+            R.id.widget_layout,
+            PendingIntent.getActivity(
+                context,
+                PendingIntentCode.LaunchHomeActivity.ordinal,
+                Intent(Settings.ACTION_WIFI_SETTINGS)
+                    .setMakeUniqueActivityFlags(),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        )
     }
 
     /**
@@ -147,7 +233,12 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
                     PendingIntent.getActivity(
                         context,
                         PendingIntentCode.LaunchHomeActivity.ordinal,
-                        Intent.makeRestartActivityTask(ComponentName(context, "com.w2sv.wifiwidget.activities.HomeActivity"))
+                        Intent.makeRestartActivityTask(
+                            ComponentName(
+                                context,
+                                "com.w2sv.wifiwidget.activities.HomeActivity"
+                            )
+                        )
                             .putExtra(
                                 WifiWidgetProvider.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
                                 true
@@ -156,6 +247,7 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
                     )
                 )
             }
+
             false -> setViewVisibility(R.id.settings_button, View.GONE)
         }
     }
@@ -172,6 +264,7 @@ internal class ConnectionDependentWidgetLayoutSetter @Inject constructor() {
                 R.id.wifi_properties_layout,
                 R.id.no_connection_available_layout
             )
+
             true -> crossVisualize(R.id.no_connection_available_layout, R.id.wifi_properties_layout)
         }
     }
