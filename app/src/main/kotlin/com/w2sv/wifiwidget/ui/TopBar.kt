@@ -44,6 +44,6 @@ fun WifiWidgetTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () ->
 @Composable
 private fun Preview() {
     WifiWidgetTheme {
-        WifiWidgetTopBar{}
+        WifiWidgetTopBar {}
     }
 }

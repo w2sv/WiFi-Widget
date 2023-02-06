@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -133,7 +132,7 @@ private fun ThemeIndicator(
             shape = CircleShape,
             colors = ButtonDefaults.elevatedButtonColors(containerColor = properties.color),
             border = if (selected)
-                BorderStroke(3.dp, colorResource(id = com.w2sv.resources.R.color.blue_chill))
+                BorderStroke(3.dp, colorResource(id = com.w2sv.common.R.color.blue_chill))
             else
                 BorderStroke(Dp.Hairline, Color.Black)
         ) {}

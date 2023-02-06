@@ -60,6 +60,7 @@ fun LocationAccessPermissionDialog(
                 onDismiss = onDismiss
             )
         }
+
         LocationAccessPermissionDialogTrigger.SSIDCheck -> StatelessLocationAccessPermissionDialog(
             dismissButtonText = "Never mind",
             onConfirmButtonPressed = {

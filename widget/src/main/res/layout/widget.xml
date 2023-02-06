@@ -1,10 +1,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
     style="@style/Widget.WiFiWidget.AppWidget.Container"
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
     <FrameLayout
@@ -33,12 +33,14 @@
                 android:textStyle="italic" />
 
             <TextView
+                android:id="@+id/go_to_wifi_settings_tv"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
 
-                android:textSize="12sp"
-                android:text="@string/go_to_wifi_settings"/>
+                android:text="@string/go_to_wifi_settings"
+                android:textSize="12sp" />
         </LinearLayout>
 
     </FrameLayout>

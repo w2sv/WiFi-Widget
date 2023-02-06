@@ -1,5 +1,5 @@
 android {
-    kotlinOptions{
+    kotlinOptions {
         jvmTarget = '17'
     }
     compileOptions {

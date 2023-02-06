@@ -1,4 +1,4 @@
-plugins{
+plugins {
     alias libs.plugins.library
     alias libs.plugins.kotlin
     alias libs.plugins.hilt
@@ -13,7 +13,7 @@ android {
 
 dependencies {
     implementation project(path: ':preferences')
-    implementation project(path: ':resources')
+    implementation project(path: ':common')
 
     implementation libs.androidx.workmanager
     implementation libs.androidx.localbroadcastmanager

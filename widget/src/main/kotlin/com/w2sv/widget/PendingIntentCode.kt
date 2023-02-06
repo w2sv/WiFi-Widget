@@ -1,6 +1,6 @@
 package com.w2sv.widget
 
-enum class PendingIntentCode{
+internal enum class PendingIntentCode {
     RefreshWidgetData,
     LaunchHomeActivity
 }
