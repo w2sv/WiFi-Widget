@@ -28,7 +28,7 @@ fun PropertySelectionDialogInflationButton(
     }
 
     if (inflateDialog)
-        PropertySelectionDialog {
+        WidgetConfigurationDialog {
             inflateDialog = false
         }
 }
