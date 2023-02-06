@@ -16,8 +16,8 @@ fun WifiWidgetTheme(content: @Composable () -> Unit) {
             onPrimary = Color.White,
             surface = Color.White,
             background = Color.White,
-            secondary = colorResource(id = R.color.secondary),
-            tertiary = colorResource(id = R.color.tertiary)
+            secondary = colorResource(id = com.w2sv.common.R.color.mischka_dark),
+            tertiary = colorResource(id = com.w2sv.common.R.color.mischka)
         )
     ) {
         content()

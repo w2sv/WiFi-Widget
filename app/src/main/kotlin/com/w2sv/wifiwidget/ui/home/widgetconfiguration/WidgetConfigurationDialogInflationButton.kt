@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home
+package com.w2sv.wifiwidget.ui.home.widgetconfiguration
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -13,7 +13,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.widgetconfiguration.WidgetConfigurationDialog
 
 @Composable
 fun PropertySelectionDialogInflationButton(
