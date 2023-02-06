@@ -27,6 +27,7 @@ import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.preferences.GlobalFlags
 import com.w2sv.preferences.WidgetProperties
+import com.w2sv.widget.WidgetTheme
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
@@ -46,6 +47,7 @@ class HomeActivity : AppActivity() {
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
         private val globalFlags: GlobalFlags,
+        private val widgetTheme: WidgetTheme,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
@@ -100,6 +102,8 @@ class HomeActivity : AppActivity() {
         private val _propertyStatesDissimilar = MutableStateFlow(false)
         val propertyStatesDissimilar = _propertyStatesDissimilar.asStateFlow()
 
+        
+
         /**
          * @return Boolean indicating whether change has been endorsed
          */
@@ -134,6 +138,9 @@ class HomeActivity : AppActivity() {
     @Inject
     lateinit var widgetProperties: WidgetProperties
 
+    @Inject
+    lateinit var widgetTheme: WidgetProperties
+
     inner class WifiWidgetOptionsChangedReceiver : SelfManagingLocalBroadcastReceiver(
         LocalBroadcastManager.getInstance(this),
         IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)
@@ -159,6 +166,7 @@ class HomeActivity : AppActivity() {
         get() = listOf(
             globalFlags,
             widgetProperties,
+            widgetTheme,
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver()
         )

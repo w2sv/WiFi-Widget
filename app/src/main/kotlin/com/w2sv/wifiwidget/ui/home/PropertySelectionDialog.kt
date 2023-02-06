@@ -1,8 +1,10 @@
 package com.w2sv.wifiwidget.ui.home
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -14,12 +16,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -32,6 +37,20 @@ import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+
+@Preview
+@Composable
+private fun StatelessPropertySelectionDialogPrev() {
+    WifiWidgetTheme {
+        StatelessPropertySelectionDialog(
+            onCancel = { /*TODO*/ },
+            onConfirm = { /*TODO*/ },
+            confirmButtonEnabled = true
+        ) {
+            StatelessPropertyRows({ true }, { _, _ -> }, {})
+        }
+    }
+}
 
 @Composable
 fun PropertySelectionDialog(
@@ -138,40 +157,51 @@ private fun StatelessPropertySelectionDialog(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 // gradient background
-                modifier = Modifier.background(
-                    Brush.linearGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.secondary,
-                            MaterialTheme.colorScheme.tertiary
-                        ),
-                        start = Offset(0f, Float.POSITIVE_INFINITY),
-                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+                modifier = Modifier
+                    .background(
+                        Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.secondary,
+                                MaterialTheme.colorScheme.tertiary
+                            ),
+                            start = Offset(0f, Float.POSITIVE_INFINITY),
+                            end = Offset(Float.POSITIVE_INFINITY, 0f)
+                        )
                     )
-                )
+                    .padding(vertical = 16.dp)
             ) {
                 JostText(
-                    text = stringResource(id = R.string.configure_properties),
+                    text = stringResource(id = com.w2sv.widget.R.string.configure_widget),
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
-                    modifier = Modifier.padding(
-                        top = 24.dp,
-                        bottom = 12.dp,
-                        start = 18.dp,
-                        end = 18.dp
-                    ),
+                    modifier = Modifier.padding(bottom = 16.dp),
                     color = MaterialTheme.colorScheme.primary
                 )
                 Divider(
-                    Modifier.padding(horizontal = 22.dp, vertical = 12.dp),
+                    Modifier.padding(horizontal = 22.dp),
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                propertyRows()
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(260.dp, 460.dp)
+                        .padding(vertical = 16.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    SubHeader("Theme", Modifier.padding(top = 12.dp, bottom = 22.dp))
+                    ThemeSelectionRow(modifier = Modifier.fillMaxWidth())
+
+                    SubHeader("Displayed Properties", Modifier.padding(vertical = 22.dp))
+                    propertyRows()
+                }
+
                 ButtonRow(
                     onCancel = onCancel,
                     onConfirm = onConfirm,
                     confirmButtonEnabled = confirmButtonEnabled,
                     modifier = Modifier
-                        .padding(vertical = 24.dp)
                         .fillMaxWidth()
                 )
             }
@@ -180,16 +210,88 @@ private fun StatelessPropertySelectionDialog(
 }
 
 @Composable
-private fun ColumnScope.StatelessPropertyRows(
+private fun SubHeader(text: String, modifier: Modifier = Modifier) {
+    JostText(
+        text = text,
+        modifier = modifier,
+        fontSize = 18.sp,
+        color = MaterialTheme.colorScheme.inversePrimary
+    )
+}
+
+@Composable
+private fun ThemeSelectionRow(modifier: Modifier = Modifier) {
+    var selectedThemeIndex by rememberSaveable {
+        mutableStateOf(1)
+    }
+
+    Row(
+        modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        remember {
+            listOf(
+                ThemeIndicatorProperties(label = "Light", color = Color.White),
+                ThemeIndicatorProperties(label = "Device Default", color = Color.Gray),
+                ThemeIndicatorProperties(label = "Dark", color = Color.Black)
+            )
+        }
+            .forEachIndexed { index, properties ->
+                ThemeIndicator(
+                    properties = properties,
+                    selected = index == selectedThemeIndex,
+                    modifier = Modifier.padding(
+                        horizontal = 16.dp
+                    )
+                ) {
+                    selectedThemeIndex = index
+                }
+            }
+    }
+}
+
+private data class ThemeIndicatorProperties(val label: String, val color: Color)
+
+@Composable
+private fun ThemeIndicator(
+    properties: ThemeIndicatorProperties,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceEvenly,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        JostText(
+            text = properties.label,
+            fontSize = 12.sp,
+            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
+        )
+        ElevatedButton(
+            onClick,
+            modifier = Modifier
+                .size(36.dp),
+            shape = CircleShape,
+            colors = ButtonDefaults.elevatedButtonColors(containerColor = properties.color),
+            border = if (selected)
+                BorderStroke(3.dp, colorResource(id = com.w2sv.resources.R.color.blue_chill))
+            else
+                BorderStroke(Dp.Hairline, Color.Black)
+        ) {}
+    }
+}
+
+@Composable
+private fun StatelessPropertyRows(
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .padding(horizontal = 26.dp)
-            .verticalScroll(rememberScrollState())
-            .weight(1f, fill = false)
+        modifier = Modifier.padding(horizontal = 26.dp)
     ) {
         stringArrayResource(id = R.array.wifi_properties)
             .forEachIndexed { propertyIndex, property ->
@@ -227,16 +329,6 @@ private fun ColumnScope.StatelessPropertyRows(
     }
 }
 
-@Preview
-@Composable
-private fun StatelessPropertyRowsPrev() {
-    WifiWidgetTheme {
-        Column {
-            StatelessPropertyRows({ true }, { _, _ -> }, {})
-        }
-    }
-}
-
 @Composable
 private fun ButtonRow(
     onCancel: () -> Unit,
@@ -252,15 +344,7 @@ private fun ButtonRow(
             JostText(text = stringResource(R.string.cancel))
         }
         DialogButton(onClick = onConfirm, enabled = confirmButtonEnabled) {
-            JostText(text = stringResource(R.string.confirm))
+            JostText(text = stringResource(R.string.apply))
         }
-    }
-}
-
-@Preview
-@Composable
-private fun ButtonRowPrev() {
-    WifiWidgetTheme {
-        ButtonRow(onCancel = { /*TODO*/ }, onConfirm = { /*TODO*/ }, confirmButtonEnabled = true)
     }
 }

@@ -12,8 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -96,7 +96,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 12.dp)
             )
-            rememberSaveable {
+            remember {
                 NavigationDrawerItemProperties.get()
             }
                 .forEach {

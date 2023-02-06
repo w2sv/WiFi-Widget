@@ -9,7 +9,7 @@
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
 
-    <string name="configure_widget">Configure widget</string>
+    <string name="configure_widget">Configure Widget</string>
     <string name="go_to_wifi_settings">Go to WiFi Settings</string>
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
