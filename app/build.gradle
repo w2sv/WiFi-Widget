@@ -23,8 +23,8 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 6
-        versionName '1.1.2'
+        versionCode 7
+        versionName '1.1.3'
 
 //        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
