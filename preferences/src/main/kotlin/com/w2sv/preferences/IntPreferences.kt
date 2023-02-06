@@ -6,8 +6,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WidgetTheme @Inject constructor(sharedPreferences: SharedPreferences) :
-    IntPreferences("theme" to 1, sharedPreferences = sharedPreferences) {
+class IntPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
+    IntPreferences("widgetTheme" to 1, sharedPreferences = sharedPreferences) {
 
-    var theme by this
+    var widgetTheme by this
 }

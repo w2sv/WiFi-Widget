@@ -42,11 +42,11 @@ fun LocationAccessPermissionDialog(
                 onConfirmButtonPressed = {
                     activity.lapRequestLauncher.requestPermissionIfRequired(
                         onGranted = {
-                            viewModel.setSSIDState(true, updatePropertyStatesDissimilar = false)
-                            viewModel.syncWidgetPropertyStates()
+                            viewModel.setSSIDState(true, updateRequiringUpdate = false)
+                            viewModel.updateWidgetConfiguration()
                         },
                         onRequestDismissed = {
-                            viewModel.setSSIDState(false, updatePropertyStatesDissimilar = false)
+                            viewModel.setSSIDState(false, updateRequiringUpdate = false)
                             WifiWidgetProvider.pinWidget(context)
                         }
                     )

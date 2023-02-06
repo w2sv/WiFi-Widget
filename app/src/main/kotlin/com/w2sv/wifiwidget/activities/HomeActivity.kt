@@ -20,14 +20,15 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.preferences.GlobalFlags
+import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
-import com.w2sv.preferences.WidgetTheme
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
@@ -36,7 +37,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
@@ -47,7 +48,7 @@ class HomeActivity : AppActivity() {
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
         private val globalFlags: GlobalFlags,
-        private val widgetTheme: WidgetTheme,
+        private val intPreferences: IntPreferences,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
@@ -78,48 +79,79 @@ class HomeActivity : AppActivity() {
          * widgetPropertyStates
          */
 
-        val widgetPropertyStates: SnapshotStateMap<String, Boolean> by lazy {
+        val widgetPropertyFlags: SnapshotStateMap<String, Boolean> by lazy {
             widgetProperties.getMutableStateMap()
         }
-
-        fun setSSIDState(value: Boolean, updatePropertyStatesDissimilar: Boolean = true) {
-            when (updatePropertyStatesDissimilar) {
-                true -> onChangePropertyState(ssidKey, value)
-                false -> widgetPropertyStates[ssidKey] = value
-            }
-        }
-
-        fun syncWidgetPropertyStates() {
-            widgetProperties.putAll(widgetPropertyStates)
-            _propertyStatesDissimilar.value = false
-        }
-
-        fun resetWidgetPropertyStates() {
-            widgetPropertyStates.putAll(widgetProperties)
-            _propertyStatesDissimilar.value = false
-        }
-
-        private val _propertyStatesDissimilar = MutableStateFlow(false)
-        val propertyStatesDissimilar = _propertyStatesDissimilar.asStateFlow()
-
-        
 
         /**
          * @return Boolean indicating whether change has been endorsed
          */
-        fun onChangePropertyState(property: String, value: Boolean): Boolean {
+        fun setWidgetPropertyFlag(property: String, value: Boolean): Boolean {
             // veto change if leading to all properties being unchecked
-            if (!value && widgetPropertyStates.values.count { true } == 1)
+            if (!value && widgetPropertyFlags.values.count { true } == 1)
                 return false
 
             // implement change and update _propertyStatesDissimilar
-            widgetPropertyStates[property] = value
-            _propertyStatesDissimilar.value =
-                widgetPropertyStates.any { (k, v) ->  // TODO: optimize
+            widgetPropertyFlags[property] = value
+            widgetPropertyFlagsRequiringUpdate.value =
+                widgetPropertyFlags.any { (k, v) ->  // TODO: optimize
                     v != widgetProperties.getValue(k)
                 }
             return true
         }
+
+        fun setSSIDState(value: Boolean, updateRequiringUpdate: Boolean = true) {
+            when (updateRequiringUpdate) {
+                true -> setWidgetPropertyFlag(ssidKey, value)
+                false -> widgetPropertyFlags[ssidKey] = value
+            }
+        }
+
+        fun updateWidgetConfiguration() {
+            widgetProperties.putAll(widgetPropertyFlags)
+            intPreferences.widgetTheme = widgetTheme.value
+
+            resetRequiringUpdateFlows()
+        }
+
+        fun resetWidgetConfiguration() {
+            widgetPropertyFlags.putAll(widgetProperties)
+            widgetTheme.value = intPreferences.widgetTheme
+
+            resetRequiringUpdateFlows()
+        }
+
+        val widgetConfigurationRequiringUpdate = MutableStateFlow(false)
+
+        private val widgetPropertyFlagsRequiringUpdate = MutableStateFlow(false)
+        private val widgetThemeRequiringUpdate = MutableStateFlow(false)
+
+        init {
+            val updateWidgetConfigurationRequiringUpdate: (Boolean) -> Unit = {
+                widgetConfigurationRequiringUpdate.value =
+                    widgetThemeRequiringUpdate.value || widgetPropertyFlagsRequiringUpdate.value
+            }
+            viewModelScope.launch {
+                widgetThemeRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
+            }
+            viewModelScope.launch {
+                widgetPropertyFlagsRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
+            }
+        }
+
+        private fun resetRequiringUpdateFlows() {
+            widgetThemeRequiringUpdate.value = false
+            widgetPropertyFlagsRequiringUpdate.value = false
+        }
+
+        var widgetTheme = MutableStateFlow(intPreferences.widgetTheme)
+            .apply {
+                viewModelScope.launch {
+                    collect {
+                        widgetThemeRequiringUpdate.value = it != intPreferences.widgetTheme
+                    }
+                }
+            }
 
         /**
          * lap := Location Access Permission
@@ -139,7 +171,7 @@ class HomeActivity : AppActivity() {
     lateinit var widgetProperties: WidgetProperties
 
     @Inject
-    lateinit var widgetTheme: WidgetProperties
+    lateinit var intPreferences: IntPreferences
 
     inner class WifiWidgetOptionsChangedReceiver : SelfManagingLocalBroadcastReceiver(
         LocalBroadcastManager.getInstance(this),
@@ -166,7 +198,7 @@ class HomeActivity : AppActivity() {
         get() = listOf(
             globalFlags,
             widgetProperties,
-            widgetTheme,
+            intPreferences,
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver()
         )

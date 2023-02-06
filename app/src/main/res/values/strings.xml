@@ -2,8 +2,7 @@
     <string name="app_name">WiFi Widget</string>
     <string name="pin_widget">Pin Widget</string>
     <string name="uncheck_all_properties_toast">You need to leave at least one property checked!</string>
-    <string name="updated_widget_properties">Updated Widget Properties</string>
-    <string name="widget_properties_will_apply">Updated Widget Properties, yet no Widget in use</string>
+    <string name="updated_widget_configuration">Updated Widget Configuration</string>
     <string name="pinned_widget">Pinned Widget</string>
     <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="lap_dialog_title">SSID Retrieval requires Location Access Permission</string>
