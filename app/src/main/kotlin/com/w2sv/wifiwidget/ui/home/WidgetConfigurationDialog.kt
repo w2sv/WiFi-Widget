@@ -40,9 +40,9 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Preview
 @Composable
-private fun StatelessPropertySelectionDialogPrev() {
+private fun StatelessWidgetConfigurationDialogPrev() {
     WifiWidgetTheme {
-        StatelessPropertySelectionDialog(
+        StatelessWidgetConfigurationDialog(
             onCancel = { /*TODO*/ },
             onConfirm = { /*TODO*/ },
             confirmButtonEnabled = true
@@ -53,7 +53,7 @@ private fun StatelessPropertySelectionDialogPrev() {
 }
 
 @Composable
-fun PropertySelectionDialog(
+fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel(),
     onDismiss: () -> Unit
@@ -88,7 +88,7 @@ fun PropertySelectionDialog(
             showLocationAccessPermissionDialog = false
         }
 
-    StatelessPropertySelectionDialog(
+    StatelessWidgetConfigurationDialog(
         modifier = modifier,
         onCancel = {
             viewModel.resetWidgetPropertyStates()
@@ -141,7 +141,7 @@ private fun HomeActivity.launchLAPRequestIfRequired(viewModel: HomeActivity.View
 }
 
 @Composable
-private fun StatelessPropertySelectionDialog(
+private fun StatelessWidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     onCancel: () -> Unit,
     onConfirm: () -> Unit,

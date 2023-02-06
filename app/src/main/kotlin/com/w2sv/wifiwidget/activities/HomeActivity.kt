@@ -27,7 +27,7 @@ import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.preferences.GlobalFlags
 import com.w2sv.preferences.WidgetProperties
-import com.w2sv.widget.WidgetTheme
+import com.w2sv.preferences.WidgetTheme
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
