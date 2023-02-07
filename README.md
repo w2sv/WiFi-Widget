@@ -21,7 +21,7 @@ Janek Zangenberg
 
 ## Credits
 
-Logo foreground by [Hilmy Abiyyu Asad](https://freeicons.io/profile/75801) taken from [here](https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667#), where it is licensed under the [Creative Commons(Attribution 3.0 unported)](https://creativecommons.org/licenses/by/3.0/) license.
+Logo foreground by [Hilmy Abiyyu Asad](https://freeicons.io/profile/75801) taken from [here](https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667#), where it is licensed under [Creative Commons(Attribution 3.0 unported)](https://creativecommons.org/licenses/by/3.0/).
 
 ## License
 
