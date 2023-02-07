@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.home.widgetconfiguration
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,14 +52,14 @@ internal fun ConfigurationColumn(
             .padding(vertical = 16.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        SubHeader("Theme", Modifier.padding(top = 12.dp, bottom = 22.dp))
+        SubHeader(stringResource(R.string.theme), Modifier.padding(top = 12.dp, bottom = 22.dp))
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
             selected = selectedThemeIndex,
             onSelected = onSelectedThemeIndex
         )
 
-        SubHeader("Displayed Properties", Modifier.padding(vertical = 22.dp))
+        SubHeader(stringResource(R.string.displayed_properties), Modifier.padding(vertical = 22.dp))
         StatelessPropertyRows(
             propertyChecked = propertyChecked,
             onCheckedChange = onCheckedChange,
@@ -98,9 +100,9 @@ private fun ThemeSelectionRow(
     ) {
         remember {
             listOf(
-                ThemeIndicatorProperties(label = "Light", color = Color.White),
-                ThemeIndicatorProperties(label = "Device Default", color = Color.Gray),
-                ThemeIndicatorProperties(label = "Dark", color = Color.Black)
+                ThemeIndicatorProperties(label = R.string.light, color = Color.White),
+                ThemeIndicatorProperties(label = R.string.device_default, color = Color.Gray),
+                ThemeIndicatorProperties(label = R.string.dark, color = Color.Black)
             )
         }
             .forEachIndexed { index, properties ->
@@ -117,7 +119,7 @@ private fun ThemeSelectionRow(
     }
 }
 
-private data class ThemeIndicatorProperties(val label: String, val color: Color)
+private data class ThemeIndicatorProperties(@StringRes val label: Int, val color: Color)
 
 @Composable
 private fun ThemeIndicator(
@@ -132,7 +134,7 @@ private fun ThemeIndicator(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         JostText(
-            text = properties.label,
+            text = stringResource(id = properties.label),
             fontSize = 12.sp,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )

@@ -15,4 +15,9 @@
     <string name="rate">Rate</string>
     <string name="share">Share</string>
     <string name="ssid_display_requires_location_services_to_be_enabled">SSID display requires location services to be enabled!</string>
+    <string name="light">Light</string>
+    <string name="device_default">Device Default</string>
+    <string name="dark">Dark</string>
+    <string name="theme">Theme</string>
+    <string name="displayed_properties">Displayed Properties</string>
 </resources>
