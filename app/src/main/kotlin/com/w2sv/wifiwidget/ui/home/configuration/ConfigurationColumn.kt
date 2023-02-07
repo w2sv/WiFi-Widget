@@ -40,8 +40,8 @@ import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 @Composable
 internal fun ConfigurationColumn(
     modifier: Modifier = Modifier,
-    selectedThemeIndex: () -> Int,
-    onSelectedThemeIndex: (Int) -> Unit,
+    selectedTheme: () -> Int,
+    onSelectedTheme: (Int) -> Unit,
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
@@ -55,8 +55,8 @@ internal fun ConfigurationColumn(
         SubHeader(stringResource(R.string.theme), Modifier.padding(top = 12.dp, bottom = 22.dp))
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
-            selected = selectedThemeIndex,
-            onSelected = onSelectedThemeIndex
+            selected = selectedTheme,
+            onSelected = onSelectedTheme
         )
 
         SubHeader(stringResource(R.string.displayed_properties), Modifier.padding(vertical = 22.dp))

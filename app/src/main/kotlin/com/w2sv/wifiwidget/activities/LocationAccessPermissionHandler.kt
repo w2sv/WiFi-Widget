@@ -6,7 +6,10 @@ import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.permissionhandler.CoupledPermissionsHandler
 
-class LocationAccessPermissionHandler(activity: ComponentActivity) :
+class LocationAccessPermissionHandler(
+    activity: ComponentActivity,
+    private val viewModel: HomeActivity.ViewModel
+) :
     CoupledPermissionsHandler(
         activity,
         arrayOf(
@@ -15,6 +18,25 @@ class LocationAccessPermissionHandler(activity: ComponentActivity) :
         ),
         "LocationAccessPermissionHandler"
     ) {
+
+    fun requestPermissionIfRequiredAndSetSSIDFlag(
+        updateRequiringUpdateFlow: Boolean,
+        onGranted: (() -> Unit)? = null,
+        onDenied: (() -> Unit)? = null,
+        onRequestDismissed: (() -> Unit)? = null
+    ): Boolean =
+        super.requestPermissionIfRequired(
+            {
+                viewModel.changeSSIDFlag(true, updateRequiringUpdateFlow)
+                onGranted?.invoke()
+            },
+            {
+                viewModel.changeSSIDFlag(false, updateRequiringUpdateFlow)
+                onDenied?.invoke()
+            },
+            onRequestDismissed
+        )
+
     override fun onPermissionRationalSuppressed() {
         activity.showToast(
             "Go to app settings and grant location access permission",
