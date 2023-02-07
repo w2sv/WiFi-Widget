@@ -12,12 +12,12 @@ fun WifiWidgetTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = lightColorScheme(
             primary = colorResource(id = R.color.primary),
-            inversePrimary = colorResource(id = com.w2sv.common.R.color.blue_chill),
+            inversePrimary = colorResource(id = com.w2sv.common.R.color.amaranth_purple),
             onPrimary = Color.White,
             surface = Color.White,
             background = Color.White,
-            secondary = colorResource(id = com.w2sv.common.R.color.mischka_dark),
-            tertiary = colorResource(id = com.w2sv.common.R.color.mischka)
+            secondary = colorResource(id = com.w2sv.common.R.color.cadet_gray),
+            tertiary = colorResource(id = com.w2sv.common.R.color.ghost_white)
         )
     ) {
         content()

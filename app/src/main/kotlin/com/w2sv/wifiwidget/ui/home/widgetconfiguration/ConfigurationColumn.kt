@@ -28,11 +28,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
 @Composable
 internal fun ConfigurationColumn(
@@ -65,6 +66,14 @@ internal fun ConfigurationColumn(
     }
 }
 
+@Preview
+@Composable
+private fun SubHeaderPrev() {
+    WifiWidgetTheme {
+        SubHeader(text = "Theme")
+    }
+}
+
 @Composable
 private fun SubHeader(text: String, modifier: Modifier = Modifier) {
     JostText(
@@ -72,7 +81,7 @@ private fun SubHeader(text: String, modifier: Modifier = Modifier) {
         modifier = modifier,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
-        color = colorResource(id = com.w2sv.common.R.color.blue_ocean)
+        color = MaterialTheme.colorScheme.inversePrimary
     )
 }
 
@@ -132,11 +141,12 @@ private fun ThemeIndicator(
             modifier = Modifier
                 .size(36.dp),
             shape = CircleShape,
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
             colors = ButtonDefaults.elevatedButtonColors(containerColor = properties.color),
             border = if (selected)
-                BorderStroke(3.dp, colorResource(id = com.w2sv.common.R.color.blue_chill))
+                BorderStroke(3.dp, colorResource(id = com.w2sv.common.R.color.dark_cyan))
             else
-                BorderStroke(Dp.Hairline, Color.Black)
+                null
         ) {}
     }
 }
