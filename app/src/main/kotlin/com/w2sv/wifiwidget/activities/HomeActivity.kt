@@ -30,6 +30,7 @@ import com.w2sv.preferences.GlobalFlags
 import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
 import com.w2sv.wifiwidget.utils.getMutableStateMap
@@ -65,11 +66,19 @@ class HomeActivity : AppActivity() {
 
         fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
             if (widgetIds.add(widgetId)) {
-                i { "New widgetId: $widgetId" }
-                context.showToast("Pinned Widget")
-                if (widgetProperties.SSID && !context.locationServicesEnabled)
-                    context.showToast("SSID display requires location access!", Toast.LENGTH_LONG)
+                onNewWidgetPinned(widgetId, context)
             }
+        }
+
+        private fun onNewWidgetPinned(widgetId: Int, context: Context) {
+            i { "Pinned new widget w ID=$widgetId" }
+            context.showToast(R.string.pinned_widget)
+
+            if (widgetProperties.SSID && !context.locationServicesEnabled)
+                context.showToast(
+                    R.string.ssid_display_requires_location_services_to_be_enabled,
+                    Toast.LENGTH_LONG
+                )
         }
 
         private val widgetIds: MutableSet<Int> =
