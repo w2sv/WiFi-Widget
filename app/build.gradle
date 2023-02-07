@@ -6,13 +6,6 @@ plugins {
 }
 
 android {
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlinOptions {
-        jvmTarget = '17'
-    }
     def PACKAGE_NAME = 'com.w2sv.wifiwidget'
 
     namespace PACKAGE_NAME
@@ -20,13 +13,15 @@ android {
 
     defaultConfig {
         applicationId PACKAGE_NAME
+
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 7
-        versionName '1.1.3'
+        versionCode 8
+        versionName '1.1.4'
 
-//        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        setProperty('archivesBaseName', versionName)  // Stores built aab's as "{versionName}-{buildFlavor}.apk"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
         // create release signingConfig from keystore.properties file, if present
@@ -62,6 +57,19 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    // Store built apks as "{versionName}.apk"
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "${variant.versionName}.apk"
         }
     }
 }
