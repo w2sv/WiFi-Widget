@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.widgetconfiguration
+package com.w2sv.wifiwidget.ui.home.configuration
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
