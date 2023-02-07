@@ -69,10 +69,8 @@ class HomeActivity : AppActivity() {
                 }
             }
 
-        val ssidKey: String = widgetProperties::SSID.name
-
         /**
-         * Widget Creation Listening
+         * Widget Pin Listening
          */
 
         fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
@@ -96,7 +94,7 @@ class HomeActivity : AppActivity() {
             WifiWidgetProvider.getWidgetIds(context).toMutableSet()
 
         /**
-         * widgetPropertyStates
+         * Widget Configuration
          */
 
         val widgetPropertyFlags: SnapshotStateMap<String, Boolean> by lazy {
@@ -106,26 +104,30 @@ class HomeActivity : AppActivity() {
         /**
          * @return Boolean indicating whether change has been endorsed
          */
-        fun setWidgetPropertyFlag(property: String, value: Boolean): Boolean {
-            // veto change if leading to all properties being unchecked
-            if (!value && widgetPropertyFlags.values.count { true } == 1)
-                return false
+        fun onWidgetPropertyFlagInput(property: String, value: Boolean): Boolean =
+            (!value && widgetPropertyFlags.values.count { true } == 1).let { leadsToLastRemainingPropertySetToFalse ->
+                if (!leadsToLastRemainingPropertySetToFalse) {
+                    widgetPropertyFlags[property] = value
+                    updateWidgetPropertyFlagsRequiringUpdate()
+                }
+                !leadsToLastRemainingPropertySetToFalse
+            }
 
-            // implement change and update _propertyStatesDissimilar
-            widgetPropertyFlags[property] = value
+        private fun updateWidgetPropertyFlagsRequiringUpdate() {
             widgetPropertyFlagsRequiringUpdate.value =
                 widgetPropertyFlags.any { (k, v) ->  // TODO: optimize
                     v != widgetProperties.getValue(k)
                 }
-            return true
         }
 
-        fun setSSIDState(value: Boolean, updateRequiringUpdate: Boolean = true) {
-            when (updateRequiringUpdate) {
-                true -> setWidgetPropertyFlag(ssidKey, value)
-                false -> widgetPropertyFlags[ssidKey] = value
-            }
+        fun changeSSIDFlag(value: Boolean, updateRequiringUpdateFlow: Boolean) {
+            widgetPropertyFlags[ssidKey] = value
+
+            if (updateRequiringUpdateFlow)
+                updateWidgetPropertyFlagsRequiringUpdate()
         }
+
+        val ssidKey: String = widgetProperties::SSID.name
 
         fun updateWidgetConfiguration() {
             widgetProperties.putAll(widgetPropertyFlags)
@@ -209,7 +211,10 @@ class HomeActivity : AppActivity() {
     }
 
     val lapRequestLauncher by lazy {
-        LocationAccessPermissionHandler(this)
+        LocationAccessPermissionHandler(
+            this,
+            viewModel
+        )
     }
 
     override val lifecycleObservers: List<LifecycleObserver>

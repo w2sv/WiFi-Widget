@@ -40,13 +40,12 @@ fun LocationAccessPermissionDialog(
             StatelessLocationAccessPermissionDialog(
                 dismissButtonText = "Proceed without SSID",
                 onConfirmButtonPressed = {
-                    activity.lapRequestLauncher.requestPermissionIfRequired(
+                    activity.lapRequestLauncher.requestPermissionIfRequiredAndSetSSIDFlag(
+                        updateRequiringUpdateFlow = false,
                         onGranted = {
-                            viewModel.setSSIDState(true, updateRequiringUpdate = false)
                             viewModel.updateWidgetConfiguration()
                         },
                         onRequestDismissed = {
-                            viewModel.setSSIDState(false, updateRequiringUpdate = false)
                             WifiWidgetProvider.pinWidget(context)
                         }
                     )
@@ -64,12 +63,16 @@ fun LocationAccessPermissionDialog(
         LocationAccessPermissionDialogTrigger.SSIDCheck -> StatelessLocationAccessPermissionDialog(
             dismissButtonText = "Never mind",
             onConfirmButtonPressed = {
-                activity.lapRequestLauncher.requestPermissionIfRequired(
-                    onDenied = { viewModel.setSSIDState(false) },
-                    onGranted = { viewModel.setSSIDState(true) }
+                activity.lapRequestLauncher.requestPermissionIfRequiredAndSetSSIDFlag(
+                    true
                 )
             },
-            onDismissButtonPressed = { viewModel.setSSIDState(false) },
+            onDismissButtonPressed = {
+                viewModel.changeSSIDFlag(
+                    false,
+                    updateRequiringUpdateFlow = false
+                )
+            },
             onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
             onDismiss = onDismiss
         )

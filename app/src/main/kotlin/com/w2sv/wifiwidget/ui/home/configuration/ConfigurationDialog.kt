@@ -51,8 +51,8 @@ private fun StatelessWidgetConfigurationDialogPrev() {
             onDismiss = {},
             contentColumn = {
                 ConfigurationColumn(
-                    selectedThemeIndex = { 1 },
-                    onSelectedThemeIndex = {},
+                    selectedTheme = { 1 },
+                    onSelectedTheme = {},
                     propertyChecked = { true },
                     onCheckedChange = { _, _ -> },
                     onInfoButtonClick = {}
@@ -62,7 +62,7 @@ private fun StatelessWidgetConfigurationDialogPrev() {
                 ButtonRow(
                     onCancel = { /*TODO*/ },
                     onApply = { /*TODO*/ },
-                    confirmButtonEnabled = { true }
+                    applyButtonEnabled = { true }
                 )
             }
         )
@@ -110,8 +110,8 @@ fun WidgetConfigurationDialog(
         closeDialog()
     }
 
-    val selectedThemeIndex by viewModel.widgetTheme.collectAsState()
-    val widgetConfigurationRequiringUpdate by viewModel.widgetConfigurationRequiringUpdate.collectAsState()
+    val theme by viewModel.widgetTheme.collectAsState()
+    val applyButtonEnabled by viewModel.widgetConfigurationRequiringUpdate.collectAsState()
 
     StatelessWidgetConfigurationDialog(
         modifier = modifier,
@@ -121,10 +121,10 @@ fun WidgetConfigurationDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(260.dp, 460.dp),
-                selectedThemeIndex = {
-                    selectedThemeIndex
+                selectedTheme = {
+                    theme
                 },
-                onSelectedThemeIndex = {
+                onSelectedTheme = {
                     viewModel.widgetTheme.value = it
                 },
                 propertyChecked = { property ->
@@ -135,14 +135,13 @@ fun WidgetConfigurationDialog(
                         property == viewModel.ssidKey && newValue -> {
                             when (viewModel.lapDialogAnswered) {
                                 false -> showLocationAccessPermissionDialog = true
-                                true -> activity.lapRequestLauncher.requestPermissionIfRequired(
-                                    onDenied = { viewModel.setSSIDState(false) },
-                                    onGranted = { viewModel.setSSIDState(true) }
+                                true -> activity.lapRequestLauncher.requestPermissionIfRequiredAndSetSSIDFlag(
+                                    updateRequiringUpdateFlow = true
                                 )
                             }
                         }
 
-                        !viewModel.setWidgetPropertyFlag(property, newValue) -> {
+                        !viewModel.onWidgetPropertyFlagInput(property, newValue) -> {
                             context.showToast(R.string.uncheck_all_properties_toast)
                         }
                     }
@@ -161,8 +160,8 @@ fun WidgetConfigurationDialog(
                     context.showToast(R.string.updated_widget_configuration)
                     closeDialog()
                 },
-                confirmButtonEnabled = {
-                    widgetConfigurationRequiringUpdate
+                applyButtonEnabled = {
+                    applyButtonEnabled
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -223,7 +222,7 @@ private fun StatelessWidgetConfigurationDialog(
 private fun ButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
-    confirmButtonEnabled: () -> Boolean,
+    applyButtonEnabled: () -> Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -233,7 +232,7 @@ private fun ButtonRow(
         DialogButton(onClick = onCancel) {
             JostText(text = stringResource(R.string.cancel))
         }
-        DialogButton(onClick = onApply, enabled = confirmButtonEnabled()) {
+        DialogButton(onClick = onApply, enabled = applyButtonEnabled()) {
             JostText(text = stringResource(R.string.apply))
         }
     }
