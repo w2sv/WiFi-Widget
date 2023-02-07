@@ -240,7 +240,7 @@ internal class WidgetLayoutSetter @Inject constructor() {
                             )
                         )
                             .putExtra(
-                                WifiWidgetProvider.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START,
+                                WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START,
                                 true
                             ),
                         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

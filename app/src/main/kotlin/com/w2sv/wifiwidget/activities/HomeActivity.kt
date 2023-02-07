@@ -54,9 +54,20 @@ class HomeActivity : AppActivity() {
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
 
-        val openPropertiesConfigurationDialogOnStart =
-            savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START)
-                .also { i { "openPropertiesConfigurationDialog: $it" } }
+        private val openConfigurationDialogOnStart =
+            savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
+
+        var openConfigurationDialog = MutableStateFlow(false)
+
+        var splashScreenAnimationFinished = MutableStateFlow(false)
+            .apply {
+                viewModelScope.launch {
+                    collect {
+                        if (it && openConfigurationDialogOnStart)
+                            openConfigurationDialog.value = true
+                    }
+                }
+            }
 
         val ssidKey: String = widgetProperties::SSID.name
 
@@ -166,11 +177,7 @@ class HomeActivity : AppActivity() {
          * lap := Location Access Permission
          */
 
-        val lapDialogAnswered: Boolean by globalFlags::locationPermissionDialogAnswered
-
-        fun onLapDialogAnswered() {
-            globalFlags.locationPermissionDialogAnswered = true
-        }
+        var lapDialogAnswered: Boolean by globalFlags::locationPermissionDialogAnswered
     }
 
     @Inject
@@ -182,6 +189,8 @@ class HomeActivity : AppActivity() {
     @Inject
     lateinit var intPreferences: IntPreferences
 
+    private val viewModel by viewModels<ViewModel>()
+
     inner class WifiWidgetOptionsChangedReceiver : SelfManagingLocalBroadcastReceiver(
         LocalBroadcastManager.getInstance(this),
         IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)
@@ -191,7 +200,7 @@ class HomeActivity : AppActivity() {
 
             intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
                 ?.let { widgetId ->
-                    viewModels<ViewModel>().value.onWidgetOptionsUpdated(
+                    viewModel.onWidgetOptionsUpdated(
                         widgetId,
                         this@HomeActivity
                     )
@@ -214,7 +223,9 @@ class HomeActivity : AppActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
-            SwipeUpAnimation()
+            SwipeUpAnimation {
+                viewModel.splashScreenAnimationFinished.value = true
+            }
         )
 
         super.onCreate(savedInstanceState)
@@ -227,7 +238,8 @@ class HomeActivity : AppActivity() {
     }
 }
 
-private class SwipeUpAnimation : SplashScreen.OnExitAnimationListener {
+private class SwipeUpAnimation(private val onEnd: () -> Unit) :
+    SplashScreen.OnExitAnimationListener {
     override fun onSplashScreenExit(splashScreenViewProvider: SplashScreenViewProvider) {
         ObjectAnimator.ofFloat(
             splashScreenViewProvider.view,
@@ -238,7 +250,10 @@ private class SwipeUpAnimation : SplashScreen.OnExitAnimationListener {
             .apply {
                 interpolator = AnticipateInterpolator()
                 duration = 400L
-                doOnEnd { splashScreenViewProvider.remove() }
+                doOnEnd {
+                    splashScreenViewProvider.remove()
+                    onEnd()
+                }
             }
             .start()
     }

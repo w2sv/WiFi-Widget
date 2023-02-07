@@ -55,7 +55,7 @@ fun LocationAccessPermissionDialog(
                     WifiWidgetProvider.pinWidget(context)
                 },
                 onAnyButtonPressed = {
-                    viewModel.onLapDialogAnswered()
+                    viewModel.lapDialogAnswered = true
                 },
                 onDismiss = onDismiss
             )
@@ -70,7 +70,7 @@ fun LocationAccessPermissionDialog(
                 )
             },
             onDismissButtonPressed = { viewModel.setSSIDState(false) },
-            onAnyButtonPressed = { viewModel.onLapDialogAnswered() },
+            onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
             onDismiss = onDismiss
         )
     }

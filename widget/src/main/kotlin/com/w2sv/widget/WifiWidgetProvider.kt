@@ -23,8 +23,8 @@ import java.util.*
 class WifiWidgetProvider : AppWidgetProvider() {
 
     companion object {
-        const val EXTRA_OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START =
-            "com.w2sv.wifiwidget.extra.OPEN_PROPERTIES_CONFIGURATION_DIALOG_ON_START"
+        const val EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START =
+            "com.w2sv.wifiwidget.extra.OPEN_CONFIGURATION_DIALOG_ON_START"
 
         fun getWidgetIds(context: Context): IntArray =
             AppWidgetManager.getInstance(context)
@@ -149,7 +149,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        i { "${this::class.java.name}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
+        i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
         appWidgetIds.forEach {
             appWidgetManager.updateWidget(it, context)
@@ -167,6 +167,11 @@ private fun AppWidgetManager.updateWidget(
         appWidgetId,
         WidgetLayoutSetter
             .getInstance(context)
-            .populated(RemoteViews(context.packageName, R.layout.widget))
+            .populated(
+                RemoteViews(
+                    context.packageName,
+                    R.layout.widget
+                )
+            )
     )
 }

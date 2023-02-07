@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.widgetconfiguration
+package com.w2sv.wifiwidget.ui.home.configuration
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
