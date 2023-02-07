@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/blue_chill_dark</color>
+    <color name="primary">@color/dark_cyan</color>
 </resources>

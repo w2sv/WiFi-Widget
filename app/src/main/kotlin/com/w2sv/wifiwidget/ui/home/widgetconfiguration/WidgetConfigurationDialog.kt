@@ -73,7 +73,7 @@ private fun StatelessWidgetConfigurationDialogPrev() {
 fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel(),
-    onDismiss: () -> Unit
+    closeDialog: () -> Unit
 ) {
     val context = LocalContext.current
     val activity = context.requireCastActivity<HomeActivity>()
@@ -105,9 +105,9 @@ fun WidgetConfigurationDialog(
             showLocationAccessPermissionDialog = false
         }
 
-    val _onDismiss: () -> Unit = {
+    val onDismiss: () -> Unit = {
         viewModel.resetWidgetConfiguration()
-        onDismiss()
+        closeDialog()
     }
 
     val selectedThemeIndex by viewModel.widgetTheme.collectAsState()
@@ -115,7 +115,7 @@ fun WidgetConfigurationDialog(
 
     StatelessWidgetConfigurationDialog(
         modifier = modifier,
-        onDismiss = _onDismiss,
+        onDismiss = onDismiss,
         contentColumn = {
             ConfigurationColumn(
                 modifier = Modifier
@@ -154,12 +154,12 @@ fun WidgetConfigurationDialog(
         },
         buttonRow = {
             ButtonRow(
-                onCancel = _onDismiss,
+                onCancel = onDismiss,
                 onApply = {
                     viewModel.updateWidgetConfiguration()
                     WifiWidgetProvider.triggerDataRefresh(context)
                     context.showToast(R.string.updated_widget_configuration)
-                    onDismiss()
+                    closeDialog()
                 },
                 confirmButtonEnabled = {
                     widgetConfigurationRequiringUpdate
