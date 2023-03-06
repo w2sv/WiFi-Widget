@@ -2,13 +2,13 @@
 minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
-agp = '8.0.0-beta01'
+agp = '8.0.0-beta04'
 kotlin = '1.8.0'
 java = '17'
 
 compose-compiler = '1.4.0'
 compose-tooling = '1.3.3'
-hilt = '2.44.2'
+hilt = '2.45'
 junit = '5.9.2'
 lifecycle = '2.5.1'
 
@@ -18,9 +18,10 @@ lifecycle = '2.5.1'
 typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.1-rc2'
 androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc4'
 permissionhandler = 'com.github.w2sv:PermissionHandler:1.0.0-rc5'
+kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.6-rc3'
 
 # androidx
-androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha01'
+androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0-alpha02'
 androidx-core = 'androidx.core:core-ktx:1.9.0'
 androidx-localbroadcastmanager = 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 androidx-splashscreen = 'androidx.core:core-splashscreen:1.0.0'
@@ -43,7 +44,7 @@ google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
 
 [plugins]
-application = { id = 'com.android.application', version = "8.0.0-beta01" }
-library = { id = 'com.android.library', version = "8.0.0-beta01" }
+application = { id = 'com.android.application', version.ref = 'agp' }
+library = { id = 'com.android.library', version.ref = 'agp' }
 kotlin = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 hilt = { id = 'com.google.dagger.hilt.android', version.ref = 'hilt' }

@@ -1,8 +1,6 @@
 <resources>
     <color name="ghost_white">#dee0e6</color>
     <color name="cadet_gray">#9FA1A5</color>
-    <color name="gunmetal">#19323C</color>
-    <color name="amaranth_purple">#A93F55</color>
-    <color name="blue_chill">#1EA8B5</color>
+    <color name="magenta_haze">#985277</color>
     <color name="dark_cyan">#158a92</color>
 </resources>

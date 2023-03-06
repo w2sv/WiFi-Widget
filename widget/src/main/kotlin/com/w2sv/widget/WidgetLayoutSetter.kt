@@ -15,6 +15,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
+import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.utils.asFormattedIpAddress
@@ -30,7 +31,11 @@ import java.text.DateFormat
 import java.util.Date
 import javax.inject.Inject
 
-internal class WidgetLayoutSetter @Inject constructor() {
+internal class WidgetLayoutSetter @Inject constructor(
+    @ApplicationContext private val context: Context,
+    private val widgetProperties: WidgetProperties,
+    private val intPreferences: IntPreferences
+) {
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint
@@ -47,22 +52,12 @@ internal class WidgetLayoutSetter @Inject constructor() {
                 .getInstance()
     }
 
-    @Inject
-    @ApplicationContext
-    lateinit var context: Context
-
-    @Inject
-    lateinit var widgetProperties: WidgetProperties
-
-    @Inject
-    lateinit var intPreferences: IntPreferences
-
     /**
      * connectivityManager.getLinkProperties(connectivityManager.activeNetwork)!! -> {InterfaceName: wlan0 LinkAddresses: [ fe80::ac57:89ff:fe22:9f70/64,192.168.1.233/24,2a02:3036:20a:9df2:ac57:89ff:fe22:9f70/64,2a02:3036:20a:9df2:79d9:9c65:ad9e:81ab/64 ] DnsAddresses: [ /192.168.1.1 ] Domains: null MTU: 1500 ServerAddress: /192.168.1.1 TcpBufferSizes: 1730560,3461120,6922240,524288,1048576,4525824 Routes: [ fe80::/64 -> :: wlan0 mtu 0,::/0 -> fe80::49c8:81bb:cfd2:ce7a wlan0 mtu 0,2a02:3036:20a:9df2::/64 -> :: wlan0 mtu 0,192.168.1.0/24 -> 0.0.0.0 wlan0 mtu 0,0.0.0.0/0 -> 192.168.1.1 wlan0 mtu 0 ]}
      */
     fun populated(remoteViews: RemoteViews): RemoteViews =
         remoteViews.apply {
-            setColors(Theme[intPreferences.widgetTheme])
+            setColors(getByOrdinal(intPreferences.widgetTheme))
             setConnectionDependentLayout()
             setConnectionIndependentLayout()
         }
@@ -88,7 +83,8 @@ internal class WidgetLayoutSetter @Inject constructor() {
         }
     }
 
-    private fun RemoteViews.setColors(@ColorRes backgroundColor: Int, @ColorRes textColor: Int) {
+    private fun RemoteViews.setColors(@ColorRes background: Int, @ColorRes foreground: Int) {
+        // TextViews
         listOf(
             R.id.ssid_value_tv,
             R.id.ip_value_tv,
@@ -99,12 +95,22 @@ internal class WidgetLayoutSetter @Inject constructor() {
             R.id.netmask_value_tv,
 
             R.id.wifi_status_tv,
-            R.id.go_to_wifi_settings_tv
+            R.id.go_to_wifi_settings_tv,
+            R.id.last_updated_tv
         )
             .forEach {
-                setInt(it, "setTextColor", context.getColor(textColor))
+                setInt(it, "setTextColor", context.getColor(foreground))
             }
-        setInt(R.id.widget_layout, "setBackgroundColor", context.getColor(backgroundColor))
+        // ImageButtons
+        listOf(
+            R.id.settings_button,
+            R.id.refresh_button
+        )
+            .forEach {
+                setInt(it, "setColorFilter", context.getColor(foreground))
+            }
+        // Layout
+        setInt(R.id.widget_layout, "setBackgroundColor", context.getColor(background))
     }
 
     private fun RemoteViews.setConnectionDependentLayout() {

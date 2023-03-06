@@ -61,7 +61,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
 
-            android:textColor="@color/widget_bottom_row"
             android:textSize="14sp"
             android:textStyle="italic"
             tools:ignore="RelativeOverlap" />
@@ -79,9 +78,9 @@
             android:layout_height="@dimen/size_widget_image_button_icon"
             android:layout_marginHorizontal="8dp"
 
-            android:background="@drawable/ic_refresh_24"
-            android:backgroundTint="@color/widget_bottom_row"
-            android:contentDescription="@string/refresh_data" />
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/refresh_data"
+            android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
             android:id="@+id/settings_button"
@@ -89,9 +88,9 @@
             android:layout_width="@dimen/size_widget_image_button_icon"
             android:layout_height="@dimen/size_widget_image_button_icon"
 
-            android:background="@drawable/ic_settings_24"
-            android:backgroundTint="@color/widget_bottom_row"
-            android:contentDescription="@string/configure_widget" />
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/configure_widget"
+            android:src="@drawable/ic_settings_24" />
 
     </LinearLayout>
 
