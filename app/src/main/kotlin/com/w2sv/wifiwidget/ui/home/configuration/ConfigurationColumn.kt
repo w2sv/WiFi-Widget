@@ -167,6 +167,7 @@ private fun ThemeIndicator(
         JostText(
             text = stringResource(id = properties.label),
             fontSize = 12.sp,
+            color = MaterialTheme.colorScheme.onPrimary,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
         ElevatedButton(
@@ -209,7 +210,7 @@ private fun StatelessPropertyRows(
                         onCheckedChange = { onCheckedChange(property, it) },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+                            uncheckedColor = MaterialTheme.colorScheme.onPrimary
                         )
                     )
                     IconButton(onClick = {

@@ -26,6 +26,7 @@ fun DialogButton(
             MaterialTheme.colorScheme.primary
         ) else null,
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
+        colors = ButtonDefaults.elevatedButtonColors(disabledContentColor = MaterialTheme.colorScheme.onPrimary),
         content = content
     )
 }
