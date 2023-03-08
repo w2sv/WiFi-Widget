@@ -10,9 +10,6 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
 import com.w2sv.androidutils.extensions.showToast
@@ -80,21 +77,11 @@ class WifiWidgetProvider : AppWidgetProvider() {
         super.onEnabled(context)
 
         context?.run {
-            val refreshPeriod = Duration.ofMinutes(15L)
-
-            WorkManager.getInstance(applicationContext)
-                .enqueueUniquePeriodicWork(
-                    WidgetDataRefreshWorker.UNIQUE_WORK_NAME,
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
-                        .setConstraints(
-                            Constraints.Builder()
-                                .setRequiresBatteryNotLow(true)
-                                .build()
-                        )
-                        .setInitialDelay(refreshPeriod)
-                        .build()
-                )
+            WidgetDataRefreshWorker.enqueueAsUniquePeriodicWork(
+                WorkManager.getInstance(applicationContext),
+                Duration.ofMinutes(15L),
+                true
+            )
 
             i { "Enqueued ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
         }
@@ -112,7 +99,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             WorkManager.getInstance(applicationContext)
                 .cancelUniqueWork(WidgetDataRefreshWorker.UNIQUE_WORK_NAME)
 
-            i { "Cancelled unique ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
+            i { "Cancelled ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
         }
     }
 

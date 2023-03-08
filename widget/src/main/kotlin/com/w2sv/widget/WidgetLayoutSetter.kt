@@ -28,7 +28,9 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 internal class WidgetLayoutSetter @Inject constructor(
@@ -133,10 +135,7 @@ internal class WidgetLayoutSetter @Inject constructor(
 
     private fun RemoteViews.setConnectionIndependentLayout() {
         // set last_updated_tv text
-        setTextViewText(
-            R.id.last_updated_tv,
-            DateFormat.getTimeInstance(DateFormat.SHORT).format(Date())
-        )
+        setLastUpdatedTV()
 
         /**
          * OnClickPendingIntents
@@ -274,4 +273,14 @@ internal class WidgetLayoutSetter @Inject constructor(
             true -> crossVisualize(R.id.no_connection_available_layout, R.id.wifi_properties_layout)
         }
     }
+}
+
+private fun RemoteViews.setLastUpdatedTV() {
+    val now = Date()
+    setTextViewText(
+        R.id.last_updated_tv,
+        "${
+            DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
+        } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}"
+    )
 }
