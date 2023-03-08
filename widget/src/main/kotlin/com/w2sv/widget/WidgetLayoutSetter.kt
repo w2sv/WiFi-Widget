@@ -13,9 +13,11 @@ import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.utils.asFormattedIpAddress
@@ -36,7 +38,8 @@ import javax.inject.Inject
 internal class WidgetLayoutSetter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetProperties: WidgetProperties,
-    private val intPreferences: IntPreferences
+    private val intPreferences: IntPreferences,
+    private val floatPreferences: FloatPreferences
 ) {
 
     @InstallIn(SingletonComponent::class)
@@ -112,7 +115,14 @@ internal class WidgetLayoutSetter @Inject constructor(
                 setInt(it, "setColorFilter", context.getColor(foreground))
             }
         // Layout
-        setInt(R.id.widget_layout, "setBackgroundColor", context.getColor(background))
+        setInt(
+            R.id.widget_layout,
+            "setBackgroundColor",
+            ColorUtils.setAlphaComponent(
+                context.getColor(background),
+                (floatPreferences.opacity * 255).toInt()
+            )
+        )
     }
 
     private fun RemoteViews.setConnectionDependentLayout() {

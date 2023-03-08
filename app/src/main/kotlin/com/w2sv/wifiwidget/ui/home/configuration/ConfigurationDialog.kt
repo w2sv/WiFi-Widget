@@ -53,6 +53,8 @@ private fun StatelessWidgetConfigurationDialogPrev() {
                 ConfigurationColumn(
                     selectedTheme = { 1 },
                     onSelectedTheme = {},
+                    opacity = { 1f },
+                    onOpacityChanged = {},
                     propertyChecked = { true },
                     onCheckedChange = { _, _ -> },
                     onInfoButtonClick = {}
@@ -111,6 +113,7 @@ fun WidgetConfigurationDialog(
     }
 
     val theme by viewModel.widgetTheme.collectAsState()
+    val opacity by viewModel.widgetOpacity.collectAsState()
     val applyButtonEnabled by viewModel.widgetConfigurationRequiringUpdate.collectAsState()
 
     StatelessWidgetConfigurationDialog(
@@ -126,6 +129,12 @@ fun WidgetConfigurationDialog(
                 },
                 onSelectedTheme = {
                     viewModel.widgetTheme.value = it
+                },
+                opacity = {
+                    opacity
+                },
+                onOpacityChanged = {
+                    viewModel.widgetOpacity.value = it
                 },
                 propertyChecked = { property ->
                     viewModel.widgetPropertyFlags.getValue(property)

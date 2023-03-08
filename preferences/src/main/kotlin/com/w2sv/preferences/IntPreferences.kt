@@ -12,6 +12,5 @@ class IntPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
         "widgetTheme" to Theme.SystemDefault.ordinal,
         sharedPreferences = sharedPreferences
     ) {
-
     var widgetTheme by this
 }

@@ -20,6 +20,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -42,6 +43,8 @@ internal fun ConfigurationColumn(
     modifier: Modifier = Modifier,
     selectedTheme: () -> Int,
     onSelectedTheme: (Int) -> Unit,
+    opacity: () -> Float,
+    onOpacityChanged: (Float) -> Unit,
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
@@ -59,11 +62,39 @@ internal fun ConfigurationColumn(
             onSelected = onSelectedTheme
         )
 
+        SubHeader(stringResource(R.string.background_opacity), Modifier.padding(vertical = 22.dp))
+        JostText(
+            text = "${(opacity() * 100).toInt()}%",
+            color = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        Slider(
+            value = opacity(),
+            onValueChange = onOpacityChanged,
+            modifier = Modifier.padding(horizontal = 32.dp)
+        )
+
         SubHeader(stringResource(R.string.displayed_properties), Modifier.padding(vertical = 22.dp))
         StatelessPropertyRows(
             propertyChecked = propertyChecked,
             onCheckedChange = onCheckedChange,
             onInfoButtonClick = onInfoButtonClick
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ConfigDialogPrev() {
+    WifiWidgetTheme {
+        ConfigurationColumn(
+            selectedTheme = { 1 },
+            onSelectedTheme = {},
+            opacity = { 1f },
+            onOpacityChanged = {},
+            propertyChecked = { true },
+            onCheckedChange = { _, _ -> },
+            onInfoButtonClick = {}
         )
     }
 }

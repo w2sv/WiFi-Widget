@@ -20,4 +20,5 @@
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
     <string name="displayed_properties">Displayed Properties</string>
+    <string name="background_opacity">Background Opacity</string>
 </resources>

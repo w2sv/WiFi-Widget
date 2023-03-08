@@ -26,6 +26,7 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.GlobalFlags
 import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
@@ -50,9 +51,17 @@ class HomeActivity : AppActivity() {
         private val widgetProperties: WidgetProperties,
         private val globalFlags: GlobalFlags,
         private val intPreferences: IntPreferences,
+        private val floatPreferences: FloatPreferences,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
+
+        val lifecycleObservers: List<LifecycleObserver>
+            get() = listOf(
+                widgetProperties,
+                globalFlags,
+                intPreferences
+            )
 
         private val openConfigurationDialogOnStart =
             savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
@@ -132,6 +141,7 @@ class HomeActivity : AppActivity() {
         fun updateWidgetConfiguration() {
             widgetProperties.putAll(widgetPropertyFlags)
             intPreferences.widgetTheme = widgetTheme.value
+            floatPreferences.opacity = widgetOpacity.value
 
             resetRequiringUpdateFlows()
         }
@@ -139,6 +149,7 @@ class HomeActivity : AppActivity() {
         fun resetWidgetConfiguration() {
             widgetPropertyFlags.putAll(widgetProperties)
             widgetTheme.value = intPreferences.widgetTheme
+            widgetOpacity.value = floatPreferences.opacity
 
             resetRequiringUpdateFlows()
         }
@@ -147,23 +158,32 @@ class HomeActivity : AppActivity() {
 
         private val widgetPropertyFlagsRequiringUpdate = MutableStateFlow(false)
         private val widgetThemeRequiringUpdate = MutableStateFlow(false)
+        private val widgetOpacityRequiringUpdate = MutableStateFlow(false)
 
         init {
             val updateWidgetConfigurationRequiringUpdate: (Boolean) -> Unit = {
                 widgetConfigurationRequiringUpdate.value =
-                    widgetThemeRequiringUpdate.value || widgetPropertyFlagsRequiringUpdate.value
+                    widgetThemeRequiringUpdate.value || widgetPropertyFlagsRequiringUpdate.value || widgetOpacityRequiringUpdate.value
             }
-            viewModelScope.launch {
-                widgetThemeRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
-            }
-            viewModelScope.launch {
-                widgetPropertyFlagsRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
+            with(viewModelScope) {
+                launch {
+                    widgetThemeRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
+                }
+                launch {
+                    widgetPropertyFlagsRequiringUpdate.collect(
+                        updateWidgetConfigurationRequiringUpdate
+                    )
+                }
+                launch {
+                    widgetOpacityRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
+                }
             }
         }
 
         private fun resetRequiringUpdateFlows() {
             widgetThemeRequiringUpdate.value = false
             widgetPropertyFlagsRequiringUpdate.value = false
+            widgetOpacityRequiringUpdate.value = false
         }
 
         var widgetTheme = MutableStateFlow(intPreferences.widgetTheme)
@@ -175,21 +195,21 @@ class HomeActivity : AppActivity() {
                 }
             }
 
+        var widgetOpacity = MutableStateFlow(floatPreferences.opacity)
+            .apply {
+                viewModelScope.launch {
+                    collect {
+                        widgetOpacityRequiringUpdate.value = it != floatPreferences.opacity
+                    }
+                }
+            }
+
         /**
          * lap := Location Access Permission
          */
 
         var lapDialogAnswered: Boolean by globalFlags::locationPermissionDialogAnswered
     }
-
-    @Inject
-    lateinit var globalFlags: GlobalFlags
-
-    @Inject
-    lateinit var widgetProperties: WidgetProperties
-
-    @Inject
-    lateinit var intPreferences: IntPreferences
 
     private val viewModel by viewModels<ViewModel>()
 
@@ -218,10 +238,7 @@ class HomeActivity : AppActivity() {
     }
 
     override val lifecycleObservers: List<LifecycleObserver>
-        get() = listOf(
-            globalFlags,
-            widgetProperties,
-            intPreferences,
+        get() = viewModel.lifecycleObservers + listOf(
             lapRequestLauncher,
             WifiWidgetOptionsChangedReceiver()
         )
