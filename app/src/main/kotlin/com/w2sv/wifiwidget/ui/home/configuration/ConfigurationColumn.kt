@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+import kotlin.math.roundToInt
 
 @Composable
 internal fun ConfigurationColumn(
@@ -64,14 +65,15 @@ internal fun ConfigurationColumn(
 
         SubHeader(stringResource(R.string.background_opacity), Modifier.padding(vertical = 22.dp))
         JostText(
-            text = "${(opacity() * 100).toInt()}%",
+            text = "${(opacity() * 100).roundToInt()}%",
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Slider(
             value = opacity(),
             onValueChange = onOpacityChanged,
-            modifier = Modifier.padding(horizontal = 32.dp)
+            modifier = Modifier.padding(horizontal = 32.dp),
+            steps = 9
         )
 
         SubHeader(stringResource(R.string.displayed_properties), Modifier.padding(vertical = 22.dp))
