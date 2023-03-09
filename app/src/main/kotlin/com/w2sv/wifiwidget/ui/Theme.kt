@@ -15,21 +15,25 @@ fun WifiWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
         colorScheme = if (darkTheme)
             darkColorScheme(
                 primary = colorResource(id = R.color.primary),
-                inversePrimary = colorResource(id = com.w2sv.common.R.color.magenta_haze),
-                onPrimary = Color.Black,
-                surface = Color.Black,
-                background = Color.Black,
-                secondary = colorResource(id = com.w2sv.common.R.color.cadet_gray),
-                tertiary = colorResource(id = com.w2sv.common.R.color.ghost_white)
+                onPrimary = Color.White,
+
+                secondary = colorResource(id = com.w2sv.common.R.color.magenta_haze),
+
+                onSurface = Color.White,
+                onSurfaceVariant = colorResource(id = com.w2sv.common.R.color.cadet_gray),
+
+                onBackground = Color.White
             ) else
             lightColorScheme(
                 primary = colorResource(id = R.color.primary),
-                inversePrimary = colorResource(id = com.w2sv.common.R.color.magenta_haze),
                 onPrimary = Color.White,
-                surface = Color.White,
-                background = Color.White,
-                secondary = colorResource(id = com.w2sv.common.R.color.cadet_gray),
-                tertiary = colorResource(id = com.w2sv.common.R.color.ghost_white)
+
+                secondary = colorResource(id = com.w2sv.common.R.color.magenta_haze),
+
+                onSurface = Color.Black,
+                onSurfaceVariant = colorResource(id = com.w2sv.common.R.color.cadet_gray),
+
+                onBackground = Color.Black
             )
     ) {
         content()

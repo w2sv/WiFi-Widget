@@ -65,7 +65,7 @@ internal fun ConfigurationColumn(
         SubHeader(stringResource(R.string.background_opacity), Modifier.padding(vertical = 22.dp))
         JostText(
             text = "${(opacity() * 100).toInt()}%",
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Slider(
@@ -99,14 +99,6 @@ fun ConfigDialogPrev() {
     }
 }
 
-@Preview
-@Composable
-private fun SubHeaderPrev() {
-    WifiWidgetTheme {
-        SubHeader(text = "Theme")
-    }
-}
-
 @Composable
 private fun SubHeader(text: String, modifier: Modifier = Modifier) {
     JostText(
@@ -114,7 +106,7 @@ private fun SubHeader(text: String, modifier: Modifier = Modifier) {
         modifier = modifier,
         fontSize = 18.sp,
         fontWeight = FontWeight.Medium,
-        color = MaterialTheme.colorScheme.inversePrimary
+        color = MaterialTheme.colorScheme.secondary
     )
 }
 
@@ -167,7 +159,7 @@ private fun ThemeIndicator(
         JostText(
             text = stringResource(id = properties.label),
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
         ElevatedButton(
@@ -202,7 +194,7 @@ private fun StatelessPropertyRows(
                     JostText(
                         text = property,
                         modifier = Modifier.weight(1f, fill = true),
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         fontSize = 14.sp
                     )
                     Checkbox(
@@ -210,7 +202,7 @@ private fun StatelessPropertyRows(
                         onCheckedChange = { onCheckedChange(property, it) },
                         colors = CheckboxDefaults.colors(
                             checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = MaterialTheme.colorScheme.onPrimary
+                            uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                     IconButton(onClick = {
@@ -222,7 +214,7 @@ private fun StatelessPropertyRows(
                             modifier = Modifier.size(
                                 dimensionResource(id = R.dimen.size_icon)
                             ),
-                            tint = MaterialTheme.colorScheme.secondary
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -199,8 +198,8 @@ private fun StatelessWidgetConfigurationDialog(
                     .background(
                         Brush.linearGradient(
                             listOf(
-                                MaterialTheme.colorScheme.secondary,
-                                MaterialTheme.colorScheme.tertiary
+                                MaterialTheme.colorScheme.surfaceVariant,
+                                MaterialTheme.colorScheme.surface
                             ),
                             start = Offset(0f, Float.POSITIVE_INFINITY),
                             end = Offset(Float.POSITIVE_INFINITY, 0f)
@@ -213,12 +212,7 @@ private fun StatelessWidgetConfigurationDialog(
                     textAlign = TextAlign.Center,
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(bottom = 16.dp),
                     color = MaterialTheme.colorScheme.primary
-                )
-                Divider(
-                    Modifier.padding(horizontal = 22.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
                 )
                 contentColumn(Modifier)
                 buttonRow(Modifier)

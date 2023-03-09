@@ -40,16 +40,16 @@ import kotlinx.coroutines.launch
 @Composable
 private fun NavigationDrawerPrev() {
     WifiWidgetTheme {
-        NavigationDrawer {
+        NavigationDrawer(initialValue = DrawerValue.Open) {
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (DrawerState) -> Unit) {
+fun NavigationDrawer(modifier: Modifier = Modifier, initialValue: DrawerValue = DrawerValue.Closed, content: @Composable (DrawerState) -> Unit) {
+    val drawerState = rememberDrawerState(initialValue = initialValue)
     val scope = rememberCoroutineScope()
-    val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     val closeDrawer: () -> Unit = {
         scope.launch {
@@ -73,7 +73,7 @@ fun NavigationDrawer(modifier: Modifier = Modifier, content: @Composable (Drawer
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
-    ModalDrawerSheet(drawerContainerColor = MaterialTheme.colorScheme.secondary) {
+    ModalDrawerSheet {
         Column(
             modifier = Modifier
                 .padding(bottom = 32.dp)
@@ -91,7 +91,6 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
                 VersionText(Modifier.padding(top = 26.dp))
             }
             Divider(
-                color = MaterialTheme.colorScheme.onPrimary,
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 12.dp)
@@ -110,8 +109,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit) {
 fun VersionText(modifier: Modifier = Modifier) {
     JostText(
         text = "Version: ${BuildConfig.VERSION_NAME}",
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onPrimary
+        modifier = modifier
     )
 }
 
@@ -180,8 +178,7 @@ private fun NavigationDrawerItem(
             text = stringResource(id = properties.label),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 20.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onPrimary
+            fontWeight = FontWeight.Medium
         )
     }
 }
