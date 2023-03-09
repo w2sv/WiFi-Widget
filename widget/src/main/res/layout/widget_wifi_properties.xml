@@ -46,6 +46,19 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linkspeed_row"
+        style="@style/PropertyRow">
+
+        <TextView
+            android:id="@+id/linkspeed_tv"
+            style="@style/Widget.Wifi.Property.Label" />
+
+        <TextView
+            android:id="@+id/linkspeed_value_tv"
+            style="@style/Widget.Wifi.Property.Value" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/gateway_row"
         style="@style/PropertyRow">
 
@@ -55,19 +68,6 @@
 
         <TextView
             android:id="@+id/gateway_value_tv"
-            style="@style/Widget.Wifi.Property.Value" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/netmask_row"
-        style="@style/PropertyRow">
-
-        <TextView
-            android:id="@+id/netmask_tv"
-            style="@style/Widget.Wifi.Property.Label" />
-
-        <TextView
-            android:id="@+id/netmask_value_tv"
             style="@style/Widget.Wifi.Property.Value" />
     </LinearLayout>
 
@@ -96,4 +96,18 @@
             android:id="@+id/dhcp_value_tv"
             style="@style/Widget.Wifi.Property.Value" />
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/netmask_row"
+        style="@style/PropertyRow">
+
+        <TextView
+            android:id="@+id/netmask_tv"
+            style="@style/Widget.Wifi.Property.Label" />
+
+        <TextView
+            android:id="@+id/netmask_value_tv"
+            style="@style/Widget.Wifi.Property.Value" />
+    </LinearLayout>
+
 </LinearLayout>

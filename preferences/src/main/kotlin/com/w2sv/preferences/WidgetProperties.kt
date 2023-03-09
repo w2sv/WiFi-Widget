@@ -11,6 +11,7 @@ class WidgetProperties @Inject constructor(sharedPreferences: SharedPreferences)
         "SSID" to false,
         "IP" to true,
         "Frequency" to true,
+        "Link Speed" to true,
         "Gateway" to true,
         "Netmask" to true,
         "DNS" to true,

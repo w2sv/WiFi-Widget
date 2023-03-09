@@ -3,6 +3,7 @@
         <item>@string/ssid</item>
         <item>@string/ip</item>
         <item>@string/frequency</item>
+        <item>@string/linkspeed</item>
         <item>@string/gateway</item>
         <item>@string/dns</item>
         <item>@string/dhcp</item>
@@ -23,6 +24,11 @@
         <item>@string/frequency</item>
         <item>The frequency band employed for WiFi signal transmission. Usually one of 2.4G or 5G.</item>
         <item>https://en.wikipedia.org/wiki/List_of_WLAN_channels</item>
+    </string-array>
+    <string-array name="linkspeed">
+        <item>@string/linkspeed</item>
+        <item>The theoretical data transmission max speed between your device and the router.</item>
+        <item />
     </string-array>
     <string-array name="gateway">
         <item>@string/gateway</item>

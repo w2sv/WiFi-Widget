@@ -36,9 +36,13 @@ fun PropertyInfoDialog(
             modifier = modifier,
             title = get(0),
             text = get(1),
-            learnMoreButtonOnClickListener = {
-                context.openUrl(get(2))
-                onDismissRequest()
+            learnMoreButtonOnClickListener = get(2).let {
+                if (it.isNotEmpty()) {
+                    {
+                        context.openUrl(it)
+                        onDismissRequest()
+                    }
+                } else null
             },
             onDismissRequest = onDismissRequest
         )
@@ -50,7 +54,7 @@ private fun StatelessPropertyInfoDialog(
     modifier: Modifier = Modifier,
     title: String,
     text: String,
-    learnMoreButtonOnClickListener: () -> Unit,
+    learnMoreButtonOnClickListener: (() -> Unit)?,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
@@ -78,11 +82,13 @@ private fun StatelessPropertyInfoDialog(
                 Alignment.CenterHorizontally
             ) {
                 JostText(text = text, textAlign = TextAlign.Center)
-                DialogButton(
-                    onClick = learnMoreButtonOnClickListener,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
-                ) {
-                    JostText(text = "Learn more")
+                learnMoreButtonOnClickListener?.let {
+                    DialogButton(
+                        onClick = it,
+                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
+                    ) {
+                        JostText(text = "Learn more")
+                    }
                 }
             }
         }

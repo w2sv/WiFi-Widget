@@ -19,16 +19,16 @@ val ConnectivityManager.isWifiConnected: Boolean
 /**
  * Reference: https://stackoverflow.com/a/33094601/12083276
  */
-fun netmask(): String {
-    networkPrefixLength()?.let {
-        val shift = 0xffffffff shl (32 - it)
-        return "${((shift and 0xff000000) shr 24) and 0xff}" +
-                ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-                ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-                ".${(shift and 0x000000ff) and 0xff}"
-    }
-    return "0.0.0.0"
-}
+fun netmask(): String =
+    networkPrefixLength()
+        ?.let {
+            val shift = 0xffffffff shl (32 - it)
+            "${((shift and 0xff000000) shr 24) and 0xff}" +
+                    ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+                    ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+                    ".${(shift and 0x000000ff) and 0xff}"
+        }
+        ?: "0.0.0.0"
 
 /**
  * Reference: https://stackoverflow.com/a/29017289/12083276

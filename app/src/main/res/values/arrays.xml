@@ -3,6 +3,7 @@
         <item>@array/ssid</item>
         <item>@array/ip</item>
         <item>@array/frequency</item>
+        <item>@array/linkspeed</item>
         <item>@array/gateway</item>
         <item>@array/dns</item>
         <item>@array/dhcp</item>

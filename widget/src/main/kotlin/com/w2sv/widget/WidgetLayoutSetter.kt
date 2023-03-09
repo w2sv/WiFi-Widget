@@ -197,17 +197,17 @@ internal class WidgetLayoutSetter @Inject constructor(
             R.id.frequency_value_tv
         ) { "${wifiManager.connectionInfo.frequency}Hz" }
         setWifiPropertyRow(
+            R.id.linkspeed_row,
+            R.string.linkspeed,
+            R.id.linkspeed_tv,
+            R.id.linkspeed_value_tv
+        ) { "${wifiManager.connectionInfo.linkSpeed}Mbps" }
+        setWifiPropertyRow(
             R.id.gateway_row,
             R.string.gateway,
             R.id.gateway_tv,
             R.id.gateway_value_tv
         ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() }
-        setWifiPropertyRow(
-            R.id.netmask_row,
-            R.string.netmask,
-            R.id.netmask_tv,
-            R.id.netmask_value_tv
-        ) { netmask() }
         setWifiPropertyRow(
             R.id.dns_row,
             R.string.dns,
@@ -220,6 +220,12 @@ internal class WidgetLayoutSetter @Inject constructor(
             R.id.dhcp_tv,
             R.id.dhcp_value_tv
         ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() }
+        setWifiPropertyRow(
+            R.id.netmask_row,
+            R.string.netmask,
+            R.id.netmask_tv,
+            R.id.netmask_value_tv
+        ) { netmask() }
     }
 
     private fun RemoteViews.setWifiPropertyRow(
