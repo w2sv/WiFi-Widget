@@ -196,13 +196,13 @@ internal class WidgetLayoutSetter @Inject constructor(
             R.string.frequency,
             R.id.frequency_tv,
             R.id.frequency_value_tv
-        ) { "${wifiManager.connectionInfo.frequency}MHz" }
+        ) { "${wifiManager.connectionInfo.frequency} MHz" }
         setWifiPropertyRow(
             R.id.linkspeed_row,
             R.string.linkspeed,
             R.id.linkspeed_tv,
             R.id.linkspeed_value_tv
-        ) { "${wifiManager.connectionInfo.linkSpeed}Mbps" }
+        ) { "${wifiManager.connectionInfo.linkSpeed} Mbps" }
         setWifiPropertyRow(
             R.id.gateway_row,
             R.string.gateway,

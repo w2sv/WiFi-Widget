@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -10,7 +9,7 @@ import androidx.compose.ui.res.colorResource
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun WifiWidgetTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
+fun WifiWidgetTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = if (darkTheme)
             darkColorScheme(

@@ -13,6 +13,9 @@ import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
@@ -26,6 +29,8 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.Theme
+import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.GlobalFlags
 import com.w2sv.preferences.IntPreferences
@@ -77,6 +82,29 @@ class HomeActivity : AppActivity() {
                     }
                 }
             }
+
+        var themeRequiringUpdate = MutableStateFlow(false)
+
+        var theme = MutableStateFlow(intPreferences.theme)
+            .apply {
+                viewModelScope.launch {
+                    collect {
+                        themeRequiringUpdate.value = it != intPreferences.theme
+                    }
+                }
+            }
+        var usedTheme = MutableStateFlow<Theme>(getByOrdinal(intPreferences.theme))
+
+        fun updateTheme() {
+            intPreferences.theme = theme.value
+            usedTheme.value = getByOrdinal(theme.value)
+            themeRequiringUpdate.value = false
+        }
+
+        fun resetTheme() {
+            theme.value = intPreferences.theme
+            themeRequiringUpdate.value = false
+        }
 
         /**
          * Widget Pin Listening
@@ -253,7 +281,15 @@ class HomeActivity : AppActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            WifiWidgetTheme {
+            val theme by viewModel.usedTheme.collectAsState()
+
+            WifiWidgetTheme(
+                darkTheme = when (theme) {
+                    Theme.Light -> false
+                    Theme.Dark -> true
+                    Theme.SystemDefault -> isSystemInDarkTheme()
+                }
+            ) {
                 HomeScreen()
             }
         }

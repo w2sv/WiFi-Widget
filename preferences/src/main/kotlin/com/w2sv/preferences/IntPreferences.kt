@@ -10,7 +10,9 @@ import javax.inject.Singleton
 class IntPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
     IntPreferences(
         "widgetTheme" to Theme.SystemDefault.ordinal,
+        "theme" to Theme.SystemDefault.ordinal,
         sharedPreferences = sharedPreferences
     ) {
     var widgetTheme by this
+    var theme by this
 }

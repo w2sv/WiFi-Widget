@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -20,15 +21,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
@@ -39,6 +38,7 @@ import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.diagonalGradient
 import com.w2sv.wifiwidget.ui.home.LocationAccessPermissionDialog
 import com.w2sv.wifiwidget.ui.home.LocationAccessPermissionDialogTrigger
 
@@ -196,23 +196,24 @@ private fun StatelessWidgetConfigurationDialog(
                 modifier = Modifier
                     // gradient background
                     .background(
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.surfaceVariant,
-                                MaterialTheme.colorScheme.surface
-                            ),
-                            start = Offset(0f, Float.POSITIVE_INFINITY),
-                            end = Offset(Float.POSITIVE_INFINITY, 0f)
+                        diagonalGradient(
+                            MaterialTheme.colorScheme.surfaceVariant,
+                            MaterialTheme.colorScheme.surface
                         )
                     )
                     .padding(vertical = 16.dp)
             ) {
+                Icon(
+                    painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
+                    contentDescription = "@null",
+                    modifier = Modifier.padding(bottom = 12.dp),
+                    tint = MaterialTheme.colorScheme.primary
+                )
                 JostText(
                     text = stringResource(id = com.w2sv.widget.R.string.configure_widget),
                     textAlign = TextAlign.Center,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
+                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
+                    fontWeight = FontWeight.Medium
                 )
                 contentColumn(Modifier)
                 buttonRow(Modifier)

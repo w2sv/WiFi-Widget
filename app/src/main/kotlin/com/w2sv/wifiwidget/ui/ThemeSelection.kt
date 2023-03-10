@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
@@ -23,10 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.JostText
 
 @Composable
-internal fun ThemeSelectionRow(
+fun ThemeSelectionRow(
     modifier: Modifier = Modifier,
     selected: () -> Int,
     onSelected: (Int) -> Unit
