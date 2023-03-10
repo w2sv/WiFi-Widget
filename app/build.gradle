@@ -20,7 +20,8 @@ android {
         versionCode 12
         versionName '1.1.8'
 
-        setProperty('archivesBaseName', versionName)  // Stores built aab's as "{versionName}-{buildFlavor}.apk"
+        setProperty('archivesBaseName', versionName)
+        // Stores built aab's as "{versionName}-{buildFlavor}.apk"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {

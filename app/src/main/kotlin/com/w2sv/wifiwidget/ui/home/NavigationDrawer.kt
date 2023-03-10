@@ -261,7 +261,13 @@ private fun ThemeDialog(
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = { JostText(text = stringResource(id = R.string.theme)) },
-        icon = { Icon(painter = painterResource(id = R.drawable.ic_nightlight_24), contentDescription = "@null", tint = MaterialTheme.colorScheme.primary)},
+        icon = {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_nightlight_24),
+                contentDescription = "@null",
+                tint = MaterialTheme.colorScheme.primary
+            )
+        },
         confirmButton = {
             DialogButton(onClick = { onApplyButtonPress() }, enabled = applyButtonEnabled()) {
                 JostText(text = stringResource(id = R.string.apply))
