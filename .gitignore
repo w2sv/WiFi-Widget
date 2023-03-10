@@ -14,4 +14,4 @@
 .cxx
 /keystore.properties
 /keys.jks
-service-account-key.json
+.service-account-key.json

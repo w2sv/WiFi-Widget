@@ -1,17 +1,21 @@
-Displayed connection properties are:
+WiFi properties which may be displayed by the widget are:
 - <i>SSID</i>
 - <i>IP Address</i>
 - <i>Frequency</i>
+- <i>Link Speed</i>
 - <i>Gateway</i>
-- <i>Netmask</i>
 - <i>DNS</i>
 - <i>DHCP</i>
+- <i>Netmask</i>
+
+You can configure which properties are to be displayed. Also, you can choose between a light/dark widget theme
+independent of the set device theme, as well as determine the widget background opacity.
+The app itself likewise supports both light and dark mode.
 
 The source code is available under the GPL-3.0 license at https://github.com/w2sv/WiFi-Widget.
-
 Feel free to hit me up with enhancement propositions, bug reports or whatever.
 
 Built by yours truly, Janek Zangenberg.
 
-<i>Credits:</i>
-- Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> licensed under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>
+<b>Credits:</b>
+- Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> licensed under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.
