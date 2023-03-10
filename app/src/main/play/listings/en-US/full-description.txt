@@ -1,0 +1,17 @@
+Displayed connection properties are:
+- <i>SSID</i>
+- <i>IP Address</i>
+- <i>Frequency</i>
+- <i>Gateway</i>
+- <i>Netmask</i>
+- <i>DNS</i>
+- <i>DHCP</i>
+
+The source code is available under the GPL-3.0 license at https://github.com/w2sv/WiFi-Widget.
+
+Feel free to hit me up with enhancement propositions, bug reports or whatever.
+
+Built by yours truly, Janek Zangenberg.
+
+<i>Credits:</i>
+- Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> licensed under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>

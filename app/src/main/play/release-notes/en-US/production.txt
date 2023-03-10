@@ -1,0 +1,5 @@
+[Added]
+- Option to configure in-app theme
+[Fix]
+- Frequency order of magnitude formatting error
+- Missing whitespace in between property value and unit   
