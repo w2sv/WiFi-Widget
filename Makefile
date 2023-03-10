@@ -27,8 +27,9 @@ publish-bundle-to-play:
 create-gh-release:
 	@gh release create $(VERSION) app/build/outputs/apk/release/$(VERSION).apk -F app/src/main/play/release-notes/en-US/production.txt
 
-publishListing:
+publish-listing:
 	@./gradlew publishListing
+
 # -------------
 # Building & Publishing
 # -------------
