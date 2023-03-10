@@ -8,3 +8,6 @@ build-aab:
 
 publish-release-gh:
 	@gh release create $(version) --generate-notes app/build/outputs/apk/release/$(version).apk
+
+build-and-publish: build-apk build-aab
+	@gh release create $(version) --generate-notes app/build/outputs/apk/release/$(version).apk

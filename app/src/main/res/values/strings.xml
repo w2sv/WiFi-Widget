@@ -19,6 +19,6 @@
     <string name="device_default">Device Default</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
-    <string name="displayed_properties">Displayed Properties</string>
-    <string name="background_opacity">Background Opacity</string>
+    <string name="properties">Properties</string>
+    <string name="opacity">Opacity</string>
 </resources>

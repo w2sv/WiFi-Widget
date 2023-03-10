@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configuration
+package com.w2sv.wifiwidget.ui.home.configurationdialog
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings

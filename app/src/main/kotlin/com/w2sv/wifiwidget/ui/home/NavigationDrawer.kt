@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -113,6 +114,7 @@ fun VersionText(modifier: Modifier = Modifier) {
     )
 }
 
+@Stable
 private data class NavigationDrawerItemProperties(
     @DrawableRes val icon: Int,
     @StringRes val label: Int,

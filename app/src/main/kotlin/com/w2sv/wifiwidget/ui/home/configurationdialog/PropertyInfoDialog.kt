@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configuration
+package com.w2sv.wifiwidget.ui.home.configurationdialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,8 +23,22 @@ import com.w2sv.wifiwidget.ui.DialogButton
 import com.w2sv.wifiwidget.ui.JostText
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 
+@Preview
 @Composable
-fun PropertyInfoDialog(
+private fun Prev() {
+    WifiWidgetTheme {
+        StatelessPropertyInfoDialog(
+            Modifier,
+            "SSID",
+            "Service Set Identifier. Your network's name.",
+            {},
+            {}
+        )
+    }
+}
+
+@Composable
+internal fun StatelessPropertyInfoDialog(
     propertyIndex: Int,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
@@ -93,17 +107,4 @@ private fun StatelessPropertyInfoDialog(
             }
         }
     )
-}
-
-@Preview
-@Composable
-private fun Preview() {
-    WifiWidgetTheme {
-        StatelessPropertyInfoDialog(
-            Modifier,
-            "SSID",
-            "Service Set Identifier. Your network's name.",
-            {},
-            {})
-    }
 }

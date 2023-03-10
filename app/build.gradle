@@ -17,8 +17,8 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 10
-        versionName '1.1.6'
+        versionCode 11
+        versionName '1.1.7'
 
         setProperty('archivesBaseName', versionName)  // Stores built aab's as "{versionName}-{buildFlavor}.apk"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'

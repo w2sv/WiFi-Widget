@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configuration
+package com.w2sv.wifiwidget.ui.home.configurationdialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -49,7 +49,7 @@ private fun StatelessWidgetConfigurationDialogPrev() {
         StatelessWidgetConfigurationDialog(
             onDismiss = {},
             contentColumn = {
-                ConfigurationColumn(
+                ConfigColumn(
                     selectedTheme = { 1 },
                     onSelectedTheme = {},
                     opacity = { 1f },
@@ -88,7 +88,7 @@ fun WidgetConfigurationDialog(
     }
 
     infoDialogPropertyIndex?.let {
-        PropertyInfoDialog(it) {
+        StatelessPropertyInfoDialog(it) {
             infoDialogPropertyIndex = null
         }
     }
@@ -119,7 +119,7 @@ fun WidgetConfigurationDialog(
         modifier = modifier,
         onDismiss = onDismiss,
         contentColumn = {
-            ConfigurationColumn(
+            ConfigColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(260.dp, 460.dp),
