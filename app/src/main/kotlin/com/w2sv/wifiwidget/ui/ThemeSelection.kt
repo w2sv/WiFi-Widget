@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -85,7 +84,7 @@ private fun ThemeIndicator(
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
             colors = ButtonDefaults.elevatedButtonColors(containerColor = properties.color),
             border = if (selected)
-                BorderStroke(3.dp, colorResource(id = com.w2sv.common.R.color.dark_cyan))
+                BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
             else
                 null
         ) {}

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">@color/dark_cyan</color>
+    <color name="cadet_gray">#9FA1A5</color>
+    <color name="magenta_haze">#985277</color>
+    <color name="dark_cyan">#158a92</color>
+
+    <color name="logo_background">@color/dark_cyan</color>
 </resources>
