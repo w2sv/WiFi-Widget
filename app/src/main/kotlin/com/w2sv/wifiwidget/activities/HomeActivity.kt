@@ -16,7 +16,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -39,12 +38,13 @@ import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
-import com.w2sv.wifiwidget.utils.getMutableStateMap
+import com.w2sv.wifiwidget.utils.CoherentNonAppliedStates
+import com.w2sv.wifiwidget.utils.NonAppliedSnapshotStateMap
+import com.w2sv.wifiwidget.utils.NonAppliedStateFlow
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
@@ -68,43 +68,33 @@ class HomeActivity : AppActivity() {
                 intPreferences
             )
 
-        private val openConfigurationDialogOnStart =
+        /**
+         * onSplashScreenAnimationFinished
+         */
+
+        fun onSplashScreenAnimationFinished(){
+            if (openConfigurationDialogOnSplashScreenAnimationFinished){
+                openConfigurationDialog.value = true
+            }
+        }
+
+        private val openConfigurationDialogOnSplashScreenAnimationFinished =
             savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
 
-        var openConfigurationDialog = MutableStateFlow(false)
+        /**
+         * In-App Theme
+         */
 
-        var splashScreenAnimationFinished = MutableStateFlow(false)
-            .apply {
-                viewModelScope.launch {
-                    collect {
-                        if (it && openConfigurationDialogOnStart)
-                            openConfigurationDialog.value = true
-                    }
-                }
+        val inAppThemeState = NonAppliedStateFlow(
+            viewModelScope,
+            { intPreferences.inAppTheme },
+            {
+                intPreferences.inAppTheme = it
+                appliedInAppTheme.value = getByOrdinal(it)
             }
+        )
 
-        var themeRequiringUpdate = MutableStateFlow(false)
-
-        var theme = MutableStateFlow(intPreferences.theme)
-            .apply {
-                viewModelScope.launch {
-                    collect {
-                        themeRequiringUpdate.value = it != intPreferences.theme
-                    }
-                }
-            }
-        var usedTheme = MutableStateFlow<Theme>(getByOrdinal(intPreferences.theme))
-
-        fun updateTheme() {
-            intPreferences.theme = theme.value
-            usedTheme.value = getByOrdinal(theme.value)
-            themeRequiringUpdate.value = false
-        }
-
-        fun resetTheme() {
-            theme.value = intPreferences.theme
-            themeRequiringUpdate.value = false
-        }
+        var appliedInAppTheme = MutableStateFlow<Theme>(getByOrdinal(intPreferences.inAppTheme))
 
         /**
          * Widget Pin Listening
@@ -134,102 +124,41 @@ class HomeActivity : AppActivity() {
          * Widget Configuration
          */
 
-        val widgetPropertyFlags: SnapshotStateMap<String, Boolean> by lazy {
-            widgetProperties.getMutableStateMap()
-        }
+        val openConfigurationDialog = MutableStateFlow(false)
+
+        val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
+            { widgetProperties },
+            { widgetProperties.putAll(it) }
+        )
+
+        val widgetThemeState = NonAppliedStateFlow(
+            viewModelScope,
+            { intPreferences.widgetTheme },
+            { intPreferences.widgetTheme = it }
+        )
+
+        val widgetOpacityState = NonAppliedStateFlow(
+            viewModelScope,
+            { floatPreferences.opacity },
+            { floatPreferences.opacity = it }
+        )
+
+        val widgetConfigurationStates = CoherentNonAppliedStates(
+            widgetPropertyStateMap,
+            widgetThemeState,
+            widgetOpacityState,
+            coroutineScope = viewModelScope
+        )
 
         /**
-         * @return Boolean indicating whether change has been endorsed
+         * @return Boolean indicating whether change has been confirmed
          */
-        fun onWidgetPropertyFlagInput(property: String, value: Boolean): Boolean =
-            (!value && widgetPropertyFlags.values.count { true } == 1).let { leadsToLastRemainingPropertySetToFalse ->
-                if (!leadsToLastRemainingPropertySetToFalse) {
-                    widgetPropertyFlags[property] = value
-                    updateWidgetPropertyFlagsRequiringUpdate()
+        fun onUnconfirmedWidgetPropertyChange(property: String, value: Boolean): Boolean =
+            (value || widgetPropertyStateMap.values.count { true } != 1).let { changeConfirmed ->
+                if (changeConfirmed) {
+                    widgetPropertyStateMap[property] = value
                 }
-                !leadsToLastRemainingPropertySetToFalse
-            }
-
-        private fun updateWidgetPropertyFlagsRequiringUpdate() {
-            widgetPropertyFlagsRequiringUpdate.value =
-                widgetPropertyFlags.any { (k, v) ->  // TODO: optimize
-                    v != widgetProperties.getValue(k)
-                }
-        }
-
-        fun changeSSIDFlag(value: Boolean, updateRequiringUpdateFlow: Boolean) {
-            widgetPropertyFlags[ssidKey] = value
-
-            if (updateRequiringUpdateFlow)
-                updateWidgetPropertyFlagsRequiringUpdate()
-        }
-
-        val ssidKey: String = widgetProperties::SSID.name
-
-        fun updateWidgetConfiguration() {
-            widgetProperties.putAll(widgetPropertyFlags)
-            intPreferences.widgetTheme = widgetTheme.value
-            floatPreferences.opacity = widgetOpacity.value
-
-            resetRequiringUpdateFlows()
-        }
-
-        fun resetWidgetConfiguration() {
-            widgetPropertyFlags.putAll(widgetProperties)
-            widgetTheme.value = intPreferences.widgetTheme
-            widgetOpacity.value = floatPreferences.opacity
-
-            resetRequiringUpdateFlows()
-        }
-
-        val widgetConfigurationRequiringUpdate = MutableStateFlow(false)
-
-        private val widgetPropertyFlagsRequiringUpdate = MutableStateFlow(false)
-        private val widgetThemeRequiringUpdate = MutableStateFlow(false)
-        private val widgetOpacityRequiringUpdate = MutableStateFlow(false)
-
-        init {
-            val updateWidgetConfigurationRequiringUpdate: (Boolean) -> Unit = {
-                widgetConfigurationRequiringUpdate.value =
-                    widgetThemeRequiringUpdate.value || widgetPropertyFlagsRequiringUpdate.value || widgetOpacityRequiringUpdate.value
-            }
-            with(viewModelScope) {
-                launch {
-                    widgetThemeRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
-                }
-                launch {
-                    widgetPropertyFlagsRequiringUpdate.collect(
-                        updateWidgetConfigurationRequiringUpdate
-                    )
-                }
-                launch {
-                    widgetOpacityRequiringUpdate.collect(updateWidgetConfigurationRequiringUpdate)
-                }
-            }
-        }
-
-        private fun resetRequiringUpdateFlows() {
-            widgetThemeRequiringUpdate.value = false
-            widgetPropertyFlagsRequiringUpdate.value = false
-            widgetOpacityRequiringUpdate.value = false
-        }
-
-        var widgetTheme = MutableStateFlow(intPreferences.widgetTheme)
-            .apply {
-                viewModelScope.launch {
-                    collect {
-                        widgetThemeRequiringUpdate.value = it != intPreferences.widgetTheme
-                    }
-                }
-            }
-
-        var widgetOpacity = MutableStateFlow(floatPreferences.opacity)
-            .apply {
-                viewModelScope.launch {
-                    collect {
-                        widgetOpacityRequiringUpdate.value = it != floatPreferences.opacity
-                    }
-                }
+                changeConfirmed
             }
 
         /**
@@ -274,14 +203,14 @@ class HomeActivity : AppActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
             SwipeUpAnimation {
-                viewModel.splashScreenAnimationFinished.value = true
+                viewModel.onSplashScreenAnimationFinished()
             }
         )
 
         super.onCreate(savedInstanceState)
 
         setContent {
-            val theme by viewModel.usedTheme.collectAsState()
+            val theme by viewModel.appliedInAppTheme.collectAsState()
 
             WifiWidgetTheme(
                 darkTheme = when (theme) {

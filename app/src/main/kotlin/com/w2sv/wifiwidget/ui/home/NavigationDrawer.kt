@@ -70,20 +70,20 @@ fun NavigationDrawer(
         mutableStateOf(false)
     }
 
-    val theme by viewModel.theme.collectAsState()
-    val themeRequiringUpdate by viewModel.themeRequiringUpdate.collectAsState()
+    val theme by viewModel.inAppThemeState.collectAsState()
+    val themeRequiringUpdate by viewModel.inAppThemeState.requiringUpdate.collectAsState()
 
     if (showThemeDialog) {
         ThemeDialog(
             onDismissRequest = {
-                viewModel.resetTheme()
+                viewModel.inAppThemeState.reset()
                 showThemeDialog = false
             },
             theme = { theme },
-            onThemeSelected = { viewModel.theme.value = it },
+            onThemeSelected = { viewModel.inAppThemeState.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
             onApplyButtonPress = {
-                viewModel.updateTheme()
+                viewModel.inAppThemeState.apply()
                 showThemeDialog = false
                 context.showToast("Updated Theme")
             }

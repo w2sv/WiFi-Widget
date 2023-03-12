@@ -19,19 +19,18 @@ class LocationAccessPermissionHandler(
         "LocationAccessPermissionHandler"
     ) {
 
-    fun requestPermissionIfRequiredAndSetSSIDFlag(
-        updateRequiringUpdateFlow: Boolean,
+    fun requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired(
         onGranted: (() -> Unit)? = null,
         onDenied: (() -> Unit)? = null,
         onRequestDismissed: (() -> Unit)? = null
     ): Boolean =
         super.requestPermissionIfRequired(
             {
-                viewModel.changeSSIDFlag(true, updateRequiringUpdateFlow)
+                viewModel.widgetPropertyStateMap["SSID"] = true
                 onGranted?.invoke()
             },
             {
-                viewModel.changeSSIDFlag(false, updateRequiringUpdateFlow)
+                viewModel.widgetPropertyStateMap["SSID"] = false
                 onDenied?.invoke()
             },
             onRequestDismissed

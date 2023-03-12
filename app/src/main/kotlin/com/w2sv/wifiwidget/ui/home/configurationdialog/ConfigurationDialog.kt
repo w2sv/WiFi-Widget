@@ -107,13 +107,13 @@ fun WidgetConfigurationDialog(
         }
 
     val onDismiss: () -> Unit = {
-        viewModel.resetWidgetConfiguration()
+        viewModel.widgetConfigurationStates.reset()
         closeDialog()
     }
 
-    val theme by viewModel.widgetTheme.collectAsState()
-    val opacity by viewModel.widgetOpacity.collectAsState()
-    val applyButtonEnabled by viewModel.widgetConfigurationRequiringUpdate.collectAsState()
+    val theme by viewModel.widgetThemeState.collectAsState()
+    val opacity by viewModel.widgetOpacityState.collectAsState()
+    val applyButtonEnabled by viewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
 
     StatelessWidgetConfigurationDialog(
         modifier = modifier,
@@ -127,29 +127,27 @@ fun WidgetConfigurationDialog(
                     theme
                 },
                 onSelectedTheme = {
-                    viewModel.widgetTheme.value = it
+                    viewModel.widgetThemeState.value = it
                 },
                 opacity = {
                     opacity
                 },
                 onOpacityChanged = {
-                    viewModel.widgetOpacity.value = it
+                    viewModel.widgetOpacityState.value = it
                 },
                 propertyChecked = { property ->
-                    viewModel.widgetPropertyFlags.getValue(property)
+                    viewModel.widgetPropertyStateMap.map.getValue(property)
                 },
-                onCheckedChange = { property, newValue ->
+                onCheckedChange = { property, value ->
                     when {
-                        property == viewModel.ssidKey && newValue -> {
+                        property == "SSID" && value -> {
                             when (viewModel.lapDialogAnswered) {
                                 false -> showLocationAccessPermissionDialog = true
-                                true -> activity.lapRequestLauncher.requestPermissionIfRequiredAndSetSSIDFlag(
-                                    updateRequiringUpdateFlow = true
-                                )
+                                true -> activity.lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired()
                             }
                         }
 
-                        !viewModel.onWidgetPropertyFlagInput(property, newValue) -> {
+                        !viewModel.onUnconfirmedWidgetPropertyChange(property, value) -> {
                             context.showToast(R.string.uncheck_all_properties_toast)
                         }
                     }
@@ -163,7 +161,7 @@ fun WidgetConfigurationDialog(
             ButtonRow(
                 onCancel = onDismiss,
                 onApply = {
-                    viewModel.updateWidgetConfiguration()
+                    viewModel.widgetConfigurationStates.apply()
                     WifiWidgetProvider.triggerDataRefresh(context)
                     context.showToast(R.string.updated_widget_configuration)
                     closeDialog()
