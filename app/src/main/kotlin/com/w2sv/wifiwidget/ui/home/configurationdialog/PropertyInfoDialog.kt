@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.extensions.getNestedStringArray
 import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.DialogButton
-import com.w2sv.wifiwidget.ui.JostText
-import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.shared.DialogButton
+import com.w2sv.wifiwidget.ui.shared.JostText
+import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
 @Preview
 @Composable

@@ -35,12 +35,12 @@ import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.DialogButton
-import com.w2sv.wifiwidget.ui.JostText
-import com.w2sv.wifiwidget.ui.WifiWidgetTheme
-import com.w2sv.wifiwidget.ui.diagonalGradient
+import com.w2sv.wifiwidget.ui.shared.DialogButton
+import com.w2sv.wifiwidget.ui.shared.JostText
+import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.shared.diagonalGradient
 import com.w2sv.wifiwidget.ui.home.LocationAccessPermissionDialog
-import com.w2sv.wifiwidget.ui.home.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 
 @Preview
 @Composable

@@ -22,9 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.JostText
-import com.w2sv.wifiwidget.ui.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.shared.JostText
+import com.w2sv.wifiwidget.ui.shared.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
 @Preview
 @Composable

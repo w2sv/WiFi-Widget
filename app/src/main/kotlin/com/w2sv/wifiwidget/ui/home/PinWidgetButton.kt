@@ -15,7 +15,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
 fun PinWidgetButton(

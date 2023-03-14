@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.JostText
+import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
 internal fun StatelessPropertyRows(

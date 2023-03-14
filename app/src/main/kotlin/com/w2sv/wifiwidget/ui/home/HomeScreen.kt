@@ -9,8 +9,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.JostText
-import com.w2sv.wifiwidget.ui.WifiWidgetTopBar
+import com.w2sv.wifiwidget.ui.shared.JostText
+import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
 import com.w2sv.wifiwidget.ui.home.configurationdialog.PropertySelectionDialogInflationButton
 import kotlinx.coroutines.launch
 import java.util.*

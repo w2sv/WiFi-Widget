@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.utils
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.w2sv.kotlinutils.extensions.valueEqualTo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -39,11 +40,6 @@ class NonAppliedSnapshotStateMap<K, V>(
         requiringUpdate.value = !valueEqualTo(getAppliedState())
         return previous
     }
-
-    private fun valueEqualTo(other: Map<K, V>): Boolean =
-        all { (k, v) ->
-            other.getValue(k) == v
-        }
 }
 
 class NonAppliedStateFlow<T>(

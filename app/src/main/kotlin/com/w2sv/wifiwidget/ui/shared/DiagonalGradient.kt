@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui
+package com.w2sv.wifiwidget.ui.shared
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.Offset
