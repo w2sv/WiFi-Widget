@@ -32,36 +32,53 @@ internal fun StatelessPropertyRows(
     ) {
         stringArrayResource(id = R.array.wifi_properties)
             .forEachIndexed { propertyIndex, property ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    JostText(
-                        text = property,
-                        modifier = Modifier.weight(1f, fill = true),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontSize = 14.sp
-                    )
-                    Checkbox(
-                        checked = propertyChecked(property),
-                        onCheckedChange = { onCheckedChange(property, it) },
-                        colors = CheckboxDefaults.colors(
-                            checkedColor = MaterialTheme.colorScheme.primary,
-                            uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    )
-                    IconButton(onClick = {
-                        onInfoButtonClick(propertyIndex)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = "Click to toggle the property info dialog",
-                            modifier = Modifier.size(
-                                dimensionResource(id = R.dimen.size_icon)
-                            ),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                PropertyRow(
+                    property = property,
+                    propertyIndex = propertyIndex,
+                    propertyChecked = propertyChecked,
+                    onCheckedChange = onCheckedChange,
+                    onInfoButtonClick = onInfoButtonClick
+                )
             }
+    }
+}
+
+@Composable
+private fun PropertyRow(
+    property: String,
+    propertyIndex: Int,
+    propertyChecked: (String) -> Boolean,
+    onCheckedChange: (String, Boolean) -> Unit,
+    onInfoButtonClick: (Int) -> Unit
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        JostText(
+            text = property,
+            modifier = Modifier.weight(1f, fill = true),
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 14.sp
+        )
+        Checkbox(
+            checked = propertyChecked(property),
+            onCheckedChange = { onCheckedChange(property, it) },
+            colors = CheckboxDefaults.colors(
+                checkedColor = MaterialTheme.colorScheme.primary,
+                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        )
+        IconButton(onClick = {
+            onInfoButtonClick(propertyIndex)
+        }) {
+            Icon(
+                imageVector = Icons.Outlined.Info,
+                contentDescription = "Click to toggle the property info dialog",
+                modifier = Modifier.size(
+                    dimensionResource(id = R.dimen.size_icon)
+                ),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }

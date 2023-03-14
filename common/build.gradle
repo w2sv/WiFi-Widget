@@ -7,6 +7,4 @@ apply from: '../modulebase.gradle'
 
 android {
     namespace 'com.w2sv.common'
-
-    compileSdk libs.versions.compileSdk.get().toInteger()
 }

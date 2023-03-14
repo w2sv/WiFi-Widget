@@ -18,7 +18,7 @@ android {
         minSdk libs.versions.minSdk.get().toInteger()
         targetSdk libs.versions.compileSdk.get().toInteger()
 
-        versionCode 13
+        versionCode project.findProperty('versionCode').toInteger()
         versionName version
 
         setProperty('archivesBaseName', versionName)
@@ -81,7 +81,7 @@ play {
 
     serviceAccountCredentials.set(file("../service-account-key.json"))
     defaultToAppBundles.set(true)
-    artifactDir.set(file("build/outputs/aab/release/${version}.aab"))
+    track.set("production")
 }
 
 dependencies {
