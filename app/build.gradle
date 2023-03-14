@@ -21,8 +21,8 @@ android {
         versionCode project.findProperty('versionCode').toInteger()
         versionName version
 
+        // Store bundles as "{versionName}-{buildFlavor}.aab"
         setProperty('archivesBaseName', versionName)
-        // Stores built aab's as "{versionName}-{buildFlavor}.aab"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     signingConfigs {
@@ -68,7 +68,7 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
-    // Store built apk's as "{versionName}.apk"
+    // Store .apk's as "{versionName}.apk"
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "${variant.versionName}.apk"
