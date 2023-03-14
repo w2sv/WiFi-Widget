@@ -36,8 +36,8 @@ import com.w2sv.preferences.IntPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.home.HomeScreen
+import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.utils.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.utils.NonAppliedStateFlow
@@ -73,8 +73,8 @@ class HomeActivity : AppActivity() {
          * onSplashScreenAnimationFinished
          */
 
-        fun onSplashScreenAnimationFinished(){
-            if (openConfigurationDialogOnSplashScreenAnimationFinished){
+        fun onSplashScreenAnimationFinished() {
+            if (openConfigurationDialogOnSplashScreenAnimationFinished) {
                 openConfigurationDialog.value = true
             }
         }

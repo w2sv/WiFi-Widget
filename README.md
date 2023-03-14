@@ -8,7 +8,8 @@
 ![](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls)
 ![GitHub](https://img.shields.io/github/license/w2sv/WiFi-Widget)
 
-__A configurable WiFi connection details monitoring widget for Android. Built with Jetpack Compose.__
+__A configurable WiFi connection details monitoring widget for Android. Built with Jetpack
+Compose.__
 
 ## Download
 
@@ -21,7 +22,10 @@ Janek Zangenberg
 
 ## Credits
 
-Logo foreground by [Hilmy Abiyyu Asad](https://freeicons.io/profile/75801) taken from [here](https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667#), where it is licensed under [Creative Commons(Attribution 3.0 unported)](https://creativecommons.org/licenses/by/3.0/).
+Logo foreground by [Hilmy Abiyyu Asad](https://freeicons.io/profile/75801) taken
+from [here](https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667#),
+where it is licensed
+under [Creative Commons(Attribution 3.0 unported)](https://creativecommons.org/licenses/by/3.0/).
 
 ## License
 
