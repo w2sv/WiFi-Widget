@@ -15,8 +15,8 @@ lifecycle = "2.6.0"
 [libraries]
 
 # owned
-typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.1-rc2'
-androidutils = 'com.github.w2sv:AndroidUtils:0.0.16-rc4'
+typedpreferences = 'com.github.w2sv:TypedPreferences:1.0.1-rc3'
+androidutils = 'com.github.w2sv:AndroidUtils:0.0.17-rc2'
 permissionhandler = 'com.github.w2sv:PermissionHandler:1.0.0-rc5'
 kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.6-rc4'
 
