@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
+import com.w2sv.androidutils.extensions.resetBoolean
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
@@ -38,7 +39,6 @@ import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.shared.diagonalGradient
-import com.w2sv.wifiwidget.utils.resetBoolean
 
 @Preview
 @Composable
@@ -82,8 +82,8 @@ fun StatefulWidgetConfigurationDialog(
      */
 
     viewModel.lapDialogTrigger.collectAsState().apply {
-        if (value == LocationAccessPermissionDialogTrigger.SSIDCheck) {
-            LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.SSIDCheck)
+        LocationAccessPermissionDialog {
+            value
         }
     }
 

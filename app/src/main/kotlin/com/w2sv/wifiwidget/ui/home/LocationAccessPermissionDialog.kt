@@ -14,6 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
+import com.w2sv.androidutils.extensions.reset
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
@@ -21,7 +22,6 @@ import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
-import com.w2sv.wifiwidget.utils.reset
 
 @Preview
 @Composable
@@ -33,52 +33,54 @@ private fun Prev() {
 
 @Composable
 fun LocationAccessPermissionDialog(
-    trigger: LocationAccessPermissionDialogTrigger,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    viewModel: HomeActivity.ViewModel = viewModel(),
+    trigger: () -> LocationAccessPermissionDialogTrigger?
 ) {
     val context = LocalContext.current
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
-    when (trigger) {
-        LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
-            LocationAccessPermissionDialog(
-                dismissButtonText = "Proceed without SSID",
+    trigger()?.let {
+        when (it) {
+            LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
+                LocationAccessPermissionDialog(
+                    dismissButtonText = "Proceed without SSID",
+                    onConfirmButtonPressed = {
+                        lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
+                            viewModel,
+                            onGranted = {
+                                viewModel.widgetPropertyStateMap.apply()
+                            },
+                            onRequestDismissed = {
+                                WifiWidgetProvider.pinWidget(context)
+                            }
+                        )
+                    },
+                    onDismissButtonPressed = {
+                        WifiWidgetProvider.pinWidget(context)
+                    },
+                    onAnyButtonPressed = {
+                        viewModel.lapDialogAnswered = true
+                    },
+                    onDismiss = {
+                        viewModel.lapDialogTrigger.reset()
+                    }
+                )
+            }
+
+            LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
+                dismissButtonText = "Never mind",
                 onConfirmButtonPressed = {
-                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                        viewModel,
-                        onGranted = {
-                            viewModel.widgetPropertyStateMap.apply()
-                        },
-                        onRequestDismissed = {
-                            WifiWidgetProvider.pinWidget(context)
-                        }
-                    )
+                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(viewModel)
                 },
                 onDismissButtonPressed = {
-                    WifiWidgetProvider.pinWidget(context)
+                    viewModel.widgetPropertyStateMap["SSID"] = false
                 },
-                onAnyButtonPressed = {
-                    viewModel.lapDialogAnswered = true
-                },
+                onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
                 onDismiss = {
                     viewModel.lapDialogTrigger.reset()
                 }
             )
         }
-
-        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
-            dismissButtonText = "Never mind",
-            onConfirmButtonPressed = {
-                lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(viewModel)
-            },
-            onDismissButtonPressed = {
-                viewModel.widgetPropertyStateMap["SSID"] = false
-            },
-            onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
-            onDismiss = {
-                viewModel.lapDialogTrigger.reset()
-            }
-        )
     }
 }
 
