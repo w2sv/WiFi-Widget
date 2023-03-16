@@ -24,7 +24,7 @@ fun PropertySelectionDialogInflationButton(
     }
 
     if (inflateDialog)
-        WidgetConfigurationDialog {
+        StatefulWidgetConfigurationDialog {
             viewModel.openConfigurationDialog.value = false
         }
 }

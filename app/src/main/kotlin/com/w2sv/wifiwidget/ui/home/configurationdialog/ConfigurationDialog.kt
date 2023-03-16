@@ -44,9 +44,9 @@ import com.w2sv.wifiwidget.ui.shared.diagonalGradient
 
 @Preview
 @Composable
-private fun StatelessWidgetConfigurationDialogPrev() {
+private fun WidgetConfigurationDialogPrev() {
     WifiWidgetTheme {
-        StatelessWidgetConfigurationDialog(
+        WidgetConfigurationDialog(
             onDismiss = {},
             contentColumn = {
                 ConfigColumn(
@@ -71,7 +71,7 @@ private fun StatelessWidgetConfigurationDialogPrev() {
 }
 
 @Composable
-fun WidgetConfigurationDialog(
+fun StatefulWidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel(),
     closeDialog: () -> Unit
@@ -101,10 +101,11 @@ fun WidgetConfigurationDialog(
         mutableStateOf(false)
     }
 
-    if (showLocationAccessPermissionDialog)
+    if (showLocationAccessPermissionDialog) {
         LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.SSIDCheck) {
             showLocationAccessPermissionDialog = false
         }
+    }
 
     val onDismiss: () -> Unit = {
         viewModel.widgetConfigurationStates.reset()
@@ -115,7 +116,7 @@ fun WidgetConfigurationDialog(
     val opacity by viewModel.widgetOpacityState.collectAsState()
     val applyButtonEnabled by viewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
 
-    StatelessWidgetConfigurationDialog(
+    WidgetConfigurationDialog(
         modifier = modifier,
         onDismiss = onDismiss,
         contentColumn = {
@@ -177,7 +178,7 @@ fun WidgetConfigurationDialog(
 }
 
 @Composable
-private fun StatelessWidgetConfigurationDialog(
+private fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     contentColumn: @Composable ColumnScope.(Modifier) -> Unit,
