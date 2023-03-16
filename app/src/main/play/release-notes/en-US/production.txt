@@ -1,2 +1,4 @@
 [Fix]
-- Resetting of widget opacity upon app restart
+- Property info dialog display on rotation
+[Optimize]
+- Size of resources

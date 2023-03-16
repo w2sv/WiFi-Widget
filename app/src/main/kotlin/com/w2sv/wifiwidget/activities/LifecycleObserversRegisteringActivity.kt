@@ -4,9 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.LifecycleObserver
 
-abstract class LifecycleObservedActivity : ComponentActivity() {
+abstract class LifecycleObserversRegisteringActivity : ComponentActivity() {
 
-    abstract val lifecycleObservers: List<LifecycleObserver>
+    protected abstract val lifecycleObservers: List<LifecycleObserver>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

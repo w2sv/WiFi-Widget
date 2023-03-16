@@ -50,7 +50,7 @@ import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : LifecycleObservedActivity() {
+class HomeActivity : LifecycleObserversRegisteringActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(

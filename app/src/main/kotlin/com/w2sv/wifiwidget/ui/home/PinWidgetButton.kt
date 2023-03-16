@@ -33,7 +33,7 @@ fun StatefulPinWidgetButton(
 
     viewModel.lapDialogTrigger.collectAsState().apply {
         if (value == LocationAccessPermissionDialogTrigger.PinWidgetButtonPress) {
-            LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.PinWidgetButtonPress)
+            LocationAccessPermissionDialog(LocationAccessPermissionDialogTrigger.PinWidgetButtonPress)
         }
     }
 }
