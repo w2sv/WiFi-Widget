@@ -76,7 +76,7 @@ class HomeActivity : LifecycleObservedActivity() {
 
         fun onSplashScreenAnimationFinished() {
             if (openConfigurationDialogOnSplashScreenAnimationFinished) {
-                openConfigurationDialog.value = true
+                showWidgetConfigurationDialog.value = true
             }
         }
 
@@ -126,7 +126,7 @@ class HomeActivity : LifecycleObservedActivity() {
          * Widget Configuration
          */
 
-        val openConfigurationDialog = MutableStateFlow(false)
+        val showWidgetConfigurationDialog = MutableStateFlow(false)
 
         val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
             { widgetProperties },

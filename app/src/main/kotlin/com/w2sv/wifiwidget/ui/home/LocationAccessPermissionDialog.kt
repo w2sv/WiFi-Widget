@@ -69,7 +69,7 @@ fun LocationAccessPermissionDialog(
         LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
             dismissButtonText = "Never mind",
             onConfirmButtonPressed = {
-                lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly()
+                lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(viewModel)
             },
             onDismissButtonPressed = {
                 viewModel.widgetPropertyStateMap["SSID"] = false

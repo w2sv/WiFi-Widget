@@ -16,9 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,6 +38,7 @@ import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.shared.diagonalGradient
+import com.w2sv.wifiwidget.utils.resetBoolean
 
 @Preview
 @Composable
@@ -74,24 +72,10 @@ private fun WidgetConfigurationDialogPrev() {
 fun StatefulWidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel(),
-    closeDialog: () -> Unit
+    setInfoDialogPropertyIndex: (Int) -> Unit
 ) {
     val context = LocalContext.current
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
-
-    /**
-     * PropertyInfoDialog
-     */
-
-    var infoDialogPropertyIndex by rememberSaveable {
-        mutableStateOf<Int?>(null)
-    }
-
-    infoDialogPropertyIndex?.let {
-        PropertyInfoDialog(it) {
-            infoDialogPropertyIndex = null
-        }
-    }
 
     /**
      * LocationAccessPermissionDialog
@@ -105,7 +89,7 @@ fun StatefulWidgetConfigurationDialog(
 
     val onDismiss: () -> Unit = {
         viewModel.widgetConfigurationStates.reset()
-        closeDialog()
+        viewModel.showWidgetConfigurationDialog.resetBoolean()
     }
 
     val theme by viewModel.widgetThemeState.collectAsState()
@@ -153,8 +137,8 @@ fun StatefulWidgetConfigurationDialog(
                         }
                     }
                 },
-                onInfoButtonClick = { propertyIndex ->
-                    infoDialogPropertyIndex = propertyIndex
+                onInfoButtonClick = {
+                    setInfoDialogPropertyIndex(it)
                 }
             )
         },
@@ -165,7 +149,7 @@ fun StatefulWidgetConfigurationDialog(
                     viewModel.widgetConfigurationStates.apply()
                     WifiWidgetProvider.triggerDataRefresh(context)
                     context.showToast(R.string.updated_widget_configuration)
-                    closeDialog()
+                    viewModel.showWidgetConfigurationDialog.resetBoolean()
                 },
                 applyButtonEnabled = {
                     applyButtonEnabled
