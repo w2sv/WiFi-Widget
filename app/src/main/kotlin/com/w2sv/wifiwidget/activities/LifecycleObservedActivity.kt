@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.LifecycleObserver
 
-abstract class AppActivity : ComponentActivity() {
+abstract class LifecycleObservedActivity : ComponentActivity() {
 
     abstract val lifecycleObservers: List<LifecycleObserver>
 

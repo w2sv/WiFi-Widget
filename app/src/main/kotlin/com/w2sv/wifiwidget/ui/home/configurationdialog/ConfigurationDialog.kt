@@ -49,7 +49,7 @@ private fun WidgetConfigurationDialogPrev() {
         WidgetConfigurationDialog(
             onDismiss = {},
             contentColumn = {
-                ConfigColumn(
+                ContentColumn(
                     selectedTheme = { 1 },
                     onSelectedTheme = {},
                     opacity = { 1f },
@@ -77,7 +77,7 @@ fun StatefulWidgetConfigurationDialog(
     closeDialog: () -> Unit
 ) {
     val context = LocalContext.current
-    val activity = context.requireCastActivity<HomeActivity>()
+    val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
     /**
      * PropertyInfoDialog
@@ -88,7 +88,7 @@ fun StatefulWidgetConfigurationDialog(
     }
 
     infoDialogPropertyIndex?.let {
-        StatelessPropertyInfoDialog(it) {
+        PropertyInfoDialog(it) {
             infoDialogPropertyIndex = null
         }
     }
@@ -97,13 +97,9 @@ fun StatefulWidgetConfigurationDialog(
      * LocationAccessPermissionDialog
      */
 
-    var showLocationAccessPermissionDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (showLocationAccessPermissionDialog) {
-        LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.SSIDCheck) {
-            showLocationAccessPermissionDialog = false
+    viewModel.lapDialogTrigger.collectAsState().apply {
+        if (value == LocationAccessPermissionDialogTrigger.SSIDCheck) {
+            LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.SSIDCheck)
         }
     }
 
@@ -120,7 +116,7 @@ fun StatefulWidgetConfigurationDialog(
         modifier = modifier,
         onDismiss = onDismiss,
         contentColumn = {
-            ConfigColumn(
+            ContentColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(260.dp, 460.dp),
@@ -143,12 +139,16 @@ fun StatefulWidgetConfigurationDialog(
                     when {
                         property == "SSID" && value -> {
                             when (viewModel.lapDialogAnswered) {
-                                false -> showLocationAccessPermissionDialog = true
-                                true -> activity.lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired()
+                                false -> viewModel.lapDialogTrigger.value =
+                                    LocationAccessPermissionDialogTrigger.SSIDCheck
+
+                                true -> lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
+                                    viewModel
+                                )
                             }
                         }
 
-                        !viewModel.onUnconfirmedWidgetPropertyChange(property, value) -> {
+                        else -> viewModel.confirmAndSyncPropertyChange(property, value) {
                             context.showToast(R.string.uncheck_all_properties_toast)
                         }
                     }

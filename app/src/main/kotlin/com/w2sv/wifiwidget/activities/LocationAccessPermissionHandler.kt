@@ -6,10 +6,7 @@ import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.permissionhandler.CoupledPermissionsHandler
 
-class LocationAccessPermissionHandler(
-    activity: ComponentActivity,
-    private val viewModel: HomeActivity.ViewModel
-) :
+class LocationAccessPermissionHandler(activity: ComponentActivity) :
     CoupledPermissionsHandler(
         activity,
         arrayOf(
@@ -19,7 +16,8 @@ class LocationAccessPermissionHandler(
         "LocationAccessPermissionHandler"
     ) {
 
-    fun requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired(
+    fun requestPermissionAndSetSSIDFlagCorrespondingly(
+        viewModel: HomeActivity.ViewModel,
         onGranted: (() -> Unit)? = null,
         onDenied: (() -> Unit)? = null,
         onRequestDismissed: (() -> Unit)? = null

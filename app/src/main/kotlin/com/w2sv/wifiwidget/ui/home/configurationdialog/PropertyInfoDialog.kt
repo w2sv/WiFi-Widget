@@ -27,7 +27,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        StatelessPropertyInfoDialog(
+        PropertyInfoDialog(
             Modifier,
             "SSID",
             "Service Set Identifier. Your network's name.",
@@ -38,7 +38,7 @@ private fun Prev() {
 }
 
 @Composable
-internal fun StatelessPropertyInfoDialog(
+internal fun PropertyInfoDialog(
     propertyIndex: Int,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
@@ -46,7 +46,7 @@ internal fun StatelessPropertyInfoDialog(
     val context = LocalContext.current
 
     with(context.resources.getNestedStringArray(R.array.wifi_property_data_arrays, propertyIndex)) {
-        StatelessPropertyInfoDialog(
+        PropertyInfoDialog(
             modifier = modifier,
             title = get(0),
             text = get(1),
@@ -64,7 +64,7 @@ internal fun StatelessPropertyInfoDialog(
 }
 
 @Composable
-private fun StatelessPropertyInfoDialog(
+private fun PropertyInfoDialog(
     modifier: Modifier = Modifier,
     title: String,
     text: String,

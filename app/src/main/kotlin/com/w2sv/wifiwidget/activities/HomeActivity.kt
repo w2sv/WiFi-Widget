@@ -37,6 +37,7 @@ import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.home.HomeScreen
+import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.utils.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.utils.NonAppliedSnapshotStateMap
@@ -49,7 +50,7 @@ import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : AppActivity() {
+class HomeActivity : LifecycleObservedActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(
@@ -154,19 +155,25 @@ class HomeActivity : AppActivity() {
         /**
          * @return Boolean indicating whether change has been confirmed
          */
-        fun onUnconfirmedWidgetPropertyChange(property: String, value: Boolean): Boolean =
-            (value || widgetPropertyStateMap.values.count { true } != 1).let { changeConfirmed ->
-                if (changeConfirmed) {
-                    widgetPropertyStateMap[property] = value
-                }
-                changeConfirmed
+        fun confirmAndSyncPropertyChange(
+            property: String,
+            value: Boolean,
+            onChangeRejected: () -> Unit
+        ) {
+            when (value || widgetPropertyStateMap.values.count { true } != 1) {
+                true -> widgetPropertyStateMap[property] = value
+                false -> onChangeRejected()
             }
+        }
 
         /**
          * lap := Location Access Permission
          */
 
         var lapDialogAnswered: Boolean by globalFlags::locationPermissionDialogAnswered
+
+        val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
+            MutableStateFlow(null)
     }
 
     private val viewModel by viewModels<ViewModel>()
@@ -189,10 +196,7 @@ class HomeActivity : AppActivity() {
     }
 
     val lapRequestLauncher by lazy {
-        LocationAccessPermissionHandler(
-            this,
-            viewModel
-        )
+        LocationAccessPermissionHandler(this)
     }
 
     override val lifecycleObservers: List<LifecycleObserver>

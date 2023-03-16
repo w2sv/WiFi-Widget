@@ -21,22 +21,31 @@ import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
+import com.w2sv.wifiwidget.utils.reset
+
+@Preview
+@Composable
+private fun Prev() {
+    WifiWidgetTheme {
+        LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {}, {}, {})
+    }
+}
 
 @Composable
 fun LocationAccessPermissionDialog(
     trigger: LocationAccessPermissionDialogTrigger,
-    viewModel: HomeActivity.ViewModel = viewModel(),
-    onDismiss: () -> Unit
+    viewModel: HomeActivity.ViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val activity = context.requireCastActivity<HomeActivity>()
+    val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
     when (trigger) {
         LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
-            StatelessLocationAccessPermissionDialog(
+            LocationAccessPermissionDialog(
                 dismissButtonText = "Proceed without SSID",
                 onConfirmButtonPressed = {
-                    activity.lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired(
+                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
+                        viewModel,
                         onGranted = {
                             viewModel.widgetPropertyStateMap.apply()
                         },
@@ -51,26 +60,30 @@ fun LocationAccessPermissionDialog(
                 onAnyButtonPressed = {
                     viewModel.lapDialogAnswered = true
                 },
-                onDismiss = onDismiss
+                onDismiss = {
+                    viewModel.lapDialogTrigger.reset()
+                }
             )
         }
 
-        LocationAccessPermissionDialogTrigger.SSIDCheck -> StatelessLocationAccessPermissionDialog(
+        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
             dismissButtonText = "Never mind",
             onConfirmButtonPressed = {
-                activity.lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondinglyIfRequired()
+                lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly()
             },
             onDismissButtonPressed = {
                 viewModel.widgetPropertyStateMap["SSID"] = false
             },
             onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
-            onDismiss = onDismiss
+            onDismiss = {
+                viewModel.lapDialogTrigger.reset()
+            }
         )
     }
 }
 
 @Composable
-private fun StatelessLocationAccessPermissionDialog(
+private fun LocationAccessPermissionDialog(
     modifier: Modifier = Modifier,
     dismissButtonText: String,
     onConfirmButtonPressed: () -> Unit,
@@ -118,12 +131,4 @@ private fun StatelessLocationAccessPermissionDialog(
         },
         onDismissRequest = onDismiss
     )
-}
-
-@Preview
-@Composable
-private fun LocationAccessPermissionDialogPrev() {
-    WifiWidgetTheme {
-        StatelessLocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {}, {}, {})
-    }
 }

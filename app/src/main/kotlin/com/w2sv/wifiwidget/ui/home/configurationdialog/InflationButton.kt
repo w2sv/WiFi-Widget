@@ -13,31 +13,32 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.activities.HomeActivity
 
 @Composable
-fun PropertySelectionDialogInflationButton(
+fun StatefulWidgetConfigurationDialogButton(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel()
 ) {
-    val inflateDialog by viewModel.openConfigurationDialog.collectAsState()
-
-    StatelessPropertySelectionDialogInflationButton(modifier) {
+    WidgetConfigurationDialogButton(modifier) {
         viewModel.openConfigurationDialog.value = true
     }
 
-    if (inflateDialog)
+    val inflateDialog by viewModel.openConfigurationDialog.collectAsState()
+
+    if (inflateDialog) {
         StatefulWidgetConfigurationDialog {
             viewModel.openConfigurationDialog.value = false
         }
+    }
 }
 
 @Composable
-private fun StatelessPropertySelectionDialogInflationButton(
+private fun WidgetConfigurationDialogButton(
     modifier: Modifier,
     onClick: () -> Unit
 ) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
-            contentDescription = "Inflate widget properties configuration dialog",
+            contentDescription = "Press to inflate widget configuration dialog.",
             modifier = modifier,
             tint = MaterialTheme.colorScheme.primary
         )

@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun StatelessPropertyRows(
+internal fun PropertyColumn(
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit

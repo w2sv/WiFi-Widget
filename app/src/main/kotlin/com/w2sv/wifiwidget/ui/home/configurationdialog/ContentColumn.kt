@@ -30,7 +30,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        ConfigColumn(
+        ContentColumn(
             selectedTheme = { 1 },
             onSelectedTheme = {},
             opacity = { 1f },
@@ -43,7 +43,7 @@ private fun Prev() {
 }
 
 @Composable
-internal fun ConfigColumn(
+internal fun ContentColumn(
     modifier: Modifier = Modifier,
     selectedTheme: () -> Int,
     onSelectedTheme: (Int) -> Unit,
@@ -82,7 +82,7 @@ internal fun ConfigColumn(
             R.drawable.ic_checklist_24,
             Modifier.padding(vertical = 22.dp)
         )
-        StatelessPropertyRows(
+        PropertyColumn(
             propertyChecked = propertyChecked,
             onCheckedChange = onCheckedChange,
             onInfoButtonClick = onInfoButtonClick

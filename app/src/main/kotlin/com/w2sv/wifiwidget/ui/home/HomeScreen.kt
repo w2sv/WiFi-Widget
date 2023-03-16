@@ -9,7 +9,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.home.configurationdialog.PropertySelectionDialogInflationButton
+import com.w2sv.wifiwidget.ui.home.configurationdialog.StatefulWidgetConfigurationDialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ import java.util.*
 internal fun HomeScreen() {
     val coroutineScope = rememberCoroutineScope()
 
-    NavigationDrawer { drawerState ->
+    StatefulNavigationDrawer { drawerState ->
         Scaffold(topBar = {
             WifiWidgetTopBar {
                 coroutineScope.launch {
@@ -37,14 +37,14 @@ internal fun HomeScreen() {
             ) {
                 Spacer(Modifier.weight(1.5f))
                 Box(Modifier.weight(0.5f)) {
-                    PinWidgetButton(
+                    StatefulPinWidgetButton(
                         Modifier.defaultMinSize(140.dp, 60.dp)
                     )
                 }
 
                 Spacer(Modifier.weight(0.5f))
                 Box(Modifier.weight(1f)) {
-                    PropertySelectionDialogInflationButton(
+                    StatefulWidgetConfigurationDialogButton(
                         Modifier.size(32.dp)
                     )
                 }

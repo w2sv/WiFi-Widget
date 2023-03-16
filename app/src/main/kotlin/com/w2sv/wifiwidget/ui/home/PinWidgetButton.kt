@@ -4,10 +4,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -19,34 +16,30 @@ import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-fun PinWidgetButton(
+fun StatefulPinWidgetButton(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel()
 ) {
-    var triggerOnClickListener by rememberSaveable {
-        mutableStateOf(false)
-    }
+    val context = LocalContext.current
 
-    StatelessPinWidgetButton(modifier) {
-        triggerOnClickListener = true
-    }
-
-    if (triggerOnClickListener) {
+    PinWidgetButton(modifier) {
         when (viewModel.lapDialogAnswered) {
-            false -> LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.PinWidgetButtonPress) {
-                triggerOnClickListener = false
-            }
+            false -> viewModel.lapDialogTrigger.value =
+                LocationAccessPermissionDialogTrigger.PinWidgetButtonPress
 
-            true -> {
-                WifiWidgetProvider.pinWidget(LocalContext.current)
-                triggerOnClickListener = false
-            }
+            true -> WifiWidgetProvider.pinWidget(context)
+        }
+    }
+
+    viewModel.lapDialogTrigger.collectAsState().apply {
+        if (value == LocationAccessPermissionDialogTrigger.PinWidgetButtonPress) {
+            LocationAccessPermissionDialog(trigger = LocationAccessPermissionDialogTrigger.PinWidgetButtonPress)
         }
     }
 }
 
 @Composable
-private fun StatelessPinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick,
         modifier = modifier,

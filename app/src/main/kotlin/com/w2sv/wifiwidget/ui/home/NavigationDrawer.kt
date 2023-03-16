@@ -49,14 +49,14 @@ import kotlinx.coroutines.launch
 @Composable
 private fun NavigationDrawerPrev() {
     WifiWidgetTheme {
-        NavigationDrawer(initialValue = DrawerValue.Open) {
+        StatefulNavigationDrawer(initialValue = DrawerValue.Open) {
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NavigationDrawer(
+fun StatefulNavigationDrawer(
     modifier: Modifier = Modifier,
     initialValue: DrawerValue = DrawerValue.Closed,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
