@@ -7,6 +7,8 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.core.FloatSpringSpec
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -19,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
+import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.androidutils.extensions.playStoreUrl
 import com.w2sv.androidutils.extensions.showToast
@@ -60,55 +62,70 @@ fun StatefulNavigationDrawer(
     modifier: Modifier = Modifier,
     initialValue: DrawerValue = DrawerValue.Closed,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    content: @Composable (DrawerState) -> Unit
+    content: @Composable (() -> Unit) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = initialValue)
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    var showThemeDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    val theme by viewModel.inAppThemeState.collectAsState()
-    val themeRequiringUpdate by viewModel.inAppThemeState.requiringUpdate.collectAsState()
-
-    if (showThemeDialog) {
-        ThemeDialog(
-            onDismissRequest = {
-                viewModel.inAppThemeState.reset()
-                showThemeDialog = false
-            },
-            theme = { theme },
-            onThemeSelected = { viewModel.inAppThemeState.value = it },
-            applyButtonEnabled = { themeRequiringUpdate },
-            onApplyButtonPress = {
-                viewModel.inAppThemeState.apply()
-                showThemeDialog = false
-                context.showToast("Updated Theme")
-            }
-        )
-    }
+    val navigationDrawerAnim = FloatSpringSpec(Spring.DampingRatioMediumBouncy)
 
     val closeDrawer: () -> Unit = {
         scope.launch {
-            drawerState.close()
+            drawerState.animateTo(
+                DrawerValue.Closed,
+                navigationDrawerAnim
+            )
         }
     }
 
-    BackHandler(drawerState.isOpen, closeDrawer)
+    val (showThemeDialog, setShowThemeDialog) = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
             NavigationDrawerContent(
                 closeDrawer = closeDrawer,
-                onItemThemePressed = { showThemeDialog = true }
+                onItemThemePressed = {
+                    // show dialog after delay for display of navigationDrawer close animation
+                    scope.launchDelayed(250L) {
+                        setShowThemeDialog(true)
+                    }
+                }
             )
         },
         drawerState = drawerState
     ) {
-        content(drawerState)
+        content {
+            scope.launch {
+                drawerState.animateTo(DrawerValue.Open, navigationDrawerAnim)
+            }
+        }
+    }
+
+    val theme by viewModel.inAppThemeState.collectAsState()
+    val themeRequiringUpdate by viewModel.inAppThemeState.requiringUpdate.collectAsState()
+    val context = LocalContext.current
+
+    if (showThemeDialog) {
+        ThemeDialog(
+            onDismissRequest = {
+                viewModel.inAppThemeState.reset()
+                setShowThemeDialog(false)
+            },
+            theme = { theme },
+            onThemeSelected = { viewModel.inAppThemeState.value = it },
+            applyButtonEnabled = { themeRequiringUpdate },
+            onApplyButtonPress = {
+                viewModel.inAppThemeState.apply()
+                setShowThemeDialog(false)
+                context.showToast("Updated Theme")
+            }
+        )
+    }
+
+    BackHandler(enabled = drawerState.isOpen) {
+        closeDrawer()
     }
 }
 

@@ -12,20 +12,15 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.home.configurationdialog.StatefulWidgetConfigurationDialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
-import kotlinx.coroutines.launch
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen() {
-    val coroutineScope = rememberCoroutineScope()
-
-    StatefulNavigationDrawer { drawerState ->
+    StatefulNavigationDrawer { openDrawer ->
         Scaffold(topBar = {
             WifiWidgetTopBar {
-                coroutineScope.launch {
-                    drawerState.open()
-                }
+                openDrawer()
             }
         }) { paddingValues ->
             Column(
