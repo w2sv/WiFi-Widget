@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.shared
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +47,7 @@ fun ThemeSelectionRow(
                 ),
                 ThemeIndicatorProperties(
                     label = R.string.device_default,
-                    ButtonColoring.Gradient(
+                    buttonColoring = ButtonColoring.Gradient(
                         Brush.linearGradient(
                             0.5f to Color.White,
                             0.5f to Color.Black,
@@ -80,9 +80,9 @@ private data class ThemeIndicatorProperties(
     val buttonColoring: ButtonColoring
 )
 
-sealed class ButtonColoring {
-    class Uniform(val color: Color) : ButtonColoring()
-    class Gradient(val brush: Brush) : ButtonColoring()
+sealed class ButtonColoring(val containerColor: Color) {
+    class Uniform(color: Color) : ButtonColoring(color)
+    class Gradient(val brush: Brush) : ButtonColoring(Color.Transparent)
 }
 
 @Composable
@@ -103,7 +103,7 @@ private fun ThemeIndicator(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
-        ThemeIndicatorButton(
+        ThemeButton(
             buttonColoring = properties.buttonColoring,
             onClick = onClick,
             size = 36.dp,
@@ -113,62 +113,33 @@ private fun ThemeIndicator(
 }
 
 @Composable
-fun ThemeIndicatorButton(
+fun ThemeButton(
     buttonColoring: ButtonColoring,
     onClick: () -> Unit,
     size: Dp,
-    isSelected: () -> Boolean
-) {
-    val modifier = Modifier.size(size)
-
-    when (buttonColoring) {
-        is ButtonColoring.Uniform -> Unit // Button(
-//            onClick,
-//            modifier = modifier,
-//            shape = CircleShape,
-//            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonColoring.color),
-//            border = border
-//        ) {}
-
-        is ButtonColoring.Gradient -> CircleGradientButton(
-            onClick,
-            modifier = modifier,
-            size = size,
-            brush = buttonColoring.brush,
-            isSelected = isSelected
-        )
-    }
-}
-
-@Composable
-private fun CircleGradientButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    size: Dp,
-    brush: Brush,
-    isSelected: () -> Boolean
+    isSelected: () -> Boolean,
+    modifier: Modifier = Modifier
 ) {
     val radius = with(LocalDensity.current) { (size / 2).toPx() }
-    val primaryColor = MaterialTheme.colorScheme.primary
 
     Button(
         modifier = modifier
+            .size(size)
             .drawBehind {
-                drawCircle(
-                    brush,
-                    radius = radius
-                )
-                if (isSelected()){
+                if (buttonColoring is ButtonColoring.Gradient) {
                     drawCircle(
-                        primaryColor,
-                        radius = radius + 1,
-                        style = Stroke(3f)
+                        buttonColoring.brush,
+                        radius = radius
                     )
                 }
             },
-        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColoring.containerColor),
         onClick = onClick,
-        shape = CircleShape
+        shape = CircleShape,
+        border = when (isSelected()) {
+            true -> BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
+            false -> null
+        }
     ) {}
 }
 
@@ -176,14 +147,15 @@ private fun CircleGradientButton(
 @Composable
 fun Prev() {
     WifiWidgetTheme {
-        CircleGradientButton(
-            {},
-            Modifier.size(32.dp),
-            32.dp,
-            Brush.linearGradient(
-                0.5f to Color.White,
-                0.5f to Color.Black,
+        ThemeButton(
+            ButtonColoring.Gradient(
+                Brush.linearGradient(
+                    0.5f to Color.White,
+                    0.5f to Color.Black,
+                )
             ),
+            {},
+            32.dp,
             { true }
         )
     }
