@@ -1,0 +1,53 @@
+<resources>
+    <string-array name="wifi_properties">
+        <item>@string/ssid</item>
+        <item>@string/ip</item>
+        <item>@string/frequency</item>
+        <item>@string/linkspeed</item>
+        <item>@string/gateway</item>
+        <item>@string/dns</item>
+        <item>@string/dhcp</item>
+        <item>@string/netmask</item>
+    </string-array>
+
+    <string-array name="ssid">
+        <item>@string/ssid</item>
+        <item>Service Set Identifier. Der Name Ihres Netzwerks.</item>
+        <item>https://de.wikipedia.org/wiki/Service_Set#SSID,_ESSID_und_BSSID</item>
+    </string-array>
+    <string-array name="ip">
+        <item>@string/ip</item>
+        <item>IP-Adresse, die den beiden Hauptzwecken dient, die Netzwerkschnittstelle Ihres Geräts zu identifizieren und seinen Standort innerhalb des Netzwerks bereitzustellen, wodurch es adressierbar wird. WiFi Widget zeigt die IPv4-Darstellung an, die einer 32-Bit-Zahl entspricht, im Gegensatz zum IPv6-Format, das einer 128-Bit-Zahl entspricht. Die angezeigte Adresse ist Ihre interne Adresse, d. h. sie ist nur innerhalb Ihres Netzwerks sichtbar.</item>
+        <item>https://de.wikipedia.org/wiki/IP-Adresse</item>
+    </string-array>
+    <string-array name="frequency">
+        <item>@string/frequency</item>
+        <item>Das für die WiFi-Signalübertragung verwendete Frequenzband. Normalerweise 2,4G oder 5G.</item>
+        <item>https://de.wikipedia.org/wiki/Wireless_Local_Area_Network#%C3%9Cberlappungsfreie_Kan%C3%A4le_und_Spektralmasken</item>
+    </string-array>
+    <string-array name="linkspeed">
+        <item>@string/linkspeed</item>
+        <item>Die theoretische Höchstgeschwindigkeit der Datenübertragung zwischen Ihrem Gerät und dem Router.</item>
+        <item />
+    </string-array>
+    <string-array name="gateway">
+        <item>@string/gateway</item>
+        <item>Ein Gateway ist ein Gerät, dass die Funktionalität eines Modems vereint, d. h. die Kommunikation mit Ihrem ISP (Internet Service Provider) wird übersetzt die empfangen Daten bspw. mittels eines Routers und verteilt diese über das WLAN-Signal an die vorhandenen Client-Geräte im Netzwerk.</item>
+        <item>https://de.wikipedia.org/wiki/Gateway_(Informatik)</item>
+    </string-array>
+    <string-array name="dns">
+        <item>@string/dns</item>
+        <item>Domain-Name-System. Ordnet Domänennamen verschiedenen Arten von Informationen zu und fungiert als Datenbank. Vor allem übersetzt es Domänennamen in ihre zugrunde liegenden IP-Adressen, die für die Lokalisierung und Kommunikation mit ihnen benötigt werden.</item>
+        <item>https://de.wikipedia.org/wiki/Domain_Name_System</item>
+    </string-array>
+    <string-array name="dhcp">
+        <item>@string/dhcp</item>
+        <item>Dynamisches Host-Konfigurationsprotokoll. Ein Dienst, der mit einem Netzwerk verbundenen Geräten automatisch IP-Adressen und andere Netzwerkparameter zuweist.</item>
+        <item>https://de.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol</item>
+    </string-array>
+    <string-array name="netmask">
+        <item>@string/netmask</item>
+        <item>Wird auch als Subnetzmaske bezeichnet. Eine Bitmaske, die das Teilnetz bestimmt, in dem das DHCP arbeiten darf.</item>
+        <item>https://de.wikipedia.org/wiki/Subnetz</item>
+    </string-array>
+</resources>
