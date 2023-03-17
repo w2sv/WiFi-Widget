@@ -1,0 +1,18 @@
+<resources>
+    <string name="widget_description">Überwachen Sie Ihre WLAN-Verbindungsdetails</string>
+
+    <string name="ip">IP</string>
+    <string name="ssid">SSID</string>
+    <string name="frequency">Frequenz</string>
+    <string name="linkspeed">Verbindungsgeschwindigkeit</string>
+    <string name="gateway">Gateway</string>
+    <string name="netmask">Netzmaske</string>
+    <string name="dns">DNS</string>
+    <string name="dhcp">DHCP</string>
+
+    <string name="configure_widget">Widget konfigurieren</string>
+    <string name="go_to_wifi_settings">Zu WLAN-Einstellungen wechseln</string>
+    <string name="refresh_data">Daten aktualisieren</string>
+    <string name="no_wifi_connection">Keine WLAN-Verbindung</string>
+    <string name="wifi_disabled">WLAN deaktiviert</string>
+</resources>
