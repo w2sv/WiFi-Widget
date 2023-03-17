@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.shared
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -63,7 +63,7 @@ fun ThemeSelectionRow(
             .forEachIndexed { index, properties ->
                 ThemeIndicator(
                     properties = properties,
-                    selected = index == selected(),
+                    isSelected = { index == selected() },
                     modifier = Modifier.padding(
                         horizontal = 16.dp
                     )
@@ -88,7 +88,7 @@ sealed class ButtonColoring {
 @Composable
 private fun ThemeIndicator(
     properties: ThemeIndicatorProperties,
-    selected: Boolean,
+    isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -107,10 +107,7 @@ private fun ThemeIndicator(
             buttonColoring = properties.buttonColoring,
             onClick = onClick,
             size = 36.dp,
-            border = if (selected)
-                BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
-            else
-                null
+            isSelected = isSelected
         )
     }
 }
@@ -120,25 +117,25 @@ fun ThemeIndicatorButton(
     buttonColoring: ButtonColoring,
     onClick: () -> Unit,
     size: Dp,
-    border: BorderStroke?
+    isSelected: () -> Boolean
 ) {
     val modifier = Modifier.size(size)
 
     when (buttonColoring) {
-        is ButtonColoring.Uniform -> Button(
-            onClick,
-            modifier = modifier,
-            shape = CircleShape,
-            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonColoring.color),
-            border = border
-        ) {}
+        is ButtonColoring.Uniform -> Unit // Button(
+//            onClick,
+//            modifier = modifier,
+//            shape = CircleShape,
+//            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonColoring.color),
+//            border = border
+//        ) {}
 
         is ButtonColoring.Gradient -> CircleGradientButton(
             onClick,
             modifier = modifier,
             size = size,
             brush = buttonColoring.brush,
-            border = border
+            isSelected = isSelected
         )
     }
 }
@@ -149,9 +146,10 @@ private fun CircleGradientButton(
     modifier: Modifier = Modifier,
     size: Dp,
     brush: Brush,
-    border: BorderStroke?
+    isSelected: () -> Boolean
 ) {
     val radius = with(LocalDensity.current) { (size / 2).toPx() }
+    val primaryColor = MaterialTheme.colorScheme.primary
 
     Button(
         modifier = modifier
@@ -160,10 +158,16 @@ private fun CircleGradientButton(
                     brush,
                     radius = radius
                 )
+                if (isSelected()){
+                    drawCircle(
+                        primaryColor,
+                        radius = radius + 1,
+                        style = Stroke(3f)
+                    )
+                }
             },
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         onClick = onClick,
-        border = border,
         shape = CircleShape
     ) {}
 }
@@ -180,7 +184,7 @@ fun Prev() {
                 0.5f to Color.White,
                 0.5f to Color.Black,
             ),
-            BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.primary)
+            { true }
         )
     }
 }
