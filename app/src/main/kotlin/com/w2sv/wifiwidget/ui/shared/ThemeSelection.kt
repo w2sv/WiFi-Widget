@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -21,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
@@ -46,15 +44,20 @@ fun ThemeSelectionRow(
             listOf(
                 ThemeIndicatorProperties(
                     label = R.string.light,
-                    buttonType = ButtonType.Default(Color.White)
+                    buttonColoring = ButtonColoring.Uniform(Color.White)
                 ),
                 ThemeIndicatorProperties(
                     label = R.string.device_default,
-                    ButtonType.DeviceDefault
+                    ButtonColoring.Gradient(
+                        Brush.linearGradient(
+                            0.5f to Color.White,
+                            0.5f to Color.Black,
+                        )
+                    )
                 ),
                 ThemeIndicatorProperties(
                     label = R.string.dark,
-                    buttonType = ButtonType.Default(Color.Black)
+                    buttonColoring = ButtonColoring.Uniform(Color.Black)
                 )
             )
         }
@@ -75,12 +78,12 @@ fun ThemeSelectionRow(
 @Stable
 private data class ThemeIndicatorProperties(
     @StringRes val label: Int,
-    val buttonType: ButtonType
+    val buttonColoring: ButtonColoring
 )
 
-sealed class ButtonType {
-    class Default(val color: Color) : ButtonType()
-    object DeviceDefault : ButtonType()
+sealed class ButtonColoring {
+    class Uniform(val color: Color) : ButtonColoring()
+    class Gradient(val brush: Brush) : ButtonColoring()
 }
 
 @Composable
@@ -102,11 +105,9 @@ private fun ThemeIndicator(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
         ThemeIndicatorButton(
-            buttonType = properties.buttonType,
+            buttonColoring = properties.buttonColoring,
             onClick = onClick,
             size = 36.dp,
-            shape = CircleShape,
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
             border = if (selected)
                 BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
             else
@@ -117,41 +118,38 @@ private fun ThemeIndicator(
 
 @Composable
 fun ThemeIndicatorButton(
-    buttonType: ButtonType,
+    buttonColoring: ButtonColoring,
     onClick: () -> Unit,
     size: Dp,
-    shape: Shape,
-    elevation: ButtonElevation,
     border: BorderStroke?
 ) {
     val modifier = Modifier.size(size)
 
-    when (buttonType) {
-        is ButtonType.Default -> ElevatedButton(
+    when (buttonColoring) {
+        is ButtonColoring.Uniform -> ElevatedButton(
             onClick,
             modifier = modifier,
-            shape = shape,
-            elevation = elevation,
-            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonType.color),
+            shape = CircleShape,
+            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonColoring.color),
             border = border
         ) {}
 
-        is ButtonType.DeviceDefault -> DeviceDefaultButton(
+        is ButtonColoring.Gradient -> CircleGradientButton(
             onClick,
             modifier = modifier,
             size = size,
-            shape = shape,
+            brush = buttonColoring.brush,
             border = border
         )
     }
 }
 
 @Composable
-private fun DeviceDefaultButton(
+private fun CircleGradientButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     size: Dp,
-    shape: Shape,
+    brush: Brush,
     border: BorderStroke?
 ) {
     val radius = with(LocalDensity.current) { (size / 2).toPx() }
@@ -160,16 +158,13 @@ private fun DeviceDefaultButton(
         modifier = modifier
             .drawBehind {
                 drawCircle(
-                    Brush.linearGradient(
-                        0.5f to Color.White,
-                        0.5f to Color.Black,
-                    ),
+                    brush,
                     radius = radius
                 )
             },
         onClick = onClick,
         border = border,
-        shape = shape
+        shape = CircleShape
     ) {}
 }
 
@@ -177,11 +172,14 @@ private fun DeviceDefaultButton(
 @Composable
 fun Prev() {
     WifiWidgetTheme {
-        DeviceDefaultButton(
+        CircleGradientButton(
             {},
             Modifier.size(32.dp),
             32.dp,
-            CircleShape,
+            Brush.linearGradient(
+                0.5f to Color.White,
+                0.5f to Color.Black,
+            ),
             BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.primary)
         )
     }
