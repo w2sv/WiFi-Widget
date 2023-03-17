@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.ThemeSelectionRow
@@ -31,7 +32,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 private fun Prev() {
     WifiWidgetTheme {
         ContentColumn(
-            selectedTheme = { 1 },
+            selectedTheme = { Theme.DeviceDefault },
             onSelectedTheme = {},
             opacity = { 1f },
             onOpacityChanged = {},
@@ -45,8 +46,8 @@ private fun Prev() {
 @Composable
 internal fun ContentColumn(
     modifier: Modifier = Modifier,
-    selectedTheme: () -> Int,
-    onSelectedTheme: (Int) -> Unit,
+    selectedTheme: () -> Theme,
+    onSelectedTheme: (Theme) -> Unit,
     opacity: () -> Float,
     onOpacityChanged: (Float) -> Unit,
     propertyChecked: (String) -> Boolean,

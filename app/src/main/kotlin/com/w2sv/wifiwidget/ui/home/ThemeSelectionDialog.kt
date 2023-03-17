@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
@@ -19,7 +20,7 @@ private fun Prev() {
     WifiWidgetTheme {
         ThemeSelectionDialog(
             onDismissRequest = { /*TODO*/ },
-            theme = { 1 },
+            selectedTheme = { Theme.DeviceDefault },
             onThemeSelected = {},
             applyButtonEnabled = { true },
             onApplyButtonPress = {}
@@ -30,8 +31,8 @@ private fun Prev() {
 @Composable
 fun ThemeSelectionDialog(
     onDismissRequest: () -> Unit,
-    theme: () -> Int,
-    onThemeSelected: (Int) -> Unit,
+    selectedTheme: () -> Theme,
+    onThemeSelected: (Theme) -> Unit,
     applyButtonEnabled: () -> Boolean,
     onApplyButtonPress: () -> Unit
 ) {
@@ -56,7 +57,7 @@ fun ThemeSelectionDialog(
             }
         },
         text = {
-            ThemeSelectionRow(selected = theme, onSelected = onThemeSelected)
+            ThemeSelectionRow(selected = selectedTheme, onSelected = onThemeSelected)
         }
     )
 }

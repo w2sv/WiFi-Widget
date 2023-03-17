@@ -26,13 +26,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 
 @Composable
 fun ThemeSelectionRow(
     modifier: Modifier = Modifier,
-    selected: () -> Int,
-    onSelected: (Int) -> Unit
+    selected: () -> Theme,
+    onSelected: (Theme) -> Unit
 ) {
     Row(
         modifier,
@@ -42,10 +43,12 @@ fun ThemeSelectionRow(
         remember {
             listOf(
                 ThemeIndicatorProperties(
+                    theme = Theme.Light,
                     label = R.string.light,
                     buttonColoring = ButtonColoring.Uniform(Color.White)
                 ),
                 ThemeIndicatorProperties(
+                    theme = Theme.DeviceDefault,
                     label = R.string.device_default,
                     buttonColoring = ButtonColoring.Gradient(
                         Brush.linearGradient(
@@ -55,20 +58,21 @@ fun ThemeSelectionRow(
                     )
                 ),
                 ThemeIndicatorProperties(
+                    theme = Theme.Dark,
                     label = R.string.dark,
                     buttonColoring = ButtonColoring.Uniform(Color.Black)
                 )
             )
         }
-            .forEachIndexed { index, properties ->
+            .forEach { properties ->
                 ThemeIndicator(
                     properties = properties,
-                    isSelected = { index == selected() },
+                    isSelected = { properties.theme == selected() },
                     modifier = Modifier.padding(
                         horizontal = 16.dp
                     )
                 ) {
-                    onSelected(index)
+                    onSelected(properties.theme)
                 }
             }
     }
@@ -76,6 +80,7 @@ fun ThemeSelectionRow(
 
 @Stable
 private data class ThemeIndicatorProperties(
+    val theme: Theme,
     @StringRes val label: Int,
     val buttonColoring: ButtonColoring
 )

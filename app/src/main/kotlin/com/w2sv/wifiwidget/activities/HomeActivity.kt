@@ -33,7 +33,7 @@ import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.GlobalFlags
-import com.w2sv.preferences.IntPreferences
+import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
@@ -57,7 +57,7 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
     class ViewModel @Inject constructor(
         private val widgetProperties: WidgetProperties,
         private val globalFlags: GlobalFlags,
-        private val intPreferences: IntPreferences,
+        private val enumOrdinals: EnumOrdinals,
         private val floatPreferences: FloatPreferences,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
@@ -67,7 +67,7 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
             get() = listOf(
                 widgetProperties,
                 globalFlags,
-                intPreferences,
+                enumOrdinals,
                 floatPreferences
             )
 
@@ -90,14 +90,14 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
 
         val inAppThemeState = NonAppliedStateFlow(
             viewModelScope,
-            { intPreferences.inAppTheme },
+            { getByOrdinal<Theme>(enumOrdinals.inAppTheme) },
             {
-                intPreferences.inAppTheme = it
-                appliedInAppTheme.value = getByOrdinal(it)
+                enumOrdinals.inAppTheme = it.ordinal
+                appliedInAppTheme.value = it
             }
         )
 
-        var appliedInAppTheme = MutableStateFlow<Theme>(getByOrdinal(intPreferences.inAppTheme))
+        var appliedInAppTheme = MutableStateFlow<Theme>(getByOrdinal(enumOrdinals.inAppTheme))
 
         /**
          * Widget Pin Listening
@@ -136,8 +136,8 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
 
         val widgetThemeState = NonAppliedStateFlow(
             viewModelScope,
-            { intPreferences.widgetTheme },
-            { intPreferences.widgetTheme = it }
+            { getByOrdinal<Theme>(enumOrdinals.widgetTheme) },
+            { enumOrdinals.widgetTheme = it.ordinal }
         )
 
         val widgetOpacityState = NonAppliedStateFlow(
@@ -237,7 +237,7 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
                 darkTheme = when (theme) {
                     Theme.Light -> false
                     Theme.Dark -> true
-                    Theme.SystemDefault -> isSystemInDarkTheme()
+                    Theme.DeviceDefault -> isSystemInDarkTheme()
                 }
             ) {
                 HomeScreen {

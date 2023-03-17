@@ -18,7 +18,7 @@ import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.FloatPreferences
-import com.w2sv.preferences.IntPreferences
+import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.utils.asFormattedIpAddress
 import com.w2sv.widget.utils.isWifiConnected
@@ -38,7 +38,7 @@ import javax.inject.Inject
 internal class WidgetLayoutSetter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetProperties: WidgetProperties,
-    private val intPreferences: IntPreferences,
+    private val enumOrdinals: EnumOrdinals,
     private val floatPreferences: FloatPreferences
 ) {
 
@@ -62,7 +62,7 @@ internal class WidgetLayoutSetter @Inject constructor(
      */
     fun populated(remoteViews: RemoteViews): RemoteViews =
         remoteViews.apply {
-            setColors(getByOrdinal(intPreferences.widgetTheme))
+            setColors(getByOrdinal(enumOrdinals.widgetTheme))
             setConnectionDependentLayout()
             setConnectionIndependentLayout()
         }
@@ -79,7 +79,7 @@ internal class WidgetLayoutSetter @Inject constructor(
                 androidx.appcompat.R.color.foreground_material_light
             )
 
-            Theme.SystemDefault -> {
+            Theme.DeviceDefault -> {
                 when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
                     Configuration.UI_MODE_NIGHT_NO -> setColors(Theme.Light)
                     Configuration.UI_MODE_NIGHT_YES -> setColors(Theme.Dark)

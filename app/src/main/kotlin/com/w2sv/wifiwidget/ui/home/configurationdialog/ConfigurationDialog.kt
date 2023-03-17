@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.resetBoolean
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.Theme
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
@@ -48,7 +49,7 @@ private fun WidgetConfigurationDialogPrev() {
             onDismiss = {},
             contentColumn = {
                 ContentColumn(
-                    selectedTheme = { 1 },
+                    selectedTheme = { Theme.DeviceDefault },
                     onSelectedTheme = {},
                     opacity = { 1f },
                     onOpacityChanged = {},

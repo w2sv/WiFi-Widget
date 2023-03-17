@@ -7,10 +7,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class IntPreferences @Inject constructor(sharedPreferences: SharedPreferences) :
+class EnumOrdinals @Inject constructor(sharedPreferences: SharedPreferences) :
     IntPreferences(
-        "widgetTheme" to Theme.SystemDefault.ordinal,
-        "inAppTheme" to Theme.SystemDefault.ordinal,
+        "widgetTheme" to Theme.DeviceDefault.ordinal,
+        "inAppTheme" to Theme.DeviceDefault.ordinal,
         sharedPreferences = sharedPreferences
     ) {
     var widgetTheme by this

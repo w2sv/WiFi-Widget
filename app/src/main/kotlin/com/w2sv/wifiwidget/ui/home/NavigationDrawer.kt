@@ -114,7 +114,7 @@ fun StatefulNavigationDrawer(
                 viewModel.inAppThemeState.reset()
                 setShowThemeDialog(false)
             },
-            theme = { theme },
+            selectedTheme = { theme },
             onThemeSelected = { viewModel.inAppThemeState.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
             onApplyButtonPress = {
