@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">WiFi Widget</string>
+    <string name="pin_widget">Widget anheften</string>
+    <string name="uncheck_all_properties_toast">Sie müssen mindestens eine Eigenschaft aktiviert lassen!</string>
+    <string name="updated_widget_configuration">Aktualisierte Widget-Konfiguration</string>
+    <string name="pinned_widget">Angeheftetes Widget</string>
+    <string name="lap_dialog_text">Wenn Sie möchten, dass die SSID Ihres Geräts unter den WLAN-Eigenschaften angezeigt wird, müssen Sie die Standortzugriffsberechtigung erteilen.</string>
+    <string name="lap_dialog_title">Für den SSID-Abruf ist eine Standortzugriffsberechtigung erforderlich</string>
+    <string name="open_navigation_drawer">Navigationsmenü öffnen</string>
+    <string name="go_ahead">Weitermachen</string>
+    <string name="close">Schließen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="apply">Anwenden</string>
+    <string name="code">Code</string>
+    <string name="rate">Durchsatz</string>
+    <string name="share">Teilen</string>
+    <string name="ssid_display_requires_location_services_to_be_enabled">SSID-Anzeige erfordert aktivierte Ortungsdienste!/string>
+    <string name="light">Hell</string>
+    <string name="device_default">Systemstandard</string>
+    <string name="dark">Dunkel</string>
+    <string name="theme">Thema</string>
+    <string name="properties">Eigenschaften</string>
+    <string name="opacity">Deckkraft </string>
+</resources>
