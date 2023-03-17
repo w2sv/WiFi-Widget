@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.FloatSpringSpec
@@ -49,7 +48,7 @@ import kotlinx.coroutines.launch
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        StatefulNavigationDrawer(initialValue = DrawerValue.Open) {
+        StatefulNavigationDrawer(initialValue = DrawerValue.Open) { _, _, _ ->
         }
     }
 }
@@ -60,17 +59,17 @@ fun StatefulNavigationDrawer(
     modifier: Modifier = Modifier,
     initialValue: DrawerValue = DrawerValue.Closed,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    content: @Composable (() -> Unit) -> Unit
+    content: @Composable (openDrawer: () -> Unit, closeDrawer: () -> Unit, drawerOpen: () -> Boolean) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = initialValue)
     val scope = rememberCoroutineScope()
-    val navigationDrawerAnim = FloatSpringSpec(Spring.DampingRatioMediumBouncy)
+    val springSpec = FloatSpringSpec(Spring.DampingRatioMediumBouncy)
 
     val closeDrawer: () -> Unit = {
         scope.launch {
             drawerState.animateTo(
                 DrawerValue.Closed,
-                navigationDrawerAnim
+                springSpec
             )
         }
     }
@@ -94,11 +93,15 @@ fun StatefulNavigationDrawer(
         },
         drawerState = drawerState
     ) {
-        content {
-            scope.launch {
-                drawerState.animateTo(DrawerValue.Open, navigationDrawerAnim)
-            }
-        }
+        content(
+            openDrawer = {
+                scope.launch {
+                    drawerState.animateTo(DrawerValue.Open, springSpec)
+                }
+            },
+            closeDrawer = closeDrawer,
+            drawerOpen = { drawerState.isOpen }
+        )
     }
 
     val theme by viewModel.inAppThemeState.collectAsState()
@@ -120,10 +123,6 @@ fun StatefulNavigationDrawer(
                 context.showToast("Updated Theme")
             }
         )
-    }
-
-    BackHandler(enabled = drawerState.isOpen) {
-        closeDrawer()
     }
 }
 
