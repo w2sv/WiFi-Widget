@@ -47,6 +47,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.transform
 import slimber.log.i
 import javax.inject.Inject
 
@@ -139,6 +140,10 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
             { getByOrdinal<Theme>(enumOrdinals.widgetTheme) },
             { enumOrdinals.widgetTheme = it.ordinal }
         )
+
+        val showCustomThemeSection = widgetThemeState.transform {
+            emit(it == Theme.Custom)
+        }
 
         val widgetOpacityState = NonAppliedStateFlow(
             viewModelScope,

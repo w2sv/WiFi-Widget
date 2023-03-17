@@ -61,6 +61,16 @@ fun ThemeSelectionRow(
                     theme = Theme.Dark,
                     label = R.string.dark,
                     buttonColoring = ButtonColoring.Uniform(Color.Black)
+                ),
+                ThemeIndicatorProperties(
+                    theme = Theme.Custom,
+                    label = R.string.custom,
+                    buttonColoring = ButtonColoring.Gradient(
+                        Brush.linearGradient(
+                            0.5f to Color.Magenta,
+                            0.5f to Color.Cyan,
+                        )
+                    )
                 )
             )
         }
