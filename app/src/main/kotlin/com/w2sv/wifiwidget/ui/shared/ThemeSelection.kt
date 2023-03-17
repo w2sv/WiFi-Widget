@@ -9,16 +9,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
@@ -36,9 +44,18 @@ fun ThemeSelectionRow(
     ) {
         remember {
             listOf(
-                ThemeIndicatorProperties(label = R.string.light, color = Color.White),
-                ThemeIndicatorProperties(label = R.string.device_default, color = Color.Gray),
-                ThemeIndicatorProperties(label = R.string.dark, color = Color.Black)
+                ThemeIndicatorProperties(
+                    label = R.string.light,
+                    buttonType = ButtonType.Default(Color.White)
+                ),
+                ThemeIndicatorProperties(
+                    label = R.string.device_default,
+                    ButtonType.DeviceDefault
+                ),
+                ThemeIndicatorProperties(
+                    label = R.string.dark,
+                    buttonType = ButtonType.Default(Color.Black)
+                )
             )
         }
             .forEachIndexed { index, properties ->
@@ -56,7 +73,15 @@ fun ThemeSelectionRow(
 }
 
 @Stable
-private data class ThemeIndicatorProperties(@StringRes val label: Int, val color: Color)
+private data class ThemeIndicatorProperties(
+    @StringRes val label: Int,
+    val buttonType: ButtonType
+)
+
+sealed class ButtonType {
+    class Default(val color: Color) : ButtonType()
+    object DeviceDefault : ButtonType()
+}
 
 @Composable
 private fun ThemeIndicator(
@@ -76,17 +101,88 @@ private fun ThemeIndicator(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
-        ElevatedButton(
-            onClick,
-            modifier = Modifier
-                .size(36.dp),
+        ThemeIndicatorButton(
+            buttonType = properties.buttonType,
+            onClick = onClick,
+            size = 36.dp,
             shape = CircleShape,
             elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp),
-            colors = ButtonDefaults.elevatedButtonColors(containerColor = properties.color),
             border = if (selected)
                 BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
             else
                 null
+        )
+    }
+}
+
+@Composable
+fun ThemeIndicatorButton(
+    buttonType: ButtonType,
+    onClick: () -> Unit,
+    size: Dp,
+    shape: Shape,
+    elevation: ButtonElevation,
+    border: BorderStroke?
+) {
+    val modifier = Modifier.size(size)
+
+    when (buttonType) {
+        is ButtonType.Default -> ElevatedButton(
+            onClick,
+            modifier = modifier,
+            shape = shape,
+            elevation = elevation,
+            colors = ButtonDefaults.elevatedButtonColors(containerColor = buttonType.color),
+            border = border
         ) {}
+
+        is ButtonType.DeviceDefault -> DeviceDefaultButton(
+            onClick,
+            modifier = modifier,
+            size = size,
+            shape = shape,
+            border = border
+        )
+    }
+}
+
+@Composable
+private fun DeviceDefaultButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    size: Dp,
+    shape: Shape,
+    border: BorderStroke?
+) {
+    val radius = with(LocalDensity.current) { (size / 2).toPx() }
+
+    OutlinedButton(
+        modifier = modifier
+            .drawBehind {
+                drawCircle(
+                    Brush.linearGradient(
+                        0.5f to Color.White,
+                        0.5f to Color.Black,
+                    ),
+                    radius = radius
+                )
+            },
+        onClick = onClick,
+        border = border,
+        shape = shape
+    ) {}
+}
+
+@Preview
+@Composable
+fun Prev() {
+    WifiWidgetTheme {
+        DeviceDefaultButton(
+            {},
+            Modifier.size(32.dp),
+            32.dp,
+            CircleShape,
+            BorderStroke(Dp.Hairline, MaterialTheme.colorScheme.primary)
+        )
     }
 }
