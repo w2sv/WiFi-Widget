@@ -1,5 +1,2 @@
-[Fix]
-- Property info dialog display on rotation
-[Improve]
-- App size
-- UI
+- New 'device default' theme button
+- Altered back press handling
