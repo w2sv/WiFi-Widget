@@ -8,10 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -126,7 +125,7 @@ fun ThemeIndicatorButton(
     val modifier = Modifier.size(size)
 
     when (buttonColoring) {
-        is ButtonColoring.Uniform -> ElevatedButton(
+        is ButtonColoring.Uniform -> Button(
             onClick,
             modifier = modifier,
             shape = CircleShape,
@@ -154,7 +153,7 @@ private fun CircleGradientButton(
 ) {
     val radius = with(LocalDensity.current) { (size / 2).toPx() }
 
-    OutlinedButton(
+    Button(
         modifier = modifier
             .drawBehind {
                 drawCircle(
@@ -162,6 +161,7 @@ private fun CircleGradientButton(
                     radius = radius
                 )
             },
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         onClick = onClick,
         border = border,
         shape = CircleShape
