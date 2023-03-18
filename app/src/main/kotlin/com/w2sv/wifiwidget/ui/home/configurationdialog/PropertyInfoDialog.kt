@@ -17,8 +17,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.extensions.getNestedStringArray
-import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -53,7 +53,7 @@ internal fun PropertyInfoDialog(
             learnMoreButtonOnClickListener = get(2).let {
                 if (it.isNotEmpty()) {
                     {
-                        context.openUrl(it)
+                        context.openUrlWithActivityNotFoundHandling(it)
                         onDismissRequest()
                     }
                 } else null

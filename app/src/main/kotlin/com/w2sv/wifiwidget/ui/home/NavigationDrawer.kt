@@ -33,12 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
 import com.w2sv.androidutils.extensions.launchDelayed
-import com.w2sv.androidutils.extensions.openUrl
 import com.w2sv.androidutils.extensions.playStoreUrl
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import kotlinx.coroutines.launch
@@ -189,8 +189,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                         R.drawable.ic_github_24,
                         R.string.code
                     ) {
-                        it
-                            .openUrl("https://github.com/w2sv/WiFi-Widget")
+                        it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
                     }
                 )
             }
