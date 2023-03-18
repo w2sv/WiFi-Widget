@@ -14,4 +14,4 @@ jobs:
           java-version: 17
 
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew buildDebug
