@@ -1,4 +1,4 @@
-name: Check & Assemble Debug
+name: Build
 on: [ push, pull_request ]
 
 jobs:
