@@ -24,8 +24,7 @@
 ------
 
 <p align="center">
-<b> A configurable WiFi connection details monitoring widget for Android. Built with Jetpack
-Compose.</b>
+<b> Android FOSS app providing a configurable widget for the monitoring of your WiFi connection details. Built with Jetpack Compose.</b>
 </p>
 
 ------
