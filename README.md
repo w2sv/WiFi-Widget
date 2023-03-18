@@ -32,17 +32,16 @@ Compose.</b>
 <h2 align="center">Download</h2>
 
 <p align="center">
-<a href="https://play.google.com/store/apps/details?id=com.w2sv.wifiwidget"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="80"</img></a>
-<a href="https://apt.izzysoft.de/fdroid/index/apk/com.w2sv.wifiwidget"><img alt="Download from IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80"</img></a>
-<a href="https://github.com/w2sv/WiFi-Widget/releases/latest"><img alt="Get it on GitHub" src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="80"</img></a>
+<a href="https://play.google.com/store/apps/details?id=com.w2sv.wifiwidget"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="80"/></a>
+<a href="https://apt.izzysoft.de/fdroid/index/apk/com.w2sv.wifiwidget"><img alt="Download from IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80"/></a>
+<a href="https://github.com/w2sv/WiFi-Widget/releases/latest"><img alt="Get it on GitHub" src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="80"/></a>
 </p>
 
 <h2 align="center">Screenshots</h2>
 
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/Screenshot_2023-03-10-18-09-09-330_com.miui.home.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/Screenshot_2023-03-10-18-09-21-500_com.miui.home.jpg)
-|-------------------------------------------------------|-------------------------------------------------------|
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/Screenshot_2023-03-10-18-09-35-079_com.w2sv.wifiwidget.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/Screenshot_2023-03-10-18-09-53-502_com.w2sv.wifiwidget.jpg)
-
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) |
+|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg) |
 
 
 <h2 align="center">Credits</h2>
