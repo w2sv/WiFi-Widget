@@ -182,7 +182,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                                     .setPackage("com.android.vending")
                             )
                         } catch (e: ActivityNotFoundException) {
-                            it.showToast("You're not signed into the Play Store \uD83E\uDD14")
+                            it.showToast("You're not signed into the Play Store")
                         }
                     },
                     NavigationDrawerItem(

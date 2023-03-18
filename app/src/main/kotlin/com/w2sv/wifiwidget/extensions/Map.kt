@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.utils
+package com.w2sv.wifiwidget.extensions
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
