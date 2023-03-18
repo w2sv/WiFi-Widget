@@ -15,8 +15,9 @@
   
   <br>
   
-  <img src="https://img.shields.io/github/license/w2sv/WiFi-Widget"/>
+  <img src="https://img.shields.io/github/license/w2sv/WiFi-Widget">
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/w2sv/WiFi-Widget">
+  <a href="https://github.com/w2sv/WiFi-Widget/actions/workflows/workflow.yaml"><img alt="Check & Assemble Debug" src="https://github.com/w2sv/WiFi-Widget/actions/workflows/workflow.yaml/badge.svg"></a>
   
 </p>
 
