@@ -7,10 +7,17 @@
   <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/w2sv/WiFi-Widget?include_prereleases"/>
   <img src="https://img.shields.io/endpoint?url=https://apt.izzysoft.de/fdroid/api/v1/shield/com.w2sv.wifiwidget"/>
   <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DPlay%2520Store%26m%3D%24version"/>
+  
+  <br>
+  
+  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total">
   <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls"/>
+  
+  <br>
+  
   <img src="https://img.shields.io/github/license/w2sv/WiFi-Widget"/>
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/w2sv/WiFi-Widget">
-  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total">
+  
 </p>
 
 ------
