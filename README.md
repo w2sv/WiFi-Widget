@@ -53,6 +53,12 @@ where it is licensed
 under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.
 </p>
 
+<h2 align="center">Donations</h2>
+<br>
+<p align="center">
+<a href="https://www.buymeacoffee.com/w2sv" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important" ></a>
+</p>
+
 <h2 align="center">License</h2>
 
 <p align="center">
