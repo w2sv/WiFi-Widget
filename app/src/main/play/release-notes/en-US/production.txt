@@ -1,2 +1,4 @@
-- New 'device default' theme button
-- Altered back press handling
+[Improved]
+- App stability
+[Added]
+- Ripple animations on click on widget buttons
