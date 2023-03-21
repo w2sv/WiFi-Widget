@@ -37,17 +37,14 @@ internal class WidgetDataRefreshWorker(context: Context, workerParams: WorkerPar
         }
     }
 
-    override fun doWork(): Result =
+    override fun doWork(): Result {
         when (applicationContext.getSystemService(PowerManager::class.java).isInteractive) {
-            false -> {
-                i { "System not interactive; Skipping Widget Data refresh" }
-                Result.failure()
-            }
-
+            false -> i { "System not interactive; Skipping Widget Data refresh" }
             true -> {
                 WifiWidgetProvider.triggerDataRefresh(applicationContext)
                 i { "Refreshed Widget Data" }
-                Result.success()
             }
         }
+        return Result.success()
+    }
 }
