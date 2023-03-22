@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.home.configurationdialog
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
@@ -16,20 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
 internal fun PropertyColumn(
+    modifier: Modifier = Modifier,
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
 ) {
-    Column(
-        modifier = Modifier.padding(horizontal = 26.dp)
-    ) {
+    Column(modifier = modifier) {
         stringArrayResource(id = R.array.wifi_properties)
             .forEachIndexed { propertyIndex, property ->
                 PropertyRow(

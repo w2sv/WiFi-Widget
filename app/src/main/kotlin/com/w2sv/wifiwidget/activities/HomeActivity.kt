@@ -22,6 +22,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
@@ -31,10 +32,12 @@ import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.GlobalFlags
-import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.WidgetProperties
+import com.w2sv.preferences.WidgetRefreshingParameters
+import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.home.HomeScreen
@@ -47,6 +50,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
@@ -59,6 +63,7 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         private val globalFlags: GlobalFlags,
         private val enumOrdinals: EnumOrdinals,
         private val floatPreferences: FloatPreferences,
+        private val widgetRefreshingParameters: WidgetRefreshingParameters,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
@@ -68,7 +73,8 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
                 widgetProperties,
                 globalFlags,
                 enumOrdinals,
-                floatPreferences
+                floatPreferences,
+                widgetRefreshingParameters
             )
 
         /**
@@ -146,10 +152,21 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
             { floatPreferences.opacity = it }
         )
 
+        val widgetRefreshingParametersState = NonAppliedSnapshotStateMap(
+            { widgetRefreshingParameters },
+            {
+                widgetRefreshingParameters.putAll(it)
+                widgetRefreshingParametersChanged.value = true
+            }
+        )
+
+        val widgetRefreshingParametersChanged = MutableStateFlow(false)
+
         val widgetConfigurationStates = CoherentNonAppliedStates(
             widgetPropertyStateMap,
             widgetThemeState,
             widgetOpacityState,
+            widgetRefreshingParametersState,
             coroutineScope = viewModelScope
         )
 
@@ -229,6 +246,18 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        lifecycleScope.launch {
+            with(viewModel.widgetRefreshingParametersChanged) {
+                collect {
+                    if (it) {
+                        WidgetDataRefreshWorker.Administrator.getInstance(applicationContext)
+                            .applyChangedParameters()
+                    }
+                    value = false
+                }
+            }
+        }
 
         setContent {
             val theme by viewModel.appliedInAppTheme.collectAsState()

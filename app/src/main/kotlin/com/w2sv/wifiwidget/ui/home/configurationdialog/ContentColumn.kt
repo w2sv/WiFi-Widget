@@ -13,6 +13,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,6 +27,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -54,12 +56,18 @@ internal fun ContentColumn(
     onCheckedChange: (String, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
 ) {
+    val scrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .padding(vertical = 16.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
     ) {
+        val checkablePropertiesColumnModifier = Modifier.padding(horizontal = 26.dp)
+        val defaultSectionHeaderModifier = Modifier.padding(vertical = 22.dp)
+
         SectionHeader(
             R.string.theme,
             R.drawable.ic_nightlight_24,
@@ -74,20 +82,34 @@ internal fun ContentColumn(
         SectionHeader(
             R.string.opacity,
             R.drawable.ic_opacity_24,
-            Modifier.padding(vertical = 22.dp)
+            defaultSectionHeaderModifier
         )
         OpacitySliderWithValue(opacity = opacity, onOpacityChanged = onOpacityChanged)
 
         SectionHeader(
             R.string.properties,
             R.drawable.ic_checklist_24,
-            Modifier.padding(vertical = 22.dp)
+            defaultSectionHeaderModifier
         )
         PropertyColumn(
+            modifier = checkablePropertiesColumnModifier,
             propertyChecked = propertyChecked,
             onCheckedChange = onCheckedChange,
             onInfoButtonClick = onInfoButtonClick
         )
+
+        SectionHeader(
+            titleRes = R.string.refreshing,
+            iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
+            modifier = defaultSectionHeaderModifier
+        )
+        RefreshingSection(checkablePropertiesColumnModifier) {
+            scope.launch {
+                with(scrollState) {
+                    animateScrollTo(maxValue)
+                }
+            }
+        }
     }
 }
 

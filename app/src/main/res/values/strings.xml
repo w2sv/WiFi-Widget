@@ -21,4 +21,7 @@
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
     <string name="opacity">Opacity</string>
+    <string name="refreshing">Refreshing</string>
+    <string name="refresh_periodically">Refresh periodically</string>
+    <string name="refresh_on_low_battery">Refresh on low battery</string>
 </resources>
