@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.shared.InfoIconButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
 
@@ -28,7 +27,6 @@ import kotlinx.coroutines.launch
 internal fun RefreshingSection(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    showInfoDialog: () -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -36,10 +34,7 @@ internal fun RefreshingSection(
     Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
         RefreshingParameterRow(
             label = R.string.refresh_periodically,
-            parameterName = "refreshPeriodically",
-            infoIconButton = {
-                InfoIconButton(showInfoDialog)
-            }
+            parameterName = "refreshPeriodically"
         )
         AnimatedVisibility(
             visible = viewModel.widgetRefreshingParametersState.getValue("refreshPeriodically"),
@@ -61,8 +56,7 @@ private fun RefreshingParameterRow(
     parameterName: String,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    fontSize: TextUnit = TextUnit.Unspecified,
-    infoIconButton: (@Composable () -> Unit)? = null
+    fontSize: TextUnit = TextUnit.Unspecified
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -78,6 +72,5 @@ private fun RefreshingParameterRow(
                 viewModel.widgetRefreshingParametersState[parameterName] = it
             }
         )
-        infoIconButton?.invoke()
     }
 }

@@ -31,16 +31,14 @@ import com.w2sv.wifiwidget.ui.shared.diagonalGradient
 @Composable
 private fun WidgetConfigurationDialogPrev() {
     WifiWidgetTheme {
-        WidgetConfigurationDialog(setInfoDialogPropertyIndex = {}, showRefreshingInfoDialog = {})
+        WidgetConfigurationDialog()
     }
 }
 
 @Composable
 fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = viewModel(),
-    setInfoDialogPropertyIndex: (Int) -> Unit,
-    showRefreshingInfoDialog: () -> Unit
+    viewModel: HomeActivity.ViewModel = viewModel()
 ) {
     Dialog(onDismissRequest = { viewModel.onDismissWidgetConfigurationDialog() }) {
         ElevatedCard(
@@ -75,9 +73,7 @@ fun WidgetConfigurationDialog(
                 StatefulContentColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(260.dp, 420.dp),
-                    setInfoDialogPropertyIndex = setInfoDialogPropertyIndex,
-                    showRefreshingInfoDialog = showRefreshingInfoDialog
+                        .heightIn(260.dp, 420.dp)
                 )
                 StatefulButtonRow(modifier = Modifier.fillMaxWidth())
             }

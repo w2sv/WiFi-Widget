@@ -136,6 +136,8 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
 
         val showWidgetConfigurationDialog = MutableStateFlow(false)
 
+        val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+
         val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
             { widgetProperties },
             { widgetProperties.putAll(it) }

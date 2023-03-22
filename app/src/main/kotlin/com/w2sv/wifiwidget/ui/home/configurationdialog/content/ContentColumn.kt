@@ -40,16 +40,14 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        StatefulContentColumn(setInfoDialogPropertyIndex = {}, showRefreshingInfoDialog = {})
+        StatefulContentColumn()
     }
 }
 
 @Composable
 fun StatefulContentColumn(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    setInfoDialogPropertyIndex: (Int) -> Unit,
-    showRefreshingInfoDialog: () -> Unit
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val scrollState = rememberScrollState()
 
@@ -102,9 +100,8 @@ fun StatefulContentColumn(
             }
         },
         onInfoButtonClick = {
-            setInfoDialogPropertyIndex(it)
-        },
-        showRefreshingInfoDialog = showRefreshingInfoDialog
+            viewModel.propertyInfoDialogIndex.value = it
+        }
     )
 }
 
@@ -118,8 +115,7 @@ internal fun ContentColumn(
     onOpacityChanged: (Float) -> Unit,
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,
-    onInfoButtonClick: (Int) -> Unit,
-    showRefreshingInfoDialog: () -> Unit,
+    onInfoButtonClick: (Int) -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -165,10 +161,7 @@ internal fun ContentColumn(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             modifier = defaultSectionHeaderModifier
         )
-        RefreshingSection(
-            checkablePropertiesColumnModifier,
-            showInfoDialog = showRefreshingInfoDialog
-        ) {
+        RefreshingSection(checkablePropertiesColumnModifier) {
             with(scrollState) {
                 animateScrollTo(maxValue)
             }

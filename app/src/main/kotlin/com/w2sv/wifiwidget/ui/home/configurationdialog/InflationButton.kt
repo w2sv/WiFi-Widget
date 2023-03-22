@@ -8,14 +8,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.androidutils.extensions.reset
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.home.configurationdialog.content.PropertyInfoDialog
-import com.w2sv.wifiwidget.ui.shared.InfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(
@@ -27,32 +24,14 @@ fun StatefulWidgetConfigurationDialogButton(
     }
 
     val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
-
-    var infoDialogPropertyIndex by rememberSaveable {
-        mutableStateOf<Int?>(null)
-    }
-    val (showRefreshingInfoDialog, setShowRefreshingInfoDialog) = rememberSaveable {
-        mutableStateOf(false)
-    }
+    val propertyInfoDialogIndex by viewModel.propertyInfoDialogIndex.collectAsState()
 
     if (inflateDialog) {
-        WidgetConfigurationDialog(
-            setInfoDialogPropertyIndex = {
-                infoDialogPropertyIndex = it
-            },
-            showRefreshingInfoDialog = {
-                setShowRefreshingInfoDialog(true)
-            }
-        )
+        WidgetConfigurationDialog()
 
-        infoDialogPropertyIndex?.let {
+        propertyInfoDialogIndex?.let {
             PropertyInfoDialog(it) {
-                infoDialogPropertyIndex = null
-            }
-        }
-        if (showRefreshingInfoDialog) {
-            InfoDialog(title = "Data Refreshing", text = "BlubBlub") {
-                setShowRefreshingInfoDialog(false)
+                viewModel.propertyInfoDialogIndex.reset()
             }
         }
     }
