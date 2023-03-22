@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.home.configurationdialog.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +20,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun PropertyColumn(
+internal fun PropertySelectionSection(
     modifier: Modifier = Modifier,
     propertyChecked: (String) -> Boolean,
     onCheckedChange: (String, Boolean) -> Unit,

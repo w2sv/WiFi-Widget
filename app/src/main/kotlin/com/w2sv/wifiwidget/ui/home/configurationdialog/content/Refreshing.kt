@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.home.configurationdialog.content
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,13 +21,16 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun RefreshingSection(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    scrollToContentColumnBottom: () -> Unit
+    scrollToContentColumnBottom: suspend () -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+
     Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
         RefreshingParameterRow(
             label = R.string.refresh_periodically,
@@ -35,7 +39,7 @@ internal fun RefreshingSection(
         )
         AnimatedVisibility(
             visible = viewModel.widgetRefreshingParametersState.getValue("refreshPeriodically"),
-            enter = fadeIn() + expandVertically(initialHeight = { scrollToContentColumnBottom(); 0 })
+            enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
         ) {
             RefreshingParameterRow(
                 label = R.string.refresh_on_low_battery,

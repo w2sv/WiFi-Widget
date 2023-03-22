@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.ui.home.configurationdialog.content.PropertyInfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(
@@ -31,7 +32,7 @@ fun StatefulWidgetConfigurationDialogButton(
     val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
 
     if (inflateDialog) {
-        StatefulWidgetConfigurationDialog(
+        WidgetConfigurationDialog(
             setInfoDialogPropertyIndex = {
                 infoDialogPropertyIndex = it
             }
