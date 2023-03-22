@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.ui.shared.InfoIconButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
 
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 internal fun RefreshingSection(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    showInfoDialog: () -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -35,7 +37,9 @@ internal fun RefreshingSection(
         RefreshingParameterRow(
             label = R.string.refresh_periodically,
             parameterName = "refreshPeriodically",
-            viewModel = viewModel
+            infoIconButton = {
+                InfoIconButton(showInfoDialog)
+            }
         )
         AnimatedVisibility(
             visible = viewModel.widgetRefreshingParametersState.getValue("refreshPeriodically"),
@@ -44,7 +48,6 @@ internal fun RefreshingSection(
             RefreshingParameterRow(
                 label = R.string.refresh_on_low_battery,
                 parameterName = "refreshOnBatteryLow",
-                viewModel = viewModel,
                 modifier = Modifier.padding(start = 12.dp),
                 fontSize = 14.sp
             )
@@ -56,9 +59,10 @@ internal fun RefreshingSection(
 private fun RefreshingParameterRow(
     @StringRes label: Int,
     parameterName: String,
-    viewModel: HomeActivity.ViewModel,
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = TextUnit.Unspecified
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    fontSize: TextUnit = TextUnit.Unspecified,
+    infoIconButton: (@Composable () -> Unit)? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -74,5 +78,6 @@ private fun RefreshingParameterRow(
                 viewModel.widgetRefreshingParametersState[parameterName] = it
             }
         )
+        infoIconButton?.invoke()
     }
 }

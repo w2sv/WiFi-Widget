@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.activities.HomeActivity
 import com.w2sv.wifiwidget.ui.home.configurationdialog.content.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.shared.InfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(
@@ -25,22 +26,33 @@ fun StatefulWidgetConfigurationDialogButton(
         viewModel.showWidgetConfigurationDialog.value = true
     }
 
+    val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
+
     var infoDialogPropertyIndex by rememberSaveable {
         mutableStateOf<Int?>(null)
     }
-
-    val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
+    val (showRefreshingInfoDialog, setShowRefreshingInfoDialog) = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     if (inflateDialog) {
         WidgetConfigurationDialog(
             setInfoDialogPropertyIndex = {
                 infoDialogPropertyIndex = it
+            },
+            showRefreshingInfoDialog = {
+                setShowRefreshingInfoDialog(true)
             }
         )
 
         infoDialogPropertyIndex?.let {
             PropertyInfoDialog(it) {
                 infoDialogPropertyIndex = null
+            }
+        }
+        if (showRefreshingInfoDialog) {
+            InfoDialog(title = "Data Refreshing", text = "BlubBlub") {
+                setShowRefreshingInfoDialog(false)
             }
         }
     }

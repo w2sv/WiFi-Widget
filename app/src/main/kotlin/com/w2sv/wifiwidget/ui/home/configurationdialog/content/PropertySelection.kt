@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.shared.InfoIconButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
@@ -59,23 +59,10 @@ private fun PropertyRow(
         )
         Checkbox(
             checked = propertyChecked(property),
-            onCheckedChange = { onCheckedChange(property, it) },
-            colors = CheckboxDefaults.colors(
-                checkedColor = MaterialTheme.colorScheme.primary,
-                uncheckedColor = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            onCheckedChange = { onCheckedChange(property, it) }
         )
-        IconButton(onClick = {
+        InfoIconButton {
             onInfoButtonClick(propertyIndex)
-        }) {
-            Icon(
-                imageVector = Icons.Outlined.Info,
-                contentDescription = "Click to toggle the property info dialog",
-                modifier = Modifier.size(
-                    dimensionResource(id = R.dimen.size_icon)
-                ),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 }
