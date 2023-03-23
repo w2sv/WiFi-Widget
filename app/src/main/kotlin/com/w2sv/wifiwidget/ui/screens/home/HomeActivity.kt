@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.w2sv.wifiwidget.activities
+package com.w2sv.wifiwidget.ui.screens.home
 
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -41,12 +42,10 @@ import com.w2sv.preferences.WidgetRefreshingParameters
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.home.HomeScreen
-import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
+import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
+import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
-import com.w2sv.wifiwidget.utils.CoherentNonAppliedStates
-import com.w2sv.wifiwidget.utils.NonAppliedSnapshotStateMap
-import com.w2sv.wifiwidget.utils.NonAppliedStateFlow
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -56,7 +55,7 @@ import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : LifecycleObserversRegisteringActivity() {
+class HomeActivity : ComponentActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(
@@ -240,12 +239,6 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         LocationAccessPermissionHandler(this)
     }
 
-    override val lifecycleObservers: List<LifecycleObserver>
-        get() = viewModel.lifecycleObservers + listOf(
-            lapRequestLauncher,
-            WifiWidgetOptionsChangedReceiver()
-        )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
             SwipeUpAnimation {
@@ -254,6 +247,12 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        viewModel.lifecycleObservers + listOf(
+            lapRequestLauncher,
+            WifiWidgetOptionsChangedReceiver()
+        )
+            .forEach(lifecycle::addObserver)
 
         lifecycleScope.launch {
             with(viewModel.widgetRefreshingParametersChanged) {

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog.content
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -29,9 +29,8 @@ import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.LocationAccessPermissionDialog
-import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -40,12 +39,12 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        StatefulContentColumn()
+        StatefulConfigColumn()
     }
 }
 
 @Composable
-fun StatefulContentColumn(
+fun StatefulConfigColumn(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
@@ -57,13 +56,7 @@ fun StatefulContentColumn(
     val context = LocalContext.current
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
-    viewModel.lapDialogTrigger.collectAsState().apply {
-        LocationAccessPermissionDialog {
-            value
-        }
-    }
-
-    ContentColumn(
+    ConfigColumn(
         scrollState = scrollState,
         modifier = modifier,
         selectedTheme = {
@@ -106,7 +99,7 @@ fun StatefulContentColumn(
 }
 
 @Composable
-internal fun ContentColumn(
+internal fun ConfigColumn(
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
     selectedTheme: () -> Theme,

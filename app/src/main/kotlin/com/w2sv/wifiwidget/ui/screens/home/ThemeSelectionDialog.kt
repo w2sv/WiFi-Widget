@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon

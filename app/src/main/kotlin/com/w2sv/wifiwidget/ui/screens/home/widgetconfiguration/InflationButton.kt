@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -11,8 +11,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.reset
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.configurationdialog.content.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.PropertyInfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(

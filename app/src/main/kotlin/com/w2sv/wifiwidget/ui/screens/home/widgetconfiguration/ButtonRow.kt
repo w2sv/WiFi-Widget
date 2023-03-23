@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -13,7 +13,7 @@ import com.w2sv.androidutils.extensions.resetBoolean
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 

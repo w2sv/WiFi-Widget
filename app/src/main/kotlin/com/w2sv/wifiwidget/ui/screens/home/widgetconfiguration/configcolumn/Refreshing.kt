@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog.content
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
 

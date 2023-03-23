@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
@@ -11,8 +11,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.configurationdialog.StatefulWidgetConfigurationDialogButton
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.StatefulWidgetConfigurationDialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
 import java.util.*
@@ -46,6 +45,11 @@ internal fun HomeScreen(viewModel: HomeActivity.ViewModel = androidx.lifecycle.v
                 }
 
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
+            }
+        }
+        viewModel.lapDialogTrigger.collectAsState().apply {
+            LocationAccessPermissionDialog {
+                value
             }
         }
         BackHandler {

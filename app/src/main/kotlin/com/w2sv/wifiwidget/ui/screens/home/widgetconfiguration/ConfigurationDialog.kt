@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.configurationdialog.content.StatefulContentColumn
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.StatefulConfigColumn
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.shared.diagonalGradient
@@ -70,7 +70,7 @@ fun WidgetConfigurationDialog(
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                     fontWeight = FontWeight.Medium
                 )
-                StatefulContentColumn(
+                StatefulConfigColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(260.dp, 420.dp)

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.activities
+package com.w2sv.wifiwidget.ui.screens.home
 
 import android.Manifest
 import android.widget.Toast

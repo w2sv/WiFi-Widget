@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.utils
+package com.w2sv.wifiwidget.ui
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.w2sv.kotlinutils.extensions.valueEqualTo
