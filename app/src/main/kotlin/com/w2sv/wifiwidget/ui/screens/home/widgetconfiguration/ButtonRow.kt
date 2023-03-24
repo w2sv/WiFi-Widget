@@ -17,7 +17,10 @@ import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun StatefulButtonRow(modifier: Modifier = Modifier, viewModel: HomeActivity.ViewModel = viewModel()) {
+internal fun StatefulButtonRow(
+    modifier: Modifier = Modifier,
+    viewModel: HomeActivity.ViewModel = viewModel()
+) {
     val context = LocalContext.current
     val applyButtonEnabled by viewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
 

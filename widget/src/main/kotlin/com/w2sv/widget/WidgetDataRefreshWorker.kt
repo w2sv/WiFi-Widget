@@ -65,8 +65,8 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
                     .getAdministratorInstance()
         }
 
-        fun applyChangedParameters(){
-            when(widgetRefreshingParameters.refreshPeriodically){
+        fun applyChangedParameters() {
+            when (widgetRefreshingParameters.refreshPeriodically) {
                 true -> enableWorker()
                 false -> cancelWorker()
             }
@@ -78,7 +78,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
             }
         }
 
-        private fun enableWorker(){
+        private fun enableWorker() {
             enqueueAsUniquePeriodicWork(
                 WorkManager.getInstance(context),
                 Duration.ofMinutes(15L),

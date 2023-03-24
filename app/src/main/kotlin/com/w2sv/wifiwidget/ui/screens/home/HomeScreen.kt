@@ -18,7 +18,10 @@ import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun HomeScreen(viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(), finishAffinity: () -> Unit) {
+internal fun HomeScreen(
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    finishAffinity: () -> Unit
+) {
     val context = LocalContext.current
 
     StatefulNavigationDrawer { openDrawer, closeDrawer, drawerOpen ->

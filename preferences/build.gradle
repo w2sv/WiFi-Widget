@@ -15,7 +15,7 @@ dependencies {
     implementation project(path: ':common')
 
     implementation libs.androidutils
-    
+
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt
 }
