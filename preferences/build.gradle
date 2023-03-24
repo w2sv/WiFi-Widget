@@ -14,8 +14,8 @@ android {
 dependencies {
     implementation project(path: ':common')
 
-    api libs.typedpreferences
-
+    implementation libs.androidutils
+    
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt
 }

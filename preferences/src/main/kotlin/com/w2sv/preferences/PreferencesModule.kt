@@ -2,7 +2,7 @@ package com.w2sv.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.w2sv.typedpreferences.extensions.getAppPreferences
+import com.w2sv.androidutils.extensions.getAppPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

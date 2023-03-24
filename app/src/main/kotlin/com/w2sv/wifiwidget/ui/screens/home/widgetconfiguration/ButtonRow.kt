@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.extensions.resetBoolean
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
@@ -30,7 +29,7 @@ internal fun StatefulButtonRow(modifier: Modifier = Modifier, viewModel: HomeAct
             viewModel.widgetConfigurationStates.apply()
             WifiWidgetProvider.triggerDataRefresh(context)
             context.showToast(R.string.updated_widget_configuration)
-            viewModel.showWidgetConfigurationDialog.resetBoolean()
+            viewModel.showWidgetConfigurationDialog.value = false
         },
         applyButtonEnabled = {
             applyButtonEnabled

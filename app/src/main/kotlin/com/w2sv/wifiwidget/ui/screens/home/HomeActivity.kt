@@ -30,7 +30,6 @@ import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
-import com.w2sv.androidutils.extensions.resetBoolean
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
@@ -174,7 +173,7 @@ class HomeActivity : ComponentActivity() {
 
         fun onDismissWidgetConfigurationDialog() {
             widgetConfigurationStates.reset()
-            showWidgetConfigurationDialog.resetBoolean()
+            showWidgetConfigurationDialog.value = false
         }
 
         /**
