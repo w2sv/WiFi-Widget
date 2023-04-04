@@ -2,7 +2,7 @@
 minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
-agp = "8.0.0-beta05"
+agp = "8.0.0-rc01"
 kotlin = '1.8.0'
 java = '17'
 
@@ -15,8 +15,8 @@ lifecycle = "2.6.1"
 [libraries]
 
 # owned
-androidutils = 'com.github.w2sv:AndroidUtils:0.1.0'
-kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.6-rc4'
+androidutils = 'com.github.w2sv:AndroidUtils:0.1.1-rc1'
+kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.7-rc2'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.6.1'
