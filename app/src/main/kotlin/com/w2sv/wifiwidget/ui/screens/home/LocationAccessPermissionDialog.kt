@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -17,8 +17,6 @@ import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -29,6 +27,11 @@ private fun Prev() {
     WifiWidgetTheme {
         LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {}, {}, {})
     }
+}
+
+enum class LocationAccessPermissionDialogTrigger {
+    PinWidgetButtonPress,
+    SSIDCheck
 }
 
 @Composable

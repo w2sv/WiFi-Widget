@@ -92,7 +92,6 @@ dependencies {
     implementation project(path: ':common')
 
     implementation libs.androidutils
-    implementation libs.permissionhandler
     implementation libs.kotlinutils
 
     // androidx

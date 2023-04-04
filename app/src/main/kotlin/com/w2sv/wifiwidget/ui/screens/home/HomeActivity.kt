@@ -1,6 +1,6 @@
 @file:Suppress("DEPRECATION")
 
-package com.w2sv.wifiwidget.activities
+package com.w2sv.wifiwidget.ui.screens.home
 
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -22,6 +23,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
@@ -29,30 +31,32 @@ import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.CustomizableTheme
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.GlobalFlags
-import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.WidgetProperties
+import com.w2sv.preferences.WidgetRefreshingParameters
+import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.home.HomeScreen
-import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
+import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
+import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
-import com.w2sv.wifiwidget.utils.CoherentNonAppliedStates
-import com.w2sv.wifiwidget.utils.NonAppliedSnapshotStateMap
-import com.w2sv.wifiwidget.utils.NonAppliedStateFlow
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeActivity : LifecycleObserversRegisteringActivity() {
+class HomeActivity : ComponentActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(
@@ -60,6 +64,7 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         private val globalFlags: GlobalFlags,
         private val enumOrdinals: EnumOrdinals,
         private val floatPreferences: FloatPreferences,
+        private val widgetRefreshingParameters: WidgetRefreshingParameters,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
@@ -69,7 +74,8 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
                 widgetProperties,
                 globalFlags,
                 enumOrdinals,
-                floatPreferences
+                floatPreferences,
+                widgetRefreshingParameters
             )
 
         /**
@@ -130,6 +136,8 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
 
         val showWidgetConfigurationDialog = MutableStateFlow(false)
 
+        val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+
         val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
             { widgetProperties },
             { widgetProperties.putAll(it) }
@@ -137,12 +145,12 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
 
         val widgetThemeState = NonAppliedStateFlow(
             viewModelScope,
-            { getByOrdinal<Theme>(enumOrdinals.widgetTheme) },
+            { getByOrdinal<CustomizableTheme>(enumOrdinals.widgetTheme) },
             { enumOrdinals.widgetTheme = it.ordinal }
         )
 
         val showCustomThemeSection = widgetThemeState.transform {
-            emit(it == Theme.Custom)
+            emit(it == CustomizableTheme.Custom)
         }
 
         val widgetOpacityState = NonAppliedStateFlow(
@@ -151,12 +159,28 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
             { floatPreferences.opacity = it }
         )
 
+        val widgetRefreshingParametersState = NonAppliedSnapshotStateMap(
+            { widgetRefreshingParameters },
+            {
+                widgetRefreshingParameters.putAll(it)
+                widgetRefreshingParametersChanged.value = true
+            }
+        )
+
+        val widgetRefreshingParametersChanged = MutableStateFlow(false)
+
         val widgetConfigurationStates = CoherentNonAppliedStates(
             widgetPropertyStateMap,
             widgetThemeState,
             widgetOpacityState,
+            widgetRefreshingParametersState,
             coroutineScope = viewModelScope
         )
+
+        fun onDismissWidgetConfigurationDialog() {
+            widgetConfigurationStates.reset()
+            showWidgetConfigurationDialog.value = false
+        }
 
         /**
          * @return Boolean indicating whether change has been confirmed
@@ -220,12 +244,6 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         LocationAccessPermissionHandler(this)
     }
 
-    override val lifecycleObservers: List<LifecycleObserver>
-        get() = viewModel.lifecycleObservers + listOf(
-            lapRequestLauncher,
-            WifiWidgetOptionsChangedReceiver()
-        )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen().setOnExitAnimationListener(
             SwipeUpAnimation {
@@ -234,6 +252,24 @@ class HomeActivity : LifecycleObserversRegisteringActivity() {
         )
 
         super.onCreate(savedInstanceState)
+
+        viewModel.lifecycleObservers + listOf(
+            lapRequestLauncher,
+            WifiWidgetOptionsChangedReceiver()
+        )
+            .forEach(lifecycle::addObserver)
+
+        lifecycleScope.launch {
+            with(viewModel.widgetRefreshingParametersChanged) {
+                collect {
+                    if (it) {
+                        WidgetDataRefreshWorker.Administrator.getInstance(applicationContext)
+                            .applyChangedParameters()
+                    }
+                    value = false
+                }
+            }
+        }
 
         setContent {
             val theme by viewModel.appliedInAppTheme.collectAsState()

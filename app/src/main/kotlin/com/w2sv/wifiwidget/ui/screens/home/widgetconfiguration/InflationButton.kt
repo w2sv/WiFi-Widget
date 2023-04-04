@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.home.configurationdialog
+package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -8,12 +8,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.wifiwidget.activities.HomeActivity
+import com.w2sv.androidutils.extensions.reset
+import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.PropertyInfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(
@@ -24,22 +23,15 @@ fun StatefulWidgetConfigurationDialogButton(
         viewModel.showWidgetConfigurationDialog.value = true
     }
 
-    var infoDialogPropertyIndex by rememberSaveable {
-        mutableStateOf<Int?>(null)
-    }
-
     val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
+    val propertyInfoDialogIndex by viewModel.propertyInfoDialogIndex.collectAsState()
 
     if (inflateDialog) {
-        StatefulWidgetConfigurationDialog(
-            setInfoDialogPropertyIndex = {
-                infoDialogPropertyIndex = it
-            }
-        )
+        WidgetConfigurationDialog()
 
-        infoDialogPropertyIndex?.let {
+        propertyInfoDialogIndex?.let {
             PropertyInfoDialog(it) {
-                infoDialogPropertyIndex = null
+                viewModel.propertyInfoDialogIndex.reset()
             }
         }
     }

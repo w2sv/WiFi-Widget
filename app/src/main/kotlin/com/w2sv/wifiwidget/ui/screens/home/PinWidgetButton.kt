@@ -1,18 +1,15 @@
-package com.w2sv.wifiwidget.ui.home
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.activities.HomeActivity
-import com.w2sv.wifiwidget.ui.home.model.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
@@ -28,12 +25,6 @@ fun StatefulPinWidgetButton(
                 LocationAccessPermissionDialogTrigger.PinWidgetButtonPress
 
             true -> WifiWidgetProvider.pinWidget(context)
-        }
-    }
-
-    viewModel.lapDialogTrigger.collectAsState().apply {
-        LocationAccessPermissionDialog {
-            value
         }
     }
 }

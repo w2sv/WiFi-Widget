@@ -1,5 +1,2 @@
-[Fix]
-- Property info dialog display on rotation
-[Improve]
-- App size
-- UI
+[Added]
+- Possibility to configure widget refreshing

@@ -6,10 +6,12 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GlobalFlags @Inject constructor(sharedPreferences: SharedPreferences) :
+class WidgetRefreshingParameters @Inject constructor(sharedPreferences: SharedPreferences) :
     BooleanPreferences(
-        "locationPermissionDialogAnswered" to false,
+        "refreshPeriodically" to true,
+        "refreshOnBatteryLow" to false,
         sharedPreferences = sharedPreferences
     ) {
-    var locationPermissionDialogAnswered by this
+    val refreshPeriodically by this
+    val refreshOnBatteryLow by this
 }

@@ -17,8 +17,8 @@ import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
-import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.EnumOrdinals
+import com.w2sv.preferences.FloatPreferences
 import com.w2sv.preferences.WidgetProperties
 import com.w2sv.widget.utils.asFormattedIpAddress
 import com.w2sv.widget.utils.isWifiConnected

@@ -17,7 +17,7 @@
         android:theme="@style/Theme.App.SplashScreen">
 
         <activity
-            android:name=".activities.HomeActivity"
+            android:name=".ui.screens.home.HomeActivity"
             android:exported="true">
 
             <intent-filter>
@@ -42,7 +42,7 @@
         </receiver>
 
         <receiver
-            android:name="com.w2sv.wifiwidget.activities.HomeActivity$WifiWidgetOptionsChangedReceiver"
+            android:name="com.w2sv.wifiwidget.ui.screens.home.HomeActivity$WifiWidgetOptionsChangedReceiver"
             tools:ignore="Instantiatable" />
 
     </application>

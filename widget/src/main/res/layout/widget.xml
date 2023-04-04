@@ -3,7 +3,6 @@
     android:id="@+id/widget_layout"
     style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:layout_width="match_parent"
-
     android:layout_height="match_parent"
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
@@ -78,7 +77,7 @@
             android:layout_height="@dimen/size_widget_image_button_icon"
             android:layout_marginHorizontal="8dp"
 
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/refresh_data"
             android:src="@drawable/ic_refresh_24" />
 
@@ -88,7 +87,7 @@
             android:layout_width="@dimen/size_widget_image_button_icon"
             android:layout_height="@dimen/size_widget_image_button_icon"
 
-            android:background="@android:color/transparent"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/configure_widget"
             android:src="@drawable/ic_settings_24" />
 

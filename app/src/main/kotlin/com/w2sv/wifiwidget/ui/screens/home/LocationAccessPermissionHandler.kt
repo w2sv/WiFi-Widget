@@ -1,10 +1,10 @@
-package com.w2sv.wifiwidget.activities
+package com.w2sv.wifiwidget.ui.screens.home
 
 import android.Manifest
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.permissionhandler.CoupledPermissionsHandler
+import com.w2sv.androidutils.permissionhandler.CoupledPermissionsHandler
 
 class LocationAccessPermissionHandler(activity: ComponentActivity) :
     CoupledPermissionsHandler(

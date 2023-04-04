@@ -10,11 +10,9 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.work.WorkManager
 import com.w2sv.androidutils.extensions.getAppWidgetIds
 import com.w2sv.androidutils.extensions.showToast
 import slimber.log.i
-import java.time.Duration
 import java.util.*
 
 class WifiWidgetProvider : AppWidgetProvider() {
@@ -76,14 +74,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
 
-        context?.run {
-            WidgetDataRefreshWorker.enqueueAsUniquePeriodicWork(
-                WorkManager.getInstance(applicationContext),
-                Duration.ofMinutes(15L),
-                true
-            )
-
-            i { "Enqueued ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
+        context?.let {
+            WidgetDataRefreshWorker.Administrator.getInstance(it).enableWorkerIfApplicable()
         }
     }
 
@@ -95,11 +87,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
 
-        context?.run {
-            WorkManager.getInstance(applicationContext)
-                .cancelUniqueWork(WidgetDataRefreshWorker.UNIQUE_WORK_NAME)
-
-            i { "Cancelled ${WidgetDataRefreshWorker.UNIQUE_WORK_NAME}" }
+        context?.let {
+            WidgetDataRefreshWorker.Administrator.getInstance(it).cancelWorker()
         }
     }
 
