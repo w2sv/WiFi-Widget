@@ -2,11 +2,11 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.w2sv.wifiwidget.R
@@ -114,29 +115,33 @@ private fun ColorPickerDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.padding(16.dp)
             ) {
-                Box(Modifier.fillMaxHeight(0.2f), contentAlignment = Alignment.Center) {
-                    JostText(
-                        text = stringResource(id = properties.labelRes),
-                        fontSize = MaterialTheme.typography.headlineMedium.fontSize
-                    )
-                }
-                Box(modifier = Modifier.fillMaxHeight(0.6f), contentAlignment = Alignment.Center) {
-                    HsvColorPicker(
-                        modifier = Modifier.padding(8.dp),
-                        controller = controller,
-                        onColorChanged = {
-                            color = it.color
-                        }
-                    )
-                }
-                Box(modifier = Modifier.fillMaxHeight(0.2f), contentAlignment = Alignment.Center) {
-                    JostText(
-                        text = "RGB(${color.red.toRGBInt()}, ${color.green.toRGBInt()}, ${color.blue.toRGBInt()})",
-                        color = color
-                    )
-                }
+                JostText(
+                    text = stringResource(id = properties.labelRes),
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                )
+                HsvColorPicker(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .height(300.dp),
+                    controller = controller,
+                    onColorChanged = {
+                        color = it.color
+                    }
+                )
+                BrightnessSlider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp)
+                        .height(36.dp),
+                    controller = controller
+                )
+                Spacer(modifier = Modifier.padding(vertical = 12.dp))
+                JostText(
+                    text = "RGB(${color.red.toRGBInt()}, ${color.green.toRGBInt()}, ${color.blue.toRGBInt()})",
+                    color = color
+                )
+                Spacer(modifier = Modifier.padding(vertical = 12.dp))
                 Row(
-                    modifier = Modifier.fillMaxHeight(0.2f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
