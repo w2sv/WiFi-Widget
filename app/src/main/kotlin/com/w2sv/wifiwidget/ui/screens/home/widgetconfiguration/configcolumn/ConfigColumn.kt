@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.common.CustomizableTheme
+import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
@@ -102,8 +103,8 @@ fun StatefulConfigColumn(
 internal fun ConfigColumn(
     scrollState: ScrollState,
     modifier: Modifier = Modifier,
-    selectedTheme: () -> CustomizableTheme,
-    onSelectedTheme: (CustomizableTheme) -> Unit,
+    selectedTheme: () -> Theme,
+    onSelectedTheme: (Theme) -> Unit,
     opacity: () -> Float,
     onOpacityChanged: (Float) -> Unit,
     propertyChecked: (String) -> Boolean,
@@ -129,12 +130,13 @@ internal fun ConfigColumn(
         )
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
+            includeCustomTheme = true,
             selected = selectedTheme,
             onSelected = onSelectedTheme
         )
 
-        if (showCustomColorSection) {
-            SectionHeader(titleRes = R.string.custom_theme, iconRes = R.drawable.ic_nightlight_24)
+        AnimatedVisibility(visible = showCustomColorSection) {
+            ColorSelectionRow(modifier = Modifier.padding(vertical = 12.dp))
         }
 
         SectionHeader(

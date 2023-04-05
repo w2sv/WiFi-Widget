@@ -22,11 +22,12 @@
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
     <string name="opacity">Opacity</string>
-<<<<<<< HEAD
     <string name="custom_theme">Custom Theme</string>
-=======
     <string name="refreshing">Refreshing</string>
     <string name="refresh_periodically">Periodically refresh data</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
->>>>>>> main
+    <string name="background">Background</string>
+    <string name="labels">Labels</string>
+    <string name="other">Other</string>
+    <string name="okay">Okay</string>
 </resources>

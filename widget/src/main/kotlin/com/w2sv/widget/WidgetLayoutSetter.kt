@@ -85,6 +85,8 @@ internal class WidgetLayoutSetter @Inject constructor(
                     Configuration.UI_MODE_NIGHT_YES -> setColors(Theme.Dark)
                 }
             }
+
+            else -> throw Error()
         }
     }
 

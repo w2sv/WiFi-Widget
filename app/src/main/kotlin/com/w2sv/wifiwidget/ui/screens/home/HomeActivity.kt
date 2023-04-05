@@ -17,6 +17,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -31,7 +32,6 @@ import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.common.CustomizableTheme
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.EnumOrdinals
@@ -145,13 +145,34 @@ class HomeActivity : ComponentActivity() {
 
         val widgetThemeState = NonAppliedStateFlow(
             viewModelScope,
-            { getByOrdinal<CustomizableTheme>(enumOrdinals.widgetTheme) },
+            { getByOrdinal<Theme>(enumOrdinals.widgetTheme) },
             { enumOrdinals.widgetTheme = it.ordinal }
         )
 
         val showCustomThemeSection = widgetThemeState.transform {
-            emit(it == CustomizableTheme.Custom)
+            emit(it == Theme.Custom)
         }
+
+        val customBackgroundColorState = NonAppliedStateFlow(
+            viewModelScope,
+            { Color.Black},
+            {}
+        )
+        val customLabelColorState = NonAppliedStateFlow(
+            viewModelScope,
+            { Color.Black},
+            {}
+        )
+
+        val customTextColorState = NonAppliedStateFlow(
+            viewModelScope,
+            { Color.Black},
+            {}
+        )
+
+        val showBackgroundColorPickerDialog = MutableStateFlow(false)
+        val showLabelColorPickerDialog = MutableStateFlow(false)
+        val showTextColorPickerDialog = MutableStateFlow(false)
 
         val widgetOpacityState = NonAppliedStateFlow(
             viewModelScope,
@@ -279,6 +300,7 @@ class HomeActivity : ComponentActivity() {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.DeviceDefault -> isSystemInDarkTheme()
+                    else -> throw Error()
                 }
             ) {
                 HomeScreen {
