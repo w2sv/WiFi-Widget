@@ -165,7 +165,6 @@ class HomeActivity : ComponentActivity() {
             { Color.Black},
             {}
         )
-
         val customOtherColorState = NonAppliedStateFlow(
             viewModelScope,
             { Color.Black},

@@ -8,3 +8,8 @@ apply from: '../modulebase.gradle'
 android {
     namespace 'com.w2sv.common'
 }
+
+dependencies {
+    implementation libs.androidx.core
+    implementation libs.androidx.appcompat
+}

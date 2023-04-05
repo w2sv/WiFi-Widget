@@ -16,6 +16,7 @@ import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
+import com.w2sv.common.extensions.toRGBInt
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.preferences.EnumOrdinals
 import com.w2sv.preferences.FloatPreferences
@@ -123,7 +124,7 @@ internal class WidgetLayoutSetter @Inject constructor(
             "setBackgroundColor",
             ColorUtils.setAlphaComponent(
                 context.getColor(background),
-                (floatPreferences.opacity * 255).toInt()
+                floatPreferences.opacity.toRGBInt()
             )
         )
     }

@@ -34,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 import com.github.skydoves.colorpicker.compose.BrightnessSlider
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
+import com.w2sv.common.extensions.toRGBInt
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
@@ -160,8 +161,6 @@ private fun ColorPickerDialog(
         }
     }
 }
-
-private fun Float.toRGBInt(): Int = (this * 255).roundToInt()
 
 @Preview
 @Composable
