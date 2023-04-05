@@ -17,7 +17,6 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -34,12 +33,13 @@ import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
-import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
 import com.w2sv.common.preferences.GlobalFlags
 import com.w2sv.common.preferences.WidgetProperties
 import com.w2sv.common.preferences.WidgetRefreshingParameters
+import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
@@ -67,6 +67,7 @@ class HomeActivity : ComponentActivity() {
         private val enumOrdinals: EnumOrdinals,
         private val floatPreferences: FloatPreferences,
         private val widgetRefreshingParameters: WidgetRefreshingParameters,
+        private val customWidgetColors: CustomWidgetColors,
         savedStateHandle: SavedStateHandle,
         @ApplicationContext context: Context
     ) : androidx.lifecycle.ViewModel() {
@@ -77,7 +78,8 @@ class HomeActivity : ComponentActivity() {
                 globalFlags,
                 enumOrdinals,
                 floatPreferences,
-                widgetRefreshingParameters
+                widgetRefreshingParameters,
+                customWidgetColors
             )
 
         /**
@@ -155,25 +157,14 @@ class HomeActivity : ComponentActivity() {
             emit(it == Theme.Custom)
         }
 
-        val customBackgroundColorState = NonAppliedStateFlow(
-            viewModelScope,
-            { Color.Black},
-            {}
-        )
-        val customLabelsColorState = NonAppliedStateFlow(
-            viewModelScope,
-            { Color.Black},
-            {}
-        )
-        val customOtherColorState = NonAppliedStateFlow(
-            viewModelScope,
-            { Color.Black},
-            {}
+        val customWidgetColorsState = NonAppliedSnapshotStateMap(
+            { customWidgetColors },
+            { customWidgetColors.putAll(it) }
         )
 
         val customizationDialogSection = MutableStateFlow<CustomizableSection?>(null)
 
-        fun onDismissCustomizationDialog(){
+        fun onDismissCustomizationDialog() {
             customizationDialogSection.reset()
         }
 
@@ -198,6 +189,7 @@ class HomeActivity : ComponentActivity() {
             widgetThemeState,
             widgetOpacityState,
             widgetRefreshingParametersState,
+            customWidgetColorsState,
             coroutineScope = viewModelScope
         )
 

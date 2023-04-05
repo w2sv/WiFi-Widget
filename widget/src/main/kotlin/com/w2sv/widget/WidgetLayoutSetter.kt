@@ -10,17 +10,18 @@ import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.view.View
 import android.widget.RemoteViews
-import androidx.annotation.ColorRes
+import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.Theme
 import com.w2sv.common.extensions.toRGBInt
-import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
 import com.w2sv.common.preferences.WidgetProperties
+import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.widget.utils.asFormattedIpAddress
 import com.w2sv.widget.utils.isWifiConnected
 import com.w2sv.widget.utils.netmask
@@ -40,7 +41,8 @@ internal class WidgetLayoutSetter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetProperties: WidgetProperties,
     private val enumOrdinals: EnumOrdinals,
-    private val floatPreferences: FloatPreferences
+    private val floatPreferences: FloatPreferences,
+    private val customWidgetColors: CustomWidgetColors
 ) {
 
     @InstallIn(SingletonComponent::class)
@@ -71,13 +73,15 @@ internal class WidgetLayoutSetter @Inject constructor(
     private fun RemoteViews.setColors(theme: Theme) {
         when (theme) {
             Theme.Dark -> setColors(
-                android.R.color.background_dark,
-                androidx.appcompat.R.color.foreground_material_dark
+                context.getColor(android.R.color.background_dark),
+                context.getColor(com.w2sv.common.R.color.blue_chill),
+                context.getColor(androidx.appcompat.R.color.foreground_material_dark)
             )
 
             Theme.Light -> setColors(
-                android.R.color.background_light,
-                androidx.appcompat.R.color.foreground_material_light
+                context.getColor(android.R.color.background_light),
+                context.getColor(com.w2sv.common.R.color.blue_chill),
+                context.getColor(androidx.appcompat.R.color.foreground_material_light)
             )
 
             Theme.DeviceDefault -> {
@@ -87,12 +91,44 @@ internal class WidgetLayoutSetter @Inject constructor(
                 }
             }
 
-            else -> throw Error()
+            Theme.Custom -> setColors(
+                customWidgetColors["Background"]!!,
+                customWidgetColors["Labels"]!!,
+                customWidgetColors["Other"]!!
+            )
         }
     }
 
-    private fun RemoteViews.setColors(@ColorRes background: Int, @ColorRes foreground: Int) {
-        // TextViews
+    private fun RemoteViews.setColors(
+        @ColorInt background: Int,
+        @ColorInt labels: Int,
+        @ColorInt other: Int
+    ) {
+        // Background
+        setInt(
+            R.id.widget_layout,
+            "setBackgroundColor",
+            ColorUtils.setAlphaComponent(
+                background,
+                floatPreferences.opacity.toRGBInt()
+            )
+        )
+
+        listOf(
+            R.id.ssid_tv,
+            R.id.ip_tv,
+            R.id.frequency_tv,
+            R.id.linkspeed_tv,
+            R.id.gateway_tv,
+            R.id.dhcp_tv,
+            R.id.dns_tv,
+            R.id.netmask_tv
+        )
+            .forEach {
+                setInt(it, "setTextColor", labels)
+            }
+
+        // 'Other' TVs
         listOf(
             R.id.ssid_value_tv,
             R.id.ip_value_tv,
@@ -108,25 +144,17 @@ internal class WidgetLayoutSetter @Inject constructor(
             R.id.last_updated_tv
         )
             .forEach {
-                setInt(it, "setTextColor", context.getColor(foreground))
+                setInt(it, "setTextColor", other)
             }
-        // ImageButtons
+
+        // 'Other' ImageButtons
         listOf(
             R.id.settings_button,
             R.id.refresh_button
         )
             .forEach {
-                setInt(it, "setColorFilter", context.getColor(foreground))
+                setInt(it, "setColorFilter", other)
             }
-        // Layout
-        setInt(
-            R.id.widget_layout,
-            "setBackgroundColor",
-            ColorUtils.setAlphaComponent(
-                context.getColor(background),
-                floatPreferences.opacity.toRGBInt()
-            )
-        )
     }
 
     private fun RemoteViews.setConnectionDependentLayout() {

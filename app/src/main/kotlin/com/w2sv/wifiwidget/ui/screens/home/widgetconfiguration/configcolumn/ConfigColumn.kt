@@ -19,6 +19,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,7 +34,9 @@ import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.shared.ButtonColoring
 import com.w2sv.wifiwidget.ui.shared.JostText
+import com.w2sv.wifiwidget.ui.shared.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.shared.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
@@ -130,13 +134,24 @@ internal fun ConfigColumn(
         )
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
-            includeCustomTheme = true,
+            customThemeIndicatorProperties = ThemeIndicatorProperties(
+                theme = Theme.Custom,
+                label = R.string.custom,
+                buttonColoring = ButtonColoring.Gradient(
+                    Brush.linearGradient(
+                        0.4f to Color(viewModel.customWidgetColorsState["Background"]!!),
+                        0.4f to Color(viewModel.customWidgetColorsState["Labels"]!!),
+                        0.6f to Color(viewModel.customWidgetColorsState["Labels"]!!),
+                        0.6f to Color(viewModel.customWidgetColorsState["Other"]!!)
+                    )
+                )
+            ),
             selected = selectedTheme,
             onSelected = onSelectedTheme
         )
 
         AnimatedVisibility(visible = showCustomColorSection) {
-            ColorSelectionRow(modifier = Modifier.padding(vertical = 12.dp))
+            ColorSelectionRow(modifier = Modifier.padding(vertical = 12.dp, horizontal = 22.dp))
         }
 
         SectionHeader(

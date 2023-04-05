@@ -31,7 +31,7 @@ import com.w2sv.wifiwidget.R
 @Composable
 fun ThemeSelectionRow(
     modifier: Modifier = Modifier,
-    includeCustomTheme: Boolean = false,
+    customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
     selected: () -> Theme,
     onSelected: (Theme) -> Unit
 ) {
@@ -67,19 +67,8 @@ fun ThemeSelectionRow(
                     buttonColoring = ButtonColoring.Uniform(Color.Black)
                 )
             )
-            if (includeCustomTheme) {
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.Custom,
-                        label = R.string.custom,
-                        buttonColoring = ButtonColoring.Gradient(
-                            Brush.linearGradient(
-                                0.5f to Color.Magenta,
-                                0.5f to Color.Cyan,
-                            )
-                        )
-                    )
-                )
+            customThemeIndicatorProperties?.let {
+                add(it)
             }
         }
             .forEach { properties ->
@@ -97,7 +86,7 @@ fun ThemeSelectionRow(
 }
 
 @Stable
-private data class ThemeIndicatorProperties(
+data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val label: Int,
     val buttonColoring: ButtonColoring
