@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = 'WiFi Widget'
 include ':app'
 include ':widget'
-include ':preferences'
 include ':common'

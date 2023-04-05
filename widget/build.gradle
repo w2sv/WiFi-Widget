@@ -12,7 +12,6 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':preferences')
     implementation project(path: ':common')
 
     implementation libs.androidx.workmanager

@@ -1,4 +1,4 @@
-package com.w2sv.preferences
+package com.w2sv.common.preferences
 
 import android.content.SharedPreferences
 import com.w2sv.androidutils.typedpreferences.FloatPreferences

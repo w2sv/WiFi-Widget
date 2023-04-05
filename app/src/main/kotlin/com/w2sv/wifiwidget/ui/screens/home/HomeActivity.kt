@@ -35,11 +35,11 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.kotlinutils.extensions.getByOrdinal
-import com.w2sv.preferences.EnumOrdinals
-import com.w2sv.preferences.FloatPreferences
-import com.w2sv.preferences.GlobalFlags
-import com.w2sv.preferences.WidgetProperties
-import com.w2sv.preferences.WidgetRefreshingParameters
+import com.w2sv.common.preferences.EnumOrdinals
+import com.w2sv.common.preferences.FloatPreferences
+import com.w2sv.common.preferences.GlobalFlags
+import com.w2sv.common.preferences.WidgetProperties
+import com.w2sv.common.preferences.WidgetRefreshingParameters
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
