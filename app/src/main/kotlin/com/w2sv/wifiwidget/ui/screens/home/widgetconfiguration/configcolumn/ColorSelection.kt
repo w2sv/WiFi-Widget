@@ -1,20 +1,27 @@
 package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,6 +38,13 @@ import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
+import kotlin.math.roundToInt
+
+enum class CustomizableSection {
+    Background,
+    Labels,
+    Other
+}
 
 @Composable
 internal fun ColorSelectionRow(
@@ -38,8 +52,8 @@ internal fun ColorSelectionRow(
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val customBackgroundColor by viewModel.customBackgroundColorState.collectAsState()
-    val customLabelColor by viewModel.customLabelColorState.collectAsState()
-    val customTextColor by viewModel.customTextColorState.collectAsState()
+    val customLabelColor by viewModel.customLabelsColorState.collectAsState()
+    val customTextColor by viewModel.customOtherColorState.collectAsState()
 
     Row(
         horizontalArrangement = Arrangement.SpaceAround,
@@ -47,85 +61,92 @@ internal fun ColorSelectionRow(
         modifier = modifier
     ) {
         WidgetColorConfigurator(stringResource(R.string.background), customBackgroundColor) {
-            viewModel.showBackgroundColorPickerDialog.value = true
+            viewModel.customizationDialogSection.value = CustomizableSection.Background
         }
         WidgetColorConfigurator(stringResource(R.string.labels), customLabelColor) {
-            viewModel.showLabelColorPickerDialog.value = true
+            viewModel.customizationDialogSection.value = CustomizableSection.Labels
         }
         WidgetColorConfigurator(stringResource(R.string.other), customTextColor) {
-            viewModel.showTextColorPickerDialog.value = true
+            viewModel.customizationDialogSection.value = CustomizableSection.Other
         }
     }
 
-    val showBackgroundColorPicker by viewModel.showBackgroundColorPickerDialog.collectAsState()
-    val showLabelColorPicker by viewModel.showLabelColorPickerDialog.collectAsState()
-    val showTextColorPicker by viewModel.showTextColorPickerDialog.collectAsState()
-
-    if (showBackgroundColorPicker) {
+    viewModel.customizationDialogSection.collectAsState().value?.let { section ->
         ColorPickerDialog(
-            label = stringResource(R.string.background),
-            applyColor = {
-                viewModel.customBackgroundColorState.value = it
-            },
+            properties = when (section) {
+                CustomizableSection.Background -> Properties(R.string.background) {
+                    viewModel.customBackgroundColorState.value = it
+                }
 
-        ) {
-            viewModel.customBackgroundColorState.value = it
-            viewModel.showBackgroundColorPickerDialog.value = false
-        }
-    }
-    if (showLabelColorPicker) {
-        ColorPickerDialog(label = stringResource(R.string.labels), applyColor = {
-            viewModel.customLabelColorState.value = it
-        }) {
-            viewModel.customLabelColorState.value = it
-            viewModel.showLabelColorPickerDialog.value = false
-        }
-    }
-    if (showTextColorPicker) {
-        ColorPickerDialog(label = stringResource(R.string.other), applyColor = {
-            viewModel.customTextColorState.value = it
-        })
+                CustomizableSection.Labels -> Properties(R.string.labels) {
+                    viewModel.customLabelsColorState.value = it
+                }
+
+                CustomizableSection.Other -> Properties(R.string.other) {
+                    viewModel.customOtherColorState.value = it
+                }
+            }
+        )
     }
 }
 
+@Stable
+private data class Properties(@StringRes val labelRes: Int, val applyColor: (Color) -> Unit)
+
 @Composable
 private fun ColorPickerDialog(
+    properties: Properties,
     modifier: Modifier = Modifier,
-    label: String,
-    applyColor: (Color) -> Unit,
-    onDismiss: () -> Unit
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val controller = rememberColorPickerController()
+    var color by remember(properties.hashCode()) {
+        mutableStateOf(controller.selectedColor.value)
+    }
 
-    Dialog(onDismissRequest = onDismiss) {
-        Surface(modifier = modifier, shape = RoundedCornerShape(20)) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Dialog(onDismissRequest = viewModel::onDismissCustomizationDialog) {
+        ElevatedCard(
+            modifier = modifier,
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.elevatedCardElevation(32.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(16.dp)
+            ) {
                 Box(Modifier.fillMaxHeight(0.2f), contentAlignment = Alignment.Center) {
                     JostText(
-                        text = label,
+                        text = stringResource(id = properties.labelRes),
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize
                     )
                 }
                 Box(modifier = Modifier.fillMaxHeight(0.6f), contentAlignment = Alignment.Center) {
                     HsvColorPicker(
                         modifier = Modifier.padding(8.dp),
-                        controller = controller
+                        controller = controller,
+                        onColorChanged = {
+                            color = it.color
+                        }
                     )
                 }
                 Box(modifier = Modifier.fillMaxHeight(0.2f), contentAlignment = Alignment.Center) {
-                    JostText(text = "RGBA()")
+                    JostText(
+                        text = "RGB(${color.red.toRGBInt()}, ${color.green.toRGBInt()}, ${color.blue.toRGBInt()})",
+                        color = color
+                    )
                 }
                 Row(
                     modifier = Modifier.fillMaxHeight(0.2f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    DialogButton(onClick = onDismiss) {
+                    DialogButton(onClick = viewModel::onDismissCustomizationDialog) {
                         JostText(text = stringResource(id = R.string.cancel))
                     }
+                    Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        applyColor(controller.selectedColor.value)
-                        onDismiss()
+                        properties.applyColor(controller.selectedColor.value)
+                        viewModel.onDismissCustomizationDialog()
                     }) {
                         JostText(text = stringResource(id = R.string.okay))
                     }
@@ -135,13 +156,14 @@ private fun ColorPickerDialog(
     }
 }
 
+private fun Float.toRGBInt(): Int = (this * 255).roundToInt()
+
 @Preview
 @Composable
 private fun ColorPickerDialogPrev() {
-    WifiWidgetTheme() {
+    WifiWidgetTheme {
         ColorPickerDialog(
-            label = stringResource(R.string.background),
-            applyColor = {}
+            properties = Properties(R.string.background) {}
         )
     }
 }
