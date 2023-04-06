@@ -3,11 +3,11 @@ minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
 agp = "8.0.0-rc01"
-kotlin = '1.8.0'
+kotlin = '1.8.10'
 java = '17'
 
-compose-compiler = '1.4.0'
-compose-tooling = '1.4.0'
+compose-compiler = '1.4.4'
+compose-tooling = '1.4.1'
 hilt = '2.45'
 junit = '5.9.2'
 lifecycle = "2.6.1"
@@ -20,7 +20,7 @@ kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.7-rc2'
 
 # androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.6.1'
-androidx-core = 'androidx.core:core-ktx:1.9.0'
+androidx-core = 'androidx.core:core-ktx:1.10.0'
 androidx-localbroadcastmanager = 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 androidx-splashscreen = 'androidx.core:core-splashscreen:1.0.0'
 androidx-lifecycle-runtime = { module = 'androidx.lifecycle:lifecycle-runtime-ktx', version.ref = 'lifecycle' }
@@ -40,7 +40,7 @@ google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version
 
 # other
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
-colorpicker = 'com.github.skydoves:colorpicker-compose:1.0.1'
+colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc1'
 
 [plugins]
 application = { id = 'com.android.application', version.ref = 'agp' }
