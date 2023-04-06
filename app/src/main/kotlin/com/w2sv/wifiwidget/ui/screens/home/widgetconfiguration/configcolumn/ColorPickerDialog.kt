@@ -4,8 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.smarttoolfactory.colorpicker.picker.ColorPickerCircleValueHSV
+import com.smarttoolfactory.colorpicker.model.ColorModel
+import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
+import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
@@ -51,15 +57,31 @@ internal fun ColorPickerDialog(
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState())
             ) {
                 JostText(
                     text = properties.label,
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
-                ColorPickerCircleValueHSV(
+                Spacer(modifier = Modifier.padding(vertical = 6.dp))
+                HSVColorPickerCircularWithSliders(
                     initialColor = color,
-                    onColorChange = { newColor, _ -> color = newColor })
+                    onColorChange = { newColor, _ -> color = newColor }
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    ColorComponentsDisplay(
+                        color = color,
+                        colorModel = ColorModel.RGB,
+                        textColor = MaterialTheme.colorScheme.onSurface,
+                        modifier = Modifier.width(220.dp),
+                    )
+                }
                 Spacer(modifier = Modifier.padding(vertical = 12.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,

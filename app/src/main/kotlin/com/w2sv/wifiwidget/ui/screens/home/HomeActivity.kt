@@ -45,7 +45,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
-import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.CustomizableSection
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.CustomizableWidgetSection
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -161,7 +161,7 @@ class HomeActivity : ComponentActivity() {
             { customWidgetColors.putAll(it) }
         )
 
-        val customizationDialogSection = MutableStateFlow<CustomizableSection?>(null)
+        val customizationDialogSection = MutableStateFlow<CustomizableWidgetSection?>(null)
 
         fun onDismissCustomizationDialog() {
             customizationDialogSection.reset()

@@ -40,7 +40,7 @@ google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version
 
 # other
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
-colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc1'
+colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc8'
 
 [plugins]
 application = { id = 'com.android.application', version.ref = 'agp' }

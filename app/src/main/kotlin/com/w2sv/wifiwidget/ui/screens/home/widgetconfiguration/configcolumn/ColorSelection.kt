@@ -25,7 +25,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
 
-enum class CustomizableSection {
+enum class CustomizableWidgetSection {
     Background,
     Labels,
     Other
@@ -40,21 +40,21 @@ internal fun ColorSelectionRow(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        SectionCustomizationRow(stringResource(R.string.background), CustomizableSection.Background)
+        SectionCustomizationRow(stringResource(R.string.background), CustomizableWidgetSection.Background)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(stringResource(R.string.labels), CustomizableSection.Labels)
+        SectionCustomizationRow(stringResource(R.string.labels), CustomizableWidgetSection.Labels)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(stringResource(R.string.other), CustomizableSection.Other)
+        SectionCustomizationRow(stringResource(R.string.other), CustomizableWidgetSection.Other)
     }
 
     viewModel.customizationDialogSection.collectAsState().value?.let { section ->
         ColorPickerDialog(
             properties = when (section) {
-                CustomizableSection.Background -> Properties(stringResource(id = R.string.background))
+                CustomizableWidgetSection.Background -> Properties(stringResource(id = R.string.background))
 
-                CustomizableSection.Labels -> Properties(stringResource(id = R.string.labels))
+                CustomizableWidgetSection.Labels -> Properties(stringResource(id = R.string.labels))
 
-                CustomizableSection.Other -> Properties(stringResource(id = R.string.other))
+                CustomizableWidgetSection.Other -> Properties(stringResource(id = R.string.other))
             }
         )
     }
@@ -63,7 +63,7 @@ internal fun ColorSelectionRow(
 @Composable
 private fun SectionCustomizationRow(
     label: String,
-    customizableSection: CustomizableSection,
+    customizableWidgetSection: CustomizableWidgetSection,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
@@ -92,7 +92,7 @@ private fun SectionCustomizationRow(
                 )
             ),
             onClick = {
-                viewModel.customizationDialogSection.value = customizableSection
+                viewModel.customizationDialogSection.value = customizableWidgetSection
             },
             shape = CircleShape
         ) {}
