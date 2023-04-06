@@ -151,7 +151,9 @@ internal fun ConfigColumn(
         )
 
         AnimatedVisibility(visible = showCustomColorSection) {
-            ColorSelectionRow(modifier = Modifier.padding(vertical = 12.dp, horizontal = 22.dp))
+            ColorSelectionRow(modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .padding(top = 18.dp))
         }
 
         SectionHeader(
