@@ -1,15 +1,4 @@
 <resources>
-    <string-array name="wifi_properties">
-        <item>@string/ssid</item>
-        <item>@string/ip</item>
-        <item>@string/frequency</item>
-        <item>@string/linkspeed</item>
-        <item>@string/gateway</item>
-        <item>@string/dns</item>
-        <item>@string/dhcp</item>
-        <item>@string/netmask</item>
-    </string-array>
-
     <string-array name="ssid">
         <item>@string/ssid</item>
         <item>Service Set Identifier. Your network\'s name.</item>

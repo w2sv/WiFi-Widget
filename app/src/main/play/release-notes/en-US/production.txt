@@ -1,2 +1,2 @@
 [Added]
-- Possibility to configure widget refreshing
+- Custom widget color setting
