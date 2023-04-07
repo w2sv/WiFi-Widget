@@ -15,6 +15,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.extensions.crossVisualize
+import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
 import com.w2sv.common.extensions.toRGBInt
 import com.w2sv.common.preferences.CustomWidgetColors
@@ -92,9 +93,9 @@ internal class WidgetLayoutSetter @Inject constructor(
             }
 
             Theme.Custom -> setColors(
-                customWidgetColors["Background"]!!,
-                customWidgetColors["Labels"]!!,
-                customWidgetColors["Other"]!!
+                customWidgetColors[CustomizableWidgetSection.Background.name]!!,
+                customWidgetColors[CustomizableWidgetSection.Labels.name]!!,
+                customWidgetColors[CustomizableWidgetSection.Values.name]!!
             )
         }
     }

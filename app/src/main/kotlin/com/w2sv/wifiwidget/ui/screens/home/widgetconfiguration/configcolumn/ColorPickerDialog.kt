@@ -14,7 +14,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,24 +29,23 @@ import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
+import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
-@Stable
-internal data class Properties(val label: String)
-
 @Composable
 internal fun ColorPickerDialog(
-    properties: Properties,
+    customizableWidgetSection: CustomizableWidgetSection,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var color by remember {
-        mutableStateOf(Color(viewModel.customWidgetColorsState[properties.label]!!))
+        mutableStateOf(Color(viewModel.customWidgetColorsState[customizableWidgetSection.name]!!))
     }
+    val scrollState = rememberScrollState()
 
     Dialog(onDismissRequest = viewModel::onDismissCustomizationDialog) {
         ElevatedCard(
@@ -59,10 +57,10 @@ internal fun ColorPickerDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(scrollState)
             ) {
                 JostText(
-                    text = properties.label,
+                    text = stringResource(id = customizableWidgetSection.labelRes),
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
                 Spacer(modifier = Modifier.padding(vertical = 6.dp))
@@ -92,7 +90,8 @@ internal fun ColorPickerDialog(
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        viewModel.customWidgetColorsState[properties.label] = color.toArgb()
+                        viewModel.customWidgetColorsState[customizableWidgetSection.name] =
+                            color.toArgb()
                         viewModel.onDismissCustomizationDialog()
                     }) {
                         JostText(text = stringResource(id = R.string.okay))
@@ -108,7 +107,7 @@ internal fun ColorPickerDialog(
 private fun Prev() {
     WifiWidgetTheme {
         ColorPickerDialog(
-            properties = Properties(stringResource(id = R.string.background))
+            customizableWidgetSection = CustomizableWidgetSection.Background
         )
     }
 }

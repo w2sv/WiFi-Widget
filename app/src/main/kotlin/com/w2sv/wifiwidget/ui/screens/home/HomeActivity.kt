@@ -31,6 +31,7 @@ import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
@@ -45,7 +46,6 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
-import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.CustomizableWidgetSection
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel

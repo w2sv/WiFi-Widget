@@ -21,15 +21,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.wifiwidget.R
+import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
-
-enum class CustomizableWidgetSection {
-    Background,
-    Labels,
-    Other
-}
 
 @Composable
 internal fun ColorSelectionRow(
@@ -40,29 +34,20 @@ internal fun ColorSelectionRow(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        SectionCustomizationRow(stringResource(R.string.background), CustomizableWidgetSection.Background)
+        SectionCustomizationRow(CustomizableWidgetSection.Background)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(stringResource(R.string.labels), CustomizableWidgetSection.Labels)
+        SectionCustomizationRow(CustomizableWidgetSection.Labels)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(stringResource(R.string.other), CustomizableWidgetSection.Other)
+        SectionCustomizationRow(CustomizableWidgetSection.Values)
     }
 
     viewModel.customizationDialogSection.collectAsState().value?.let { section ->
-        ColorPickerDialog(
-            properties = when (section) {
-                CustomizableWidgetSection.Background -> Properties(stringResource(id = R.string.background))
-
-                CustomizableWidgetSection.Labels -> Properties(stringResource(id = R.string.labels))
-
-                CustomizableWidgetSection.Other -> Properties(stringResource(id = R.string.other))
-            }
-        )
+        ColorPickerDialog(section)
     }
 }
 
 @Composable
 private fun SectionCustomizationRow(
-    label: String,
     customizableWidgetSection: CustomizableWidgetSection,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
@@ -74,7 +59,7 @@ private fun SectionCustomizationRow(
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         JostText(
-            text = label,
+            text = stringResource(id = customizableWidgetSection.labelRes),
             fontSize = 12.sp,
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.SemiBold,
@@ -87,7 +72,7 @@ private fun SectionCustomizationRow(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
                     viewModel.customWidgetColorsState.getValue(
-                        label
+                        customizableWidgetSection.name
                     )
                 )
             ),

@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
@@ -139,10 +140,10 @@ internal fun ConfigColumn(
                 label = R.string.custom,
                 buttonColoring = ButtonColoring.Gradient(
                     Brush.linearGradient(
-                        0.4f to Color(viewModel.customWidgetColorsState["Background"]!!),
-                        0.4f to Color(viewModel.customWidgetColorsState["Labels"]!!),
-                        0.6f to Color(viewModel.customWidgetColorsState["Labels"]!!),
-                        0.6f to Color(viewModel.customWidgetColorsState["Other"]!!)
+                        0.4f to Color(viewModel.customWidgetColorsState[CustomizableWidgetSection.Background.name]!!),
+                        0.4f to Color(viewModel.customWidgetColorsState[CustomizableWidgetSection.Labels.name]!!),
+                        0.6f to Color(viewModel.customWidgetColorsState[CustomizableWidgetSection.Labels.name]!!),
+                        0.6f to Color(viewModel.customWidgetColorsState[CustomizableWidgetSection.Values.name]!!)
                     )
                 )
             ),

@@ -1,0 +1,5 @@
+<resources>
+    <string name="background">Background</string>
+    <string name="labels">Labels</string>
+    <string name="values">Values</string>
+</resources>

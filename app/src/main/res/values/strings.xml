@@ -26,8 +26,5 @@
     <string name="refreshing">Refreshing</string>
     <string name="refresh_periodically">Periodically refresh data</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
-    <string name="background">Background</string>
-    <string name="labels">Labels</string>
-    <string name="other">Other</string>
     <string name="okay">Okay</string>
 </resources>
