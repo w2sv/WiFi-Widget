@@ -10,14 +10,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun StatefulButtonRow(
+internal fun ButtonRow(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = viewModel()
 ) {
@@ -30,7 +30,7 @@ internal fun StatefulButtonRow(
         },
         onApply = {
             viewModel.widgetConfigurationStates.apply()
-            WifiWidgetProvider.triggerDataRefresh(context)
+            WidgetProvider.triggerDataRefresh(context)
             context.showToast(R.string.updated_widget_configuration)
             viewModel.showWidgetConfigurationDialog.value = false
         },

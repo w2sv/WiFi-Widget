@@ -29,7 +29,7 @@
         <!--Receivers-->
 
         <receiver
-            android:name="com.w2sv.widget.WifiWidgetProvider"
+            android:name="com.w2sv.widget.WidgetProvider"
             android:exported="false">
 
             <intent-filter>

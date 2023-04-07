@@ -7,8 +7,6 @@ import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import com.w2sv.common.WifiProperty
 import com.w2sv.common.preferences.WidgetProperties
-import com.w2sv.widget.utils.asFormattedIpAddress
-import com.w2sv.widget.utils.getNetmask
 
 @Suppress("DEPRECATION")
 internal fun RemoteViews.setWifiProperties(context: Context, widgetProperties: WidgetProperties) {

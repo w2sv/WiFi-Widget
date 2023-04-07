@@ -75,7 +75,7 @@ fun WidgetConfigurationDialog(
                         .fillMaxWidth()
                         .heightIn(260.dp, 420.dp)
                 )
-                StatefulButtonRow(modifier = Modifier.fillMaxWidth())
+                ButtonRow(modifier = Modifier.fillMaxWidth())
             }
         }
     }

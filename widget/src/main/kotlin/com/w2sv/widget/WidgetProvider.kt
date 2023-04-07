@@ -15,7 +15,7 @@ import com.w2sv.androidutils.extensions.showToast
 import slimber.log.i
 import java.util.*
 
-class WifiWidgetProvider : AppWidgetProvider() {
+class WidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START =
@@ -23,7 +23,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
 
         fun getWidgetIds(context: Context): IntArray =
             AppWidgetManager.getInstance(context)
-                .getAppWidgetIds(context, WifiWidgetProvider::class.java)
+                .getAppWidgetIds(context, WidgetProvider::class.java)
 
         fun pinWidget(context: Context) {
             with(context) {
@@ -32,7 +32,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                         it.requestPinAppWidget(
                             ComponentName(
                                 this,
-                                WifiWidgetProvider::class.java
+                                WidgetProvider::class.java
                             ),
                             null,
                             null
@@ -60,7 +60,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
             )
 
         private fun getRefreshDataIntent(context: Context): Intent =
-            Intent(context, WifiWidgetProvider::class.java)
+            Intent(context, WidgetProvider::class.java)
                 .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
@@ -142,7 +142,7 @@ private fun AppWidgetManager.updateWidget(
     updateAppWidget(
         appWidgetId,
         WidgetPopulator
-            .getInstance(context)
+            .getWidgetPopulatorInstance(context)
             .populate(
                 RemoteViews(
                     context.packageName,

@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.WifiProperty
-import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
@@ -55,12 +55,12 @@ fun LocationAccessPermissionDialog(
                                 viewModel.widgetPropertyStateMap.apply()
                             },
                             onRequestDismissed = {
-                                WifiWidgetProvider.pinWidget(context)
+                                WidgetProvider.pinWidget(context)
                             }
                         )
                     },
                     onDismissButtonPressed = {
-                        WifiWidgetProvider.pinWidget(context)
+                        WidgetProvider.pinWidget(context)
                     },
                     onAnyButtonPressed = {
                         viewModel.lapDialogAnswered = true

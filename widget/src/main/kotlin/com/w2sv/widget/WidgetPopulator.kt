@@ -8,15 +8,12 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
-import androidx.annotation.StringRes
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
 import com.w2sv.common.preferences.WidgetProperties
 import com.w2sv.kotlinutils.extensions.getByOrdinal
-import com.w2sv.widget.utils.isWifiConnected
-import com.w2sv.widget.utils.setMakeUniqueActivityFlags
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -27,6 +24,12 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+
+private enum class WifiStatus {
+    Disabled,
+    Disconnected,
+    Connected
+}
 
 internal class WidgetPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -39,16 +42,16 @@ internal class WidgetPopulator @Inject constructor(
     @InstallIn(SingletonComponent::class)
     @EntryPoint
     interface EntryPointInterface {
-        fun getInstance(): WidgetPopulator
+        fun getWidgetPopulatorInstance(): WidgetPopulator
     }
 
     companion object {
-        fun getInstance(context: Context): WidgetPopulator =
+        fun getWidgetPopulatorInstance(context: Context): WidgetPopulator =
             EntryPointAccessors.fromApplication(
                 context,
                 EntryPointInterface::class.java
             )
-                .getInstance()
+                .getWidgetPopulatorInstance()
     }
 
     // ============
@@ -57,36 +60,65 @@ internal class WidgetPopulator @Inject constructor(
 
     fun populate(widget: RemoteViews): RemoteViews =
         widget.apply {
-            setContentLayout()
+            setContentLayout(
+                wifiStatus = when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
+                    false -> WifiStatus.Disabled
+                    true -> {
+                        when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
+                            true -> WifiStatus.Connected
+                            false -> WifiStatus.Disconnected
+                        }
+                    }
+
+                }
+            )
             setWidgetColors(
-                getByOrdinal(enumOrdinals.widgetTheme),
-                customWidgetColors,
-                floatPreferences.opacity,
-                context
+                theme = getByOrdinal(enumOrdinals.widgetTheme),
+                customWidgetColors = customWidgetColors,
+                backgroundOpacity = floatPreferences.opacity,
+                context = context
             )
             setLastUpdatedTV()
             setOnClickPendingIntents()
         }
 
-    private fun RemoteViews.setContentLayout() {
-        when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
-            true -> {
-                when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
-                    true -> setWifiProperties(context, widgetProperties)
-                    false -> setNoConnectionAvailableLayout(com.w2sv.common.R.string.no_wifi_connection)
-                }
+    private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus) {
+        when (wifiStatus) {
+            WifiStatus.Connected -> {
+                setLayout(true)
+                setWifiProperties(context, widgetProperties)
             }
 
-            false -> setNoConnectionAvailableLayout(com.w2sv.common.R.string.wifi_disabled)
+            WifiStatus.Disabled -> {
+                setLayout(false)
+                setTextViewText(
+                    R.id.wifi_status_tv,
+                    context.getString(com.w2sv.common.R.string.wifi_disabled)
+                )
+            }
+
+            WifiStatus.Disconnected -> {
+                setLayout(false)
+                setTextViewText(
+                    R.id.wifi_status_tv,
+                    context.getString(com.w2sv.common.R.string.wifi_disabled)
+                )
+            }
         }
     }
 
-    private fun RemoteViews.setNoConnectionAvailableLayout(@StringRes wifiStatusStringRes: Int) {
-        crossVisualize(
-            R.id.wifi_properties_layout,
-            R.id.no_connection_available_layout
-        )
-        setTextViewText(R.id.wifi_status_tv, context.getString(wifiStatusStringRes))
+    private fun RemoteViews.setLayout(wifiConnected: Boolean) {
+        when (wifiConnected) {
+            true -> crossVisualize(
+                R.id.no_connection_available_layout,
+                R.id.wifi_properties_layout
+            )
+
+            false -> crossVisualize(
+                R.id.wifi_properties_layout,
+                R.id.no_connection_available_layout
+            )
+        }
     }
 
     // ============
@@ -107,7 +139,7 @@ internal class WidgetPopulator @Inject constructor(
         // refresh_button
         setOnClickPendingIntent(
             R.id.refresh_button,
-            WifiWidgetProvider.getRefreshDataPendingIntent(context)
+            WidgetProvider.getRefreshDataPendingIntent(context)
         )
 
         // settings_button
@@ -123,7 +155,7 @@ internal class WidgetPopulator @Inject constructor(
                     )
                 )
                     .putExtra(
-                        WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START,
+                        WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START,
                         true
                     ),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -137,7 +169,7 @@ internal class WidgetPopulator @Inject constructor(
                 context,
                 PendingIntentCode.LaunchHomeActivity.ordinal,
                 Intent(Settings.ACTION_WIFI_SETTINGS)
-                    .setMakeUniqueActivityFlags(),
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
                 PendingIntent.FLAG_IMMUTABLE
             )
         )

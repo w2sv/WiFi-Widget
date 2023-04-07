@@ -95,7 +95,8 @@ fun ConfigColumn(
             },
             onSelected = {
                 viewModel.widgetThemeState.value = it
-            })
+            }
+        )
 
         AnimatedVisibility(visible = showCustomColorSection) {
             ColorSelectionRow(

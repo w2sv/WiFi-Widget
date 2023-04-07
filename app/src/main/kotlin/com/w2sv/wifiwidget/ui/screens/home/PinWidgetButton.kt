@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
 
@@ -24,7 +24,7 @@ fun StatefulPinWidgetButton(
             false -> viewModel.lapDialogTrigger.value =
                 LocationAccessPermissionDialogTrigger.PinWidgetButtonPress
 
-            true -> WifiWidgetProvider.pinWidget(context)
+            true -> WidgetProvider.pinWidget(context)
         }
     }
 }

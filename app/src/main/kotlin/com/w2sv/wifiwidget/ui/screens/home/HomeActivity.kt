@@ -42,7 +42,7 @@ import com.w2sv.common.preferences.WidgetProperties
 import com.w2sv.common.preferences.WidgetRefreshingParameters
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.widget.WidgetDataRefreshWorker
-import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
@@ -93,7 +93,7 @@ class HomeActivity : ComponentActivity() {
         }
 
         private val openConfigurationDialogOnSplashScreenAnimationFinished =
-            savedStateHandle.contains(WifiWidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
+            savedStateHandle.contains(WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
 
         /**
          * In-App Theme
@@ -132,7 +132,7 @@ class HomeActivity : ComponentActivity() {
         }
 
         private val widgetIds: MutableSet<Int> =
-            WifiWidgetProvider.getWidgetIds(context).toMutableSet()
+            WidgetProvider.getWidgetIds(context).toMutableSet()
 
         /**
          * Widget Configuration
