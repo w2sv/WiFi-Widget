@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
-import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.StatefulConfigColumn
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.shared.diagonalGradient
@@ -65,12 +65,12 @@ fun WidgetConfigurationDialog(
                     tint = MaterialTheme.colorScheme.primary
                 )
                 JostText(
-                    text = stringResource(id = com.w2sv.widget.R.string.configure_widget),
+                    text = stringResource(id = com.w2sv.common.R.string.configure_widget),
                     textAlign = TextAlign.Center,
                     fontSize = MaterialTheme.typography.headlineSmall.fontSize,
                     fontWeight = FontWeight.Medium
                 )
-                StatefulConfigColumn(
+                ConfigColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(260.dp, 420.dp)

@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +31,7 @@ import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
+import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
@@ -45,79 +45,23 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        StatefulConfigColumn()
+        ConfigColumn()
     }
 }
 
 @Composable
-fun StatefulConfigColumn(
+fun ConfigColumn(
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val scrollState = rememberScrollState()
 
+    val showCustomColorSection by viewModel.showCustomThemeSection.collectAsState(false)
     val theme by viewModel.widgetThemeState.collectAsState()
     val opacity by viewModel.widgetOpacityState.collectAsState()
 
     val context = LocalContext.current
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
-
-    ConfigColumn(
-        scrollState = scrollState,
-        modifier = modifier,
-        selectedTheme = {
-            theme
-        },
-        onSelectedTheme = {
-            viewModel.widgetThemeState.value = it
-        },
-        opacity = {
-            opacity
-        },
-        onOpacityChanged = {
-            viewModel.widgetOpacityState.value = it
-        },
-        propertyChecked = { property ->
-            viewModel.widgetPropertyStateMap.map.getValue(property)
-        },
-        onCheckedChange = { property, value ->
-            when {
-                property == "SSID" && value -> {
-                    when (viewModel.lapDialogAnswered) {
-                        false -> viewModel.lapDialogTrigger.value =
-                            LocationAccessPermissionDialogTrigger.SSIDCheck
-
-                        true -> lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                            viewModel
-                        )
-                    }
-                }
-
-                else -> viewModel.confirmAndSyncPropertyChange(property, value) {
-                    context.showToast(R.string.uncheck_all_properties_toast)
-                }
-            }
-        },
-        onInfoButtonClick = {
-            viewModel.propertyInfoDialogIndex.value = it
-        }
-    )
-}
-
-@Composable
-internal fun ConfigColumn(
-    scrollState: ScrollState,
-    modifier: Modifier = Modifier,
-    selectedTheme: () -> Theme,
-    onSelectedTheme: (Theme) -> Unit,
-    opacity: () -> Float,
-    onOpacityChanged: (Float) -> Unit,
-    propertyChecked: (String) -> Boolean,
-    onCheckedChange: (String, Boolean) -> Unit,
-    onInfoButtonClick: (Int) -> Unit,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-) {
-    val showCustomColorSection: Boolean by viewModel.showCustomThemeSection.collectAsState(false)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -129,12 +73,11 @@ internal fun ConfigColumn(
         val defaultSectionHeaderModifier = Modifier.padding(vertical = 22.dp)
 
         SectionHeader(
-            R.string.theme,
-            R.drawable.ic_nightlight_24,
-            Modifier.padding(top = 12.dp, bottom = 22.dp)
+            titleRes = R.string.theme,
+            iconRes = R.drawable.ic_nightlight_24,
+            modifier = Modifier.padding(top = 12.dp, bottom = 22.dp)
         )
-        ThemeSelectionRow(
-            modifier = Modifier.fillMaxWidth(),
+        ThemeSelectionRow(modifier = Modifier.fillMaxWidth(),
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
                 label = R.string.custom,
@@ -147,34 +90,56 @@ internal fun ConfigColumn(
                     )
                 )
             ),
-            selected = selectedTheme,
-            onSelected = onSelectedTheme
-        )
+            selected = {
+                theme
+            },
+            onSelected = {
+                viewModel.widgetThemeState.value = it
+            })
 
         AnimatedVisibility(visible = showCustomColorSection) {
-            ColorSelectionRow(modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(top = 18.dp))
+            ColorSelectionRow(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 18.dp)
+            )
         }
 
         SectionHeader(
-            R.string.opacity,
-            R.drawable.ic_opacity_24,
-            defaultSectionHeaderModifier
+            R.string.opacity, R.drawable.ic_opacity_24, defaultSectionHeaderModifier
         )
-        OpacitySliderWithValue(opacity = opacity, onOpacityChanged = onOpacityChanged)
+        OpacitySliderWithValue(opacity = { opacity }, onOpacityChanged = {
+            viewModel.widgetOpacityState.value = it
+        })
 
         SectionHeader(
-            R.string.properties,
-            R.drawable.ic_checklist_24,
-            defaultSectionHeaderModifier
+            titleRes = R.string.properties,
+            iconRes = R.drawable.ic_checklist_24,
+            modifier = defaultSectionHeaderModifier
         )
-        PropertySelectionSection(
-            modifier = checkablePropertiesColumnModifier,
-            propertyChecked = propertyChecked,
-            onCheckedChange = onCheckedChange,
-            onInfoButtonClick = onInfoButtonClick
-        )
+        PropertySelectionSection(modifier = checkablePropertiesColumnModifier,
+            propertyChecked = { property ->
+                viewModel.widgetPropertyStateMap.getValue(property.name)
+            },
+            onCheckedChange = { property, value ->
+                when {
+                    property == WifiProperty.SSID && value -> {
+                        when (viewModel.lapDialogAnswered) {
+                            false -> viewModel.lapDialogTrigger.value =
+                                LocationAccessPermissionDialogTrigger.SSIDCheck
+
+                            true -> lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
+                                viewModel
+                            )
+                        }
+                    }
+
+                    else -> viewModel.confirmAndSyncPropertyChange(property, value) {
+                        context.showToast(R.string.uncheck_all_properties_toast)
+                    }
+                }
+            },
+            onInfoButtonClick = { viewModel.propertyInfoDialogIndex.value = it })
 
         SectionHeader(
             titleRes = R.string.refreshing,

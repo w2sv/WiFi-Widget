@@ -8,7 +8,7 @@ import androidx.annotation.IdRes
 import androidx.core.graphics.ColorUtils
 import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
-import com.w2sv.common.extensions.toRGBInt
+import com.w2sv.common.extensions.toRGBChannelInt
 import com.w2sv.common.preferences.CustomWidgetColors
 
 internal fun RemoteViews.setWidgetColors(
@@ -70,7 +70,7 @@ private fun RemoteViews.setColors(
         R.id.widget_layout,
         ColorUtils.setAlphaComponent(
             background,
-            backgroundOpacity.toRGBInt()
+            backgroundOpacity.toRGBChannelInt()
         )
     )
 

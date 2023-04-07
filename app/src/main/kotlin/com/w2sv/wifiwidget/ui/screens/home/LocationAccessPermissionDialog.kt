@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.reset
+import com.w2sv.common.WifiProperty
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.DialogButton
@@ -76,7 +77,7 @@ fun LocationAccessPermissionDialog(
                     lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(viewModel)
                 },
                 onDismissButtonPressed = {
-                    viewModel.widgetPropertyStateMap["SSID"] = false
+                    viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
                 },
                 onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
                 onDismiss = {

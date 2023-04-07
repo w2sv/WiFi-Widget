@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.androidutils.permissionhandler.CoupledPermissionsHandler
+import com.w2sv.common.WifiProperty
 
 class LocationAccessPermissionHandler(activity: ComponentActivity) :
     CoupledPermissionsHandler(
@@ -24,11 +25,11 @@ class LocationAccessPermissionHandler(activity: ComponentActivity) :
     ): Boolean =
         super.requestPermissionIfRequired(
             {
-                viewModel.widgetPropertyStateMap["SSID"] = true
+                viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = true
                 onGranted?.invoke()
             },
             {
-                viewModel.widgetPropertyStateMap["SSID"] = false
+                viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
                 onDenied?.invoke()
             },
             onRequestDismissed

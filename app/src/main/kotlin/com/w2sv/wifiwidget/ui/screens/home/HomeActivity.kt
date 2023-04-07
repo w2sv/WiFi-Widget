@@ -33,6 +33,7 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.CustomizableWidgetSection
 import com.w2sv.common.Theme
+import com.w2sv.common.WifiProperty
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
@@ -123,7 +124,7 @@ class HomeActivity : ComponentActivity() {
             i { "Pinned new widget w ID=$widgetId" }
             context.showToast(R.string.pinned_widget)
 
-            if (widgetProperties.SSID && !context.locationServicesEnabled)
+            if (widgetProperties.getValue(WifiProperty.SSID.name) && !context.locationServicesEnabled)
                 context.showToast(
                     R.string.ssid_display_requires_location_services_to_be_enabled,
                     Toast.LENGTH_LONG
@@ -201,12 +202,12 @@ class HomeActivity : ComponentActivity() {
          * @return Boolean indicating whether change has been confirmed
          */
         fun confirmAndSyncPropertyChange(
-            property: String,
+            property: WifiProperty,
             value: Boolean,
             onChangeRejected: () -> Unit
         ) {
             when (value || widgetPropertyStateMap.values.count { true } != 1) {
-                true -> widgetPropertyStateMap[property] = value
+                true -> widgetPropertyStateMap[property.name] = value
                 false -> onChangeRejected()
             }
         }

@@ -19,8 +19,8 @@ val ConnectivityManager.isWifiConnected: Boolean
 /**
  * Reference: https://stackoverflow.com/a/33094601/12083276
  */
-fun netmask(): String =
-    networkPrefixLength()
+fun getNetmask(): String =
+    getNetworkPrefixLength()
         ?.let {
             val shift = 0xffffffff shl (32 - it)
             "${((shift and 0xff000000) shr 24) and 0xff}" +
@@ -34,7 +34,7 @@ fun netmask(): String =
  * Reference: https://stackoverflow.com/a/29017289/12083276
  */
 @RequiresPermission(Manifest.permission.INTERNET)
-private fun networkPrefixLength(): Short? {
+private fun getNetworkPrefixLength(): Short? {
     val interfaces = NetworkInterface.getNetworkInterfaces()
 
     while (interfaces.hasMoreElements()) {

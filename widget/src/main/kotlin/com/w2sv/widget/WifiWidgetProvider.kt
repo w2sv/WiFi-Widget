@@ -141,7 +141,7 @@ private fun AppWidgetManager.updateWidget(
 
     updateAppWidget(
         appWidgetId,
-        WidgetLayoutPopulator
+        WidgetPopulator
             .getInstance(context)
             .populate(
                 RemoteViews(
