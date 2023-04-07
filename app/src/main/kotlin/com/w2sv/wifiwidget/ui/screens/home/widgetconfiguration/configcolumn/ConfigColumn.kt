@@ -3,6 +3,12 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseOutElastic
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -56,7 +62,7 @@ fun ConfigColumn(
 ) {
     val scrollState = rememberScrollState()
 
-    val showCustomColorSection by viewModel.showCustomThemeSection.collectAsState(false)
+    val showColorSelectionSection by viewModel.customThemeSelected.collectAsState(false)
     val theme by viewModel.widgetThemeState.collectAsState()
     val opacity by viewModel.widgetOpacityState.collectAsState()
 
@@ -98,8 +104,24 @@ fun ConfigColumn(
             }
         )
 
-        AnimatedVisibility(visible = showCustomColorSection) {
-            ColorSelectionRow(
+        AnimatedVisibility(
+            visible = showColorSelectionSection,
+            enter = fadeIn(animationSpec = tween(1000)) +
+                    expandVertically(
+                        animationSpec = tween(
+                            1000,
+                            easing = EaseOutElastic
+                        )
+                    ),
+            exit = fadeOut(animationSpec = tween(1000)) +
+                    shrinkVertically(
+                        animationSpec = tween(
+                            1000,
+                            easing = EaseOutElastic
+                        )
+                    )
+        ) {
+            ColorSelectionSection(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 18.dp)
@@ -107,11 +129,16 @@ fun ConfigColumn(
         }
 
         SectionHeader(
-            R.string.opacity, R.drawable.ic_opacity_24, defaultSectionHeaderModifier
+            R.string.opacity,
+            R.drawable.ic_opacity_24,
+            defaultSectionHeaderModifier
         )
-        OpacitySliderWithValue(opacity = { opacity }, onOpacityChanged = {
-            viewModel.widgetOpacityState.value = it
-        })
+        OpacitySliderWithValue(
+            opacity = { opacity },
+            onOpacityChanged = {
+                viewModel.widgetOpacityState.value = it
+            }
+        )
 
         SectionHeader(
             titleRes = R.string.properties,

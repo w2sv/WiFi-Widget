@@ -153,7 +153,7 @@ class HomeActivity : ComponentActivity() {
             { enumOrdinals.widgetTheme = it.ordinal }
         )
 
-        val showCustomThemeSection = widgetThemeState.transform {
+        val customThemeSelected = widgetThemeState.transform {
             emit(it == Theme.Custom)
         }
 
