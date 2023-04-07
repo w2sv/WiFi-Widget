@@ -12,6 +12,7 @@
 
         <TextView
             android:id="@+id/ssid_tv"
+            android:text="@string/ssid"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -25,6 +26,7 @@
 
         <TextView
             android:id="@+id/ip_tv"
+            android:text="@string/ip"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -38,6 +40,7 @@
 
         <TextView
             android:id="@+id/frequency_tv"
+            android:text="@string/frequency"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -51,6 +54,7 @@
 
         <TextView
             android:id="@+id/linkspeed_tv"
+            android:text="@string/linkspeed"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -64,6 +68,7 @@
 
         <TextView
             android:id="@+id/gateway_tv"
+            android:text="@string/gateway"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -77,6 +82,7 @@
 
         <TextView
             android:id="@+id/dns_tv"
+            android:text="@string/dns"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -90,6 +96,7 @@
 
         <TextView
             android:id="@+id/dhcp_tv"
+            android:text="@string/dhcp"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
@@ -103,6 +110,7 @@
 
         <TextView
             android:id="@+id/netmask_tv"
+            android:text="@string/netmask"
             style="@style/Widget.Wifi.Property.Label" />
 
         <TextView
