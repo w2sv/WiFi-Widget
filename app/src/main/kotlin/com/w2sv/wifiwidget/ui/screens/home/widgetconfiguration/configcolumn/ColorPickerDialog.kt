@@ -83,7 +83,8 @@ internal fun ColorPickerDialog(
                 Spacer(modifier = Modifier.padding(vertical = 12.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(bottom = 12.dp)
                 ) {
                     DialogButton(onClick = viewModel::onDismissCustomizationDialog) {
                         JostText(text = stringResource(id = R.string.cancel))

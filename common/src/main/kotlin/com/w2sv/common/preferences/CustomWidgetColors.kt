@@ -11,6 +11,6 @@ import javax.inject.Singleton
 class CustomWidgetColors @Inject constructor(sharedPreferences: SharedPreferences) : IntPreferences(
     WidgetColorSection.Background.name to Color.GRAY,
     WidgetColorSection.Labels.name to Color.RED,
-    WidgetColorSection.Values.name to Color.BLACK,
+    WidgetColorSection.Values.name to Color.WHITE,
     sharedPreferences = sharedPreferences
 )
