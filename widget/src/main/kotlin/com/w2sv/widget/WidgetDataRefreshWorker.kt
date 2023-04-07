@@ -8,6 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.common.preferences.WidgetRefreshingParameters
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -66,14 +67,14 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         }
 
         fun applyChangedParameters() {
-            when (widgetRefreshingParameters.refreshPeriodically) {
+            when (widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshPeriodically)) {
                 true -> enableWorker()
                 false -> cancelWorker()
             }
         }
 
         fun enableWorkerIfApplicable() {
-            if (widgetRefreshingParameters.refreshPeriodically) {
+            if (widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshPeriodically)) {
                 enableWorker()
             }
         }
@@ -82,7 +83,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
             enqueueAsUniquePeriodicWork(
                 WorkManager.getInstance(context),
                 Duration.ofMinutes(15L),
-                !widgetRefreshingParameters.refreshOnBatteryLow
+                !widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshOnBatteryLow)
             )
         }
 

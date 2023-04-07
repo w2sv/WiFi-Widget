@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.common.CustomizableWidgetSection
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
@@ -38,7 +38,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
 @Composable
 internal fun ColorPickerDialog(
-    customizableWidgetSection: CustomizableWidgetSection,
+    customizableWidgetSection: WidgetColorSection,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
@@ -107,7 +107,7 @@ internal fun ColorPickerDialog(
 private fun Prev() {
     WifiWidgetTheme {
         ColorPickerDialog(
-            customizableWidgetSection = CustomizableWidgetSection.Background
+            customizableWidgetSection = WidgetColorSection.Background
         )
     }
 }

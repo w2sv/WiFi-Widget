@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.CustomizableWidgetSection
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
 
@@ -34,11 +34,11 @@ internal fun ColorSelectionSection(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        SectionCustomizationRow(CustomizableWidgetSection.Background)
+        SectionCustomizationRow(WidgetColorSection.Background)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(CustomizableWidgetSection.Labels)
+        SectionCustomizationRow(WidgetColorSection.Labels)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(CustomizableWidgetSection.Values)
+        SectionCustomizationRow(WidgetColorSection.Values)
     }
 
     viewModel.customizationDialogSection.collectAsState().value?.let { section ->
@@ -48,7 +48,7 @@ internal fun ColorSelectionSection(
 
 @Composable
 private fun SectionCustomizationRow(
-    customizableWidgetSection: CustomizableWidgetSection,
+    widgetColorSection: WidgetColorSection,
     modifier: Modifier = Modifier,
     viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
@@ -59,7 +59,7 @@ private fun SectionCustomizationRow(
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         JostText(
-            text = stringResource(id = customizableWidgetSection.labelRes),
+            text = stringResource(id = widgetColorSection.labelRes),
             fontSize = 12.sp,
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.SemiBold,
@@ -72,12 +72,12 @@ private fun SectionCustomizationRow(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
                     viewModel.customWidgetColorsState.getValue(
-                        customizableWidgetSection.name
+                        widgetColorSection.name
                     )
                 )
             ),
             onClick = {
-                viewModel.customizationDialogSection.value = customizableWidgetSection
+                viewModel.customizationDialogSection.value = widgetColorSection
             },
             shape = CircleShape
         ) {}

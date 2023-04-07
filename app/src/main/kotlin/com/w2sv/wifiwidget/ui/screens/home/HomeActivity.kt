@@ -31,7 +31,7 @@ import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.common.CustomizableWidgetSection
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.Theme
 import com.w2sv.common.WifiProperty
 import com.w2sv.common.preferences.CustomWidgetColors
@@ -162,7 +162,7 @@ class HomeActivity : ComponentActivity() {
             { customWidgetColors.putAll(it) }
         )
 
-        val customizationDialogSection = MutableStateFlow<CustomizableWidgetSection?>(null)
+        val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
 
         fun onDismissCustomizationDialog() {
             customizationDialogSection.reset()

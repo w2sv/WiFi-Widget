@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.JostText
@@ -34,15 +35,15 @@ internal fun RefreshingSection(
     Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
         RefreshingParameterRow(
             label = R.string.refresh_periodically,
-            parameterName = "refreshPeriodically"
+            parameter = WidgetRefreshingParameter.RefreshPeriodically
         )
         AnimatedVisibility(
-            visible = viewModel.widgetRefreshingParametersState.getValue("refreshPeriodically"),
+            visible = viewModel.widgetRefreshingParametersState.getValue(WidgetRefreshingParameter.RefreshPeriodically.name),
             enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
         ) {
             RefreshingParameterRow(
                 label = R.string.refresh_on_low_battery,
-                parameterName = "refreshOnBatteryLow",
+                parameter = WidgetRefreshingParameter.RefreshOnBatteryLow,
                 modifier = Modifier.padding(start = 12.dp),
                 fontSize = 14.sp
             )
@@ -53,10 +54,10 @@ internal fun RefreshingSection(
 @Composable
 private fun RefreshingParameterRow(
     @StringRes label: Int,
-    parameterName: String,
+    parameter: WidgetRefreshingParameter,
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    fontSize: TextUnit = TextUnit.Unspecified
+    fontSize: TextUnit = TextUnit.Unspecified,
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -67,9 +68,9 @@ private fun RefreshingParameterRow(
     ) {
         JostText(text = stringResource(id = label), fontSize = fontSize)
         Checkbox(
-            checked = viewModel.widgetRefreshingParametersState.map.getValue(parameterName),
+            checked = viewModel.widgetRefreshingParametersState.getValue(parameter.name),
             onCheckedChange = {
-                viewModel.widgetRefreshingParametersState[parameterName] = it
+                viewModel.widgetRefreshingParametersState[parameter.name] = it
             }
         )
     }
