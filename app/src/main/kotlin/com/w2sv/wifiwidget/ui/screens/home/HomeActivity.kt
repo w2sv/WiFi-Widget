@@ -259,20 +259,23 @@ class HomeActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         addObservers(
-            viewModel.lifecycleObservers + listOf(
-                lapRequestLauncher,
-                AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this)) { _, intent ->
-                    i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
+            buildList {
+                addAll(viewModel.lifecycleObservers)
+                add(lapRequestLauncher)
+                add(
+                    AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this@HomeActivity)) { _, intent ->
+                        i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
 
-                    intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                        ?.let { widgetId ->
-                            viewModel.onWidgetOptionsUpdated(
-                                widgetId,
-                                this
-                            )
-                        }
-                }
-            )
+                        intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                            ?.let { widgetId ->
+                                viewModel.onWidgetOptionsUpdated(
+                                    widgetId,
+                                    this@HomeActivity
+                                )
+                            }
+                    }
+                )
+            }
         )
 
         subscribeToFlows()
