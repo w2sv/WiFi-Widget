@@ -69,7 +69,6 @@ internal class WidgetPopulator @Inject constructor(
                             false -> WifiStatus.Disconnected
                         }
                     }
-
                 }
             )
             setWidgetColors(
@@ -101,7 +100,7 @@ internal class WidgetPopulator @Inject constructor(
                 setLayout(false)
                 setTextViewText(
                     R.id.wifi_status_tv,
-                    context.getString(com.w2sv.common.R.string.wifi_disabled)
+                    context.getString(com.w2sv.common.R.string.no_wifi_connection)
                 )
             }
         }

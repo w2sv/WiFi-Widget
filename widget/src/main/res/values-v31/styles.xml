@@ -1,10 +1,8 @@
 <resources>
-
     <style name="Widget.WiFiWidget.AppWidget.Container" parent="android:Widget">
         <item name="android:id">@android:id/background</item>
         <item name="android:padding">?attr/appWidgetPadding</item>
         <item name="android:background">@drawable/shape_widget_background</item>
         <item name="android:clipToOutline">true</item>
     </style>
-
 </resources>
