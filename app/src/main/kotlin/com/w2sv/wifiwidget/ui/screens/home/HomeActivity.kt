@@ -38,7 +38,7 @@ import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
 import com.w2sv.common.preferences.GlobalFlags
-import com.w2sv.common.preferences.WidgetProperties
+import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.common.preferences.WidgetRefreshingParameters
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.widget.WidgetDataRefreshWorker
@@ -62,7 +62,7 @@ class HomeActivity : ComponentActivity() {
 
     @HiltViewModel
     class ViewModel @Inject constructor(
-        private val widgetProperties: WidgetProperties,
+        private val wifiProperties: WifiProperties,
         private val globalFlags: GlobalFlags,
         private val enumOrdinals: EnumOrdinals,
         private val floatPreferences: FloatPreferences,
@@ -74,7 +74,7 @@ class HomeActivity : ComponentActivity() {
 
         val lifecycleObservers: List<LifecycleObserver>
             get() = listOf(
-                widgetProperties,
+                wifiProperties,
                 globalFlags,
                 enumOrdinals,
                 floatPreferences,
@@ -124,7 +124,7 @@ class HomeActivity : ComponentActivity() {
             i { "Pinned new widget w ID=$widgetId" }
             context.showToast(R.string.pinned_widget)
 
-            if (widgetProperties.getValue(WifiProperty.SSID.name) && !context.locationServicesEnabled)
+            if (wifiProperties.getValue(WifiProperty.SSID.name) && !context.locationServicesEnabled)
                 context.showToast(
                     R.string.ssid_display_requires_location_services_to_be_enabled,
                     Toast.LENGTH_LONG
@@ -143,8 +143,8 @@ class HomeActivity : ComponentActivity() {
         val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
 
         val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
-            { widgetProperties },
-            { widgetProperties.putAll(it) }
+            { wifiProperties },
+            { wifiProperties.putAll(it) }
         )
 
         val widgetThemeState = NonAppliedStateFlow(

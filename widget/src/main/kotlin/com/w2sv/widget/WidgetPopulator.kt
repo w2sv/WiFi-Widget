@@ -12,7 +12,7 @@ import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
-import com.w2sv.common.preferences.WidgetProperties
+import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -33,7 +33,7 @@ private enum class WifiStatus {
 
 internal class WidgetPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val widgetProperties: WidgetProperties,
+    private val wifiProperties: WifiProperties,
     private val enumOrdinals: EnumOrdinals,
     private val floatPreferences: FloatPreferences,
     private val customWidgetColors: CustomWidgetColors
@@ -85,7 +85,7 @@ internal class WidgetPopulator @Inject constructor(
         when (wifiStatus) {
             WifiStatus.Connected -> {
                 setLayout(true)
-                setWifiProperties(context, widgetProperties)
+                setWifiProperties(context, wifiProperties)
             }
 
             WifiStatus.Disabled -> {

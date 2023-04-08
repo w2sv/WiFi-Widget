@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WidgetProperties @Inject constructor(sharedPreferences: SharedPreferences) :
+class WifiProperties @Inject constructor(sharedPreferences: SharedPreferences) :
     BooleanPreferences(
         WifiProperty.SSID.name to false,
         WifiProperty.IP.name to true,

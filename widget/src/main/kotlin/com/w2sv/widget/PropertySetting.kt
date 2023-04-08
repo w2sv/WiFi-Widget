@@ -6,49 +6,49 @@ import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import com.w2sv.common.WifiProperty
-import com.w2sv.common.preferences.WidgetProperties
+import com.w2sv.common.preferences.WifiProperties
 
 @Suppress("DEPRECATION")
-internal fun RemoteViews.setWifiProperties(context: Context, widgetProperties: WidgetProperties) {
+internal fun RemoteViews.setWifiProperties(context: Context, wifiProperties: WifiProperties) {
     val wifiManager = context.getSystemService(WifiManager::class.java)
 
     setPropertyRow(
-        widgetProperties.get(WifiProperty.SSID),
+        wifiProperties.get(WifiProperty.SSID),
         R.id.ssid_row,
         R.id.ssid_value_tv
     ) { wifiManager.connectionInfo.ssid.replace("\"", "") }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.IP),
+        wifiProperties.get(WifiProperty.IP),
         R.id.ip_row,
         R.id.ip_value_tv
     ) { wifiManager.connectionInfo.ipAddress.asFormattedIpAddress() }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.Frequency),
+        wifiProperties.get(WifiProperty.Frequency),
         R.id.frequency_row,
         R.id.frequency_value_tv
     ) { "${wifiManager.connectionInfo.frequency} MHz" }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.Linkspeed),
+        wifiProperties.get(WifiProperty.Linkspeed),
         R.id.linkspeed_row,
         R.id.linkspeed_value_tv
     ) { "${wifiManager.connectionInfo.linkSpeed} Mbps" }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.Gateway),
+        wifiProperties.get(WifiProperty.Gateway),
         R.id.gateway_row,
         R.id.gateway_value_tv
     ) { wifiManager.dhcpInfo.gateway.asFormattedIpAddress() }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.DNS),
+        wifiProperties.get(WifiProperty.DNS),
         R.id.dns_row,
         R.id.dns_value_tv
     ) { wifiManager.dhcpInfo.dns1.asFormattedIpAddress() }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.DHCP),
+        wifiProperties.get(WifiProperty.DHCP),
         R.id.dhcp_row,
         R.id.dhcp_value_tv
     ) { wifiManager.dhcpInfo.serverAddress.asFormattedIpAddress() }
     setPropertyRow(
-        widgetProperties.get(WifiProperty.Netmask),
+        wifiProperties.get(WifiProperty.Netmask),
         R.id.netmask_row,
         R.id.netmask_value_tv
     ) { getNetmask() }
