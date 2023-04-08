@@ -17,9 +17,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
-import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.splashscreen.SplashScreenViewProvider
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
@@ -254,11 +252,9 @@ class HomeActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen().setOnExitAnimationListener(
-            SwipeUpAnimation {
-                viewModel.onSplashScreenAnimationFinished()
-            }
-        )
+        handleSplashScreen {
+            viewModel.onSplashScreenAnimationFinished()
+        }
 
         super.onCreate(savedInstanceState)
 
@@ -297,6 +293,29 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
+    /**
+     * Sets SwipeUp exit animation and triggers call to [onAnimationFinished] in time.
+     */
+    private fun handleSplashScreen(onAnimationFinished: () -> Unit) {
+        installSplashScreen().setOnExitAnimationListener { splashScreenViewProvider ->
+            ObjectAnimator.ofFloat(
+                splashScreenViewProvider.view,
+                View.TRANSLATION_Y,
+                0f,
+                -splashScreenViewProvider.view.height.toFloat()
+            )
+                .apply {
+                    interpolator = AnticipateInterpolator()
+                    duration = 400L
+                    doOnEnd {
+                        splashScreenViewProvider.remove()
+                        onAnimationFinished()
+                    }
+                }
+                .start()
+        }
+    }
+
     private fun subscribeToFlows() {
         lifecycleScope.launch {
             with(viewModel.widgetRefreshingParametersChanged) {
@@ -311,26 +330,5 @@ class HomeActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-private class SwipeUpAnimation(private val onEnd: () -> Unit) :
-    SplashScreen.OnExitAnimationListener {
-    override fun onSplashScreenExit(splashScreenViewProvider: SplashScreenViewProvider) {
-        ObjectAnimator.ofFloat(
-            splashScreenViewProvider.view,
-            View.TRANSLATION_Y,
-            0f,
-            -splashScreenViewProvider.view.height.toFloat()
-        )
-            .apply {
-                interpolator = AnticipateInterpolator()
-                duration = 400L
-                doOnEnd {
-                    splashScreenViewProvider.remove()
-                    onEnd()
-                }
-            }
-            .start()
     }
 }
