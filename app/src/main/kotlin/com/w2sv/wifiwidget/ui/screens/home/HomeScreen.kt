@@ -19,8 +19,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    finishAffinity: () -> Unit
+    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val context = LocalContext.current
 
@@ -58,8 +57,7 @@ internal fun HomeScreen(
         BackHandler {
             when {
                 drawerOpen() -> closeDrawer()
-                !viewModel.exitOnBackPress -> viewModel.onFirstBackPress(context)
-                else -> finishAffinity()
+                else -> viewModel.onBackPress(context)
             }
         }
     }

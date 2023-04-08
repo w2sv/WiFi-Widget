@@ -18,6 +18,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
@@ -224,16 +225,27 @@ class HomeActivity : ComponentActivity() {
          * BackPress
          */
 
-        var exitOnBackPress: Boolean = false
-            private set
-
-        fun onFirstBackPress(context: Context) {
-            exitOnBackPress = true
-            context.showToast("Tap again to exit")
-            viewModelScope.launchDelayed(2500L) {
-                exitOnBackPress = false
+        fun onBackPress(context: Context) {
+            when (exitOnBackPress) {
+                true -> exitApplication.value = true
+                false -> {
+                    exitOnBackPress = true
+                    context.showToast(context.getString(R.string.tap_again_to_exit))
+                }
             }
         }
+
+        val exitApplication = MutableStateFlow(false)
+
+        private var exitOnBackPress: Boolean = false
+            set(value) {
+                if (value) {
+                    viewModelScope.launchDelayed(2500L) {
+                        field = false
+                    }
+                }
+                field = value
+            }
     }
 
     private val viewModel by viewModels<ViewModel>()
@@ -278,7 +290,7 @@ class HomeActivity : ComponentActivity() {
             }
         )
 
-        subscribeToFlows()
+        lifecycleScope.subscribeToFlows()
 
         setContent {
             WifiWidgetTheme(
@@ -289,9 +301,7 @@ class HomeActivity : ComponentActivity() {
                     else -> throw Error()
                 }
             ) {
-                HomeScreen {
-                    finishAffinity()
-                }
+                HomeScreen()
             }
         }
     }
@@ -319,8 +329,8 @@ class HomeActivity : ComponentActivity() {
         }
     }
 
-    private fun subscribeToFlows() {
-        lifecycleScope.launch {
+    private fun LifecycleCoroutineScope.subscribeToFlows() {
+        launch {
             with(viewModel.widgetRefreshingParametersChanged) {
                 collect {
                     if (it) {
@@ -330,6 +340,13 @@ class HomeActivity : ComponentActivity() {
                             .applyChangedParameters()
                         value = false
                     }
+                }
+            }
+        }
+        launch {
+            viewModel.exitApplication.collect {
+                if (it) {
+                    finishAffinity()
                 }
             }
         }
