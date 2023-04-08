@@ -17,9 +17,9 @@ import com.w2sv.wifiwidget.R
 
 @Composable
 fun InfoDialog(
-    modifier: Modifier = Modifier,
     title: String,
     text: String,
+    modifier: Modifier = Modifier,
     learnMoreButton: (@Composable () -> Unit)? = null,
     onDismissRequest: () -> Unit
 ) {

@@ -31,15 +31,16 @@ import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.Theme
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
+import com.w2sv.common.extensions.addObservers
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
 import com.w2sv.common.preferences.GlobalFlags
-import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.common.preferences.WidgetRefreshingParameters
+import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
@@ -239,22 +240,14 @@ class HomeActivity : ComponentActivity() {
 
     private val viewModel by viewModels<ViewModel>()
 
-    inner class WifiWidgetOptionsChangedReceiver : SelfManagingLocalBroadcastReceiver(
-        LocalBroadcastManager.getInstance(this),
-        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED)
-    ) {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
-
-            intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                ?.let { widgetId ->
-                    viewModel.onWidgetOptionsUpdated(
-                        widgetId,
-                        this@HomeActivity
-                    )
-                }
-        }
-    }
+    class AppWidgetOptionsChangedReceiver(
+        broadcastManager: LocalBroadcastManager,
+        callback: (Context?, Intent?) -> Unit
+    ) : SelfManagingLocalBroadcastReceiver.Impl(
+        broadcastManager,
+        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED),
+        callback
+    )
 
     val lapRequestLauncher by lazy {
         LocationAccessPermissionHandler(this)
@@ -269,23 +262,24 @@ class HomeActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        viewModel.lifecycleObservers + listOf(
-            lapRequestLauncher,
-            WifiWidgetOptionsChangedReceiver()
-        )
-            .forEach(lifecycle::addObserver)
+        addObservers(
+            viewModel.lifecycleObservers + listOf(
+                lapRequestLauncher,
+                AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this)) { _, intent ->
+                    i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
 
-        lifecycleScope.launch {
-            with(viewModel.widgetRefreshingParametersChanged) {
-                collect {
-                    if (it) {
-                        WidgetDataRefreshWorker.Administrator.getInstance(applicationContext)
-                            .applyChangedParameters()
-                    }
-                    value = false
+                    intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                        ?.let { widgetId ->
+                            viewModel.onWidgetOptionsUpdated(
+                                widgetId,
+                                this
+                            )
+                        }
                 }
-            }
-        }
+            )
+        )
+
+        subscribeToFlows()
 
         setContent {
             WifiWidgetTheme(
@@ -298,6 +292,22 @@ class HomeActivity : ComponentActivity() {
             ) {
                 HomeScreen {
                     finishAffinity()
+                }
+            }
+        }
+    }
+
+    private fun subscribeToFlows() {
+        lifecycleScope.launch {
+            with(viewModel.widgetRefreshingParametersChanged) {
+                collect {
+                    if (it) {
+                        WidgetDataRefreshWorker
+                            .Administrator
+                            .getInstance(applicationContext)
+                            .applyChangedParameters()
+                        value = false
+                    }
                 }
             }
         }

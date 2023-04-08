@@ -41,7 +41,7 @@
         </receiver>
 
         <receiver
-            android:name="com.w2sv.wifiwidget.ui.screens.home.HomeActivity$WifiWidgetOptionsChangedReceiver"
+            android:name="com.w2sv.wifiwidget.ui.screens.home.HomeActivity$AppWidgetOptionsChangedReceiver"
             tools:ignore="Instantiatable" />
 
     </application>
