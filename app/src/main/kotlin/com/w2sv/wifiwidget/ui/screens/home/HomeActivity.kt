@@ -24,16 +24,16 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
+import com.w2sv.androidutils.extensions.addObservers
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
-import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
-import com.w2sv.common.extensions.addObservers
 import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.EnumOrdinals
 import com.w2sv.common.preferences.FloatPreferences
@@ -225,27 +225,20 @@ class HomeActivity : ComponentActivity() {
          * BackPress
          */
 
-        fun onBackPress(context: Context) {
-            when (exitOnBackPress) {
-                true -> exitApplication.value = true
-                false -> {
-                    exitOnBackPress = true
-                    context.showToast(context.getString(R.string.tap_again_to_exit))
-                }
-            }
-        }
-
         val exitApplication = MutableStateFlow(false)
 
-        private var exitOnBackPress: Boolean = false
-            set(value) {
-                if (value) {
-                    viewModelScope.launchDelayed(2500L) {
-                        field = false
-                    }
+        fun onBackPress(context: Context) {
+            backPressHandler.invoke(
+                onFirstPress = {
+                    exitApplication.value = true
+                },
+                onSecondPress = {
+                    context.showToast(context.getString(R.string.tap_again_to_exit))
                 }
-                field = value
-            }
+            )
+        }
+
+        private val backPressHandler = BackPressHandler(viewModelScope, 2500L)
     }
 
     private val viewModel by viewModels<ViewModel>()
