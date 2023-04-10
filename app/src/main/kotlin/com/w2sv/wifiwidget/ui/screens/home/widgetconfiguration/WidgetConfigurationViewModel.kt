@@ -7,11 +7,8 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
-import com.w2sv.common.preferences.CustomWidgetColors
 import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.common.preferences.PreferencesKey
-import com.w2sv.common.preferences.WidgetRefreshingParameters
-import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
@@ -24,9 +21,6 @@ import javax.inject.Inject
 @HiltViewModel
 class WidgetConfigurationViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
-    private val wifiProperties: WifiProperties,
-    private val widgetRefreshingParameters: WidgetRefreshingParameters,
-    private val customWidgetColors: CustomWidgetColors,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -48,23 +42,24 @@ class WidgetConfigurationViewModel @Inject constructor(
     val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
 
     val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
-        { wifiProperties },
-        { wifiProperties.putAll(it) }
+        viewModelScope,
+        dataStoreRepository.wifiProperties,
+        dataStoreRepository
     )
 
     val widgetThemeState = NonAppliedStateFlow(
         viewModelScope,
-        dataStoreRepository.widgetTheme,
-        { dataStoreRepository.save(it, PreferencesKey.IN_APP_THEME, viewModelScope) }
-    )
+        dataStoreRepository.widgetTheme
+    ) { dataStoreRepository.saveEnum(it, PreferencesKey.WIDGET_THEME, viewModelScope) }
 
     val customThemeSelected = widgetThemeState.transform {
         emit(it == Theme.Custom)
     }
 
     val customWidgetColorsState = NonAppliedSnapshotStateMap(
-        { customWidgetColors },
-        { customWidgetColors.putAll(it) }
+        viewModelScope,
+        dataStoreRepository.customWidgetColors,
+        dataStoreRepository
     )
 
     val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
@@ -75,16 +70,13 @@ class WidgetConfigurationViewModel @Inject constructor(
 
     val widgetOpacityState = NonAppliedStateFlow(
         viewModelScope,
-        dataStoreRepository.opacity,
-        { dataStoreRepository.save(it, PreferencesKey.OPACITY, viewModelScope) }
-    )
+        dataStoreRepository.opacity
+    ) { dataStoreRepository.save(it, PreferencesKey.OPACITY, viewModelScope) }
 
     val widgetRefreshingParametersState = NonAppliedSnapshotStateMap(
-        { widgetRefreshingParameters },
-        {
-            widgetRefreshingParameters.putAll(it)
-            widgetRefreshingParametersChanged.value = true
-        }
+        viewModelScope,
+        dataStoreRepository.widgetRefreshingParameters,
+        dataStoreRepository
     )
 
     val widgetRefreshingParametersChanged = MutableStateFlow(false)
@@ -112,7 +104,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         onChangeRejected: () -> Unit
     ) {
         when (value || widgetPropertyStateMap.values.count { true } != 1) {
-            true -> widgetPropertyStateMap[property.name] = value
+            true -> widgetPropertyStateMap[property] = value
             false -> onChangeRejected()
         }
     }

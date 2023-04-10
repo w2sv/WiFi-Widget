@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WidgetColorSection
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.JostText
 
@@ -73,7 +72,7 @@ private fun SectionCustomizationRow(
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
                     viewModel.customWidgetColorsState.getValue(
-                        widgetColorSection.name
+                        widgetColorSection
                     )
                 )
             ),

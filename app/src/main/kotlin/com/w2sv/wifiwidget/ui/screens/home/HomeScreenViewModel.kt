@@ -7,9 +7,9 @@ import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.WifiProperty
+import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.common.preferences.PreferencesKey
-import com.w2sv.common.preferences.WifiProperties
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
@@ -17,14 +17,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     val dataStoreRepository: DataStoreRepository,
-    private val wifiProperties: WifiProperties,
     @ApplicationContext context: Context
 ) : androidx.lifecycle.ViewModel() {
 
@@ -34,11 +33,10 @@ class HomeScreenViewModel @Inject constructor(
 
     val inAppThemeState = NonAppliedStateFlow(
         viewModelScope,
-        dataStoreRepository.inAppTheme,
-        {
-            dataStoreRepository.save(it, PreferencesKey.IN_APP_THEME, viewModelScope)
-        }
-    )
+        dataStoreRepository.inAppTheme
+    ) {
+        dataStoreRepository.saveEnum(it, PreferencesKey.IN_APP_THEME, viewModelScope)
+    }
 
     /**
      * Widget Pin Listening
@@ -54,11 +52,15 @@ class HomeScreenViewModel @Inject constructor(
         i { "Pinned new widget w ID=$widgetId" }
         context.showToast(R.string.pinned_widget)
 
-        if (wifiProperties.getValue(WifiProperty.SSID.name) && !context.locationServicesEnabled)
-            context.showToast(
-                R.string.ssid_display_requires_location_services_to_be_enabled,
-                Toast.LENGTH_LONG
+        viewModelScope.launch {
+            if (dataStoreRepository.wifiProperties.getValue(WifiProperty.SSID)
+                    .first() && !context.locationServicesEnabled
             )
+                context.showToast(
+                    R.string.ssid_display_requires_location_services_to_be_enabled,
+                    Toast.LENGTH_LONG
+                )
+        }
     }
 
     private val widgetIds: MutableSet<Int> =
@@ -68,7 +70,7 @@ class HomeScreenViewModel @Inject constructor(
      * lap := Location Access Permission
      */
 
-    val lapDialogAnswered: Boolean get() = runBlocking { dataStoreRepository.locationPermissionDialogAnswered.first() }
+    val lapDialogAnswered: Boolean get() = dataStoreRepository.locationPermissionDialogAnswered.getValueSynchronously()
 
     fun onLAPDialogAnswered() {
         dataStoreRepository.save(

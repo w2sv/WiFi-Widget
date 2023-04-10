@@ -1,14 +1,16 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import com.w2sv.kotlinutils.extensions.valueEqualTo
+import com.w2sv.common.preferences.DataStoreProperty
+import com.w2sv.common.extensions.getDeflowedMap
+import com.w2sv.common.extensions.getValueSynchronously
+import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.wifiwidget.extensions.getMutableStateMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 abstract class NonAppliedState<T>(
     protected val applyState: (T) -> Unit
@@ -24,49 +26,64 @@ abstract class NonAppliedState<T>(
     abstract fun reset()
 }
 
-class NonAppliedSnapshotStateMap<K, V>(
-    private val getAppliedState: () -> Map<K, V>,
-    updateAppliedState: (Map<K, V>) -> Unit,
-    private val map: SnapshotStateMap<K, V> = getAppliedState().getMutableStateMap()
-) : NonAppliedState<Map<K, V>>(updateAppliedState),
+class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
+    private val coroutineScope: CoroutineScope,
+    private val appliedFlowMap: Map<K, Flow<V>>,
+    private val dataStoreRepository: DataStoreRepository,
+    private val map: SnapshotStateMap<K, V> = appliedFlowMap
+        .getDeflowedMap()
+        .getMutableStateMap()
+) : NonAppliedState<Map<K, V>>({ dataStoreRepository.saveMap(it, coroutineScope) }),
     MutableMap<K, V> by map {
 
     override val value: Map<K, V> get() = this
 
     override fun reset() {
-        putAll(getAppliedState())
+        coroutineScope.launch {
+            appliedFlowMap.forEach { (k, v) ->
+                map[k] = v.first()
+            }
+        }
         requiringUpdate.value = false
     }
 
+    private val dissimilarKeys = mutableSetOf<K>()
+
     override fun put(key: K, value: V): V? {
         val previous = map.put(key, value)
-        requiringUpdate.value = !valueEqualTo(getAppliedState())
+        coroutineScope.launch {
+            when (value == appliedFlowMap.getValue(key).first()) {
+                true -> dissimilarKeys.remove(key)
+                false -> dissimilarKeys.add(key)
+            }
+            requiringUpdate.value = dissimilarKeys.isNotEmpty()
+        }
         return previous
     }
 }
 
 class NonAppliedStateFlow<T>(
-    coroutineScope: CoroutineScope,
-    private val dataStoreFlow: Flow<T>,
-    updateAppliedState: (T) -> Unit,
-    private val getAppliedState: () -> T = {
-        runBlocking {
-            dataStoreFlow.first()
-        }
-    }
+    private val coroutineScope: CoroutineScope,
+    private val appliedFlow: Flow<T>,
+    updateAppliedState: (T) -> Unit
 ) : NonAppliedState<T>(updateAppliedState),
-    MutableStateFlow<T> by MutableStateFlow(getAppliedState()) {
+    MutableStateFlow<T> by MutableStateFlow(
+        appliedFlow.getValueSynchronously()
+    ) {
 
     init {
         coroutineScope.launch {
             collect {
-                requiringUpdate.value = it != getAppliedState()
+                requiringUpdate.value = it != appliedFlow.first()
             }
         }
     }
 
     override fun reset() {
-        value = getAppliedState()
+        coroutineScope.launch {
+            value = appliedFlow.first()
+        }
+        requiringUpdate.value = false
     }
 }
 

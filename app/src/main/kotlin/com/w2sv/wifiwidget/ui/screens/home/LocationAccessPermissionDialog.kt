@@ -79,7 +79,7 @@ fun LocationAccessPermissionDialog(
                     lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(widgetConfigurationViewModel)
                 },
                 onDismissButtonPressed = {
-                    widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
+                    widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
                 },
                 onAnyButtonPressed = { homeScreenViewModel.onLAPDialogAnswered() },
                 onDismiss = {

@@ -94,12 +94,30 @@ fun ConfigColumn(
                 theme = Theme.Custom,
                 label = R.string.custom,
                 buttonColoring = ButtonColoring.Gradient(
-                    Brush.linearGradient(
-                        0.4f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Background.name]!!),
-                        0.4f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
-                        0.6f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
-                        0.6f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Values.name]!!)
-                    )
+                    with(Brush) {
+                        linearGradient(
+                            0.4f to Color(
+                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                    WidgetColorSection.Background
+                                )
+                            ),
+                            0.4f to Color(
+                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                    WidgetColorSection.Labels
+                                )
+                            ),
+                            0.6f to Color(
+                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                    WidgetColorSection.Labels
+                                )
+                            ),
+                            0.6f to Color(
+                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                    WidgetColorSection.Values
+                                )
+                            )
+                        )
+                    }
                 )
             ),
             selected = {
@@ -153,7 +171,7 @@ fun ConfigColumn(
         )
         PropertySelectionSection(modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
-                widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property.name)
+                widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when {

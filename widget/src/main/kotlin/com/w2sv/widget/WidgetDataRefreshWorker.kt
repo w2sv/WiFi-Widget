@@ -9,7 +9,8 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.common.WidgetRefreshingParameter
-import com.w2sv.common.preferences.WidgetRefreshingParameters
+import com.w2sv.common.extensions.getDeflowedMap
+import com.w2sv.common.preferences.DataStoreRepository
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -48,7 +49,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
 
     class Administrator @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val widgetRefreshingParameters: WidgetRefreshingParameters
+        dataStoreRepository: DataStoreRepository
     ) {
 
         @InstallIn(SingletonComponent::class)
@@ -66,15 +67,18 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
                     .getAdministratorInstance()
         }
 
+        private val widgetRefreshingParameters =
+            dataStoreRepository.widgetRefreshingParameters.getDeflowedMap()
+
         fun applyChangedParameters() {
-            when (widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshPeriodically)) {
+            when (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {
                 true -> enableWorker()
                 false -> cancelWorker()
             }
         }
 
         fun enableWorkerIfApplicable() {
-            if (widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshPeriodically)) {
+            if (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {
                 enableWorker()
             }
         }
@@ -83,7 +87,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
             enqueueAsUniquePeriodicWork(
                 WorkManager.getInstance(context),
                 Duration.ofMinutes(15L),
-                !widgetRefreshingParameters.get(WidgetRefreshingParameter.RefreshOnBatteryLow)
+                !widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshOnBatteryLow)
             )
         }
 

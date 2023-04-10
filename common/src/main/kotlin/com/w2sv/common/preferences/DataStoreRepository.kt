@@ -4,6 +4,9 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import com.w2sv.common.Theme
+import com.w2sv.common.WidgetColorSection
+import com.w2sv.common.WidgetRefreshingParameter
+import com.w2sv.common.WifiProperty
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +38,29 @@ class DataStoreRepository @Inject constructor(
         )
     }
 
+    val widgetRefreshingParameters = mapFromDataStoreProperties(WidgetRefreshingParameter.values())
+
+    val customWidgetColors = mapFromDataStoreProperties(WidgetColorSection.values())
+
+    val wifiProperties = mapFromDataStoreProperties(WifiProperty.values())
+
+    private fun <T, P : DataStoreProperty<T>> mapFromDataStoreProperties(properties: Array<P>): Map<P, Flow<T>> =
+        properties.associateWith { property ->
+            dataStore.data.map {
+                it[property.preferencesKey] ?: property.defaultValue
+            }
+        }
+
+    fun <T, P : DataStoreProperty<T>> saveMap(map: Map<P, T>, coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
+            dataStore.edit {
+                map.forEach { (property, value) ->
+                    it[property.preferencesKey] = value
+                }
+            }
+        }
+    }
+
     fun <T> save(value: T, preferencesKey: Preferences.Key<T>, coroutineScope: CoroutineScope) {
         coroutineScope.launch(Dispatchers.IO) {
             dataStore.edit {
@@ -43,7 +69,7 @@ class DataStoreRepository @Inject constructor(
         }
     }
 
-    fun save(
+    fun saveEnum(
         value: Enum<*>,
         preferencesKey: Preferences.Key<Int>,
         coroutineScope: CoroutineScope

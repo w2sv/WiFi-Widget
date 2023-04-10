@@ -38,7 +38,7 @@ internal fun RefreshingSection(
             parameter = WidgetRefreshingParameter.RefreshPeriodically
         )
         AnimatedVisibility(
-            visible = viewModel.widgetRefreshingParametersState.getValue(WidgetRefreshingParameter.RefreshPeriodically.name),
+            visible = viewModel.widgetRefreshingParametersState.getValue(WidgetRefreshingParameter.RefreshPeriodically),
             enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
         ) {
             RefreshingParameterRow(
@@ -68,9 +68,9 @@ private fun RefreshingParameterRow(
     ) {
         JostText(text = stringResource(id = label), fontSize = fontSize)
         Checkbox(
-            checked = viewModel.widgetRefreshingParametersState.getValue(parameter.name),
+            checked = viewModel.widgetRefreshingParametersState.getValue(parameter),
             onCheckedChange = {
-                viewModel.widgetRefreshingParametersState[parameter.name] = it
+                viewModel.widgetRefreshingParametersState[parameter] = it
             }
         )
     }

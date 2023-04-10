@@ -26,11 +26,11 @@ class LocationAccessPermissionHandler(activity: ComponentActivity) :
     ): Boolean =
         super.requestPermissionIfRequired(
             {
-                viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = true
+                viewModel.widgetPropertyStateMap[WifiProperty.SSID] = true
                 onGranted?.invoke()
             },
             {
-                viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
+                viewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
                 onDenied?.invoke()
             },
             onRequestDismissed

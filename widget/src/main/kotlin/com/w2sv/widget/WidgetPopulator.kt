@@ -9,16 +9,14 @@ import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.extensions.crossVisualize
-import com.w2sv.common.preferences.CustomWidgetColors
+import com.w2sv.common.extensions.getDeflowedMap
+import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.preferences.DataStoreRepository
-import com.w2sv.common.preferences.WifiProperties
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -33,9 +31,7 @@ private enum class WifiStatus {
 
 internal class WidgetPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val wifiProperties: WifiProperties,
-    private val dataStoreRepository: DataStoreRepository,
-    private val customWidgetColors: CustomWidgetColors
+    private val dataStoreRepository: DataStoreRepository
 ) {
 
     @InstallIn(SingletonComponent::class)
@@ -71,9 +67,9 @@ internal class WidgetPopulator @Inject constructor(
                 }
             )
             setWidgetColors(
-                theme = runBlocking { dataStoreRepository.widgetTheme.first() },
-                customWidgetColors = customWidgetColors,
-                backgroundOpacity = runBlocking { dataStoreRepository.opacity.first() },
+                theme = dataStoreRepository.widgetTheme.getValueSynchronously(),
+                customWidgetColors = dataStoreRepository.customWidgetColors.getDeflowedMap(),
+                backgroundOpacity = dataStoreRepository.opacity.getValueSynchronously(),
                 context = context
             )
             setLastUpdatedTV()
@@ -84,7 +80,7 @@ internal class WidgetPopulator @Inject constructor(
         when (wifiStatus) {
             WifiStatus.Connected -> {
                 setLayout(true)
-                setWifiProperties(context, wifiProperties)
+                setWifiProperties(context, dataStoreRepository.wifiProperties.getDeflowedMap())
             }
 
             WifiStatus.Disabled -> {

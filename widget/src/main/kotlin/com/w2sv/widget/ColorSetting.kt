@@ -9,11 +9,10 @@ import androidx.core.graphics.ColorUtils
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.Theme
 import com.w2sv.common.extensions.toRGBChannelInt
-import com.w2sv.common.preferences.CustomWidgetColors
 
 internal fun RemoteViews.setWidgetColors(
     theme: Theme,
-    customWidgetColors: CustomWidgetColors,
+    customWidgetColors: Map<WidgetColorSection, Int>,
     backgroundOpacity: Float,
     context: Context
 ) {
@@ -51,10 +50,10 @@ internal fun RemoteViews.setWidgetColors(
         )
 
         Theme.Custom -> setColors(
-            customWidgetColors[WidgetColorSection.Background.name]!!,
+            customWidgetColors.getValue(WidgetColorSection.Background),
             backgroundOpacity,
-            customWidgetColors[WidgetColorSection.Labels.name]!!,
-            customWidgetColors[WidgetColorSection.Values.name]!!
+            customWidgetColors.getValue(WidgetColorSection.Labels),
+            customWidgetColors.getValue(WidgetColorSection.Values)
         )
     }
 }

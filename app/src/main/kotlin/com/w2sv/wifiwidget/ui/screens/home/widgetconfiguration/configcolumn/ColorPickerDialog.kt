@@ -43,7 +43,13 @@ internal fun ColorPickerDialog(
     widgetConfigurationViewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var color by remember {
-        mutableStateOf(Color(widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection.name]!!))
+        mutableStateOf(
+            Color(
+                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                    customizableWidgetSection
+                )
+            )
+        )
     }
     val scrollState = rememberScrollState()
 
@@ -91,7 +97,7 @@ internal fun ColorPickerDialog(
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection.name] =
+                        widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection] =
                             color.toArgb()
                         widgetConfigurationViewModel.onDismissCustomizationDialog()
                     }) {
