@@ -8,11 +8,8 @@ import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.common.WifiProperty
 import com.w2sv.kotlinutils.extensions.getByOrdinal
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DataStoreRepository @Inject constructor(
@@ -51,33 +48,28 @@ class DataStoreRepository @Inject constructor(
             }
         }
 
-    fun <T, P : DataStoreProperty<T>> saveMap(map: Map<P, T>, coroutineScope: CoroutineScope) {
-        coroutineScope.launch {
-            dataStore.edit {
-                map.forEach { (property, value) ->
-                    it[property.preferencesKey] = value
-                }
-            }
-        }
-    }
-
-    fun <T> save(value: T, preferencesKey: Preferences.Key<T>, coroutineScope: CoroutineScope) {
-        coroutineScope.launch(Dispatchers.IO) {
-            dataStore.edit {
-                it[preferencesKey] = value
-            }
-        }
-    }
-
-    fun saveEnum(
-        value: Enum<*>,
-        preferencesKey: Preferences.Key<Int>,
-        coroutineScope: CoroutineScope
+    suspend fun <T, P : DataStoreProperty<T>> saveMap(
+        map: Map<P, T>
     ) {
-        coroutineScope.launch(Dispatchers.IO) {
-            dataStore.edit {
-                it[preferencesKey] = value.ordinal
+        dataStore.edit {
+            map.forEach { (property, value) ->
+                it[property.preferencesKey] = value
             }
+        }
+    }
+
+    suspend fun <T> save(value: T, preferencesKey: Preferences.Key<T>) {
+        dataStore.edit {
+            it[preferencesKey] = value
+        }
+    }
+
+    suspend fun saveEnum(
+        value: Enum<*>,
+        preferencesKey: Preferences.Key<Int>
+    ) {
+        dataStore.edit {
+            it[preferencesKey] = value.ordinal
         }
     }
 }

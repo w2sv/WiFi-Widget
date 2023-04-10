@@ -104,7 +104,7 @@ fun StatefulNavigationDrawer(
     }
 
     val theme by homeScreenViewModel.inAppThemeState.collectAsState()
-    val themeRequiringUpdate by homeScreenViewModel.inAppThemeState.requiringUpdate.collectAsState()
+    val themeRequiringUpdate by homeScreenViewModel.inAppThemeState.stateChanged.collectAsState()
     val context = LocalContext.current
 
     if (showThemeDialog) {
@@ -117,9 +117,11 @@ fun StatefulNavigationDrawer(
             onThemeSelected = { homeScreenViewModel.inAppThemeState.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
             onApplyButtonPress = {
-                homeScreenViewModel.inAppThemeState.apply()
                 setShowThemeDialog(false)
-                context.showToast("Updated Theme")
+                scope.launch {
+                    homeScreenViewModel.inAppThemeState.apply()
+                    context.showToast("Updated Theme")
+                }
             }
         )
     }

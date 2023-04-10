@@ -16,6 +16,7 @@ import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -50,7 +51,11 @@ class WidgetConfigurationViewModel @Inject constructor(
     val widgetThemeState = NonAppliedStateFlow(
         viewModelScope,
         dataStoreRepository.widgetTheme
-    ) { dataStoreRepository.saveEnum(it, PreferencesKey.WIDGET_THEME, viewModelScope) }
+    ) {
+        viewModelScope.launch {
+            dataStoreRepository.saveEnum(it, PreferencesKey.WIDGET_THEME)
+        }
+    }
 
     val customThemeSelected = widgetThemeState.transform {
         emit(it == Theme.Custom)
@@ -71,13 +76,19 @@ class WidgetConfigurationViewModel @Inject constructor(
     val widgetOpacityState = NonAppliedStateFlow(
         viewModelScope,
         dataStoreRepository.opacity
-    ) { dataStoreRepository.save(it, PreferencesKey.OPACITY, viewModelScope) }
+    ) {
+        viewModelScope.launch {
+            dataStoreRepository.save(it, PreferencesKey.OPACITY)
+        }
+    }
 
     val widgetRefreshingParametersState = NonAppliedSnapshotStateMap(
         viewModelScope,
         dataStoreRepository.widgetRefreshingParameters,
         dataStoreRepository
-    )
+    ) {
+        widgetRefreshingParametersChanged.value = true
+    }
 
     val widgetRefreshingParametersChanged = MutableStateFlow(false)
 

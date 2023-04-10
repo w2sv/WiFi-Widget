@@ -35,7 +35,9 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope,
         dataStoreRepository.inAppTheme
     ) {
-        dataStoreRepository.saveEnum(it, PreferencesKey.IN_APP_THEME, viewModelScope)
+        viewModelScope.launch {
+            dataStoreRepository.saveEnum(it, PreferencesKey.IN_APP_THEME)
+        }
     }
 
     /**
@@ -73,11 +75,12 @@ class HomeScreenViewModel @Inject constructor(
     val lapDialogAnswered: Boolean get() = dataStoreRepository.locationPermissionDialogAnswered.getValueSynchronously()
 
     fun onLAPDialogAnswered() {
-        dataStoreRepository.save(
-            true,
-            PreferencesKey.LOCATION_PERMISSION_DIALOG_ANSWERED,
-            viewModelScope
-        )
+        viewModelScope.launch {
+            dataStoreRepository.save(
+                true,
+                PreferencesKey.LOCATION_PERMISSION_DIALOG_ANSWERED
+            )
+        }
     }
 
     val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
@@ -92,10 +95,10 @@ class HomeScreenViewModel @Inject constructor(
     fun onBackPress(context: Context) {
         backPressHandler.invoke(
             onFirstPress = {
-                exitApplication.value = true
+                context.showToast(context.getString(R.string.tap_again_to_exit))
             },
             onSecondPress = {
-                context.showToast(context.getString(R.string.tap_again_to_exit))
+                exitApplication.value = true
             }
         )
     }

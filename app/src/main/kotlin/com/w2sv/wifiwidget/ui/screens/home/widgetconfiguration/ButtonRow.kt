@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -14,6 +15,7 @@ import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun ButtonRow(
@@ -21,6 +23,7 @@ internal fun ButtonRow(
     widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val applyButtonEnabled by widgetConfigurationViewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
 
     ButtonRow(
@@ -28,10 +31,12 @@ internal fun ButtonRow(
             widgetConfigurationViewModel.onDismissWidgetConfigurationDialog()
         },
         onApply = {
-            widgetConfigurationViewModel.widgetConfigurationStates.apply()
-            WidgetProvider.triggerDataRefresh(context)
-            context.showToast(R.string.updated_widget_configuration)
-            widgetConfigurationViewModel.showWidgetConfigurationDialog.value = false
+            scope.launch {
+                widgetConfigurationViewModel.widgetConfigurationStates.apply()
+                WidgetProvider.triggerDataRefresh(context)
+                context.showToast(R.string.updated_widget_configuration)
+                widgetConfigurationViewModel.showWidgetConfigurationDialog.value = false
+            }
         },
         applyButtonEnabled = {
             applyButtonEnabled

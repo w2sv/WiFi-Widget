@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 abstract class NonAppliedState<T>(
-    protected val applyState: (T) -> Unit
+    protected val applyState: suspend (T) -> Unit
 ) {
-    val requiringUpdate = MutableStateFlow(false)
+    val stateChanged = MutableStateFlow(false)
     abstract val value: T
 
-    fun apply() {
+    suspend fun apply() {
+        stateChanged.value = false
         applyState(value)
-        requiringUpdate.value = false
     }
 
     abstract fun reset()
@@ -32,8 +32,12 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
     private val dataStoreRepository: DataStoreRepository,
     private val map: SnapshotStateMap<K, V> = appliedFlowMap
         .getDeflowedMap()
-        .getMutableStateMap()
-) : NonAppliedState<Map<K, V>>({ dataStoreRepository.saveMap(it, coroutineScope) }),
+        .getMutableStateMap(),
+    onApplyState: (Map<K, V>) -> Unit = { it }
+) : NonAppliedState<Map<K, V>>({
+    dataStoreRepository.saveMap(it)
+    onApplyState(it)
+}),
     MutableMap<K, V> by map {
 
     override val value: Map<K, V> get() = this
@@ -44,7 +48,7 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
                 map[k] = v.first()
             }
         }
-        requiringUpdate.value = false
+        stateChanged.value = false
     }
 
     private val dissimilarKeys = mutableSetOf<K>()
@@ -56,7 +60,7 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
                 true -> dissimilarKeys.remove(key)
                 false -> dissimilarKeys.add(key)
             }
-            requiringUpdate.value = dissimilarKeys.isNotEmpty()
+            stateChanged.value = dissimilarKeys.isNotEmpty()
         }
         return previous
     }
@@ -74,7 +78,7 @@ class NonAppliedStateFlow<T>(
     init {
         coroutineScope.launch {
             collect {
-                requiringUpdate.value = it != appliedFlow.first()
+                stateChanged.value = it != appliedFlow.first()
             }
         }
     }
@@ -83,7 +87,7 @@ class NonAppliedStateFlow<T>(
         coroutineScope.launch {
             value = appliedFlow.first()
         }
-        requiringUpdate.value = false
+        stateChanged.value = false
     }
 }
 
@@ -97,14 +101,14 @@ class CoherentNonAppliedStates(
     init {
         forEach {
             coroutineScope.launch {
-                it.requiringUpdate.collect {
-                    requiringUpdate.value = any { it.requiringUpdate.value }
+                it.stateChanged.collect {
+                    requiringUpdate.value = any { it.stateChanged.value }
                 }
             }
         }
     }
 
-    fun apply() {
+    suspend fun apply() {
         forEach {
             it.apply()
         }

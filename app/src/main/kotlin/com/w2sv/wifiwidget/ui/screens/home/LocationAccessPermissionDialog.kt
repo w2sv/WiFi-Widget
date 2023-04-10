@@ -7,6 +7,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,12 +23,13 @@ import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurati
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {}, {}, {})
+        LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {})
     }
 }
 
@@ -39,22 +41,24 @@ enum class LocationAccessPermissionDialogTrigger {
 @Composable
 fun LocationAccessPermissionDialog(
     widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel(),
-    homeScreenViewModel: HomeScreenViewModel = viewModel(),
     trigger: () -> LocationAccessPermissionDialogTrigger?
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
     trigger()?.let {
         when (it) {
             LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
                 LocationAccessPermissionDialog(
-                    dismissButtonText = "Proceed without SSID",
+                    dismissButtonText = stringResource(R.string.proceed_without_ssid),
                     onConfirmButtonPressed = {
                         lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
                             widgetConfigurationViewModel,
                             onGranted = {
-                                widgetConfigurationViewModel.widgetPropertyStateMap.apply()
+                                scope.launch {
+                                    widgetConfigurationViewModel.widgetPropertyStateMap.apply()
+                                }
                             },
                             onRequestDismissed = {
                                 WidgetProvider.pinWidget(context)
@@ -63,18 +67,12 @@ fun LocationAccessPermissionDialog(
                     },
                     onDismissButtonPressed = {
                         WidgetProvider.pinWidget(context)
-                    },
-                    onAnyButtonPressed = {
-                        homeScreenViewModel.onLAPDialogAnswered()
-                    },
-                    onDismiss = {
-                        homeScreenViewModel.lapDialogTrigger.reset()
                     }
                 )
             }
 
             LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
-                dismissButtonText = "Never mind",
+                dismissButtonText = stringResource(R.string.never_mind),
                 onConfirmButtonPressed = {
                     lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
                         widgetConfigurationViewModel
@@ -82,10 +80,6 @@ fun LocationAccessPermissionDialog(
                 },
                 onDismissButtonPressed = {
                     widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
-                },
-                onAnyButtonPressed = { homeScreenViewModel.onLAPDialogAnswered() },
-                onDismiss = {
-                    homeScreenViewModel.lapDialogTrigger.reset()
                 }
             )
         }
@@ -98,8 +92,7 @@ private fun LocationAccessPermissionDialog(
     dismissButtonText: String,
     onConfirmButtonPressed: () -> Unit,
     onDismissButtonPressed: () -> Unit,
-    onAnyButtonPressed: () -> Unit,
-    onDismiss: () -> Unit
+    viewModel: HomeScreenViewModel = viewModel()
 ) {
     AlertDialog(
         modifier = modifier,
@@ -126,8 +119,8 @@ private fun LocationAccessPermissionDialog(
             DialogButton(
                 {
                     onConfirmButtonPressed()
-                    onAnyButtonPressed()
-                    onDismiss()
+                    viewModel.onLAPDialogAnswered()
+                    viewModel.lapDialogTrigger.reset()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) { JostText(text = stringResource(R.string.go_ahead)) }
@@ -135,10 +128,12 @@ private fun LocationAccessPermissionDialog(
         dismissButton = {
             DialogButton({
                 onDismissButtonPressed()
-                onAnyButtonPressed()
-                onDismiss()
+                viewModel.onLAPDialogAnswered()
+                viewModel.lapDialogTrigger.reset()
             }, modifier = Modifier.fillMaxWidth()) { JostText(text = dismissButtonText) }
         },
-        onDismissRequest = onDismiss
+        onDismissRequest = {
+            viewModel.lapDialogTrigger.reset()
+        }
     )
 }

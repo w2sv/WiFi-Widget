@@ -28,4 +28,6 @@
     <string name="refresh_on_low_battery">Refresh on low battery</string>
     <string name="okay">Okay</string>
     <string name="tap_again_to_exit">Tap again to exit</string>
+    <string name="proceed_without_ssid">Proceed without SSID</string>
+    <string name="never_mind">Never mind</string>
 </resources>
