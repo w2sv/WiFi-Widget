@@ -6,8 +6,8 @@ import android.widget.RemoteViews
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.core.graphics.ColorUtils
-import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.Theme
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.extensions.toRGBChannelInt
 
 internal fun RemoteViews.setWidgetColors(
