@@ -6,6 +6,7 @@ import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.androidutils.permissionhandler.CoupledPermissionsHandler
 import com.w2sv.common.WifiProperty
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 
 class LocationAccessPermissionHandler(activity: ComponentActivity) :
     CoupledPermissionsHandler(
@@ -18,7 +19,7 @@ class LocationAccessPermissionHandler(activity: ComponentActivity) :
     ) {
 
     fun requestPermissionAndSetSSIDFlagCorrespondingly(
-        viewModel: HomeActivity.ViewModel,
+        viewModel: WidgetConfigurationViewModel,
         onGranted: (() -> Unit)? = null,
         onDenied: (() -> Unit)? = null,
         onRequestDismissed: (() -> Unit)? = null

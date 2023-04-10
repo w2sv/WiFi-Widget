@@ -33,14 +33,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
-import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.Theme
+import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.ButtonColoring
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.ThemeIndicatorProperties
@@ -58,13 +61,16 @@ private fun Prev() {
 @Composable
 fun ConfigColumn(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel(),
+    homeScreenViewModel: HomeScreenViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()
 
-    val showColorSelectionSection by viewModel.customThemeSelected.collectAsState(false)
-    val theme by viewModel.widgetThemeState.collectAsState()
-    val opacity by viewModel.widgetOpacityState.collectAsState()
+    val showColorSelectionSection by widgetConfigurationViewModel.customThemeSelected.collectAsState(
+        false
+    )
+    val theme by widgetConfigurationViewModel.widgetThemeState.collectAsState()
+    val opacity by widgetConfigurationViewModel.widgetOpacityState.collectAsState()
 
     val context = LocalContext.current
     val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
@@ -89,10 +95,10 @@ fun ConfigColumn(
                 label = R.string.custom,
                 buttonColoring = ButtonColoring.Gradient(
                     Brush.linearGradient(
-                        0.4f to Color(viewModel.customWidgetColorsState[WidgetColorSection.Background.name]!!),
-                        0.4f to Color(viewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
-                        0.6f to Color(viewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
-                        0.6f to Color(viewModel.customWidgetColorsState[WidgetColorSection.Values.name]!!)
+                        0.4f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Background.name]!!),
+                        0.4f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
+                        0.6f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Labels.name]!!),
+                        0.6f to Color(widgetConfigurationViewModel.customWidgetColorsState[WidgetColorSection.Values.name]!!)
                     )
                 )
             ),
@@ -100,7 +106,7 @@ fun ConfigColumn(
                 theme
             },
             onSelected = {
-                viewModel.widgetThemeState.value = it
+                widgetConfigurationViewModel.widgetThemeState.value = it
             }
         )
 
@@ -136,7 +142,7 @@ fun ConfigColumn(
         OpacitySliderWithValue(
             opacity = { opacity },
             onOpacityChanged = {
-                viewModel.widgetOpacityState.value = it
+                widgetConfigurationViewModel.widgetOpacityState.value = it
             }
         )
 
@@ -147,27 +153,30 @@ fun ConfigColumn(
         )
         PropertySelectionSection(modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
-                viewModel.widgetPropertyStateMap.getValue(property.name)
+                widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property.name)
             },
             onCheckedChange = { property, value ->
                 when {
                     property == WifiProperty.SSID && value -> {
-                        when (viewModel.lapDialogAnswered) {
-                            false -> viewModel.lapDialogTrigger.value =
+                        when (homeScreenViewModel.lapDialogAnswered) {
+                            false -> homeScreenViewModel.lapDialogTrigger.value =
                                 LocationAccessPermissionDialogTrigger.SSIDCheck
 
                             true -> lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                                viewModel
+                                widgetConfigurationViewModel
                             )
                         }
                     }
 
-                    else -> viewModel.confirmAndSyncPropertyChange(property, value) {
+                    else -> widgetConfigurationViewModel.confirmAndSyncPropertyChange(
+                        property,
+                        value
+                    ) {
                         context.showToast(R.string.uncheck_all_properties_toast)
                     }
                 }
             },
-            onInfoButtonClick = { viewModel.propertyInfoDialogIndex.value = it })
+            onInfoButtonClick = { widgetConfigurationViewModel.propertyInfoDialogIndex.value = it })
 
         SectionHeader(
             titleRes = R.string.refreshing,

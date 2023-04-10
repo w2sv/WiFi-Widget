@@ -31,7 +31,7 @@ import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -40,14 +40,14 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 internal fun ColorPickerDialog(
     customizableWidgetSection: WidgetColorSection,
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var color by remember {
-        mutableStateOf(Color(viewModel.customWidgetColorsState[customizableWidgetSection.name]!!))
+        mutableStateOf(Color(widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection.name]!!))
     }
     val scrollState = rememberScrollState()
 
-    Dialog(onDismissRequest = viewModel::onDismissCustomizationDialog) {
+    Dialog(onDismissRequest = widgetConfigurationViewModel::onDismissCustomizationDialog) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
@@ -86,14 +86,14 @@ internal fun ColorPickerDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 12.dp)
                 ) {
-                    DialogButton(onClick = viewModel::onDismissCustomizationDialog) {
+                    DialogButton(onClick = widgetConfigurationViewModel::onDismissCustomizationDialog) {
                         JostText(text = stringResource(id = R.string.cancel))
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        viewModel.customWidgetColorsState[customizableWidgetSection.name] =
+                        widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection.name] =
                             color.toArgb()
-                        viewModel.onDismissCustomizationDialog()
+                        widgetConfigurationViewModel.onDismissCustomizationDialog()
                     }) {
                         JostText(text = stringResource(id = R.string.okay))
                     }

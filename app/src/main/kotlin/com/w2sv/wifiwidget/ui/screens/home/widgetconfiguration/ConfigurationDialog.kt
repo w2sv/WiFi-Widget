@@ -21,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -38,9 +37,9 @@ private fun WidgetConfigurationDialogPrev() {
 @Composable
 fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
-    Dialog(onDismissRequest = { viewModel.onDismissWidgetConfigurationDialog() }) {
+    Dialog(onDismissRequest = { widgetConfigurationViewModel.onDismissWidgetConfigurationDialog() }) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),

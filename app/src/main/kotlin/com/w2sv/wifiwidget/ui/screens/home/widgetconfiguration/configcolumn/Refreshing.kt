@@ -20,14 +20,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun RefreshingSection(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     scrollToContentColumnBottom: suspend () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -57,7 +57,7 @@ private fun RefreshingParameterRow(
     parameter: WidgetRefreshingParameter,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

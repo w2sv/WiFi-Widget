@@ -10,15 +10,15 @@ import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.preferences.CustomWidgetColors
-import com.w2sv.common.preferences.EnumOrdinals
-import com.w2sv.common.preferences.FloatPreferences
+import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.common.preferences.WifiProperties
-import com.w2sv.kotlinutils.extensions.getByOrdinal
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -34,8 +34,7 @@ private enum class WifiStatus {
 internal class WidgetPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
     private val wifiProperties: WifiProperties,
-    private val enumOrdinals: EnumOrdinals,
-    private val floatPreferences: FloatPreferences,
+    private val dataStoreRepository: DataStoreRepository,
     private val customWidgetColors: CustomWidgetColors
 ) {
 
@@ -72,9 +71,9 @@ internal class WidgetPopulator @Inject constructor(
                 }
             )
             setWidgetColors(
-                theme = getByOrdinal(enumOrdinals.widgetTheme),
+                theme = runBlocking { dataStoreRepository.widgetTheme.first() },
                 customWidgetColors = customWidgetColors,
-                backgroundOpacity = floatPreferences.opacity,
+                backgroundOpacity = runBlocking { dataStoreRepository.opacity.first() },
                 context = context
             )
             setLastUpdatedTV()

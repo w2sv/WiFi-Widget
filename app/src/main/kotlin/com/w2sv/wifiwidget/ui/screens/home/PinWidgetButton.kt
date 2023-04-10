@@ -11,17 +11,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared.JostText
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @Composable
 fun StatefulPinWidgetButton(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    homeScreenViewModel: HomeScreenViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
     PinWidgetButton(modifier) {
-        when (viewModel.lapDialogAnswered) {
-            false -> viewModel.lapDialogTrigger.value =
+        when (homeScreenViewModel.lapDialogAnswered) {
+            false -> homeScreenViewModel.lapDialogTrigger.value =
                 LocationAccessPermissionDialogTrigger.PinWidgetButtonPress
 
             true -> WidgetProvider.pinWidget(context)

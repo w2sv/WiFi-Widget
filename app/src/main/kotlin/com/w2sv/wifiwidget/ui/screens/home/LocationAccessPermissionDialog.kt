@@ -18,6 +18,7 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.WifiProperty
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
@@ -37,7 +38,8 @@ enum class LocationAccessPermissionDialogTrigger {
 
 @Composable
 fun LocationAccessPermissionDialog(
-    viewModel: HomeActivity.ViewModel = viewModel(),
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel(),
+    homeScreenViewModel: HomeScreenViewModel = viewModel(),
     trigger: () -> LocationAccessPermissionDialogTrigger?
 ) {
     val context = LocalContext.current
@@ -50,9 +52,9 @@ fun LocationAccessPermissionDialog(
                     dismissButtonText = "Proceed without SSID",
                     onConfirmButtonPressed = {
                         lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                            viewModel,
+                            widgetConfigurationViewModel,
                             onGranted = {
-                                viewModel.widgetPropertyStateMap.apply()
+                                widgetConfigurationViewModel.widgetPropertyStateMap.apply()
                             },
                             onRequestDismissed = {
                                 WidgetProvider.pinWidget(context)
@@ -63,10 +65,10 @@ fun LocationAccessPermissionDialog(
                         WidgetProvider.pinWidget(context)
                     },
                     onAnyButtonPressed = {
-                        viewModel.lapDialogAnswered = true
+                        homeScreenViewModel.onLAPDialogAnswered()
                     },
                     onDismiss = {
-                        viewModel.lapDialogTrigger.reset()
+                        homeScreenViewModel.lapDialogTrigger.reset()
                     }
                 )
             }
@@ -74,14 +76,14 @@ fun LocationAccessPermissionDialog(
             LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
                 dismissButtonText = "Never mind",
                 onConfirmButtonPressed = {
-                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(viewModel)
+                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(widgetConfigurationViewModel)
                 },
                 onDismissButtonPressed = {
-                    viewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
+                    widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID.name] = false
                 },
-                onAnyButtonPressed = { viewModel.lapDialogAnswered = true },
+                onAnyButtonPressed = { homeScreenViewModel.onLAPDialogAnswered() },
                 onDismiss = {
-                    viewModel.lapDialogTrigger.reset()
+                    homeScreenViewModel.lapDialogTrigger.reset()
                 }
             )
         }

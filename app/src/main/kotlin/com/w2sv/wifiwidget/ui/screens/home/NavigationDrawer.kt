@@ -57,7 +57,7 @@ private fun Prev() {
 fun StatefulNavigationDrawer(
     modifier: Modifier = Modifier,
     initialValue: DrawerValue = DrawerValue.Closed,
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    homeScreenViewModel: HomeScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     content: @Composable (openDrawer: () -> Unit, closeDrawer: () -> Unit, drawerOpen: () -> Boolean) -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = initialValue)
@@ -103,21 +103,21 @@ fun StatefulNavigationDrawer(
         )
     }
 
-    val theme by viewModel.inAppThemeState.collectAsState()
-    val themeRequiringUpdate by viewModel.inAppThemeState.requiringUpdate.collectAsState()
+    val theme by homeScreenViewModel.inAppThemeState.collectAsState()
+    val themeRequiringUpdate by homeScreenViewModel.inAppThemeState.requiringUpdate.collectAsState()
     val context = LocalContext.current
 
     if (showThemeDialog) {
         ThemeSelectionDialog(
             onDismissRequest = {
-                viewModel.inAppThemeState.reset()
+                homeScreenViewModel.inAppThemeState.reset()
                 setShowThemeDialog(false)
             },
             selectedTheme = { theme },
-            onThemeSelected = { viewModel.inAppThemeState.value = it },
+            onThemeSelected = { homeScreenViewModel.inAppThemeState.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
             onApplyButtonPress = {
-                viewModel.inAppThemeState.apply()
+                homeScreenViewModel.inAppThemeState.apply()
                 setShowThemeDialog(false)
                 context.showToast("Updated Theme")
             }

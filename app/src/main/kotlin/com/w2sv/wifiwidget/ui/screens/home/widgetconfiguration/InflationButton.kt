@@ -11,27 +11,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.reset
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.PropertyInfoDialog
 
 @Composable
 fun StatefulWidgetConfigurationDialogButton(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     WidgetConfigurationDialogButton(modifier) {
-        viewModel.showWidgetConfigurationDialog.value = true
+        widgetConfigurationViewModel.showWidgetConfigurationDialog.value = true
     }
 
-    val inflateDialog by viewModel.showWidgetConfigurationDialog.collectAsState()
-    val propertyInfoDialogIndex by viewModel.propertyInfoDialogIndex.collectAsState()
+    val inflateDialog by widgetConfigurationViewModel.showWidgetConfigurationDialog.collectAsState()
+    val propertyInfoDialogIndex by widgetConfigurationViewModel.propertyInfoDialogIndex.collectAsState()
 
     if (inflateDialog) {
         WidgetConfigurationDialog()
 
         propertyInfoDialogIndex?.let {
             PropertyInfoDialog(it) {
-                viewModel.propertyInfoDialogIndex.reset()
+                widgetConfigurationViewModel.propertyInfoDialogIndex.reset()
             }
         }
     }

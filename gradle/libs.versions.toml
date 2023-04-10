@@ -32,6 +32,7 @@ androidx-compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling
 androidx-compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose-tooling' }
 androidx-compose-activity = 'androidx.activity:activity-compose:1.7.0'
 androidx-compose-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
+androidx-datastore-preferences = 'androidx.datastore:datastore-preferences:1.0.0'
 
 # google
 google-material = 'com.google.android.material:material:1.8.0'

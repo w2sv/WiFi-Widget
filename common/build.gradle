@@ -14,7 +14,9 @@ android {
 dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
+    api libs.androidx.datastore.preferences
 
+    implementation libs.kotlinutils
     implementation libs.androidutils
 
     implementation libs.google.hilt

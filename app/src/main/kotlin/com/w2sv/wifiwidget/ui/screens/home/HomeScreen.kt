@@ -19,7 +19,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
-    viewModel: HomeActivity.ViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: HomeScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val context = LocalContext.current
 

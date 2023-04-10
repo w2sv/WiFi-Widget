@@ -4,11 +4,13 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.w2sv.kotlinutils.extensions.valueEqualTo
 import com.w2sv.wifiwidget.extensions.getMutableStateMap
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 abstract class NonAppliedState<T>(
-    protected val getAppliedState: () -> T,
     protected val applyState: (T) -> Unit
 ) {
     val requiringUpdate = MutableStateFlow(false)
@@ -23,10 +25,10 @@ abstract class NonAppliedState<T>(
 }
 
 class NonAppliedSnapshotStateMap<K, V>(
-    getAppliedState: () -> Map<K, V>,
+    private val getAppliedState: () -> Map<K, V>,
     updateAppliedState: (Map<K, V>) -> Unit,
-    val map: SnapshotStateMap<K, V> = getAppliedState().getMutableStateMap()
-) : NonAppliedState<Map<K, V>>(getAppliedState, updateAppliedState),
+    private val map: SnapshotStateMap<K, V> = getAppliedState().getMutableStateMap()
+) : NonAppliedState<Map<K, V>>(updateAppliedState),
     MutableMap<K, V> by map {
 
     override val value: Map<K, V> get() = this
@@ -45,9 +47,14 @@ class NonAppliedSnapshotStateMap<K, V>(
 
 class NonAppliedStateFlow<T>(
     coroutineScope: CoroutineScope,
-    getAppliedState: () -> T,
-    updateAppliedState: (T) -> Unit
-) : NonAppliedState<T>(getAppliedState, updateAppliedState),
+    private val dataStoreFlow: Flow<T>,
+    updateAppliedState: (T) -> Unit,
+    private val getAppliedState: () -> T = {
+        runBlocking {
+            dataStoreFlow.first()
+        }
+    }
+) : NonAppliedState<T>(updateAppliedState),
     MutableStateFlow<T> by MutableStateFlow(getAppliedState()) {
 
     init {

@@ -12,27 +12,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
 internal fun ButtonRow(
     modifier: Modifier = Modifier,
-    viewModel: HomeActivity.ViewModel = viewModel()
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val applyButtonEnabled by viewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
+    val applyButtonEnabled by widgetConfigurationViewModel.widgetConfigurationStates.requiringUpdate.collectAsState()
 
     ButtonRow(
         onCancel = {
-            viewModel.onDismissWidgetConfigurationDialog()
+            widgetConfigurationViewModel.onDismissWidgetConfigurationDialog()
         },
         onApply = {
-            viewModel.widgetConfigurationStates.apply()
+            widgetConfigurationViewModel.widgetConfigurationStates.apply()
             WidgetProvider.triggerDataRefresh(context)
             context.showToast(R.string.updated_widget_configuration)
-            viewModel.showWidgetConfigurationDialog.value = false
+            widgetConfigurationViewModel.showWidgetConfigurationDialog.value = false
         },
         applyButtonEnabled = {
             applyButtonEnabled
