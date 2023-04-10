@@ -37,9 +37,9 @@ private fun WidgetConfigurationDialogPrev() {
 @Composable
 fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
-    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
+    viewModel: WidgetConfigurationViewModel = viewModel()
 ) {
-    Dialog(onDismissRequest = { widgetConfigurationViewModel.onDismissWidgetConfigurationDialog() }) {
+    Dialog(onDismissRequest = { viewModel.onDismissWidgetConfigurationDialog() }) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
