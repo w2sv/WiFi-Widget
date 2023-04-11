@@ -7,7 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.ui.shared.InfoIconButton
@@ -39,6 +42,8 @@ private fun PropertyRow(
     onCheckedChange: (WifiProperty, Boolean) -> Unit,
     onInfoButtonClick: (Int) -> Unit
 ) {
+    val context = LocalContext.current
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -50,10 +55,16 @@ private fun PropertyRow(
         )
         Checkbox(
             checked = propertyChecked(property),
-            onCheckedChange = { onCheckedChange(property, it) }
+            onCheckedChange = { onCheckedChange(property, it) },
+            modifier = Modifier.semantics {
+                contentDescription = "Set/unset ${context.getString(property.labelRes)}."
+            }
         )
-        InfoIconButton {
-            onInfoButtonClick(property.ordinal)
-        }
+        InfoIconButton(
+            onClick = {
+                onInfoButtonClick(property.ordinal)
+            },
+            contentDescription = "Open a ${stringResource(id = property.labelRes)} info dialog."
+        )
     }
 }

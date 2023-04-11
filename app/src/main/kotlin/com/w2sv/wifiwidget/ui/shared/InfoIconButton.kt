@@ -12,11 +12,11 @@ import androidx.compose.ui.res.dimensionResource
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun InfoIconButton(onClick: () -> Unit) {
+fun InfoIconButton(onClick: () -> Unit, contentDescription: String) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Outlined.Info,
-            contentDescription = "Open an info dialog.",
+            contentDescription = contentDescription,
             modifier = Modifier.size(
                 dimensionResource(id = R.dimen.size_icon)
             ),
