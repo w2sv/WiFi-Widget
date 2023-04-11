@@ -16,10 +16,10 @@ fun WifiWidgetTheme(darkTheme: Boolean = false, content: @Composable () -> Unit)
                 primary = colorResource(id = R.color.dark_cyan),
                 onPrimary = Color.White,
 
-                secondary = colorResource(id = R.color.magenta_haze),
+                secondary = colorResource(id = R.color.magenta_haze_light),
 
                 onSurface = Color.White,
-                onSurfaceVariant = colorResource(id = R.color.cadet_gray),
+                onSurfaceVariant = colorResource(id = R.color.light_gray),
 
                 onBackground = Color.White
             ) else
@@ -27,10 +27,10 @@ fun WifiWidgetTheme(darkTheme: Boolean = false, content: @Composable () -> Unit)
                 primary = colorResource(id = R.color.dark_cyan),
                 onPrimary = Color.White,
 
-                secondary = colorResource(id = R.color.magenta_haze),
+                secondary = colorResource(id = R.color.magenta_haze_dark),
 
                 onSurface = Color.Black,
-                onSurfaceVariant = colorResource(id = R.color.cadet_gray),
+                onSurfaceVariant = colorResource(id = R.color.dark_gray),
 
                 onBackground = Color.Black
             )
