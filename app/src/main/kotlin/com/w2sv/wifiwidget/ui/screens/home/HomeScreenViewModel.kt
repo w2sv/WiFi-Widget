@@ -90,7 +90,7 @@ class HomeScreenViewModel @Inject constructor(
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean
-        get() = dataStoreRepository.locationAccessPermissionRequestLaunchedAtLeastOnce.getValueSynchronously()
+        get() = dataStoreRepository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
 
     /**
      * BackPress

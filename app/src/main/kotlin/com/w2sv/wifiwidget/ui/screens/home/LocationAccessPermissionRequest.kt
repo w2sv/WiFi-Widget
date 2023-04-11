@@ -72,7 +72,7 @@ private fun LocationAccessPermissionRequest(
                 homeScreenViewModel.lapRequestTrigger.reset()
                 homeScreenViewModel.dataStoreRepository.save(
                     true,
-                    PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUEST_LAUNCHED_AT_LEAST_ONCE
+                    PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE
                 )
             }
         }
