@@ -37,8 +37,9 @@ class WidgetProvider : AppWidgetProvider() {
                             null,
                             null
                         )
-                    } else
-                        showToast("Widget pinning not supported by your device launcher")
+                    } else {
+                        showToast(getString(R.string.widget_pinning_not_supported_by_your_device_launcher))
+                    }
                 }
             }
         }
