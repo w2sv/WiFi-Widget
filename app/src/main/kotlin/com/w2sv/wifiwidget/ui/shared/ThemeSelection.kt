@@ -119,7 +119,9 @@ private fun ThemeIndicator(
         )
         ThemeButton(
             buttonColoring = properties.buttonColoring,
-            contentDescription = "Set the ${properties.label} theme.",
+            contentDescription = stringResource(id = R.string.theme_button_cd).format(
+                stringResource(id = properties.label)
+            ),
             onClick = onClick,
             size = 36.dp,
             isSelected = isSelected

@@ -31,5 +31,6 @@
     <string name="proceed_without_ssid">Proceed without SSID</string>
     <string name="never_mind">Never mind</string>
     <string name="go_to_app_settings_and_grant_location_access_permission">Go to app settings and grant location access permission</string>
-    <string name="set_the_widget_background_opacity">Set the widget background opacity.</string>
+    <string name="opacity_slider_cd">Set the widget background opacity.</string>
+    <string name="theme_button_cd">Set the $1%s theme.</string>
 </resources>

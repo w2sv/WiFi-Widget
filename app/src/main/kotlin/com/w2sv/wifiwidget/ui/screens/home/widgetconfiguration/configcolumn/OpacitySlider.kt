@@ -35,7 +35,7 @@ internal fun ColumnScope.OpacitySliderWithValue(
             .padding(horizontal = 32.dp)
             .semantics {
                 contentDescription = context.getString(
-                    R.string.set_the_widget_background_opacity
+                    R.string.opacity_slider_cd
                 )
             },
         steps = 9
