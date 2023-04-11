@@ -15,6 +15,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -72,7 +73,8 @@ class HomeScreenViewModel @Inject constructor(
      * lap := Location Access Permission
      */
 
-    val lapDialogAnswered: Boolean get() = dataStoreRepository.locationAccessPermissionDialogAnswered.getValueSynchronously()
+    val lapDialogAnswered: Boolean
+        get() = dataStoreRepository.locationAccessPermissionDialogAnswered.getValueSynchronously()
 
     fun onLAPDialogAnswered() {
         viewModelScope.launch {
@@ -96,7 +98,7 @@ class HomeScreenViewModel @Inject constructor(
      * BackPress
      */
 
-    val exitApplication = MutableStateFlow(false)
+    val exitApplication = MutableSharedFlow<Unit>()
 
     fun onBackPress(context: Context) {
         backPressHandler.invoke(
@@ -104,7 +106,9 @@ class HomeScreenViewModel @Inject constructor(
                 context.showToast(context.getString(R.string.tap_again_to_exit))
             },
             onSecondPress = {
-                exitApplication.value = true
+                viewModelScope.launch {
+                    exitApplication.emit(Unit)
+                }
             }
         )
     }

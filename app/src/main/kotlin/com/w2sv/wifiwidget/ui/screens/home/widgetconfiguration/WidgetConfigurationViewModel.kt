@@ -14,6 +14,7 @@ import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -42,11 +43,13 @@ class WidgetConfigurationViewModel @Inject constructor(
 
     val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
 
-    val widgetPropertyStateMap = NonAppliedSnapshotStateMap(
-        viewModelScope,
-        dataStoreRepository.wifiProperties,
-        dataStoreRepository
-    )
+    val widgetPropertyStateMap by lazy {
+        NonAppliedSnapshotStateMap(
+            viewModelScope,
+            dataStoreRepository.wifiProperties,
+            dataStoreRepository
+        )
+    }
 
     val widgetThemeState = NonAppliedStateFlow(
         viewModelScope,
@@ -61,11 +64,13 @@ class WidgetConfigurationViewModel @Inject constructor(
         emit(it == Theme.Custom)
     }
 
-    val customWidgetColorsState = NonAppliedSnapshotStateMap(
-        viewModelScope,
-        dataStoreRepository.customWidgetColors,
-        dataStoreRepository
-    )
+    val customWidgetColorsState by lazy {
+        NonAppliedSnapshotStateMap(
+            viewModelScope,
+            dataStoreRepository.customWidgetColors,
+            dataStoreRepository
+        )
+    }
 
     val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
 
@@ -82,24 +87,30 @@ class WidgetConfigurationViewModel @Inject constructor(
         }
     }
 
-    val widgetRefreshingParametersState = NonAppliedSnapshotStateMap(
-        viewModelScope,
-        dataStoreRepository.widgetRefreshingParameters,
-        dataStoreRepository
-    ) {
-        widgetRefreshingParametersChanged.value = true
+    val widgetRefreshingParametersState by lazy {
+        NonAppliedSnapshotStateMap(
+            viewModelScope,
+            dataStoreRepository.widgetRefreshingParameters,
+            dataStoreRepository
+        ) {
+            viewModelScope.launch {
+                widgetRefreshingParametersChanged.emit(Unit)
+            }
+        }
     }
 
-    val widgetRefreshingParametersChanged = MutableStateFlow(false)
+    val widgetRefreshingParametersChanged = MutableSharedFlow<Unit>()
 
-    val widgetConfigurationStates = CoherentNonAppliedStates(
-        widgetPropertyStateMap,
-        widgetThemeState,
-        widgetOpacityState,
-        widgetRefreshingParametersState,
-        customWidgetColorsState,
-        coroutineScope = viewModelScope
-    )
+    val widgetConfigurationStates by lazy {
+        CoherentNonAppliedStates(
+            widgetPropertyStateMap,
+            widgetThemeState,
+            widgetOpacityState,
+            widgetRefreshingParametersState,
+            customWidgetColorsState,
+            coroutineScope = viewModelScope
+        )
+    }
 
     fun onDismissWidgetConfigurationDialog() {
         widgetConfigurationStates.reset()

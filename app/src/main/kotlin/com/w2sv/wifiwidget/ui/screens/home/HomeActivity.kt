@@ -110,23 +110,16 @@ class HomeActivity : ComponentActivity() {
 
     private fun LifecycleCoroutineScope.subscribeToFlows() {
         launch {
-            with(widgetConfigurationViewModel.widgetRefreshingParametersChanged) {
-                collect {
-                    if (it) {
-                        WidgetDataRefreshWorker
-                            .Administrator
-                            .getInstance(applicationContext)
-                            .applyChangedParameters()
-                        value = false
-                    }
-                }
+            widgetConfigurationViewModel.widgetRefreshingParametersChanged.collect {
+                WidgetDataRefreshWorker
+                    .Administrator
+                    .getInstance(applicationContext)
+                    .applyChangedParameters()
             }
         }
         launch {
             homeScreenViewModel.exitApplication.collect {
-                if (it) {
-                    finishAffinity()
-                }
+                finishAffinity()
             }
         }
     }
