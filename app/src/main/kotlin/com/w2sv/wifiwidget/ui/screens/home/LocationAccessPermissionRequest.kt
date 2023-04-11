@@ -9,11 +9,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.WifiProperty
+import com.w2sv.common.extensions.launchingSuppressed
 import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
@@ -100,7 +100,3 @@ private fun LocationAccessPermissionRequest(
         }
     }
 }
-
-@OptIn(ExperimentalPermissionsApi::class)
-fun MultiplePermissionsState.launchingSuppressed(launchedAtLeastOnce: Boolean): Boolean =
-    !shouldShowRationale && launchedAtLeastOnce
