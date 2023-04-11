@@ -15,10 +15,6 @@ import javax.inject.Inject
 class DataStoreRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    val opacity: Flow<Float> = dataStore.data.map {
-        it[PreferencesKey.OPACITY] ?: 1.0f
-    }
-
     val locationAccessPermissionDialogAnswered: Flow<Boolean> = dataStore.data.map {
         it[PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED] ?: false
     }
@@ -38,6 +34,29 @@ class DataStoreRepository @Inject constructor(
             it[PreferencesKey.WIDGET_THEME] ?: Theme.DeviceDefault.ordinal
         )
     }
+
+    val opacity: Flow<Float> = dataStore.data.map {
+        it[PreferencesKey.OPACITY] ?: 1.0f
+    }
+
+    suspend fun <T> save(value: T, preferencesKey: Preferences.Key<T>) {
+        dataStore.edit {
+            it[preferencesKey] = value
+        }
+    }
+
+    suspend fun saveEnum(
+        enum: Enum<*>,
+        preferencesKey: Preferences.Key<Int>
+    ) {
+        dataStore.edit {
+            it[preferencesKey] = enum.ordinal
+        }
+    }
+
+    // ============
+    // Maps
+    // ============
 
     val widgetRefreshingParameters = mapFromDataStoreProperties(WidgetRefreshingParameter.values())
 
@@ -59,21 +78,6 @@ class DataStoreRepository @Inject constructor(
             map.forEach { (property, value) ->
                 it[property.preferencesKey] = value
             }
-        }
-    }
-
-    suspend fun <T> save(value: T, preferencesKey: Preferences.Key<T>) {
-        dataStore.edit {
-            it[preferencesKey] = value
-        }
-    }
-
-    suspend fun saveEnum(
-        value: Enum<*>,
-        preferencesKey: Preferences.Key<Int>
-    ) {
-        dataStore.edit {
-            it[preferencesKey] = value.ordinal
         }
     }
 }
