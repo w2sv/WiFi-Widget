@@ -188,7 +188,7 @@ fun ConfigColumn(
                     }
                 }
             },
-            onInfoButtonClick = { widgetConfigurationViewModel.propertyInfoDialogIndex.value = it })
+            onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it })
 
         SectionHeader(
             titleRes = R.string.refreshing,

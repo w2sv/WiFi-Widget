@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.androidutils.extensions.getNestedStringArray
+import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.ui.shared.DialogButton
@@ -19,7 +21,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 private fun Prev() {
     WifiWidgetTheme {
         PropertyInfoDialog(
-            1,
+            WifiProperty.SSID,
             onDismissRequest = {}
         )
     }
@@ -27,33 +29,34 @@ private fun Prev() {
 
 @Composable
 internal fun PropertyInfoDialog(
-    propertyIndex: Int,
+    property: WifiProperty,
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
+    val stringArray = stringArrayResource(id = property.infoStringArrayRes)
 
-    with(context.resources.getNestedStringArray(R.array.wifi_property_data_arrays, propertyIndex)) {
-        InfoDialog(
-            modifier = modifier,
-            title = get(0),
-            text = get(1),
-            learnMoreButton = get(2).let {
-                if (it.isNotEmpty()) {
-                    {
-                        DialogButton(
-                            onClick = {
-                                context.openUrlWithActivityNotFoundHandling(it)
-                                onDismissRequest()
-                            },
-                            modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
-                        ) {
-                            JostText(text = "Learn more")
-                        }
+    InfoDialog(
+        modifier = modifier,
+        title = stringResource(id = property.labelRes),
+        text = stringArray[0],
+        learnMoreButton = when (stringArray[1].isNotEmpty()) {
+            true -> {
+                {
+                    DialogButton(
+                        onClick = {
+                            context.openUrlWithActivityNotFoundHandling(stringArray[1])
+                            onDismissRequest()
+                        },
+                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
+                    ) {
+                        JostText(text = stringResource(R.string.learn_more))
                     }
-                } else null
-            },
-            onDismissRequest = onDismissRequest
-        )
-    }
+                }
+            }
+
+            false -> null
+        },
+        onDismissRequest = onDismissRequest
+    )
 }

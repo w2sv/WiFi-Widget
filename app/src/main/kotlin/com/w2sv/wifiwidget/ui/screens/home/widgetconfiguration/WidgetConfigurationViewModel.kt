@@ -41,7 +41,7 @@ class WidgetConfigurationViewModel @Inject constructor(
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
 
-    val propertyInfoDialogIndex: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
 
     val widgetPropertyStateMap by lazy {
         NonAppliedSnapshotStateMap(

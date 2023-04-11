@@ -21,7 +21,7 @@ internal fun PropertySelectionSection(
     modifier: Modifier = Modifier,
     propertyChecked: (WifiProperty) -> Boolean,
     onCheckedChange: (WifiProperty, Boolean) -> Unit,
-    onInfoButtonClick: (Int) -> Unit
+    onInfoButtonClick: (WifiProperty) -> Unit
 ) {
     Column(modifier = modifier) {
         WifiProperty.values().forEach {
@@ -40,7 +40,7 @@ private fun PropertyRow(
     property: WifiProperty,
     propertyChecked: (WifiProperty) -> Boolean,
     onCheckedChange: (WifiProperty, Boolean) -> Unit,
-    onInfoButtonClick: (Int) -> Unit
+    onInfoButtonClick: (WifiProperty) -> Unit
 ) {
     val context = LocalContext.current
 
@@ -62,7 +62,7 @@ private fun PropertyRow(
         )
         InfoIconButton(
             onClick = {
-                onInfoButtonClick(property.ordinal)
+                onInfoButtonClick(property)
             },
             contentDescription = "Open a ${stringResource(id = property.labelRes)} info dialog."
         )

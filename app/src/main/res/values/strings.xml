@@ -33,4 +33,5 @@
     <string name="go_to_app_settings_and_grant_location_access_permission">Go to app settings and grant location access permission</string>
     <string name="opacity_slider_cd">Set the widget background opacity.</string>
     <string name="theme_button_cd">Set the $1%s theme.</string>
+    <string name="learn_more">Learn more</string>
 </resources>

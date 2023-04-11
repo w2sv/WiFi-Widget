@@ -23,14 +23,14 @@ fun StatefulWidgetConfigurationDialogButton(
     }
 
     val inflateDialog by widgetConfigurationViewModel.showWidgetConfigurationDialog.collectAsState()
-    val propertyInfoDialogIndex by widgetConfigurationViewModel.propertyInfoDialogIndex.collectAsState()
+    val propertyInfoDialogIndex by widgetConfigurationViewModel.infoDialogProperty.collectAsState()
 
     if (inflateDialog) {
         WidgetConfigurationDialog()
 
         propertyInfoDialogIndex?.let {
             PropertyInfoDialog(it) {
-                widgetConfigurationViewModel.propertyInfoDialogIndex.reset()
+                widgetConfigurationViewModel.infoDialogProperty.reset()
             }
         }
     }
