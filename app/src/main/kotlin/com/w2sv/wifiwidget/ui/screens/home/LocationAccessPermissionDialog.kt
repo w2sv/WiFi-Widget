@@ -7,14 +7,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.WifiProperty
 import com.w2sv.widget.WidgetProvider
@@ -23,7 +21,6 @@ import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurati
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
-import kotlinx.coroutines.launch
 
 @Preview
 @Composable
@@ -40,49 +37,34 @@ enum class LocationAccessPermissionDialogTrigger {
 
 @Composable
 fun LocationAccessPermissionDialog(
-    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel(),
-    trigger: () -> LocationAccessPermissionDialogTrigger?
+    trigger: LocationAccessPermissionDialogTrigger,
+    homeScreenViewModel: HomeScreenViewModel = viewModel(),
+    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
-    trigger()?.let {
-        when (it) {
-            LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
-                LocationAccessPermissionDialog(
-                    dismissButtonText = stringResource(R.string.proceed_without_ssid),
-                    onConfirmButtonPressed = {
-                        lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                            widgetConfigurationViewModel,
-                            onGranted = {
-                                scope.launch {
-                                    widgetConfigurationViewModel.widgetPropertyStateMap.apply()
-                                }
-                            },
-                            onRequestDismissed = {
-                                WidgetProvider.pinWidget(context)
-                            }
-                        )
-                    },
-                    onDismissButtonPressed = {
-                        WidgetProvider.pinWidget(context)
-                    }
-                )
-            }
-
-            LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
-                dismissButtonText = stringResource(R.string.never_mind),
+    when (trigger) {
+        LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
+            LocationAccessPermissionDialog(
+                dismissButtonText = stringResource(R.string.proceed_without_ssid),
                 onConfirmButtonPressed = {
-                    lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                        widgetConfigurationViewModel
-                    )
+                    homeScreenViewModel.lapRequestTrigger.value = trigger
                 },
                 onDismissButtonPressed = {
-                    widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
+                    WidgetProvider.pinWidget(context)
                 }
             )
         }
+
+        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
+            dismissButtonText = stringResource(R.string.never_mind),
+            onConfirmButtonPressed = {
+                homeScreenViewModel.lapRequestTrigger.value = trigger
+            },
+            onDismissButtonPressed = {
+                widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
+            }
+        )
     }
 }
 

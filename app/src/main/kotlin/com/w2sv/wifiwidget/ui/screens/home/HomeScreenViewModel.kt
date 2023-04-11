@@ -86,6 +86,9 @@ class HomeScreenViewModel @Inject constructor(
     val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
         MutableStateFlow(null)
 
+    val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
+        MutableStateFlow(null)
+
     /**
      * BackPress
      */

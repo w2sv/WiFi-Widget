@@ -49,10 +49,11 @@ internal fun HomeScreen(
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
         }
-        viewModel.lapDialogTrigger.collectAsState().apply {
-            LocationAccessPermissionDialog {
-                value
-            }
+        viewModel.lapDialogTrigger.collectAsState().value?.let {
+            LocationAccessPermissionDialog(it)
+        }
+        viewModel.lapRequestTrigger.collectAsState().value?.let {
+            LocationAccessPermissionRequest(it)
         }
         BackHandler {
             when {

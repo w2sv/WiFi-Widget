@@ -22,7 +22,6 @@ import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
-import com.w2sv.androidutils.extensions.addObservers
 import com.w2sv.androidutils.extensions.getIntExtraOrNull
 import com.w2sv.common.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
@@ -47,10 +46,6 @@ class HomeActivity : ComponentActivity() {
         callback
     )
 
-    val lapRequestLauncher by lazy {
-        LocationAccessPermissionHandler(this)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         handleSplashScreen {
             widgetConfigurationViewModel.onSplashScreenAnimationFinished()
@@ -58,22 +53,17 @@ class HomeActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        addObservers(
-            buildList {
-                add(lapRequestLauncher)
-                add(
-                    AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this@HomeActivity)) { _, intent ->
-                        i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
+        lifecycle.addObserver(
+            AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this@HomeActivity)) { _, intent ->
+                i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
 
-                        intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                            ?.let { widgetId ->
-                                homeScreenViewModel.onWidgetOptionsUpdated(
-                                    widgetId,
-                                    this@HomeActivity
-                                )
-                            }
+                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                    ?.let { widgetId ->
+                        homeScreenViewModel.onWidgetOptionsUpdated(
+                            widgetId,
+                            this@HomeActivity
+                        )
                     }
-                )
             }
         )
 

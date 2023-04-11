@@ -34,13 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.extensions.requireCastActivity
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeActivity
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionDialogTrigger
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
@@ -73,7 +71,6 @@ fun ConfigColumn(
     val opacity by widgetConfigurationViewModel.widgetOpacityState.collectAsState()
 
     val context = LocalContext.current
-    val lapRequestLauncher = context.requireCastActivity<HomeActivity>().lapRequestLauncher
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -174,19 +171,16 @@ fun ConfigColumn(
                 widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property)
             },
             onCheckedChange = { property, value ->
-                when {
-                    property == WifiProperty.SSID && value -> {
-                        when (homeScreenViewModel.lapDialogAnswered) {
-                            false -> homeScreenViewModel.lapDialogTrigger.value =
-                                LocationAccessPermissionDialogTrigger.SSIDCheck
+                if (property == WifiProperty.SSID && value) {
+                    when (homeScreenViewModel.lapDialogAnswered) {
+                        false -> homeScreenViewModel.lapDialogTrigger.value =
+                            LocationAccessPermissionDialogTrigger.SSIDCheck
 
-                            true -> lapRequestLauncher.requestPermissionAndSetSSIDFlagCorrespondingly(
-                                widgetConfigurationViewModel
-                            )
-                        }
+                        true -> homeScreenViewModel.lapRequestTrigger.value =
+                            LocationAccessPermissionDialogTrigger.SSIDCheck
                     }
-
-                    else -> widgetConfigurationViewModel.confirmAndSyncPropertyChange(
+                } else {
+                    widgetConfigurationViewModel.confirmAndSyncPropertyChange(
                         property,
                         value
                     ) {
