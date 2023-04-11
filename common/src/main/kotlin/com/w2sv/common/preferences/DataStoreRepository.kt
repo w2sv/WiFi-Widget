@@ -19,8 +19,12 @@ class DataStoreRepository @Inject constructor(
         it[PreferencesKey.OPACITY] ?: 1.0f
     }
 
-    val locationPermissionDialogAnswered: Flow<Boolean> = dataStore.data.map {
-        it[PreferencesKey.LOCATION_PERMISSION_DIALOG_ANSWERED] ?: false
+    val locationAccessPermissionDialogAnswered: Flow<Boolean> = dataStore.data.map {
+        it[PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED] ?: false
+    }
+
+    val locationAccessPermissionRequestLaunchedAtLeastOnce: Flow<Boolean> = dataStore.data.map {
+        it[PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUEST_LAUNCHED_AT_LEAST_ONCE] ?: false
     }
 
     val inAppTheme: Flow<Theme> = dataStore.data.map {

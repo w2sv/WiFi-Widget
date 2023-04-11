@@ -72,13 +72,13 @@ class HomeScreenViewModel @Inject constructor(
      * lap := Location Access Permission
      */
 
-    val lapDialogAnswered: Boolean get() = dataStoreRepository.locationPermissionDialogAnswered.getValueSynchronously()
+    val lapDialogAnswered: Boolean get() = dataStoreRepository.locationAccessPermissionDialogAnswered.getValueSynchronously()
 
     fun onLAPDialogAnswered() {
         viewModelScope.launch {
             dataStoreRepository.save(
                 true,
-                PreferencesKey.LOCATION_PERMISSION_DIALOG_ANSWERED
+                PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED
             )
         }
     }
@@ -88,6 +88,9 @@ class HomeScreenViewModel @Inject constructor(
 
     val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
         MutableStateFlow(null)
+
+    val lapRequestLaunchedAtLeastOnce: Boolean
+        get() = dataStoreRepository.locationAccessPermissionRequestLaunchedAtLeastOnce.getValueSynchronously()
 
     /**
      * BackPress

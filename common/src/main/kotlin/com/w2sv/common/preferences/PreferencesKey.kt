@@ -5,8 +5,10 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 
 object PreferencesKey {
-    val LOCATION_PERMISSION_DIALOG_ANSWERED =
+    val LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED =
         booleanPreferencesKey("locationPermissionDialogAnswered")
+    val LOCATION_ACCESS_PERMISSION_REQUEST_LAUNCHED_AT_LEAST_ONCE =
+        booleanPreferencesKey("locationAccessPermissionRequestLaunchedAtLeastOnce")
     val OPACITY = floatPreferencesKey("opacity")
     val WIDGET_THEME = intPreferencesKey("widgetTheme")
     val IN_APP_THEME = intPreferencesKey("inAppTheme")

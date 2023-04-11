@@ -9,15 +9,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.WifiProperty
+import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import kotlinx.coroutines.launch
-import slimber.log.i
 
 @Composable
 fun LocationAccessPermissionRequest(
@@ -26,7 +27,6 @@ fun LocationAccessPermissionRequest(
 ) {
     val context = LocalContext.current
 
-    i { "LocationAccessPermissionRequest; trigger=${trigger.name}" }
     when (trigger) {
         LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
             onGranted = {
@@ -70,6 +70,10 @@ private fun LocationAccessPermissionRequest(
                     false -> onDenied()
                 }
                 homeScreenViewModel.lapRequestTrigger.reset()
+                homeScreenViewModel.dataStoreRepository.save(
+                    true,
+                    PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUEST_LAUNCHED_AT_LEAST_ONCE
+                )
             }
         }
     )
@@ -81,15 +85,22 @@ private fun LocationAccessPermissionRequest(
         )
 
         false -> {
-            if (!permissionState.shouldShowRationale) {
+            if (permissionState.launchingSuppressed(homeScreenViewModel.lapRequestLaunchedAtLeastOnce)) {
                 context.showToast(
                     stringResource(R.string.go_to_app_settings_and_grant_location_access_permission),
                     Toast.LENGTH_LONG
                 )
+                homeScreenViewModel.lapRequestTrigger.reset()
+            } else {
+                LaunchedEffect(
+                    key1 = permissionState.permissions,
+                    block = { permissionState.launchMultiplePermissionRequest() }
+                )
             }
-            LaunchedEffect(
-                key1 = permissionState.permissions,
-                block = { permissionState.launchMultiplePermissionRequest() })
         }
     }
 }
+
+@OptIn(ExperimentalPermissionsApi::class)
+fun MultiplePermissionsState.launchingSuppressed(launchedAtLeastOnce: Boolean): Boolean =
+    !shouldShowRationale && launchedAtLeastOnce
