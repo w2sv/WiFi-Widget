@@ -42,7 +42,7 @@ fun ThemeSelectionDialog(
         icon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_nightlight_24),
-                contentDescription = "@null",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         },

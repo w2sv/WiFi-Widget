@@ -213,7 +213,7 @@ private fun SectionHeader(
         Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
             Icon(
                 painterResource(id = iconRes),
-                contentDescription = "@null",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary
             )
         }

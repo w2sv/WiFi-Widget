@@ -12,17 +12,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-abstract class NonAppliedState<T>(
-    protected val applyState: suspend (T) -> Unit
-) {
+abstract class NonAppliedState<T> {
     val stateChanged = MutableStateFlow(false)
-    abstract val value: T
 
-    suspend fun apply() {
+    protected fun resetStateChanged() {
         stateChanged.value = false
-        applyState(value)
     }
 
+    abstract val value: T
+    abstract suspend fun apply()
     abstract fun reset()
 }
 
@@ -33,14 +31,17 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
     private val map: SnapshotStateMap<K, V> = appliedFlowMap
         .getDeflowedMap()
         .getMutableStateMap(),
-    onApplyState: (Map<K, V>) -> Unit = { it }
-) : NonAppliedState<Map<K, V>>({
-    dataStoreRepository.saveMap(it)
-    onApplyState(it)
-}),
+    private val onApplyState: (Map<K, V>) -> Unit = {}
+) : NonAppliedState<Map<K, V>>(),
     MutableMap<K, V> by map {
 
     override val value: Map<K, V> get() = this
+
+    override suspend fun apply() {
+        dataStoreRepository.saveMap(value)
+        onApplyState(value)
+        resetStateChanged()
+    }
 
     override fun reset() {
         coroutineScope.launch {
@@ -48,7 +49,7 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
                 map[k] = v.first()
             }
         }
-        stateChanged.value = false
+        resetStateChanged()
     }
 
     private val dissimilarKeys = mutableSetOf<K>()
@@ -69,8 +70,8 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
 class NonAppliedStateFlow<T>(
     private val coroutineScope: CoroutineScope,
     private val appliedFlow: Flow<T>,
-    updateAppliedState: (T) -> Unit
-) : NonAppliedState<T>(updateAppliedState),
+    private val updateAppliedState: (T) -> Unit
+) : NonAppliedState<T>(),
     MutableStateFlow<T> by MutableStateFlow(
         appliedFlow.getValueSynchronously()
     ) {
@@ -83,11 +84,16 @@ class NonAppliedStateFlow<T>(
         }
     }
 
+    override suspend fun apply() {
+        updateAppliedState(value)
+        resetStateChanged()
+    }
+
     override fun reset() {
         coroutineScope.launch {
             value = appliedFlow.first()
         }
-        stateChanged.value = false
+        resetStateChanged()
     }
 }
 

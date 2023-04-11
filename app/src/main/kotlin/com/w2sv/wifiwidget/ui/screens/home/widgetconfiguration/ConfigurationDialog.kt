@@ -59,7 +59,7 @@ fun WidgetConfigurationDialog(
             ) {
                 Icon(
                     painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
-                    contentDescription = "@null",
+                    contentDescription = null,
                     modifier = Modifier.padding(bottom = 12.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )

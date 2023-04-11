@@ -81,7 +81,7 @@ private fun LocationAccessPermissionDialog(
         icon = {
             Icon(
                 imageVector = Icons.Outlined.Info,
-                contentDescription = "@null",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         },
