@@ -10,7 +10,7 @@ publish-listing:
 	@./gradlew publishListing  --console verbose
 
 build-and-publish-to-test-track:
-	@echo -e "Retrieved Version: ${VERSION}\n\nHit enter to continue"
+	@echo -e "Retrieved Version: ${VERSION}\nHit enter to continue"
 	@read
 
 	@echo "Clean"  # Required as 'publishBundle' publishes all .aab's in specified archive dir

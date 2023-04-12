@@ -17,6 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ private fun SectionCustomizationRow(
     modifier: Modifier = Modifier,
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val label = stringResource(id = widgetColorSection.labelRes)
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
@@ -59,7 +62,7 @@ private fun SectionCustomizationRow(
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         JostText(
-            text = stringResource(id = widgetColorSection.labelRes),
+            text = label,
             fontSize = 12.sp,
             fontStyle = FontStyle.Italic,
             fontWeight = FontWeight.SemiBold,
@@ -68,7 +71,9 @@ private fun SectionCustomizationRow(
         )
         Spacer(modifier = Modifier.weight(0.1f))
         Button(
-            modifier = modifier.size(36.dp),
+            modifier = modifier
+                .size(36.dp)
+                .semantics { contentDescription = "Open the $label color picker dialog." },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
                     viewModel.customWidgetColorsState.getValue(

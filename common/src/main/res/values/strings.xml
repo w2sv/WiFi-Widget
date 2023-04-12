@@ -14,6 +14,9 @@
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
 
+    <string name="refresh_periodically">Periodically refresh data</string>
+    <string name="refresh_on_low_battery">Refresh on low battery</string>
+
     <string name="configure_widget">Configure Widget</string>
     <string name="go_to_wifi_settings">Go to WiFi Settings</string>
     <string name="refresh_data">Refresh data</string>

@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -15,11 +14,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WidgetRefreshingParameter
-import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
@@ -34,7 +34,6 @@ internal fun RefreshingSection(
 
     Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
         RefreshingParameterRow(
-            label = R.string.refresh_periodically,
             parameter = WidgetRefreshingParameter.RefreshPeriodically
         )
         AnimatedVisibility(
@@ -42,7 +41,6 @@ internal fun RefreshingSection(
             enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
         ) {
             RefreshingParameterRow(
-                label = R.string.refresh_on_low_battery,
                 parameter = WidgetRefreshingParameter.RefreshOnBatteryLow,
                 modifier = Modifier.padding(start = 12.dp),
                 fontSize = 14.sp
@@ -53,12 +51,13 @@ internal fun RefreshingSection(
 
 @Composable
 private fun RefreshingParameterRow(
-    @StringRes label: Int,
     parameter: WidgetRefreshingParameter,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
+    val label = stringResource(id = parameter.labelRes)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -66,11 +65,14 @@ private fun RefreshingParameterRow(
             .fillMaxWidth()
             .then(modifier)
     ) {
-        JostText(text = stringResource(id = label), fontSize = fontSize)
+        JostText(text = label, fontSize = fontSize)
         Checkbox(
             checked = viewModel.widgetRefreshingParametersState.getValue(parameter),
             onCheckedChange = {
                 viewModel.widgetRefreshingParametersState[parameter] = it
+            },
+            modifier = Modifier.semantics {
+                contentDescription = "Set/unset $label"
             }
         )
     }
