@@ -119,7 +119,7 @@ fun StatefulNavigationDrawer(
             onApplyButtonPress = {
                 setShowThemeDialog(false)
                 scope.launch {
-                    homeScreenViewModel.inAppThemeState.apply()
+                    homeScreenViewModel.inAppThemeState.sync()
                     context.showToast("Updated Theme")
                 }
             }

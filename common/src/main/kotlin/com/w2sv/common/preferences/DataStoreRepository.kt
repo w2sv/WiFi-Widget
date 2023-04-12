@@ -39,15 +39,15 @@ class DataStoreRepository @Inject constructor(
         it[PreferencesKey.OPACITY] ?: 1.0f
     }
 
-    suspend fun <T> save(value: T, preferencesKey: Preferences.Key<T>) {
+    suspend fun <T> save(preferencesKey: Preferences.Key<T>, value: T) {
         dataStore.edit {
             it[preferencesKey] = value
         }
     }
 
     suspend fun saveEnum(
-        enum: Enum<*>,
-        preferencesKey: Preferences.Key<Int>
+        preferencesKey: Preferences.Key<Int>,
+        enum: Enum<*>
     ) {
         dataStore.edit {
             it[preferencesKey] = enum.ordinal

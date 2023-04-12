@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -31,7 +30,7 @@ fun LocationAccessPermissionRequest(
         LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
             onGranted = {
                 widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = true
-                widgetConfigurationViewModel.widgetPropertyStateMap.apply()
+                widgetConfigurationViewModel.widgetPropertyStateMap.sync()
                 WidgetProvider.pinWidget(context)
             },
             onDenied = {
@@ -70,32 +69,31 @@ private fun LocationAccessPermissionRequest(
                     false -> onDenied()
                 }
                 homeScreenViewModel.lapRequestTrigger.reset()
-                homeScreenViewModel.dataStoreRepository.save(
-                    true,
-                    PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE
-                )
             }
         }
     )
 
-    when (permissionState.allPermissionsGranted) {
-        true -> LaunchedEffect(
-            key1 = permissionState.permissions,
-            block = { onGranted() }
-        )
-
-        false -> {
-            if (permissionState.launchingSuppressed(homeScreenViewModel.lapRequestLaunchedAtLeastOnce)) {
-                context.showToast(
-                    stringResource(R.string.go_to_app_settings_and_grant_location_access_permission),
-                    Toast.LENGTH_LONG
-                )
+    LaunchedEffect(key1 = permissionState.permissions) {
+        when (permissionState.allPermissionsGranted) {
+            true -> {
+                onGranted()
                 homeScreenViewModel.lapRequestTrigger.reset()
-            } else {
-                LaunchedEffect(
-                    key1 = permissionState.permissions,
-                    block = { permissionState.launchMultiplePermissionRequest() }
-                )
+            }
+
+            false -> {
+                if (permissionState.launchingSuppressed(homeScreenViewModel.lapRequestLaunchedAtLeastOnce)) {
+                    context.showToast(
+                        context.getString(R.string.go_to_app_settings_and_grant_location_access_permission),
+                        Toast.LENGTH_LONG
+                    )
+                    homeScreenViewModel.lapRequestTrigger.reset()
+                } else {
+                    permissionState.launchMultiplePermissionRequest()
+                    homeScreenViewModel.dataStoreRepository.save(
+                        PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE,
+                        true
+                    )
+                }
             }
         }
     }

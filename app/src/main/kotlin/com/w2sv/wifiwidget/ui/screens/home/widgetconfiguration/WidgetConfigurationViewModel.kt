@@ -56,7 +56,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         dataStoreRepository.widgetTheme
     ) {
         viewModelScope.launch {
-            dataStoreRepository.saveEnum(it, PreferencesKey.WIDGET_THEME)
+            dataStoreRepository.saveEnum(PreferencesKey.WIDGET_THEME, it)
         }
     }
 
@@ -83,7 +83,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         dataStoreRepository.opacity
     ) {
         viewModelScope.launch {
-            dataStoreRepository.save(it, PreferencesKey.OPACITY)
+            dataStoreRepository.save(PreferencesKey.OPACITY, it)
         }
     }
 
@@ -115,19 +115,5 @@ class WidgetConfigurationViewModel @Inject constructor(
     fun onDismissWidgetConfigurationDialog() {
         widgetConfigurationStates.reset()
         showWidgetConfigurationDialog.value = false
-    }
-
-    /**
-     * @return Boolean indicating whether change has been confirmed
-     */
-    fun confirmAndSyncPropertyChange(
-        property: WifiProperty,
-        value: Boolean,
-        onChangeRejected: () -> Unit
-    ) {
-        when (value || widgetPropertyStateMap.values.count { true } != 1) {
-            true -> widgetPropertyStateMap[property] = value
-            false -> onChangeRejected()
-        }
     }
 }

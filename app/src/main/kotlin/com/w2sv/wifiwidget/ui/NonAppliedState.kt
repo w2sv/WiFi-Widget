@@ -10,17 +10,19 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 
 abstract class NonAppliedState<T> {
     val stateChanged = MutableStateFlow(false)
 
-    protected fun resetStateChanged() {
+    protected fun resetStateChanged(){
         stateChanged.value = false
     }
 
     abstract val value: T
-    abstract suspend fun apply()
+    abstract suspend fun sync()
     abstract fun reset()
 }
 
@@ -31,15 +33,16 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
     private val map: SnapshotStateMap<K, V> = appliedFlowMap
         .getDeflowedMap()
         .getMutableStateMap(),
-    private val onApplyState: (Map<K, V>) -> Unit = {}
+    private val onStateSynced: (Map<K, V>) -> Unit = {}
 ) : NonAppliedState<Map<K, V>>(),
     MutableMap<K, V> by map {
 
     override val value: Map<K, V> get() = this
 
-    override suspend fun apply() {
+    override suspend fun sync() {
         dataStoreRepository.saveMap(value)
-        onApplyState(value)
+        onStateSynced(value)
+        dissimilarKeys.clear()
         resetStateChanged()
     }
 
@@ -49,6 +52,7 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
                 map[k] = v.first()
             }
         }
+        dissimilarKeys.clear()
         resetStateChanged()
     }
 
@@ -70,7 +74,7 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
 class NonAppliedStateFlow<T>(
     private val coroutineScope: CoroutineScope,
     private val appliedFlow: Flow<T>,
-    private val updateAppliedState: (T) -> Unit
+    private val syncState: (T) -> Unit
 ) : NonAppliedState<T>(),
     MutableStateFlow<T> by MutableStateFlow(
         appliedFlow.getValueSynchronously()
@@ -84,8 +88,8 @@ class NonAppliedStateFlow<T>(
         }
     }
 
-    override suspend fun apply() {
-        updateAppliedState(value)
+    override suspend fun sync() {
+        syncState(value)
         resetStateChanged()
     }
 
@@ -102,27 +106,41 @@ class CoherentNonAppliedStates(
     coroutineScope: CoroutineScope
 ) : List<NonAppliedState<*>> by nonAppliedState.asList() {
 
-    val requiringUpdate = MutableStateFlow(false)
+    val stateChanged = MutableStateFlow(false)
+
+    private val changedStateIndices = mutableSetOf<Int>()
 
     init {
-        forEach {
-            coroutineScope.launch {
-                it.stateChanged.collect {
-                    requiringUpdate.value = any { it.stateChanged.value }
+        coroutineScope.launch {
+            mapIndexed { i, it -> it.stateChanged.transform { emit(it to i) } }
+                .merge()
+                .collect { (stateChanged, i) ->
+                    if (stateChanged) {
+                        changedStateIndices.add(i)
+                    } else {
+                        changedStateIndices.remove(i)
+                    }
+
+                    this@CoherentNonAppliedStates.stateChanged.value = changedStateIndices.isNotEmpty()
                 }
-            }
         }
     }
 
-    suspend fun apply() {
+    suspend fun sync() {
         forEach {
-            it.apply()
+            if (it.stateChanged.value) {
+                it.sync()
+            }
         }
+        changedStateIndices.clear()
     }
 
     fun reset() {
         forEach {
-            it.reset()
+            if (it.stateChanged.value) {
+                it.reset()
+            }
         }
+        changedStateIndices.clear()
     }
 }

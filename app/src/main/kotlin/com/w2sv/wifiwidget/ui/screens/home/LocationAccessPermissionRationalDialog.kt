@@ -26,7 +26,7 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        LocationAccessPermissionDialog(Modifier, "Proceed without SSID", {}, {})
+        LocationAccessPermissionRationalDialog(Modifier, "Proceed without SSID", {}, {})
     }
 }
 
@@ -36,7 +36,7 @@ enum class LocationAccessPermissionDialogTrigger {
 }
 
 @Composable
-fun LocationAccessPermissionDialog(
+fun LocationAccessPermissionRationalDialog(
     trigger: LocationAccessPermissionDialogTrigger,
     homeScreenViewModel: HomeScreenViewModel = viewModel(),
     widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
@@ -45,7 +45,7 @@ fun LocationAccessPermissionDialog(
 
     when (trigger) {
         LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> {
-            LocationAccessPermissionDialog(
+            LocationAccessPermissionRationalDialog(
                 dismissButtonText = stringResource(R.string.proceed_without_ssid),
                 onConfirmButtonPressed = {
                     homeScreenViewModel.lapRequestTrigger.value = trigger
@@ -56,7 +56,7 @@ fun LocationAccessPermissionDialog(
             )
         }
 
-        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionDialog(
+        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionRationalDialog(
             dismissButtonText = stringResource(R.string.never_mind),
             onConfirmButtonPressed = {
                 homeScreenViewModel.lapRequestTrigger.value = trigger
@@ -69,7 +69,7 @@ fun LocationAccessPermissionDialog(
 }
 
 @Composable
-private fun LocationAccessPermissionDialog(
+private fun LocationAccessPermissionRationalDialog(
     modifier: Modifier = Modifier,
     dismissButtonText: String,
     onConfirmButtonPressed: () -> Unit,

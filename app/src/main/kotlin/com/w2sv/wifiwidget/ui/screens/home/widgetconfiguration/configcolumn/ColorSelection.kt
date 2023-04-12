@@ -55,6 +55,7 @@ private fun SectionCustomizationRow(
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val label = stringResource(id = widgetColorSection.labelRes)
+
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,

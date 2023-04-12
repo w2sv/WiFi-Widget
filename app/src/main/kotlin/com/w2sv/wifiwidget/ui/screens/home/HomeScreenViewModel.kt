@@ -37,7 +37,7 @@ class HomeScreenViewModel @Inject constructor(
         dataStoreRepository.inAppTheme
     ) {
         viewModelScope.launch {
-            dataStoreRepository.saveEnum(it, PreferencesKey.IN_APP_THEME)
+            dataStoreRepository.saveEnum(PreferencesKey.IN_APP_THEME, it)
         }
     }
 
@@ -79,8 +79,8 @@ class HomeScreenViewModel @Inject constructor(
     fun onLAPDialogAnswered() {
         viewModelScope.launch {
             dataStoreRepository.save(
-                true,
-                PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED
+                PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED,
+                true
             )
         }
     }

@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,7 +33,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
@@ -69,8 +67,6 @@ fun ConfigColumn(
     )
     val theme by widgetConfigurationViewModel.widgetThemeState.collectAsState()
     val opacity by widgetConfigurationViewModel.widgetOpacityState.collectAsState()
-
-    val context = LocalContext.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -171,21 +167,16 @@ fun ConfigColumn(
                 widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property)
             },
             onCheckedChange = { property, value ->
-                if (property == WifiProperty.SSID && value) {
-                    when (homeScreenViewModel.lapDialogAnswered) {
+                when (property == WifiProperty.SSID && value) {
+                    true -> when (homeScreenViewModel.lapDialogAnswered) {
                         false -> homeScreenViewModel.lapDialogTrigger.value =
                             LocationAccessPermissionDialogTrigger.SSIDCheck
 
                         true -> homeScreenViewModel.lapRequestTrigger.value =
                             LocationAccessPermissionDialogTrigger.SSIDCheck
                     }
-                } else {
-                    widgetConfigurationViewModel.confirmAndSyncPropertyChange(
-                        property,
-                        value
-                    ) {
-                        context.showToast(R.string.uncheck_all_properties_toast)
-                    }
+
+                    false -> widgetConfigurationViewModel.widgetPropertyStateMap[property] = value
                 }
             },
             onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it })
