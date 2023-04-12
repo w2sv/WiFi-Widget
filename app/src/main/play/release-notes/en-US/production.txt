@@ -1,2 +1,5 @@
-[Added]
-- Custom widget color setting
+[Fixed]
+- Widget settings synchronization issues [hopefully]
+[Improved]
+- App performance
+- Accessibility, including contrasts and TalkBack content descriptions
