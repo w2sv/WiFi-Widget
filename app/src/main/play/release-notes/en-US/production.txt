@@ -1,5 +1,2 @@
-[Fixed]
-- Widget settings synchronization issues [hopefully]
-[Improved]
-- App performance
-- Accessibility, including contrasts and TalkBack content descriptions
+[Hotfix]
+- Widget settings synchronization issues (maybe this time)

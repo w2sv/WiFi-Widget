@@ -19,6 +19,7 @@ dependencies {
 
     implementation libs.kotlinutils
     implementation libs.androidutils
+    implementation libs.slimber
 
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt
