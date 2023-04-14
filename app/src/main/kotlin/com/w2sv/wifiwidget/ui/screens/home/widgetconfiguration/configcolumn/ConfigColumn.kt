@@ -164,7 +164,7 @@ fun ConfigColumn(
         )
         PropertySelectionSection(modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
-                widgetConfigurationViewModel.widgetPropertyStateMap.getValue(property)
+                widgetConfigurationViewModel.wifiPropertySetStateMap.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
@@ -176,7 +176,7 @@ fun ConfigColumn(
                             LocationAccessPermissionDialogTrigger.SSIDCheck
                     }
 
-                    false -> widgetConfigurationViewModel.widgetPropertyStateMap[property] = value
+                    false -> widgetConfigurationViewModel.wifiPropertySetStateMap[property] = value
                 }
             },
             onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it })

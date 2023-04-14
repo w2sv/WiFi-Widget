@@ -23,45 +23,69 @@ import javax.inject.Inject
 @HiltViewModel
 class WidgetConfigurationViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    /**
-     * onSplashScreenAnimationFinished
-     */
+    // ===================================
+    // onSplashScreenAnimationFinished
+    // ===================================
 
     fun onSplashScreenAnimationFinished() {
-        if (openConfigurationDialogOnSplashScreenAnimationFinished) {
+        if (savedStateHandle.contains(WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)) {
             showWidgetConfigurationDialog.value = true
         }
     }
 
-    private val openConfigurationDialogOnSplashScreenAnimationFinished =
-        savedStateHandle.contains(WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)
+    // ==========
+    // Dialog
+    // ==========
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
 
+    fun onDismissWidgetConfigurationDialog() {
+        viewModelScope.launch {
+            widgetConfigurationStates.reset()
+            showWidgetConfigurationDialog.value = false
+        }
+    }
+
+    // ========================
+    // Dialog overlay dialogs
+    // ========================
+
     val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
 
-    val widgetPropertyStateMap by lazy {
+    val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
+
+    fun onDismissCustomizationDialog() {
+        customizationDialogSection.reset()
+    }
+
+    // =========
+    // NonAppliedState
+    // =========
+
+    val widgetConfigurationStates by lazy {
+        CoherentNonAppliedStates(
+            wifiPropertySetStateMap,
+            widgetThemeState,
+            widgetOpacityState,
+            widgetRefreshingParametersState,
+            customWidgetColorsState,
+            coroutineScope = viewModelScope
+        )
+    }
+
+    // =========
+    // NonAppliedSnapshotStateMap
+    // =========
+
+    val wifiPropertySetStateMap by lazy {
         NonAppliedSnapshotStateMap(
             viewModelScope,
             dataStoreRepository.wifiProperties,
             dataStoreRepository
         )
-    }
-
-    val widgetThemeState = NonAppliedStateFlow(
-        viewModelScope,
-        dataStoreRepository.widgetTheme
-    ) {
-        viewModelScope.launch {
-            dataStoreRepository.saveEnum(PreferencesKey.WIDGET_THEME, it)
-        }
-    }
-
-    val customThemeSelected = widgetThemeState.transform {
-        emit(it == Theme.Custom)
     }
 
     val customWidgetColorsState by lazy {
@@ -70,21 +94,6 @@ class WidgetConfigurationViewModel @Inject constructor(
             dataStoreRepository.customWidgetColors,
             dataStoreRepository
         )
-    }
-
-    val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
-
-    fun onDismissCustomizationDialog() {
-        customizationDialogSection.reset()
-    }
-
-    val widgetOpacityState = NonAppliedStateFlow(
-        viewModelScope,
-        dataStoreRepository.opacity
-    ) {
-        viewModelScope.launch {
-            dataStoreRepository.save(PreferencesKey.OPACITY, it)
-        }
     }
 
     val widgetRefreshingParametersState by lazy {
@@ -99,21 +108,31 @@ class WidgetConfigurationViewModel @Inject constructor(
         }
     }
 
+    // =====================
+    // NonAppliedStateFlow
+    // =====================
+
+    val widgetThemeState = NonAppliedStateFlow(
+        viewModelScope,
+        dataStoreRepository.widgetTheme
+    ) {
+        dataStoreRepository.saveEnum(PreferencesKey.WIDGET_THEME, it)
+    }
+
+    val widgetOpacityState = NonAppliedStateFlow(
+        viewModelScope,
+        dataStoreRepository.opacity
+    ) {
+        dataStoreRepository.save(PreferencesKey.OPACITY, it)
+    }
+
+    // ===========================
+    // State change side effects
+    // ===========================
+
+    val customThemeSelected = widgetThemeState.transform {
+        emit(it == Theme.Custom)
+    }
+
     val widgetRefreshingParametersChanged = MutableSharedFlow<Unit>()
-
-    val widgetConfigurationStates by lazy {
-        CoherentNonAppliedStates(
-            widgetPropertyStateMap,
-            widgetThemeState,
-            widgetOpacityState,
-            widgetRefreshingParametersState,
-            customWidgetColorsState,
-            coroutineScope = viewModelScope
-        )
-    }
-
-    fun onDismissWidgetConfigurationDialog() {
-        widgetConfigurationStates.reset()
-        showWidgetConfigurationDialog.value = false
-    }
 }

@@ -62,7 +62,7 @@ fun LocationAccessPermissionRationalDialog(
                 homeScreenViewModel.lapRequestTrigger.value = trigger
             },
             onDismissButtonPressed = {
-                widgetConfigurationViewModel.widgetPropertyStateMap[WifiProperty.SSID] = false
+                widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = false
             }
         )
     }

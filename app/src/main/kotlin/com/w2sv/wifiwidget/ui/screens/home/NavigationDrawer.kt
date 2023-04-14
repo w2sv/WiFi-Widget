@@ -110,18 +110,20 @@ fun StatefulNavigationDrawer(
     if (showThemeDialog) {
         ThemeSelectionDialog(
             onDismissRequest = {
-                homeScreenViewModel.inAppThemeState.reset()
+                scope.launch {
+                    homeScreenViewModel.inAppThemeState.reset()
+                }
                 setShowThemeDialog(false)
             },
             selectedTheme = { theme },
             onThemeSelected = { homeScreenViewModel.inAppThemeState.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
             onApplyButtonPress = {
-                setShowThemeDialog(false)
                 scope.launch {
                     homeScreenViewModel.inAppThemeState.sync()
                     context.showToast("Updated Theme")
                 }
+                setShowThemeDialog(false)
             }
         )
     }

@@ -36,9 +36,7 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope,
         dataStoreRepository.inAppTheme
     ) {
-        viewModelScope.launch {
-            dataStoreRepository.saveEnum(PreferencesKey.IN_APP_THEME, it)
-        }
+        dataStoreRepository.saveEnum(PreferencesKey.IN_APP_THEME, it)
     }
 
     /**

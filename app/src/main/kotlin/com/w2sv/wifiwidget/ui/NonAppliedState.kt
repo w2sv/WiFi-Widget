@@ -17,13 +17,12 @@ import kotlinx.coroutines.launch
 abstract class NonAppliedState<T> {
     val stateChanged = MutableStateFlow(false)
 
-    protected fun resetStateChanged(){
-        stateChanged.value = false
+    protected fun MutableStateFlow<Boolean>.reset() {
+        value = false
     }
 
-    abstract val value: T
     abstract suspend fun sync()
-    abstract fun reset()
+    abstract suspend fun reset()
 }
 
 class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
@@ -37,44 +36,47 @@ class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
 ) : NonAppliedState<Map<K, V>>(),
     MutableMap<K, V> by map {
 
-    override val value: Map<K, V> get() = this
-
-    override suspend fun sync() {
-        dataStoreRepository.saveMap(value)
-        onStateSynced(value)
-        dissimilarKeys.clear()
-        resetStateChanged()
-    }
-
-    override fun reset() {
-        coroutineScope.launch {
-            appliedFlowMap.forEach { (k, v) ->
-                map[k] = v.first()
-            }
-        }
-        dissimilarKeys.clear()
-        resetStateChanged()
-    }
-
     private val dissimilarKeys = mutableSetOf<K>()
 
-    override fun put(key: K, value: V): V? {
-        val previous = map.put(key, value)
-        coroutineScope.launch {
-            when (value == appliedFlowMap.getValue(key).first()) {
-                true -> dissimilarKeys.remove(key)
-                false -> dissimilarKeys.add(key)
+    private val dissimilarEntries: Map<K, V>
+        get() = filterKeys { it in dissimilarKeys }
+
+    override fun put(key: K, value: V): V? =
+        map.put(key, value)
+            .also {
+                coroutineScope.launch {
+                    when (value == appliedFlowMap.getValue(key).first()) {
+                        true -> dissimilarKeys.remove(key)
+                        false -> dissimilarKeys.add(key)
+                    }
+                    stateChanged.value = dissimilarKeys.isNotEmpty()
+                }
             }
-            stateChanged.value = dissimilarKeys.isNotEmpty()
-        }
-        return previous
+
+    override suspend fun sync() {
+        dataStoreRepository.saveMap(dissimilarEntries)
+        onStateSynced(this)
+        resetInternally()
+    }
+
+    override suspend fun reset() {
+        dissimilarKeys
+            .forEach {
+                map[it] = appliedFlowMap.getValue(it).first()
+            }
+        resetInternally()
+    }
+
+    private fun resetInternally() {
+        dissimilarKeys.clear()
+        stateChanged.reset()
     }
 }
 
 class NonAppliedStateFlow<T>(
-    private val coroutineScope: CoroutineScope,
+    coroutineScope: CoroutineScope,
     private val appliedFlow: Flow<T>,
-    private val syncState: (T) -> Unit
+    private val syncState: suspend (T) -> Unit
 ) : NonAppliedState<T>(),
     MutableStateFlow<T> by MutableStateFlow(
         appliedFlow.getValueSynchronously()
@@ -90,23 +92,19 @@ class NonAppliedStateFlow<T>(
 
     override suspend fun sync() {
         syncState(value)
-        resetStateChanged()
+        stateChanged.reset()
     }
 
-    override fun reset() {
-        coroutineScope.launch {
-            value = appliedFlow.first()
-        }
-        resetStateChanged()
+    override suspend fun reset() {
+        value = appliedFlow.first()
     }
 }
 
 class CoherentNonAppliedStates(
     vararg nonAppliedState: NonAppliedState<*>,
     coroutineScope: CoroutineScope
-) : List<NonAppliedState<*>> by nonAppliedState.asList() {
-
-    val stateChanged = MutableStateFlow(false)
+) : List<NonAppliedState<*>> by nonAppliedState.asList(),
+    NonAppliedState<List<NonAppliedState<*>>>() {
 
     private val changedStateIndices = mutableSetOf<Int>()
 
@@ -121,26 +119,25 @@ class CoherentNonAppliedStates(
                         changedStateIndices.remove(i)
                     }
 
-                    this@CoherentNonAppliedStates.stateChanged.value = changedStateIndices.isNotEmpty()
+                    this@CoherentNonAppliedStates.stateChanged.value =
+                        changedStateIndices.isNotEmpty()
                 }
         }
     }
 
-    suspend fun sync() {
+    override suspend fun sync() {
         forEach {
             if (it.stateChanged.value) {
                 it.sync()
             }
         }
-        changedStateIndices.clear()
     }
 
-    fun reset() {
+    override suspend fun reset() {
         forEach {
             if (it.stateChanged.value) {
                 it.reset()
             }
         }
-        changedStateIndices.clear()
     }
 }
