@@ -20,7 +20,7 @@ build-and-publish-to-test-track:
 	@./gradlew :app:bundleRelease --console verbose
 
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --artifact-dir app/build/outputs/bundle/release --track internal --console verbose
+	@./gradlew publishBundle --track internal --console verbose
 
 build-and-publish:
 	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n 3. Pushed the latest changes\n\n Otherwise cancel target now."
@@ -37,4 +37,4 @@ build-and-publish:
 	@echo "Create GitHub Release"
 	@gh release create $(VERSION) app/build/outputs/apk/release/$(VERSION).apk -F app/src/main/play/release-notes/en-US/production.txt
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --artifact-dir app/build/outputs/bundle/release --console verbose
+	@./gradlew publishBundle --track production --console verbose

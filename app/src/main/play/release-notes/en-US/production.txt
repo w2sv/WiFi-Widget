@@ -1,2 +1,2 @@
-[Hotfix]
-- Widget settings synchronization issues (maybe this time)
+[UI]
+- Simplify location access permission rational dialog
