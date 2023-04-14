@@ -45,7 +45,7 @@ class DataStoreRepository @Inject constructor(
         }
     }
 
-    suspend fun saveEnum(
+    suspend fun save(
         preferencesKey: Preferences.Key<Int>,
         enum: Enum<*>
     ) {

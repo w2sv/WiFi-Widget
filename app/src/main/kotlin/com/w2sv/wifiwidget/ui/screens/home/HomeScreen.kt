@@ -50,7 +50,7 @@ internal fun HomeScreen(
             }
         }
         viewModel.lapDialogTrigger.collectAsState().value?.let {
-            LocationAccessPermissionRationalDialog(it)
+            LocationAccessPermissionRational(it)
         }
         viewModel.lapRequestTrigger.collectAsState().value?.let {
             LocationAccessPermissionRequest(it)

@@ -6,7 +6,7 @@
     <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="lap_dialog_title">SSID Retrieval requires Location Access Permission</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
-    <string name="go_ahead">Go ahead</string>
+    <string name="proceed">Proceed</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>

@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.Theme
@@ -10,6 +9,7 @@ import com.w2sv.common.WifiProperty
 import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.widget.WidgetProvider
+import com.w2sv.wifiwidget.DataStoreRepositoryHoldingViewModel
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
@@ -22,9 +22,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WidgetConfigurationViewModel @Inject constructor(
-    private val dataStoreRepository: DataStoreRepository,
+    dataStoreRepository: DataStoreRepository,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : DataStoreRepositoryHoldingViewModel(dataStoreRepository) {
 
     // ===================================
     // onSplashScreenAnimationFinished
@@ -116,7 +116,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         viewModelScope,
         dataStoreRepository.widgetTheme
     ) {
-        dataStoreRepository.saveEnum(PreferencesKey.WIDGET_THEME, it)
+        dataStoreRepository.save(PreferencesKey.WIDGET_THEME, it)
     }
 
     val widgetOpacityState = NonAppliedStateFlow(

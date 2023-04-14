@@ -38,11 +38,11 @@ androidx-datastore-preferences = 'androidx.datastore:datastore-preferences:1.0.0
 google-material = 'com.google.android.material:material:1.8.0'
 google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
 google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
+accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.30.1"
 
 # other
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
 colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc8'
-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.30.1"
 
 [plugins]
 application = { id = 'com.android.application', version.ref = 'agp' }

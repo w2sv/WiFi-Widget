@@ -21,13 +21,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LocationAccessPermissionRequest(
-    trigger: LocationAccessPermissionDialogTrigger,
+    trigger: LocationAccessPermissionRequestTrigger,
     widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
     when (trigger) {
-        LocationAccessPermissionDialogTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+        LocationAccessPermissionRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
             onGranted = {
                 widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
                 widgetConfigurationViewModel.wifiPropertySetStateMap.sync()
@@ -38,7 +38,7 @@ fun LocationAccessPermissionRequest(
             }
         )
 
-        LocationAccessPermissionDialogTrigger.SSIDCheck -> LocationAccessPermissionRequest(
+        LocationAccessPermissionRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
             onGranted = {
                 widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
             },
@@ -52,7 +52,7 @@ fun LocationAccessPermissionRequest(
 private fun LocationAccessPermissionRequest(
     onGranted: suspend () -> Unit,
     onDenied: suspend () -> Unit,
-    homeScreenViewModel: HomeScreenViewModel = viewModel()
+    viewModel: HomeScreenViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -68,7 +68,7 @@ private fun LocationAccessPermissionRequest(
                     true -> onGranted()
                     false -> onDenied()
                 }
-                homeScreenViewModel.lapRequestTrigger.reset()
+                viewModel.lapRequestTrigger.reset()
             }
         }
     )
@@ -77,22 +77,19 @@ private fun LocationAccessPermissionRequest(
         when (permissionState.allPermissionsGranted) {
             true -> {
                 onGranted()
-                homeScreenViewModel.lapRequestTrigger.reset()
+                viewModel.lapRequestTrigger.reset()
             }
 
             false -> {
-                if (permissionState.launchingSuppressed(homeScreenViewModel.lapRequestLaunchedAtLeastOnce)) {
+                if (permissionState.launchingSuppressed(viewModel.lapRequestLaunchedAtLeastOnce)) {
                     context.showToast(
                         context.getString(R.string.go_to_app_settings_and_grant_location_access_permission),
                         Toast.LENGTH_LONG
                     )
-                    homeScreenViewModel.lapRequestTrigger.reset()
+                    viewModel.lapRequestTrigger.reset()
                 } else {
                     permissionState.launchMultiplePermissionRequest()
-                    homeScreenViewModel.dataStoreRepository.save(
-                        PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE,
-                        true
-                    )
+                    viewModel.saveToDataStore(PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE, true)
                 }
             }
         }

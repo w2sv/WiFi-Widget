@@ -22,7 +22,7 @@ fun StatefulPinWidgetButton(
     PinWidgetButton(modifier) {
         when (homeScreenViewModel.lapDialogAnswered) {
             false -> homeScreenViewModel.lapDialogTrigger.value =
-                LocationAccessPermissionDialogTrigger.PinWidgetButtonPress
+                LocationAccessPermissionRequestTrigger.PinWidgetButtonPress
 
             true -> WidgetProvider.pinWidget(context)
         }

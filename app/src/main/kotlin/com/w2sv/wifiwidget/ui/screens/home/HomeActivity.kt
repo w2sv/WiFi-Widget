@@ -15,7 +15,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.LifecycleCoroutineScope
@@ -70,10 +69,10 @@ class HomeActivity : ComponentActivity() {
         lifecycleScope.subscribeToFlows()
 
         setContent {
-            val theme by homeScreenViewModel.dataStoreRepository.inAppTheme.collectAsState(Theme.DeviceDefault)
-
             WifiWidgetTheme(
-                darkTheme = when (theme) {
+                darkTheme = when (homeScreenViewModel.dataStoreRepository.inAppTheme.collectAsState(
+                    initial = Theme.DeviceDefault
+                ).value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.DeviceDefault -> isSystemInDarkTheme()

@@ -11,6 +11,7 @@ import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.preferences.DataStoreRepository
 import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.widget.WidgetProvider
+import com.w2sv.wifiwidget.DataStoreRepositoryHoldingViewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,24 +25,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    val dataStoreRepository: DataStoreRepository,
+    dataStoreRepository: DataStoreRepository,
     @ApplicationContext context: Context
-) : androidx.lifecycle.ViewModel() {
+) : DataStoreRepositoryHoldingViewModel(dataStoreRepository) {
 
-    /**
-     * In-App Theme
-     */
-
-    val inAppThemeState = NonAppliedStateFlow(
+    val nonAppliedInAppTheme = NonAppliedStateFlow(
         viewModelScope,
         dataStoreRepository.inAppTheme
     ) {
-        dataStoreRepository.saveEnum(PreferencesKey.IN_APP_THEME, it)
+        dataStoreRepository.save(PreferencesKey.IN_APP_THEME, it)
     }
 
-    /**
-     * Widget Pin Listening
-     */
+    // ========================
+    // Widget Pin Listening
+    // ========================
 
     fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
         if (widgetIds.add(widgetId)) {
@@ -67,34 +64,25 @@ class HomeScreenViewModel @Inject constructor(
     private val widgetIds: MutableSet<Int> =
         WidgetProvider.getWidgetIds(context).toMutableSet()
 
-    /**
-     * lap := Location Access Permission
-     */
+    // =============
+    // LAP Dialog
+    // =============
 
     val lapDialogAnswered: Boolean
         get() = dataStoreRepository.locationAccessPermissionDialogAnswered.getValueSynchronously()
 
-    fun onLAPDialogAnswered() {
-        viewModelScope.launch {
-            dataStoreRepository.save(
-                PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED,
-                true
-            )
-        }
-    }
-
-    val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
+    val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
         MutableStateFlow(null)
 
-    val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionDialogTrigger?> =
+    val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean
         get() = dataStoreRepository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
 
-    /**
-     * BackPress
-     */
+    // ==============
+    // BackPress Handling
+    // ==============
 
     val exitApplication = MutableSharedFlow<Unit>()
 
