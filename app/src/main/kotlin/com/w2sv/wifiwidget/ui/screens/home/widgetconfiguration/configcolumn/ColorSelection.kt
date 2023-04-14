@@ -28,7 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurati
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun ColorSelectionSection(
+internal fun ColorSelection(
     modifier: Modifier = Modifier,
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {

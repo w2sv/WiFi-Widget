@@ -138,7 +138,7 @@ fun ConfigColumn(
                         )
                     )
         ) {
-            ColorSelectionSection(
+            ColorSelection(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 18.dp)
@@ -162,7 +162,7 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_checklist_24,
             modifier = defaultSectionHeaderModifier
         )
-        PropertySelectionSection(modifier = checkablePropertiesColumnModifier,
+        PropertySelection(modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
                 widgetConfigurationViewModel.wifiPropertySetStateMap.getValue(property)
             },

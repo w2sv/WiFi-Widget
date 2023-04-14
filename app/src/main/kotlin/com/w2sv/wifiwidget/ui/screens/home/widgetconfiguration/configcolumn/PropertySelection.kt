@@ -16,7 +16,7 @@ import com.w2sv.wifiwidget.ui.shared.InfoIconButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
-internal fun PropertySelectionSection(
+internal fun PropertySelection(
     modifier: Modifier = Modifier,
     propertyChecked: (WifiProperty) -> Boolean,
     onCheckedChange: (WifiProperty, Boolean) -> Unit,
