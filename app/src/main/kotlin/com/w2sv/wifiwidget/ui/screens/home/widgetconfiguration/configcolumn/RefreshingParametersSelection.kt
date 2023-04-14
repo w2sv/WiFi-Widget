@@ -20,12 +20,13 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WidgetRefreshingParameter
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.JostText
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun RefreshingSection(
+internal fun RefreshingParametersSelection(
     modifier: Modifier = Modifier,
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
     scrollToContentColumnBottom: suspend () -> Unit
@@ -57,6 +58,7 @@ private fun RefreshingParameterRow(
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val label = stringResource(id = parameter.labelRes)
+    val checkBoxCD = stringResource(id = R.string.set_unset).format(label)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -72,7 +74,7 @@ private fun RefreshingParameterRow(
                 viewModel.widgetRefreshingParametersState[parameter] = it
             },
             modifier = Modifier.semantics {
-                contentDescription = "Set/unset $label"
+                contentDescription = checkBoxCD
             }
         )
     }

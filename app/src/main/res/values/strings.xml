@@ -32,4 +32,9 @@
     <string name="theme_button_cd">Set the $1%s theme.</string>
     <string name="learn_more">Learn more</string>
     <string name="updated_theme">Updated Theme</string>
+    <string name="set_unset">Set/unset $1%s.</string>
+    <string name="info_icon_cd">Open the $1%s info dialog.</string>
+    <string name="color_picker_button_cd">Open the $1%s color picker dialog.</string>
+    <string name="you_re_not_signed_into_the_play_store">You\'re not signed into the Play Store</string>
+    <string name="version">Version: $1%s</string>
 </resources>

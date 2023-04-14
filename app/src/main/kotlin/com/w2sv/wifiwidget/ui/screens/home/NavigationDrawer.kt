@@ -132,6 +132,8 @@ fun StatefulNavigationDrawer(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
+    val context = LocalContext.current
+
     ModalDrawerSheet {
         Column(
             modifier = Modifier
@@ -185,7 +187,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                                     .setPackage("com.android.vending")
                             )
                         } catch (e: ActivityNotFoundException) {
-                            it.showToast("You're not signed into the Play Store")
+                            it.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
                         }
                     },
                     NavigationDrawerItem(
@@ -206,7 +208,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
 @Composable
 fun VersionText(modifier: Modifier = Modifier) {
     JostText(
-        text = "Version: ${BuildConfig.VERSION_NAME}",
+        text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
         modifier = modifier
     )
 }

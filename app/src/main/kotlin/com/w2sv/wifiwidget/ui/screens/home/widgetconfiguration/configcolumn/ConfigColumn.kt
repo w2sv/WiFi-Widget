@@ -162,7 +162,8 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_checklist_24,
             modifier = defaultSectionHeaderModifier
         )
-        PropertySelection(modifier = checkablePropertiesColumnModifier,
+        PropertySelection(
+            modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
                 widgetConfigurationViewModel.wifiPropertySetStateMap.getValue(property)
             },
@@ -179,14 +180,15 @@ fun ConfigColumn(
                     false -> widgetConfigurationViewModel.wifiPropertySetStateMap[property] = value
                 }
             },
-            onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it })
+            onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it }
+        )
 
         SectionHeader(
             titleRes = R.string.refreshing,
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             modifier = defaultSectionHeaderModifier
         )
-        RefreshingSection(checkablePropertiesColumnModifier) {
+        RefreshingParametersSelection(checkablePropertiesColumnModifier) {
             with(scrollState) {
                 animateScrollTo(maxValue)
             }

@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.WidgetColorSection
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.JostText
 
@@ -55,6 +56,7 @@ private fun SectionCustomizationRow(
     viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val label = stringResource(id = widgetColorSection.labelRes)
+    val colorPickerButtonCD = stringResource(id = R.string.color_picker_button_cd).format(label)
 
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -74,7 +76,7 @@ private fun SectionCustomizationRow(
         Button(
             modifier = modifier
                 .size(36.dp)
-                .semantics { contentDescription = "Open the $label color picker dialog." },
+                .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
                     viewModel.customWidgetColorsState.getValue(
