@@ -24,7 +24,7 @@ internal fun ButtonRow(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val applyButtonEnabled by widgetConfigurationViewModel.widgetConfigurationStates.stateChanged.collectAsState()
+    val applyButtonEnabled by widgetConfigurationViewModel.nonAppliedWidgetConfiguration.stateChanged.collectAsState()
 
     ButtonRow(
         onCancel = {
@@ -32,7 +32,7 @@ internal fun ButtonRow(
         },
         onApply = {
             scope.launch {
-                widgetConfigurationViewModel.widgetConfigurationStates.sync()
+                widgetConfigurationViewModel.nonAppliedWidgetConfiguration.sync()
                 WidgetProvider.triggerDataRefresh(context)
                 context.showToast(R.string.updated_widget_configuration)
                 widgetConfigurationViewModel.showWidgetConfigurationDialog.value = false

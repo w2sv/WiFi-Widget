@@ -79,7 +79,7 @@ private fun SectionCustomizationRow(
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(
-                    viewModel.customWidgetColorsState.getValue(
+                    viewModel.nonAppliedWidgetColors.getValue(
                         widgetColorSection
                     )
                 )

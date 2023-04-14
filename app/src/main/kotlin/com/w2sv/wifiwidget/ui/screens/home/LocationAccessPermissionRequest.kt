@@ -29,8 +29,8 @@ fun LocationAccessPermissionRequest(
     when (trigger) {
         LAPRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
             onGranted = {
-                widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
-                widgetConfigurationViewModel.wifiPropertySetStateMap.sync()
+                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
+                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags.sync()
                 WidgetProvider.pinWidget(context)
             },
             onDenied = {
@@ -40,7 +40,7 @@ fun LocationAccessPermissionRequest(
 
         LAPRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
             onGranted = {
-                widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
+                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
             },
             onDenied = {}
         )

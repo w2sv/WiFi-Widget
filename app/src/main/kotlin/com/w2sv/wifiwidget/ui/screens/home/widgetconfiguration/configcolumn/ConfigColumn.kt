@@ -65,8 +65,8 @@ fun ConfigColumn(
     val showColorSelectionSection by widgetConfigurationViewModel.customThemeSelected.collectAsState(
         false
     )
-    val theme by widgetConfigurationViewModel.widgetThemeState.collectAsState()
-    val opacity by widgetConfigurationViewModel.widgetOpacityState.collectAsState()
+    val theme by widgetConfigurationViewModel.nonAppliedWidgetTheme.collectAsState()
+    val opacity by widgetConfigurationViewModel.nonAppliedWidgetOpacity.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,22 +90,22 @@ fun ConfigColumn(
                     with(Brush) {
                         linearGradient(
                             0.4f to Color(
-                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Background
                                 )
                             ),
                             0.4f to Color(
-                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Labels
                                 )
                             ),
                             0.6f to Color(
-                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Labels
                                 )
                             ),
                             0.6f to Color(
-                                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Values
                                 )
                             )
@@ -117,7 +117,7 @@ fun ConfigColumn(
                 theme
             },
             onSelected = {
-                widgetConfigurationViewModel.widgetThemeState.value = it
+                widgetConfigurationViewModel.nonAppliedWidgetTheme.value = it
             }
         )
 
@@ -153,7 +153,7 @@ fun ConfigColumn(
         OpacitySliderWithValue(
             opacity = { opacity },
             onOpacityChanged = {
-                widgetConfigurationViewModel.widgetOpacityState.value = it
+                widgetConfigurationViewModel.nonAppliedWidgetOpacity.value = it
             }
         )
 
@@ -165,7 +165,7 @@ fun ConfigColumn(
         PropertySelection(
             modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
-                widgetConfigurationViewModel.wifiPropertySetStateMap.getValue(property)
+                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
@@ -177,7 +177,7 @@ fun ConfigColumn(
                             LAPRequestTrigger.SSIDCheck
                     }
 
-                    false -> widgetConfigurationViewModel.wifiPropertySetStateMap[property] = value
+                    false -> widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[property] = value
                 }
             },
             onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it }

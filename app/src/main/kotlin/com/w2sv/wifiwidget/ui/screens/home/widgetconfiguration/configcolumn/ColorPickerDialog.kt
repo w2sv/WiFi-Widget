@@ -45,7 +45,7 @@ internal fun ColorPickerDialog(
     var color by remember {
         mutableStateOf(
             Color(
-                widgetConfigurationViewModel.customWidgetColorsState.getValue(
+                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
                     customizableWidgetSection
                 )
             )
@@ -97,7 +97,7 @@ internal fun ColorPickerDialog(
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        widgetConfigurationViewModel.customWidgetColorsState[customizableWidgetSection] =
+                        widgetConfigurationViewModel.nonAppliedWidgetColors[customizableWidgetSection] =
                             color.toArgb()
                         widgetConfigurationViewModel.onDismissCustomizationDialog()
                     }) {

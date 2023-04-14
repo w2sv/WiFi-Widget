@@ -44,7 +44,7 @@ class WidgetConfigurationViewModel @Inject constructor(
 
     fun onDismissWidgetConfigurationDialog() {
         viewModelScope.launch {
-            widgetConfigurationStates.reset()
+            nonAppliedWidgetConfiguration.reset()
             showWidgetConfigurationDialog.value = false
         }
     }
@@ -65,13 +65,13 @@ class WidgetConfigurationViewModel @Inject constructor(
     // NonAppliedState
     // =========
 
-    val widgetConfigurationStates by lazy {
+    val nonAppliedWidgetConfiguration by lazy {
         CoherentNonAppliedStates(
-            wifiPropertySetStateMap,
-            widgetThemeState,
-            widgetOpacityState,
-            widgetRefreshingParametersState,
-            customWidgetColorsState,
+            nonAppliedWifiPropertyFlags,
+            nonAppliedWidgetTheme,
+            nonAppliedWidgetOpacity,
+            nonAppliedWidgetRefreshingParameterFlags,
+            nonAppliedWidgetColors,
             coroutineScope = viewModelScope
         )
     }
@@ -80,7 +80,7 @@ class WidgetConfigurationViewModel @Inject constructor(
     // NonAppliedSnapshotStateMap
     // =========
 
-    val wifiPropertySetStateMap by lazy {
+    val nonAppliedWifiPropertyFlags by lazy {
         NonAppliedSnapshotStateMap(
             viewModelScope,
             dataStoreRepository.wifiProperties,
@@ -88,7 +88,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         )
     }
 
-    val customWidgetColorsState by lazy {
+    val nonAppliedWidgetColors by lazy {
         NonAppliedSnapshotStateMap(
             viewModelScope,
             dataStoreRepository.customWidgetColors,
@@ -96,7 +96,7 @@ class WidgetConfigurationViewModel @Inject constructor(
         )
     }
 
-    val widgetRefreshingParametersState by lazy {
+    val nonAppliedWidgetRefreshingParameterFlags by lazy {
         NonAppliedSnapshotStateMap(
             viewModelScope,
             dataStoreRepository.widgetRefreshingParameters,
@@ -112,14 +112,14 @@ class WidgetConfigurationViewModel @Inject constructor(
     // NonAppliedStateFlow
     // =====================
 
-    val widgetThemeState = NonAppliedStateFlow(
+    val nonAppliedWidgetTheme = NonAppliedStateFlow(
         viewModelScope,
         dataStoreRepository.widgetTheme
     ) {
         dataStoreRepository.save(PreferencesKey.WIDGET_THEME, it)
     }
 
-    val widgetOpacityState = NonAppliedStateFlow(
+    val nonAppliedWidgetOpacity = NonAppliedStateFlow(
         viewModelScope,
         dataStoreRepository.opacity
     ) {
@@ -130,7 +130,7 @@ class WidgetConfigurationViewModel @Inject constructor(
     // State change side effects
     // ===========================
 
-    val customThemeSelected = widgetThemeState.transform {
+    val customThemeSelected = nonAppliedWidgetTheme.transform {
         emit(it == Theme.Custom)
     }
 

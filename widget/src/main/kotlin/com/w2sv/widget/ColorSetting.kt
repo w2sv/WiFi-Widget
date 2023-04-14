@@ -12,7 +12,7 @@ import com.w2sv.common.extensions.toRGBChannelInt
 
 internal fun RemoteViews.setWidgetColors(
     theme: Theme,
-    customWidgetColors: Map<WidgetColorSection, Int>,
+    customWidgetColors: Lazy<Map<WidgetColorSection, Int>>,
     backgroundOpacity: Float,
     context: Context
 ) {
@@ -49,12 +49,14 @@ internal fun RemoteViews.setWidgetColors(
             context.getColor(androidx.appcompat.R.color.foreground_material_light)
         )
 
-        Theme.Custom -> setColors(
-            customWidgetColors.getValue(WidgetColorSection.Background),
-            backgroundOpacity,
-            customWidgetColors.getValue(WidgetColorSection.Labels),
-            customWidgetColors.getValue(WidgetColorSection.Values)
-        )
+        Theme.Custom -> with(customWidgetColors.value) {
+            setColors(
+                getValue(WidgetColorSection.Background),
+                backgroundOpacity,
+                getValue(WidgetColorSection.Labels),
+                getValue(WidgetColorSection.Values)
+            )
+        }
     }
 }
 

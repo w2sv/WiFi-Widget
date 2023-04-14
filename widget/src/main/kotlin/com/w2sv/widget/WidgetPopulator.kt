@@ -68,7 +68,7 @@ internal class WidgetPopulator @Inject constructor(
             )
             setWidgetColors(
                 theme = dataStoreRepository.widgetTheme.getValueSynchronously(),
-                customWidgetColors = dataStoreRepository.customWidgetColors.getDeflowedMap(),
+                customWidgetColors = lazy { dataStoreRepository.customWidgetColors.getDeflowedMap() },
                 backgroundOpacity = dataStoreRepository.opacity.getValueSynchronously(),
                 context = context
             )
