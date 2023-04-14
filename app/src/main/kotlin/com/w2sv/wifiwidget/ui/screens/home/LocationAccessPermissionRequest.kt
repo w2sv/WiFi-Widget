@@ -21,13 +21,13 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun LocationAccessPermissionRequest(
-    trigger: LocationAccessPermissionRequestTrigger,
+    trigger: LAPRequestTrigger,
     widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
 
     when (trigger) {
-        LocationAccessPermissionRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+        LAPRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
             onGranted = {
                 widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
                 widgetConfigurationViewModel.wifiPropertySetStateMap.sync()
@@ -38,7 +38,7 @@ fun LocationAccessPermissionRequest(
             }
         )
 
-        LocationAccessPermissionRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
+        LAPRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
             onGranted = {
                 widgetConfigurationViewModel.wifiPropertySetStateMap[WifiProperty.SSID] = true
             },

@@ -49,7 +49,7 @@ internal fun HomeScreen(
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
         }
-        viewModel.lapDialogTrigger.collectAsState().value?.let {
+        viewModel.lapRationalTrigger.collectAsState().value?.let {
             LocationAccessPermissionRational(it)
         }
         viewModel.lapRequestTrigger.collectAsState().value?.let {

@@ -15,8 +15,8 @@ import javax.inject.Inject
 class DataStoreRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-    val locationAccessPermissionDialogAnswered: Flow<Boolean> = dataStore.data.map {
-        it[PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED] ?: false
+    val locationAccessPermissionRationalShown: Flow<Boolean> = dataStore.data.map {
+        it[PreferencesKey.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN] ?: false
     }
 
     val locationAccessPermissionRequestedAtLeastOnce: Flow<Boolean> = dataStore.data.map {

@@ -38,7 +38,7 @@ import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.screens.home.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.ButtonColoring
 import com.w2sv.wifiwidget.ui.shared.JostText
@@ -168,12 +168,12 @@ fun ConfigColumn(
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
-                    true -> when (homeScreenViewModel.lapDialogAnswered) {
-                        false -> homeScreenViewModel.lapDialogTrigger.value =
-                            LocationAccessPermissionRequestTrigger.SSIDCheck
+                    true -> when (homeScreenViewModel.lapRationalShown) {
+                        false -> homeScreenViewModel.lapRationalTrigger.value =
+                            LAPRequestTrigger.SSIDCheck
 
                         true -> homeScreenViewModel.lapRequestTrigger.value =
-                            LocationAccessPermissionRequestTrigger.SSIDCheck
+                            LAPRequestTrigger.SSIDCheck
                     }
 
                     false -> widgetConfigurationViewModel.wifiPropertySetStateMap[property] = value

@@ -23,18 +23,18 @@ import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 @Composable
 private fun Prev() {
     WifiWidgetTheme {
-        LocationAccessPermissionRational(LocationAccessPermissionRequestTrigger.SSIDCheck)
+        LocationAccessPermissionRational(LAPRequestTrigger.SSIDCheck)
     }
 }
 
-enum class LocationAccessPermissionRequestTrigger {
+enum class LAPRequestTrigger {
     PinWidgetButtonPress,
     SSIDCheck
 }
 
 @Composable
 fun LocationAccessPermissionRational(
-    trigger: LocationAccessPermissionRequestTrigger,
+    trigger: LAPRequestTrigger,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel()
 ) {
@@ -63,17 +63,17 @@ fun LocationAccessPermissionRational(
             DialogButton(
                 onClick = {
                     viewModel.saveToDataStore(
-                        PreferencesKey.LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED,
+                        PreferencesKey.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN,
                         true
                     )
-                    viewModel.lapDialogTrigger.reset()
+                    viewModel.lapRationalTrigger.reset()
                     viewModel.lapRequestTrigger.value = trigger
                 },
                 modifier = Modifier.fillMaxWidth()
             ) { JostText(text = stringResource(R.string.proceed)) }
         },
         onDismissRequest = {
-            viewModel.lapDialogTrigger.reset()
+            viewModel.lapRationalTrigger.reset()
         }
     )
 }

@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 
 object PreferencesKey {
-    val LOCATION_ACCESS_PERMISSION_DIALOG_ANSWERED =
+    val LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN =
         booleanPreferencesKey("locationPermissionDialogAnswered")
     val LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE =
         booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce")

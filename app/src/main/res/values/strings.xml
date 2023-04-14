@@ -31,4 +31,5 @@
     <string name="opacity_slider_cd">Set the widget background opacity.</string>
     <string name="theme_button_cd">Set the $1%s theme.</string>
     <string name="learn_more">Learn more</string>
+    <string name="updated_theme">Updated Theme</string>
 </resources>

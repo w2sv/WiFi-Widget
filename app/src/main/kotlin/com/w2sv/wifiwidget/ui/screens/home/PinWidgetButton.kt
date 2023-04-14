@@ -20,9 +20,9 @@ fun StatefulPinWidgetButton(
     val context = LocalContext.current
 
     PinWidgetButton(modifier) {
-        when (homeScreenViewModel.lapDialogAnswered) {
-            false -> homeScreenViewModel.lapDialogTrigger.value =
-                LocationAccessPermissionRequestTrigger.PinWidgetButtonPress
+        when (homeScreenViewModel.lapRationalShown) {
+            false -> homeScreenViewModel.lapRationalTrigger.value =
+                LAPRequestTrigger.PinWidgetButtonPress
 
             true -> WidgetProvider.pinWidget(context)
         }

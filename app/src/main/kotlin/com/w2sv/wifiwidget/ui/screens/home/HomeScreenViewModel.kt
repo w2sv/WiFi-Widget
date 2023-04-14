@@ -68,13 +68,13 @@ class HomeScreenViewModel @Inject constructor(
     // LAP Dialog
     // =============
 
-    val lapDialogAnswered: Boolean
-        get() = dataStoreRepository.locationAccessPermissionDialogAnswered.getValueSynchronously()
-
-    val lapDialogTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
+    val lapRationalTrigger: MutableStateFlow<LAPRequestTrigger?> =
         MutableStateFlow(null)
 
-    val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
+    val lapRationalShown: Boolean
+        get() = dataStoreRepository.locationAccessPermissionRationalShown.getValueSynchronously()
+
+    val lapRequestTrigger: MutableStateFlow<LAPRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean
