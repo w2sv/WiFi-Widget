@@ -7,7 +7,7 @@ kotlin = '1.8.10'
 java = '17'
 
 compose-compiler = '1.4.4'
-compose-tooling = '1.4.1'
+compose-tooling = '1.4.2'
 hilt = '2.45'
 junit = '5.9.2'
 lifecycle = "2.6.1"
