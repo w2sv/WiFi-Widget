@@ -3,7 +3,7 @@ package com.w2sv.common
 import android.graphics.Color
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.common.preferences.DataStoreProperty
+import com.w2sv.common.datastore.DataStoreProperty
 
 enum class WidgetColorSection(@StringRes val labelRes: Int, override val defaultValue: Int) :
     DataStoreProperty<Int> {

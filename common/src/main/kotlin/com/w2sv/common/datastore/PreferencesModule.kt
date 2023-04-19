@@ -1,4 +1,4 @@
-package com.w2sv.common.preferences
+package com.w2sv.common.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore

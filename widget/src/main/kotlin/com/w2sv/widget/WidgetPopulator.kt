@@ -11,7 +11,7 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.extensions.crossVisualize
 import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.getValueSynchronously
-import com.w2sv.common.preferences.DataStoreRepository
+import com.w2sv.common.datastore.DataStoreRepository
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors

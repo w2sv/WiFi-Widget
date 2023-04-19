@@ -4,7 +4,7 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import com.w2sv.common.preferences.DataStoreProperty
+import com.w2sv.common.datastore.DataStoreProperty
 
 enum class WifiProperty(
     @StringRes val labelRes: Int,

@@ -1,4 +1,4 @@
-package com.w2sv.common.preferences
+package com.w2sv.common.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -8,8 +8,10 @@ import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.common.WifiProperty
 import com.w2sv.kotlinutils.extensions.getByOrdinal
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class DataStoreRepository @Inject constructor(
@@ -77,6 +79,26 @@ class DataStoreRepository @Inject constructor(
         dataStore.edit {
             map.forEach { (property, value) ->
                 it[property.preferencesKey] = value
+            }
+        }
+    }
+
+    interface Interface {
+
+        val dataStoreRepository: DataStoreRepository
+        val coroutineScope: CoroutineScope
+
+        fun <T> saveToDataStore(key: Preferences.Key<T>, value: T) {
+            coroutineScope.launch {
+                dataStoreRepository.save(key, value)
+            }
+        }
+
+        fun <T, P : DataStoreProperty<T>> saveMapToDataStore(
+            map: Map<P, T>
+        ) {
+            coroutineScope.launch {
+                dataStoreRepository.saveMap(map)
             }
         }
     }

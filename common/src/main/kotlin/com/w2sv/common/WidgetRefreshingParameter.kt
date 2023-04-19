@@ -2,7 +2,7 @@ package com.w2sv.common
 
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import com.w2sv.common.preferences.DataStoreProperty
+import com.w2sv.common.datastore.DataStoreProperty
 
 enum class WidgetRefreshingParameter(
     override val defaultValue: Boolean,

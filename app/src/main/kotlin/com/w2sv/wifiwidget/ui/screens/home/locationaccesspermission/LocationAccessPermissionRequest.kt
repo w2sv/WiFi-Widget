@@ -14,7 +14,7 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.WifiProperty
 import com.w2sv.common.extensions.launchingSuppressed
-import com.w2sv.common.preferences.PreferencesKey
+import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel

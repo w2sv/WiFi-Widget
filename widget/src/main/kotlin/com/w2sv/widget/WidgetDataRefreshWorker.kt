@@ -10,7 +10,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.common.WidgetRefreshingParameter
 import com.w2sv.common.extensions.getDeflowedMap
-import com.w2sv.common.preferences.DataStoreRepository
+import com.w2sv.common.datastore.DataStoreRepository
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors

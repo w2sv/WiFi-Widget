@@ -9,12 +9,12 @@ import com.w2sv.androidutils.extensions.getLong
 import com.w2sv.androidutils.extensions.locationServicesEnabled
 import com.w2sv.androidutils.extensions.showToast
 import com.w2sv.common.WifiProperty
+import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
+import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.extensions.hasPermission
-import com.w2sv.common.preferences.DataStoreRepository
-import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.widget.WidgetProvider
-import com.w2sv.wifiwidget.DataStoreRepositoryHoldingViewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.BACKGROUND_LOCATION_ACCESS_GRANT_REQUIRED
@@ -32,7 +32,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     dataStoreRepository: DataStoreRepository,
     @ApplicationContext context: Context
-) : DataStoreRepositoryHoldingViewModel(dataStoreRepository) {
+) : DataStoreRepositoryInterfacingViewModel(dataStoreRepository) {
 
     val nonAppliedInAppTheme = NonAppliedStateFlow(
         viewModelScope,

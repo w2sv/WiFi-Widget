@@ -6,10 +6,10 @@ import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty
-import com.w2sv.common.preferences.DataStoreRepository
-import com.w2sv.common.preferences.PreferencesKey
+import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
+import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.widget.WidgetProvider
-import com.w2sv.wifiwidget.DataStoreRepositoryHoldingViewModel
 import com.w2sv.wifiwidget.ui.CoherentNonAppliedStates
 import com.w2sv.wifiwidget.ui.NonAppliedSnapshotStateMap
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class WidgetConfigurationViewModel @Inject constructor(
     dataStoreRepository: DataStoreRepository,
     private val savedStateHandle: SavedStateHandle
-) : DataStoreRepositoryHoldingViewModel(dataStoreRepository) {
+) : DataStoreRepositoryInterfacingViewModel(dataStoreRepository) {
 
     // ===================================
     // onSplashScreenAnimationFinished

@@ -1,4 +1,4 @@
-package com.w2sv.common.preferences
+package com.w2sv.common.datastore
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
