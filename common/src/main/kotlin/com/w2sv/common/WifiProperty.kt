@@ -6,7 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.common.preferences.DataStoreProperty
 
-enum class WifiProperty(@StringRes val labelRes: Int, @ArrayRes val infoStringArrayRes: Int, override val defaultValue: Boolean = true) :
+enum class WifiProperty(
+    @StringRes val labelRes: Int,
+    @ArrayRes val infoStringArrayRes: Int,
+    override val defaultValue: Boolean = true
+) :
     DataStoreProperty<Boolean> {
     SSID(R.string.ssid, R.array.ssid, false),
     IP(R.string.ip, R.array.ip),

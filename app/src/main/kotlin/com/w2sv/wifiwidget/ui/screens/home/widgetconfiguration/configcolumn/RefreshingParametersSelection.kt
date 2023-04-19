@@ -38,7 +38,9 @@ internal fun RefreshingParametersSelection(
             parameter = WidgetRefreshingParameter.RefreshPeriodically
         )
         AnimatedVisibility(
-            visible = viewModel.nonAppliedWidgetRefreshingParameterFlags.getValue(WidgetRefreshingParameter.RefreshPeriodically),
+            visible = viewModel.nonAppliedWidgetRefreshingParameterFlags.getValue(
+                WidgetRefreshingParameter.RefreshPeriodically
+            ),
             enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
         ) {
             RefreshingParameterRow(

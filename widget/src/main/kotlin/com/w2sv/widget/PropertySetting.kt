@@ -67,6 +67,7 @@ private fun RemoteViews.setPropertyRow(
             setViewVisibility(layout, View.VISIBLE)
             setTextViewText(valueTV, getValue())
         }
+
         else -> setViewVisibility(layout, View.GONE)
     }
 }

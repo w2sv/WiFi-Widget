@@ -4,7 +4,10 @@ import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.common.preferences.DataStoreProperty
 
-enum class WidgetRefreshingParameter(override val defaultValue: Boolean, @StringRes val labelRes: Int) :
+enum class WidgetRefreshingParameter(
+    override val defaultValue: Boolean,
+    @StringRes val labelRes: Int
+) :
     DataStoreProperty<Boolean> {
     RefreshPeriodically(true, R.string.refresh_periodically),
     RefreshOnBatteryLow(false, R.string.refresh_on_low_battery);
