@@ -26,20 +26,18 @@ class WidgetProvider : AppWidgetProvider() {
                 .getAppWidgetIds(context, WidgetProvider::class.java)
 
         fun pinWidget(context: Context) {
-            with(context) {
-                getSystemService(AppWidgetManager::class.java).let {
-                    if (it.isRequestPinAppWidgetSupported) {
-                        it.requestPinAppWidget(
-                            ComponentName(
-                                this,
-                                WidgetProvider::class.java
-                            ),
-                            null,
-                            null
-                        )
-                    } else {
-                        showToast(getString(R.string.widget_pinning_not_supported_by_your_device_launcher))
-                    }
+            with(context.getSystemService(AppWidgetManager::class.java)) {
+                when (isRequestPinAppWidgetSupported) {
+                    true -> requestPinAppWidget(
+                        ComponentName(
+                            context,
+                            WidgetProvider::class.java
+                        ),
+                        null,
+                        null
+                    )
+
+                    false -> context.showToast(R.string.widget_pinning_not_supported_by_your_device_launcher)
                 }
             }
         }

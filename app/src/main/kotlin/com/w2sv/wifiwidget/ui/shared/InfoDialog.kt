@@ -31,6 +31,7 @@ fun InfoDialog(
                 JostText(text = stringResource(R.string.close))
             }
         },
+        icon = { InfoIcon() },
         title = {
             JostText(
                 text = title,

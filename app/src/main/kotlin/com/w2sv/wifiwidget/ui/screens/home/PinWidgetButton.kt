@@ -10,6 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.shared.JostText
 
 @Composable
@@ -22,7 +23,7 @@ fun StatefulPinWidgetButton(
     PinWidgetButton(modifier) {
         when (homeScreenViewModel.lapRationalShown) {
             false -> homeScreenViewModel.lapRationalTrigger.value =
-                LAPRequestTrigger.PinWidgetButtonPress
+                LocationAccessPermissionRequestTrigger.PinWidgetButtonPress
 
             true -> WidgetProvider.pinWidget(context)
         }

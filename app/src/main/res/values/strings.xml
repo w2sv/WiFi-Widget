@@ -4,7 +4,6 @@
     <string name="updated_widget_configuration">Updated Widget Configuration</string>
     <string name="pinned_widget">Pinned Widget</string>
     <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
-    <string name="lap_dialog_title">SSID Retrieval requires Location Access Permission</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="proceed">Proceed</string>
     <string name="close">Close</string>
@@ -13,7 +12,11 @@
     <string name="code">Code</string>
     <string name="rate">Rate</string>
     <string name="share">Share</string>
-    <string name="ssid_display_requires_location_services_to_be_enabled">SSID display requires location services to be enabled!</string>
+    <string name="on_pin_widget_wo_gps_enabled">SSID display requires GPS to be enabled!</string>
+    <string name="on_pin_widget_wo_location_access_permission">SSID display requires location access permission!</string>
+    <string name="on_pin_widget_wo_background_location_access_permission">Persistent SSID display requires continuous location access permission!</string>
+    <string name="location_access_permission">Location Access Permission Rational</string>
+    <string name="background_location_access_rational">In oder for your SSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
     <string name="light">Light</string>
     <string name="device_default">Device Default</string>
     <string name="custom">Custom</string>
@@ -29,12 +32,13 @@
     <string name="never_mind">Never mind</string>
     <string name="go_to_app_settings_and_grant_location_access_permission">Go to app settings and grant location access permission</string>
     <string name="opacity_slider_cd">Set the widget background opacity.</string>
-    <string name="theme_button_cd">Set the $1%s theme.</string>
+    <string name="theme_button_cd">Set the %s theme.</string>
     <string name="learn_more">Learn more</string>
     <string name="updated_theme">Updated Theme</string>
-    <string name="set_unset">Set/unset $1%s.</string>
-    <string name="info_icon_cd">Open the $1%s info dialog.</string>
-    <string name="color_picker_button_cd">Open the $1%s color picker dialog.</string>
+    <string name="set_unset">Set/unset %s.</string>
+    <string name="info_icon_cd">Open the %s info dialog.</string>
+    <string name="color_picker_button_cd">Open the %s color picker dialog.</string>
     <string name="you_re_not_signed_into_the_play_store">You\'re not signed into the Play Store</string>
-    <string name="version">Version: $1%s</string>
+    <string name="version">Version: %s</string>
+    <string name="got_it">Got it</string>
 </resources>

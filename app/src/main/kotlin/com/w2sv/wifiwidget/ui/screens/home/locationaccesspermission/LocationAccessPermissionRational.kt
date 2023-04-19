@@ -1,8 +1,8 @@
-package com.w2sv.wifiwidget.ui.screens.home
+package com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,41 +15,54 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.extensions.reset
 import com.w2sv.common.preferences.PreferencesKey
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.shared.DialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 
-@Preview
-@Composable
-private fun Prev() {
-    WifiWidgetTheme {
-        LocationAccessPermissionRational(LAPRequestTrigger.SSIDCheck)
-    }
-}
-
-enum class LAPRequestTrigger {
+enum class LocationAccessPermissionRequestTrigger {
     PinWidgetButtonPress,
     SSIDCheck
 }
 
 @Composable
 fun LocationAccessPermissionRational(
-    trigger: LAPRequestTrigger,
+    trigger: LocationAccessPermissionRequestTrigger,
     modifier: Modifier = Modifier,
     viewModel: HomeScreenViewModel = viewModel()
+) {
+    LocationAccessPermissionRational(
+        onConfirmButtonClick = {
+            viewModel.saveToDataStore(
+                PreferencesKey.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN,
+                true
+            )
+            viewModel.lapRationalTrigger.reset()
+            viewModel.lapRequestTrigger.value = trigger
+        },
+        onDismissRequest = { viewModel.lapRequestTrigger.value = trigger },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun LocationAccessPermissionRational(
+    onConfirmButtonClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     AlertDialog(
         modifier = modifier,
         icon = {
             Icon(
-                imageVector = Icons.Outlined.Info,
+                Icons.Outlined.LocationOn,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         },
         title = {
             JostText(
-                text = stringResource(R.string.lap_dialog_title),
+                text = stringResource(id = R.string.location_access_permission),
                 textAlign = TextAlign.Center
             )
         },
@@ -61,19 +74,19 @@ fun LocationAccessPermissionRational(
         },
         confirmButton = {
             DialogButton(
-                onClick = {
-                    viewModel.saveToDataStore(
-                        PreferencesKey.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN,
-                        true
-                    )
-                    viewModel.lapRationalTrigger.reset()
-                    viewModel.lapRequestTrigger.value = trigger
-                },
+                onClick = onConfirmButtonClick,
                 modifier = Modifier.fillMaxWidth()
             ) { JostText(text = stringResource(R.string.proceed)) }
         },
-        onDismissRequest = {
-            viewModel.lapRationalTrigger.reset()
-        }
+        onDismissRequest = onDismissRequest
     )
+}
+
+
+@Preview
+@Composable
+private fun Prev() {
+    WifiWidgetTheme {
+        LocationAccessPermissionRational({}, {})
+    }
 }

@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -11,6 +12,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.BackgroundLocationAccessRational
+import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRational
+import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.StatefulWidgetConfigurationDialogButton
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
@@ -54,6 +58,10 @@ internal fun HomeScreen(
         }
         viewModel.lapRequestTrigger.collectAsState().value?.let {
             LocationAccessPermissionRequest(it)
+        }
+        @SuppressLint("NewApi")
+        if (viewModel.showBackgroundLocationAccessRational.collectAsState().value) {
+            BackgroundLocationAccessRational()
         }
         BackHandler {
             when {
