@@ -118,7 +118,7 @@ fun StatefulNavigationDrawer(
             selectedTheme = { theme },
             onThemeSelected = { homeScreenViewModel.nonAppliedInAppTheme.value = it },
             applyButtonEnabled = { themeRequiringUpdate },
-            onApplyButtonPress = {
+            onApplyButtonClick = {
                 scope.launch {
                     homeScreenViewModel.nonAppliedInAppTheme.sync()
                     context.showToast(context.getString(R.string.updated_theme))
@@ -170,8 +170,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                     ) {
                         ShareCompat.IntentBuilder(it)
                             .setType("text/plain")
-                            .setText("Check out WiFi Widget!\n${it.playStoreUrl}")
-                            .setChooserTitle("Choose an app")
+                            .setText(context.getString(R.string.share_action_text))
                             .startChooser()
                     },
                     NavigationDrawerItem(

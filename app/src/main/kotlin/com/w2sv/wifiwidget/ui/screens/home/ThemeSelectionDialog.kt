@@ -23,7 +23,7 @@ private fun Prev() {
             selectedTheme = { Theme.DeviceDefault },
             onThemeSelected = {},
             applyButtonEnabled = { true },
-            onApplyButtonPress = {}
+            onApplyButtonClick = {}
         )
     }
 }
@@ -34,7 +34,7 @@ fun ThemeSelectionDialog(
     selectedTheme: () -> Theme,
     onThemeSelected: (Theme) -> Unit,
     applyButtonEnabled: () -> Boolean,
-    onApplyButtonPress: () -> Unit
+    onApplyButtonClick: () -> Unit
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -47,7 +47,7 @@ fun ThemeSelectionDialog(
             )
         },
         confirmButton = {
-            DialogButton(onClick = { onApplyButtonPress() }, enabled = applyButtonEnabled()) {
+            DialogButton(onClick = { onApplyButtonClick() }, enabled = applyButtonEnabled()) {
                 JostText(text = stringResource(id = R.string.apply))
             }
         },

@@ -1,2 +1,2 @@
-[UI]
-- Simplify location access permission rational dialog
+- Integrated "Location: Allow all the time" enablement to fix SSID inaccessibility
+- Simplified location access permission rational dialog
