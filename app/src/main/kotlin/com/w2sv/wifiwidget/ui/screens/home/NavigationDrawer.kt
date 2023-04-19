@@ -35,9 +35,9 @@ import androidx.core.app.ShareCompat
 import com.w2sv.androidutils.extensions.launchDelayed
 import com.w2sv.androidutils.extensions.playStoreUrl
 import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.ui.shared.JostText
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme
 import kotlinx.coroutines.launch

@@ -5,7 +5,7 @@ import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.datastore.DataStoreProperty
 import com.w2sv.common.datastore.DataStoreRepository
-import com.w2sv.wifiwidget.extensions.getMutableStateMap
+import com.w2sv.common.extensions.getMutableStateMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
