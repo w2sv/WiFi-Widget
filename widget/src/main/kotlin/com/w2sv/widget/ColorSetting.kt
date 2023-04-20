@@ -6,6 +6,8 @@ import android.widget.RemoteViews
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.core.graphics.ColorUtils
+import com.w2sv.androidutils.appwidgets.setBackgroundColor
+import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.extensions.toRGBChannelInt
@@ -117,12 +119,4 @@ private fun RemoteViews.setColors(
         .forEach {
             setColorFilter(it, values)
         }
-}
-
-private fun RemoteViews.setColorFilter(@IdRes id: Int, color: Int) {
-    setInt(id, "setColorFilter", color)
-}
-
-private fun RemoteViews.setBackgroundColor(@IdRes id: Int, color: Int) {
-    setInt(id, "setBackgroundColor", color)
 }

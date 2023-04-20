@@ -8,7 +8,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
-import com.w2sv.androidutils.extensions.crossVisualize
+import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.datastore.DataStoreRepository

@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.extensions.reset
+import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.common.Theme
 import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.WifiProperty

@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.extensions.reset
+import com.w2sv.androidutils.coroutines.reset
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.PropertyInfoDialog
 
 @Composable
@@ -44,7 +46,7 @@ private fun WidgetConfigurationDialogButton(
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
-            contentDescription = "Inflate the widget configuration dialog.",
+            contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
             modifier = modifier,
             tint = MaterialTheme.colorScheme.primary
         )

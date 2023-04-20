@@ -20,8 +20,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.w2sv.androidutils.SelfManagingLocalBroadcastReceiver
-import com.w2sv.androidutils.extensions.getIntExtraOrNull
+import com.w2sv.androidutils.generic.getIntExtraOrNull
+import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
 import com.w2sv.common.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel

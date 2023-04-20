@@ -10,8 +10,8 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.w2sv.androidutils.extensions.getAppWidgetIds
-import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.androidutils.appwidgets.getAppWidgetIds
+import com.w2sv.androidutils.notifying.showToast
 import slimber.log.i
 import java.util.*
 
@@ -22,7 +22,8 @@ class WidgetProvider : AppWidgetProvider() {
             "com.w2sv.wifiwidget.extra.OPEN_CONFIGURATION_DIALOG_ON_START"
 
         fun getWidgetIds(context: Context): IntArray =
-            AppWidgetManager.getInstance(context)
+            AppWidgetManager
+                .getInstance(context)
                 .getAppWidgetIds(context, WidgetProvider::class.java)
 
         fun pinWidget(context: Context) {

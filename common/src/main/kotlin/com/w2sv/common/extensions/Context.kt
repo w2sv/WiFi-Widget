@@ -2,14 +2,9 @@ package com.w2sv.common.extensions
 
 import android.content.ActivityNotFoundException
 import android.content.Context
-import android.content.pm.PackageManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import com.w2sv.androidutils.extensions.openUrl
-import com.w2sv.androidutils.extensions.showToast
-
-fun Context.hasPermission(permission: String): Boolean =
-    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
+import com.w2sv.androidutils.generic.openUrl
+import com.w2sv.androidutils.notifying.showToast
 
 fun Context.openUrlWithActivityNotFoundHandling(url: String) {
     try {

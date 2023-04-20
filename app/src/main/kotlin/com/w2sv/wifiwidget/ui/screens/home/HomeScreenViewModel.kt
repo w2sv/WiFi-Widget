@@ -4,16 +4,16 @@ import android.Manifest
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.BackPressHandler
-import com.w2sv.androidutils.extensions.getLong
-import com.w2sv.androidutils.extensions.locationServicesEnabled
-import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.androidutils.eventhandling.BackPressHandler
+import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.androidutils.permissions.hasPermission
+import com.w2sv.androidutils.services.isLocationEnabled
+import com.w2sv.androidutils.ui.resources.getLong
 import com.w2sv.common.WifiProperty
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
 import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.common.extensions.getValueSynchronously
-import com.w2sv.common.extensions.hasPermission
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
@@ -58,7 +58,7 @@ class HomeScreenViewModel @Inject constructor(
         viewModelScope.launch {
             if (dataStoreRepository.wifiProperties.getValue(WifiProperty.SSID).first())
                 when {
-                    !context.locationServicesEnabled -> context.showToast(
+                    !context.isLocationEnabled -> context.showToast(
                         R.string.on_pin_widget_wo_gps_enabled,
                         Toast.LENGTH_LONG
                     )

@@ -39,4 +39,5 @@
     <string name="version">Version: %s</string>
     <string name="got_it">Got it</string>
     <string name="share_action_text">Check out WiFi Widget!\nhttps://play.google.com/store/apps/details?id=com.w2sv.wifiwidget</string>
+    <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
 </resources>

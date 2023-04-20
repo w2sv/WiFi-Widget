@@ -32,9 +32,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import com.w2sv.androidutils.extensions.launchDelayed
-import com.w2sv.androidutils.extensions.playStoreUrl
-import com.w2sv.androidutils.extensions.showToast
+import com.w2sv.androidutils.coroutines.launchDelayed
+import com.w2sv.androidutils.generic.appPlayStoreUrl
+import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
@@ -181,7 +181,7 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                             it.startActivity(
                                 Intent(
                                     Intent.ACTION_VIEW,
-                                    Uri.parse(it.playStoreUrl)
+                                    Uri.parse(appPlayStoreUrl(it))
                                 )
                                     .setPackage("com.android.vending")
                             )
