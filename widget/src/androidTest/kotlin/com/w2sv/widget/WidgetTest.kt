@@ -1,5 +1,9 @@
 package com.w2sv.widget
 
+import android.provider.Settings
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
+import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
@@ -34,6 +38,7 @@ class WidgetTest {
         with(device.findObject(UiSelector().description("Refresh data"))) {
             Assert.assertTrue(isClickable)
             click()
+            intended(hasComponent(WidgetProvider::class.java.name))
         }
     }
 
@@ -48,6 +53,15 @@ class WidgetTest {
                 Until.hasObject(By.pkg(PACKAGE_NAME).depth(0)),
                 LAUNCH_TIMEOUT
             )
+        }
+    }
+
+    @Test
+    fun layoutOnClick() {
+        with(device.findObject(UiSelector().resourceId("com.w2sv.wifiwidget.debug:id/widget_layout"))) {
+            Assert.assertTrue(isClickable)
+            click()
+            intended(hasAction(Settings.ACTION_WIFI_SETTINGS))
         }
     }
 
