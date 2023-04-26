@@ -147,7 +147,8 @@ private fun AppWidgetManager.updateWidget(
                 RemoteViews(
                     context.packageName,
                     R.layout.widget
-                )
+                ),
+                appWidgetId
             )
     )
 }

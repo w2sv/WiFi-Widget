@@ -1,17 +1,20 @@
 package com.w2sv.widget
 
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
+import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.getValueSynchronously
-import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.isWifiConnected
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -53,7 +56,7 @@ internal class WidgetPopulator @Inject constructor(
     // Populating
     // ============
 
-    fun populate(widget: RemoteViews): RemoteViews =
+    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget.apply {
             setContentLayout(
                 wifiStatus = when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
@@ -64,7 +67,8 @@ internal class WidgetPopulator @Inject constructor(
                             false -> WifiStatus.Disconnected
                         }
                     }
-                }
+                },
+                appWidgetId = appWidgetId
             )
             setWidgetColors(
                 theme = dataStoreRepository.widgetTheme.getValueSynchronously(),
@@ -76,11 +80,24 @@ internal class WidgetPopulator @Inject constructor(
             setOnClickPendingIntents()
         }
 
-    private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus) {
+    private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
         when (wifiStatus) {
             WifiStatus.Connected -> {
                 setLayout(true)
-                setWifiProperties(context, dataStoreRepository.wifiProperties.getDeflowedMap())
+
+                setRemoteAdapter(
+                    R.id.wifi_property_list_view,
+                    Intent(context, WifiPropertyService::class.java)
+                        .apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+                        }
+                )
+
+                // The empty view is displayed when the collection has no items.
+                // It must be in the same layout used to instantiate the
+                // RemoteViews object.
+                // setEmptyView(R.id.stack_view, R.id.empty_view)
             }
 
             WifiStatus.Disabled -> {
@@ -105,11 +122,11 @@ internal class WidgetPopulator @Inject constructor(
         when (wifiConnected) {
             true -> crossVisualize(
                 R.id.no_connection_available_layout,
-                R.id.wifi_properties_layout
+                R.id.wifi_property_list_view
             )
 
             false -> crossVisualize(
-                R.id.wifi_properties_layout,
+                R.id.wifi_property_list_view,
                 R.id.no_connection_available_layout
             )
         }

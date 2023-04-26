@@ -11,9 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/wifi_properties_layout"
-            layout="@layout/widget_wifi_properties" />
+        <ListView
+            android:id="@+id/wifi_property_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="32dp"
+            android:divider="@null"
+            android:gravity="center"
+            android:orientation="vertical" />
 
         <LinearLayout
             android:id="@+id/no_connection_available_layout"

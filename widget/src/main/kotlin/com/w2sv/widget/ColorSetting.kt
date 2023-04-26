@@ -78,38 +78,38 @@ private fun RemoteViews.setColors(
     )
 
     // Labels
-    listOf(
-        R.id.ssid_tv,
-        R.id.ip_tv,
-        R.id.frequency_tv,
-        R.id.linkspeed_tv,
-        R.id.gateway_tv,
-        R.id.dhcp_tv,
-        R.id.dns_tv,
-        R.id.netmask_tv
-    )
-        .forEach {
-            setTextColor(it, labels)
-        }
-
-    // 'Other' TVs
-    listOf(
-        R.id.ssid_value_tv,
-        R.id.ip_value_tv,
-        R.id.frequency_value_tv,
-        R.id.linkspeed_value_tv,
-        R.id.gateway_value_tv,
-        R.id.dhcp_value_tv,
-        R.id.dns_value_tv,
-        R.id.netmask_value_tv,
-
-        R.id.wifi_status_tv,
-        R.id.go_to_wifi_settings_tv,
-        R.id.last_updated_tv
-    )
-        .forEach {
-            setTextColor(it, values)
-        }
+//    listOf(
+//        R.id.ssid_tv,
+//        R.id.ip_tv,
+//        R.id.frequency_tv,
+//        R.id.linkspeed_tv,
+//        R.id.gateway_tv,
+//        R.id.dhcp_tv,
+//        R.id.dns_tv,
+//        R.id.netmask_tv
+//    )
+//        .forEach {
+//            setTextColor(it, labels)
+//        }
+//
+//    // 'Other' TVs
+//    listOf(
+//        R.id.ssid_value_tv,
+//        R.id.ip_value_tv,
+//        R.id.frequency_value_tv,
+//        R.id.linkspeed_value_tv,
+//        R.id.gateway_value_tv,
+//        R.id.dhcp_value_tv,
+//        R.id.dns_value_tv,
+//        R.id.netmask_value_tv,
+//
+//        R.id.wifi_status_tv,
+//        R.id.go_to_wifi_settings_tv,
+//        R.id.last_updated_tv
+//    )
+//        .forEach {
+//            setTextColor(it, values)
+//        }
 
     // 'Other' ImageButtons
     listOf(

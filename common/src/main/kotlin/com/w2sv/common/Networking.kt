@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.common
 
 import android.Manifest
 import android.net.ConnectivityManager

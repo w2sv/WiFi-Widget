@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/PropertyRow">
+
+    <TextView
+        android:id="@+id/property_label_tv"
+        style="@style/Widget.Wifi.Property.Label" />
+
+    <TextView
+        android:id="@+id/property_value_tv"
+        style="@style/Widget.Wifi.Property.Value" />
+</LinearLayout>
