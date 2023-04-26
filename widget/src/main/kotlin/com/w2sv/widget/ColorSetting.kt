@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.res.Configuration
 import android.widget.RemoteViews
 import androidx.annotation.ColorInt
-import androidx.annotation.IdRes
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
@@ -113,7 +112,7 @@ private fun RemoteViews.setColors(
 
     // 'Other' ImageButtons
     listOf(
-        R.id.settings_button,
+        R.id.configure_widget_button,
         R.id.refresh_button
     )
         .forEach {

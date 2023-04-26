@@ -83,7 +83,7 @@
             android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
-            android:id="@+id/settings_button"
+            android:id="@+id/configure_widget_button"
 
             android:layout_width="@dimen/size_widget_image_button_icon"
             android:layout_height="@dimen/size_widget_image_button_icon"

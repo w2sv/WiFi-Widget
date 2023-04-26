@@ -138,7 +138,7 @@ internal class WidgetPopulator @Inject constructor(
 
         // settings_button
         setOnClickPendingIntent(
-            R.id.settings_button,
+            R.id.configure_widget_button,
             PendingIntent.getActivity(
                 context,
                 PendingIntentCode.LaunchHomeActivity.ordinal,
