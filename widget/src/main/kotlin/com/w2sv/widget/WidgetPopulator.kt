@@ -11,9 +11,8 @@ import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
+import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.datastore.DataStoreRepository
-import com.w2sv.common.extensions.getDeflowedMap
-import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.isWifiConnected
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -72,7 +71,7 @@ internal class WidgetPopulator @Inject constructor(
             )
             setWidgetColors(
                 theme = dataStoreRepository.widgetTheme.getValueSynchronously(),
-                customWidgetColors = lazy { dataStoreRepository.customWidgetColors.getDeflowedMap() },
+                customWidgetColors = dataStoreRepository.customWidgetColors,
                 backgroundOpacity = dataStoreRepository.opacity.getValueSynchronously(),
                 context = context
             )
@@ -87,17 +86,15 @@ internal class WidgetPopulator @Inject constructor(
 
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    Intent(context, WifiPropertyService::class.java)
+                    Intent(context, WifiPropertiesService::class.java)
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
                         }
                 )
 
-                // The empty view is displayed when the collection has no items.
-                // It must be in the same layout used to instantiate the
-                // RemoteViews object.
-                // setEmptyView(R.id.stack_view, R.id.empty_view)
+                AppWidgetManager.getInstance(context)
+                    .notifyAppWidgetViewDataChanged(appWidgetId, R.id.wifi_property_list_view)
             }
 
             WifiStatus.Disabled -> {
@@ -125,10 +122,23 @@ internal class WidgetPopulator @Inject constructor(
                 R.id.wifi_property_list_view
             )
 
-            false -> crossVisualize(
-                R.id.wifi_property_list_view,
-                R.id.no_connection_available_layout
-            )
+            false -> {
+                crossVisualize(
+                    R.id.wifi_property_list_view,
+                    R.id.no_connection_available_layout
+                )
+
+                setOnClickPendingIntent(
+                    R.id.no_connection_available_layout,
+                    PendingIntent.getActivity(
+                        context,
+                        PendingIntentCode.LaunchHomeActivity.ordinal,
+                        Intent(Settings.ACTION_WIFI_SETTINGS)
+                            .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
+                        PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
+            }
         }
     }
 
@@ -170,18 +180,6 @@ internal class WidgetPopulator @Inject constructor(
                         true
                     ),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        )
-
-        // widget_layout
-        setOnClickPendingIntent(
-            R.id.widget_layout,
-            PendingIntent.getActivity(
-                context,
-                PendingIntentCode.LaunchHomeActivity.ordinal,
-                Intent(Settings.ACTION_WIFI_SETTINGS)
-                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
-                PendingIntent.FLAG_IMMUTABLE
             )
         )
     }

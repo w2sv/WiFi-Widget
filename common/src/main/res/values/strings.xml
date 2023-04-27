@@ -5,20 +5,21 @@
 
     <string name="widget_description">Monitor your WiFi connection details</string>
 
-    <string name="ip">IP</string>
     <string name="ssid">SSID</string>
+    <string name="ip">IP</string>
     <string name="frequency">Frequency</string>
+    <string name="channel">Channel</string>
     <string name="linkspeed">Link Speed</string>
     <string name="gateway">Gateway</string>
-    <string name="netmask">Netmask</string>
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
+    <string name="netmask">Netmask</string>
+<!--    <string name="mac_address">MAC Address</string>-->
 
     <string name="refresh_periodically">Periodically refresh data</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
 
     <string name="configure_widget">Configure Widget</string>
-    <string name="go_to_wifi_settings">Go to WiFi Settings</string>
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>

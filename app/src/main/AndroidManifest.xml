@@ -45,7 +45,7 @@
             android:name="com.w2sv.wifiwidget.ui.screens.home.HomeActivity$AppWidgetOptionsChangedReceiver"
             tools:ignore="Instantiatable" />
 
-        <service android:name="com.w2sv.widget.WifiPropertyService"
+        <service android:name="com.w2sv.widget.WifiPropertiesService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>

@@ -9,6 +9,7 @@ enum class WidgetRefreshingParameter(
     @StringRes val labelRes: Int
 ) :
     DataStoreProperty<Boolean> {
+
     RefreshPeriodically(true, R.string.refresh_periodically),
     RefreshOnBatteryLow(false, R.string.refresh_on_low_battery);
 

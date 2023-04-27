@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.viewModelScope
+import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
@@ -13,7 +14,6 @@ import com.w2sv.common.WifiProperty
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
 import com.w2sv.common.datastore.PreferencesKey
-import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.NonAppliedStateFlow

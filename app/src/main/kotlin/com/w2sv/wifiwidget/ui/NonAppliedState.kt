@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.extensions.getDeflowedMap
-import com.w2sv.common.extensions.getValueSynchronously
 import com.w2sv.common.datastore.DataStoreProperty
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.extensions.getMutableStateMap

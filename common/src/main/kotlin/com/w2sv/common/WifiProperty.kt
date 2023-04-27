@@ -34,6 +34,11 @@ enum class WifiProperty(
         R.array.frequency,
         { "${it.connectionInfo.frequency} MHz" }
     ),
+    Channel(
+        R.string.channel,
+        R.array.channel,
+        { frequencyToChannel(it.connectionInfo.frequency).toString() }
+    ),
     Linkspeed(
         R.string.linkspeed,
         R.array.linkspeed,
@@ -59,6 +64,12 @@ enum class WifiProperty(
         R.array.netmask,
         { getNetmask() }
     );
+//    @SuppressLint("HardwareIds")
+//    MacAddress(
+//        R.string.mac_address,
+//        R.array.mac_address,
+//        { it.connectionInfo.macAddress }
+//    );
 
     override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
 }
