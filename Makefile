@@ -31,10 +31,10 @@ build-and-publish:
 
 	@echo "Build APK"
 	@./gradlew assembleRelease --console verbose
-	@echo "Build AAB"
-	@./gradlew :app:bundleRelease --console verbose
+#	@echo "Build AAB"
+#	@./gradlew :app:bundleRelease --console verbose
 
 	@echo "Create GitHub Release"
 	@gh release create $(VERSION) app/build/outputs/apk/release/$(VERSION).apk -F app/src/main/play/release-notes/en-US/production.txt
-	@echo "Publish Bundle"
-	@./gradlew publishBundle --track production --console verbose --no-configuration-cache  # as usage of configuration cache throws error for task
+#	@echo "Publish Bundle"
+#	@./gradlew publishBundle --track production --console verbose --no-configuration-cache  # as usage of configuration cache throws error for task
