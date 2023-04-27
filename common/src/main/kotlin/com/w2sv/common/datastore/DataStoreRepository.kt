@@ -3,10 +3,10 @@ package com.w2sv.common.datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import com.w2sv.common.Theme
-import com.w2sv.common.WidgetColorSection
-import com.w2sv.common.WidgetRefreshingParameter
-import com.w2sv.common.WifiProperty
+import com.w2sv.common.enums.Theme
+import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WidgetRefreshingParameter
+import com.w2sv.common.enums.WifiProperty
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -66,14 +66,14 @@ class DataStoreRepository @Inject constructor(
 
     val wifiProperties = mapFromDataStoreProperties(WifiProperty.values())
 
-    private fun <T, P : DataStoreProperty<T>> mapFromDataStoreProperties(properties: Array<P>): Map<P, Flow<T>> =
+    private fun <T, P : DataStoreVariable<T>> mapFromDataStoreProperties(properties: Array<P>): Map<P, Flow<T>> =
         properties.associateWith { property ->
             dataStore.data.map {
                 it[property.preferencesKey] ?: property.defaultValue
             }
         }
 
-    suspend fun <T, P : DataStoreProperty<T>> saveMap(
+    suspend fun <T, P : DataStoreVariable<T>> saveMap(
         map: Map<P, T>
     ) {
         dataStore.edit {
@@ -83,6 +83,9 @@ class DataStoreRepository @Inject constructor(
         }
     }
 
+    /**
+     * Interface for classes interfacing with [dataStoreRepository] via a held [coroutineScope].
+     */
     interface Interface {
 
         val dataStoreRepository: DataStoreRepository
@@ -94,7 +97,7 @@ class DataStoreRepository @Inject constructor(
             }
         }
 
-        fun <T, P : DataStoreProperty<T>> saveMapToDataStore(
+        fun <T, P : DataStoreVariable<T>> saveMapToDataStore(
             map: Map<P, T>
         ) {
             coroutineScope.launch {

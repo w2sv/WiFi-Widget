@@ -2,7 +2,6 @@ package com.w2sv.widget
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.graphics.Color
 import android.net.wifi.WifiManager
 import android.widget.RemoteViews
@@ -10,10 +9,11 @@ import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.common.Theme
-import com.w2sv.common.WidgetColorSection
 import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.enums.Theme
+import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.extensions.getDeflowedMap
+import com.w2sv.common.extensions.isNightModeActiveCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -115,14 +115,9 @@ private data class WifiPropertyViewColors(val label: Int, val value: Int) {
                 )
 
                 Theme.DeviceDefault -> fromTheme(
-                    when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                        Configuration.UI_MODE_NIGHT_NO ->
-                            Theme.Light
-
-                        Configuration.UI_MODE_NIGHT_YES ->
-                            Theme.Dark
-
-                        else -> throw Error()
+                    when (context.resources.configuration.isNightModeActiveCompat) {
+                        false -> Theme.Light
+                        true -> Theme.Dark
                     },
                     context,
                     customWidgetColors

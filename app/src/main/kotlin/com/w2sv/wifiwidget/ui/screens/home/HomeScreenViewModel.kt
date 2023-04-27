@@ -10,7 +10,7 @@ import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
-import com.w2sv.common.WifiProperty
+import com.w2sv.common.enums.WifiProperty
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
 import com.w2sv.common.datastore.PreferencesKey

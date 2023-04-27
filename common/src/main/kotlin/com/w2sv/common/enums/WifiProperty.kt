@@ -1,11 +1,15 @@
-package com.w2sv.common
+package com.w2sv.common.enums
 
 import android.net.wifi.WifiManager
 import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import com.w2sv.common.datastore.DataStoreProperty
+import com.w2sv.common.R
+import com.w2sv.common.asFormattedIpAddress
+import com.w2sv.common.datastore.DataStoreVariable
+import com.w2sv.common.frequencyToChannel
+import com.w2sv.common.getNetmask
 
 @Suppress("DEPRECATION")
 enum class WifiProperty(
@@ -14,7 +18,7 @@ enum class WifiProperty(
     val getValue: (WifiManager) -> String,
     override val defaultValue: Boolean = true
 ) :
-    DataStoreProperty<Boolean> {
+    DataStoreVariable<Boolean> {
 
     SSID(
         R.string.ssid,

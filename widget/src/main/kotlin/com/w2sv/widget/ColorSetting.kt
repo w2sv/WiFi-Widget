@@ -1,15 +1,15 @@
 package com.w2sv.widget
 
 import android.content.Context
-import android.content.res.Configuration
 import android.widget.RemoteViews
 import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
-import com.w2sv.common.Theme
-import com.w2sv.common.WidgetColorSection
+import com.w2sv.common.enums.Theme
+import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.extensions.getDeflowedMap
+import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.extensions.toRGBChannelInt
 import kotlinx.coroutines.flow.Flow
 
@@ -27,15 +27,15 @@ internal fun RemoteViews.setWidgetColors(
         )
 
         Theme.DeviceDefault -> {
-            when (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_NO -> setWidgetColors(
+            when (context.resources.configuration.isNightModeActiveCompat) {
+                false -> setWidgetColors(
                     Theme.Light,
                     customWidgetColors,
                     backgroundOpacity,
                     context
                 )
 
-                Configuration.UI_MODE_NIGHT_YES -> setWidgetColors(
+                true -> setWidgetColors(
                     Theme.Dark,
                     customWidgetColors,
                     backgroundOpacity,
@@ -63,7 +63,7 @@ internal fun RemoteViews.setWidgetColors(
 private fun RemoteViews.setColors(
     @ColorInt background: Int,
     backgroundOpacity: Float,
-    @ColorInt values: Int
+    @ColorInt foreground: Int
 ) {
     // Background
     setBackgroundColor(
@@ -75,20 +75,10 @@ private fun RemoteViews.setColors(
     )
 
     // TVs
-    listOf(
-        R.id.wifi_status_tv,
-        R.id.last_updated_tv
-    )
-        .forEach {
-            setTextColor(it, values)
-        }
+    setTextColor(R.id.wifi_status_tv, foreground)
+    setTextColor(R.id.last_updated_tv, foreground)
 
     // ImageButtons
-    listOf(
-        R.id.settings_button,
-        R.id.refresh_button
-    )
-        .forEach {
-            setColorFilter(it, values)
-        }
+    setColorFilter(R.id.settings_button, foreground)
+    setColorFilter(R.id.refresh_button, foreground)
 }

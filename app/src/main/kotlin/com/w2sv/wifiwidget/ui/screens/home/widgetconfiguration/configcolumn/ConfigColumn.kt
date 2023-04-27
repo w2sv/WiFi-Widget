@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.common.Theme
-import com.w2sv.common.WidgetColorSection
-import com.w2sv.common.WifiProperty
+import com.w2sv.common.enums.Theme
+import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequestTrigger

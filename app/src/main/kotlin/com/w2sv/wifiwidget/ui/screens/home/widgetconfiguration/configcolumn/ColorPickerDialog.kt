@@ -29,7 +29,7 @@ import androidx.compose.ui.window.Dialog
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.common.WidgetColorSection
+import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.DialogButton
