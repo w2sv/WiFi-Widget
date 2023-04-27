@@ -49,4 +49,4 @@ application = { id = 'com.android.application', version.ref = 'agp' }
 library = { id = 'com.android.library', version.ref = 'agp' }
 kotlin = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 hilt = { id = 'com.google.dagger.hilt.android', version.ref = 'hilt' }
-play = { id = 'com.github.triplet.play', version = '3.8.1' }
+play = { id = 'com.github.triplet.play', version = '3.8.2' }
