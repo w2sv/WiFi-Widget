@@ -68,12 +68,6 @@ enum class WifiProperty(
         R.array.netmask,
         { getNetmask() }
     );
-//    @SuppressLint("HardwareIds")
-//    MacAddress(
-//        R.string.mac_address,
-//        R.array.mac_address,
-//        { it.connectionInfo.macAddress }
-//    );
 
     override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
 }

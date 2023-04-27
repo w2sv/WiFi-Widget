@@ -35,8 +35,4 @@
         <item>Also referred to as subnet mask. A bitmask determining the subnetwork within which the DHCP may operate.</item>
         <item>https://en.wikipedia.org/wiki/Subnetwork</item>
     </string-array>
-<!--    <string-array name="mac_address">-->
-<!--        <item>Media Access Control Address. MAC Addresses are unique identifiers, used to identify devices connected to a network. As they are predominantly assigned by device manufacturers, they are often referred to as burned-in address, hardware address, or physical address.</item>-->
-<!--        <item>https://en.wikipedia.org/wiki/MAC_address</item>-->
-<!--    </string-array>-->
 </resources>

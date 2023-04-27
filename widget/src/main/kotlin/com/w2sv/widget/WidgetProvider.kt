@@ -38,7 +38,7 @@ class WidgetProvider : AppWidgetProvider() {
                         null
                     )
 
-                    false -> context.showToast(R.string.widget_pinning_not_supported_by_your_device_launcher)
+                    false -> context.showToast(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher)
                 }
             }
         }
