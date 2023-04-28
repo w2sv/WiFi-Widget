@@ -1,6 +1,6 @@
 # WiFi Widget Privacy Policy
 
-WiFi Widget is an open source Android app developed by me, Janek Zangenberg, alias w2sv. The code is
+WiFi Widget is an open source Android app developed by me, Janek Zangenberg, alias w2sv (W2SV). The code is
 available on [GitHub](https://github.com/w2sv/WiFi-Widget) - the very webpage you are currently at -
 under the [GPL-3.0 license](https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE).
 
