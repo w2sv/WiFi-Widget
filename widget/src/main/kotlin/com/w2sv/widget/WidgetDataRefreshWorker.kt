@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.w2sv.common.WidgetRefreshingParameter
+import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.datastore.DataStoreRepository
 import dagger.hilt.EntryPoint

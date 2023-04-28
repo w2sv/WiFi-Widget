@@ -7,13 +7,18 @@
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
     <FrameLayout
-        android:id="@+id/connection_dependent_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <include
-            android:id="@+id/wifi_properties_layout"
-            layout="@layout/widget_wifi_properties" />
+        <ListView
+            android:id="@+id/wifi_property_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="32dp"
+            android:divider="@null"
+            android:listSelector="@android:color/transparent"
+            android:gravity="center"
+            android:orientation="vertical" />
 
         <LinearLayout
             android:id="@+id/no_connection_available_layout"
@@ -32,15 +37,6 @@
                 android:textSize="16sp"
                 android:textStyle="italic" />
 
-            <TextView
-                android:id="@+id/go_to_wifi_settings_tv"
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-
-                android:text="@string/go_to_wifi_settings"
-                android:textSize="12sp" />
         </LinearLayout>
 
     </FrameLayout>

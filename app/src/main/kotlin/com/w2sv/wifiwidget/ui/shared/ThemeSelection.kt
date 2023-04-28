@@ -27,7 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.Theme
+import com.w2sv.common.enums.Theme
 import com.w2sv.wifiwidget.R
 
 @Composable

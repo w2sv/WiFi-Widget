@@ -22,7 +22,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
-import com.w2sv.common.Theme
+import com.w2sv.common.enums.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.shared.WifiWidgetTheme

@@ -8,7 +8,11 @@
         <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>
     <string-array name="frequency">
-        <item>The frequency band employed for WiFi signal transmission. Usually one of 2.4G or 5G.</item>
+        <item>The radio frequency band employed for WiFi signal transmission, following the IEEE 802.11 technical standards. Bands for use in WiFi communication provided by IEEE 802.11 lie at 900 MHz, 2.4 GHz, 3.6 GHz, 4.9 GHz, 5 GHz, 5.9 GHz, 6 GHz and 60 GHz. Bands are divided into several distinct channels.</item>
+        <item>https://en.wikipedia.org/wiki/List_of_WLAN_channels</item>
+    </string-array>
+    <string-array name="channel">
+        <item>The sub frequencies which the main frequency bands are divided into, and via which WiFi communication takes place. As per the IEEE 802.11 standard, channels are numbered at 5 MHz spacing within a band (except in the 60 GHz band, where they are 2.16 GHz apart), where the number corresponds to the centre frequency of the channel. Although channels are numbered at 5 MHz spacing, transmitters generally occupy at least 20 MHz, and standards allow for channels to be bonded together to form wider channels for faster throughput.</item>
         <item>https://en.wikipedia.org/wiki/List_of_WLAN_channels</item>
     </string-array>
     <string-array name="linkspeed">

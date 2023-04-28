@@ -1,9 +1,9 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.extensions.getDeflowedMap
-import com.w2sv.common.extensions.getValueSynchronously
-import com.w2sv.common.datastore.DataStoreProperty
+import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.extensions.getMutableStateMap
 import kotlinx.coroutines.CoroutineScope
@@ -25,7 +25,7 @@ abstract class NonAppliedState<T> {
     abstract suspend fun reset()
 }
 
-class NonAppliedSnapshotStateMap<K : DataStoreProperty<V>, V>(
+class NonAppliedSnapshotStateMap<K : DataStoreVariable<V>, V>(
     private val coroutineScope: CoroutineScope,
     private val appliedFlowMap: Map<K, Flow<V>>,
     private val dataStoreRepository: DataStoreRepository,

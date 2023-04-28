@@ -12,7 +12,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.common.WifiProperty
+import com.w2sv.common.enums.WifiProperty
 import com.w2sv.common.extensions.launchingSuppressed
 import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.widget.WidgetProvider

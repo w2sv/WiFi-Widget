@@ -1,2 +1,2 @@
-- Integrated "Location: Allow all the time" enablement to fix SSID inaccessibility
-- Simplified location access permission rational dialog
+- Make properties scrollable
+- Add channel to shown WiFi properties

@@ -3,9 +3,9 @@ package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.common.Theme
-import com.w2sv.common.WidgetColorSection
-import com.w2sv.common.WifiProperty
+import com.w2sv.common.enums.Theme
+import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WifiProperty
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
 import com.w2sv.common.datastore.PreferencesKey
