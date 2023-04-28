@@ -9,7 +9,8 @@
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
-    <string name="code">Code</string>
+    <string name="source">Source</string>
+    <string name="privacy_policy">Privacy Policy</string>
     <string name="rate">Rate</string>
     <string name="share">Share</string>
     <string name="on_pin_widget_wo_gps_enabled">SSID display requires GPS to be enabled!</string>

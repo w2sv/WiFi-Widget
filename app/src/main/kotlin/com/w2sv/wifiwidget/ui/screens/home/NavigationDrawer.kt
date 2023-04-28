@@ -190,8 +190,14 @@ private fun NavigationDrawerContent(closeDrawer: () -> Unit, onItemThemePressed:
                         }
                     },
                     NavigationDrawerItem(
+                        R.drawable.ic_policy_24,
+                        R.string.privacy_policy
+                    ) {
+                        it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md")
+                    },
+                    NavigationDrawerItem(
                         R.drawable.ic_github_24,
-                        R.string.code
+                        R.string.source
                     ) {
                         it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
                     }
