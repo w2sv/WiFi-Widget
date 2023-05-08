@@ -35,15 +35,17 @@ fun getNetmask(): String =
  */
 @RequiresPermission(Manifest.permission.INTERNET)
 private fun getNetworkPrefixLength(): Short? {
-    val interfaces = NetworkInterface.getNetworkInterfaces()
+    val networkInterfaces = NetworkInterface.getNetworkInterfaces()
 
-    while (interfaces.hasMoreElements()) {
-        interfaces.nextElement().run {
-            if (!isLoopback)
+    while (networkInterfaces.hasMoreElements()) {
+        networkInterfaces.nextElement().run {
+            if (!isLoopback) {
                 interfaceAddresses.forEach { interfaceAddress ->
-                    if (interfaceAddress.broadcast != null)
+                    if (interfaceAddress.broadcast != null) {
                         return interfaceAddress.networkPrefixLength
+                    }
                 }
+            }
         }
     }
 
