@@ -86,7 +86,7 @@ class DataStoreRepository @Inject constructor(
     /**
      * Interface for classes interfacing with [dataStoreRepository] via a held [coroutineScope].
      */
-    interface Interface {
+    interface Client {
 
         val dataStoreRepository: DataStoreRepository
         val coroutineScope: CoroutineScope

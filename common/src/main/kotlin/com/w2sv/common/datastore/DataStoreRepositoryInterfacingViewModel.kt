@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 
 abstract class DataStoreRepositoryInterfacingViewModel(override val dataStoreRepository: DataStoreRepository) :
     ViewModel(),
-    DataStoreRepository.Interface {
+    DataStoreRepository.Client {
 
     override val coroutineScope: CoroutineScope get() = viewModelScope
 }
