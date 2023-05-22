@@ -8,7 +8,8 @@
     <string name="ssid">SSID</string>
     <string name="ipv4">IPv4</string>
     <string name="ipv6_local">IPv6 local</string>
-    <string name="ipv6_public">IPv6 public</string>
+    <string name="ipv6_public_first">IPv6 public 1st</string>
+    <string name="ipv6_public_second">IPv6 public 2nd</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="linkspeed">Link Speed</string>

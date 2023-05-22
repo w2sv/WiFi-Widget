@@ -66,7 +66,7 @@ enum class WifiProperty(
         }
     ),
     IPv6Public1(
-        R.string.ipv6_public,
+        R.string.ipv6_public_first,
         R.array.ip,
         { _, connectivityManager ->
             connectivityManager
@@ -77,7 +77,7 @@ enum class WifiProperty(
         }
     ),
     IPv6Public2(
-        R.string.ipv6_public,
+        R.string.ipv6_public_second,
         R.array.ip,
         { _, connectivityManager ->
             connectivityManager

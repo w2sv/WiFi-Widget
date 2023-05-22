@@ -5,9 +5,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.net.Uri
-import android.net.wifi.WifiManager
 import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
@@ -76,11 +74,6 @@ internal class WidgetPopulator @Inject constructor(
                                     }
                                     i {
                                         "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
-                                    }
-                                    context.connectivityManager.linkProperties?.linkAddresses?.forEach {
-                                        i { it.address.hostAddress!! }
-                                        i { it.prefixLength.toString() }
-                                        i { it.address.isLinkLocalAddress.toString() }
                                     }
                                 }
 
