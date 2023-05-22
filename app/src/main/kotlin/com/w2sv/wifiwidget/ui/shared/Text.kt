@@ -32,6 +32,7 @@ fun JostText(
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
     onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
@@ -50,6 +51,7 @@ fun JostText(
         overflow,
         softWrap,
         maxLines,
+        minLines,
         onTextLayout,
         style
     )
