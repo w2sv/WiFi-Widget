@@ -6,7 +6,9 @@
     <string name="widget_description">Monitor your WiFi connection details</string>
 
     <string name="ssid">SSID</string>
-    <string name="ip">IP</string>
+    <string name="ipv4">IPv4</string>
+    <string name="ipv6_local">IPv6 local</string>
+    <string name="ipv6_public">IPv6 public</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="linkspeed">Link Speed</string>

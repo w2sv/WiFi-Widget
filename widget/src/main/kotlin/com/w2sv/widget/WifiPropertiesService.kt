@@ -3,17 +3,20 @@ package com.w2sv.widget
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getValueSynchronously
+import com.w2sv.common.connectivityManager
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.isNightModeActiveCompat
+import com.w2sv.common.wifiManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -34,9 +37,11 @@ private class WifiPropertyViewFactory(
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private lateinit var wifiManager: WifiManager
+    private lateinit var connectivityManager: ConnectivityManager
 
     override fun onCreate() {
-        wifiManager = context.getSystemService(WifiManager::class.java)
+        wifiManager = context.wifiManager
+        connectivityManager = context.connectivityManager
     }
 
     private lateinit var propertyViewData: List<WifiPropertyViewData>
@@ -49,7 +54,7 @@ private class WifiPropertyViewFactory(
             .map {
                 WifiPropertyViewData(
                     context.getString(it.labelRes),
-                    it.getValue(wifiManager)
+                    it.getValue(wifiManager, connectivityManager)
                 )
             }
         propertyViewColors = WifiPropertyViewColors.fromTheme(

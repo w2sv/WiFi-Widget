@@ -1,15 +1,37 @@
 package com.w2sv.common
 
-import android.Manifest
+import android.content.Context
 import android.net.ConnectivityManager
+import android.net.LinkAddress
+import android.net.LinkProperties
 import android.net.NetworkCapabilities
-import androidx.annotation.RequiresPermission
+import android.net.wifi.WifiManager
 import java.net.InetAddress
-import java.net.NetworkInterface
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-private const val FALLBACK_IP4_ADDRESS = "0.0.0.0"
+val Context.wifiManager: WifiManager get() = getSystemService(WifiManager::class.java)
+
+val Context.connectivityManager: ConnectivityManager get() = getSystemService(ConnectivityManager::class.java)
+
+val ConnectivityManager.linkProperties: LinkProperties? get() = getLinkProperties(activeNetwork)
+
+fun ConnectivityManager.findLinkAddress(predicate: (LinkAddress) -> Boolean): LinkAddress? =
+    linkProperties?.linkAddresses?.find(predicate)
+
+fun ConnectivityManager.getPublicIPv6Addresses(): List<InetAddress>? =
+    linkProperties
+        ?.linkAddresses
+        ?.filter { it.ipAddressType == IPAddressType.V6 && !it.address.isLinkLocalAddress }
+        ?.map { it.address }
+
+val LinkAddress.ipAddressType: IPAddressType
+    get() = if (prefixLength < 64) IPAddressType.V4 else IPAddressType.V6
+
+enum class IPAddressType(val fallbackAddress: String) {
+    V4("0.0.0.0"),
+    V6("::::::")
+}
 
 //fun Int.asFormattedIpAddress(): String =
 //    Formatter.formatIpAddress(this)
@@ -17,7 +39,7 @@ private const val FALLBACK_IP4_ADDRESS = "0.0.0.0"
 /**
  * Reference: https://stackoverflow.com/a/52663352/12083276
  */
-fun textualAddressRepresentation(address: Int): String =
+fun textualAddressRepresentation(address: Int): String? =
     InetAddress.getByAddress(
         ByteBuffer
             .allocate(Integer.BYTES)
@@ -25,7 +47,7 @@ fun textualAddressRepresentation(address: Int): String =
             .putInt(address)
             .array()
     )
-        .hostAddress ?: FALLBACK_IP4_ADDRESS
+        .hostAddress
 
 /**
  * activeNetwork: null when there is no default network, or when the default network is blocked.
@@ -40,38 +62,35 @@ val ConnectivityManager.isWifiConnected: Boolean?
 /**
  * Reference: https://stackoverflow.com/a/33094601/12083276
  */
-fun getNetmask(): String =
-    getNetworkPrefixLength()
-        ?.let {
-            val shift = 0xffffffff shl (32 - it)
-            "${((shift and 0xff000000) shr 24) and 0xff}" +
-                    ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-                    ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-                    ".${(shift and 0x000000ff) and 0xff}"
-        }
-        ?: FALLBACK_IP4_ADDRESS
-
-/**
- * Reference: https://stackoverflow.com/a/29017289/12083276
- */
-@RequiresPermission(Manifest.permission.INTERNET)
-private fun getNetworkPrefixLength(): Short? {
-    val networkInterfaces = NetworkInterface.getNetworkInterfaces()
-
-    while (networkInterfaces.hasMoreElements()) {
-        networkInterfaces.nextElement().run {
-            if (!isLoopback) {
-                interfaceAddresses.forEach { interfaceAddress ->
-                    if (interfaceAddress.broadcast != null) {
-                        return interfaceAddress.networkPrefixLength
-                    }
-                }
-            }
-        }
-    }
-
-    return null
+fun toNetmask(networkPrefixLength: Int): String {
+    val shift = 0xffffffff shl (32 - networkPrefixLength)
+    return "${((shift and 0xff000000) shr 24) and 0xff}" +
+            ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+            ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+            ".${(shift and 0x000000ff) and 0xff}"
 }
+
+///**
+// * Reference: https://stackoverflow.com/a/29017289/12083276
+// */
+//@RequiresPermission(Manifest.permission.INTERNET)
+//private fun getNetworkPrefixLength(): Short? {
+//    val networkInterfaces = NetworkInterface.getNetworkInterfaces()
+//
+//    while (networkInterfaces.hasMoreElements()) {
+//        networkInterfaces.nextElement().run {
+//            if (!isLoopback) {
+//                interfaceAddresses.forEach { interfaceAddress ->
+//                    if (interfaceAddress.broadcast != null) {
+//                        return interfaceAddress.networkPrefixLength
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    return null
+//}
 
 /**
  * Reference: https://stackoverflow.com/a/58646104/12083276

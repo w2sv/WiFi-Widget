@@ -12,13 +12,17 @@ import android.provider.Settings
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.coroutines.getValueSynchronously
+import com.w2sv.common.connectivityManager
 import com.w2sv.common.datastore.DataStoreRepository
 import com.w2sv.common.isWifiConnected
+import com.w2sv.common.linkProperties
+import com.w2sv.common.wifiManager
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import slimber.log.i
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -58,11 +62,28 @@ internal class WidgetPopulator @Inject constructor(
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget.apply {
             setContentLayout(
-                wifiStatus = when (context.getSystemService(WifiManager::class.java).isWifiEnabled) {
+                wifiStatus = when (context.wifiManager.isWifiEnabled) {
                     false -> WifiStatus.Disabled
                     true -> {
-                        when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
+                        when (context.connectivityManager.isWifiConnected) {
                             true, null -> WifiStatus.Connected
+                                .also {
+                                    i {
+                                        "wifiManager.connectionInfo: ${context.wifiManager.connectionInfo}"
+                                    }
+                                    i {
+                                        "wifiManager.dhcpInfo: ${context.wifiManager.dhcpInfo}"
+                                    }
+                                    i {
+                                        "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
+                                    }
+                                    context.connectivityManager.linkProperties?.linkAddresses?.forEach {
+                                        i { it.address.hostAddress!! }
+                                        i { it.prefixLength.toString() }
+                                        i { it.address.isLinkLocalAddress.toString() }
+                                    }
+                                }
+
                             false -> WifiStatus.Disconnected
                         }
                     }

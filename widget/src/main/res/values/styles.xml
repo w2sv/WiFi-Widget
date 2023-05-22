@@ -6,9 +6,4 @@
         <item name="android:background">@drawable/shape_widget_background</item>
     </style>
 
-    <style name="Widget.Wifi.Property.TextView" parent="TextAppearance.AppCompat">
-        <item name="android:textSize">@dimen/text_size_widget_wifi_property</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
 </resources>

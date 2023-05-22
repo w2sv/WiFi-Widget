@@ -2,18 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingEnd="6dp">
+    android:paddingVertical="0.5dp">
 
     <TextView
         android:id="@+id/property_label_tv"
-        style="@style/Widget.Wifi.Property.TextView"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:textColor="@color/blue_chill" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="6dp"
+        android:textSize="@dimen/text_size_widget_wifi_property" />
 
     <TextView
         android:id="@+id/property_value_tv"
-        style="@style/Widget.Wifi.Property.TextView"
-        android:layout_width="wrap_content"
-        android:textColor="?android:attr/textColorPrimary" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:paddingEnd="6dp"
+        android:textSize="@dimen/text_size_widget_wifi_property" />
+
 </LinearLayout>
