@@ -17,7 +17,7 @@ private const val FALLBACK_IP4_ADDRESS = "0.0.0.0"
 /**
  * Reference: https://stackoverflow.com/a/52663352/12083276
  */
-fun getTextualAddressRepresentation(address: Int): String =
+fun textualAddressRepresentation(address: Int): String =
     InetAddress.getByAddress(
         ByteBuffer
             .allocate(Integer.BYTES)

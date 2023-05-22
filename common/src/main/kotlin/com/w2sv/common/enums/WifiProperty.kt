@@ -9,7 +9,7 @@ import com.w2sv.common.R
 import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.frequencyToChannel
 import com.w2sv.common.getNetmask
-import com.w2sv.common.getTextualAddressRepresentation
+import com.w2sv.common.textualAddressRepresentation
 
 @Suppress("DEPRECATION")
 enum class WifiProperty(
@@ -31,12 +31,12 @@ enum class WifiProperty(
     IP(
         R.string.ip,
         R.array.ip,
-        { getTextualAddressRepresentation(it.connectionInfo.ipAddress) }
+        { textualAddressRepresentation(it.connectionInfo.ipAddress) }
     ),
     Frequency(
         R.string.frequency,
         R.array.frequency,
-        { "${it.connectionInfo.frequency} MHz" }
+        { quantityRepresentation(it.connectionInfo.frequency, "MHz") }
     ),
     Channel(
         R.string.channel,
@@ -46,22 +46,22 @@ enum class WifiProperty(
     Linkspeed(
         R.string.linkspeed,
         R.array.linkspeed,
-        { "${it.connectionInfo.linkSpeed} Mbps" }
+        { quantityRepresentation(it.connectionInfo.linkSpeed, "Mbps") }
     ),
     Gateway(
         R.string.gateway,
         R.array.gateway,
-        { getTextualAddressRepresentation(it.dhcpInfo.gateway) }
+        { textualAddressRepresentation(it.dhcpInfo.gateway) }
     ),
     DNS(
         R.string.dns,
         R.array.dns,
-        { getTextualAddressRepresentation(it.dhcpInfo.dns1) }
+        { textualAddressRepresentation(it.dhcpInfo.dns1) }
     ),
     DHCP(
         R.string.dhcp,
         R.array.dhcp,
-        { getTextualAddressRepresentation(it.dhcpInfo.serverAddress) }
+        { textualAddressRepresentation(it.dhcpInfo.serverAddress) }
     ),
     Netmask(
         R.string.netmask,
@@ -71,3 +71,6 @@ enum class WifiProperty(
 
     override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
 }
+
+private fun quantityRepresentation(quantity: Number, unit: String): String =
+    "$quantity $unit"
