@@ -3,18 +3,39 @@ package com.w2sv.common
 import android.Manifest
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.text.format.Formatter
 import androidx.annotation.RequiresPermission
+import java.net.InetAddress
 import java.net.NetworkInterface
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
-@Suppress("DEPRECATION")
-fun Int.asFormattedIpAddress(): String =
-    Formatter.formatIpAddress(this)
+private const val FALLBACK_IP4_ADDRESS = "0.0.0.0"
 
-val ConnectivityManager.isWifiConnected: Boolean
+//fun Int.asFormattedIpAddress(): String =
+//    Formatter.formatIpAddress(this)
+
+/**
+ * Reference: https://stackoverflow.com/a/52663352/12083276
+ */
+fun getTextualAddressRepresentation(address: Int): String =
+    InetAddress.getByAddress(
+        ByteBuffer
+            .allocate(Integer.BYTES)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .putInt(address)
+            .array()
+    )
+        .hostAddress ?: FALLBACK_IP4_ADDRESS
+
+/**
+ * activeNetwork: null when there is no default network, or when the default network is blocked.
+ * getNetworkCapabilities: null if the network is unknown or if the |network| argument is null.
+ *
+ * Reference: https://stackoverflow.com/questions/3841317/how-do-i-see-if-wi-fi-is-connected-on-android
+ */
+val ConnectivityManager.isWifiConnected: Boolean?
     get() =
-        getNetworkCapabilities(activeNetwork)
-            ?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+        getNetworkCapabilities(activeNetwork)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
 
 /**
  * Reference: https://stackoverflow.com/a/33094601/12083276
@@ -28,7 +49,7 @@ fun getNetmask(): String =
                     ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
                     ".${(shift and 0x000000ff) and 0xff}"
         }
-        ?: "0.0.0.0"
+        ?: FALLBACK_IP4_ADDRESS
 
 /**
  * Reference: https://stackoverflow.com/a/29017289/12083276

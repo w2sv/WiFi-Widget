@@ -6,10 +6,10 @@ import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.common.R
-import com.w2sv.common.asFormattedIpAddress
 import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.frequencyToChannel
 import com.w2sv.common.getNetmask
+import com.w2sv.common.getTextualAddressRepresentation
 
 @Suppress("DEPRECATION")
 enum class WifiProperty(
@@ -31,7 +31,7 @@ enum class WifiProperty(
     IP(
         R.string.ip,
         R.array.ip,
-        { it.connectionInfo.ipAddress.asFormattedIpAddress() }
+        { getTextualAddressRepresentation(it.connectionInfo.ipAddress) }
     ),
     Frequency(
         R.string.frequency,
@@ -51,17 +51,17 @@ enum class WifiProperty(
     Gateway(
         R.string.gateway,
         R.array.gateway,
-        { it.dhcpInfo.gateway.asFormattedIpAddress() }
+        { getTextualAddressRepresentation(it.dhcpInfo.gateway) }
     ),
     DNS(
         R.string.dns,
         R.array.dns,
-        { it.dhcpInfo.dns1.asFormattedIpAddress() }
+        { getTextualAddressRepresentation(it.dhcpInfo.dns1) }
     ),
     DHCP(
         R.string.dhcp,
         R.array.dhcp,
-        { it.dhcpInfo.serverAddress.asFormattedIpAddress() }
+        { getTextualAddressRepresentation(it.dhcpInfo.serverAddress) }
     ),
     Netmask(
         R.string.netmask,

@@ -62,7 +62,7 @@ internal class WidgetPopulator @Inject constructor(
                     false -> WifiStatus.Disabled
                     true -> {
                         when (context.getSystemService(ConnectivityManager::class.java).isWifiConnected) {
-                            true -> WifiStatus.Connected
+                            true, null -> WifiStatus.Connected
                             false -> WifiStatus.Disconnected
                         }
                     }
