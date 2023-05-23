@@ -3,13 +3,13 @@ minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
 agp = "8.0.1"
-kotlin = '1.8.10'
+kotlin = '1.8.21'
 java = '17'
 
-compose-compiler = '1.4.4'
+compose-compiler = '1.4.7'
 compose-tooling = '1.4.3'
 hilt = '2.46.1'
-junit = '5.9.2'
+#junit = '5.9.2'
 lifecycle = "2.6.1"
 
 [libraries]
@@ -42,7 +42,7 @@ accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.30.1
 
 # other
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
-colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc8'
+colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9'
 
 [plugins]
 application = { id = 'com.android.application', version.ref = 'agp' }
