@@ -6,13 +6,13 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import com.w2sv.common.IPAddressType
+import com.w2sv.common.AddressType
 import com.w2sv.common.R
 import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.findLinkAddress
 import com.w2sv.common.frequencyToChannel
 import com.w2sv.common.getPublicIPv6Addresses
-import com.w2sv.common.ipAddressType
+import com.w2sv.common.addressType
 import com.w2sv.common.textualAddressRepresentation
 
 @Suppress("DEPRECATION")
@@ -37,10 +37,10 @@ enum class WifiProperty(
         R.array.ip,
         { _, connectivityManager ->
             connectivityManager
-                .findLinkAddress { it.ipAddressType == IPAddressType.V4 }
+                .findLinkAddress { it.addressType == AddressType.IPv4 }
                 ?.address
                 ?.hostAddress
-                ?: IPAddressType.V6.fallbackAddress
+                ?: com.w2sv.common.enums.IPV4_FALLBACK_ADDRESS
         }
     ),
     Netmask(
@@ -48,10 +48,10 @@ enum class WifiProperty(
         R.array.netmask,
         { _, connectivityManager ->
             connectivityManager
-                .findLinkAddress { it.ipAddressType == IPAddressType.V4 }
+                .findLinkAddress { it.addressType == AddressType.IPv4 }
                 ?.prefixLength
                 ?.let { com.w2sv.common.toNetmask(it) }
-                ?: IPAddressType.V4.fallbackAddress
+                ?: IPV4_FALLBACK_ADDRESS
         }
     ),
     IPv6Local(
@@ -59,38 +59,46 @@ enum class WifiProperty(
         R.array.ip,
         { _, connectivityManager ->
             connectivityManager
-                .findLinkAddress { it.address.isLinkLocalAddress && it.ipAddressType == IPAddressType.V6 }
+                .findLinkAddress { it.address.isLinkLocalAddress && it.addressType == AddressType.IPv6 }
                 ?.address
                 ?.hostAddress
-                ?: IPAddressType.V6.fallbackAddress
+                ?: IPV6_FALLBACK_ADDRESS
         }
     ),
     IPv6Public1(
         R.string.ipv6_public_first,
         R.array.ip,
         { _, connectivityManager ->
-            connectivityManager
-                .getPublicIPv6Addresses()
-                ?.get(0)
-                ?.hostAddress
-                ?: IPAddressType.V6.fallbackAddress
+            try {
+                connectivityManager
+                    .getPublicIPv6Addresses()
+                    ?.get(0)
+                    ?.hostAddress
+                    ?: IPV6_FALLBACK_ADDRESS
+            } catch (e: IndexOutOfBoundsException) {
+                IPV6_FALLBACK_ADDRESS
+            }
         }
     ),
     IPv6Public2(
         R.string.ipv6_public_second,
         R.array.ip,
         { _, connectivityManager ->
-            connectivityManager
-                .getPublicIPv6Addresses()
-                ?.get(1)
-                ?.hostAddress
-                ?: IPAddressType.V6.fallbackAddress
+            try {
+                connectivityManager
+                    .getPublicIPv6Addresses()
+                    ?.get(1)
+                    ?.hostAddress
+                    ?: IPV6_FALLBACK_ADDRESS
+            } catch (e: IndexOutOfBoundsException) {
+                IPV6_FALLBACK_ADDRESS
+            }
         }
     ),
     Frequency(
         R.string.frequency,
         R.array.frequency,
-        { wifiManager, _ -> quantityRepresentation(wifiManager.connectionInfo.frequency, "MHz") }
+        { wifiManager, _ -> "${wifiManager.connectionInfo.frequency} MHz" }
     ),
     Channel(
         R.string.channel,
@@ -100,14 +108,14 @@ enum class WifiProperty(
     Linkspeed(
         R.string.linkspeed,
         R.array.linkspeed,
-        { wifiManager, _ -> quantityRepresentation(wifiManager.connectionInfo.linkSpeed, "Mbps") }
+        { wifiManager, _ -> "${wifiManager.connectionInfo.linkSpeed} Mbps" }
     ),
     Gateway(
         R.string.gateway,
         R.array.gateway,
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.gateway)
-                ?: IPAddressType.V4.fallbackAddress
+                ?: IPV4_FALLBACK_ADDRESS
         }
     ),
     DNS(
@@ -115,7 +123,7 @@ enum class WifiProperty(
         R.array.dns,
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.dns1)
-                ?: IPAddressType.V4.fallbackAddress
+                ?: IPV4_FALLBACK_ADDRESS
         }
     ),
     DHCP(
@@ -123,12 +131,13 @@ enum class WifiProperty(
         R.array.dhcp,
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.serverAddress)
-                ?: IPAddressType.V4.fallbackAddress
+                ?: IPV4_FALLBACK_ADDRESS
         }
     );
 
     override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
 }
 
-private fun quantityRepresentation(quantity: Number, unit: String): String =
-    "$quantity $unit"
+private const val IPV4_FALLBACK_ADDRESS = "0.0.0.0"
+
+private const val IPV6_FALLBACK_ADDRESS = "::::::"

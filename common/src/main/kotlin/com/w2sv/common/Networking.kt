@@ -22,15 +22,15 @@ fun ConnectivityManager.findLinkAddress(predicate: (LinkAddress) -> Boolean): Li
 fun ConnectivityManager.getPublicIPv6Addresses(): List<InetAddress>? =
     linkProperties
         ?.linkAddresses
-        ?.filter { it.ipAddressType == IPAddressType.V6 && !it.address.isLinkLocalAddress }
+        ?.filter { it.addressType == AddressType.IPv6 && !it.address.isLinkLocalAddress }
         ?.map { it.address }
 
-val LinkAddress.ipAddressType: IPAddressType
-    get() = if (prefixLength < 64) IPAddressType.V4 else IPAddressType.V6
+val LinkAddress.addressType: AddressType
+    get() = if (prefixLength < 64) AddressType.IPv4 else AddressType.IPv6
 
-enum class IPAddressType(val fallbackAddress: String) {
-    V4("0.0.0.0"),
-    V6("::::::")
+enum class AddressType {
+    IPv4,
+    IPv6
 }
 
 //fun Int.asFormattedIpAddress(): String =
@@ -99,6 +99,7 @@ fun toNetmask(networkPrefixLength: Int): String {
  */
 fun frequencyToChannel(frequency: Int): Int =
     when {
+        frequency <= 0 -> -1
         frequency == 2484 -> 14
         frequency < 2484 -> (frequency - 2407) / 5
         frequency in 4910..4980 -> (frequency - 4000) / 5

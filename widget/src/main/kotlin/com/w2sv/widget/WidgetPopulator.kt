@@ -66,14 +66,11 @@ internal class WidgetPopulator @Inject constructor(
                         when (context.connectivityManager.isWifiConnected) {
                             true, null -> WifiStatus.Connected
                                 .also {
+                                    @Suppress("DEPRECATION")
                                     i {
-                                        "wifiManager.connectionInfo: ${context.wifiManager.connectionInfo}"
-                                    }
-                                    i {
-                                        "wifiManager.dhcpInfo: ${context.wifiManager.dhcpInfo}"
-                                    }
-                                    i {
-                                        "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
+                                        "wifiManager.connectionInfo: ${context.wifiManager.connectionInfo}\n" +
+                                                "wifiManager.dhcpInfo: ${context.wifiManager.dhcpInfo}\n" +
+                                                "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
                                     }
                                 }
 

@@ -16,8 +16,8 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="32dp"
             android:divider="@null"
-            android:listSelector="@android:color/transparent"
             android:gravity="center"
+            android:listSelector="@android:color/transparent"
             android:orientation="vertical" />
 
         <LinearLayout
