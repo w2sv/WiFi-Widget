@@ -23,7 +23,7 @@ fun WifiWidgetTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () ->
             )
         },
         modifier = modifier,
-        colors = TopAppBarDefaults.smallTopAppBarColors(
+        colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary
         ),
