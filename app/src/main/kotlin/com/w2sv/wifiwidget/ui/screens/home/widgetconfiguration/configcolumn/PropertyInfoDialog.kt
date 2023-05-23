@@ -34,7 +34,7 @@ internal fun PropertyInfoDialog(
     onDismissRequest: () -> Unit
 ) {
     val context = LocalContext.current
-    val stringArray = stringArrayResource(id = property.infoStringArrayRes)
+    val stringArray = stringArrayResource(id = property.stringArrayRes)
 
     InfoDialog(
         modifier = modifier,

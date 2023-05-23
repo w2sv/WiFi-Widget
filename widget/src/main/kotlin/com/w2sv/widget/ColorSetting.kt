@@ -54,7 +54,7 @@ internal fun RemoteViews.setWidgetColors(
             setColors(
                 getValue(WidgetColorSection.Background),
                 backgroundOpacity,
-                getValue(WidgetColorSection.Values)
+                getValue(WidgetColorSection.Other)
             )
         }
     }

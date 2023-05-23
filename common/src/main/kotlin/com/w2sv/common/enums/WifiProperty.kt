@@ -8,17 +8,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.common.AddressType
 import com.w2sv.common.R
+import com.w2sv.common.addressType
 import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.findLinkAddress
 import com.w2sv.common.frequencyToChannel
 import com.w2sv.common.getPublicIPv6Addresses
-import com.w2sv.common.addressType
 import com.w2sv.common.textualAddressRepresentation
 
 @Suppress("DEPRECATION")
 enum class WifiProperty(
     @StringRes val labelRes: Int,
-    @ArrayRes val infoStringArrayRes: Int,
+    @ArrayRes val stringArrayRes: Int,
     val getValue: (WifiManager, ConnectivityManager) -> String,
     override val defaultValue: Boolean = true
 ) :
@@ -34,13 +34,13 @@ enum class WifiProperty(
     ),
     IP(
         R.string.ipv4,
-        R.array.ip,
+        R.array.ipv4,
         { _, connectivityManager ->
             connectivityManager
                 .findLinkAddress { it.addressType == AddressType.IPv4 }
                 ?.address
                 ?.hostAddress
-                ?: com.w2sv.common.enums.IPV4_FALLBACK_ADDRESS
+                ?: IPV4_FALLBACK_ADDRESS
         }
     ),
     Netmask(
@@ -56,7 +56,7 @@ enum class WifiProperty(
     ),
     IPv6Local(
         R.string.ipv6_local,
-        R.array.ip,
+        R.array.ipv6_local,
         { _, connectivityManager ->
             connectivityManager
                 .findLinkAddress { it.address.isLinkLocalAddress && it.addressType == AddressType.IPv6 }
@@ -67,7 +67,7 @@ enum class WifiProperty(
     ),
     IPv6Public1(
         R.string.ipv6_public_first,
-        R.array.ip,
+        R.array.ipv6_public_one,
         { _, connectivityManager ->
             try {
                 connectivityManager
@@ -82,7 +82,7 @@ enum class WifiProperty(
     ),
     IPv6Public2(
         R.string.ipv6_public_second,
-        R.array.ip,
+        R.array.ipv6_public_two,
         { _, connectivityManager ->
             try {
                 connectivityManager
@@ -105,7 +105,7 @@ enum class WifiProperty(
         R.array.channel,
         { wifiManager, _ -> frequencyToChannel(wifiManager.connectionInfo.frequency).toString() }
     ),
-    Linkspeed(
+    LinkSpeed(
         R.string.linkspeed,
         R.array.linkspeed,
         { wifiManager, _ -> "${wifiManager.connectionInfo.linkSpeed} Mbps" }

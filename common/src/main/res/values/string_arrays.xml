@@ -3,8 +3,20 @@
         <item>Service Set Identifier. Your network\'s name.</item>
         <item>https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID</item>
     </string-array>
-    <string-array name="ip">
-        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. WiFi Widget displays the IPv4 representation, which corresponds to a 32-bit number, as opposed to the IPv6 format, which corresponds to a 128-bit number. The displayed address is your internal one, meaning that it\'s merely visible from within your network.</item>
+    <string-array name="ipv4">
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv4 representation corresponds to a 32-bit number. The displayed address is your internal one, meaning that it\'s only visible from within your network.</item>
+        <item>https://en.wikipedia.org/wiki/IP_address</item>
+    </string-array>
+    <string-array name="ipv6_local">
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is the local IPv6 address, meaning that it\'s only visible from within your network.</item>
+        <item>https://en.wikipedia.org/wiki/IP_address</item>
+    </string-array>
+    <string-array name="ipv6_public_one">
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is one of the two public IPv6 addresses, Android devices are typically assigned with. Of those two addresses, one comes from the Stateless Address Autoconfiguration (SLAAC) mechanism - meaning that it will always be the same - whereas the other one is a privacy variant, that changes every few hours.</item>
+        <item>https://en.wikipedia.org/wiki/IP_address</item>
+    </string-array>
+    <string-array name="ipv6_public_two">
+        <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is one of the two public IPv6 addresses, Android devices are typically assigned with. Of those two addresses, one comes from the Stateless Address Autoconfiguration (SLAAC) mechanism - meaning that it will always be the same - whereas the other one is a privacy variant, that changes every few hours.</item>
         <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>
     <string-array name="frequency">

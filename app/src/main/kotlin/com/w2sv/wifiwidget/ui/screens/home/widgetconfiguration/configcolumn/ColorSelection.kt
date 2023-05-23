@@ -41,7 +41,7 @@ internal fun ColorSelection(
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
         SectionCustomizationRow(WidgetColorSection.Labels)
         Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        SectionCustomizationRow(WidgetColorSection.Values)
+        SectionCustomizationRow(WidgetColorSection.Other)
     }
 
     viewModel.customizationDialogSection.collectAsState().value?.let { section ->

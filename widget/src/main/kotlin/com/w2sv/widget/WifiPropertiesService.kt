@@ -131,7 +131,7 @@ private data class WifiPropertyViewColors(val label: Int, val value: Int) {
                 Theme.Custom -> customWidgetColors.getDeflowedMap().run {
                     WifiPropertyViewColors(
                         getValue(WidgetColorSection.Labels),
-                        getValue(WidgetColorSection.Values)
+                        getValue(WidgetColorSection.Other)
                     )
                 }
             }

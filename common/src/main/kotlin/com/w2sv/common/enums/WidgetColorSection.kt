@@ -11,7 +11,7 @@ enum class WidgetColorSection(@StringRes val labelRes: Int, override val default
 
     Background(R.string.background, Color.GRAY),
     Labels(R.string.labels, Color.RED),
-    Values(R.string.values, Color.WHITE);
+    Other(R.string.other, Color.WHITE);
 
     override val preferencesKey = intPreferencesKey(name)
 }

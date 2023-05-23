@@ -106,7 +106,7 @@ fun ConfigColumn(
                             ),
                             0.6f to Color(
                                 widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
-                                    WidgetColorSection.Values
+                                    WidgetColorSection.Other
                                 )
                             )
                         )
