@@ -1,8 +1,1 @@
-[Fixes]
-- Attempt to fix erroneous 'No Connection available' display
-[New Features]
-- Added 'IPv6 local', 'IPv6 public 1' & 'IPv6 public 2' to WiFi properties
-[Other Changes]
-- Polished some wordings
-- Removed the now redundant 'Internet Permission' by means of a different subnet mask retrieval approach
-- Changed the default custom widget colors
+Fixed F-Droid build
