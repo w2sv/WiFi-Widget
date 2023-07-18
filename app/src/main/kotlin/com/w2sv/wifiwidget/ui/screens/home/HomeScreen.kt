@@ -12,23 +12,24 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppTopBar
+import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.NavigationDrawer
+import com.w2sv.wifiwidget.ui.screens.home.components.PinWidgetButton
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.BackgroundLocationAccessRational
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRational
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.StatefulWidgetConfigurationDialogButton
-import com.w2sv.wifiwidget.ui.shared.JostText
-import com.w2sv.wifiwidget.ui.shared.WifiWidgetTopBar
 import java.util.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun HomeScreen(
     viewModel: HomeScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val context = LocalContext.current
 
-    StatefulNavigationDrawer { openDrawer, closeDrawer, drawerOpen ->
-        Scaffold(topBar = { WifiWidgetTopBar { openDrawer() } }) { paddingValues ->
+    NavigationDrawer { openDrawer, closeDrawer, drawerOpen ->
+        Scaffold(topBar = { AppTopBar { openDrawer() } }) { paddingValues ->
             Column(
                 Modifier
                     .padding(paddingValues)
@@ -38,7 +39,7 @@ internal fun HomeScreen(
             ) {
                 Spacer(Modifier.weight(1.5f))
                 Box(Modifier.weight(0.5f)) {
-                    StatefulPinWidgetButton(
+                    PinWidgetButton(
                         Modifier.defaultMinSize(140.dp, 60.dp)
                     )
                 }

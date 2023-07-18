@@ -11,7 +11,7 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.isWifiConnected
 import com.w2sv.common.linkProperties
 import com.w2sv.common.wifiManager
@@ -35,7 +35,7 @@ private enum class WifiStatus {
 
 internal class WidgetPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val dataStoreRepository: DataStoreRepository
+    private val widgetConfigurationRepository: WidgetConfigurationRepository
 ) {
 
     @InstallIn(SingletonComponent::class)
@@ -81,9 +81,9 @@ internal class WidgetPopulator @Inject constructor(
                 appWidgetId = appWidgetId
             )
             setWidgetColors(
-                theme = dataStoreRepository.widgetTheme.getValueSynchronously(),
-                customWidgetColors = dataStoreRepository.customWidgetColors,
-                backgroundOpacity = dataStoreRepository.opacity.getValueSynchronously(),
+                theme = widgetConfigurationRepository.theme.getValueSynchronously(),
+                customWidgetColors = widgetConfigurationRepository.customColors,
+                backgroundOpacity = widgetConfigurationRepository.opacity.getValueSynchronously(),
                 context = context
             )
             setLastUpdatedTV()

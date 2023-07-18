@@ -8,9 +8,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.common.extensions.getDeflowedMap
-import com.w2sv.common.datastore.DataStoreRepository
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -49,7 +49,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
 
     class Administrator @Inject constructor(
         @ApplicationContext private val context: Context,
-        dataStoreRepository: DataStoreRepository
+        widgetConfigurationRepository: WidgetConfigurationRepository
     ) {
 
         @InstallIn(SingletonComponent::class)
@@ -68,7 +68,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         }
 
         private val widgetRefreshingParameters =
-            dataStoreRepository.widgetRefreshingParameters.getDeflowedMap()
+            widgetConfigurationRepository.refreshingParameters.getDeflowedMap()
 
         fun applyChangedParameters() {
             when (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {

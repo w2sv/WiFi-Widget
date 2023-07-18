@@ -3,20 +3,20 @@ package com.w2sv.wifiwidget.ui.screens.home
 import android.Manifest
 import android.content.Context
 import android.widget.Toast
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.getValueSynchronously
+import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
+import com.w2sv.common.data.repositories.PreferencesRepository
+import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.WifiProperty
-import com.w2sv.common.datastore.DataStoreRepository
-import com.w2sv.common.datastore.DataStoreRepositoryInterfacingViewModel
-import com.w2sv.common.datastore.PreferencesKey
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.NonAppliedStateFlow
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.BACKGROUND_LOCATION_ACCESS_GRANT_REQUIRED
 import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,16 +30,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    dataStoreRepository: DataStoreRepository,
-    @ApplicationContext context: Context
-) : DataStoreRepositoryInterfacingViewModel(dataStoreRepository) {
+    preferencesRepository: PreferencesRepository,
+    private val widgetConfigurationRepository: WidgetConfigurationRepository,
+    @ApplicationContext context: Context,
+    private val savedStateHandle: SavedStateHandle
+) : PreferencesDataStoreRepository.ViewModel<PreferencesRepository>(preferencesRepository) {
 
-    val nonAppliedInAppTheme = NonAppliedStateFlow(
-        viewModelScope,
-        dataStoreRepository.inAppTheme
-    ) {
-        dataStoreRepository.save(PreferencesKey.IN_APP_THEME, it)
+    fun onSplashScreenAnimationFinished() {
+        if (savedStateHandle.contains(WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)) {
+            showWidgetConfigurationDialog.value = true
+        }
     }
+
+    val showWidgetConfigurationDialog = MutableStateFlow(false)
 
     // ========================
     // Widget Pin Listening
@@ -56,7 +59,7 @@ class HomeScreenViewModel @Inject constructor(
         context.showToast(R.string.pinned_widget)
 
         viewModelScope.launch {
-            if (dataStoreRepository.wifiProperties.getValue(WifiProperty.SSID).first())
+            if (widgetConfigurationRepository.wifiProperties.getValue(WifiProperty.SSID).first())
                 when {
                     !context.isLocationEnabled -> context.showToast(
                         R.string.on_pin_widget_wo_gps_enabled,
@@ -87,13 +90,13 @@ class HomeScreenViewModel @Inject constructor(
         MutableStateFlow(null)
 
     val lapRationalShown: Boolean
-        get() = dataStoreRepository.locationAccessPermissionRationalShown.getValueSynchronously()
+        get() = repository.locationAccessPermissionRationalShown.getValueSynchronously()
 
     val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean
-        get() = dataStoreRepository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
+        get() = repository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
 
     val showBackgroundLocationAccessRational = MutableStateFlow(false)
 

@@ -6,10 +6,10 @@ import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.common.AddressType
 import com.w2sv.common.R
 import com.w2sv.common.addressType
-import com.w2sv.common.datastore.DataStoreVariable
 import com.w2sv.common.findLinkAddress
 import com.w2sv.common.frequencyToChannel
 import com.w2sv.common.getPublicIPv6Addresses
@@ -22,7 +22,7 @@ enum class WifiProperty(
     val getValue: (WifiManager, ConnectivityManager) -> String,
     override val defaultValue: Boolean = true
 ) :
-    DataStoreVariable<Boolean> {
+    DataStoreEntry.UniType<Boolean> {
 
     SSID(
         R.string.ssid,
@@ -139,5 +139,4 @@ enum class WifiProperty(
 }
 
 private const val IPV4_FALLBACK_ADDRESS = "0.0.0.0"
-
 private const val IPV6_FALLBACK_ADDRESS = "::::::"

@@ -3,12 +3,12 @@ minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '33'
 
 agp = "8.1.0-rc01"
-kotlin = '1.8.21'
+kotlin = '1.8.22'
 java = '17'
 
-compose-compiler = '1.4.7'
+compose-compiler = '1.4.8'
 compose-tooling = '1.4.3'
-hilt = '2.46.1'
+hilt = '2.47'
 lifecycle = "2.6.1"
 
 [libraries]

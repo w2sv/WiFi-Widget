@@ -11,7 +11,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.datastore.DataStoreRepository
+import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.extensions.getDeflowedMap
@@ -25,15 +25,15 @@ import javax.inject.Inject
 class WifiPropertiesService : RemoteViewsService() {
 
     @Inject
-    lateinit var dataStoreRepository: DataStoreRepository
+    lateinit var widgetConfigurationRepository: WidgetConfigurationRepository
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory =
-        WifiPropertyViewFactory(applicationContext, dataStoreRepository)
+        WifiPropertyViewFactory(applicationContext, widgetConfigurationRepository)
 }
 
 private class WifiPropertyViewFactory(
     private val context: Context,
-    private val dataStoreRepository: DataStoreRepository
+    private val widgetConfigurationRepository: WidgetConfigurationRepository
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private lateinit var wifiManager: WifiManager
@@ -48,7 +48,7 @@ private class WifiPropertyViewFactory(
     private lateinit var propertyViewColors: WifiPropertyViewColors
 
     override fun onDataSetChanged() {
-        propertyViewData = dataStoreRepository.wifiProperties.getDeflowedMap()
+        propertyViewData = widgetConfigurationRepository.wifiProperties.getDeflowedMap()
             .filterValues { it }
             .keys
             .map {
@@ -58,9 +58,9 @@ private class WifiPropertyViewFactory(
                 )
             }
         propertyViewColors = WifiPropertyViewColors.fromTheme(
-            dataStoreRepository.widgetTheme.getValueSynchronously(),
+            widgetConfigurationRepository.theme.getValueSynchronously(),
             context,
-            dataStoreRepository.customWidgetColors
+            widgetConfigurationRepository.customColors
         )
     }
 
