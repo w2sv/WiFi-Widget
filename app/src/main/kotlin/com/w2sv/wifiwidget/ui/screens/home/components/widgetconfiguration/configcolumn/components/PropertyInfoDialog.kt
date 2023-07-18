@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -30,8 +30,8 @@ private fun Prev() {
 @Composable
 internal fun PropertyInfoDialog(
     property: WifiProperty,
-    modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val stringArray = stringArrayResource(id = property.stringArrayRes)

@@ -17,8 +17,8 @@ import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.WifiProperty
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.BACKGROUND_LOCATION_ACCESS_GRANT_REQUIRED
-import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -71,7 +71,7 @@ class HomeScreenViewModel @Inject constructor(
                         Toast.LENGTH_LONG
                     )
 
-                    (BACKGROUND_LOCATION_ACCESS_GRANT_REQUIRED) && !context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) && !showBackgroundLocationAccessRational.value -> context.showToast(
+                    (backgroundLocationAccessGrantRequired) && !context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) && !showBackgroundLocationAccessRational.value -> context.showToast(
                         R.string.on_pin_widget_wo_background_location_access_permission,
                         Toast.LENGTH_LONG
                     )

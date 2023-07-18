@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
@@ -17,9 +17,9 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun ColumnScope.OpacitySliderWithValue(
-    modifier: Modifier = Modifier,
     opacity: () -> Float,
-    onOpacityChanged: (Float) -> Unit
+    onOpacityChanged: (Float) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 

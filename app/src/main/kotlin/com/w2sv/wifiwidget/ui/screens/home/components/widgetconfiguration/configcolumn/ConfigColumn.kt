@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -37,13 +37,17 @@ import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.enums.WifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.components.ButtonColoring
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithValue
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Preview
@@ -189,11 +193,14 @@ fun ConfigColumn(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             modifier = defaultSectionHeaderModifier
         )
-        RefreshingParametersSelection(checkablePropertiesColumnModifier) {
-            with(scrollState) {
-                animateScrollTo(maxValue)
-            }
-        }
+        RefreshingParametersSelection(
+            scrollToContentColumnBottom = {
+                with(scrollState) {
+                    animateScrollTo(maxValue)
+                }
+            },
+            modifier = checkablePropertiesColumnModifier
+        )
     }
 }
 

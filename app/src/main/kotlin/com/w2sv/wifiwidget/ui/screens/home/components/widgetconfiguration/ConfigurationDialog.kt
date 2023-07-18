@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -11,8 +11,10 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,26 +23,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn.ConfigColumn
+import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.widget.WidgetProvider
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.components.diagonalGradient
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
+import com.w2sv.wifiwidget.ui.theme.AppTheme
+import kotlinx.coroutines.launch
 
 @Preview
 @Composable
 private fun WidgetConfigurationDialogPrev() {
     AppTheme {
-        WidgetConfigurationDialog()
+        WidgetConfigurationDialog(closeDialog = {})
     }
 }
 
 @Composable
 fun WidgetConfigurationDialog(
+    closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WidgetConfigurationViewModel = viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel()
 ) {
-    Dialog(onDismissRequest = { viewModel.onDismissWidgetConfigurationDialog() }) {
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val onDismissRequest: () -> Unit = {
+        widgetConfigurationVM.onDismissWidgetConfigurationDialog()
+        closeDialog()
+    }
+
+    Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
@@ -75,7 +89,23 @@ fun WidgetConfigurationDialog(
                         .fillMaxWidth()
                         .heightIn(260.dp, 420.dp)
                 )
-                ButtonRow(modifier = Modifier.fillMaxWidth())
+                ButtonRow(
+                    onCancel = {
+                        onDismissRequest()
+                    },
+                    onApply = {
+                        scope.launch {
+                            widgetConfigurationVM.nonAppliedWidgetConfiguration.sync()
+                            WidgetProvider.triggerDataRefresh(context)
+                            context.showToast(R.string.updated_widget_configuration)
+                            closeDialog()
+                        }
+                    },
+                    applyButtonEnabled = {
+                        widgetConfigurationVM.nonAppliedWidgetConfiguration.statesDissimilar.value
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         }
     }

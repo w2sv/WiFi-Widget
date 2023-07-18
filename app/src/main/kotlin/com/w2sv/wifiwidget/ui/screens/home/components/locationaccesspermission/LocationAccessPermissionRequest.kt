@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.locationaccesspermission
+package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
 import android.Manifest
 import android.content.Context
@@ -12,48 +12,19 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.common.enums.WifiProperty
+import com.w2sv.common.data.repositories.PreferencesRepository
 import com.w2sv.common.extensions.launchingSuppressed
-import com.w2sv.common.data.PreferencesKey
-import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import kotlinx.coroutines.launch
 import slimber.log.i
 
-@Composable
-fun LocationAccessPermissionRequest(
-    trigger: LocationAccessPermissionRequestTrigger,
-    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel()
-) {
-    when (trigger) {
-        LocationAccessPermissionRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
-            onGranted = {
-                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
-                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags.sync()
-                WidgetProvider.pinWidget(it)
-            },
-            onDenied = {
-                WidgetProvider.pinWidget(it)
-            }
-        )
-
-        LocationAccessPermissionRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
-            onGranted = {
-                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
-            },
-            onDenied = {}
-        )
-    }
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun LocationAccessPermissionRequest(
+fun LocationAccessPermissionRequest(
     onGranted: suspend (Context) -> Unit,
     onDenied: suspend (Context) -> Unit,
-    viewModel: HomeScreenViewModel = viewModel()
+    homeScreenVM: HomeScreenViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -68,14 +39,14 @@ private fun LocationAccessPermissionRequest(
                 when (permissionToGranted.values.all { it }) {
                     true -> {
                         onGranted(context)
-                        if (BACKGROUND_LOCATION_ACCESS_GRANT_REQUIRED) {
-                            viewModel.showBackgroundLocationAccessRational.value = true
+                        if (backgroundLocationAccessGrantRequired) {
+                            homeScreenVM.showBackgroundLocationAccessRational.value = true
                         }
                     }
 
                     false -> onDenied(context)
                 }
-                viewModel.lapRequestTrigger.reset()
+                homeScreenVM.lapRequestTrigger.reset()
             }
         }
     )
@@ -85,23 +56,23 @@ private fun LocationAccessPermissionRequest(
         when (permissionState.allPermissionsGranted) {
             true -> {
                 onGranted(context)
-                viewModel.lapRequestTrigger.reset()
+                homeScreenVM.lapRequestTrigger.reset()
             }
 
             false -> {
-                when (permissionState.launchingSuppressed(viewModel.lapRequestLaunchedAtLeastOnce)) {
+                when (permissionState.launchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
                     true -> {
                         context.showToast(
                             context.getString(R.string.go_to_app_settings_and_grant_location_access_permission),
                             Toast.LENGTH_LONG
                         )
-                        viewModel.lapRequestTrigger.reset()
+                        homeScreenVM.lapRequestTrigger.reset()
                     }
 
                     false -> {
                         permissionState.launchMultiplePermissionRequest()
-                        viewModel.saveToDataStore(
-                            PreferencesKey.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE,
+                        homeScreenVM.saveToDataStore(
+                            PreferencesRepository.Key.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE,
                             true
                         )
                     }

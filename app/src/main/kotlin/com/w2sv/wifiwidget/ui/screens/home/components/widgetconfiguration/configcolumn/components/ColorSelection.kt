@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,13 +25,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 
 @Composable
 internal fun ColorSelection(
     modifier: Modifier = Modifier,
-    viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
@@ -44,7 +44,7 @@ internal fun ColorSelection(
         SectionCustomizationRow(WidgetColorSection.Other)
     }
 
-    viewModel.customizationDialogSection.collectAsState().value?.let { section ->
+    widgetConfigurationVM.customizationDialogSection.collectAsState().value?.let { section ->
         ColorPickerDialog(section)
     }
 }

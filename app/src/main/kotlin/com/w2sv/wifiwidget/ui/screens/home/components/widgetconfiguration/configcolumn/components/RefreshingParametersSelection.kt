@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -21,15 +21,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun RefreshingParametersSelection(
+    scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-    scrollToContentColumnBottom: suspend () -> Unit
+    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val scope = rememberCoroutineScope()
 
@@ -38,7 +38,7 @@ internal fun RefreshingParametersSelection(
             parameter = WidgetRefreshingParameter.RefreshPeriodically
         )
         AnimatedVisibility(
-            visible = viewModel.nonAppliedWidgetRefreshingParameterFlags.getValue(
+            visible = widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags.getValue(
                 WidgetRefreshingParameter.RefreshPeriodically
             ),
             enter = fadeIn() + expandVertically(initialHeight = { scope.launch { scrollToContentColumnBottom() }; 0 })
@@ -57,7 +57,7 @@ private fun RefreshingParameterRow(
     parameter: WidgetRefreshingParameter,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    viewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val label = stringResource(id = parameter.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset).format(label)
@@ -71,9 +71,9 @@ private fun RefreshingParameterRow(
     ) {
         JostText(text = label, fontSize = fontSize)
         Checkbox(
-            checked = viewModel.nonAppliedWidgetRefreshingParameterFlags.getValue(parameter),
+            checked = widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags.getValue(parameter),
             onCheckedChange = {
-                viewModel.nonAppliedWidgetRefreshingParameterFlags[parameter] = it
+                widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags[parameter] = it
             },
             modifier = Modifier.semantics {
                 contentDescription = checkBoxCD

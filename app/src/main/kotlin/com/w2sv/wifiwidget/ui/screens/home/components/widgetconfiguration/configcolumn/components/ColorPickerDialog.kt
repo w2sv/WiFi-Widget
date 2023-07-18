@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,21 +31,21 @@ import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
 internal fun ColorPickerDialog(
     customizableWidgetSection: WidgetColorSection,
     modifier: Modifier = Modifier,
-    widgetConfigurationViewModel: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var color by remember {
         mutableStateOf(
             Color(
-                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
+                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                     customizableWidgetSection
                 )
             )
@@ -53,7 +53,7 @@ internal fun ColorPickerDialog(
     }
     val scrollState = rememberScrollState()
 
-    Dialog(onDismissRequest = widgetConfigurationViewModel::onDismissCustomizationDialog) {
+    Dialog(onDismissRequest = widgetConfigurationVM::onDismissCustomizationDialog) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
@@ -92,14 +92,14 @@ internal fun ColorPickerDialog(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 12.dp)
                 ) {
-                    DialogButton(onClick = widgetConfigurationViewModel::onDismissCustomizationDialog) {
+                    DialogButton(onClick = widgetConfigurationVM::onDismissCustomizationDialog) {
                         JostText(text = stringResource(id = R.string.cancel))
                     }
                     Spacer(modifier = Modifier.padding(horizontal = 12.dp))
                     DialogButton(onClick = {
-                        widgetConfigurationViewModel.nonAppliedWidgetColors[customizableWidgetSection] =
+                        widgetConfigurationVM.nonAppliedWidgetColors[customizableWidgetSection] =
                             color.toArgb()
-                        widgetConfigurationViewModel.onDismissCustomizationDialog()
+                        widgetConfigurationVM.onDismissCustomizationDialog()
                     }) {
                         JostText(text = stringResource(id = R.string.okay))
                     }
