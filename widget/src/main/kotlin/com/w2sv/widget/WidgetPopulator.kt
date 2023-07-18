@@ -183,7 +183,7 @@ internal class WidgetPopulator @Inject constructor(
                 Intent.makeRestartActivityTask(
                     ComponentName(
                         context,
-                        "com.w2sv.wifiwidget.ui.screens.home.HomeActivity"
+                        "com.w2sv.wifiwidget.ui.MainActivity"
                     )
                 )
                     .putExtra(
