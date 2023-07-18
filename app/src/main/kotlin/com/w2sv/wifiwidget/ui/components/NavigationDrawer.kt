@@ -6,8 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.FloatSpringSpec
-import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,12 +18,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
@@ -83,35 +81,32 @@ class NavigationDrawerViewModel @Inject constructor(preferencesRepository: Prefe
 //    }
 //}
 
+suspend fun DrawerState.closeDrawer() {
+    animateTo(DrawerValue.Closed, defaultSpringSpec)
+}
+
+suspend fun DrawerState.openDrawer() {
+    animateTo(DrawerValue.Open, defaultSpringSpec)
+}
+
 @Composable
 fun NavigationDrawer(
+    state: DrawerState,
     modifier: Modifier = Modifier,
-    initialValue: DrawerValue = DrawerValue.Closed,
     navigationDrawerVM: NavigationDrawerViewModel = viewModel(),
-    content: @Composable (openDrawer: () -> Unit, closeDrawer: () -> Unit, drawerOpen: () -> Boolean) -> Unit
+    content: @Composable () -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = initialValue)
     val scope = rememberCoroutineScope()
-    val springSpec = FloatSpringSpec(Spring.DampingRatioMediumBouncy)
+    val context = LocalContext.current
 
     val theme by navigationDrawerVM.unconfirmedInAppTheme.collectAsState()
     val themeRequiringUpdate by navigationDrawerVM.unconfirmedInAppTheme.statesDissimilar.collectAsState()
-    val context = LocalContext.current
-
-    val closeDrawer: () -> Unit = {
-        scope.launch {
-            drawerState.animateTo(
-                DrawerValue.Closed,
-                springSpec
-            )
-        }
-    }
 
     var showThemeSelectionDialog by rememberSaveable {
         mutableStateOf(false)
     }
         .apply {
-            if (value){
+            if (value) {
                 ThemeSelectionDialog(
                     onDismissRequest = {
                         scope.launch {
@@ -137,7 +132,11 @@ fun NavigationDrawer(
         modifier = modifier,
         drawerContent = {
             Content(
-                closeDrawer = closeDrawer,
+                closeDrawer = {
+                    scope.launch {
+                        state.closeDrawer()
+                    }
+                },
                 onItemThemePressed = {
                     // show dialog after delay for display of navigationDrawer close animation
                     scope.launchDelayed(250L) {
@@ -146,17 +145,9 @@ fun NavigationDrawer(
                 }
             )
         },
-        drawerState = drawerState
+        drawerState = state
     ) {
-        content(
-            openDrawer = {
-                scope.launch {
-                    drawerState.animateTo(DrawerValue.Open, springSpec)
-                }
-            },
-            closeDrawer = closeDrawer,
-            drawerOpen = { drawerState.isOpen }
-        )
+        content()
     }
 }
 

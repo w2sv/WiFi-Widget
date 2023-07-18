@@ -20,6 +20,8 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.NavigationDrawer
+import com.w2sv.wifiwidget.ui.components.closeDrawer
+import com.w2sv.wifiwidget.ui.components.openDrawer
 import com.w2sv.wifiwidget.ui.screens.home.components.PinWidgetButton
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRational
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRational
@@ -29,6 +31,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.Widget
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialogButton
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertyInfoDialog
+import kotlinx.coroutines.launch
 import java.util.*
 
 @Composable
@@ -37,9 +40,20 @@ internal fun HomeScreen(
     widgetConfigurationVM: WidgetConfigurationViewModel = viewModel()
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
-    NavigationDrawer { openDrawer, closeDrawer, drawerOpen ->
-        Scaffold(topBar = { AppTopBar { openDrawer() } }) { paddingValues ->
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
+    NavigationDrawer(
+        state = drawerState
+    ) {
+        Scaffold(topBar = {
+            AppTopBar {
+                scope.launch {
+                    drawerState.openDrawer()
+                }
+            }
+        }) { paddingValues ->
             Column(
                 Modifier
                     .padding(paddingValues)
@@ -127,9 +141,12 @@ internal fun HomeScreen(
             BackgroundLocationAccessRational()
         }
         BackHandler {
-            when {
-                drawerOpen() -> closeDrawer()
-                else -> homeScreenVM.onBackPress(context)
+            when (drawerState.isOpen) {
+                true -> scope.launch {
+                    drawerState.closeDrawer()
+                }
+
+                false -> homeScreenVM.onBackPress(context)
             }
         }
     }

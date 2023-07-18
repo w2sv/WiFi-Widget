@@ -16,7 +16,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(140.dp, 60.dp),
+        modifier = modifier.defaultMinSize(160.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         content = {
             JostText(
