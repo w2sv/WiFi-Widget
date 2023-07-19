@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.common.enums.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.theme.DefaultAnimationDuration
 import com.w2sv.wifiwidget.ui.utils.toEasing
 
 @Composable
@@ -155,11 +154,11 @@ fun ThemeButton(
         transitionSpec = {
             if (targetState) {
                 tween(
-                    durationMillis = DefaultAnimationDuration,
+                    durationMillis = BORDER_ANIMATION_DURATION,
                     easing = OvershootInterpolator().toEasing()
                 )
             } else {
-                tween(durationMillis = DefaultAnimationDuration)
+                tween(durationMillis = BORDER_ANIMATION_DURATION)
             }
         }, label = ""
     ) { state ->
@@ -170,11 +169,11 @@ fun ThemeButton(
         transitionSpec = {
             if (targetState) {
                 tween(
-                    durationMillis = DefaultAnimationDuration,
+                    durationMillis = BORDER_ANIMATION_DURATION,
                     easing = OvershootInterpolator().toEasing()
                 )
             } else {
-                tween(durationMillis = DefaultAnimationDuration)
+                tween(durationMillis = BORDER_ANIMATION_DURATION)
             }
         }, label = ""
     ) { state ->
@@ -201,6 +200,8 @@ fun ThemeButton(
         border = BorderStroke(borderWidth.dp, borderColor)
     ) {}
 }
+
+private const val BORDER_ANIMATION_DURATION = 500
 
 @Preview
 @Composable
