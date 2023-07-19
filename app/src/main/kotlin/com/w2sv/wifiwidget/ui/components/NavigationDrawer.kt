@@ -41,6 +41,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
@@ -54,6 +55,7 @@ import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.components.ThemeSelectionDialog
+import com.w2sv.wifiwidget.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -70,16 +72,6 @@ class NavigationDrawerViewModel @Inject constructor(preferencesRepository: Prefe
         onStateSynced = {}
     )
 }
-
-
-//@Preview
-//@Composable
-//private fun Prev() {
-//    AppTheme {
-//        NavigationDrawer(initialValue = DrawerValue.Open) { _, _, _ ->
-//        }
-//    }
-//}
 
 suspend fun DrawerState.closeDrawer() {
     animateTo(DrawerValue.Closed, defaultSpringSpec)
@@ -151,9 +143,87 @@ fun NavigationDrawer(
     }
 }
 
+@Preview
+@Composable
+fun ContentPrev() {
+    AppTheme {
+        Content(closeDrawer = { /*TODO*/ }, onItemThemePressed = {})
+    }
+}
+
 @Composable
 private fun Content(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
     val context = LocalContext.current
+    val elements = remember {
+        listOf(
+            NavigationDrawerElement.SubHeader(R.string.appearance),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_nightlight_24,
+                labelRes = R.string.theme,
+                onClick = {
+                    onItemThemePressed()
+                }
+            ),
+            NavigationDrawerElement.SubHeader(R.string.support),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_share_24,
+                labelRes = R.string.share,
+                onClick = {
+                    ShareCompat.IntentBuilder(it)
+                        .setType("text/plain")
+                        .setText(context.getString(R.string.share_action_text))
+                        .startChooser()
+                }
+            ),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_star_rate_24,
+                labelRes = R.string.rate,
+                onClick = {
+                    try {
+                        it.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(appPlayStoreUrl(it))
+                            )
+                                .setPackage("com.android.vending")
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        it.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
+                    }
+                }
+            ),
+            NavigationDrawerElement.SubHeader(R.string.legal),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_policy_24,
+                labelRes = R.string.privacy_policy,
+                onClick = {
+                    it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md")
+                }
+            ),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_copyright_24,
+                labelRes = R.string.license,
+                onClick = {
+                    it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE")
+                }
+            ),
+            NavigationDrawerElement.SubHeader(R.string.about),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_mask_24,
+                labelRes = R.string.creator,
+                onClick = {
+                    it.openUrlWithActivityNotFoundHandling("https://play.google.com/store/apps/dev?id=6884111703871536890")
+                }
+            ),
+            NavigationDrawerElement.Item(
+                iconRes = R.drawable.ic_github_24,
+                labelRes = R.string.source,
+                onClick = {
+                    it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
+                }
+            )
+        )
+    }
 
     ModalDrawerSheet {
         Column(
@@ -168,56 +238,17 @@ private fun Content(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 12.dp)
             )
-            remember {
-                listOf(
-                    NavigationDrawerItem(
-                        R.drawable.ic_nightlight_24,
-                        R.string.theme
-                    ) {
-                        onItemThemePressed()
-                    },
-                    NavigationDrawerItem(
-                        R.drawable.ic_share_24,
-                        R.string.share
-                    ) {
-                        ShareCompat.IntentBuilder(it)
-                            .setType("text/plain")
-                            .setText(context.getString(R.string.share_action_text))
-                            .startChooser()
-                    },
-                    NavigationDrawerItem(
-                        R.drawable.ic_star_rate_24,
-                        R.string.rate
-                    ) {
-                        try {
-                            it.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(appPlayStoreUrl(it))
-                                )
-                                    .setPackage("com.android.vending")
-                            )
-                        } catch (e: ActivityNotFoundException) {
-                            it.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
-                        }
-                    },
-                    NavigationDrawerItem(
-                        R.drawable.ic_policy_24,
-                        R.string.privacy_policy
-                    ) {
-                        it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md")
-                    },
-                    NavigationDrawerItem(
-                        R.drawable.ic_github_24,
-                        R.string.source
-                    ) {
-                        it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
+            elements.forEach {
+                when (it) {
+                    is NavigationDrawerElement.Item -> {
+                        NavigationDrawerItem(item = it, closeDrawer = closeDrawer)
                     }
-                )
-            }
-                .forEach {
-                    NavigationDrawerItem(item = it, closeDrawer = closeDrawer)
+
+                    is NavigationDrawerElement.SubHeader -> {
+                        NavigationDrawerSubHeader(properties = it)
+                    }
                 }
+            }
         }
     }
 }
@@ -244,22 +275,31 @@ private fun VersionText(modifier: Modifier = Modifier) {
     )
 }
 
-@Stable
-private data class NavigationDrawerItem(
-    @DrawableRes val icon: Int,
-    @StringRes val label: Int,
-    val onClick: (Context) -> Unit
-)
+private sealed interface NavigationDrawerElement {
+    @Stable
+    data class Item(
+        @DrawableRes val iconRes: Int,
+        @StringRes val labelRes: Int,
+        val onClick: (Context) -> Unit
+    ) : NavigationDrawerElement
+
+    @Stable
+    data class SubHeader(
+        @StringRes val titleRes: Int
+    ) : NavigationDrawerElement
+}
+
 
 @Composable
 private fun NavigationDrawerItem(
-    item: NavigationDrawerItem,
-    closeDrawer: () -> Unit
+    item: NavigationDrawerElement.Item,
+    closeDrawer: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable {
                 item.onClick(context)
@@ -271,16 +311,31 @@ private fun NavigationDrawerItem(
         Icon(
             modifier = Modifier
                 .size(size = dimensionResource(id = R.dimen.size_icon)),
-            painter = painterResource(id = item.icon),
+            painter = painterResource(id = item.iconRes),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary
         )
 
         JostText(
-            text = stringResource(id = item.label),
+            text = stringResource(id = item.labelRes),
             modifier = Modifier.padding(start = 16.dp),
-            fontSize = 20.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Medium
         )
     }
+}
+
+@Composable
+private fun NavigationDrawerSubHeader(
+    properties: NavigationDrawerElement.SubHeader,
+    modifier: Modifier = Modifier
+) {
+    JostText(
+        text = stringResource(id = properties.titleRes),
+        modifier = modifier
+            .padding(vertical = 4.dp),
+        fontSize = 16.sp,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.secondary
+    )
 }
