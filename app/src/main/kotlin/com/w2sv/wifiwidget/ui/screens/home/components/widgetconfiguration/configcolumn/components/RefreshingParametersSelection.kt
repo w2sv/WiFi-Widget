@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.bulletPointText
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import kotlinx.coroutines.launch
 
@@ -71,7 +72,7 @@ private fun RefreshingParameterRow(
             .fillMaxWidth()
             .then(modifier)
     ) {
-        JostText(text = label, fontSize = fontSize)
+        JostText(text = bulletPointText(label), fontSize = fontSize)
         Checkbox(
             checked = widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags.getValue(
                 parameter

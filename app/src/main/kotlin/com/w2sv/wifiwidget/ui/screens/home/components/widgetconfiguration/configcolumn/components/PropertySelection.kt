@@ -15,6 +15,7 @@ import com.w2sv.common.enums.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.bulletPointText
 
 @Composable
 internal fun PropertySelection(
@@ -50,7 +51,7 @@ private fun PropertyRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         JostText(
-            text = label,
+            text = bulletPointText(label),
             modifier = Modifier.weight(1f, fill = true),
             color = MaterialTheme.colorScheme.onSurface,
             fontSize = 14.sp
