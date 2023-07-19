@@ -11,7 +11,8 @@ enum class WidgetRefreshingParameter(
 ) : DataStoreEntry.UniType<Boolean> {
 
     RefreshPeriodically(true, R.string.refresh_periodically),
-    RefreshOnBatteryLow(false, R.string.refresh_on_low_battery);
+    RefreshOnBatteryLow(false, R.string.refresh_on_low_battery),
+    ShowDateTime(true, R.string.show_date_time);
 
     override val preferencesKey = booleanPreferencesKey(name)
 }

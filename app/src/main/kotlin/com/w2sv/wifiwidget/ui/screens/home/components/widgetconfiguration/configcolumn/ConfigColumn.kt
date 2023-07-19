@@ -37,17 +37,17 @@ import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.enums.WifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.ButtonColoring
+import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithValue
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Preview
@@ -61,16 +61,16 @@ private fun Prev() {
 @Composable
 fun ConfigColumn(
     modifier: Modifier = Modifier,
-    widgetConfigurationViewModel: WidgetConfigurationViewModel = viewModel(),
-    homeScreenViewModel: HomeScreenViewModel = viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel(),
+    homeScreenVM: HomeScreenViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()
 
-    val showColorSelectionSection by widgetConfigurationViewModel.customThemeSelected.collectAsState(
+    val showColorSelectionSection by widgetConfigurationVM.customThemeSelected.collectAsState(
         false
     )
-    val theme by widgetConfigurationViewModel.nonAppliedWidgetTheme.collectAsState()
-    val opacity by widgetConfigurationViewModel.nonAppliedWidgetOpacity.collectAsState()
+    val theme by widgetConfigurationVM.nonAppliedWidgetTheme.collectAsState()
+    val opacity by widgetConfigurationVM.nonAppliedWidgetOpacity.collectAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,26 +90,26 @@ fun ConfigColumn(
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
                 label = R.string.custom,
-                buttonColoring = ButtonColoring.Gradient(
+                buttonColoring = ButtonColor.Gradient(
                     with(Brush) {
                         linearGradient(
                             0.4f to Color(
-                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
+                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Background
                                 )
                             ),
                             0.4f to Color(
-                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
+                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Labels
                                 )
                             ),
                             0.6f to Color(
-                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
+                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Labels
                                 )
                             ),
                             0.6f to Color(
-                                widgetConfigurationViewModel.nonAppliedWidgetColors.getValue(
+                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Other
                                 )
                             )
@@ -121,7 +121,7 @@ fun ConfigColumn(
                 theme
             },
             onSelected = {
-                widgetConfigurationViewModel.nonAppliedWidgetTheme.value = it
+                widgetConfigurationVM.nonAppliedWidgetTheme.value = it
             }
         )
 
@@ -157,7 +157,7 @@ fun ConfigColumn(
         OpacitySliderWithValue(
             opacity = { opacity },
             onOpacityChanged = {
-                widgetConfigurationViewModel.nonAppliedWidgetOpacity.value = it
+                widgetConfigurationVM.nonAppliedWidgetOpacity.value = it
             }
         )
 
@@ -169,23 +169,23 @@ fun ConfigColumn(
         PropertySelection(
             modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
-                widgetConfigurationViewModel.nonAppliedWifiPropertyFlags.getValue(property)
+                widgetConfigurationVM.nonAppliedWifiPropertyFlags.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
-                    true -> when (homeScreenViewModel.lapRationalShown) {
-                        false -> homeScreenViewModel.lapRationalTrigger.value =
+                    true -> when (homeScreenVM.lapRationalShown) {
+                        false -> homeScreenVM.lapRationalTrigger.value =
                             LocationAccessPermissionRequestTrigger.SSIDCheck
 
-                        true -> homeScreenViewModel.lapRequestTrigger.value =
+                        true -> homeScreenVM.lapRequestTrigger.value =
                             LocationAccessPermissionRequestTrigger.SSIDCheck
                     }
 
-                    false -> widgetConfigurationViewModel.nonAppliedWifiPropertyFlags[property] =
+                    false -> widgetConfigurationVM.nonAppliedWifiPropertyFlags[property] =
                         value
                 }
             },
-            onInfoButtonClick = { widgetConfigurationViewModel.infoDialogProperty.value = it }
+            onInfoButtonClick = { widgetConfigurationVM.infoDialogProperty.value = it }
         )
 
         SectionHeader(

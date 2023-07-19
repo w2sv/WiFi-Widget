@@ -8,9 +8,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.WidgetRefreshingParameter
-import com.w2sv.common.extensions.getDeflowedMap
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -68,7 +68,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         }
 
         private val widgetRefreshingParameters =
-            widgetConfigurationRepository.refreshingParameters.getDeflowedMap()
+            widgetConfigurationRepository.refreshingParameters.getSynchronousMap()
 
         fun applyChangedParameters() {
             when (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {

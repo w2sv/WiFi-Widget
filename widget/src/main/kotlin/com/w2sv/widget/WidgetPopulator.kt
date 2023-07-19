@@ -7,11 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import android.view.View
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
+import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.common.isWifiConnected
 import com.w2sv.common.linkProperties
 import com.w2sv.common.wifiManager
@@ -158,13 +160,22 @@ internal class WidgetPopulator @Inject constructor(
     // ============
 
     private fun RemoteViews.setLastUpdatedTV() {
-        val now = Date()
-        setTextViewText(
-            R.id.last_updated_tv,
-            "${
-                DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
-            } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}"
-        )
+        when(widgetConfigurationRepository.refreshingParameters.getValue(WidgetRefreshingParameter.ShowDateTime).getValueSynchronously()){
+            true -> {
+                setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
+
+                val now = Date()
+                setTextViewText(
+                    R.id.last_updated_tv,
+                    "${
+                        DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
+                    } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}"
+                )
+            }
+            false -> {
+                setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
+            }
+        }
     }
 
     private fun RemoteViews.setOnClickPendingIntents() {

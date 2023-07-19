@@ -13,7 +13,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 fun ButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
-    applyButtonEnabled: () -> Boolean,
+    applyButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -23,7 +23,7 @@ fun ButtonRow(
         DialogButton(onClick = onCancel) {
             JostText(text = stringResource(R.string.cancel))
         }
-        DialogButton(onClick = onApply, enabled = applyButtonEnabled()) {
+        DialogButton(onClick = onApply, enabled = applyButtonEnabled) {
             JostText(text = stringResource(R.string.apply))
         }
     }

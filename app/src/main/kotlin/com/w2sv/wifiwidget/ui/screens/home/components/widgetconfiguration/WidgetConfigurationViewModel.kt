@@ -1,18 +1,15 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 
-import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
-import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.enums.WifiProperty
+import com.w2sv.common.extensions.getSynchronousMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,13 +22,11 @@ class WidgetConfigurationViewModel @Inject constructor(
     // ==========
 
     fun onDismissWidgetConfigurationDialog() {
-        viewModelScope.launch {
-            nonAppliedWidgetConfiguration.reset()
-        }
+        nonAppliedWidgetConfiguration.launchReset()
     }
 
     // ========================
-    // Dialog overlay dialogs
+    // Overlay dialogs
     // ========================
 
     val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
@@ -39,7 +34,7 @@ class WidgetConfigurationViewModel @Inject constructor(
     val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
 
     fun onDismissCustomizationDialog() {
-        customizationDialogSection.reset()
+        customizationDialogSection.value = null
     }
 
     // =========
@@ -47,15 +42,14 @@ class WidgetConfigurationViewModel @Inject constructor(
     // =========
 
     val nonAppliedWidgetConfiguration by lazy {
-        UnconfirmedStatesComposition(
+        makeUnconfirmedStatesComposition(
             listOf(
                 nonAppliedWifiPropertyFlags,
                 nonAppliedWidgetTheme,
                 nonAppliedWidgetOpacity,
                 nonAppliedWidgetRefreshingParameterFlags,
                 nonAppliedWidgetColors
-            ),
-            coroutineScope = viewModelScope
+            )
         )
     }
 
@@ -64,16 +58,23 @@ class WidgetConfigurationViewModel @Inject constructor(
     // =========
 
     val nonAppliedWifiPropertyFlags by lazy {
-        makeUnconfirmedStateMap(repository.wifiProperties)
+        makeUnconfirmedStateMap(
+            repository.wifiProperties,
+            makeMutableMap = { it.getSynchronousMutableStateMap() }
+        )
     }
 
     val nonAppliedWidgetColors by lazy {
-        makeUnconfirmedStateMap(repository.customColors)
+        makeUnconfirmedStateMap(
+            repository.customColors,
+            makeMutableMap = { it.getSynchronousMutableStateMap() }
+        )
     }
 
     val nonAppliedWidgetRefreshingParameterFlags by lazy {
         makeUnconfirmedStateMap(
             repository.refreshingParameters,
+            makeMutableMap = { it.getSynchronousMutableStateMap() },
             onStateSynced = {
                 widgetRefreshingParametersChanged.emit(Unit)
             }

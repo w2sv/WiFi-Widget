@@ -6,9 +6,9 @@ import androidx.annotation.ColorInt
 import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
-import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.extensions.toRGBChannelInt
 import kotlinx.coroutines.flow.Flow
@@ -50,7 +50,7 @@ internal fun RemoteViews.setWidgetColors(
             context.getColor(androidx.appcompat.R.color.foreground_material_light)
         )
 
-        Theme.Custom -> with(customWidgetColors.getDeflowedMap()) {
+        Theme.Custom -> with(customWidgetColors.getSynchronousMap()) {
             setColors(
                 getValue(WidgetColorSection.Background),
                 backgroundOpacity,

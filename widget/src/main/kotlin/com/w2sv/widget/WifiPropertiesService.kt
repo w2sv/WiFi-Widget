@@ -9,12 +9,12 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.Theme
 import com.w2sv.common.enums.WidgetColorSection
-import com.w2sv.common.extensions.getDeflowedMap
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.wifiManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,7 +48,7 @@ private class WifiPropertyViewFactory(
     private lateinit var propertyViewColors: WifiPropertyViewColors
 
     override fun onDataSetChanged() {
-        propertyViewData = widgetConfigurationRepository.wifiProperties.getDeflowedMap()
+        propertyViewData = widgetConfigurationRepository.wifiProperties.getSynchronousMap()
             .filterValues { it }
             .keys
             .map {
@@ -128,7 +128,7 @@ private data class WifiPropertyViewColors(val label: Int, val value: Int) {
                     customWidgetColors
                 )
 
-                Theme.Custom -> customWidgetColors.getDeflowedMap().run {
+                Theme.Custom -> customWidgetColors.getSynchronousMap().run {
                     WifiPropertyViewColors(
                         getValue(WidgetColorSection.Labels),
                         getValue(WidgetColorSection.Other)

@@ -1,6 +1,11 @@
 package com.w2sv.wifiwidget.ui.components
 
+import android.view.animation.OvershootInterpolator
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +18,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -30,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.common.enums.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.theme.DefaultAnimationDuration
+import com.w2sv.wifiwidget.ui.utils.toEasing
 
 @Composable
 fun ThemeSelectionRow(
@@ -48,14 +56,14 @@ fun ThemeSelectionRow(
                 ThemeIndicatorProperties(
                     theme = Theme.Light,
                     label = R.string.light,
-                    buttonColoring = ButtonColoring.Uniform(Color.White)
+                    buttonColoring = ButtonColor.Uniform(Color.White)
                 )
             )
             add(
                 ThemeIndicatorProperties(
                     theme = Theme.DeviceDefault,
                     label = R.string.device_default,
-                    buttonColoring = ButtonColoring.Gradient(
+                    buttonColoring = ButtonColor.Gradient(
                         Brush.linearGradient(
                             0.5f to Color.White,
                             0.5f to Color.Black,
@@ -67,7 +75,7 @@ fun ThemeSelectionRow(
                 ThemeIndicatorProperties(
                     theme = Theme.Dark,
                     label = R.string.dark,
-                    buttonColoring = ButtonColoring.Uniform(Color.Black)
+                    buttonColoring = ButtonColor.Uniform(Color.Black)
                 )
             )
             customThemeIndicatorProperties?.let {
@@ -92,12 +100,12 @@ fun ThemeSelectionRow(
 data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val label: Int,
-    val buttonColoring: ButtonColoring
+    val buttonColoring: ButtonColor
 )
 
-sealed class ButtonColoring(val containerColor: Color) {
-    class Uniform(color: Color) : ButtonColoring(color)
-    class Gradient(val brush: Brush) : ButtonColoring(Color.Transparent)
+sealed class ButtonColor(val containerColor: Color) {
+    class Uniform(color: Color) : ButtonColor(color)
+    class Gradient(val brush: Brush) : ButtonColor(Color.Transparent)
 }
 
 @Composable
@@ -119,7 +127,7 @@ private fun ThemeIndicator(
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
         )
         ThemeButton(
-            buttonColoring = properties.buttonColoring,
+            buttonColor = properties.buttonColoring,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
                 stringResource(id = properties.label)
             ),
@@ -132,7 +140,7 @@ private fun ThemeIndicator(
 
 @Composable
 fun ThemeButton(
-    buttonColoring: ButtonColoring,
+    buttonColor: ButtonColor,
     contentDescription: String,
     onClick: () -> Unit,
     size: Dp,
@@ -141,6 +149,38 @@ fun ThemeButton(
 ) {
     val radius = with(LocalDensity.current) { (size / 2).toPx() }
 
+    val transition = updateTransition(targetState = isSelected(), label = "")
+
+    val borderWidth by transition.animateFloat(
+        transitionSpec = {
+            if (targetState) {
+                tween(
+                    durationMillis = DefaultAnimationDuration,
+                    easing = OvershootInterpolator().toEasing()
+                )
+            } else {
+                tween(durationMillis = DefaultAnimationDuration)
+            }
+        }, label = ""
+    ) { state ->
+        if (state) 3f else 0f
+    }
+
+    val borderColor by transition.animateColor(
+        transitionSpec = {
+            if (targetState) {
+                tween(
+                    durationMillis = DefaultAnimationDuration,
+                    easing = OvershootInterpolator().toEasing()
+                )
+            } else {
+                tween(durationMillis = DefaultAnimationDuration)
+            }
+        }, label = ""
+    ) { state ->
+        if (state) MaterialTheme.colorScheme.primary else Color.Transparent
+    }
+
     Button(
         modifier = modifier
             .semantics {
@@ -148,20 +188,17 @@ fun ThemeButton(
             }
             .size(size)
             .drawBehind {
-                if (buttonColoring is ButtonColoring.Gradient) {
+                if (buttonColor is ButtonColor.Gradient) {
                     drawCircle(
-                        buttonColoring.brush,
+                        buttonColor.brush,
                         radius = radius
                     )
                 }
             },
-        colors = ButtonDefaults.buttonColors(containerColor = buttonColoring.containerColor),
+        colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
         onClick = onClick,
         shape = CircleShape,
-        border = when (isSelected()) {
-            true -> BorderStroke(3.dp, MaterialTheme.colorScheme.primary)
-            false -> null
-        }
+        border = BorderStroke(borderWidth.dp, borderColor)
     ) {}
 }
 
@@ -170,7 +207,7 @@ fun ThemeButton(
 fun Prev() {
     AppTheme {
         ThemeButton(
-            ButtonColoring.Gradient(
+            ButtonColor.Gradient(
                 Brush.linearGradient(
                     0.5f to Color.White,
                     0.5f to Color.Black,

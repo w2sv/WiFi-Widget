@@ -11,6 +11,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,9 +102,7 @@ fun WidgetConfigurationDialog(
                             closeDialog()
                         }
                     },
-                    applyButtonEnabled = {
-                        widgetConfigurationVM.nonAppliedWidgetConfiguration.statesDissimilar.value
-                    },
+                    applyButtonEnabled = widgetConfigurationVM.nonAppliedWidgetConfiguration.statesDissimilar.collectAsState().value,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

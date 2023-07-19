@@ -19,6 +19,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
@@ -29,7 +30,7 @@ import kotlinx.coroutines.launch
 internal fun RefreshingParametersSelection(
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier,
-    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
 
@@ -49,6 +50,7 @@ internal fun RefreshingParametersSelection(
                 fontSize = 14.sp
             )
         }
+        RefreshingParameterRow(parameter = WidgetRefreshingParameter.ShowDateTime)
     }
 }
 
@@ -57,7 +59,7 @@ private fun RefreshingParameterRow(
     parameter: WidgetRefreshingParameter,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel()
 ) {
     val label = stringResource(id = parameter.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset).format(label)
@@ -71,7 +73,9 @@ private fun RefreshingParameterRow(
     ) {
         JostText(text = label, fontSize = fontSize)
         Checkbox(
-            checked = widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags.getValue(parameter),
+            checked = widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags.getValue(
+                parameter
+            ),
             onCheckedChange = {
                 widgetConfigurationVM.nonAppliedWidgetRefreshingParameterFlags[parameter] = it
             },
