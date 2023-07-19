@@ -21,7 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -66,12 +66,6 @@ fun ConfigColumn(
 ) {
     val scrollState = rememberScrollState()
 
-    val showColorSelectionSection by widgetConfigurationVM.customThemeSelected.collectAsState(
-        false
-    )
-    val theme by widgetConfigurationVM.nonAppliedWidgetTheme.collectAsState()
-    val opacity by widgetConfigurationVM.nonAppliedWidgetOpacity.collectAsState()
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -86,13 +80,14 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_nightlight_24,
             modifier = Modifier.padding(top = 12.dp, bottom = 22.dp)
         )
-        ThemeSelectionRow(modifier = Modifier.fillMaxWidth(),
+        ThemeSelectionRow(
+            modifier = Modifier.fillMaxWidth(),
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
                 label = R.string.custom,
-                buttonColoring = ButtonColor.Gradient(
-                    with(Brush) {
-                        linearGradient(
+                buttonColoring = remember {
+                    ButtonColor.Gradient(
+                        Brush.linearGradient(
                             0.4f to Color(
                                 widgetConfigurationVM.nonAppliedWidgetColors.getValue(
                                     WidgetColorSection.Background
@@ -114,19 +109,17 @@ fun ConfigColumn(
                                 )
                             )
                         )
-                    }
-                )
+                    )
+                }
             ),
-            selected = {
-                theme
-            },
+            selected = widgetConfigurationVM.nonAppliedWidgetTheme.collectAsState().value,
             onSelected = {
                 widgetConfigurationVM.nonAppliedWidgetTheme.value = it
             }
         )
 
         AnimatedVisibility(
-            visible = showColorSelectionSection,
+            visible = widgetConfigurationVM.customThemeSelected.collectAsState(false).value,
             enter = fadeIn(animationSpec = tween(1000)) +
                     expandVertically(
                         animationSpec = tween(
@@ -150,12 +143,12 @@ fun ConfigColumn(
         }
 
         SectionHeader(
-            R.string.opacity,
-            R.drawable.ic_opacity_24,
-            defaultSectionHeaderModifier
+            titleRes = R.string.opacity,
+            iconRes = R.drawable.ic_opacity_24,
+            modifier = defaultSectionHeaderModifier
         )
         OpacitySliderWithValue(
-            opacity = { opacity },
+            opacity = widgetConfigurationVM.nonAppliedWidgetOpacity.collectAsState().value,
             onOpacityChanged = {
                 widgetConfigurationVM.nonAppliedWidgetOpacity.value = it
             }

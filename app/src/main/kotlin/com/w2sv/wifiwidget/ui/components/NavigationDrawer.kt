@@ -91,9 +91,6 @@ fun NavigationDrawer(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val theme by navigationDrawerVM.unconfirmedInAppTheme.collectAsState()
-    val themeRequiringUpdate by navigationDrawerVM.unconfirmedInAppTheme.statesDissimilar.collectAsState()
-
     var showThemeSelectionDialog by rememberSaveable {
         mutableStateOf(false)
     }
@@ -106,9 +103,9 @@ fun NavigationDrawer(
                         }
                         value = false
                     },
-                    selectedTheme = { theme },
+                    selectedTheme = navigationDrawerVM.unconfirmedInAppTheme.collectAsState().value,
                     onThemeSelected = { navigationDrawerVM.unconfirmedInAppTheme.value = it },
-                    applyButtonEnabled = { themeRequiringUpdate },
+                    applyButtonEnabled = navigationDrawerVM.unconfirmedInAppTheme.statesDissimilar.collectAsState().value,
                     onApplyButtonClick = {
                         scope.launch {
                             navigationDrawerVM.unconfirmedInAppTheme.sync()

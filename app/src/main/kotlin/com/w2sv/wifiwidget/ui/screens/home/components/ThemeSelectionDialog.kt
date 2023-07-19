@@ -20,9 +20,9 @@ private fun Prev() {
     AppTheme {
         ThemeSelectionDialog(
             onDismissRequest = { /*TODO*/ },
-            selectedTheme = { Theme.DeviceDefault },
+            selectedTheme = Theme.DeviceDefault,
             onThemeSelected = {},
-            applyButtonEnabled = { true },
+            applyButtonEnabled = true,
             onApplyButtonClick = {}
         )
     }
@@ -31,9 +31,9 @@ private fun Prev() {
 @Composable
 fun ThemeSelectionDialog(
     onDismissRequest: () -> Unit,
-    selectedTheme: () -> Theme,
+    selectedTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
-    applyButtonEnabled: () -> Boolean,
+    applyButtonEnabled: Boolean,
     onApplyButtonClick: () -> Unit
 ) {
     AlertDialog(
@@ -47,7 +47,7 @@ fun ThemeSelectionDialog(
             )
         },
         confirmButton = {
-            DialogButton(onClick = { onApplyButtonClick() }, enabled = applyButtonEnabled()) {
+            DialogButton(onClick = { onApplyButtonClick() }, enabled = applyButtonEnabled) {
                 JostText(text = stringResource(id = R.string.apply))
             }
         },

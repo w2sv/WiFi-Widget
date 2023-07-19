@@ -98,9 +98,10 @@ class WidgetConfigurationViewModel @Inject constructor(
     // State change side effects
     // ===========================
 
-    val customThemeSelected = nonAppliedWidgetTheme.transform {
-        emit(it == Theme.Custom)
-    }
+    val customThemeSelected = nonAppliedWidgetTheme
+        .transform {
+            emit(it == Theme.Custom)
+        }
 
     val widgetRefreshingParametersChanged = MutableSharedFlow<Unit>()
 }

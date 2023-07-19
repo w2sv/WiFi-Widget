@@ -17,19 +17,19 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun ColumnScope.OpacitySliderWithValue(
-    opacity: () -> Float,
+    opacity: Float,
     onOpacityChanged: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
 
     JostText(
-        text = "${(opacity() * 100).roundToInt()}%",
+        text = "${(opacity * 100).roundToInt()}%",
         color = MaterialTheme.colorScheme.onSurface,
         modifier = modifier.align(Alignment.CenterHorizontally)
     )
     Slider(
-        value = opacity(),
+        value = opacity,
         onValueChange = onOpacityChanged,
         modifier = Modifier
             .padding(horizontal = 32.dp)

@@ -43,7 +43,7 @@ import com.w2sv.wifiwidget.ui.utils.toEasing
 fun ThemeSelectionRow(
     modifier: Modifier = Modifier,
     customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
-    selected: () -> Theme,
+    selected: Theme,
     onSelected: (Theme) -> Unit
 ) {
     Row(
@@ -85,7 +85,7 @@ fun ThemeSelectionRow(
             .forEach { properties ->
                 ThemeIndicator(
                     properties = properties,
-                    isSelected = { properties.theme == selected() },
+                    isSelected = { properties.theme == selected },
                     modifier = Modifier.padding(
                         horizontal = 12.dp
                     )
