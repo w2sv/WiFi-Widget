@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -28,7 +27,6 @@ import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.diagonalGradient
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -64,14 +62,7 @@ fun WidgetConfigurationDialog(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
-                    // gradient background
-                    .background(
-                        diagonalGradient(
-                            MaterialTheme.colorScheme.surfaceVariant,
-                            MaterialTheme.colorScheme.surface
-                        )
-                    )
-                    .padding(vertical = 16.dp)
+                    .padding(vertical = 24.dp, horizontal = 28.dp)
             ) {
                 Icon(
                     painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
@@ -88,6 +79,7 @@ fun WidgetConfigurationDialog(
                 ConfigColumn(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(vertical = 16.dp)
                         .heightIn(260.dp, 420.dp)
                 )
                 ButtonRow(

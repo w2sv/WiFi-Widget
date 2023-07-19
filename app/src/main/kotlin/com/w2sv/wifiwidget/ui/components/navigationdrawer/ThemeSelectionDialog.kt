@@ -1,12 +1,17 @@
-package com.w2sv.wifiwidget.ui.screens.home.components
+package com.w2sv.wifiwidget.ui.components.navigationdrawer
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.w2sv.common.enums.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.DialogButton
@@ -37,6 +42,7 @@ fun ThemeSelectionDialog(
     onApplyButtonClick: () -> Unit
 ) {
     AlertDialog(
+        modifier = Modifier.width(280.dp),
         onDismissRequest = onDismissRequest,
         title = { JostText(text = stringResource(id = R.string.theme)) },
         icon = {
@@ -57,7 +63,13 @@ fun ThemeSelectionDialog(
             }
         },
         text = {
-            ThemeSelectionRow(selected = selectedTheme, onSelected = onThemeSelected)
+            ThemeSelectionRow(
+                selected = selectedTheme,
+                onSelected = onThemeSelected,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
         }
     )
 }

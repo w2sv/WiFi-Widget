@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.components
+package com.w2sv.wifiwidget.ui.components.navigationdrawer
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -54,7 +54,8 @@ import com.w2sv.common.data.repositories.PreferencesRepository
 import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.ThemeSelectionDialog
+import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.defaultSpringSpec
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

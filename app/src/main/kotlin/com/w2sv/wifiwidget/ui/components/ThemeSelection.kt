@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.components
 import android.view.animation.OvershootInterpolator
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
@@ -46,7 +46,7 @@ fun ThemeSelectionRow(
     onSelected: (Theme) -> Unit
 ) {
     Row(
-        modifier,
+        modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -150,7 +150,7 @@ fun ThemeButton(
 
     val transition = updateTransition(targetState = isSelected(), label = "")
 
-    val borderWidth by transition.animateFloat(
+    val borderWidth by transition.animateDp(
         transitionSpec = {
             if (targetState) {
                 tween(
@@ -162,7 +162,7 @@ fun ThemeButton(
             }
         }, label = ""
     ) { state ->
-        if (state) 3f else 0f
+        if (state) 3.dp else 0.5.dp
     }
 
     val borderColor by transition.animateColor(
@@ -177,7 +177,7 @@ fun ThemeButton(
             }
         }, label = ""
     ) { state ->
-        if (state) MaterialTheme.colorScheme.primary else Color.Transparent
+        if (state) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
     }
 
     Button(
@@ -197,7 +197,7 @@ fun ThemeButton(
         colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
         onClick = onClick,
         shape = CircleShape,
-        border = BorderStroke(borderWidth.dp, borderColor)
+        border = BorderStroke(borderWidth, borderColor)
     ) {}
 }
 

@@ -45,9 +45,9 @@ import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithValue
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.SliderWithLabel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Preview
@@ -69,10 +69,8 @@ fun ConfigColumn(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .padding(vertical = 16.dp)
             .verticalScroll(scrollState)
     ) {
-        val checkablePropertiesColumnModifier = Modifier.padding(horizontal = 26.dp)
         val defaultSectionHeaderModifier = Modifier.padding(vertical = 22.dp)
 
         SectionHeader(
@@ -137,7 +135,6 @@ fun ConfigColumn(
         ) {
             ColorSelection(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
                     .padding(top = 18.dp)
             )
         }
@@ -147,11 +144,12 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_opacity_24,
             modifier = defaultSectionHeaderModifier
         )
-        OpacitySliderWithValue(
+        SliderWithLabel(
             opacity = widgetConfigurationVM.nonAppliedWidgetOpacity.collectAsState().value,
             onOpacityChanged = {
                 widgetConfigurationVM.nonAppliedWidgetOpacity.value = it
-            }
+            },
+            modifier = Modifier.padding(horizontal = 6.dp)
         )
 
         SectionHeader(
@@ -160,7 +158,6 @@ fun ConfigColumn(
             modifier = defaultSectionHeaderModifier
         )
         PropertySelection(
-            modifier = checkablePropertiesColumnModifier,
             propertyChecked = { property ->
                 widgetConfigurationVM.nonAppliedWifiPropertyFlags.getValue(property)
             },
@@ -191,8 +188,7 @@ fun ConfigColumn(
                 with(scrollState) {
                     animateScrollTo(maxValue)
                 }
-            },
-            modifier = checkablePropertiesColumnModifier
+            }
         )
     }
 }
@@ -204,14 +200,14 @@ private fun SectionHeader(
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
             Icon(
                 painterResource(id = iconRes),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.secondary
             )
         }
-        Box(modifier = Modifier.weight(0.5f), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
             JostText(
                 text = stringResource(id = titleRes),
                 fontSize = 18.sp,
@@ -219,6 +215,6 @@ private fun SectionHeader(
                 color = MaterialTheme.colorScheme.secondary
             )
         }
-        Spacer(modifier = Modifier.weight(0.6f))
+        Spacer(modifier = Modifier.weight(0.3f))
     }
 }

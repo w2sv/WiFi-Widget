@@ -6,6 +6,7 @@
     <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="proceed">Proceed</string>
+    <string name="understood">Understood</string>
     <string name="close">Close</string>
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
@@ -16,10 +17,9 @@
     <string name="on_pin_widget_wo_gps_enabled">SSID display requires GPS to be enabled!</string>
     <string name="on_pin_widget_wo_location_access_permission">SSID display requires location access permission!</string>
     <string name="on_pin_widget_wo_background_location_access_permission">Persistent SSID display requires continuous location access permission!</string>
-    <string name="location_access_permission">Location Access Permission Rational</string>
     <string name="background_location_access_rational">In oder for your SSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
     <string name="light">Light</string>
-    <string name="device_default">Device Default</string>
+    <string name="device_default">Default</string>
     <string name="custom">Custom</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>

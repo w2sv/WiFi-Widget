@@ -18,11 +18,11 @@ fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
         onClick = onClick,
         modifier = modifier.defaultMinSize(160.dp, 60.dp),
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        content = {
-            JostText(
-                text = stringResource(R.string.pin_widget),
-                fontSize = 16.sp
-            )
-        }
-    )
+        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
+    ) {
+        JostText(
+            text = stringResource(R.string.pin_widget),
+            fontSize = 16.sp
+        )
+    }
 }
