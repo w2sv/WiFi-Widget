@@ -23,8 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -48,6 +46,8 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.SliderWithLabel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
+import com.w2sv.wifiwidget.ui.utils.toColor
 
 @Preview
 @Composable
@@ -84,26 +84,14 @@ fun ConfigColumn(
                 label = R.string.custom,
                 buttonColoring =
                 ButtonColor.Gradient(
-                    Brush.linearGradient(
-                        0.4f to Color(
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                WidgetColor.Background
-                            )
-                        ),
-                        0.4f to Color(
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                WidgetColor.Labels
-                            )
-                        ),
-                        0.6f to Color(
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                WidgetColor.Labels
-                            )
-                        ),
-                        0.6f to Color(
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                WidgetColor.Other
-                            )
+                    circularTrifoldStripeBrush(
+                        Triple(
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Background)
+                                .toColor(),
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Labels)
+                                .toColor(),
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Other)
+                                .toColor(),
                         )
                     )
                 )
