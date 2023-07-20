@@ -82,7 +82,7 @@ private fun SectionCustomizationRow(
             onClick = {
                 widgetConfigurationVM.customizationDialogSection.value = widgetColorSection
             },
-            shape = CircleShape
+            shape = CircleShape,
         ) {}
         Spacer(modifier = Modifier.weight(0.2f))
     }

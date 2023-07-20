@@ -162,7 +162,7 @@ fun ThemeButton(
             }
         }, label = ""
     ) { state ->
-        if (state) 3.dp else 0.5.dp
+        if (state) 3.dp else 0.dp
     }
 
     val borderColor by transition.animateColor(
@@ -177,7 +177,7 @@ fun ThemeButton(
             }
         }, label = ""
     ) { state ->
-        if (state) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+        if (state) MaterialTheme.colorScheme.primary else Color.Transparent
     }
 
     Button(

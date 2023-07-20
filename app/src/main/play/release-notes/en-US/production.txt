@@ -1,1 +1,2 @@
-Fixed F-Droid build
+- Pimped UI in various regards
+- Enabled hiding of last widget data refresh date time

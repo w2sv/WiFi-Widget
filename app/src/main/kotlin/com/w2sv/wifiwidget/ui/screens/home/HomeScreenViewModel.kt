@@ -17,8 +17,8 @@ import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.WifiProperty
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow

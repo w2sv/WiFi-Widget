@@ -160,7 +160,8 @@ internal class WidgetPopulator @Inject constructor(
     // ============
 
     private fun RemoteViews.setLastUpdatedTV() {
-        when(widgetConfigurationRepository.refreshingParameters.getValue(WidgetRefreshingParameter.ShowDateTime).getValueSynchronously()){
+        when (widgetConfigurationRepository.refreshingParameters.getValue(WidgetRefreshingParameter.ShowDateTime)
+            .getValueSynchronously()) {
             true -> {
                 setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
 
@@ -172,6 +173,7 @@ internal class WidgetPopulator @Inject constructor(
                     } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}"
                 )
             }
+
             false -> {
                 setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
             }
