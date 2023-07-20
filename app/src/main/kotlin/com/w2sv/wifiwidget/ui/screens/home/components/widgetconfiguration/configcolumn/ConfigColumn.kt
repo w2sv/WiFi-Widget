@@ -75,7 +75,7 @@ fun ConfigColumn(
         SectionHeader(
             titleRes = R.string.theme,
             iconRes = R.drawable.ic_nightlight_24,
-            modifier = Modifier.padding(top = 12.dp, bottom = 22.dp)
+            modifier = Modifier.padding(bottom = 22.dp)
         )
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
