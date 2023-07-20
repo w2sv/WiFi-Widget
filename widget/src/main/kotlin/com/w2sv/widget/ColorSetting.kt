@@ -7,8 +7,8 @@ import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColor
+import com.w2sv.common.data.sources.Theme
+import com.w2sv.common.data.sources.WidgetColor
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.extensions.toRGBChannelInt
 import kotlinx.coroutines.flow.Flow

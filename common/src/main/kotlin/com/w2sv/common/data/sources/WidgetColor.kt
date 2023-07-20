@@ -1,4 +1,4 @@
-package com.w2sv.common.enums
+package com.w2sv.common.data.sources
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color

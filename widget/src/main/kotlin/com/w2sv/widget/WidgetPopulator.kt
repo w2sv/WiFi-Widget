@@ -12,8 +12,8 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.data.repositories.WidgetConfigurationRepository
-import com.w2sv.common.enums.WidgetRefreshingParameter
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.data.sources.WidgetRefreshingParameter
 import com.w2sv.common.isWifiConnected
 import com.w2sv.common.linkProperties
 import com.w2sv.common.wifiManager

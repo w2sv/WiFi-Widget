@@ -12,9 +12,9 @@ import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
-import com.w2sv.common.data.repositories.PreferencesRepository
-import com.w2sv.common.data.repositories.WidgetConfigurationRepository
-import com.w2sv.common.enums.WifiProperty
+import com.w2sv.common.data.storage.PreferencesRepository
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.data.sources.WifiProperty
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger

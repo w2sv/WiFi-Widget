@@ -1,11 +1,11 @@
-package com.w2sv.common.data.repositories
+package com.w2sv.common.data.storage
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
-import com.w2sv.common.enums.Theme
+import com.w2sv.common.data.sources.Theme
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

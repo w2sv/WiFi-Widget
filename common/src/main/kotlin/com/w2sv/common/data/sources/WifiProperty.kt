@@ -1,4 +1,4 @@
-package com.w2sv.common.enums
+package com.w2sv.common.data.sources
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager

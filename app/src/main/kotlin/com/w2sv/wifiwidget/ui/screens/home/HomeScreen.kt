@@ -13,8 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.common.data.repositories.PreferencesRepository
-import com.w2sv.common.enums.WifiProperty
+import com.w2sv.common.data.storage.PreferencesRepository
+import com.w2sv.common.data.sources.WifiProperty
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar

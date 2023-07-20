@@ -12,9 +12,9 @@ import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.data.repositories.WidgetConfigurationRepository
-import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColor
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.data.sources.Theme
+import com.w2sv.common.data.sources.WidgetColor
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.wifiManager
 import dagger.hilt.android.AndroidEntryPoint

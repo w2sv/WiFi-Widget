@@ -50,7 +50,7 @@ import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
-import com.w2sv.common.data.repositories.PreferencesRepository
+import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R

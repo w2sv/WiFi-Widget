@@ -12,7 +12,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.common.data.repositories.PreferencesRepository
+import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.extensions.launchingSuppressed
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel

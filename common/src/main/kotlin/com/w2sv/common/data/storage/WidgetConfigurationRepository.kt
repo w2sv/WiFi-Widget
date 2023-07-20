@@ -1,14 +1,14 @@
-package com.w2sv.common.data.repositories
+package com.w2sv.common.data.storage
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
-import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColor
-import com.w2sv.common.enums.WidgetRefreshingParameter
-import com.w2sv.common.enums.WifiProperty
+import com.w2sv.common.data.sources.Theme
+import com.w2sv.common.data.sources.WidgetColor
+import com.w2sv.common.data.sources.WidgetRefreshingParameter
+import com.w2sv.common.data.sources.WifiProperty
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

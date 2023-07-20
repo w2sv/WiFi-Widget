@@ -9,8 +9,8 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.common.data.repositories.WidgetConfigurationRepository
-import com.w2sv.common.enums.WidgetRefreshingParameter
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.data.sources.WidgetRefreshingParameter
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
