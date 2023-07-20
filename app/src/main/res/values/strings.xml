@@ -25,7 +25,6 @@
     <string name="properties">Properties</string>
     <string name="opacity">Opacity</string>
     <string name="refreshing">Refreshing</string>
-    <string name="okay">Okay</string>
     <string name="tap_again_to_exit">Tap again to exit</string>
     <string name="go_to_app_settings_and_grant_location_access_permission">Go to app settings and grant location access permission</string>
     <string name="opacity_slider_cd">Set the widget background opacity.</string>

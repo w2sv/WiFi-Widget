@@ -101,7 +101,7 @@ internal fun ColorPickerDialog(
                             color.toArgb()
                         widgetConfigurationVM.onDismissCustomizationDialog()
                     }) {
-                        JostText(text = stringResource(id = R.string.okay))
+                        JostText(text = stringResource(id = R.string.apply))
                     }
                 }
             }

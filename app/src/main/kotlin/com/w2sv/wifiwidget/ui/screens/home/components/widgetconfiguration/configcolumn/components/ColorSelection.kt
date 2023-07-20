@@ -83,7 +83,8 @@ private fun SectionCustomizationRow(
                 widgetConfigurationVM.customizationDialogSection.value = widgetColorSection
             },
             shape = CircleShape,
-        ) {}
+            content = {}
+        )
         Spacer(modifier = Modifier.weight(0.2f))
     }
 }
