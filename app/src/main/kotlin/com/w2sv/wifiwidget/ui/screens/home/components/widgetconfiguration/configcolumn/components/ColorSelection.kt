@@ -28,6 +28,7 @@ import com.w2sv.common.enums.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
+import com.w2sv.wifiwidget.ui.utils.toColor
 
 @Composable
 internal fun ColorSelection(
@@ -41,7 +42,7 @@ internal fun ColorSelection(
             value?.let {
                 ColorPickerDialog(
                     widgetSection = it,
-                    appliedColor = Color(widgetColors.getValue(it)),
+                    appliedColor = widgetColors.getValue(it).toColor(),
                     applyColor = { color ->
                         widgetColors[it] = color.toArgb()
                     },
@@ -59,7 +60,7 @@ internal fun ColorSelection(
         WidgetColor.values().forEach {
             SectionCustomizationRow(
                 widgetColor = it,
-                color = Color(widgetColors.getValue(it)),
+                color = widgetColors.getValue(it).toColor(),
                 onClick = { showDialogFor = it },
                 modifier = Modifier.padding(vertical = 4.dp)
             )
