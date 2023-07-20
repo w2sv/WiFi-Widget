@@ -21,7 +21,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -83,32 +82,31 @@ fun ConfigColumn(
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
                 label = R.string.custom,
-                buttonColoring = remember {
-                    ButtonColor.Gradient(
-                        Brush.linearGradient(
-                            0.4f to Color(
-                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                    WidgetColorSection.Background
-                                )
-                            ),
-                            0.4f to Color(
-                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                    WidgetColorSection.Labels
-                                )
-                            ),
-                            0.6f to Color(
-                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                    WidgetColorSection.Labels
-                                )
-                            ),
-                            0.6f to Color(
-                                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                                    WidgetColorSection.Other
-                                )
+                buttonColoring =
+                ButtonColor.Gradient(
+                    Brush.linearGradient(
+                        0.4f to Color(
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
+                                WidgetColorSection.Background
+                            )
+                        ),
+                        0.4f to Color(
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
+                                WidgetColorSection.Labels
+                            )
+                        ),
+                        0.6f to Color(
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
+                                WidgetColorSection.Labels
+                            )
+                        ),
+                        0.6f to Color(
+                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(
+                                WidgetColorSection.Other
                             )
                         )
                     )
-                }
+                )
             ),
             selected = widgetConfigurationVM.nonAppliedWidgetTheme.collectAsState().value,
             onSelected = {
@@ -134,6 +132,7 @@ fun ConfigColumn(
                     )
         ) {
             ColorSelection(
+                widgetColors = widgetConfigurationVM.nonAppliedWidgetColors,
                 modifier = Modifier
                     .padding(top = 18.dp)
             )

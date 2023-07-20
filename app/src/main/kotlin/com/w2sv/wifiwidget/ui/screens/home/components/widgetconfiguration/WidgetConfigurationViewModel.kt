@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.common.enums.WifiProperty
 import com.w2sv.common.extensions.getSynchronousMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,12 +29,6 @@ class WidgetConfigurationViewModel @Inject constructor(
     // ========================
 
     val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
-
-    val customizationDialogSection = MutableStateFlow<WidgetColorSection?>(null)
-
-    fun onDismissCustomizationDialog() {
-        customizationDialogSection.value = null
-    }
 
     // =========
     // NonAppliedState

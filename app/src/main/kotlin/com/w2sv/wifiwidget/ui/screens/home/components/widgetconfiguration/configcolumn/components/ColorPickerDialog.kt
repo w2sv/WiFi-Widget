@@ -21,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,27 +32,24 @@ import com.w2sv.common.enums.WidgetColorSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
 internal fun ColorPickerDialog(
-    customizableWidgetSection: WidgetColorSection,
+    widgetSection: WidgetColorSection,
+    appliedColor: Color,
+    onDismissRequest: () -> Unit,
+    applyColor: (Color) -> Unit,
     modifier: Modifier = Modifier,
-    widgetConfigurationVM: WidgetConfigurationViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     var color by remember {
         mutableStateOf(
-            Color(
-                widgetConfigurationVM.nonAppliedWidgetColors.getValue(
-                    customizableWidgetSection
-                )
-            )
+            appliedColor
         )
     }
     val scrollState = rememberScrollState()
 
-    Dialog(onDismissRequest = widgetConfigurationVM::onDismissCustomizationDialog) {
+    Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
@@ -66,7 +62,7 @@ internal fun ColorPickerDialog(
                     .verticalScroll(scrollState)
             ) {
                 JostText(
-                    text = stringResource(id = customizableWidgetSection.labelRes),
+                    text = stringResource(id = widgetSection.labelRes),
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
                 Spacer(modifier = Modifier.padding(vertical = 6.dp))
@@ -77,7 +73,6 @@ internal fun ColorPickerDialog(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     ColorComponentsDisplay(
                         color = color,
@@ -87,24 +82,37 @@ internal fun ColorPickerDialog(
                     )
                 }
                 Spacer(modifier = Modifier.padding(vertical = 12.dp))
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 12.dp)
-                ) {
-                    DialogButton(onClick = widgetConfigurationVM::onDismissCustomizationDialog) {
-                        JostText(text = stringResource(id = R.string.cancel))
+                ButtonRow(
+                    onCancelButtonPress = onDismissRequest,
+                    onApplyButtonPress = {
+                        applyColor(color)
+                        onDismissRequest()
                     }
-                    Spacer(modifier = Modifier.padding(horizontal = 12.dp))
-                    DialogButton(onClick = {
-                        widgetConfigurationVM.nonAppliedWidgetColors[customizableWidgetSection] =
-                            color.toArgb()
-                        widgetConfigurationVM.onDismissCustomizationDialog()
-                    }) {
-                        JostText(text = stringResource(id = R.string.apply))
-                    }
-                }
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun ButtonRow(
+    onCancelButtonPress: () -> Unit,
+    onApplyButtonPress: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        DialogButton(onClick = onCancelButtonPress) {
+            JostText(text = stringResource(id = R.string.cancel))
+        }
+        Spacer(modifier = Modifier.padding(horizontal = 12.dp))
+        DialogButton(
+            onClick = onApplyButtonPress
+        ) {
+            JostText(text = stringResource(id = R.string.apply))
         }
     }
 }
@@ -114,7 +122,10 @@ internal fun ColorPickerDialog(
 private fun Prev() {
     AppTheme {
         ColorPickerDialog(
-            customizableWidgetSection = WidgetColorSection.Background
+            widgetSection = WidgetColorSection.Background,
+            appliedColor = Color.Red,
+            applyColor = {},
+            onDismissRequest = {}
         )
     }
 }
