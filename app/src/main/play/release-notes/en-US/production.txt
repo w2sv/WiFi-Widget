@@ -1,2 +1,1 @@
-- Pimped UI in various regards
-- Enabled hiding of last widget data refresh date time
+- Added BSSID to WiFi properties

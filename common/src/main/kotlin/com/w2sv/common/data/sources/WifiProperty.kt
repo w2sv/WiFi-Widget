@@ -32,6 +32,13 @@ enum class WifiProperty(
         },
         false
     ),
+    BSSID(
+        R.string.bssid,
+        R.array.bssid,
+        { wifiManager, _ ->
+            wifiManager.connectionInfo.bssid
+        }
+    ),
     IP(
         R.string.ipv4,
         R.array.ipv4,

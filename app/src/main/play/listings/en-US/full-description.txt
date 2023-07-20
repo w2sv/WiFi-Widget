@@ -1,21 +1,28 @@
-WiFi properties which may be displayed by the widget are:
+The widget configuration options include the:
+- <i>Color scheme</i>
+- <i>Background opacity</i>
+- <i>Connection properties to be displayed</i>
+- <i>Data refreshing parameters</i>
+
+WiFi connection properties displayed by the widget:
 - <i>SSID</i>
-- <i>IP Address</i>
+- <i>BSSID</i>
+- <i>IPv4</i>
+- <i>Netmask</i>
+- <i>Local IPv6</i>
+- <i>First Public IPv6</i>
+- <i>Second Public IPv6</i>
 - <i>Frequency</i>
+- <i>Channel</i>
 - <i>Link Speed</i>
 - <i>Gateway</i>
 - <i>DNS</i>
 - <i>DHCP</i>
-- <i>Netmask</i>
-
-You can configure which properties are to be displayed. Also, you can choose between a light/dark widget theme
-independent of the set device theme, as well as determine the widget background opacity.
-The app itself likewise supports both light and dark mode.
 
 The source code is available under the GPL-3.0 license at https://github.com/w2sv/WiFi-Widget.
 Feel free to hit me up with enhancement propositions, bug reports or whatever.
 
-Built by yours truly, Janek Zangenberg.
+Built by yours truly, Janek Zangenberg aka W2SV.
 
 <b>Credits:</b>
 - Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> licensed under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.

@@ -3,6 +3,10 @@
         <item>Service Set Identifier. Your network\'s name.</item>
         <item>https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID</item>
     </string-array>
+    <string-array name="bssid">
+        <item>Basic Service Set Identifier. A 48-bit label abiding by MAC-48 conventions which identifies your devices basic service set.</item>
+        <item>https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID</item>
+    </string-array>
     <string-array name="ipv4">
         <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv4 representation corresponds to a 32-bit number. The displayed address is your internal one, meaning that it\'s only visible from within your network.</item>
         <item>https://en.wikipedia.org/wiki/IP_address</item>
