@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.theme.AppTheme
@@ -73,8 +73,7 @@ fun WidgetConfigurationDialog(
                 JostText(
                     text = stringResource(id = com.w2sv.common.R.string.configure_widget),
                     textAlign = TextAlign.Center,
-                    fontSize = MaterialTheme.typography.headlineSmall.fontSize,
-                    fontWeight = FontWeight.Medium
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 ConfigColumn(
                     modifier = Modifier
@@ -82,7 +81,7 @@ fun WidgetConfigurationDialog(
                         .padding(vertical = 16.dp)
                         .heightIn(260.dp, 420.dp)
                 )
-                ButtonRow(
+                DialogButtonRow(
                     onCancel = {
                         onDismissRequest()
                     },

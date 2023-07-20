@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
 import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WidgetColor
 import com.w2sv.common.enums.WidgetRefreshingParameter
 import com.w2sv.common.enums.WifiProperty
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +22,7 @@ class WidgetConfigurationRepository @Inject constructor(
 
     val refreshingParameters = getFlowMap(WidgetRefreshingParameter.values().toList())
 
-    val customColors = getFlowMap(WidgetColorSection.values().toList())
+    val customColors = getFlowMap(WidgetColor.values().toList())
 
     val wifiProperties = getFlowMap(WifiProperty.values().toList())
 

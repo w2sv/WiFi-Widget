@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.common.R
 
-enum class WidgetColorSection(@StringRes val labelRes: Int, override val defaultValue: Int) :
+enum class WidgetColor(@StringRes val labelRes: Int, override val defaultValue: Int) :
     DataStoreEntry.UniType<Int> {
 
     Background(R.string.background, Color(112, 24, 136).toArgb()),

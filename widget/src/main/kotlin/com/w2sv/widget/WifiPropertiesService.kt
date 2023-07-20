@@ -14,7 +14,7 @@ import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
 import com.w2sv.common.data.repositories.WidgetConfigurationRepository
 import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WidgetColor
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.wifiManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -106,7 +106,7 @@ private data class WifiPropertyViewColors(val label: Int, val value: Int) {
         fun fromTheme(
             theme: Theme,
             context: Context,
-            customWidgetColors: Map<WidgetColorSection, Flow<Int>>
+            customWidgetColors: Map<WidgetColor, Flow<Int>>
         ): WifiPropertyViewColors =
             when (theme) {
                 Theme.Light -> WifiPropertyViewColors(
@@ -130,8 +130,8 @@ private data class WifiPropertyViewColors(val label: Int, val value: Int) {
 
                 Theme.Custom -> customWidgetColors.getSynchronousMap().run {
                     WifiPropertyViewColors(
-                        getValue(WidgetColorSection.Labels),
-                        getValue(WidgetColorSection.Other)
+                        getValue(WidgetColor.Labels),
+                        getValue(WidgetColor.Other)
                     )
                 }
             }

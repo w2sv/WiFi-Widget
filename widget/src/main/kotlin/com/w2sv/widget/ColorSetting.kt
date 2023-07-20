@@ -8,14 +8,14 @@ import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.common.enums.Theme
-import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WidgetColor
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.extensions.toRGBChannelInt
 import kotlinx.coroutines.flow.Flow
 
 internal fun RemoteViews.setWidgetColors(
     theme: Theme,
-    customWidgetColors: Map<WidgetColorSection, Flow<Int>>,
+    customWidgetColors: Map<WidgetColor, Flow<Int>>,
     backgroundOpacity: Float,
     context: Context
 ) {
@@ -52,9 +52,9 @@ internal fun RemoteViews.setWidgetColors(
 
         Theme.Custom -> with(customWidgetColors.getSynchronousMap()) {
             setColors(
-                getValue(WidgetColorSection.Background),
+                getValue(WidgetColor.Background),
                 backgroundOpacity,
-                getValue(WidgetColorSection.Other)
+                getValue(WidgetColor.Other)
             )
         }
     }

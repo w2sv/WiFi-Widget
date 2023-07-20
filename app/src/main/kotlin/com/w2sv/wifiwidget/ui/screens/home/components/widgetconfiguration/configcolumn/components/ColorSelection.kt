@@ -24,18 +24,18 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.enums.WidgetColorSection
+import com.w2sv.common.enums.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
 
 @Composable
 internal fun ColorSelection(
-    widgetColors: MutableMap<WidgetColorSection, Int>,
+    widgetColors: MutableMap<WidgetColor, Int>,
     modifier: Modifier = Modifier
 ) {
     var showDialogFor by rememberSaveable {
-        mutableStateOf<WidgetColorSection?>(null)
+        mutableStateOf<WidgetColor?>(null)
     }
         .apply {
             value?.let {
@@ -56,9 +56,9 @@ internal fun ColorSelection(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        WidgetColorSection.values().forEach {
+        WidgetColor.values().forEach {
             SectionCustomizationRow(
-                widgetColorSection = it,
+                widgetColor = it,
                 color = Color(widgetColors.getValue(it)),
                 onClick = { showDialogFor = it },
                 modifier = Modifier.padding(vertical = 4.dp)
@@ -69,12 +69,12 @@ internal fun ColorSelection(
 
 @Composable
 private fun SectionCustomizationRow(
-    widgetColorSection: WidgetColorSection,
+    widgetColor: WidgetColor,
     color: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val label = stringResource(id = widgetColorSection.labelRes)
+    val label = stringResource(id = widgetColor.labelRes)
     val colorPickerButtonCD = stringResource(id = R.string.color_picker_button_cd).format(label)
 
     Row(
