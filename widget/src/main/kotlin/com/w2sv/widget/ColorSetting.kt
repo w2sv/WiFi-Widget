@@ -21,9 +21,9 @@ internal fun RemoteViews.setWidgetColors(
 ) {
     when (theme) {
         Theme.Dark -> setColors(
-            context.getColor(android.R.color.background_dark),
+            context.getColor(R.color.background_dark),
             backgroundOpacity,
-            context.getColor(androidx.appcompat.R.color.foreground_material_dark)
+            context.getColor(R.color.foreground_dark)
         )
 
         Theme.DeviceDefault -> {
@@ -45,9 +45,9 @@ internal fun RemoteViews.setWidgetColors(
         }
 
         Theme.Light -> setColors(
-            context.getColor(android.R.color.background_light),
+            context.getColor(R.color.background_light),
             backgroundOpacity,
-            context.getColor(androidx.appcompat.R.color.foreground_material_light)
+            context.getColor(R.color.background_light)
         )
 
         Theme.Custom -> with(customWidgetColors.getSynchronousMap()) {

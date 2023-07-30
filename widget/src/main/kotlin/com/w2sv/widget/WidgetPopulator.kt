@@ -12,11 +12,12 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.data.sources.WidgetRefreshingParameter
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.isWifiConnected
 import com.w2sv.common.linkProperties
 import com.w2sv.common.wifiManager
+import com.w2sv.widget.properties.WifiPropertyViewsService
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
@@ -99,7 +100,7 @@ internal class WidgetPopulator @Inject constructor(
 
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    Intent(context, WifiPropertiesService::class.java)
+                    Intent(context, WifiPropertyViewsService::class.java)
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))

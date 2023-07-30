@@ -46,7 +46,7 @@
             tools:ignore="Instantiatable" />
 
         <service
-            android:name="com.w2sv.widget.WifiPropertiesService"
+            android:name="com.w2sv.widget.properties.WifiPropertyViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
