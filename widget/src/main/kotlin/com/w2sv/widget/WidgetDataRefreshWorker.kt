@@ -9,7 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.common.data.sources.WidgetRefreshingParameter
+import com.w2sv.common.data.model.WidgetRefreshingParameter
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import slimber.log.i
 import java.time.Duration

@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 
 import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
-import com.w2sv.common.data.sources.Theme
-import com.w2sv.common.data.sources.WifiProperty
+import com.w2sv.common.data.model.Theme
+import com.w2sv.common.data.model.WifiProperty
 import com.w2sv.common.extensions.getSynchronousMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

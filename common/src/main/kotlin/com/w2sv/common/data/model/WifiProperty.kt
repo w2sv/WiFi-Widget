@@ -1,4 +1,4 @@
-package com.w2sv.common.data.sources
+package com.w2sv.common.data.model
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager

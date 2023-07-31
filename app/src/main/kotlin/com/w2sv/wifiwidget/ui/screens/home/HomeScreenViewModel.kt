@@ -13,7 +13,7 @@ import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
 import com.w2sv.common.constants.Extra
-import com.w2sv.common.data.sources.WifiProperty
+import com.w2sv.common.data.model.WifiProperty
 import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.widget.utils.getWifiWidgetIds

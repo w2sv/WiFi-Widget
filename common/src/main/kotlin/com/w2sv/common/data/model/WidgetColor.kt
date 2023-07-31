@@ -1,4 +1,4 @@
-package com.w2sv.common.data.sources
+package com.w2sv.common.data.model
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color

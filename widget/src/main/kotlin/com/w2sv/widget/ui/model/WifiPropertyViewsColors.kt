@@ -4,8 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import androidx.annotation.ColorInt
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.common.data.sources.Theme
-import com.w2sv.common.data.sources.WidgetColor
+import com.w2sv.common.data.model.Theme
+import com.w2sv.common.data.model.WidgetColor
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.widget.R
 import kotlinx.coroutines.flow.Flow

@@ -18,9 +18,9 @@ import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
 import com.w2sv.common.constants.Extra
-import com.w2sv.common.data.sources.Theme
-import com.w2sv.common.data.sources.WidgetColor
-import com.w2sv.common.data.sources.WidgetRefreshingParameter
+import com.w2sv.common.data.model.Theme
+import com.w2sv.common.data.model.WidgetColor
+import com.w2sv.common.data.model.WidgetRefreshingParameter
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.extensions.isNightModeActiveCompat
 import com.w2sv.common.extensions.toRGBChannelInt
