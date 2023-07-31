@@ -2,69 +2,27 @@
 
 package com.w2sv.widget
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.w2sv.androidutils.appwidgets.getAppWidgetIds
-import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.widget.ui.WidgetLayoutPopulator
+import com.w2sv.widget.utils.getWifiWidgetIds
+import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class WidgetProvider : AppWidgetProvider() {
 
-    companion object {
-        const val EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START =
-            "com.w2sv.wifiwidget.extra.OPEN_CONFIGURATION_DIALOG_ON_START"
+    @Inject
+    lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
 
-        fun getWidgetIds(context: Context): IntArray =
-            AppWidgetManager
-                .getInstance(context)
-                .getAppWidgetIds(context, WidgetProvider::class.java)
-
-        fun pinWidget(context: Context) {
-            with(context.getSystemService(AppWidgetManager::class.java)) {
-                when (isRequestPinAppWidgetSupported) {
-                    true -> requestPinAppWidget(
-                        ComponentName(
-                            context,
-                            WidgetProvider::class.java
-                        ),
-                        null,
-                        null
-                    )
-
-                    false -> context.showToast(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher)
-                }
-            }
-        }
-
-        /**
-         * Data Refreshing
-         */
-
-        fun triggerDataRefresh(context: Context) {
-            context.sendBroadcast(getRefreshDataIntent(context))
-        }
-
-        fun getRefreshDataPendingIntent(context: Context): PendingIntent =
-            PendingIntent.getBroadcast(
-                context,
-                PendingIntentCode.RefreshWidgetData.ordinal,
-                getRefreshDataIntent(context),
-                PendingIntent.FLAG_IMMUTABLE
-            )
-
-        private fun getRefreshDataIntent(context: Context): Intent =
-            Intent(context, WidgetProvider::class.java)
-                .setAction(ACTION_REFRESH_DATA)
-
-        private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
-    }
+    @Inject
+    lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -74,9 +32,7 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
 
-        context?.let {
-            WidgetDataRefreshWorker.Administrator.getInstance(it).enableWorkerIfApplicable()
-        }
+        widgetDataRefreshWorkerManager.applyChangedParameters()
     }
 
     /**
@@ -87,12 +43,12 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
 
-        context?.let {
-            WidgetDataRefreshWorker.Administrator.getInstance(it).cancelWorker()
-        }
+        widgetDataRefreshWorkerManager.cancelWorker()
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        super.onReceive(context, intent)  // Required for DI
+
         i {
             "${this::class.java.simpleName}.onReceive | ${intent?.action} | ${
                 intent?.extras?.keySet()?.toList()
@@ -101,23 +57,23 @@ class WidgetProvider : AppWidgetProvider() {
 
         when (intent?.action) {
             ACTION_REFRESH_DATA -> {
-                context?.let {
-                    onUpdate(
-                        it,
-                        AppWidgetManager.getInstance(it),
-                        getWidgetIds(it)
-                    )
-                }
-                return
+                context ?: return
+
+                // Refresh data
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+
+                onUpdate(
+                    context,
+                    appWidgetManager,
+                    appWidgetManager.getWifiWidgetIds(context)
+                )
             }
 
             AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> context?.let {
+                // Forward intent as local broadcast for subscribed receivers
                 LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
-                i { "Forwarded AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED intent as local broadcast" }
             }
         }
-
-        super.onReceive(context, intent)
     }
 
     override fun onUpdate(
@@ -127,28 +83,37 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
-        appWidgetIds.forEach {
-            appWidgetManager.updateWidget(it, context)
+        appWidgetIds.forEach { id ->
+            i { "updateWidget | appWidgetId=$id" }
+
+            appWidgetManager.updateAppWidget(
+                id,
+                widgetLayoutPopulator
+                    .populate(
+                        RemoteViews(
+                            context.packageName,
+                            R.layout.widget
+                        ),
+                        id
+                    )
+            )
         }
     }
-}
 
-private fun AppWidgetManager.updateWidget(
-    appWidgetId: Int,
-    context: Context
-) {
-    i { "updateWidget | appWidgetId=$appWidgetId" }
+    companion object {
 
-    updateAppWidget(
-        appWidgetId,
-        WidgetPopulator
-            .getWidgetPopulatorInstance(context)
-            .populate(
-                RemoteViews(
-                    context.packageName,
-                    R.layout.widget
-                ),
-                appWidgetId
-            )
-    )
+        // ===============
+        // Refreshing
+        // ===============
+
+        fun triggerDataRefresh(context: Context) {
+            context.sendBroadcast(getRefreshDataIntent(context))
+        }
+
+        fun getRefreshDataIntent(context: Context): Intent =
+            Intent(context, WidgetProvider::class.java)
+                .setAction(ACTION_REFRESH_DATA)
+
+        private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
+    }
 }

@@ -1,22 +1,25 @@
-package com.w2sv.widget.properties
+package com.w2sv.widget.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import androidx.annotation.ColorInt
+import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.wifiManager
 import com.w2sv.widget.R
-import com.w2sv.widget.properties.model.WifiPropertyView
-import com.w2sv.widget.properties.model.WifiPropertyViewsColors
-import com.w2sv.widget.utils.setTextView
+import com.w2sv.widget.ui.model.WifiPropertyView
+import com.w2sv.widget.ui.model.WifiPropertyViewsColors
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class WifiPropertyViewsFactory(
-    private val context: Context,
+class WifiPropertyViewsFactory @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val widgetConfigurationRepository: WidgetConfigurationRepository
 ) : RemoteViewsService.RemoteViewsFactory {
 
@@ -72,4 +75,9 @@ class WifiPropertyViewsFactory(
     override fun hasStableIds(): Boolean = true
 
     override fun onDestroy() {}
+}
+
+private fun RemoteViews.setTextView(@IdRes viewId: Int, text: String, @ColorInt color: Int) {
+    setTextViewText(viewId, text)
+    setTextColor(viewId, color)
 }

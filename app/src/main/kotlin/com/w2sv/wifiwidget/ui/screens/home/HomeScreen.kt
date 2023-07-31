@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.data.sources.WifiProperty
-import com.w2sv.widget.WidgetProvider
+import com.w2sv.common.data.storage.PreferencesRepository
+import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
@@ -69,7 +69,7 @@ internal fun HomeScreen(
                                 false -> homeScreenVM.lapRationalTrigger.value =
                                     LocationAccessPermissionRequestTrigger.PinWidgetButtonPress
 
-                                true -> WidgetProvider.pinWidget(context)
+                                true -> attemptWifiWidgetPin(context)
                             }
                         }
                     )
@@ -106,10 +106,10 @@ internal fun HomeScreen(
                     onGranted = {
                         widgetConfigurationVM.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
                         widgetConfigurationVM.nonAppliedWifiPropertyFlags.sync()
-                        WidgetProvider.pinWidget(it)
+                        attemptWifiWidgetPin(context)
                     },
                     onDenied = {
-                        WidgetProvider.pinWidget(it)
+                        attemptWifiWidgetPin(context)
                     }
                 )
 

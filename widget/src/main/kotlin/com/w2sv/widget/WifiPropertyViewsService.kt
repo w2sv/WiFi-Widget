@@ -1,7 +1,8 @@
-package com.w2sv.widget.properties
+package com.w2sv.widget
 
 import android.content.Intent
 import android.widget.RemoteViewsService
+import com.w2sv.widget.ui.WifiPropertyViewsFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

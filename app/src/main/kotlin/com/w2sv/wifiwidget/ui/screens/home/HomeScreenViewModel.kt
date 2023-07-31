@@ -12,10 +12,11 @@ import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
+import com.w2sv.common.constants.Extra
+import com.w2sv.common.data.sources.WifiProperty
 import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
-import com.w2sv.common.data.sources.WifiProperty
-import com.w2sv.widget.WidgetProvider
+import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
@@ -37,7 +38,7 @@ class HomeScreenViewModel @Inject constructor(
 ) : PreferencesDataStoreRepository.ViewModel<PreferencesRepository>(preferencesRepository) {
 
     fun onSplashScreenAnimationFinished() {
-        if (savedStateHandle.contains(WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START)) {
+        if (savedStateHandle.contains(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
             showWidgetConfigurationDialog.value = true
         }
     }
@@ -80,7 +81,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private val widgetIds: MutableSet<Int> =
-        WidgetProvider.getWidgetIds(context).toMutableSet()
+        getWifiWidgetIds(context).toMutableSet()
 
     // =============
     // LAP := Location Access Permission

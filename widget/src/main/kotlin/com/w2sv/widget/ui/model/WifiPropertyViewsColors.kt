@@ -1,4 +1,4 @@
-package com.w2sv.widget.properties.model
+package com.w2sv.widget.ui.model
 
 import android.content.Context
 import android.graphics.Color

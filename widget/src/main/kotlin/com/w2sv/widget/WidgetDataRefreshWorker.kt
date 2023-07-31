@@ -9,95 +9,14 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.data.sources.WidgetRefreshingParameter
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
 
 class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
-
-    companion object {
-        private const val UNIQUE_WORK_NAME = "WidgetDataRefreshWorker"
-
-        private fun enqueueAsUniquePeriodicWork(
-            workManager: WorkManager,
-            refreshPeriod: Duration,
-            requiresBatteryNotLow: Boolean
-        ) {
-            workManager.enqueueUniquePeriodicWork(
-                UNIQUE_WORK_NAME,
-                ExistingPeriodicWorkPolicy.UPDATE,
-                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiresBatteryNotLow(requiresBatteryNotLow)
-                            .build()
-                    )
-                    .setInitialDelay(refreshPeriod)
-                    .build()
-            )
-            i { "Enqueued $UNIQUE_WORK_NAME" }
-        }
-    }
-
-    class Administrator @Inject constructor(
-        @ApplicationContext private val context: Context,
-        widgetConfigurationRepository: WidgetConfigurationRepository
-    ) {
-
-        @InstallIn(SingletonComponent::class)
-        @EntryPoint
-        interface EntryPointInterface {
-            fun getAdministratorInstance(): Administrator
-        }
-
-        companion object {
-            fun getInstance(context: Context): Administrator =
-                EntryPointAccessors.fromApplication(
-                    context,
-                    EntryPointInterface::class.java
-                )
-                    .getAdministratorInstance()
-        }
-
-        private val widgetRefreshingParameters =
-            widgetConfigurationRepository.refreshingParameters.getSynchronousMap()
-
-        fun applyChangedParameters() {
-            when (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {
-                true -> enableWorker()
-                false -> cancelWorker()
-            }
-        }
-
-        fun enableWorkerIfApplicable() {
-            if (widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {
-                enableWorker()
-            }
-        }
-
-        private fun enableWorker() {
-            enqueueAsUniquePeriodicWork(
-                WorkManager.getInstance(context),
-                Duration.ofMinutes(15L),
-                !widgetRefreshingParameters.getValue(WidgetRefreshingParameter.RefreshOnBatteryLow)
-            )
-        }
-
-        fun cancelWorker() {
-            WorkManager.getInstance(context)
-                .cancelUniqueWork(UNIQUE_WORK_NAME)
-
-            i { "Cancelled $UNIQUE_WORK_NAME" }
-        }
-    }
 
     override fun doWork(): Result {
         when (applicationContext.getSystemService(PowerManager::class.java).isInteractive) {
@@ -108,5 +27,52 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
             }
         }
         return Result.success()
+    }
+
+    class Manager @Inject constructor(
+        private val workManager: WorkManager,
+        widgetConfigurationRepository: WidgetConfigurationRepository
+    ) {
+        private val refreshingParameters =
+            widgetConfigurationRepository.refreshingParameters.getSynchronousMap()
+
+        fun applyChangedParameters() {
+            when (refreshingParameters.getValue(WidgetRefreshingParameter.RefreshPeriodically)) {
+                true -> enableWorker()
+                false -> cancelWorker()
+            }
+        }
+
+        fun enableWorker() {
+            val refreshPeriod = Duration.ofMinutes(15L)
+
+            workManager.enqueueUniquePeriodicWork(
+                UNIQUE_WORK_NAME,
+                ExistingPeriodicWorkPolicy.UPDATE,
+                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
+                    .setConstraints(
+                        Constraints.Builder()
+                            .setRequiresBatteryNotLow(
+                                requiresBatteryNotLow = !refreshingParameters.getValue(
+                                    WidgetRefreshingParameter.RefreshOnBatteryLow
+                                )
+                            )
+                            .build()
+                    )
+                    .setInitialDelay(refreshPeriod)
+                    .build()
+            )
+            i { "Enqueued $UNIQUE_WORK_NAME" }
+        }
+
+        fun cancelWorker() {
+            workManager
+                .cancelUniqueWork(UNIQUE_WORK_NAME)
+            i { "Cancelled $UNIQUE_WORK_NAME" }
+        }
+    }
+
+    companion object {
+        private val UNIQUE_WORK_NAME get() = WidgetDataRefreshWorker::class.java.simpleName
     }
 }

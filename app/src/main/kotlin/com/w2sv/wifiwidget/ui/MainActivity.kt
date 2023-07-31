@@ -31,12 +31,16 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
     private val widgetConfigurationViewModel by viewModels<WidgetConfigurationViewModel>()
+
+    @Inject
+    lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
 
     class AppWidgetOptionsChangedReceiver(
         broadcastManager: LocalBroadcastManager,
@@ -112,9 +116,7 @@ class MainActivity : ComponentActivity() {
     private fun LifecycleCoroutineScope.subscribeToFlows() {
         launch {
             widgetConfigurationViewModel.widgetRefreshingParametersChanged.collect {
-                WidgetDataRefreshWorker
-                    .Administrator
-                    .getInstance(applicationContext)
+                widgetDataRefreshWorkerManager
                     .applyChangedParameters()
             }
         }

@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.ui
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -9,20 +9,31 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
 import com.w2sv.androidutils.appwidgets.crossVisualize
+import com.w2sv.androidutils.appwidgets.setBackgroundColor
+import com.w2sv.androidutils.appwidgets.setColorFilter
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
+import com.w2sv.common.constants.Extra
+import com.w2sv.common.data.sources.Theme
+import com.w2sv.common.data.sources.WidgetColor
 import com.w2sv.common.data.sources.WidgetRefreshingParameter
 import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.extensions.isNightModeActiveCompat
+import com.w2sv.common.extensions.toRGBChannelInt
 import com.w2sv.common.isWifiConnected
 import com.w2sv.common.linkProperties
 import com.w2sv.common.wifiManager
-import com.w2sv.widget.properties.WifiPropertyViewsService
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.EntryPointAccessors
+import com.w2sv.widget.PendingIntentCode
+import com.w2sv.widget.R
+import com.w2sv.widget.WidgetProvider
+import com.w2sv.widget.WifiPropertyViewsService
+import com.w2sv.widget.ui.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
 import slimber.log.i
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -30,35 +41,10 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-private enum class WifiStatus {
-    Disabled,
-    Disconnected,
-    Connected
-}
-
-internal class WidgetPopulator @Inject constructor(
+class WidgetLayoutPopulator @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetConfigurationRepository: WidgetConfigurationRepository
 ) {
-
-    @InstallIn(SingletonComponent::class)
-    @EntryPoint
-    interface EntryPointInterface {
-        fun getWidgetPopulatorInstance(): WidgetPopulator
-    }
-
-    companion object {
-        fun getWidgetPopulatorInstance(context: Context): WidgetPopulator =
-            EntryPointAccessors.fromApplication(
-                context,
-                EntryPointInterface::class.java
-            )
-                .getWidgetPopulatorInstance()
-    }
-
-    // ============
-    // Populating
-    // ============
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget.apply {
@@ -70,11 +56,11 @@ internal class WidgetPopulator @Inject constructor(
                             true, null -> WifiStatus.Connected
                                 .also {
                                     @Suppress("DEPRECATION")
-                                    i {
+                                    (i {
                                         "wifiManager.connectionInfo: ${context.wifiManager.connectionInfo}\n" +
                                                 "wifiManager.dhcpInfo: ${context.wifiManager.dhcpInfo}\n" +
                                                 "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
-                                    }
+                                    })
                                 }
 
                             false -> WifiStatus.Disconnected
@@ -185,7 +171,12 @@ internal class WidgetPopulator @Inject constructor(
         // refresh_button
         setOnClickPendingIntent(
             R.id.refresh_button,
-            WidgetProvider.getRefreshDataPendingIntent(context)
+            PendingIntent.getBroadcast(
+                context,
+                PendingIntentCode.RefreshWidgetData.ordinal,
+                WidgetProvider.getRefreshDataIntent(context),
+                PendingIntent.FLAG_IMMUTABLE
+            )
         )
 
         // settings_button
@@ -201,11 +192,81 @@ internal class WidgetPopulator @Inject constructor(
                     )
                 )
                     .putExtra(
-                        WidgetProvider.EXTRA_OPEN_CONFIGURATION_DIALOG_ON_START,
+                        Extra.OPEN_WIDGET_CONFIGURATION_DIALOG,
                         true
                     ),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
         )
     }
+}
+
+private fun RemoteViews.setWidgetColors(
+    theme: Theme,
+    customWidgetColors: Map<WidgetColor, Flow<Int>>,
+    backgroundOpacity: Float,
+    context: Context
+) {
+    when (theme) {
+        Theme.Dark -> setColors(
+            context.getColor(R.color.background_dark),
+            backgroundOpacity,
+            context.getColor(R.color.foreground_dark)
+        )
+
+        Theme.DeviceDefault -> {
+            when (context.resources.configuration.isNightModeActiveCompat) {
+                false -> setWidgetColors(
+                    Theme.Light,
+                    customWidgetColors,
+                    backgroundOpacity,
+                    context
+                )
+
+                true -> setWidgetColors(
+                    Theme.Dark,
+                    customWidgetColors,
+                    backgroundOpacity,
+                    context
+                )
+            }
+        }
+
+        Theme.Light -> setColors(
+            context.getColor(R.color.background_light),
+            backgroundOpacity,
+            context.getColor(R.color.background_light)
+        )
+
+        Theme.Custom -> with(customWidgetColors.getSynchronousMap()) {
+            setColors(
+                getValue(WidgetColor.Background),
+                backgroundOpacity,
+                getValue(WidgetColor.Other)
+            )
+        }
+    }
+}
+
+private fun RemoteViews.setColors(
+    @ColorInt background: Int,
+    backgroundOpacity: Float,
+    @ColorInt foreground: Int
+) {
+    // Background
+    setBackgroundColor(
+        R.id.widget_layout,
+        ColorUtils.setAlphaComponent(
+            background,
+            backgroundOpacity.toRGBChannelInt()
+        )
+    )
+
+    // TVs
+    setTextColor(R.id.wifi_status_tv, foreground)
+    setTextColor(R.id.last_updated_tv, foreground)
+
+    // ImageButtons
+    setColorFilter(R.id.settings_button, foreground)
+    setColorFilter(R.id.refresh_button, foreground)
 }
