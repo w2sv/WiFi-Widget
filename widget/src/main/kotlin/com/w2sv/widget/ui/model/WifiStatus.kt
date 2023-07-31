@@ -1,7 +1,7 @@
 package com.w2sv.widget.ui.model
 
-enum class WifiStatus {
-    Disabled,
-    Disconnected,
-    Connected
+enum class WifiStatus(val isConnected: Boolean) {
+    Disabled(false),
+    Disconnected(false),
+    Connected(true)
 }

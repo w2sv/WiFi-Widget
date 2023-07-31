@@ -7,20 +7,20 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
-import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.connectivityManager
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.common.data.model.WidgetAppearance
+import com.w2sv.common.data.model.WidgetColors
+import com.w2sv.common.data.model.WifiProperty
 import com.w2sv.common.wifiManager
 import com.w2sv.widget.R
 import com.w2sv.widget.ui.model.WifiPropertyView
-import com.w2sv.widget.ui.model.WifiPropertyViewsColors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val widgetConfigurationRepository: WidgetConfigurationRepository
+    private val setWifiProperties: Set<WifiProperty>,
+    private val widgetAppearance: WidgetAppearance
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private val wifiManager: WifiManager by lazy { context.wifiManager }
@@ -29,23 +29,17 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onCreate() {}
 
     private lateinit var propertyViewData: List<WifiPropertyView>
-    private lateinit var propertyViewColors: WifiPropertyViewsColors
+    private lateinit var widgetColors: WidgetColors
 
     override fun onDataSetChanged() {
-        propertyViewData = widgetConfigurationRepository.wifiProperties.getSynchronousMap()
-            .filterValues { it }
-            .keys
+        propertyViewData = setWifiProperties
             .map {
                 WifiPropertyView(
                     context.getString(it.labelRes),
                     it.getValue(wifiManager, connectivityManager)
                 )
             }
-        propertyViewColors = WifiPropertyViewsColors.get(
-            widgetConfigurationRepository.theme.getValueSynchronously(),
-            widgetConfigurationRepository.customColors,
-            context
-        )
+        widgetColors = widgetAppearance.theme.getColors(context)
     }
 
     override fun getCount(): Int = propertyViewData.size
@@ -54,14 +48,14 @@ class WifiPropertyViewsFactory @Inject constructor(
         RemoteViews(context.packageName, R.layout.wifi_property)
             .apply {
                 setTextView(
-                    R.id.property_label_tv,
-                    propertyViewData[position].label,
-                    propertyViewColors.label
+                    viewId = R.id.property_label_tv,
+                    text = propertyViewData[position].label,
+                    color = widgetColors.labels
                 )
                 setTextView(
-                    R.id.property_value_tv,
-                    propertyViewData[position].value,
-                    propertyViewColors.value
+                    viewId = R.id.property_value_tv,
+                    text = propertyViewData[position].value,
+                    color = widgetColors.other
                 )
             }
 
