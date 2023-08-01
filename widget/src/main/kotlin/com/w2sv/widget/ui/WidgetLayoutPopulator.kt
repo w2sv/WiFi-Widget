@@ -25,7 +25,6 @@ import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetColors
-import com.w2sv.widget.model.WidgetTheme
 import com.w2sv.widget.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
@@ -57,11 +56,7 @@ class WidgetLayoutPopulator @Inject constructor(
         },
             appWidgetId = appWidgetId
         )
-        if (widgetAppearance.theme is WidgetTheme.ManualColorSetting) {
-            widget.setColors(
-                colors = widgetAppearance.theme.getColors(context)
-            )
-        }
+        widget.setColors(widgetAppearance.theme.getColors(context))
         widget.setAlpha(R.id.widget_layout, widgetAppearance.opacity)
         widget.setLastUpdatedTV()
         widget.setOnClickPendingIntents()
@@ -178,12 +173,12 @@ class WidgetLayoutPopulator @Inject constructor(
         )
 
         // TVs
-        setTextColor(R.id.wifi_status_tv, colors.other)
-        setTextColor(R.id.last_updated_tv, colors.other)
+        setTextColor(R.id.wifi_status_tv, colors.secondary)
+        setTextColor(R.id.last_updated_tv, colors.secondary)
 
         // ImageButtons
-        setColorFilter(R.id.settings_button, colors.labels)
-        setColorFilter(R.id.refresh_button, colors.labels)
+        setColorFilter(R.id.settings_button, colors.primary)
+        setColorFilter(R.id.refresh_button, colors.primary)
     }
 }
 

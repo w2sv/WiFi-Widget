@@ -1,11 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_layout"
     style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?android:attr/colorBackground"
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
 
     <FrameLayout
@@ -78,8 +76,7 @@
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/refresh_data"
-            android:src="@drawable/ic_refresh_24"
-            app:tint="?android:attr/colorAccent" />
+            android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
             android:id="@+id/settings_button"
@@ -89,8 +86,7 @@
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/configure_widget"
-            android:src="@drawable/ic_settings_24"
-            app:tint="?android:attr/colorAccent" />
+            android:src="@drawable/ic_settings_24" />
 
     </LinearLayout>
 

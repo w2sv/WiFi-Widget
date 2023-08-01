@@ -14,7 +14,6 @@ import com.w2sv.data.wifiManager
 import com.w2sv.widget.R
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
-import com.w2sv.widget.model.WidgetTheme
 import com.w2sv.widget.model.WifiPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
@@ -31,7 +30,7 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onCreate() {}
 
     private lateinit var propertyViewData: List<WifiPropertyView>
-    private var widgetColors: WidgetColors? = null
+    private lateinit var widgetColors: WidgetColors
 
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
@@ -44,11 +43,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                 )
             }
 
-        with(widgetRepository.appearance.getValueSynchronously()) {
-            if (theme is WidgetTheme.ManualColorSetting) {
-                widgetColors = theme.getColors(context)
-            }
-        }
+        widgetColors = widgetRepository.appearance.getValueSynchronously().theme.getColors(context)
     }
 
     override fun getCount(): Int = propertyViewData.size
@@ -59,12 +54,12 @@ class WifiPropertyViewsFactory @Inject constructor(
                 setTextView(
                     viewId = R.id.property_label_tv,
                     text = propertyViewData[position].label,
-                    color = widgetColors?.labels
+                    color = widgetColors?.primary
                 )
                 setTextView(
                     viewId = R.id.property_value_tv,
                     text = propertyViewData[position].value,
-                    color = widgetColors?.other
+                    color = widgetColors?.secondary
                 )
             }
 

@@ -2,15 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="0.5dp"
-    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
+    android:paddingVertical="0.5dp">
 
     <TextView
         android:id="@+id/property_label_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingEnd="2dp"
-        android:textColor="?android:attr/colorAccent"
         android:textSize="@dimen/text_size_widget_wifi_property" />
 
     <TextView
@@ -19,7 +17,6 @@
         android:layout_height="wrap_content"
         android:gravity="end"
         android:paddingEnd="6dp"
-        android:textColor="?android:attr/textColorSecondary"
         android:textSize="@dimen/text_size_widget_wifi_property" />
 
 </LinearLayout>

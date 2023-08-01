@@ -4,6 +4,6 @@ import androidx.annotation.ColorInt
 
 data class WidgetColors(
     @ColorInt val background: Int,
-    @ColorInt val labels: Int,
-    @ColorInt val other: Int
+    @ColorInt val primary: Int,
+    @ColorInt val secondary: Int
 )
