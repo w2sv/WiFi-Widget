@@ -40,8 +40,8 @@ class WidgetLayoutPopulator @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews = widget.apply {
-        setContentLayout(wifiStatus = when (context.wifiManager.isWifiEnabled) {
+    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews {
+        widget.setContentLayout(wifiStatus = when (context.wifiManager.isWifiEnabled) {
             false -> WifiStatus.Disabled
             true -> {
                 when (context.connectivityManager.isWifiConnected) {
@@ -58,13 +58,15 @@ class WidgetLayoutPopulator @Inject constructor(
             appWidgetId = appWidgetId
         )
         if (widgetAppearance.theme is WidgetTheme.ManualColorSetting) {
-            setColors(
+            widget.setColors(
                 colors = widgetAppearance.theme.getColors(context)
             )
         }
-        setAlpha(R.id.widget_layout, widgetAppearance.opacity)
-        setLastUpdatedTV()
-        setOnClickPendingIntents()
+        widget.setAlpha(R.id.widget_layout, widgetAppearance.opacity)
+        widget.setLastUpdatedTV()
+        widget.setOnClickPendingIntents()
+
+        return widget
     }
 
     private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
@@ -74,10 +76,11 @@ class WidgetLayoutPopulator @Inject constructor(
             WifiStatus.Connected -> {
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    Intent(context, WifiPropertyViewsService::class.java).apply {
-                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                        data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-                    }
+                    Intent(context, WifiPropertyViewsService::class.java)
+                        .apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+                        }
                 )
 
                 AppWidgetManager.getInstance(context)
@@ -168,9 +171,7 @@ class WidgetLayoutPopulator @Inject constructor(
         )
     }
 
-    private fun RemoteViews.setColors(
-        colors: WidgetColors
-    ) {
+    private fun RemoteViews.setColors(colors: WidgetColors) {
         // Background
         setBackgroundColor(
             R.id.widget_layout, colors.background
@@ -181,8 +182,8 @@ class WidgetLayoutPopulator @Inject constructor(
         setTextColor(R.id.last_updated_tv, colors.other)
 
         // ImageButtons
-        setColorFilter(R.id.settings_button, colors.other)
-        setColorFilter(R.id.refresh_button, colors.other)
+        setColorFilter(R.id.settings_button, colors.labels)
+        setColorFilter(R.id.refresh_button, colors.labels)
     }
 }
 

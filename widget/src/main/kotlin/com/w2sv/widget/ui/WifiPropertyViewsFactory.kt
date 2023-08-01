@@ -7,21 +7,22 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
+import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.data.connectivityManager
-import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.data.wifiManager
 import com.w2sv.widget.R
-import com.w2sv.widget.model.WidgetAppearance
+import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetTheme
 import com.w2sv.widget.model.WifiPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import slimber.log.i
 import javax.inject.Inject
 
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val setWifiProperties: Set<@JvmSuppressWildcards WifiProperty>,
-    private val widgetAppearance: WidgetAppearance
+    private val widgetRepository: WidgetRepository
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private val wifiManager: WifiManager by lazy { context.wifiManager }
@@ -33,15 +34,20 @@ class WifiPropertyViewsFactory @Inject constructor(
     private var widgetColors: WidgetColors? = null
 
     override fun onDataSetChanged() {
-        propertyViewData = setWifiProperties
+        i { "${this::class.simpleName}.onDataSetChanged" }
+
+        propertyViewData = widgetRepository.getSetWifiProperties()
             .map {
                 WifiPropertyView(
                     context.getString(it.labelRes),
                     it.getValue(wifiManager, connectivityManager)
                 )
             }
-        if (widgetAppearance.theme is WidgetTheme.ManualColorSetting) {
-            widgetColors = widgetAppearance.theme.getColors(context)
+
+        with(widgetRepository.appearance.getValueSynchronously()) {
+            if (theme is WidgetTheme.ManualColorSetting) {
+                widgetColors = theme.getColors(context)
+            }
         }
     }
 

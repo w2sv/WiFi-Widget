@@ -8,6 +8,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.w2sv.androidutils.coroutines.getValueSynchronously
+import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i
 import java.time.Duration
@@ -29,11 +32,13 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
 
     class Manager @Inject constructor(
         private val workManager: WorkManager,
-        private val widgetRefreshing: WidgetRefreshing
+        private val widgetRepository: WidgetRepository
     ) {
 
+        private val refreshing: WidgetRefreshing get() = widgetRepository.refreshing.getValueSynchronously()
+
         fun applyChangedParameters() {
-            when (widgetRefreshing.refreshPeriodically) {
+            when (refreshing.refreshPeriodically) {
                 true -> enableWorker()
                 false -> cancelWorker()
             }
@@ -48,7 +53,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
                 PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
                     .setConstraints(
                         Constraints.Builder()
-                            .setRequiresBatteryNotLow(requiresBatteryNotLow = !widgetRefreshing.refreshOnLowBattery)
+                            .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshing.refreshOnLowBattery)
                             .build()
                     )
                     .setInitialDelay(refreshPeriod)
