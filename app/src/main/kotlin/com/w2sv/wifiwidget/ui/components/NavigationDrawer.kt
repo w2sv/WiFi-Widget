@@ -1,19 +1,22 @@
-package com.w2sv.wifiwidget.ui.components.navigationdrawer
+package com.w2sv.wifiwidget.ui.components
 
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -24,15 +27,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,52 +45,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.androidutils.ui.UnconfirmedStateFlow
-import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
-import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.defaultSpringSpec
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-
-@HiltViewModel
-class InAppThemeViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
-    ViewModel() {
-
-    val inAppTheme by preferencesRepository::inAppTheme
-    val useDynamicTheme by preferencesRepository::useDynamicTheme
-
-    val unconfirmedUseDynamicTheme = UnconfirmedStateFlow(
-        coroutineScope = viewModelScope,
-        appliedFlow = preferencesRepository.useDynamicTheme,
-        syncState = { preferencesRepository.saveUseDynamicTheme(it) }
-    )
-
-    val unconfirmedInAppTheme = UnconfirmedStateFlow(
-        coroutineScope = viewModelScope,
-        appliedFlow = preferencesRepository.inAppTheme,
-        syncState = { preferencesRepository.saveInAppTheme(it) }
-    )
-
-    val configuration = UnconfirmedStatesComposition(
-        listOf(
-            unconfirmedUseDynamicTheme,
-            unconfirmedInAppTheme
-        ),
-        coroutineScope = viewModelScope
-    )
-}
 
 suspend fun DrawerState.closeDrawer() {
     animateTo(DrawerValue.Closed, defaultSpringSpec)
@@ -108,35 +71,6 @@ fun NavigationDrawer(
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
-    var showThemeSelectionDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
-        .apply {
-            if (value) {
-                ThemeSelectionDialog(
-                    onDismissRequest = {
-                        scope.launch {
-                            inAppThemeVM.unconfirmedInAppTheme.reset()
-                        }
-                        value = false
-                    },
-                    selectedTheme = inAppThemeVM.unconfirmedInAppTheme.collectAsState().value,
-                    onThemeSelected = { inAppThemeVM.unconfirmedInAppTheme.value = it },
-                    useDynamicTheme = inAppThemeVM.unconfirmedUseDynamicTheme.collectAsState().value,
-                    onToggleDynamicTheme = { inAppThemeVM.unconfirmedUseDynamicTheme.value = it },
-                    applyButtonEnabled = inAppThemeVM.configuration.statesDissimilar.collectAsState().value,
-                    onApplyButtonClick = {
-                        scope.launch {
-                            inAppThemeVM.configuration.sync()
-                            context.showToast(context.getString(R.string.updated_theme))
-                        }
-                        value = false
-                    }
-                )
-            }
-        }
 
     ModalNavigationDrawer(
         modifier = modifier,
@@ -147,11 +81,16 @@ fun NavigationDrawer(
                         state.closeDrawer()
                     }
                 },
-                onItemThemePressed = {
-                    // show dialog after delay for display of navigationDrawer close animation
-                    scope.launchDelayed(250L) {
-                        showThemeSelectionDialog = true
-                    }
+                themeSelection = {
+                    ThemeSelection(
+                        selectedTheme = inAppThemeVM.inAppTheme.collectAsState(Theme.SystemDefault).value,
+                        onThemeSelected = { inAppThemeVM.saveInAppTheme(it) },
+                        useDynamicTheme = inAppThemeVM.useDynamicTheme.collectAsState(false).value,
+                        onToggleDynamicTheme = { inAppThemeVM.saveUseDynamicTheme(it) },
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .width(220.dp)
+                    )
                 }
             )
         },
@@ -161,27 +100,63 @@ fun NavigationDrawer(
     }
 }
 
+@Composable
+private fun ThemeSelection(
+    useDynamicTheme: Boolean,
+    onToggleDynamicTheme: (Boolean) -> Unit,
+    selectedTheme: Theme,
+    onThemeSelected: (Theme) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                JostText(
+                    text = stringResource(R.string.use_dynamic_theme),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Switch(
+                    checked = useDynamicTheme,
+                    onCheckedChange = {
+                        onToggleDynamicTheme(
+                            it
+                        )
+                    }
+                )
+            }
+        }
+        ThemeSelectionRow(
+            selected = selectedTheme,
+            onSelected = onThemeSelected,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        )
+    }
+}
+
 @Preview
 @Composable
 fun ContentPrev() {
     AppTheme {
-        Content(closeDrawer = { /*TODO*/ }, onItemThemePressed = {})
+        Content(closeDrawer = { /*TODO*/ }, themeSelection = {})
     }
 }
 
 @Composable
-private fun Content(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
+private fun Content(closeDrawer: () -> Unit, themeSelection: @Composable () -> Unit) {
     val context = LocalContext.current
+
     val elements = remember {
         listOf(
-            NavigationDrawerElement.SubHeader(R.string.appearance),
-            NavigationDrawerElement.Item(
-                iconRes = R.drawable.ic_nightlight_24,
-                labelRes = R.string.theme,
-                onClick = {
-                    onItemThemePressed()
-                }
-            ),
+            NavigationDrawerElement.SubHeader(R.string.theme),
+            NavigationDrawerElement.Custom(themeSelection),
             NavigationDrawerElement.SubHeader(R.string.support),
             NavigationDrawerElement.Item(
                 iconRes = R.drawable.ic_share_24,
@@ -247,6 +222,7 @@ private fun Content(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
         Column(
             modifier = Modifier
                 .padding(bottom = 32.dp)
+                .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -264,6 +240,10 @@ private fun Content(closeDrawer: () -> Unit, onItemThemePressed: () -> Unit) {
 
                     is NavigationDrawerElement.SubHeader -> {
                         NavigationDrawerSubHeader(properties = it)
+                    }
+
+                    is NavigationDrawerElement.Custom -> {
+                        it.content()
                     }
                 }
             }
@@ -305,6 +285,10 @@ private sealed interface NavigationDrawerElement {
     data class SubHeader(
         @StringRes val titleRes: Int
     ) : NavigationDrawerElement
+
+    data class Custom(
+        val content: @Composable () -> Unit
+    ) : NavigationDrawerElement
 }
 
 
@@ -323,7 +307,7 @@ private fun NavigationDrawerItem(
                 item.onClick(context)
                 closeDrawer()
             }
-            .padding(horizontal = 24.dp, vertical = 14.dp),
+            .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

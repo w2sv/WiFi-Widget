@@ -18,9 +18,9 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.navigationdrawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.components.navigationdrawer.closeDrawer
-import com.w2sv.wifiwidget.ui.components.navigationdrawer.openDrawer
+import com.w2sv.wifiwidget.ui.components.NavigationDrawer
+import com.w2sv.wifiwidget.ui.components.closeDrawer
+import com.w2sv.wifiwidget.ui.components.openDrawer
 import com.w2sv.wifiwidget.ui.screens.home.components.PinWidgetButton
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRational
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRational
