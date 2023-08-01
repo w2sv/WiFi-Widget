@@ -30,7 +30,6 @@
     <string name="opacity_slider_cd">Set the widget background opacity.</string>
     <string name="theme_button_cd">Set the %s theme.</string>
     <string name="learn_more">Learn more</string>
-    <string name="updated_theme">Updated Theme</string>
     <string name="set_unset">Set/unset %s.</string>
     <string name="info_icon_cd">Open the %s info dialog.</string>
     <string name="color_picker_button_cd">Open the %s color picker dialog.</string>
@@ -39,7 +38,6 @@
     <string name="got_it">Got it</string>
     <string name="share_action_text">Check out WiFi Widget!\nhttps://play.google.com/store/apps/details?id=com.w2sv.wifiwidget</string>
     <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
-    <string name="appearance">Appearance</string>
     <string name="legal">Legal</string>
     <string name="about">About</string>
     <string name="support">Support</string>

@@ -12,7 +12,11 @@ import androidx.compose.ui.res.colorResource
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun AppTheme(useDynamicTheme: Boolean = false, darkTheme: Boolean = false, content: @Composable () -> Unit) {
+fun AppTheme(
+    useDynamicTheme: Boolean = false,
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit
+) {
     MaterialTheme(
         colorScheme = when {
             useDynamicTheme && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
@@ -28,6 +32,7 @@ fun AppTheme(useDynamicTheme: Boolean = false, darkTheme: Boolean = false, conte
 
                 onBackground = Color.White
             )
+
             else -> lightColorScheme(
                 primary = colorResource(id = R.color.dark_cyan),
                 onPrimary = Color.White,
