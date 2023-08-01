@@ -9,6 +9,8 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.FloatRange
+import androidx.annotation.IdRes
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
@@ -23,6 +25,7 @@ import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetColors
+import com.w2sv.widget.model.WidgetTheme
 import com.w2sv.widget.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
@@ -51,10 +54,15 @@ class WidgetLayoutPopulator @Inject constructor(
                     false -> WifiStatus.Disconnected
                 }
             }
-        }, appWidgetId = appWidgetId)
-        setColors(
-            colors = widgetAppearance.getBackgroundOpacityIntegratedColors(context)
+        },
+            appWidgetId = appWidgetId
         )
+        if (widgetAppearance.theme is WidgetTheme.ManualColorSetting) {
+            setColors(
+                colors = widgetAppearance.theme.getColors(context)
+            )
+        }
+        setAlpha(R.id.widget_layout, widgetAppearance.opacity)
         setLastUpdatedTV()
         setOnClickPendingIntents()
     }
@@ -176,4 +184,8 @@ class WidgetLayoutPopulator @Inject constructor(
         setColorFilter(R.id.settings_button, colors.other)
         setColorFilter(R.id.refresh_button, colors.other)
     }
+}
+
+private fun RemoteViews.setAlpha(@IdRes id: Int, @FloatRange(0.0, 1.0) alpha: Float) {
+    setFloat(id, "setAlpha", alpha)
 }

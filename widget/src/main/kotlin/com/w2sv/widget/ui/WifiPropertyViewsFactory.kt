@@ -13,6 +13,7 @@ import com.w2sv.data.wifiManager
 import com.w2sv.widget.R
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetColors
+import com.w2sv.widget.model.WidgetTheme
 import com.w2sv.widget.model.WifiPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -29,7 +30,7 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onCreate() {}
 
     private lateinit var propertyViewData: List<WifiPropertyView>
-    private lateinit var widgetColors: WidgetColors
+    private var widgetColors: WidgetColors? = null
 
     override fun onDataSetChanged() {
         propertyViewData = setWifiProperties
@@ -39,7 +40,9 @@ class WifiPropertyViewsFactory @Inject constructor(
                     it.getValue(wifiManager, connectivityManager)
                 )
             }
-        widgetColors = widgetAppearance.theme.getColors(context)
+        if (widgetAppearance.theme is WidgetTheme.ManualColorSetting) {
+            widgetColors = widgetAppearance.theme.getColors(context)
+        }
     }
 
     override fun getCount(): Int = propertyViewData.size
@@ -50,12 +53,12 @@ class WifiPropertyViewsFactory @Inject constructor(
                 setTextView(
                     viewId = R.id.property_label_tv,
                     text = propertyViewData[position].label,
-                    color = widgetColors.labels
+                    color = widgetColors?.labels
                 )
                 setTextView(
                     viewId = R.id.property_value_tv,
                     text = propertyViewData[position].value,
-                    color = widgetColors.other
+                    color = widgetColors?.other
                 )
             }
 
@@ -71,7 +74,9 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDestroy() {}
 }
 
-private fun RemoteViews.setTextView(@IdRes viewId: Int, text: String, @ColorInt color: Int) {
+private fun RemoteViews.setTextView(@IdRes viewId: Int, text: String, @ColorInt color: Int?) {
     setTextViewText(viewId, text)
-    setTextColor(viewId, color)
+    color?.let {
+        setTextColor(viewId, it)
+    }
 }

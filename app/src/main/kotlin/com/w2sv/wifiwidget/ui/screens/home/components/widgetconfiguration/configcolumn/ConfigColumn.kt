@@ -40,7 +40,7 @@ import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
@@ -60,7 +60,7 @@ private fun Prev() {
 @Composable
 fun ConfigColumn(
     modifier: Modifier = Modifier,
-    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel(),
+    widgetConfigurationVM: WidgetViewModel = viewModel(),
     homeScreenVM: HomeScreenViewModel = viewModel()
 ) {
     val scrollState = rememberScrollState()

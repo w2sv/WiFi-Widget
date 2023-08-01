@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WidgetConfigurationViewModel @Inject constructor(private val repository: WidgetRepository) :
+class WidgetViewModel @Inject constructor(private val repository: WidgetRepository) :
     ViewModel() {
 
     // ==========
@@ -54,7 +54,7 @@ class WidgetConfigurationViewModel @Inject constructor(private val repository: W
             appliedFlowMap = repository.refreshingParametersMap,
             makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
             syncState = {
-                repository.saveRefreshingParameters(it)
+                repository.saveMap(it)
                 refreshingParametersChanged.emit(Unit)
             }
         )
@@ -73,7 +73,7 @@ class WidgetConfigurationViewModel @Inject constructor(private val repository: W
             coroutineScope = viewModelScope,
             appliedFlowMap = repository.customColorsMap,
             makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
-            syncState = { repository.saveCustomColors(it) }
+            syncState = { repository.saveMap(it) }
         )
 
     val opacity = UnconfirmedStateFlow(
@@ -86,6 +86,7 @@ class WidgetConfigurationViewModel @Inject constructor(private val repository: W
         unconfirmedStates = listOf(
             setWifiProperties,
             theme,
+            customColorsMap,
             opacity,
             refreshingParametersMap
         ),

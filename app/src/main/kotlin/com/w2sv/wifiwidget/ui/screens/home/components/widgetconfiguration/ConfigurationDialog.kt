@@ -36,7 +36,7 @@ private fun WidgetConfigurationDialogPrev() {
 fun WidgetConfigurationDialog(
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
-    widgetConfigurationVM: WidgetConfigurationViewModel = viewModel()
+    widgetConfigurationVM: WidgetViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current

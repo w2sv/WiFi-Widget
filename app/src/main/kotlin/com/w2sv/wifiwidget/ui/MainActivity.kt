@@ -26,7 +26,7 @@ import com.w2sv.data.model.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetViewModel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -37,7 +37,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
-    private val widgetConfigurationViewModel by viewModels<WidgetConfigurationViewModel>()
+    private val widgetViewModel by viewModels<WidgetViewModel>()
 
     @Inject
     lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
 
     private fun LifecycleCoroutineScope.subscribeToFlows() {
         launch {
-            widgetConfigurationViewModel.refreshingParametersChanged.collect {
+            widgetViewModel.refreshingParametersChanged.collect {
                 widgetDataRefreshWorkerManager
                     .applyChangedParameters()
             }
