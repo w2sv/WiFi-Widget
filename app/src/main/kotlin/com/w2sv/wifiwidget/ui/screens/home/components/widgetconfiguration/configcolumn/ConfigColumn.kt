@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.data.model.Theme
-import com.w2sv.data.model.WidgetColorSection
+import com.w2sv.data.model.WidgetColor
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
@@ -84,11 +84,11 @@ fun ConfigColumn(
                 label = R.string.custom,
                 buttonColoring = ButtonColor.Gradient(
                     circularTrifoldStripeBrush(
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Background)
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Background)
                             .toColor(),
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Labels)
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Primary)
                             .toColor(),
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Other)
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Secondary)
                             .toColor()
                     )
                 )

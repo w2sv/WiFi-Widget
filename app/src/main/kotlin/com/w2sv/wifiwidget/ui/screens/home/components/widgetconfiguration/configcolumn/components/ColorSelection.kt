@@ -27,7 +27,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.data.model.WidgetColorSection
+import com.w2sv.data.model.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
@@ -35,33 +35,33 @@ import com.w2sv.wifiwidget.ui.utils.toColor
 
 @Stable
 private data class WidgetColorSectionData(
-    val section: WidgetColorSection,
+    val widgetColor: WidgetColor,
     val color: Color,
     val label: String
 )
 
 @Composable
 internal fun ColorSelection(
-    widgetColors: MutableMap<WidgetColorSection, Int>,
+    widgetColors: MutableMap<WidgetColor, Int>,
     modifier: Modifier = Modifier
 ) {
     val sectionData by remember {
         derivedStateOf {
             listOf(
                 WidgetColorSectionData(
-                    WidgetColorSection.Background,
-                    widgetColors.getValue(WidgetColorSection.Background).toColor(),
+                    WidgetColor.Background,
+                    widgetColors.getValue(WidgetColor.Background).toColor(),
                     "Background"
                 ),
                 WidgetColorSectionData(
-                    WidgetColorSection.Labels,
-                    widgetColors.getValue(WidgetColorSection.Labels).toColor(),
-                    "Labels"
+                    WidgetColor.Primary,
+                    widgetColors.getValue(WidgetColor.Primary).toColor(),
+                    "Primary"
                 ),
                 WidgetColorSectionData(
-                    WidgetColorSection.Other,
-                    widgetColors.getValue(WidgetColorSection.Other).toColor(),
-                    "Other"
+                    WidgetColor.Secondary,
+                    widgetColors.getValue(WidgetColor.Secondary).toColor(),
+                    "Secondary"
                 )
             )
         }
@@ -76,7 +76,7 @@ internal fun ColorSelection(
                     label = it.label,
                     appliedColor = it.color,
                     applyColor = { color ->
-                        widgetColors[it.section] = color.toArgb()
+                        widgetColors[it.widgetColor] = color.toArgb()
                     },
                     onDismissRequest = {
                         value = null

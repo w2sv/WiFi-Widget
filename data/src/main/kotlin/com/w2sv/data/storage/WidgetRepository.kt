@@ -8,7 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
 import com.w2sv.data.model.Theme
-import com.w2sv.data.model.WidgetColorSection
+import com.w2sv.data.model.WidgetColor
 import com.w2sv.data.model.WidgetRefreshingParameter
 import com.w2sv.data.model.WifiProperty
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ class WidgetRepository @Inject constructor(
         save(Key.WIDGET_THEME, theme)
     }
 
-    val customColorsMap = getFlowMap(WidgetColorSection.values().toList())
+    val customColorsMap = getFlowMap(WidgetColor.values().toList())
 
     val opacity: Flow<Float> = getFlow(Key.OPACITY, 1.0f)
 
