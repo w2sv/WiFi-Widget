@@ -12,7 +12,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.common.extensions.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
@@ -71,10 +70,7 @@ fun LocationAccessPermissionRequest(
 
                     false -> {
                         permissionState.launchMultiplePermissionRequest()
-                        homeScreenVM.saveToDataStore(
-                            PreferencesRepository.Key.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE,
-                            true
-                        )
+                        homeScreenVM.onLocationAccessPermissionRequested()
                     }
                 }
             }

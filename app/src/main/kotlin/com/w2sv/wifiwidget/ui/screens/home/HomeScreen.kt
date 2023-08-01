@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar
@@ -47,13 +46,15 @@ internal fun HomeScreen(
     NavigationDrawer(
         state = drawerState
     ) {
-        Scaffold(topBar = {
-            AppTopBar {
-                scope.launch {
-                    drawerState.openDrawer()
+        Scaffold(
+            topBar = {
+                AppTopBar {
+                    scope.launch {
+                        drawerState.openDrawer()
+                    }
                 }
             }
-        }) { paddingValues ->
+        ) { paddingValues ->
             Column(
                 Modifier
                     .padding(paddingValues)
@@ -91,12 +92,7 @@ internal fun HomeScreen(
         homeScreenVM.lapRationalTrigger.collectAsState().value?.let { trigger ->
             LocationAccessPermissionRational(
                 onProceed = {
-                    homeScreenVM.saveToDataStore(
-                        PreferencesRepository.Key.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN,
-                        true
-                    )
-                    homeScreenVM.lapRationalTrigger.reset()
-                    homeScreenVM.lapRequestTrigger.value = trigger
+                    homeScreenVM.onLocationAccessPermissionRationalShown(trigger)
                 }
             )
         }

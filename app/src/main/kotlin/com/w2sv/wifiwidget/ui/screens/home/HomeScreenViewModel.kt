@@ -4,14 +4,14 @@ import android.Manifest
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
+import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
-import com.w2sv.androidutils.ui.resources.getLong
 import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.PreferencesRepository
@@ -31,11 +31,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    preferencesRepository: PreferencesRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val widgetRepository: WidgetRepository,
     @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle
-) : PreferencesDataStoreRepository.ViewModel<PreferencesRepository>(preferencesRepository) {
+) : ViewModel() {
 
     fun onSplashScreenAnimationFinished() {
         if (savedStateHandle.contains(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
@@ -44,6 +44,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
+
+    val inAppTheme by preferencesRepository::inAppTheme
 
     // ========================
     // Widget Pin Listening
@@ -91,13 +93,27 @@ class HomeScreenViewModel @Inject constructor(
         MutableStateFlow(null)
 
     val lapRationalShown: Boolean
-        get() = repository.locationAccessPermissionRationalShown.getValueSynchronously()
+        get() = preferencesRepository.locationAccessPermissionRationalShown.getValueSynchronously()
+
+    fun onLocationAccessPermissionRationalShown(trigger: LocationAccessPermissionRequestTrigger) {
+        viewModelScope.launch {
+            preferencesRepository.saveLocationAccessPermissionRationalShown(true)
+        }
+        lapRationalTrigger.reset()
+        lapRequestTrigger.value = trigger
+    }
 
     val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean
-        get() = repository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
+        get() = preferencesRepository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
+
+    fun onLocationAccessPermissionRequested() {
+        viewModelScope.launch {
+            preferencesRepository.saveLocationAccessPermissionRequestedAtLeastOnce(true)
+        }
+    }
 
     val showBackgroundLocationAccessRational = MutableStateFlow(false)
 
@@ -122,6 +138,6 @@ class HomeScreenViewModel @Inject constructor(
 
     private val backPressHandler = BackPressHandler(
         viewModelScope,
-        context.resources.getLong(R.integer.backpress_confirmation_window)
+        2500L
     )
 }

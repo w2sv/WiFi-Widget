@@ -16,8 +16,16 @@ class PreferencesRepository @Inject constructor(
     val locationAccessPermissionRationalShown: Flow<Boolean> =
         getFlow(Key.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN, false)
 
+    suspend fun saveLocationAccessPermissionRationalShown(value: Boolean) {
+        save(Key.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN, value)
+    }
+
     val locationAccessPermissionRequestedAtLeastOnce: Flow<Boolean> =
         getFlow(Key.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE, false)
+
+    suspend fun saveLocationAccessPermissionRequestedAtLeastOnce(value: Boolean) {
+        save(Key.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE, value)
+    }
 
     val inAppTheme: Flow<Theme> = getEnumFlow(Key.IN_APP_THEME, Theme.DeviceDefault)
 
@@ -25,7 +33,7 @@ class PreferencesRepository @Inject constructor(
         save(Key.IN_APP_THEME, theme)
     }
 
-    object Key {
+    private object Key {
         val LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN =
             booleanPreferencesKey("locationPermissionDialogAnswered")
         val LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE =
