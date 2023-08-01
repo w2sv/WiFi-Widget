@@ -27,7 +27,7 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
                         customColors
                     )
                 },
-                opacity = opacity,
+                backgroundOpacity = opacity,
                 displayLastRefreshDateTime = displayLastRefreshDateTime
             )
         }

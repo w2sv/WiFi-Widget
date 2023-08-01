@@ -53,6 +53,7 @@ import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.ui.UnconfirmedStateFlow
+import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
 import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
@@ -64,13 +65,30 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NavigationDrawerViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
+class InAppThemeViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
     ViewModel() {
+
+    val inAppTheme by preferencesRepository::inAppTheme
+    val useDynamicTheme by preferencesRepository::useDynamicTheme
+
+    val unconfirmedUseDynamicTheme = UnconfirmedStateFlow(
+        coroutineScope = viewModelScope,
+        appliedFlow = preferencesRepository.useDynamicTheme,
+        syncState = { preferencesRepository.saveUseDynamicTheme(it) }
+    )
 
     val unconfirmedInAppTheme = UnconfirmedStateFlow(
         coroutineScope = viewModelScope,
         appliedFlow = preferencesRepository.inAppTheme,
         syncState = { preferencesRepository.saveInAppTheme(it) }
+    )
+
+    val configuration = UnconfirmedStatesComposition(
+        listOf(
+            unconfirmedUseDynamicTheme,
+            unconfirmedInAppTheme
+        ),
+        coroutineScope = viewModelScope
     )
 }
 
@@ -86,7 +104,7 @@ suspend fun DrawerState.openDrawer() {
 fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
-    navigationDrawerVM: NavigationDrawerViewModel = viewModel(),
+    inAppThemeVM: InAppThemeViewModel = viewModel(),
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -100,16 +118,18 @@ fun NavigationDrawer(
                 ThemeSelectionDialog(
                     onDismissRequest = {
                         scope.launch {
-                            navigationDrawerVM.unconfirmedInAppTheme.reset()
+                            inAppThemeVM.unconfirmedInAppTheme.reset()
                         }
                         value = false
                     },
-                    selectedTheme = navigationDrawerVM.unconfirmedInAppTheme.collectAsState().value,
-                    onThemeSelected = { navigationDrawerVM.unconfirmedInAppTheme.value = it },
-                    applyButtonEnabled = navigationDrawerVM.unconfirmedInAppTheme.statesDissimilar.collectAsState().value,
+                    selectedTheme = inAppThemeVM.unconfirmedInAppTheme.collectAsState().value,
+                    onThemeSelected = { inAppThemeVM.unconfirmedInAppTheme.value = it },
+                    useDynamicTheme = inAppThemeVM.unconfirmedUseDynamicTheme.collectAsState().value,
+                    onToggleDynamicTheme = { inAppThemeVM.unconfirmedUseDynamicTheme.value = it },
+                    applyButtonEnabled = inAppThemeVM.configuration.statesDissimilar.collectAsState().value,
                     onApplyButtonClick = {
                         scope.launch {
-                            navigationDrawerVM.unconfirmedInAppTheme.sync()
+                            inAppThemeVM.configuration.sync()
                             context.showToast(context.getString(R.string.updated_theme))
                         }
                         value = false

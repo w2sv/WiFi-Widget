@@ -1,12 +1,18 @@
 package com.w2sv.wifiwidget.ui.components.navigationdrawer
 
+import android.os.Build
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,6 +31,8 @@ private fun Prev() {
     AppTheme {
         ThemeSelectionDialog(
             onDismissRequest = { /*TODO*/ },
+            useDynamicTheme = true,
+            onToggleDynamicTheme = {},
             selectedTheme = Theme.DeviceDefault,
             onThemeSelected = {},
             applyButtonEnabled = true,
@@ -36,6 +44,8 @@ private fun Prev() {
 @Composable
 fun ThemeSelectionDialog(
     onDismissRequest: () -> Unit,
+    useDynamicTheme: Boolean,
+    onToggleDynamicTheme: (Boolean) -> Unit,
     selectedTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
     applyButtonEnabled: Boolean,
@@ -63,13 +73,32 @@ fun ThemeSelectionDialog(
             }
         },
         text = {
-            ThemeSelectionRow(
-                selected = selectedTheme,
-                onSelected = onThemeSelected,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        JostText(text = "Use dynamic theme", color = MaterialTheme.colorScheme.onSurface)
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Switch(
+                            checked = useDynamicTheme,
+                            onCheckedChange = {
+                                onToggleDynamicTheme(
+                                    it
+                                )
+                            }
+                        )
+                    }
+                }
+                ThemeSelectionRow(
+                    selected = selectedTheme,
+                    onSelected = onThemeSelected,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
         }
     )
 }

@@ -2,17 +2,22 @@ package com.w2sv.wifiwidget.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun AppTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
+fun AppTheme(useDynamicTheme: Boolean = false, darkTheme: Boolean = false, content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = if (darkTheme)
-            darkColorScheme(
+        colorScheme = when {
+            useDynamicTheme && darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+            useDynamicTheme && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
+            !useDynamicTheme && darkTheme -> darkColorScheme(
                 primary = colorResource(id = R.color.dark_cyan),
                 onPrimary = Color.White,
 
@@ -22,8 +27,8 @@ fun AppTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
                 onSurfaceVariant = colorResource(id = R.color.light_gray),
 
                 onBackground = Color.White
-            ) else
-            lightColorScheme(
+            )
+            else -> lightColorScheme(
                 primary = colorResource(id = R.color.dark_cyan),
                 onPrimary = Color.White,
 
@@ -34,6 +39,7 @@ fun AppTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
 
                 onBackground = Color.Black
             )
+        }
     ) {
         content()
     }

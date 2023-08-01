@@ -45,8 +45,6 @@ class HomeScreenViewModel @Inject constructor(
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
 
-    val inAppTheme by preferencesRepository::inAppTheme
-
     // ========================
     // Widget Pin Listening
     // ========================

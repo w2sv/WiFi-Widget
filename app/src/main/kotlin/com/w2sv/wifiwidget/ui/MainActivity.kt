@@ -24,6 +24,7 @@ import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
 import com.w2sv.data.model.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
+import com.w2sv.wifiwidget.ui.components.navigationdrawer.InAppThemeViewModel
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetViewModel
@@ -36,8 +37,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val homeScreenViewModel by viewModels<HomeScreenViewModel>()
-    private val widgetViewModel by viewModels<WidgetViewModel>()
+    private val homeScreenVM by viewModels<HomeScreenViewModel>()
+    private val widgetVM by viewModels<WidgetViewModel>()
+    private val inAppThemeVM by viewModels<InAppThemeViewModel>()
 
     @Inject
     lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
@@ -53,7 +55,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         handleSplashScreen {
-            homeScreenViewModel.onSplashScreenAnimationFinished()
+            homeScreenVM.onSplashScreenAnimationFinished()
         }
 
         super.onCreate(savedInstanceState)
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
                 intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
                     ?.let { widgetId ->
-                        homeScreenViewModel.onWidgetOptionsUpdated(
+                        homeScreenVM.onWidgetOptionsUpdated(
                             widgetId,
                             this@MainActivity
                         )
@@ -76,9 +78,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme(
-                darkTheme = when (homeScreenViewModel.inAppTheme.collectAsState(
-                    initial = Theme.DeviceDefault
-                ).value) {
+                useDynamicTheme = inAppThemeVM.useDynamicTheme.collectAsState(initial = false).value,
+                darkTheme = when (inAppThemeVM.inAppTheme.collectAsState(initial = Theme.DeviceDefault).value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.DeviceDefault -> isSystemInDarkTheme()
@@ -115,13 +116,13 @@ class MainActivity : ComponentActivity() {
 
     private fun LifecycleCoroutineScope.subscribeToFlows() {
         launch {
-            widgetViewModel.refreshingParametersChanged.collect {
+            widgetVM.refreshingParametersChanged.collect {
                 widgetDataRefreshWorkerManager
                     .applyChangedParameters()
             }
         }
         launch {
-            homeScreenViewModel.exitApplication.collect {
+            homeScreenVM.exitApplication.collect {
                 finishAffinity()
             }
         }

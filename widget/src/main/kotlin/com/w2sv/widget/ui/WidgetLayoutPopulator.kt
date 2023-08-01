@@ -15,10 +15,6 @@ import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.common.constants.Extra
-import com.w2sv.data.connectivityManager
-import com.w2sv.data.isWifiConnected
-import com.w2sv.data.linkProperties
-import com.w2sv.data.wifiManager
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
@@ -27,7 +23,6 @@ import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
-import slimber.log.i
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,24 +35,11 @@ class WidgetLayoutPopulator @Inject constructor(
 ) {
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews {
-        widget.setContentLayout(wifiStatus = when (context.wifiManager.isWifiEnabled) {
-            false -> WifiStatus.Disabled
-            true -> {
-                when (context.connectivityManager.isWifiConnected) {
-                    true, null -> WifiStatus.Connected.also {
-                        @Suppress("DEPRECATION") (i {
-                            "wifiManager.connectionInfo: ${context.wifiManager.connectionInfo}\n" + "wifiManager.dhcpInfo: ${context.wifiManager.dhcpInfo}\n" + "connectivityManager.linkProperties: ${context.connectivityManager.linkProperties}"
-                        })
-                    }
-
-                    false -> WifiStatus.Disconnected
-                }
-            }
-        },
+        widget.setContentLayout(
+            wifiStatus = WifiStatus.get(context),
             appWidgetId = appWidgetId
         )
         widget.setColors(widgetAppearance.theme.getColors(context))
-        widget.setAlpha(R.id.widget_layout, widgetAppearance.opacity)
         widget.setLastUpdatedTV()
         widget.setOnClickPendingIntents()
 
