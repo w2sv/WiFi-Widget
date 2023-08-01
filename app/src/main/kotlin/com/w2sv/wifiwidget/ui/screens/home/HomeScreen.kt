@@ -24,7 +24,6 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.closeDrawer
 import com.w2sv.wifiwidget.ui.components.openDrawer
-import com.w2sv.wifiwidget.ui.screens.home.components.PinWidgetButton
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRational
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRational
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
@@ -151,6 +150,21 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
+    }
+}
+
+@Composable
+fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+    ElevatedButton(
+        onClick = onClick,
+        modifier = modifier.defaultMinSize(160.dp, 60.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
+    ) {
+        JostText(
+            text = stringResource(R.string.pin_widget),
+            fontSize = 16.sp
+        )
     }
 }
 
