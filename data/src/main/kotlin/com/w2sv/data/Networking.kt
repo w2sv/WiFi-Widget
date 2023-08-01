@@ -1,4 +1,4 @@
-package com.w2sv.common
+package com.w2sv.data
 
 import android.content.Context
 import android.net.ConnectivityManager

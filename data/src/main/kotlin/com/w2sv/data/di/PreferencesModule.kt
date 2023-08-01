@@ -1,4 +1,4 @@
-package com.w2sv.common.di
+package com.w2sv.data.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore

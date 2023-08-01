@@ -8,7 +8,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.w2sv.common.data.model.WidgetRefreshing
+import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject

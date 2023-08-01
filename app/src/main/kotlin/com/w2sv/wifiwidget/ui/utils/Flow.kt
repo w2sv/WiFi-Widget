@@ -1,4 +1,4 @@
-package com.w2sv.common.extensions
+package com.w2sv.wifiwidget.ui.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State

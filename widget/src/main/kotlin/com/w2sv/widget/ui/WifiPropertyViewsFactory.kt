@@ -7,13 +7,13 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
-import com.w2sv.common.connectivityManager
-import com.w2sv.common.data.model.WidgetAppearance
-import com.w2sv.common.data.model.WidgetColors
-import com.w2sv.common.data.model.WifiProperty
-import com.w2sv.common.wifiManager
+import com.w2sv.data.connectivityManager
+import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.wifiManager
 import com.w2sv.widget.R
-import com.w2sv.widget.ui.model.WifiPropertyView
+import com.w2sv.widget.model.WidgetAppearance
+import com.w2sv.widget.model.WidgetColors
+import com.w2sv.widget.model.WifiPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

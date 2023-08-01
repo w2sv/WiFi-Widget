@@ -1,32 +1,8 @@
-package com.w2sv.common.data.model
+package com.w2sv.widget.model
 
 import android.content.Context
-import androidx.annotation.ColorInt
-import androidx.annotation.FloatRange
-import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.ColorUtils
-import com.w2sv.common.R
 import com.w2sv.common.extensions.isNightModeActiveCompat
-import com.w2sv.common.extensions.toRGBChannelInt
-
-data class WidgetAppearance(
-    val theme: WidgetTheme,
-    @FloatRange(0.0, 1.0) val opacity: Float,
-    val displayLastRefreshDateTime: Boolean
-) {
-    fun getBackgroundOpacityIntegratedColors(context: Context): WidgetColors {
-        val rawColors = theme.getColors(context)
-
-        return WidgetColors(
-            background = ColorUtils.setAlphaComponent(
-                rawColors.background,
-                opacity.toRGBChannelInt()
-            ),
-            labels = rawColors.labels,
-            other = rawColors.other
-        )
-    }
-}
+import com.w2sv.widget.R
 
 sealed interface WidgetTheme {
     fun getColors(context: Context): WidgetColors
@@ -66,29 +42,4 @@ sealed interface WidgetTheme {
     data class Custom(val colors: WidgetColors) : WidgetTheme {
         override fun getColors(context: Context): WidgetColors = colors
     }
-}
-
-enum class WidgetColorSection {
-    Background,
-    Labels,
-    Other
-}
-
-data class WidgetColors(
-    @ColorInt val background: Int,
-    @ColorInt val labels: Int,
-    @ColorInt val other: Int
-) {
-    data class Composed(
-        val background: Color,
-        val labels: Color,
-        val other: Color
-    )
-
-    fun toComposed(): Composed =
-        Composed(
-            Color(background),
-            Color(labels),
-            Color(other)
-        )
 }

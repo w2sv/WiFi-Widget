@@ -23,7 +23,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.data.model.WidgetRefreshingParameter
+import com.w2sv.data.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText

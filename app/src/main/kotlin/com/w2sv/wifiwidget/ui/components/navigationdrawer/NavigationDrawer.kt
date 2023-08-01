@@ -50,10 +50,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.generic.appPlayStoreUrl
+import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.ui.UnconfirmedStateFlow
-import com.w2sv.common.data.storage.PreferencesRepository
-import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
+import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText

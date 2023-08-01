@@ -33,7 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.data.model.Theme
+import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.toEasing

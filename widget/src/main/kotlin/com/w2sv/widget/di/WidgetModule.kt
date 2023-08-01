@@ -3,10 +3,12 @@ package com.w2sv.widget.di
 import android.content.Context
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.common.data.model.WidgetAppearance
-import com.w2sv.common.data.model.WidgetRefreshing
-import com.w2sv.common.data.model.WifiProperty
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.widget.data.appearance
+import com.w2sv.widget.data.refreshing
+import com.w2sv.widget.model.WidgetAppearance
+import com.w2sv.widget.model.WidgetRefreshing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,14 +24,14 @@ object WidgetModule {
         WorkManager.getInstance(context)
 
     @Provides
-    fun widgetRefreshing(widgetConfigurationRepository: WidgetConfigurationRepository): WidgetRefreshing =
-        widgetConfigurationRepository.refreshing.getValueSynchronously()
+    fun widgetRefreshing(widgetRepository: WidgetRepository): WidgetRefreshing =
+        widgetRepository.refreshing.getValueSynchronously()
 
     @Provides
-    fun widgetAppearance(widgetConfigurationRepository: WidgetConfigurationRepository): WidgetAppearance =
-        widgetConfigurationRepository.appearance.getValueSynchronously()
+    fun widgetAppearance(widgetRepository: WidgetRepository): WidgetAppearance =
+        widgetRepository.appearance.getValueSynchronously()
 
     @Provides
-    fun setWifiProperties(widgetConfigurationRepository: WidgetConfigurationRepository): Set<WifiProperty> =
-        widgetConfigurationRepository.getSetWifiProperties()
+    fun setWifiProperties(widgetRepository: WidgetRepository): Set<WifiProperty> =
+        widgetRepository.getSetWifiProperties()
 }

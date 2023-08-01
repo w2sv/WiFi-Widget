@@ -30,9 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.common.data.model.Theme
-import com.w2sv.common.data.model.WidgetColorSection
-import com.w2sv.common.data.model.WifiProperty
+import com.w2sv.data.model.Theme
+import com.w2sv.data.model.WidgetColorSection
+import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText

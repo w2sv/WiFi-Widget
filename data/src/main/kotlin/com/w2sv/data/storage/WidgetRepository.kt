@@ -1,4 +1,4 @@
-package com.w2sv.common.data.storage
+package com.w2sv.data.storage
 
 import androidx.annotation.FloatRange
 import androidx.datastore.core.DataStore
@@ -9,19 +9,14 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
-import com.w2sv.common.data.model.Theme
-import com.w2sv.common.data.model.WidgetAppearance
-import com.w2sv.common.data.model.WidgetColorSection
-import com.w2sv.common.data.model.WidgetColors
-import com.w2sv.common.data.model.WidgetRefreshing
-import com.w2sv.common.data.model.WidgetRefreshingParameter
-import com.w2sv.common.data.model.WidgetTheme
-import com.w2sv.common.data.model.WifiProperty
+import com.w2sv.data.model.Theme
+import com.w2sv.data.model.WidgetColorSection
+import com.w2sv.data.model.WidgetRefreshingParameter
+import com.w2sv.data.model.WifiProperty
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class WidgetConfigurationRepository @Inject constructor(
+class WidgetRepository @Inject constructor(
     dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore) {
 
@@ -29,15 +24,6 @@ class WidgetConfigurationRepository @Inject constructor(
         WidgetColorSection.Background to getFlow(Key.LABELS, -9430904),  // Purplish
         WidgetColorSection.Labels to getFlow(Key.LABELS, -65536),  // Red
         WidgetColorSection.Other to getFlow(Key.OTHER, -1),  // White
-    )
-
-    val customColors: Flow<WidgetColors> = combine(
-        customColorsMap.getValue(WidgetColorSection.Background),
-        customColorsMap.getValue(WidgetColorSection.Labels),
-        customColorsMap.getValue(WidgetColorSection.Other),
-        transform = { background, labels, other ->
-            WidgetColors(background, labels, other)
-        }
     )
 
     suspend fun saveCustomColors(colorMap: Map<WidgetColorSection, Int>) {
@@ -76,17 +62,6 @@ class WidgetConfigurationRepository @Inject constructor(
             ),
         )
 
-    val refreshing: Flow<WidgetRefreshing> = combine(
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.RefreshPeriodically),
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.RefreshOnLowBattery),
-        transform = { refreshPeriodically, refreshOnLowBattery ->
-            WidgetRefreshing(
-                refreshPeriodically = refreshPeriodically,
-                refreshOnLowBattery = refreshOnLowBattery
-            )
-        }
-    )
-
     suspend fun saveRefreshingParameters(parameters: Map<WidgetRefreshingParameter, Boolean>) {
         dataStore.edit {
             it[Key.REFRESH_PERIODICALLY] =
@@ -97,27 +72,6 @@ class WidgetConfigurationRepository @Inject constructor(
                 parameters.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime)
         }
     }
-
-    val appearance: Flow<WidgetAppearance> = combine(
-        theme,
-        customColors,
-        opacity,
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
-        transform = { theme, customColors, opacity, displayLastRefreshDateTime ->
-            WidgetAppearance(
-                theme = when (theme) {
-                    Theme.Light -> WidgetTheme.Light
-                    Theme.DeviceDefault -> WidgetTheme.DeviceDefault
-                    Theme.Dark -> WidgetTheme.Dark
-                    Theme.Custom -> WidgetTheme.Custom(
-                        customColors
-                    )
-                },
-                opacity = opacity,
-                displayLastRefreshDateTime = displayLastRefreshDateTime
-            )
-        }
-    )
 
     val wifiProperties = getFlowMap(WifiProperty.values().toList())
 

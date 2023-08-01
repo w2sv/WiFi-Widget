@@ -1,4 +1,4 @@
-package com.w2sv.common.data.model
+package com.w2sv.data.model
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
@@ -7,13 +7,14 @@ import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
-import com.w2sv.common.AddressType
-import com.w2sv.common.R
-import com.w2sv.common.addressType
-import com.w2sv.common.findLinkAddress
-import com.w2sv.common.frequencyToChannel
-import com.w2sv.common.getPublicIPv6Addresses
-import com.w2sv.common.textualAddressRepresentation
+import com.w2sv.data.AddressType
+import com.w2sv.data.R
+import com.w2sv.data.addressType
+import com.w2sv.data.findLinkAddress
+import com.w2sv.data.frequencyToChannel
+import com.w2sv.data.getPublicIPv6Addresses
+import com.w2sv.data.textualAddressRepresentation
+import com.w2sv.data.toNetmask
 
 @Suppress("DEPRECATION")
 enum class WifiProperty(
@@ -57,7 +58,7 @@ enum class WifiProperty(
             connectivityManager
                 .findLinkAddress { it.addressType == AddressType.IPv4 }
                 ?.prefixLength
-                ?.let { com.w2sv.common.toNetmask(it) }
+                ?.let { toNetmask(it) }
                 ?: IPV4_FALLBACK_ADDRESS
         }
     ),

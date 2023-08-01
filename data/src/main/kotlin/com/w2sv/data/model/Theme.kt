@@ -1,4 +1,4 @@
-package com.w2sv.common.data.model
+package com.w2sv.data.model
 
 enum class Theme {
     Light,

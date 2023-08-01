@@ -12,8 +12,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.common.data.storage.PreferencesRepository
-import com.w2sv.common.extensions.launchingSuppressed
+import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.common.extensions.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
 import kotlinx.coroutines.launch
@@ -60,7 +60,7 @@ fun LocationAccessPermissionRequest(
             }
 
             false -> {
-                when (permissionState.launchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
+                when (permissionState.isLaunchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
                     true -> {
                         context.showToast(
                             context.getString(R.string.go_to_app_settings_and_grant_location_access_permission),

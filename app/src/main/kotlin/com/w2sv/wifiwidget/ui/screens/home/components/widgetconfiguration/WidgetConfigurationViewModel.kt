@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.ui.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
-import com.w2sv.common.data.model.Theme
-import com.w2sv.common.data.model.WifiProperty
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
-import com.w2sv.common.extensions.getSynchronousMutableStateMap
+import com.w2sv.data.model.Theme
+import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.wifiwidget.ui.utils.getSynchronousMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WidgetConfigurationViewModel @Inject constructor(private val repository: WidgetConfigurationRepository) :
+class WidgetConfigurationViewModel @Inject constructor(private val repository: WidgetRepository) :
     ViewModel() {
 
     // ==========

@@ -1,8 +1,6 @@
 plugins {
     alias libs.plugins.library
     alias libs.plugins.kotlin
-    alias libs.plugins.hilt
-    id 'kotlin-kapt'
 }
 
 apply from: '../modulebase.gradle'
@@ -14,14 +12,9 @@ android {
 dependencies {
     implementation libs.androidx.core
     implementation libs.androidx.appcompat
-    implementation libs.androidx.compose.viewmodel
     implementation libs.accompanist.permissions
-    api libs.androidx.datastore.preferences
 
     implementation libs.kotlinutils
     implementation libs.androidutils
     implementation libs.slimber
-
-    implementation libs.google.hilt
-    kapt libs.google.hilt.kapt
 }

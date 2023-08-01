@@ -13,9 +13,9 @@ import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.resources.getLong
 import com.w2sv.common.constants.Extra
-import com.w2sv.common.data.model.WifiProperty
-import com.w2sv.common.data.storage.PreferencesRepository
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
@@ -32,7 +32,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
-    private val widgetConfigurationRepository: WidgetConfigurationRepository,
+    private val widgetRepository: WidgetRepository,
     @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : PreferencesDataStoreRepository.ViewModel<PreferencesRepository>(preferencesRepository) {
@@ -60,7 +60,7 @@ class HomeScreenViewModel @Inject constructor(
         context.showToast(R.string.pinned_widget)
 
         viewModelScope.launch {
-            if (widgetConfigurationRepository.wifiProperties.getValue(WifiProperty.SSID).first())
+            if (widgetRepository.wifiProperties.getValue(WifiProperty.SSID).first())
                 when {
                     !context.isLocationEnabled -> context.showToast(
                         R.string.on_pin_widget_wo_gps_enabled,
