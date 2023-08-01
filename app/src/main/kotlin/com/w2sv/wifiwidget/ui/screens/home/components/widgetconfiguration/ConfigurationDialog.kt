@@ -22,6 +22,7 @@ import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
 
 @Preview

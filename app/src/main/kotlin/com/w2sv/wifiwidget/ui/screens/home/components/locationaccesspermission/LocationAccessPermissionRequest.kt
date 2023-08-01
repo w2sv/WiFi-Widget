@@ -14,7 +14,7 @@ import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.common.extensions.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
 import slimber.log.i
 

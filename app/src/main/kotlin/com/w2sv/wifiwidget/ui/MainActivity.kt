@@ -24,10 +24,10 @@ import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
 import com.w2sv.data.model.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
-import com.w2sv.wifiwidget.ui.components.InAppThemeViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.InAppThemeViewModel
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
-import com.w2sv.wifiwidget.ui.screens.home.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

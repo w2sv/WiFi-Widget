@@ -53,6 +53,7 @@ import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.viewmodels.InAppThemeViewModel
 import kotlinx.coroutines.launch
 
 suspend fun DrawerState.closeDrawer() {

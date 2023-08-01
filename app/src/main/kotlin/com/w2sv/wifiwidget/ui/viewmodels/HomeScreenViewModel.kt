@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home
+package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.Manifest
 import android.content.Context

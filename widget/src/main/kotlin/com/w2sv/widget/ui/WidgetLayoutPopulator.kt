@@ -9,8 +9,6 @@ import android.net.Uri
 import android.provider.Settings
 import android.view.View
 import android.widget.RemoteViews
-import androidx.annotation.FloatRange
-import androidx.annotation.IdRes
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
@@ -162,8 +160,4 @@ class WidgetLayoutPopulator @Inject constructor(
         setColorFilter(R.id.settings_button, colors.primary)
         setColorFilter(R.id.refresh_button, colors.primary)
     }
-}
-
-private fun RemoteViews.setAlpha(@IdRes id: Int, @FloatRange(0.0, 1.0) alpha: Float) {
-    setFloat(id, "setAlpha", alpha)
 }
