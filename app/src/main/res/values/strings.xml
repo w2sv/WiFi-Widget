@@ -18,7 +18,7 @@
     <string name="on_pin_widget_wo_background_location_access_permission">Persistent SSID display requires continuous location access permission!</string>
     <string name="background_location_access_rational">In oder for your SSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
     <string name="light">Light</string>
-    <string name="device_default">Default</string>
+    <string name="system_default">System Default</string>
     <string name="custom">Custom</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
@@ -45,4 +45,5 @@
     <string name="support">Support</string>
     <string name="license">License</string>
     <string name="creator">Creator</string>
+    <string name="use_dynamic_theme">Use dynamic theme</string>
 </resources>

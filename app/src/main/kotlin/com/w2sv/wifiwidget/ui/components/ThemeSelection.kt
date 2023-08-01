@@ -40,14 +40,16 @@ import com.w2sv.wifiwidget.ui.utils.toEasing
 
 @Composable
 fun ThemeSelectionRow(
+    selected: Theme,
+    onSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier,
     customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
-    selected: Theme,
-    onSelected: (Theme) -> Unit
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    themeIndicatorModifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
         buildList {
@@ -60,8 +62,8 @@ fun ThemeSelectionRow(
             )
             add(
                 ThemeIndicatorProperties(
-                    theme = Theme.DeviceDefault,
-                    label = R.string.device_default,
+                    theme = Theme.SystemDefault,
+                    label = R.string.system_default,
                     buttonColoring = ButtonColor.Gradient(
                         Brush.linearGradient(
                             0.5f to Color.White,
@@ -85,9 +87,7 @@ fun ThemeSelectionRow(
                 ThemeIndicator(
                     properties = properties,
                     isSelected = { properties.theme == selected },
-                    modifier = Modifier.padding(
-                        horizontal = 12.dp
-                    )
+                    modifier = themeIndicatorModifier
                 ) {
                     onSelected(properties.theme)
                 }
@@ -116,7 +116,7 @@ private fun ThemeIndicator(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.SpaceEvenly,
+        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         JostText(

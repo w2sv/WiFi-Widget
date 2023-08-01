@@ -27,7 +27,7 @@ class PreferencesRepository @Inject constructor(
         save(Key.LOCATION_ACCESS_PERMISSION_REQUESTED_AT_LEAST_ONCE, value)
     }
 
-    val inAppTheme: Flow<Theme> = getEnumFlow(Key.IN_APP_THEME, Theme.DeviceDefault)
+    val inAppTheme: Flow<Theme> = getEnumFlow(Key.IN_APP_THEME, Theme.SystemDefault)
 
     val useDynamicTheme: Flow<Boolean> = getFlow(Key.USE_DYNAMIC_THEME, false)
 

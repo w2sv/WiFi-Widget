@@ -18,7 +18,7 @@ class WidgetRepository @Inject constructor(
     dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore) {
 
-    val theme: Flow<Theme> = getEnumFlow(Key.WIDGET_THEME, Theme.DeviceDefault)
+    val theme: Flow<Theme> = getEnumFlow(Key.WIDGET_THEME, Theme.SystemDefault)
 
     suspend fun saveTheme(theme: Theme) {
         save(Key.WIDGET_THEME, theme)

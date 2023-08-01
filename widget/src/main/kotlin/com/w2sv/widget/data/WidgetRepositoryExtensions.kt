@@ -21,7 +21,7 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
             WidgetAppearance(
                 theme = when (theme) {
                     Theme.Light -> WidgetTheme.Light
-                    Theme.DeviceDefault -> WidgetTheme.DeviceDefault
+                    Theme.SystemDefault -> WidgetTheme.DeviceDefault
                     Theme.Dark -> WidgetTheme.Dark
                     Theme.Custom -> WidgetTheme.Custom(
                         customColors

@@ -39,7 +39,7 @@ class WidgetLayoutPopulator @Inject constructor(
             wifiStatus = WifiStatus.get(context),
             appWidgetId = appWidgetId
         )
-        widget.setColors(widgetAppearance.theme.getColors(context))
+        widget.setColors(widgetAppearance.getBackgroundOpacityIntegratedColors(context))
         widget.setLastUpdatedTV()
         widget.setOnClickPendingIntents()
 

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -42,23 +40,21 @@ internal fun RefreshingParametersSelection(
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
-    val parameterViewData by remember {
-        derivedStateOf {
-            listOf(
-                RefreshingParameterViewData(
-                    label = "Refresh periodically",
-                    parameter = WidgetRefreshingParameter.RefreshPeriodically
-                ),
-                RefreshingParameterViewData(
-                    label = "Refresh on low battery",
-                    parameter = WidgetRefreshingParameter.RefreshOnLowBattery
-                ),
-                RefreshingParameterViewData(
-                    label = "Display last refresh date time",
-                    parameter = WidgetRefreshingParameter.DisplayLastRefreshDateTime
-                )
+    val parameterViewData = remember {
+        listOf(
+            RefreshingParameterViewData(
+                label = "Refresh periodically",
+                parameter = WidgetRefreshingParameter.RefreshPeriodically
+            ),
+            RefreshingParameterViewData(
+                label = "Refresh on low battery",
+                parameter = WidgetRefreshingParameter.RefreshOnLowBattery
+            ),
+            RefreshingParameterViewData(
+                label = "Display last refresh time",
+                parameter = WidgetRefreshingParameter.DisplayLastRefreshDateTime
             )
-        }
+        )
     }
 
     Column(modifier = modifier, horizontalAlignment = Alignment.Start) {

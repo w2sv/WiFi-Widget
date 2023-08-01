@@ -1,9 +1,9 @@
 package com.w2sv.wifiwidget.ui.components.navigationdrawer
 
 import android.os.Build
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -33,7 +33,7 @@ private fun Prev() {
             onDismissRequest = { /*TODO*/ },
             useDynamicTheme = true,
             onToggleDynamicTheme = {},
-            selectedTheme = Theme.DeviceDefault,
+            selectedTheme = Theme.SystemDefault,
             onThemeSelected = {},
             applyButtonEnabled = true,
             onApplyButtonClick = {}
@@ -73,14 +73,18 @@ fun ThemeSelectionDialog(
             }
         },
         text = {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth()
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth()
                     ) {
-                        JostText(text = "Use dynamic theme", color = MaterialTheme.colorScheme.onSurface)
-                        Spacer(modifier = Modifier.width(12.dp))
+                        JostText(
+                            text = stringResource(R.string.use_dynamic_theme),
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                         Switch(
                             checked = useDynamicTheme,
                             onCheckedChange = {
@@ -96,7 +100,8 @@ fun ThemeSelectionDialog(
                     onSelected = onThemeSelected,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 )
             }
         }
