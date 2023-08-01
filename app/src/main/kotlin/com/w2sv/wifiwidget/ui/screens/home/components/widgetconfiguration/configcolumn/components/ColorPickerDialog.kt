@@ -10,20 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.common.data.model.WidgetColor
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
 internal fun ColorPickerDialog(
-    widgetSection: WidgetColor,
+    label: String,
     appliedColor: Color,
     onDismissRequest: () -> Unit,
     applyColor: (Color) -> Unit,
@@ -36,7 +34,7 @@ internal fun ColorPickerDialog(
     }
 
     CustomDialog(
-        title = stringResource(id = widgetSection.labelRes),
+        title = label,
         onDismissRequest = onDismissRequest,
         modifier = modifier
     ) {
@@ -67,7 +65,7 @@ internal fun ColorPickerDialog(
 private fun Prev() {
     AppTheme {
         ColorPickerDialog(
-            widgetSection = WidgetColor.Background,
+            label = "Background",
             appliedColor = Color.Red,
             applyColor = {},
             onDismissRequest = {}

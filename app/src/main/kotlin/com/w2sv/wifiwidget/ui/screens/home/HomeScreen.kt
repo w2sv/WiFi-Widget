@@ -104,8 +104,8 @@ internal fun HomeScreen(
             when (trigger) {
                 LocationAccessPermissionRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
                     onGranted = {
-                        widgetConfigurationVM.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
-                        widgetConfigurationVM.nonAppliedWifiPropertyFlags.sync()
+                        widgetConfigurationVM.setWifiProperties[WifiProperty.SSID] = true
+                        widgetConfigurationVM.setWifiProperties.sync()
                         attemptWifiWidgetPin(context)
                     },
                     onDenied = {
@@ -115,7 +115,7 @@ internal fun HomeScreen(
 
                 LocationAccessPermissionRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
                     onGranted = {
-                        widgetConfigurationVM.nonAppliedWifiPropertyFlags[WifiProperty.SSID] = true
+                        widgetConfigurationVM.setWifiProperties[WifiProperty.SSID] = true
                     },
                     onDenied = {}
                 )

@@ -10,8 +10,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,27 +27,56 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.data.model.WidgetColor
+import com.w2sv.common.data.model.WidgetColorSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
 import com.w2sv.wifiwidget.ui.utils.toColor
 
+@Stable
+private data class WidgetColorSectionData(
+    val section: WidgetColorSection,
+    val color: Color,
+    val label: String
+)
+
 @Composable
 internal fun ColorSelection(
-    widgetColors: MutableMap<WidgetColor, Int>,
+    widgetColors: MutableMap<WidgetColorSection, Int>,
     modifier: Modifier = Modifier
 ) {
+    val sectionData by remember {
+        derivedStateOf {
+            listOf(
+                WidgetColorSectionData(
+                    WidgetColorSection.Background,
+                    widgetColors.getValue(WidgetColorSection.Background).toColor(),
+                    "Background"
+                ),
+                WidgetColorSectionData(
+                    WidgetColorSection.Labels,
+                    widgetColors.getValue(WidgetColorSection.Labels).toColor(),
+                    "Labels"
+                ),
+                WidgetColorSectionData(
+                    WidgetColorSection.Other,
+                    widgetColors.getValue(WidgetColorSection.Other).toColor(),
+                    "Other"
+                )
+            )
+        }
+    }
+
     var showDialogFor by rememberSaveable {
-        mutableStateOf<WidgetColor?>(null)
+        mutableStateOf<WidgetColorSectionData?>(null)
     }
         .apply {
             value?.let {
                 ColorPickerDialog(
-                    widgetSection = it,
-                    appliedColor = widgetColors.getValue(it).toColor(),
+                    label = it.label,
+                    appliedColor = it.color,
                     applyColor = { color ->
-                        widgetColors[it] = color.toArgb()
+                        widgetColors[it.section] = color.toArgb()
                     },
                     onDismissRequest = {
                         value = null
@@ -57,10 +89,9 @@ internal fun ColorSelection(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        WidgetColor.values().forEach {
+        sectionData.forEach {
             SectionCustomizationRow(
-                widgetColor = it,
-                color = widgetColors.getValue(it).toColor(),
+                sectionData = it,
                 onClick = { showDialogFor = it },
                 modifier = Modifier.padding(vertical = 4.dp)
             )
@@ -70,20 +101,19 @@ internal fun ColorSelection(
 
 @Composable
 private fun SectionCustomizationRow(
-    widgetColor: WidgetColor,
-    color: Color,
+    sectionData: WidgetColorSectionData,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val label = stringResource(id = widgetColor.labelRes)
-    val colorPickerButtonCD = stringResource(id = R.string.color_picker_button_cd).format(label)
+    val colorPickerButtonCD =
+        stringResource(id = R.string.color_picker_button_cd).format(sectionData.label)
 
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         JostText(
-            text = bulletPointText(label),
+            text = bulletPointText(sectionData.label),
             fontSize = 12.sp,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(0.4f)
@@ -93,7 +123,7 @@ private fun SectionCustomizationRow(
                 .size(36.dp)
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = color
+                containerColor = sectionData.color
             ),
             onClick = onClick,
             shape = CircleShape,

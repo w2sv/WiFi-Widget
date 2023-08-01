@@ -45,11 +45,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
+import com.w2sv.androidutils.ui.UnconfirmedStateFlow
 import com.w2sv.common.data.storage.PreferencesRepository
 import com.w2sv.common.extensions.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.BuildConfig
@@ -62,15 +64,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NavigationDrawerViewModel @Inject constructor(preferencesRepository: PreferencesRepository) :
-    PreferencesDataStoreBackedUnconfirmedStatesViewModel<PreferencesRepository>(
-        preferencesRepository
-    ) {
+class NavigationDrawerViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
+    ViewModel() {
 
-    val unconfirmedInAppTheme = makeUnconfirmedEnumValuedStateFlow(
+    val unconfirmedInAppTheme = UnconfirmedStateFlow(
+        coroutineScope = viewModelScope,
         appliedFlow = preferencesRepository.inAppTheme,
-        preferencesKey = PreferencesRepository.Key.IN_APP_THEME,
-        onStateSynced = {}
+        syncState = { preferencesRepository.saveInAppTheme(it) }
     )
 }
 

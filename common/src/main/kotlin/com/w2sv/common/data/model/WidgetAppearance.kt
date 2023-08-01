@@ -3,6 +3,7 @@ package com.w2sv.common.data.model
 import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.annotation.FloatRange
+import androidx.compose.ui.graphics.Color
 import androidx.core.graphics.ColorUtils
 import com.w2sv.common.R
 import com.w2sv.common.extensions.isNightModeActiveCompat
@@ -67,8 +68,27 @@ sealed interface WidgetTheme {
     }
 }
 
+enum class WidgetColorSection {
+    Background,
+    Labels,
+    Other
+}
+
 data class WidgetColors(
     @ColorInt val background: Int,
     @ColorInt val labels: Int,
     @ColorInt val other: Int
-)
+) {
+    data class Composed(
+        val background: Color,
+        val labels: Color,
+        val other: Color
+    )
+
+    fun toComposed(): Composed =
+        Composed(
+            Color(background),
+            Color(labels),
+            Color(other)
+        )
+}

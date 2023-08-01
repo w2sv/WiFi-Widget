@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val setWifiProperties: Set<WifiProperty>,
+    private val setWifiProperties: Set<@JvmSuppressWildcards WifiProperty>,
     private val widgetAppearance: WidgetAppearance
 ) : RemoteViewsService.RemoteViewsFactory {
 

@@ -1,27 +1,33 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration
 
-import com.w2sv.androidutils.ui.PreferencesDataStoreBackedUnconfirmedStatesViewModel
-import com.w2sv.common.data.storage.WidgetConfigurationRepository
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.w2sv.androidutils.ui.UnconfirmedStateFlow
+import com.w2sv.androidutils.ui.UnconfirmedStateMap
+import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
 import com.w2sv.common.data.model.Theme
 import com.w2sv.common.data.model.WifiProperty
+import com.w2sv.common.data.storage.WidgetConfigurationRepository
 import com.w2sv.common.extensions.getSynchronousMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WidgetConfigurationViewModel @Inject constructor(
-    repository: WidgetConfigurationRepository,
-) : PreferencesDataStoreBackedUnconfirmedStatesViewModel<WidgetConfigurationRepository>(repository) {
+class WidgetConfigurationViewModel @Inject constructor(private val repository: WidgetConfigurationRepository) :
+    ViewModel() {
 
     // ==========
     // Dialog
     // ==========
 
     fun onDismissWidgetConfigurationDialog() {
-        nonAppliedWidgetConfiguration.launchReset()
+        viewModelScope.launch {
+            configuration.reset()
+        }
     }
 
     // ========================
@@ -31,70 +37,69 @@ class WidgetConfigurationViewModel @Inject constructor(
     val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
 
     // =========
-    // NonAppliedState
+    // Configuration
     // =========
 
-    val nonAppliedWidgetConfiguration by lazy {
-        makeUnconfirmedStatesComposition(
-            listOf(
-                nonAppliedWifiPropertyFlags,
-                nonAppliedWidgetTheme,
-                nonAppliedWidgetOpacity,
-                nonAppliedWidgetRefreshingParameterFlags,
-                nonAppliedWidgetColors
-            )
+    val setWifiProperties =
+        UnconfirmedStateMap(
+            coroutineScope = viewModelScope,
+            appliedFlowMap = repository.wifiProperties,
+            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
+            syncState = { repository.saveMap(it) }
         )
-    }
 
-    // =========
-    // NonAppliedSnapshotStateMap
-    // =========
-
-    val nonAppliedWifiPropertyFlags by lazy {
-        makeUnconfirmedStateMap(
-            repository.wifiProperties,
-            makeMutableMap = { it.getSynchronousMutableStateMap() }
-        )
-    }
-
-    val nonAppliedWidgetColors by lazy {
-        makeUnconfirmedStateMap(
-            repository.customColors,
-            makeMutableMap = { it.getSynchronousMutableStateMap() }
-        )
-    }
-
-    val nonAppliedWidgetRefreshingParameterFlags by lazy {
-        makeUnconfirmedStateMap(
-            repository.refreshingParameters,
-            makeMutableMap = { it.getSynchronousMutableStateMap() },
-            onStateSynced = {
-                widgetRefreshingParametersChanged.emit(Unit)
+    val refreshingParametersMap by lazy {
+        UnconfirmedStateMap(
+            coroutineScope = viewModelScope,
+            appliedFlowMap = repository.refreshingParametersMap,
+            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
+            syncState = {
+                repository.saveRefreshingParameters(it)
+                refreshingParametersChanged.emit(Unit)
             }
         )
     }
 
-    // =====================
-    // NonAppliedStateFlow
-    // =====================
-
-    val nonAppliedWidgetTheme = makeUnconfirmedEnumValuedStateFlow(
+    val theme = UnconfirmedStateFlow(
+        coroutineScope = viewModelScope,
         appliedFlow = repository.theme,
-        preferencesKey = WidgetConfigurationRepository.Key.WIDGET_THEME,
-        onStateSynced = {}
+        syncState = {
+            repository.saveTheme(it)
+        }
     )
 
-    val nonAppliedWidgetOpacity =
-        makeUnconfirmedStateFlow(repository.opacity, WidgetConfigurationRepository.Key.OPACITY)
+    val customColorsMap =
+        UnconfirmedStateMap(
+            coroutineScope = viewModelScope,
+            appliedFlowMap = repository.customColorsMap,
+            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
+            syncState = { repository.saveCustomColors(it) }
+        )
+
+    val opacity = UnconfirmedStateFlow(
+        coroutineScope = viewModelScope,
+        appliedFlow = repository.opacity,
+        syncState = { repository.saveOpacity(it) }
+    )
+
+    val configuration = UnconfirmedStatesComposition(
+        unconfirmedStates = listOf(
+            setWifiProperties,
+            theme,
+            opacity,
+            refreshingParametersMap
+        ),
+        coroutineScope = viewModelScope
+    )
 
     // ===========================
     // State change side effects
     // ===========================
 
-    val customThemeSelected = nonAppliedWidgetTheme
+    val customThemeSelected = theme
         .transform {
             emit(it == Theme.Custom)
         }
 
-    val widgetRefreshingParametersChanged = MutableSharedFlow<Unit>()
+    val refreshingParametersChanged = MutableSharedFlow<Unit>()
 }

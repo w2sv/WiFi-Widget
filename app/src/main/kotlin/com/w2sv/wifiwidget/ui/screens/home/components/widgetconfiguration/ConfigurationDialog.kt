@@ -70,13 +70,13 @@ fun WidgetConfigurationDialog(
             },
             onApply = {
                 scope.launch {
-                    widgetConfigurationVM.nonAppliedWidgetConfiguration.sync()
+                    widgetConfigurationVM.configuration.sync()
                     WidgetProvider.triggerDataRefresh(context)
                     context.showToast(com.w2sv.wifiwidget.R.string.updated_widget_configuration)
                     closeDialog()
                 }
             },
-            applyButtonEnabled = widgetConfigurationVM.nonAppliedWidgetConfiguration.statesDissimilar.collectAsState().value,
+            applyButtonEnabled = widgetConfigurationVM.configuration.statesDissimilar.collectAsState().value,
             modifier = Modifier.fillMaxWidth()
         )
     }

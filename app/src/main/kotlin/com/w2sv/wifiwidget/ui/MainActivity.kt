@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
 
     private fun LifecycleCoroutineScope.subscribeToFlows() {
         launch {
-            widgetConfigurationViewModel.widgetRefreshingParametersChanged.collect {
+            widgetConfigurationViewModel.refreshingParametersChanged.collect {
                 widgetDataRefreshWorkerManager
                     .applyChangedParameters()
             }

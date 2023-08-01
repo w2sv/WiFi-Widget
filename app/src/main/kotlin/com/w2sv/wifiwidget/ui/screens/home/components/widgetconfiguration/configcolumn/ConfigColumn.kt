@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.data.model.Theme
-import com.w2sv.common.data.model.WidgetColor
+import com.w2sv.common.data.model.WidgetColorSection
 import com.w2sv.common.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
@@ -82,23 +82,20 @@ fun ConfigColumn(
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
                 label = R.string.custom,
-                buttonColoring =
-                ButtonColor.Gradient(
+                buttonColoring = ButtonColor.Gradient(
                     circularTrifoldStripeBrush(
-                        Triple(
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Background)
-                                .toColor(),
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Labels)
-                                .toColor(),
-                            widgetConfigurationVM.nonAppliedWidgetColors.getValue(WidgetColor.Other)
-                                .toColor(),
-                        )
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Background)
+                            .toColor(),
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Labels)
+                            .toColor(),
+                        widgetConfigurationVM.customColorsMap.getValue(WidgetColorSection.Other)
+                            .toColor()
                     )
                 )
             ),
-            selected = widgetConfigurationVM.nonAppliedWidgetTheme.collectAsState().value,
+            selected = widgetConfigurationVM.theme.collectAsState().value,
             onSelected = {
-                widgetConfigurationVM.nonAppliedWidgetTheme.value = it
+                widgetConfigurationVM.theme.value = it
             }
         )
 
@@ -120,7 +117,7 @@ fun ConfigColumn(
                     )
         ) {
             ColorSelection(
-                widgetColors = widgetConfigurationVM.nonAppliedWidgetColors,
+                widgetColors = widgetConfigurationVM.customColorsMap,
                 modifier = Modifier
                     .padding(top = 18.dp)
             )
@@ -132,9 +129,9 @@ fun ConfigColumn(
             modifier = defaultSectionHeaderModifier
         )
         SliderWithLabel(
-            opacity = widgetConfigurationVM.nonAppliedWidgetOpacity.collectAsState().value,
+            opacity = widgetConfigurationVM.opacity.collectAsState().value,
             onOpacityChanged = {
-                widgetConfigurationVM.nonAppliedWidgetOpacity.value = it
+                widgetConfigurationVM.opacity.value = it
             },
             modifier = Modifier.padding(horizontal = 6.dp)
         )
@@ -146,7 +143,7 @@ fun ConfigColumn(
         )
         PropertySelection(
             propertyChecked = { property ->
-                widgetConfigurationVM.nonAppliedWifiPropertyFlags.getValue(property)
+                widgetConfigurationVM.setWifiProperties.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
@@ -158,7 +155,7 @@ fun ConfigColumn(
                             LocationAccessPermissionRequestTrigger.SSIDCheck
                     }
 
-                    false -> widgetConfigurationVM.nonAppliedWifiPropertyFlags[property] =
+                    false -> widgetConfigurationVM.setWifiProperties[property] =
                         value
                 }
             },
@@ -171,6 +168,7 @@ fun ConfigColumn(
             modifier = defaultSectionHeaderModifier
         )
         RefreshingParametersSelection(
+            widgetRefreshingMap = widgetConfigurationVM.refreshingParametersMap,
             scrollToContentColumnBottom = {
                 with(scrollState) {
                     animateScrollTo(maxValue)

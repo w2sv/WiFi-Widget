@@ -21,6 +21,10 @@ class PreferencesRepository @Inject constructor(
 
     val inAppTheme: Flow<Theme> = getEnumFlow(Key.IN_APP_THEME, Theme.DeviceDefault)
 
+    suspend fun saveInAppTheme(theme: Theme) {
+        save(Key.IN_APP_THEME, theme)
+    }
+
     object Key {
         val LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN =
             booleanPreferencesKey("locationPermissionDialogAnswered")
