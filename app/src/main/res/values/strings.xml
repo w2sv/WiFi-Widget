@@ -43,5 +43,6 @@
     <string name="support">Support</string>
     <string name="license">License</string>
     <string name="creator">Creator</string>
-    <string name="use_dynamic_theme">Use dynamic theme</string>
+    <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="appearance">Appearance</string>
 </resources>

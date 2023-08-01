@@ -32,17 +32,16 @@ class WidgetLayoutPopulator @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 
-    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews {
-        widget.setContentLayout(
-            wifiStatus = WifiStatus.get(context),
-            appWidgetId = appWidgetId
-        )
-        widget.setColors(widgetAppearance.getBackgroundOpacityIntegratedColors(context))
-        widget.setLastUpdatedTV()
-        widget.setOnClickPendingIntents()
-
-        return widget
-    }
+    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
+        widget.apply {
+            setContentLayout(
+                wifiStatus = WifiStatus.get(context),
+                appWidgetId = appWidgetId
+            )
+            setColors(widgetAppearance.getBackgroundOpacityIntegratedColors(context))
+            setLastUpdatedTV()
+            setOnClickPendingIntents()
+        }
 
     private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
         setLayout(wifiStatus.isConnected)
