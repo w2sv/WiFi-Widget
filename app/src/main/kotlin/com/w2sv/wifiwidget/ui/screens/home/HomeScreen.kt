@@ -3,12 +3,15 @@ package com.w2sv.wifiwidget.ui.screens.home
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,10 +30,9 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialogButton
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 
@@ -149,6 +151,21 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
+    }
+}
+
+@Composable
+fun WidgetConfigurationDialogButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Default.Settings,
+            contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
+            modifier = modifier,
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
 
