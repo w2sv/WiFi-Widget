@@ -118,7 +118,7 @@ class WidgetLayoutPopulator @Inject constructor(
     }
 
     private fun RemoteViews.setOnClickPendingIntents() {
-        // refresh_button
+        // Refresh_button
         setOnClickPendingIntent(
             R.id.refresh_button, PendingIntent.getBroadcast(
                 context,
@@ -128,9 +128,20 @@ class WidgetLayoutPopulator @Inject constructor(
             )
         )
 
-        // settings_button
+        // Wifi settings button
         setOnClickPendingIntent(
-            R.id.settings_button, PendingIntent.getActivity(
+            R.id.go_to_wifi_settings_button,
+            PendingIntent.getActivity(
+                context,
+                PendingIntentCode.GoToWifiSettings.ordinal,
+                Intent(Settings.ACTION_WIFI_SETTINGS),
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        )
+
+        // Widget settings_button
+        setOnClickPendingIntent(
+            R.id.go_to_widget_settings_button, PendingIntent.getActivity(
                 context,
                 PendingIntentCode.LaunchHomeActivity.ordinal,
                 Intent.makeRestartActivityTask(
@@ -156,7 +167,8 @@ class WidgetLayoutPopulator @Inject constructor(
         setTextColor(R.id.last_updated_tv, colors.secondary)
 
         // ImageButtons
-        setColorFilter(R.id.settings_button, colors.primary)
         setColorFilter(R.id.refresh_button, colors.primary)
+        setColorFilter(R.id.go_to_widget_settings_button, colors.primary)
+        setColorFilter(R.id.go_to_wifi_settings_button, colors.primary)
     }
 }

@@ -72,14 +72,25 @@
 
             android:layout_width="@dimen/size_widget_image_button_icon"
             android:layout_height="@dimen/size_widget_image_button_icon"
-            android:layout_marginHorizontal="8dp"
+            android:layout_marginEnd="8dp"
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/refresh_data"
             android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
-            android:id="@+id/settings_button"
+            android:id="@+id/go_to_wifi_settings_button"
+
+            android:layout_width="@dimen/size_widget_image_button_icon"
+            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_marginEnd="8dp"
+
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/go_to_wifi_settings"
+            android:src="@drawable/ic_wifi_settings_24" />
+
+        <ImageButton
+            android:id="@+id/go_to_widget_settings_button"
 
             android:layout_width="@dimen/size_widget_image_button_icon"
             android:layout_height="@dimen/size_widget_image_button_icon"

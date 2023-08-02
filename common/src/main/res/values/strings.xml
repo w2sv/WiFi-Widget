@@ -3,6 +3,7 @@
     <string name="widget_description">Monitor your WiFi connection details</string>
 
     <string name="configure_widget">Configure Widget</string>
+    <string name="go_to_wifi_settings">Go to Wifi settings</string>
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
