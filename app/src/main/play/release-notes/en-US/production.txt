@@ -1,1 +1,2 @@
-- Enabled dynamic colors in the app & on the widget
+- Added "Go to WiFi settings" widget button
+- Made widget buttons configurable
