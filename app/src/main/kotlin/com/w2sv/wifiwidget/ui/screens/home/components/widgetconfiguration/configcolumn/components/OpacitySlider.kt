@@ -14,7 +14,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import kotlin.math.roundToInt
 
 @Composable
-internal fun SliderWithLabel(
+internal fun OpacitySliderWithLabel(
     opacity: Float,
     onOpacityChanged: (Float) -> Unit,
     modifier: Modifier = Modifier

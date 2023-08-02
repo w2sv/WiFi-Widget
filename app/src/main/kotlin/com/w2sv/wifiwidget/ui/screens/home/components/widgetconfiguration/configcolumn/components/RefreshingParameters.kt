@@ -3,35 +3,18 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.confi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Checkbox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WidgetRefreshingParameter
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.bulletPointText
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterSelection
 import kotlinx.coroutines.launch
-
-@Stable
-private data class RefreshingParameterViewData(
-    val label: String,
-    val parameter: WidgetRefreshingParameter
-)
 
 @Composable
 internal fun RefreshingParametersSelection(
@@ -42,25 +25,25 @@ internal fun RefreshingParametersSelection(
     val scope = rememberCoroutineScope()
     val parameterViewData = remember {
         listOf(
-            RefreshingParameterViewData(
+            ParameterSelection(
                 label = "Refresh periodically",
-                parameter = WidgetRefreshingParameter.RefreshPeriodically
+                type = WidgetRefreshingParameter.RefreshPeriodically
             ),
-            RefreshingParameterViewData(
+            ParameterSelection(
                 label = "Refresh on low battery",
-                parameter = WidgetRefreshingParameter.RefreshOnLowBattery
+                type = WidgetRefreshingParameter.RefreshOnLowBattery
             ),
-            RefreshingParameterViewData(
+            ParameterSelection(
                 label = "Display last refresh time",
-                parameter = WidgetRefreshingParameter.DisplayLastRefreshDateTime
+                type = WidgetRefreshingParameter.DisplayLastRefreshDateTime
             )
         )
     }
 
-    Column(modifier = modifier, horizontalAlignment = Alignment.Start) {
-        RefreshingParameterView(
+    Column(modifier = modifier) {
+        ParameterCheckRow(
             data = parameterViewData[0],
-            widgetRefreshingMap = widgetRefreshingMap
+            typeToIsChecked = widgetRefreshingMap
         )
         AnimatedVisibility(
             visible = widgetRefreshingMap.getValue(
@@ -68,45 +51,16 @@ internal fun RefreshingParametersSelection(
             ),
             enter = fadeIn() + expandVertically(initialHeight = { 0.also { scope.launch { scrollToContentColumnBottom() } } })
         ) {
-            RefreshingParameterView(
+            ParameterCheckRow(
                 data = parameterViewData[1],
-                widgetRefreshingMap = widgetRefreshingMap,
+                typeToIsChecked = widgetRefreshingMap,
                 modifier = Modifier.padding(start = 12.dp),
                 fontSize = 14.sp
             )
         }
-        RefreshingParameterView(
+        ParameterCheckRow(
             data = parameterViewData[2],
-            widgetRefreshingMap = widgetRefreshingMap
-        )
-    }
-}
-
-@Composable
-private fun RefreshingParameterView(
-    data: RefreshingParameterViewData,
-    widgetRefreshingMap: MutableMap<WidgetRefreshingParameter, Boolean>,
-    modifier: Modifier = Modifier,
-    fontSize: TextUnit = TextUnit.Unspecified
-) {
-    val checkBoxCD = stringResource(id = R.string.set_unset).format(data.label)
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier)
-    ) {
-        JostText(text = bulletPointText(data.label), fontSize = fontSize)
-        Checkbox(
-            checked = widgetRefreshingMap.getValue(data.parameter),
-            onCheckedChange = {
-                widgetRefreshingMap[data.parameter] = it
-            },
-            modifier = Modifier.semantics {
-                contentDescription = checkBoxCD
-            }
+            typeToIsChecked = widgetRefreshingMap
         )
     }
 }

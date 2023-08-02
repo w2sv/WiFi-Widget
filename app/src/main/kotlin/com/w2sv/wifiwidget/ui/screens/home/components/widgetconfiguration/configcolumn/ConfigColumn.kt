@@ -45,7 +45,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.SliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
@@ -135,7 +135,7 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_opacity_24,
             modifier = defaultSectionHeaderModifier
         )
-        SliderWithLabel(
+        OpacitySliderWithLabel(
             opacity = widgetConfigurationVM.opacity.collectAsState().value,
             onOpacityChanged = {
                 widgetConfigurationVM.opacity.value = it
