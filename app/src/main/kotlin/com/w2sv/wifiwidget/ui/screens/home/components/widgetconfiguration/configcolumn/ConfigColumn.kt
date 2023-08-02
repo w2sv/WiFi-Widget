@@ -42,8 +42,8 @@ import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.SliderWithLabel
 import com.w2sv.wifiwidget.ui.theme.AppTheme

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

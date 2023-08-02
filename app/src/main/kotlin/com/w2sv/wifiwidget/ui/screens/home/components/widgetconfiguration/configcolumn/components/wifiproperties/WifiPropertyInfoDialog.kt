@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -20,7 +20,7 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 @Composable
 private fun Prev() {
     AppTheme {
-        PropertyInfoDialog(
+        WifiPropertyInfoDialog(
             WifiProperty.SSID,
             onDismissRequest = {}
         )
@@ -28,7 +28,7 @@ private fun Prev() {
 }
 
 @Composable
-internal fun PropertyInfoDialog(
+internal fun WifiPropertyInfoDialog(
     property: WifiProperty,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier

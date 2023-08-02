@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertyInfoDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -127,7 +127,7 @@ internal fun HomeScreen(
             )
 
             widgetConfigurationVM.infoDialogProperty.collectAsState().value?.let {
-                PropertyInfoDialog(
+                WifiPropertyInfoDialog(
                     property = it,
                     onDismissRequest = { widgetConfigurationVM.infoDialogProperty.reset() }
                 )
