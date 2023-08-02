@@ -2,13 +2,12 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.ui.UnconfirmedStateFlow
-import com.w2sv.androidutils.ui.UnconfirmedStateMap
-import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
 import com.w2sv.data.model.Theme
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.WidgetRepository
-import com.w2sv.wifiwidget.ui.utils.getSynchronousMutableStateMap
+import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateFlow
+import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
+import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStatesComposition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,19 +39,16 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     // Configuration
     // =========
 
-    val setWifiProperties =
-        UnconfirmedStateMap(
-            coroutineScope = viewModelScope,
+    val wifiProperties by lazy {
+        getUnconfirmedStateMap(
             appliedFlowMap = repository.wifiProperties,
-            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
             syncState = { repository.saveMap(it) }
         )
+    }
 
     val buttonMap by lazy {
-        UnconfirmedStateMap(
-            coroutineScope = viewModelScope,
+        getUnconfirmedStateMap(
             appliedFlowMap = repository.buttonMap,
-            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
             syncState = {
                 repository.saveMap(it)
             }
@@ -60,10 +56,8 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     }
 
     val refreshingParametersMap by lazy {
-        UnconfirmedStateMap(
-            coroutineScope = viewModelScope,
+        getUnconfirmedStateMap(
             appliedFlowMap = repository.refreshingParametersMap,
-            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
             syncState = {
                 repository.saveMap(it)
                 refreshingParametersChanged.emit(Unit)
@@ -71,8 +65,7 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
         )
     }
 
-    val theme = UnconfirmedStateFlow(
-        coroutineScope = viewModelScope,
+    val theme = getUnconfirmedStateFlow(
         appliedFlow = repository.theme,
         syncState = {
             repository.saveTheme(it)
@@ -80,29 +73,25 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     )
 
     val customColorsMap =
-        UnconfirmedStateMap(
-            coroutineScope = viewModelScope,
+        getUnconfirmedStateMap(
             appliedFlowMap = repository.customColorsMap,
-            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
             syncState = { repository.saveMap(it) }
         )
 
-    val opacity = UnconfirmedStateFlow(
-        coroutineScope = viewModelScope,
+    val opacity = getUnconfirmedStateFlow(
         appliedFlow = repository.opacity,
         syncState = { repository.saveOpacity(it) }
     )
 
-    val configuration = UnconfirmedStatesComposition(
+    val configuration = getUnconfirmedStatesComposition(
         unconfirmedStates = listOf(
-            setWifiProperties,
+            wifiProperties,
             theme,
             customColorsMap,
             opacity,
             buttonMap,
             refreshingParametersMap
-        ),
-        coroutineScope = viewModelScope
+        )
     )
 
     // ===========================

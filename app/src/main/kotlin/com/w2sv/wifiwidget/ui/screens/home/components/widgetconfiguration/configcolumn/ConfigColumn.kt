@@ -150,7 +150,7 @@ fun ConfigColumn(
         )
         PropertySelection(
             propertyChecked = { property ->
-                widgetConfigurationVM.setWifiProperties.getValue(property)
+                widgetConfigurationVM.wifiProperties.getValue(property)
             },
             onCheckedChange = { property, value ->
                 when (property == WifiProperty.SSID && value) {
@@ -162,7 +162,7 @@ fun ConfigColumn(
                             LocationAccessPermissionRequestTrigger.SSIDCheck
                     }
 
-                    false -> widgetConfigurationVM.setWifiProperties[property] =
+                    false -> widgetConfigurationVM.wifiProperties[property] =
                         value
                 }
             },
