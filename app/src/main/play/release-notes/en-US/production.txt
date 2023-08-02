@@ -1,1 +1,1 @@
-- Added BSSID to WiFi properties
+- Enabled dynamic colors in the app & on the widget
