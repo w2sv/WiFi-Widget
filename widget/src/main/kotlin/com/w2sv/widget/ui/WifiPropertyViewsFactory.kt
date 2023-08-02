@@ -5,8 +5,6 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import androidx.annotation.ColorInt
-import androidx.annotation.IdRes
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.data.connectivityManager
 import com.w2sv.data.storage.WidgetRepository
@@ -15,6 +13,7 @@ import com.w2sv.widget.R
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WifiPropertyView
+import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
 import javax.inject.Inject
@@ -54,12 +53,12 @@ class WifiPropertyViewsFactory @Inject constructor(
                 setTextView(
                     viewId = R.id.property_label_tv,
                     text = propertyViewData[position].label,
-                    color = widgetColors?.primary
+                    color = widgetColors.primary
                 )
                 setTextView(
                     viewId = R.id.property_value_tv,
                     text = propertyViewData[position].value,
-                    color = widgetColors?.secondary
+                    color = widgetColors.secondary
                 )
             }
 
@@ -73,11 +72,4 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun hasStableIds(): Boolean = true
 
     override fun onDestroy() {}
-}
-
-private fun RemoteViews.setTextView(@IdRes viewId: Int, text: String, @ColorInt color: Int?) {
-    setTextViewText(viewId, text)
-    color?.let {
-        setTextColor(viewId, it)
-    }
 }

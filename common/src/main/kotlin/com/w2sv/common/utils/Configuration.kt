@@ -1,4 +1,4 @@
-package com.w2sv.common.extensions
+package com.w2sv.common.utils
 
 import android.content.res.Configuration
 

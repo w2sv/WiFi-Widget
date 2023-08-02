@@ -45,4 +45,5 @@
     <string name="creator">Creator</string>
     <string name="use_dynamic_colors">Use dynamic colors</string>
     <string name="appearance">Appearance</string>
+    <string name="buttons">Buttons</string>
 </resources>

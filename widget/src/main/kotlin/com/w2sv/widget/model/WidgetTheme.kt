@@ -3,7 +3,7 @@ package com.w2sv.widget.model
 import android.annotation.SuppressLint
 import android.content.Context
 import com.google.android.material.color.DynamicColors
-import com.w2sv.common.extensions.isNightModeActiveCompat
+import com.w2sv.common.utils.isNightModeActiveCompat
 import com.w2sv.widget.R
 
 sealed interface WidgetTheme {

@@ -48,6 +48,17 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
             syncState = { repository.saveMap(it) }
         )
 
+    val buttonMap by lazy {
+        UnconfirmedStateMap(
+            coroutineScope = viewModelScope,
+            appliedFlowMap = repository.buttonMap,
+            makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
+            syncState = {
+                repository.saveMap(it)
+            }
+        )
+    }
+
     val refreshingParametersMap by lazy {
         UnconfirmedStateMap(
             coroutineScope = viewModelScope,
@@ -88,6 +99,7 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
             theme,
             customColorsMap,
             opacity,
+            buttonMap,
             refreshingParametersMap
         ),
         coroutineScope = viewModelScope

@@ -40,9 +40,8 @@ import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ColorSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.PropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
@@ -50,6 +49,8 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 
 @Preview
 @Composable
@@ -167,6 +168,13 @@ fun ConfigColumn(
             },
             onInfoButtonClick = { widgetConfigurationVM.infoDialogProperty.value = it }
         )
+
+        SectionHeader(
+            titleRes = R.string.buttons,
+            iconRes = R.drawable.ic_gamepad_24,
+            modifier = defaultSectionHeaderModifier
+        )
+        ButtonSelection(widgetConfigurationVM.buttonMap)
 
         SectionHeader(
             titleRes = R.string.refreshing,

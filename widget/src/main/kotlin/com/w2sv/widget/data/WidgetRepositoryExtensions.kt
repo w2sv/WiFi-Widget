@@ -1,10 +1,12 @@
 package com.w2sv.widget.data
 
 import com.w2sv.data.model.Theme
+import com.w2sv.data.model.WidgetButton
 import com.w2sv.data.model.WidgetColor
 import com.w2sv.data.model.WidgetRefreshingParameter
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
+import com.w2sv.widget.model.WidgetButtons
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetRefreshing
 import com.w2sv.widget.model.WidgetTheme
@@ -17,7 +19,8 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
         customColors,
         opacity,
         refreshingParametersMap.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
-        transform = { theme, customColors, opacity, displayLastRefreshDateTime ->
+        buttons,
+        transform = { theme, customColors, opacity, displayLastRefreshDateTime, buttons ->
             WidgetAppearance(
                 theme = when (theme) {
                     Theme.Light -> WidgetTheme.Light
@@ -28,8 +31,19 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
                     )
                 },
                 backgroundOpacity = opacity,
-                displayLastRefreshDateTime = displayLastRefreshDateTime
+                displayLastRefreshDateTime = displayLastRefreshDateTime,
+                buttons = buttons
             )
+        }
+    )
+
+val WidgetRepository.buttons: Flow<WidgetButtons>
+    get() = combine(
+        buttonMap.getValue(WidgetButton.Refresh),
+        buttonMap.getValue(WidgetButton.GoToWifiSettings),
+        buttonMap.getValue(WidgetButton.GoToWidgetSettings),
+        transform = { a, b, c ->
+            WidgetButtons(refresh = a, goToWifiSettings = b, goToWidgetSettings = c)
         }
     )
 

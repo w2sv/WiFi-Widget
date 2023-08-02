@@ -1,4 +1,4 @@
-package com.w2sv.common.extensions
+package com.w2sv.common.utils
 
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
