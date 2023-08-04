@@ -2,7 +2,6 @@ package com.w2sv.data.model
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -27,7 +26,8 @@ enum class WifiProperty(
     SSID(
         ViewData(
             R.string.ssid,
-            R.array.ssid
+            R.string.ssid_description,
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID"
         ),
         { wifiManager, _ ->
             wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
@@ -37,17 +37,19 @@ enum class WifiProperty(
     BSSID(
         ViewData(
             R.string.bssid,
-            R.array.bssid
+            R.string.bssid_description,
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID"
         ),
         { wifiManager, _ ->
             wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
         },
-        true
+        false
     ),
     IP(
         ViewData(
             R.string.ipv4,
-            R.array.ipv4
+            R.string.ipv4_description,
+            "https://en.wikipedia.org/wiki/IP_address"
         ),
         { _, connectivityManager ->
             connectivityManager
@@ -56,12 +58,12 @@ enum class WifiProperty(
                 ?.hostAddress
                 ?: IPV4_FALLBACK_ADDRESS
         },
-        true
     ),
     Netmask(
         ViewData(
             R.string.netmask,
-            R.array.netmask
+            R.string.netmask_description,
+            "https://en.wikipedia.org/wiki/Subnetwork"
         ),
         { _, connectivityManager ->
             connectivityManager
@@ -70,12 +72,12 @@ enum class WifiProperty(
                 ?.let { toNetmask(it) }
                 ?: IPV4_FALLBACK_ADDRESS
         },
-        true
     ),
     IPv6Local(
         ViewData(
             R.string.ipv6_local,
-            R.array.ipv6_local
+            R.string.ipv6_local_description,
+            "https://en.wikipedia.org/wiki/IP_address"
         ),
         { _, connectivityManager ->
             connectivityManager
@@ -84,12 +86,12 @@ enum class WifiProperty(
                 ?.hostAddress
                 ?: IPV6_FALLBACK_ADDRESS
         },
-        true
     ),
     IPv6Public1(
         ViewData(
             R.string.ipv6_public_1,
-            R.array.ipv6_public_1
+            R.string.ipv6_public_description,
+            "https://en.wikipedia.org/wiki/IP_address"
         ),
         { _, connectivityManager ->
             try {
@@ -102,12 +104,12 @@ enum class WifiProperty(
                 IPV6_FALLBACK_ADDRESS
             }
         },
-        true
     ),
     IPv6Public2(
         ViewData(
             R.string.ipv6_public_2,
-            R.array.ipv6_public_2
+            R.string.ipv6_public_description,
+            "https://en.wikipedia.org/wiki/IP_address"
         ),
         { _, connectivityManager ->
             try {
@@ -120,67 +122,70 @@ enum class WifiProperty(
                 IPV6_FALLBACK_ADDRESS
             }
         },
-        true
     ),
     Frequency(
         ViewData(
             R.string.frequency,
-            R.array.frequency
+            R.string.frequency,
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { wifiManager, _ -> "${wifiManager.connectionInfo.frequency} MHz" },
-        true
     ),
     Channel(
         ViewData(
             R.string.channel,
-            R.array.channel
+            R.string.channel_description,
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { wifiManager, _ -> frequencyToChannel(wifiManager.connectionInfo.frequency).toString() },
-        true
     ),
     LinkSpeed(
         ViewData(
             R.string.link_speed,
-            R.array.link_speed
+            R.string.link_speed_description,
+            null
         ),
         { wifiManager, _ -> "${wifiManager.connectionInfo.linkSpeed} Mbps" },
-        true
     ),
     Gateway(
         ViewData(
             R.string.gateway,
-            R.array.gateway
+            R.string.gateway_description,
+            "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway"
         ),
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.gateway)
                 ?: IPV4_FALLBACK_ADDRESS
         },
-        true
     ),
     DNS(
         ViewData(
             R.string.dns,
-            R.array.dns
+            R.string.dns_description,
+            "https://en.wikipedia.org/wiki/Domain_Name_System"
         ),
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.dns1)
                 ?: IPV4_FALLBACK_ADDRESS
         },
-        true
     ),
     DHCP(
         ViewData(
             R.string.dhcp,
-            R.array.dhcp
+            R.string.dhcp_description,
+            "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol"
         ),
         { wifiManager, _ ->
             textualAddressRepresentation(wifiManager.dhcpInfo.serverAddress)
                 ?: IPV4_FALLBACK_ADDRESS
         },
-        true
     );
 
-    data class ViewData(@StringRes val labelRes: Int, @ArrayRes val arrayRes: Int)
+    data class ViewData(
+        @StringRes val labelRes: Int,
+        @StringRes val descriptionRes: Int,
+        val learnMoreUrl: String?
+    )
 
     override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
 }

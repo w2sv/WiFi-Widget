@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,28 +33,23 @@ internal fun WifiPropertyInfoDialog(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val stringArray = stringArrayResource(id = property.viewData.arrayRes)
 
     InfoDialog(
         modifier = modifier,
         title = stringResource(id = property.viewData.labelRes),
-        text = stringArray[0],
-        learnMoreButton = when (stringArray[1].isNotEmpty()) {
-            true -> {
-                {
-                    DialogButton(
-                        onClick = {
-                            context.openUrlWithActivityNotFoundHandling(stringArray[1])
-                            onDismissRequest()
-                        },
-                        modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
-                    ) {
-                        JostText(text = stringResource(R.string.learn_more))
-                    }
+        text = stringResource(id = property.viewData.descriptionRes),
+        learnMoreButton = property.viewData.learnMoreUrl?.let {
+            {
+                DialogButton(
+                    onClick = {
+                        context.openUrlWithActivityNotFoundHandling(it)
+                        onDismissRequest()
+                    },
+                    modifier = Modifier.padding(top = 20.dp, bottom = 12.dp)
+                ) {
+                    JostText(text = stringResource(R.string.learn_more))
                 }
             }
-
-            false -> null
         },
         onDismissRequest = onDismissRequest
     )
