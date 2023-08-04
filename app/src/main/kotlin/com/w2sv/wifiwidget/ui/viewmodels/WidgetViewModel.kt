@@ -3,8 +3,8 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.data.model.Theme
+import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.WidgetRepository
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertyCheckRowData
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateFlow
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStatesComposition
@@ -33,7 +33,7 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     // Overlay dialogs
     // ========================
 
-    val infoDialogProperty: MutableStateFlow<WifiPropertyCheckRowData?> = MutableStateFlow(null)
+    val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
 
     // =========
     // Configuration

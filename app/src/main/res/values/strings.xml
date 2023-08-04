@@ -3,7 +3,7 @@
     <string name="pin_widget">Pin Widget</string>
     <string name="updated_widget_configuration">Updated Widget Configuration</string>
     <string name="pinned_widget">Pinned Widget</string>
-    <string name="lap_dialog_text">If you want your device\'s SSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
+    <string name="lap_dialog_text">If you want your device\'s SSID and/or BSSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="understood">Understood</string>
     <string name="close">Close</string>
@@ -13,10 +13,10 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="rate">Rate</string>
     <string name="share">Share</string>
-    <string name="on_pin_widget_wo_gps_enabled">SSID display requires GPS to be enabled!</string>
-    <string name="on_pin_widget_wo_location_access_permission">SSID display requires location access permission!</string>
-    <string name="on_pin_widget_wo_background_location_access_permission">Persistent SSID display requires continuous location access permission!</string>
-    <string name="background_location_access_rational">In oder for your SSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
+    <string name="on_pin_widget_wo_gps_enabled">(B)SSID display requires GPS to be enabled!</string>
+    <string name="on_pin_widget_wo_location_access_permission">(B)SSID display requires location access permission!</string>
+    <string name="on_pin_widget_wo_background_location_access_permission">Persistent (B)SSID display requires continuous location access permission!</string>
+    <string name="background_location_access_rational">In oder for your SSID and/or BSSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
     <string name="light">Light</string>
     <string name="system_default">System Default</string>
     <string name="custom">Custom</string>
@@ -35,7 +35,6 @@
     <string name="color_picker_button_cd">Open the %s color picker dialog.</string>
     <string name="you_re_not_signed_into_the_play_store">You\'re not signed into the Play Store</string>
     <string name="version">Version: %s</string>
-    <string name="got_it">Got it</string>
     <string name="share_action_text">Check out WiFi Widget!\nhttps://play.google.com/store/apps/details?id=com.w2sv.wifiwidget</string>
     <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
     <string name="legal">Legal</string>
@@ -52,4 +51,6 @@
     <string name="refresh">Refresh</string>
     <string name="go_to_wifi_settings">Go to WiFi Settings</string>
     <string name="go_to_widget_settings">Go to Widget Settings</string>
+    <string name="grant">Grant</string>
+    <string name="maybe_later">Maybe later</string>
 </resources>

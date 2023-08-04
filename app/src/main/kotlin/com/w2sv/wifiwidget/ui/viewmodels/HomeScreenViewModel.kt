@@ -7,7 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
@@ -18,7 +17,7 @@ import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -87,21 +86,21 @@ class HomeScreenViewModel @Inject constructor(
     // LAP := Location Access Permission
     // =============
 
-    val lapRationalTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
+    val lapRationalTrigger: MutableStateFlow<LAPRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRationalShown: Boolean
         get() = preferencesRepository.locationAccessPermissionRationalShown.getValueSynchronously()
 
-    fun onLocationAccessPermissionRationalShown(trigger: LocationAccessPermissionRequestTrigger) {
+    fun onLocationAccessPermissionRationalShown(trigger: LAPRequestTrigger) {
         viewModelScope.launch {
             preferencesRepository.saveLocationAccessPermissionRationalShown(true)
         }
-        lapRationalTrigger.reset()
+        lapRationalTrigger.value = null
         lapRequestTrigger.value = trigger
     }
 
-    val lapRequestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
+    val lapRequestTrigger: MutableStateFlow<LAPRequestTrigger?> =
         MutableStateFlow(null)
 
     val lapRequestLaunchedAtLeastOnce: Boolean

@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Checkbox
@@ -29,18 +28,21 @@ internal fun <T> ParameterCheckRow(
     data: ParameterCheckRowData<T>,
     typeToIsChecked: MutableMap<T, Boolean>,
     modifier: Modifier = Modifier,
-    fontSize: TextUnit = TextUnit.Unspecified
+    fontSize: TextUnit = TextUnit.Unspecified,
+    trailingIconButton: (@Composable () -> Unit)? = null
 ) {
     val checkBoxCD = stringResource(id = R.string.set_unset).format(data.labelRes)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .then(modifier)
     ) {
-        JostText(text = bulletPointText(stringResource(id = data.labelRes)), fontSize = fontSize)
+        JostText(
+            text = bulletPointText(stringResource(id = data.labelRes)),
+            fontSize = fontSize,
+            modifier = Modifier.weight(1.0f, true)
+        )
         Checkbox(
             checked = typeToIsChecked.getValue(data.type),
             onCheckedChange = {
@@ -52,5 +54,6 @@ internal fun <T> ParameterCheckRow(
                 contentDescription = checkBoxCD
             }
         )
+        trailingIconButton?.invoke()
     }
 }

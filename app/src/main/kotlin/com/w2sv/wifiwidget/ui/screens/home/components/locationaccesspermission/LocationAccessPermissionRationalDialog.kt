@@ -7,19 +7,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
-enum class LocationAccessPermissionRequestTrigger {
-    PinWidgetButtonPress,
-    SSIDCheck
+sealed interface LAPRequestTrigger {
+    object PinWidgetButtonPress: LAPRequestTrigger
+    class PropertyCheckChange(val property: WifiProperty): LAPRequestTrigger
 }
 
 @Composable
-fun LocationAccessPermissionRational(
+fun LocationAccessPermissionRationalDialog(
     onProceed: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -49,6 +50,6 @@ fun LocationAccessPermissionRational(
 @Composable
 private fun Prev() {
     AppTheme {
-        LocationAccessPermissionRational({})
+        LocationAccessPermissionRationalDialog({})
     }
 }

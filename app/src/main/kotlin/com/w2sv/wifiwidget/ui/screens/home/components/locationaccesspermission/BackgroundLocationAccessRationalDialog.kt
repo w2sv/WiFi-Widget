@@ -20,7 +20,7 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun BackgroundLocationAccessRational(onDismissRequest: () -> Unit) {
+fun BackgroundLocationAccessRationalDialog(onDismissRequest: () -> Unit) {
     val backgroundAccessPermissionState: PermissionState =
         rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
@@ -33,7 +33,12 @@ fun BackgroundLocationAccessRational(onDismissRequest: () -> Unit) {
         onDismissRequest = proceed,
         confirmButton = {
             DialogButton(onClick = proceed) {
-                Text(text = stringResource(id = R.string.got_it))
+                Text(text = stringResource(id = R.string.grant))
+            }
+        },
+        dismissButton = {
+            DialogButton(onClick = onDismissRequest) {
+                Text(text = stringResource(id = R.string.maybe_later))
             }
         },
         icon = {
@@ -50,6 +55,6 @@ fun BackgroundLocationAccessRational(onDismissRequest: () -> Unit) {
 @Composable
 private fun Prev() {
     AppTheme {
-        BackgroundLocationAccessRational {}
+        BackgroundLocationAccessRationalDialog {}
     }
 }

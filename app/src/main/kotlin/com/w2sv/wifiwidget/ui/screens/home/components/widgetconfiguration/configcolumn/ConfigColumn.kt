@@ -39,7 +39,7 @@ import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
@@ -149,18 +149,18 @@ fun ConfigColumn(
         )
         WifiPropertySelection(
             wifiPropertiesMap = widgetConfigurationVM.wifiProperties,
-            allowSSIDCheckChange = { newValue ->
+            allowLAPDependentPropertyCheckChange = { property, newValue ->
                 when (newValue) {
                     true -> {
                         when (homeScreenVM.lapRationalShown) {
                             false -> {
                                 homeScreenVM.lapRationalTrigger.value =
-                                    LocationAccessPermissionRequestTrigger.SSIDCheck
+                                    LAPRequestTrigger.PropertyCheckChange(property)
                             }
 
                             true -> {
                                 homeScreenVM.lapRequestTrigger.value =
-                                    LocationAccessPermissionRequestTrigger.SSIDCheck
+                                    LAPRequestTrigger.PropertyCheckChange(property)
                             }
                         }
                         false

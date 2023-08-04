@@ -37,7 +37,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         propertyViewData = widgetRepository.getSetWifiProperties()
             .map {
                 WifiPropertyView(
-                    context.getString(it.labelRes),
+                    context.getString(it.viewData.labelRes),
                     it.getValue(wifiManager, connectivityManager)
                 )
             }

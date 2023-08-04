@@ -24,10 +24,10 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.drawer.closeDrawer
 import com.w2sv.wifiwidget.ui.components.drawer.openDrawer
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRational
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRational
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertyInfoDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -70,7 +70,7 @@ internal fun HomeScreen(
                         onClick = {
                             when (homeScreenVM.lapRationalShown) {
                                 false -> homeScreenVM.lapRationalTrigger.value =
-                                    LocationAccessPermissionRequestTrigger.PinWidgetButtonPress
+                                    LAPRequestTrigger.PinWidgetButtonPress
 
                                 true -> attemptWifiWidgetPin(context)
                             }
@@ -92,7 +92,7 @@ internal fun HomeScreen(
             }
         }
         homeScreenVM.lapRationalTrigger.collectAsState().value?.let { trigger ->
-            LocationAccessPermissionRational(
+            LocationAccessPermissionRationalDialog(
                 onProceed = {
                     homeScreenVM.onLocationAccessPermissionRationalShown(trigger)
                 }
@@ -100,9 +100,10 @@ internal fun HomeScreen(
         }
         homeScreenVM.lapRequestTrigger.collectAsState().value?.let { trigger ->
             when (trigger) {
-                LocationAccessPermissionRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+                is LAPRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
                     onGranted = {
                         widgetConfigurationVM.wifiProperties[WifiProperty.SSID] = true
+                        widgetConfigurationVM.wifiProperties[WifiProperty.BSSID] = true
                         widgetConfigurationVM.wifiProperties.sync()
                         attemptWifiWidgetPin(context)
                     },
@@ -111,9 +112,9 @@ internal fun HomeScreen(
                     }
                 )
 
-                LocationAccessPermissionRequestTrigger.SSIDCheck -> LocationAccessPermissionRequest(
+                is LAPRequestTrigger.PropertyCheckChange -> LocationAccessPermissionRequest(
                     onGranted = {
-                        widgetConfigurationVM.wifiProperties[WifiProperty.SSID] = true
+                        widgetConfigurationVM.wifiProperties[trigger.property] = true
                     },
                     onDenied = {}
                 )
@@ -135,7 +136,7 @@ internal fun HomeScreen(
         }
         @SuppressLint("NewApi")
         if (homeScreenVM.showBackgroundLocationAccessRational.collectAsState().value) {
-            BackgroundLocationAccessRational(
+            BackgroundLocationAccessRationalDialog(
                 onDismissRequest = {
                     homeScreenVM.showBackgroundLocationAccessRational.value = false
                 }

@@ -1,135 +1,131 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
-import androidx.annotation.ArrayRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRowData
+import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Stable
 class WifiPropertyCheckRowData(
     type: WifiProperty,
-    @StringRes labelRes: Int,
-    @ArrayRes val arrayRes: Int,
     allowCheckChange: (Boolean) -> Boolean = { true }
-) : ParameterCheckRowData<WifiProperty>(type, labelRes, allowCheckChange)
+) : ParameterCheckRowData<WifiProperty>(type, type.viewData.labelRes, allowCheckChange)
 
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
-    allowSSIDCheckChange: (Boolean) -> Boolean,
-    onInfoButtonClick: (WifiPropertyCheckRowData) -> Unit,
+    allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
+    onInfoButtonClick: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         remember {
             listOf(
                 WifiPropertyCheckRowData(
-                    WifiProperty.SSID,
-                    com.w2sv.data.R.string.ssid,
-                    com.w2sv.data.R.array.ssid,
-                    allowSSIDCheckChange
+                    type = WifiProperty.SSID,
+                    allowCheckChange = {
+                        allowLAPDependentPropertyCheckChange(
+                            WifiProperty.SSID,
+                            it
+                        )
+                    }
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.BSSID,
-                    com.w2sv.data.R.string.bssid,
-                    com.w2sv.data.R.array.bssid
+                    type = WifiProperty.BSSID,
+                    allowCheckChange = {
+                        allowLAPDependentPropertyCheckChange(
+                            WifiProperty.BSSID,
+                            it
+                        )
+                    }
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IP,
-                    com.w2sv.data.R.string.ipv4,
-                    com.w2sv.data.R.array.ipv4
+                    WifiProperty.IP
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Netmask,
-                    com.w2sv.data.R.string.netmask,
-                    com.w2sv.data.R.array.netmask
+                    WifiProperty.Netmask
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Local,
-                    com.w2sv.data.R.string.ipv6_local,
-                    com.w2sv.data.R.array.ipv6_local
+                    WifiProperty.IPv6Local
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Public1,
-                    com.w2sv.data.R.string.ipv6_public_1,
-                    com.w2sv.data.R.array.ipv6_public_1
+                    WifiProperty.IPv6Public1
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Public2,
-                    com.w2sv.data.R.string.ipv6_public_2,
-                    com.w2sv.data.R.array.ipv6_public_2
+                    WifiProperty.IPv6Public2
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Frequency,
-                    com.w2sv.data.R.string.frequency,
-                    com.w2sv.data.R.array.frequency
+                    WifiProperty.Frequency
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Channel,
-                    com.w2sv.data.R.string.channel,
-                    com.w2sv.data.R.array.channel
+                    WifiProperty.Channel
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.LinkSpeed,
-                    com.w2sv.data.R.string.linkspeed,
-                    com.w2sv.data.R.array.linkspeed
+                    WifiProperty.LinkSpeed
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Gateway,
-                    com.w2sv.data.R.string.gateway,
-                    com.w2sv.data.R.array.gateway
+                    WifiProperty.Gateway
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.DNS,
-                    com.w2sv.data.R.string.dns,
-                    com.w2sv.data.R.array.dns
+                    WifiProperty.DNS
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.DHCP,
-                    com.w2sv.data.R.string.dhcp,
-                    com.w2sv.data.R.array.dhcp
+                    WifiProperty.DHCP
                 )
             )
         }
             .forEach {
                 WifiPropertyCheckRow(
                     data = it,
-                    typeToIsChecked = wifiPropertiesMap,
-                    onInfoButtonClick = onInfoButtonClick
+                    typeCheckedMap = wifiPropertiesMap,
+                    onInfoButtonClick = { onInfoButtonClick(it.type) }
                 )
             }
+    }
+}
+
+@Preview
+@Composable
+private fun WifiPropertyCheckRowPrev() {
+    AppTheme(useDynamicTheme = true) {
+        WifiPropertyCheckRow(
+            data = WifiPropertyCheckRowData(
+                WifiProperty.Netmask
+            ),
+            typeCheckedMap = mutableMapOf(),
+            onInfoButtonClick = {}
+        )
     }
 }
 
 @Composable
 private fun WifiPropertyCheckRow(
     data: WifiPropertyCheckRowData,
-    typeToIsChecked: MutableMap<WifiProperty, Boolean>,
-    onInfoButtonClick: (WifiPropertyCheckRowData) -> Unit
+    typeCheckedMap: MutableMap<WifiProperty, Boolean>,
+    onInfoButtonClick: () -> Unit
 ) {
     val label = stringResource(id = data.labelRes)
     val infoIconCD = stringResource(id = R.string.info_icon_cd).format(label)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        ParameterCheckRow(data = data, typeToIsChecked = typeToIsChecked)
-        InfoIconButton(
-            onClick = {
-                onInfoButtonClick(data)
-            },
-            contentDescription = infoIconCD
-        )
-    }
+    ParameterCheckRow(
+        data = data,
+        typeToIsChecked = typeCheckedMap,
+        trailingIconButton = {
+            InfoIconButton(
+                onClick = {
+                    onInfoButtonClick()
+                },
+                contentDescription = infoIconCD
+            )
+        }
+    )
 }
