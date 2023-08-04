@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -11,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import com.w2sv.wifiwidget.R
 
+@SuppressLint("NewApi")
 @Composable
 fun AppTheme(
     useDynamicTheme: Boolean = false,

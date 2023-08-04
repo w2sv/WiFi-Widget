@@ -1,2 +1,1 @@
-- Added "Go to WiFi settings" widget button
-- Made widget buttons configurable
+- Fix bssid-retrieval based crashes

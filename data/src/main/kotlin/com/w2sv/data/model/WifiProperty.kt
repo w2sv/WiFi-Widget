@@ -126,7 +126,7 @@ enum class WifiProperty(
     Frequency(
         ViewData(
             R.string.frequency,
-            R.string.frequency,
+            R.string.frequency_description,
             "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { wifiManager, _ -> "${wifiManager.connectionInfo.frequency} MHz" },
