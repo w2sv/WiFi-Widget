@@ -20,13 +20,27 @@ import com.w2sv.wifiwidget.ui.components.bulletPointText
 open class ParameterCheckRowData<T>(
     val type: T,
     @StringRes val labelRes: Int,
+    val isChecked: () -> Boolean,
+    val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true }
-)
+) {
+    constructor(
+        type: T,
+        @StringRes labelRes: Int,
+        isCheckedMap: MutableMap<T, Boolean>,
+        allowCheckChange: (Boolean) -> Boolean = { true }
+    ) : this(
+        type = type,
+        labelRes = labelRes,
+        isChecked = { isCheckedMap.getValue(type) },
+        onCheckedChange = { isCheckedMap[type] = it },
+        allowCheckChange = allowCheckChange
+    )
+}
 
 @Composable
 internal fun <T> ParameterCheckRow(
     data: ParameterCheckRowData<T>,
-    typeToIsChecked: MutableMap<T, Boolean>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     trailingIconButton: (@Composable () -> Unit)? = null
@@ -44,10 +58,10 @@ internal fun <T> ParameterCheckRow(
             modifier = Modifier.weight(1.0f, true)
         )
         Checkbox(
-            checked = typeToIsChecked.getValue(data.type),
+            checked = data.isChecked(),
             onCheckedChange = {
                 if (data.allowCheckChange(it)) {
-                    typeToIsChecked[data.type] = it
+                    data.onCheckedChange(it)
                 }
             },
             modifier = Modifier.semantics {

@@ -19,20 +19,23 @@ internal fun ButtonSelection(
             listOf(
                 ParameterCheckRowData(
                     WidgetButton.Refresh,
-                    R.string.refresh
+                    R.string.refresh,
+                    buttonMap
                 ),
                 ParameterCheckRowData(
                     WidgetButton.GoToWifiSettings,
-                    R.string.go_to_wifi_settings
+                    R.string.go_to_wifi_settings,
+                    buttonMap
                 ),
                 ParameterCheckRowData(
                     WidgetButton.GoToWidgetSettings,
-                    R.string.go_to_widget_settings
+                    R.string.go_to_widget_settings,
+                    buttonMap
                 )
             )
         }
             .forEach {
-                ParameterCheckRow(data = it, typeToIsChecked = buttonMap)
+                ParameterCheckRow(data = it)
             }
     }
 }

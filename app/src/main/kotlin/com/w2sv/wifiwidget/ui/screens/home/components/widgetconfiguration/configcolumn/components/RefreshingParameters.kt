@@ -28,23 +28,25 @@ internal fun RefreshingParametersSelection(
         listOf(
             ParameterCheckRowData(
                 type = WidgetRefreshingParameter.RefreshPeriodically,
-                labelRes = R.string.refresh_periodically
+                labelRes = R.string.refresh_periodically,
+                isCheckedMap = widgetRefreshingMap
             ),
             ParameterCheckRowData(
                 type = WidgetRefreshingParameter.RefreshOnLowBattery,
-                labelRes = R.string.refresh_on_low_battery
+                labelRes = R.string.refresh_on_low_battery,
+                isCheckedMap = widgetRefreshingMap
             ),
             ParameterCheckRowData(
                 type = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
-                labelRes = R.string.display_last_refresh_time
+                labelRes = R.string.display_last_refresh_time,
+                isCheckedMap = widgetRefreshingMap
             )
         )
     }
 
     Column(modifier = modifier) {
         ParameterCheckRow(
-            data = parameterViewData[0],
-            typeToIsChecked = widgetRefreshingMap
+            data = parameterViewData[0]
         )
         AnimatedVisibility(
             visible = widgetRefreshingMap.getValue(
@@ -54,14 +56,12 @@ internal fun RefreshingParametersSelection(
         ) {
             ParameterCheckRow(
                 data = parameterViewData[1],
-                typeToIsChecked = widgetRefreshingMap,
                 modifier = Modifier.padding(start = 12.dp),
                 fontSize = 14.sp
             )
         }
         ParameterCheckRow(
-            data = parameterViewData[2],
-            typeToIsChecked = widgetRefreshingMap
+            data = parameterViewData[2]
         )
     }
 }
