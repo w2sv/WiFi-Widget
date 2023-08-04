@@ -46,4 +46,10 @@
     <string name="use_dynamic_colors">Use dynamic colors</string>
     <string name="appearance">Appearance</string>
     <string name="buttons">Buttons</string>
+    <string name="refresh_periodically">Refresh periodically</string>
+    <string name="refresh_on_low_battery">Refresh on low battery</string>
+    <string name="display_last_refresh_time">Display last refresh time</string>
+    <string name="refresh">Refresh</string>
+    <string name="go_to_wifi_settings">Go to WiFi Settings</string>
+    <string name="go_to_widget_settings">Go to Widget Settings</string>
 </resources>

@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WidgetRefreshingParameter
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRowData
 import kotlinx.coroutines.launch
 
 @Composable
@@ -25,17 +26,17 @@ internal fun RefreshingParametersSelection(
     val scope = rememberCoroutineScope()
     val parameterViewData = remember {
         listOf(
-            ParameterSelection(
-                label = "Refresh periodically",
-                type = WidgetRefreshingParameter.RefreshPeriodically
+            ParameterCheckRowData(
+                type = WidgetRefreshingParameter.RefreshPeriodically,
+                labelRes = R.string.refresh_periodically
             ),
-            ParameterSelection(
-                label = "Refresh on low battery",
-                type = WidgetRefreshingParameter.RefreshOnLowBattery
+            ParameterCheckRowData(
+                type = WidgetRefreshingParameter.RefreshOnLowBattery,
+                labelRes = R.string.refresh_on_low_battery
             ),
-            ParameterSelection(
-                label = "Display last refresh time",
-                type = WidgetRefreshingParameter.DisplayLastRefreshDateTime
+            ParameterCheckRowData(
+                type = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
+                labelRes = R.string.display_last_refresh_time
             )
         )
     }

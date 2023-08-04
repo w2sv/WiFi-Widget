@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,19 +18,20 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
 
 @Stable
-internal data class ParameterSelection<T>(
-    val label: String,
-    val type: T
+open class ParameterCheckRowData<T>(
+    val type: T,
+    @StringRes val labelRes: Int,
+    val allowCheckChange: (Boolean) -> Boolean = { true }
 )
 
 @Composable
 internal fun <T> ParameterCheckRow(
-    data: ParameterSelection<T>,
+    data: ParameterCheckRowData<T>,
     typeToIsChecked: MutableMap<T, Boolean>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified
 ) {
-    val checkBoxCD = stringResource(id = R.string.set_unset).format(data.label)
+    val checkBoxCD = stringResource(id = R.string.set_unset).format(data.labelRes)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -38,11 +40,13 @@ internal fun <T> ParameterCheckRow(
             .fillMaxWidth()
             .then(modifier)
     ) {
-        JostText(text = bulletPointText(data.label), fontSize = fontSize)
+        JostText(text = bulletPointText(stringResource(id = data.labelRes)), fontSize = fontSize)
         Checkbox(
             checked = typeToIsChecked.getValue(data.type),
             onCheckedChange = {
-                typeToIsChecked[data.type] = it
+                if (data.allowCheckChange(it)) {
+                    typeToIsChecked[data.type] = it
+                }
             },
             modifier = Modifier.semantics {
                 contentDescription = checkBoxCD

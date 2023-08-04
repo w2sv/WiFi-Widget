@@ -21,7 +21,11 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 private fun Prev() {
     AppTheme {
         WifiPropertyInfoDialog(
-            WifiProperty.SSID,
+            data = WifiPropertyCheckRowData(
+                WifiProperty.SSID,
+                com.w2sv.data.R.string.ssid,
+                com.w2sv.data.R.array.ssid
+            ),
             onDismissRequest = {}
         )
     }
@@ -29,16 +33,16 @@ private fun Prev() {
 
 @Composable
 internal fun WifiPropertyInfoDialog(
-    property: WifiProperty,
+    data: WifiPropertyCheckRowData,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    val stringArray = stringArrayResource(id = property.stringArrayRes)
+    val stringArray = stringArrayResource(id = data.arrayRes)
 
     InfoDialog(
         modifier = modifier,
-        title = stringResource(id = property.labelRes),
+        title = stringResource(id = data.labelRes),
         text = stringArray[0],
         learnMoreButton = when (stringArray[1].isNotEmpty()) {
             true -> {

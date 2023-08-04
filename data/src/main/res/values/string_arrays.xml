@@ -15,11 +15,11 @@
         <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is the local IPv6 address, meaning that it\'s only visible from within your network.</item>
         <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>
-    <string-array name="ipv6_public_one">
+    <string-array name="ipv6_public_1">
         <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is one of the two public IPv6 addresses, Android devices are typically assigned with. Of those two addresses, one comes from the Stateless Address Autoconfiguration (SLAAC) mechanism - meaning that it will always be the same - whereas the other one is a privacy variant, that changes every few hours.</item>
         <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>
-    <string-array name="ipv6_public_two">
+    <string-array name="ipv6_public_2">
         <item>Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing it\'s location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is one of the two public IPv6 addresses, Android devices are typically assigned with. Of those two addresses, one comes from the Stateless Address Autoconfiguration (SLAAC) mechanism - meaning that it will always be the same - whereas the other one is a privacy variant, that changes every few hours.</item>
         <item>https://en.wikipedia.org/wiki/IP_address</item>
     </string-array>

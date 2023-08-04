@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.data.model.Theme
 import com.w2sv.data.model.WidgetColor
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
@@ -42,10 +41,10 @@ import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.PropertySelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertySelection
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
@@ -148,22 +147,26 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_checklist_24,
             modifier = defaultSectionHeaderModifier
         )
-        PropertySelection(
-            propertyChecked = { property ->
-                widgetConfigurationVM.wifiProperties.getValue(property)
-            },
-            onCheckedChange = { property, value ->
-                when (property == WifiProperty.SSID && value) {
-                    true -> when (homeScreenVM.lapRationalShown) {
-                        false -> homeScreenVM.lapRationalTrigger.value =
-                            LocationAccessPermissionRequestTrigger.SSIDCheck
+        WifiPropertySelection(
+            wifiPropertiesMap = widgetConfigurationVM.wifiProperties,
+            allowSSIDCheckChange = { newValue ->
+                when (newValue) {
+                    true -> {
+                        when (homeScreenVM.lapRationalShown) {
+                            false -> {
+                                homeScreenVM.lapRationalTrigger.value =
+                                    LocationAccessPermissionRequestTrigger.SSIDCheck
+                            }
 
-                        true -> homeScreenVM.lapRequestTrigger.value =
-                            LocationAccessPermissionRequestTrigger.SSIDCheck
+                            true -> {
+                                homeScreenVM.lapRequestTrigger.value =
+                                    LocationAccessPermissionRequestTrigger.SSIDCheck
+                            }
+                        }
+                        false
                     }
 
-                    false -> widgetConfigurationVM.wifiProperties[property] =
-                        value
+                    false -> true
                 }
             },
             onInfoButtonClick = { widgetConfigurationVM.infoDialogProperty.value = it }
