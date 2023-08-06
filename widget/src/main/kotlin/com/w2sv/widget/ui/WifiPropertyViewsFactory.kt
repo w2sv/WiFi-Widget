@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.networking.IPAddress
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.R
 import com.w2sv.widget.data.appearance
@@ -37,6 +37,10 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
 
+        val subProperties by lazy {
+            widgetRepository.subWifiProperties.getSynchronousMap()
+        }
+
         propertyViewData = buildList {
             widgetRepository.getSetWifiProperties()
                 .forEach {
@@ -56,7 +60,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                                     WifiPropertyLayoutViewData.WifiProperty(
                                         context.getString(it.viewData.labelRes)
                                             .run {
-                                                if (address.type == IPAddress.Type.V6 && !address.isLocal)
+                                                if (value.property == WifiProperty.IPv6Public)
                                                     "$this ${i + 1}"
                                                 else
                                                     this
@@ -64,7 +68,9 @@ class WifiPropertyViewsFactory @Inject constructor(
                                         address.textualRepresentation
                                     )
                                 )
-                                add(WifiPropertyLayoutViewData.IPProperties(address))
+                                if (subProperties.getValue(value.property.subProperties.first())) {
+                                    add(WifiPropertyLayoutViewData.IPProperties(address))
+                                }
                             }
                         }
                     }

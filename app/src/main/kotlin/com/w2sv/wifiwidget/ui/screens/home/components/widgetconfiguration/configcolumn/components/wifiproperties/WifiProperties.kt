@@ -1,11 +1,17 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
@@ -16,7 +22,8 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 class WifiPropertyCheckRowData(
     type: WifiProperty,
     isCheckedMap: MutableMap<WifiProperty, Boolean>,
-    allowCheckChange: (Boolean) -> Boolean = { true }
+    allowCheckChange: (Boolean) -> Boolean = { true },
+    val subPropertyIsCheckedMap: MutableMap<WifiProperty.SubProperty, Boolean> = mutableMapOf()
 ) : ParameterCheckRowData<WifiProperty>(
     type,
     type.viewData.labelRes,
@@ -27,6 +34,7 @@ class WifiPropertyCheckRowData(
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
+    subPropertiesMap: MutableMap<WifiProperty.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
     onInfoButtonClick: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier
@@ -56,15 +64,18 @@ internal fun WifiPropertySelection(
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.IPv4,
-                    isCheckedMap = wifiPropertiesMap
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = subPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.IPv6Local,
-                    isCheckedMap = wifiPropertiesMap
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = subPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.IPv6Public,
-                    isCheckedMap = wifiPropertiesMap
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = subPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.Frequency,
@@ -109,15 +120,35 @@ private fun WifiPropertyCheckRow(
     val label = stringResource(id = data.labelRes)
     val infoIconCD = stringResource(id = R.string.info_icon_cd).format(label)
 
-    ParameterCheckRow(
-        data = data,
-        trailingIconButton = {
-            InfoIconButton(
-                onClick = {
-                    onInfoButtonClick()
-                },
-                contentDescription = infoIconCD
-            )
+    Column {
+        ParameterCheckRow(
+            data = data,
+            trailingIconButton = {
+                InfoIconButton(
+                    onClick = {
+                        onInfoButtonClick()
+                    },
+                    contentDescription = infoIconCD
+                )
+            }
+        )
+        if (data.type.subProperties.isNotEmpty()) {
+            data.type.subProperties.forEach { subProperty ->
+                AnimatedVisibility(
+                    visible = data.isChecked(),
+                    enter = fadeIn() + expandVertically()
+                ) {
+                    ParameterCheckRow(
+                        data = ParameterCheckRowData(
+                            subProperty,
+                            subProperty.labelRes,
+                            data.subPropertyIsCheckedMap
+                        ),
+                        modifier = Modifier.padding(start = 12.dp),
+                        fontSize = 14.sp
+                    )
+                }
+            }
         }
-    )
+    }
 }

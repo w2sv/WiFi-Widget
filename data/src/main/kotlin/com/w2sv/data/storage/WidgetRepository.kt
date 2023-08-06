@@ -35,6 +35,13 @@ class WidgetRepository @Inject constructor(
 
     val wifiProperties = getFlowMap(WifiProperty.values().toList())
 
+    val subWifiProperties =
+        WifiProperty.values()
+            .filter { it.subProperties.isNotEmpty() }
+            .associate {
+                it.subProperties.first() to getFlow(it.subProperties.first())
+            }
+
     fun getSetWifiProperties(): Set<WifiProperty> =
         wifiProperties.getSynchronousMap().filterValues { it }.keys
 

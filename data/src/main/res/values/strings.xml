@@ -11,7 +11,9 @@
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
 
-    <string name="ssid_description">Service Set Identifier. Your network\'s name.</string>
+    <string name="show_sub_properties">Show sub properties</string>
+
+    <string name="ssid_description">Service Set Identifier. Your networks name.</string>
     <string name="bssid_description">Basic Service Set Identifier. A 48-bit label abiding by MAC-48 conventions which identifies your devices basic service set.</string>
     <string name="ipv4_description">Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing its location within the network, thereby making it addressable. The IPv4 representation corresponds to a 32-bit number. The displayed address is your internal one, meaning that it\'s only visible from within your network.</string>
     <string name="ipv6_local_description">Internet Protocol Address, serving the two main purposes of identifying the network interface of your device and providing its location within the network, thereby making it addressable. The IPv6 representation corresponds to a 128-bit number. This is the local IPv6 address, meaning that it\'s only visible from within your network.</string>

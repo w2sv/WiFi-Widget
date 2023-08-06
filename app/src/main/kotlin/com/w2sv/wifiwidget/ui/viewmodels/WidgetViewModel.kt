@@ -46,6 +46,13 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
         )
     }
 
+    val subWifiProperties by lazy {
+        getUnconfirmedStateMap(
+            repository.subWifiProperties,
+            syncState = { repository.saveMap(it) }
+        )
+    }
+
     val buttonMap by lazy {
         getUnconfirmedStateMap(
             appliedFlowMap = repository.buttonMap,
@@ -86,6 +93,7 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     val configuration = getUnconfirmedStatesComposition(
         unconfirmedStates = listOf(
             wifiProperties,
+            subWifiProperties,
             theme,
             customColorsMap,
             opacity,

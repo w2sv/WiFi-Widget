@@ -16,6 +16,7 @@ import com.w2sv.data.networking.wifiManager
 enum class WifiProperty(
     val viewData: ViewData,
     val getValue: (ValueGetterResources) -> Value,
+    val subProperties: List<SubProperty> = listOf(),
     override val defaultValue: Boolean = true
 ) :
     DataStoreEntry.UniType<Boolean> {
@@ -31,7 +32,7 @@ enum class WifiProperty(
                 it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
             )
         },
-        false
+        defaultValue = false
     ),
     BSSID(
         ViewData(
@@ -44,7 +45,7 @@ enum class WifiProperty(
                 it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
             )
         },
-        false
+        defaultValue = false
     ),
     IPv4(
         ViewData(
@@ -54,10 +55,14 @@ enum class WifiProperty(
         ),
         {
             Value.getForIPProperty(
+                com.w2sv.data.model.WifiProperty.IPv4,
                 it.ipAddresses,
                 IPAddress.Type.V4
             )
         },
+        subProperties = listOf(
+            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv4.showSubProperties"))
+        )
     ),
     IPv6Local(
         ViewData(
@@ -66,12 +71,16 @@ enum class WifiProperty(
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
-            com.w2sv.data.model.WifiProperty.Value.getForIPProperty(
+            Value.getForIPProperty(
+                com.w2sv.data.model.WifiProperty.IPv6Local,
                 it.ipAddresses,
-                com.w2sv.data.networking.IPAddress.Type.V6,
+                IPAddress.Type.V6,
                 { it.isLocal }
             )
         },
+        subProperties = listOf(
+            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv6Local.showSubProperties"))
+        )
     ),
     IPv6Public(
         ViewData(
@@ -80,12 +89,16 @@ enum class WifiProperty(
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
-            com.w2sv.data.model.WifiProperty.Value.getForIPProperty(
+            Value.getForIPProperty(
+                com.w2sv.data.model.WifiProperty.IPv6Public,
                 it.ipAddresses,
-                com.w2sv.data.networking.IPAddress.Type.V6,
+                IPAddress.Type.V6,
                 { !it.isLocal }
             )
         },
+        subProperties = listOf(
+            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv6Public.showSubProperties"))
+        )
     ),
     Frequency(
         ViewData(
@@ -151,6 +164,17 @@ enum class WifiProperty(
         },
     );
 
+    sealed class SubProperty(
+        @StringRes val labelRes: Int,
+        preferencesKey: Preferences.Key<Boolean>,
+        defaultValue: Boolean = true
+    ) : DataStoreEntry.UniType.Impl<Boolean>(preferencesKey, defaultValue) {
+
+        class ShowSubProperties(
+            preferencesKey: Preferences.Key<Boolean>
+        ) : SubProperty(R.string.show_sub_properties, preferencesKey)
+    }
+
     data class ViewData(
         @StringRes val labelRes: Int,
         @StringRes val descriptionRes: Int,
@@ -159,10 +183,11 @@ enum class WifiProperty(
 
     sealed interface Value {
         class Singular(val value: String) : Value
-        class IPAddresses(val addresses: List<IPAddress>) : Value
+        class IPAddresses(val property: WifiProperty, val addresses: List<IPAddress>) : Value
 
         companion object {
             fun getForIPProperty(
+                property: WifiProperty,
                 ipAddresses: List<IPAddress>?,
                 type: IPAddress.Type,
                 additionalFilterPredicate: (IPAddress) -> Boolean = { true }
@@ -170,7 +195,7 @@ enum class WifiProperty(
                 ipAddresses
                     ?.filter { it.type == type && additionalFilterPredicate(it) }
                     ?.let { addresses ->
-                        IPAddresses(addresses)
+                        IPAddresses(property, addresses)
                     }
                     ?: Singular(type.fallbackAddress)
         }
