@@ -53,11 +53,9 @@ enum class WifiProperty(
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
-            Value.Singular(
-                it.ipAddresses
-                    ?.find { address -> address.type == IPAddress.Type.V4 }
-                    ?.textualRepresentation
-                    ?: IPAddress.Type.V4.fallbackAddress
+            Value.getForIPProperty(
+                it.ipAddresses,
+                IPAddress.Type.V4
             )
         },
     ),
@@ -68,11 +66,10 @@ enum class WifiProperty(
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
-            Value.Singular(
-                it.ipAddresses
-                    ?.find { address -> address.type == IPAddress.Type.V6 && address.isLocal }
-                    ?.textualRepresentation
-                    ?: IPAddress.Type.V6.fallbackAddress
+            com.w2sv.data.model.WifiProperty.Value.getForIPProperty(
+                it.ipAddresses,
+                com.w2sv.data.networking.IPAddress.Type.V6,
+                { it.isLocal }
             )
         },
     ),
@@ -83,12 +80,11 @@ enum class WifiProperty(
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
-            it.ipAddresses
-                ?.filter { address -> address.type == IPAddress.Type.V6 && !address.isLocal }
-                ?.let { addresses ->
-                    Value.IPAddresses(addresses)
-                }
-                ?: Value.Singular(IPAddress.Type.V6.fallbackAddress)
+            com.w2sv.data.model.WifiProperty.Value.getForIPProperty(
+                it.ipAddresses,
+                com.w2sv.data.networking.IPAddress.Type.V6,
+                { !it.isLocal }
+            )
         },
     ),
     Frequency(
@@ -164,6 +160,20 @@ enum class WifiProperty(
     sealed interface Value {
         class Singular(val value: String) : Value
         class IPAddresses(val addresses: List<IPAddress>) : Value
+
+        companion object {
+            fun getForIPProperty(
+                ipAddresses: List<IPAddress>?,
+                type: IPAddress.Type,
+                additionalFilterPredicate: (IPAddress) -> Boolean = { true }
+            ): Value =
+                ipAddresses
+                    ?.filter { it.type == type && additionalFilterPredicate(it) }
+                    ?.let { addresses ->
+                        IPAddresses(addresses)
+                    }
+                    ?: Singular(type.fallbackAddress)
+        }
     }
 
     class ValueGetterResources(val context: Context) {
