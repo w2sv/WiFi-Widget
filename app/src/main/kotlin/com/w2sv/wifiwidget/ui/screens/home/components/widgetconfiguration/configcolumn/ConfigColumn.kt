@@ -38,7 +38,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.WifiPropertySelection
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor

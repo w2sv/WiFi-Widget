@@ -27,7 +27,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.InfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
