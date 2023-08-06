@@ -35,6 +35,8 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
 
     val infoDialogProperty: MutableStateFlow<WifiProperty?> = MutableStateFlow(null)
 
+    val refreshPeriodicallyInfoDialog: MutableStateFlow<Boolean> = MutableStateFlow(false)
+
     // =========
     // Configuration
     // =========

@@ -10,6 +10,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun RefreshingParametersSelection(
     widgetRefreshingMap: MutableMap<WidgetRefreshingParameter, Boolean>,
+    onRefreshPeriodicallyInfoIconClick: () -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -44,12 +46,13 @@ internal fun RefreshingParametersSelection(
 
     Column(modifier = modifier) {
         PropertyCheckRow(
-            data = parameterViewData[0]
+            data = parameterViewData[0],
+            trailingIconButton = {
+                InfoIconButton(onClick = onRefreshPeriodicallyInfoIconClick, contentDescription = "")
+            }
         )
         AnimatedVisibility(
-            visible = widgetRefreshingMap.getValue(
-                WidgetRefreshingParameter.RefreshPeriodically
-            ),
+            visible = parameterViewData[0].isChecked(),
             enter = fadeIn() + expandVertically(initialHeight = { 0.also { scope.launch { scrollToContentColumnBottom() } } })
         ) {
             SubPropertyCheckRow(

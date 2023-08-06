@@ -53,4 +53,5 @@
     <string name="go_to_widget_settings">Go to Widget Settings</string>
     <string name="grant">Grant</string>
     <string name="maybe_later">Maybe later</string>
+    <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system every 15 min. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
 </resources>

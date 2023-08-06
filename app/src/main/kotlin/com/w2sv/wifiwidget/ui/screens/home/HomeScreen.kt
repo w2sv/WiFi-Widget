@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.WifiPropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties.InfoDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -126,10 +126,24 @@ internal fun HomeScreen(
             )
 
             widgetConfigurationVM.infoDialogProperty.collectAsState().value?.let {
-                WifiPropertyInfoDialog(
-                    property = it,
+                InfoDialog(
+                    labelRes = it.viewData.labelRes,
+                    descriptionRes = it.viewData.descriptionRes,
+                    learnMoreUrl = it.viewData.learnMoreUrl,
                     onDismissRequest = { widgetConfigurationVM.infoDialogProperty.reset() }
                 )
+            }
+
+            widgetConfigurationVM.refreshPeriodicallyInfoDialog.collectAsState().apply {
+                if (value) {
+                    InfoDialog(
+                        labelRes = R.string.refresh_periodically,
+                        descriptionRes = R.string.refresh_periodically_info,
+                        onDismissRequest = {
+                            widgetConfigurationVM.refreshPeriodicallyInfoDialog.value = false
+                        }
+                    )
+                }
             }
         }
         @SuppressLint("NewApi")

@@ -173,6 +173,9 @@ fun ConfigColumn(
                 with(scrollState) {
                     animateScrollTo(maxValue)
                 }
+            },
+            onRefreshPeriodicallyInfoIconClick = {
+                widgetConfigurationVM.refreshPeriodicallyInfoDialog.value = true
             }
         )
     }
