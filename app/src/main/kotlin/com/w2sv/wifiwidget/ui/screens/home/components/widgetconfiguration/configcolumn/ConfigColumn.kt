@@ -2,13 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.confi
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseOutElastic
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +30,7 @@ import com.w2sv.data.model.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.SpringAnimatedVisibility
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
@@ -105,22 +99,10 @@ fun ConfigColumn(
                 .height(86.dp)
         )
 
-        AnimatedVisibility(
-            visible = widgetConfigurationVM.customThemeSelected.collectAsState(false).value,
-            enter = fadeIn(animationSpec = tween(1000)) +
-                    expandVertically(
-                        animationSpec = tween(
-                            1000,
-                            easing = EaseOutElastic
-                        )
-                    ),
-            exit = fadeOut(animationSpec = tween(1000)) +
-                    shrinkVertically(
-                        animationSpec = tween(
-                            1000,
-                            easing = EaseOutElastic
-                        )
-                    )
+        SpringAnimatedVisibility(
+            visible = widgetConfigurationVM.customThemeSelected.collectAsState(
+                false
+            ).value
         ) {
             ColorSelection(
                 widgetColors = widgetConfigurationVM.customColorsMap,

@@ -6,8 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WidgetButton
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 
 @Composable
 internal fun ButtonSelection(
@@ -17,17 +17,17 @@ internal fun ButtonSelection(
     Column(modifier = modifier) {
         remember {
             listOf(
-                ParameterCheckRowData(
+                PropertyCheckRowData(
                     WidgetButton.Refresh,
                     R.string.refresh,
                     buttonMap
                 ),
-                ParameterCheckRowData(
+                PropertyCheckRowData(
                     WidgetButton.GoToWifiSettings,
                     R.string.go_to_wifi_settings,
                     buttonMap
                 ),
-                ParameterCheckRowData(
+                PropertyCheckRowData(
                     WidgetButton.GoToWidgetSettings,
                     R.string.go_to_widget_settings,
                     buttonMap
@@ -35,7 +35,7 @@ internal fun ButtonSelection(
             )
         }
             .forEach {
-                ParameterCheckRow(data = it)
+                PropertyCheckRow(data = it)
             }
     }
 }

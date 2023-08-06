@@ -1,22 +1,18 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRowData
+import com.w2sv.wifiwidget.ui.components.SpringAnimatedVisibility
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
 
 @Stable
 class WifiPropertyCheckRowData(
@@ -24,7 +20,7 @@ class WifiPropertyCheckRowData(
     isCheckedMap: MutableMap<WifiProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
     val subPropertyIsCheckedMap: MutableMap<WifiProperty.SubProperty, Boolean> = mutableMapOf()
-) : ParameterCheckRowData<WifiProperty>(
+) : PropertyCheckRowData<WifiProperty>(
     type,
     type.viewData.labelRes,
     isCheckedMap,
@@ -121,7 +117,7 @@ private fun WifiPropertyCheckRow(
     val infoIconCD = stringResource(id = R.string.info_icon_cd).format(label)
 
     Column {
-        ParameterCheckRow(
+        PropertyCheckRow(
             data = data,
             trailingIconButton = {
                 InfoIconButton(
@@ -133,20 +129,19 @@ private fun WifiPropertyCheckRow(
             }
         )
         if (data.type.subProperties.isNotEmpty()) {
-            data.type.subProperties.forEach { subProperty ->
-                AnimatedVisibility(
-                    visible = data.isChecked(),
-                    enter = fadeIn() + expandVertically()
-                ) {
-                    ParameterCheckRow(
-                        data = ParameterCheckRowData(
-                            subProperty,
-                            subProperty.labelRes,
-                            data.subPropertyIsCheckedMap
-                        ),
-                        modifier = Modifier.padding(start = 12.dp),
-                        fontSize = 14.sp
-                    )
+            SpringAnimatedVisibility(
+                visible = data.isChecked()
+            ) {
+                Column {
+                    data.type.subProperties.forEach { subProperty ->
+                        SubPropertyCheckRow(
+                            data = PropertyCheckRowData(
+                                subProperty,
+                                subProperty.labelRes,
+                                data.subPropertyIsCheckedMap
+                            )
+                        )
+                    }
                 }
             }
         }

@@ -68,8 +68,18 @@ class WifiPropertyViewsFactory @Inject constructor(
                                         address.textualRepresentation
                                     )
                                 )
-                                if (subProperties.getValue(value.property.subProperties.first())) {
-                                    add(WifiPropertyLayoutViewData.IPProperties(address))
+                                val showPrefixLength =
+                                    subProperties.getValue(value.property.subProperties.first())
+                                val showAdditionalProperties =
+                                    subProperties.getValue(value.property.subProperties.last())
+                                if (showPrefixLength || showAdditionalProperties) {
+                                    add(
+                                        WifiPropertyLayoutViewData.IPProperties(
+                                            address,
+                                            showPrefixLength,
+                                            showAdditionalProperties
+                                        )
+                                    )
                                 }
                             }
                         }
@@ -113,22 +123,23 @@ class WifiPropertyViewsFactory @Inject constructor(
                         )
                             .iterator()
 
-                        with(viewData.ipAddress) {
-                            // Prefix length
+                        if (viewData.showPrefixLength) {
                             setTextView(
                                 viewId = propertyTVIterator.next(),
-                                text = "/$prefixLength",
+                                text = "/${viewData.ipAddress.prefixLength}",
                                 color = widgetColors.secondary
                             )
-                            if (isLocal) {
-                                if (localAttributes.siteLocal) {
+                        }
+                        if (viewData.showAdditionalProperties) {
+                            if (viewData.ipAddress.isLocal) {
+                                if (viewData.ipAddress.localAttributes.siteLocal) {
                                     setTextView(
                                         viewId = propertyTVIterator.next(),
                                         text = "SiteLocal",
                                         color = widgetColors.secondary
                                     )
                                 }
-                                if (localAttributes.linkLocal) {
+                                if (viewData.ipAddress.localAttributes.linkLocal) {
                                     setTextView(
                                         viewId = propertyTVIterator.next(),
                                         text = "LinkLocal",
@@ -136,14 +147,14 @@ class WifiPropertyViewsFactory @Inject constructor(
                                     )
                                 }
                             }
-                            if (isLoopback) {
+                            if (viewData.ipAddress.isLoopback) {
                                 setTextView(
                                     viewId = propertyTVIterator.next(),
                                     text = "Loopback",
                                     color = widgetColors.secondary
                                 )
                             }
-                            if (isMultiCast) {
+                            if (viewData.ipAddress.isMultiCast) {
                                 setTextView(
                                     viewId = propertyTVIterator.next(),
                                     text = "Multicast",

@@ -61,7 +61,8 @@ enum class WifiProperty(
             )
         },
         subProperties = listOf(
-            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv4.showSubProperties"))
+            SubProperty.PrefixLength(booleanPreferencesKey("IPv4.prefixLength")),
+            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv4.additionalProperties"))
         )
     ),
     IPv6Local(
@@ -79,7 +80,8 @@ enum class WifiProperty(
             )
         },
         subProperties = listOf(
-            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv6Local.showSubProperties"))
+            SubProperty.PrefixLength(booleanPreferencesKey("IPv6Local.prefixLength")),
+            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv6Local.additionalProperties"))
         )
     ),
     IPv6Public(
@@ -97,7 +99,8 @@ enum class WifiProperty(
             )
         },
         subProperties = listOf(
-            SubProperty.ShowSubProperties(booleanPreferencesKey("IPv6Public.showSubProperties"))
+            SubProperty.PrefixLength(booleanPreferencesKey("IPv6Public.prefixLength")),
+            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv6Public.additionalProperties"))
         )
     ),
     Frequency(
@@ -170,9 +173,13 @@ enum class WifiProperty(
         defaultValue: Boolean = true
     ) : DataStoreEntry.UniType.Impl<Boolean>(preferencesKey, defaultValue) {
 
-        class ShowSubProperties(
+        class PrefixLength(
             preferencesKey: Preferences.Key<Boolean>
-        ) : SubProperty(R.string.show_sub_properties, preferencesKey)
+        ) : SubProperty(R.string.prefix_length, preferencesKey)
+
+        class AdditionalProperties(
+            preferencesKey: Preferences.Key<Boolean>
+        ) : SubProperty(R.string.additional_properties, preferencesKey)
     }
 
     data class ViewData(

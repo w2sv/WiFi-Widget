@@ -4,17 +4,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ParameterCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -26,17 +24,17 @@ internal fun RefreshingParametersSelection(
     val scope = rememberCoroutineScope()
     val parameterViewData = remember {
         listOf(
-            ParameterCheckRowData(
+            PropertyCheckRowData(
                 type = WidgetRefreshingParameter.RefreshPeriodically,
                 labelRes = R.string.refresh_periodically,
                 isCheckedMap = widgetRefreshingMap
             ),
-            ParameterCheckRowData(
+            PropertyCheckRowData(
                 type = WidgetRefreshingParameter.RefreshOnLowBattery,
                 labelRes = R.string.refresh_on_low_battery,
                 isCheckedMap = widgetRefreshingMap
             ),
-            ParameterCheckRowData(
+            PropertyCheckRowData(
                 type = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
                 labelRes = R.string.display_last_refresh_time,
                 isCheckedMap = widgetRefreshingMap
@@ -45,7 +43,7 @@ internal fun RefreshingParametersSelection(
     }
 
     Column(modifier = modifier) {
-        ParameterCheckRow(
+        PropertyCheckRow(
             data = parameterViewData[0]
         )
         AnimatedVisibility(
@@ -54,13 +52,11 @@ internal fun RefreshingParametersSelection(
             ),
             enter = fadeIn() + expandVertically(initialHeight = { 0.also { scope.launch { scrollToContentColumnBottom() } } })
         ) {
-            ParameterCheckRow(
-                data = parameterViewData[1],
-                modifier = Modifier.padding(start = 12.dp),
-                fontSize = 14.sp
+            SubPropertyCheckRow(
+                data = parameterViewData[1]
             )
         }
-        ParameterCheckRow(
+        PropertyCheckRow(
             data = parameterViewData[2]
         )
     }

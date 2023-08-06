@@ -3,21 +3,30 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.confi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
+import com.w2sv.wifiwidget.ui.theme.disabledColor
 
 @Stable
-open class ParameterCheckRowData<T>(
+open class PropertyCheckRowData<T>(
     val type: T,
     @StringRes val labelRes: Int,
     val isChecked: () -> Boolean,
@@ -39,10 +48,48 @@ open class ParameterCheckRowData<T>(
 }
 
 @Composable
-internal fun <T> ParameterCheckRow(
-    data: ParameterCheckRowData<T>,
+internal fun <T> PropertyCheckRow(
+    data: PropertyCheckRowData<T>,
+    modifier: Modifier = Modifier,
+    trailingIconButton: (@Composable () -> Unit)? = null
+) {
+    PropertyCheckRow(
+        data = data,
+        makeText = ::bulletPointText,
+        modifier = modifier,
+        trailingIconButton = trailingIconButton
+    )
+}
+
+@Composable
+internal fun <T> SubPropertyCheckRow(
+    data: PropertyCheckRowData<T>,
+    modifier: Modifier = Modifier,
+    trailingIconButton: (@Composable () -> Unit)? = null
+) {
+    PropertyCheckRow(
+        data = data,
+        makeText = { it },
+        modifier = modifier.padding(start = 12.dp),
+        fontSize = 14.sp,
+        leadingIcon = { color: Color ->
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowDown,
+                contentDescription = null,
+                tint = color
+            )
+        },
+        trailingIconButton = trailingIconButton
+    )
+}
+
+@Composable
+private fun <T> PropertyCheckRow(
+    data: PropertyCheckRowData<T>,
+    makeText: (String) -> String,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
+    leadingIcon: (@Composable (Color) -> Unit)? = null,
     trailingIconButton: (@Composable () -> Unit)? = null
 ) {
     val checkBoxCD = stringResource(id = R.string.set_unset).format(data.labelRes)
@@ -52,10 +99,14 @@ internal fun <T> ParameterCheckRow(
         modifier = modifier
             .fillMaxWidth()
     ) {
+        val color = if (data.isChecked()) LocalContentColor.current else disabledColor()
+
+        leadingIcon?.invoke(color)
         JostText(
-            text = bulletPointText(stringResource(id = data.labelRes)),
+            text = makeText(stringResource(id = data.labelRes)),
             fontSize = fontSize,
-            modifier = Modifier.weight(1.0f, true)
+            modifier = Modifier.weight(1.0f, true),
+            color = color
         )
         Checkbox(
             checked = data.isChecked(),
