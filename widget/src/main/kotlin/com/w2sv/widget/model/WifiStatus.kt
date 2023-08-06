@@ -1,10 +1,10 @@
 package com.w2sv.widget.model
 
 import android.content.Context
-import com.w2sv.data.connectivityManager
-import com.w2sv.data.isWifiConnected
-import com.w2sv.data.linkProperties
-import com.w2sv.data.wifiManager
+import com.w2sv.data.networking.connectivityManager
+import com.w2sv.data.networking.isWifiConnected
+import com.w2sv.data.networking.linkProperties
+import com.w2sv.data.networking.wifiManager
 import slimber.log.i
 
 enum class WifiStatus(val isConnected: Boolean) {

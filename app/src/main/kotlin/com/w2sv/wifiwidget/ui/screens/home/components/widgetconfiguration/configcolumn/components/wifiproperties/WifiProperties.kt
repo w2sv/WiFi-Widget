@@ -55,11 +55,7 @@ internal fun WifiPropertySelection(
                     }
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IP,
-                    isCheckedMap = wifiPropertiesMap
-                ),
-                WifiPropertyCheckRowData(
-                    WifiProperty.Netmask,
+                    WifiProperty.IPv4,
                     isCheckedMap = wifiPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
@@ -67,11 +63,7 @@ internal fun WifiPropertySelection(
                     isCheckedMap = wifiPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Public1,
-                    isCheckedMap = wifiPropertiesMap
-                ),
-                WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Public2,
+                    WifiProperty.IPv6Public,
                     isCheckedMap = wifiPropertiesMap
                 ),
                 WifiPropertyCheckRowData(

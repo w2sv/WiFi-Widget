@@ -77,7 +77,6 @@ internal fun HomeScreen(
                         }
                     )
                 }
-
                 Spacer(Modifier.weight(0.5f))
                 Box(Modifier.weight(1f)) {
                     WidgetConfigurationDialogButton(
@@ -87,7 +86,6 @@ internal fun HomeScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-
                 CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
             }
         }

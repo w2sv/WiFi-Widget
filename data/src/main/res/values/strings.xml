@@ -3,15 +3,13 @@
     <string name="bssid">BSSID</string>
     <string name="ipv4">IPv4</string>
     <string name="ipv6_local">IPv6 local</string>
-    <string name="ipv6_public_1">IPv6 public 1</string>
-    <string name="ipv6_public_2">IPv6 public 2</string>
+    <string name="ipv6_public">IPv6 public</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="link_speed">Link Speed</string>
     <string name="gateway">Gateway</string>
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
-    <string name="netmask">Netmask</string>
 
     <string name="ssid_description">Service Set Identifier. Your network\'s name.</string>
     <string name="bssid_description">Basic Service Set Identifier. A 48-bit label abiding by MAC-48 conventions which identifies your devices basic service set.</string>
@@ -24,5 +22,4 @@
     <string name="gateway_description">A Gateway is a device uniting the functionality of a modem, i.e., communicating with your ISP (Internet Service Provider), and a router, i.e., translating the data received by the modem and distributing it as WiFi signal to the client devices being present in the network.</string>
     <string name="dns_description">Domain Name System. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</string>
     <string name="dhcp_description">Dynamic Host Configuration Protocol. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</string>
-    <string name="netmask_description">Also referred to as subnet mask. A bitmask determining the subnetwork within which the DHCP may operate.</string>
 </resources>
