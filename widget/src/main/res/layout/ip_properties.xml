@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:gravity="end"
-    android:paddingVertical="1dp">
+    android:paddingVertical="2dp">
 
     <TextView
         android:id="@+id/ip_property_tv_1"
