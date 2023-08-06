@@ -22,8 +22,6 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.components.drawer.closeDrawer
-import com.w2sv.wifiwidget.ui.components.drawer.openDrawer
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
@@ -52,7 +50,7 @@ internal fun HomeScreen(
             topBar = {
                 AppTopBar {
                     scope.launch {
-                        drawerState.openDrawer()
+                        drawerState.open()
                     }
                 }
             }
@@ -157,7 +155,7 @@ internal fun HomeScreen(
         BackHandler {
             when (drawerState.isOpen) {
                 true -> scope.launch {
-                    drawerState.closeDrawer()
+                    drawerState.close()
                 }
 
                 false -> homeScreenVM.onBackPress(context)

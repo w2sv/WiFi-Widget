@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.wifiproperties
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -9,7 +10,6 @@ import androidx.compose.ui.res.stringResource
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
-import com.w2sv.wifiwidget.ui.components.SpringAnimatedVisibility
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
@@ -129,7 +129,7 @@ private fun WifiPropertyCheckRow(
             }
         )
         if (data.type.subProperties.isNotEmpty()) {
-            SpringAnimatedVisibility(
+            AnimatedVisibility(
                 visible = data.isChecked()
             ) {
                 Column {

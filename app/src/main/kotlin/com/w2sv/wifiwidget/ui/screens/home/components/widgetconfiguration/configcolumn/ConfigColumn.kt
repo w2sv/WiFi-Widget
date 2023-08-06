@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.confi
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,6 @@ import com.w2sv.data.model.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.SpringAnimatedVisibility
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
@@ -99,7 +99,7 @@ fun ConfigColumn(
                 .height(86.dp)
         )
 
-        SpringAnimatedVisibility(
+        AnimatedVisibility(
             visible = widgetConfigurationVM.customThemeSelected.collectAsState(
                 false
             ).value
