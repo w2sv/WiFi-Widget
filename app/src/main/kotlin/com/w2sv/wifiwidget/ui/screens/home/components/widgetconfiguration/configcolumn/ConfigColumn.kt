@@ -9,16 +9,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -57,6 +58,8 @@ private fun Prev() {
     }
 }
 
+const val EPSILON = 1e-6f
+
 @Composable
 fun ConfigColumn(
     modifier: Modifier = Modifier,
@@ -77,43 +80,50 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_nightlight_24,
             modifier = Modifier.padding(bottom = 22.dp)
         )
+
         val useDynamicColors by widgetConfigurationVM.useDynamicColors.collectAsState()
         val customThemeIndicatorWeight by animateFloatAsState(
-            targetValue = if (useDynamicColors) 1e-6f else 1f,
+            targetValue = if (useDynamicColors) EPSILON else 1f,
             label = ""
         )
-        ThemeSelectionRow(
-            modifier = Modifier.fillMaxWidth(),
-            customThemeIndicatorProperties = ThemeIndicatorProperties(
-                theme = Theme.Custom,
-                labelRes = R.string.custom,
-                buttonColoring = ButtonColor.Gradient(
-                    circularTrifoldStripeBrush(
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Background)
-                            .toColor(),
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Primary)
-                            .toColor(),
-                        widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Secondary)
-                            .toColor()
+        val theme by widgetConfigurationVM.theme.collectAsState()
+        Row {
+            ThemeSelectionRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = ((1 - customThemeIndicatorWeight) * 32).dp),
+                customThemeIndicatorProperties = ThemeIndicatorProperties(
+                    theme = Theme.Custom,
+                    labelRes = R.string.custom,
+                    buttonColoring = ButtonColor.Gradient(
+                        circularTrifoldStripeBrush(
+                            widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Background)
+                                .toColor(),
+                            widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Primary)
+                                .toColor(),
+                            widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Secondary)
+                                .toColor()
+                        )
                     )
-                )
-            ),
-            selected = widgetConfigurationVM.theme.collectAsState().value,
-            onSelected = {
-                widgetConfigurationVM.theme.value = it
-            },
-            themeWeights = mapOf(Theme.Custom to customThemeIndicatorWeight),
-            themeIndicatorModifier = Modifier
-                .padding(horizontal = 12.dp)
-                .widthIn(max = 46.dp)
-                .height(86.dp)
-        )
+                ),
+                selected = theme,
+                onSelected = {
+                    widgetConfigurationVM.theme.value = it
+                },
+                themeWeights = mapOf(Theme.Custom to customThemeIndicatorWeight),
+                themeIndicatorModifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .sizeIn(maxHeight = 92.dp)
+            )
+        }
 
-        AnimatedVisibility(
-            visible = widgetConfigurationVM.customThemeSelected.collectAsState(
-                false
-            ).value
-        ) {
+        val customThemeSelected by remember {
+            derivedStateOf {
+                theme == Theme.Custom
+            }
+        }
+
+        AnimatedVisibility(visible = customThemeSelected) {
             ColorSelection(
                 widgetColors = widgetConfigurationVM.customColorsMap,
                 modifier = Modifier
@@ -124,7 +134,12 @@ fun ConfigColumn(
         if (dynamicColorsSupported) {
             UseDynamicColorsRow(
                 useDynamicColors = useDynamicColors,
-                onToggleDynamicColors = { widgetConfigurationVM.useDynamicColors.value = it },
+                onToggleDynamicColors = {
+                    widgetConfigurationVM.useDynamicColors.value = it
+                    if (it && customThemeSelected) {
+                        widgetConfigurationVM.theme.value = Theme.SystemDefault
+                    }
+                },
                 modifier = Modifier
                     .padding(horizontal = 14.dp)
                     .padding(top = 22.dp)

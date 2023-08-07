@@ -8,9 +8,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -26,17 +28,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.toEasing
 
 @Composable
@@ -125,23 +123,23 @@ private fun ThemeIndicator(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         JostText(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
+            modifier = Modifier.weight(0.5f)
         )
+        Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
             buttonColor = properties.buttonColoring,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
                 stringResource(id = properties.labelRes)
             ),
             onClick = onClick,
-            size = 36.dp,
-            isSelected = isSelected
+            isSelected = isSelected,
+            modifier = Modifier.weight(0.5f)
         )
     }
 }
@@ -151,12 +149,9 @@ fun ThemeButton(
     buttonColor: ButtonColor,
     contentDescription: String,
     onClick: () -> Unit,
-    size: Dp,
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier
 ) {
-    val radius = with(LocalDensity.current) { (size / 2).toPx() }
-
     val transition = updateTransition(targetState = isSelected(), label = "")
 
     val borderWidth by transition.animateDp(
@@ -189,44 +184,47 @@ fun ThemeButton(
         if (state) MaterialTheme.colorScheme.primary else Color.Transparent
     }
 
-    Button(
-        modifier = modifier
-            .semantics {
-                this.contentDescription = contentDescription
-            }
-            .size(size)
-            .drawBehind {
-                if (buttonColor is ButtonColor.Gradient) {
-                    drawCircle(
-                        buttonColor.brush,
-                        radius = radius
-                    )
+    BoxWithConstraints(contentAlignment = Alignment.Center) {
+        val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
+        Button(
+            modifier = modifier
+                .semantics {
+                    this.contentDescription = contentDescription
                 }
-            },
-        colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
-        onClick = onClick,
-        shape = CircleShape,
-        border = BorderStroke(borderWidth, borderColor)
-    ) {}
+                .size(size)
+                .drawBehind {
+                    if (buttonColor is ButtonColor.Gradient) {
+                        drawCircle(
+                            brush = buttonColor.brush,
+                            radius = (constraints.maxWidth / 2).toFloat()
+                        )
+                    }
+                },
+            colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
+            onClick = onClick,
+            shape = CircleShape,
+            border = BorderStroke(borderWidth, borderColor)
+        ) {}
+    }
 }
 
 private const val BORDER_ANIMATION_DURATION = 500
 
-@Preview
-@Composable
-fun Prev() {
-    AppTheme {
-        ThemeButton(
-            ButtonColor.Gradient(
-                Brush.linearGradient(
-                    0.5f to Color.White,
-                    0.5f to Color.Black,
-                )
-            ),
-            "Device Default",
-            {},
-            32.dp,
-            { true }
-        )
-    }
-}
+//@Preview
+//@Composable
+//fun Prev() {
+//    AppTheme {
+//        ThemeButton(
+//            ButtonColor.Gradient(
+//                Brush.linearGradient(
+//                    0.5f to Color.White,
+//                    0.5f to Color.Black,
+//                )
+//            ),
+//            "Device Default",
+//            {},
+//            32.dp,
+//            { true }
+//        )
+//    }
+//}
