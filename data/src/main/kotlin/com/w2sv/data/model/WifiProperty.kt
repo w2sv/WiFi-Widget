@@ -20,23 +20,22 @@ sealed class WifiProperty(
 ) :
     DataStoreEntry.UniType<Boolean> {
 
-    sealed interface IP {
-        val subProperties: List<SubProperty>
+    sealed class IPProperty(
+        viewData: ViewData,
+        getValue: (ValueGetterResources) -> Value,
         val prefixLengthSubProperty: SubProperty
+    ) : WifiProperty(viewData, getValue) {
 
-        enum class SubProperty(
+        open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
+
+        class SubProperty(
             @StringRes val labelRes: Int,
             override val preferencesKey: Preferences.Key<Boolean>,
             override val defaultValue: Boolean = true
-        ) : DataStoreEntry.UniType<Boolean> {
-            V4PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv4.PrefixLength")),
-            V6PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv6.PrefixLength")),
-            V6Local(R.string.local, booleanPreferencesKey("IPv6.Local")),
-            V6Public(R.string.public_, booleanPreferencesKey("IPv6.Public"))
-        }
+        ) : DataStoreEntry.UniType<Boolean>
 
         companion object {
-            fun values(): Array<IP> {
+            fun values(): Array<IPProperty> {
                 return arrayOf(
                     IPv4,
                     IPv6
@@ -53,11 +52,11 @@ sealed class WifiProperty(
 
     sealed interface Value {
         class Singular(val value: String) : Value
-        class IPAddresses(val property: IP, val addresses: List<IPAddress>) : Value
+        class IPAddresses(val property: IPProperty, val addresses: List<IPAddress>) : Value
 
         companion object {
             fun getForIPProperty(
-                property: IP,
+                property: IPProperty,
                 ipAddresses: List<IPAddress>?,
                 type: IPAddress.Type
             ): Value =
@@ -112,7 +111,7 @@ sealed class WifiProperty(
     )
 
     object IPv4 :
-        WifiProperty(
+        IPProperty(
             ViewData(
                 R.string.ipv4,
                 R.string.ipv4_description,
@@ -124,15 +123,15 @@ sealed class WifiProperty(
                     it.ipAddresses,
                     IPAddress.Type.V4
                 )
-            }
-        ),
-        IP {
-        override val subProperties = listOf(IP.SubProperty.V4PrefixLength)
-        override val prefixLengthSubProperty: IP.SubProperty = IP.SubProperty.V4PrefixLength
-    }
+            },
+            SubProperty(
+                R.string.prefix_length,
+                booleanPreferencesKey("IPv4.PrefixLength")
+            )
+        )
 
     object IPv6 :
-        WifiProperty(
+        IPProperty(
             ViewData(
                 R.string.ipv6,
                 R.string.ipv6_description,
@@ -144,15 +143,18 @@ sealed class WifiProperty(
                     ipAddresses = it.ipAddresses,
                     type = IPAddress.Type.V6
                 )
-            }
-        ),
-        IP {
-        override val subProperties: List<IP.SubProperty> = listOf(
-            IP.SubProperty.V6Local,
-            IP.SubProperty.V6Public,
-            IP.SubProperty.V6PrefixLength
+            },
+            SubProperty(
+                R.string.prefix_length,
+                booleanPreferencesKey("IPv6.PrefixLength")
+            )
+        ) {
+        val local = SubProperty(R.string.local, booleanPreferencesKey("IPv6.Local"))
+        val public = SubProperty(R.string.public_, booleanPreferencesKey("IPv6.Public"))
+
+        override val subProperties: List<SubProperty> = listOf(
+            local, public, prefixLengthSubProperty
         )
-        override val prefixLengthSubProperty: IP.SubProperty = IP.SubProperty.V6PrefixLength
     }
 
     object Frequency : WifiProperty(

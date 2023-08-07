@@ -15,11 +15,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.config
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
 
 @Stable
-class WifiPropertyCheckRowData(
+open class WifiPropertyCheckRowData(
     type: WifiProperty,
     isCheckedMap: MutableMap<WifiProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
-    val subPropertyIsCheckedMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>? = null
 ) : PropertyCheckRowData<WifiProperty>(
     type,
     type.viewData.labelRes,
@@ -27,10 +26,18 @@ class WifiPropertyCheckRowData(
     allowCheckChange
 )
 
+@Stable
+class IPPropertyCheckRowData(
+    type: WifiProperty.IPProperty,
+    isCheckedMap: MutableMap<WifiProperty, Boolean>,
+    val subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
+    allowCheckChange: (Boolean) -> Boolean = { true }
+) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)
+
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
-    ipSubPropertiesMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
+    ipSubPropertiesMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
     onInfoButtonClick: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier
@@ -58,12 +65,12 @@ internal fun WifiPropertySelection(
                         )
                     }
                 ),
-                WifiPropertyCheckRowData(
+                IPPropertyCheckRowData(
                     WifiProperty.IPv4,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap
                 ),
-                WifiPropertyCheckRowData(
+                IPPropertyCheckRowData(
                     WifiProperty.IPv6,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap
@@ -123,17 +130,32 @@ private fun WifiPropertyCheckRow(
                 )
             }
         )
-        if (data.type is WifiProperty.IP) {
-            AnimatedVisibility(
-                visible = data.isChecked()
-            ) {
+        if (data is IPPropertyCheckRowData) {
+            AnimatedVisibility(visible = data.isChecked()) {
                 Column {
-                    data.type.subProperties.forEach { subProperty ->
+                    (data.type as WifiProperty.IPProperty).subProperties.forEach { subProperty ->
                         SubPropertyCheckRow(
                             data = PropertyCheckRowData(
-                                subProperty,
-                                subProperty.labelRes,
-                                data.subPropertyIsCheckedMap!!
+                                type = subProperty,
+                                labelRes = subProperty.labelRes,
+                                isCheckedMap = data.subPropertyIsCheckedMap,
+                                allowCheckChange = { newValue ->
+                                    mapOf(
+                                        WifiProperty.IPv6.local to WifiProperty.IPv6.public,
+                                        WifiProperty.IPv6.public to WifiProperty.IPv6.local,
+                                    )[subProperty]
+                                        ?.let { inverseSubProperty ->
+                                            if (!newValue && !data.subPropertyIsCheckedMap.getValue(
+                                                    inverseSubProperty
+                                                )
+                                            ) {
+                                                data.subPropertyIsCheckedMap[inverseSubProperty] =
+                                                    true
+                                            }
+                                        }
+
+                                    true
+                                }
                             )
                         )
                     }

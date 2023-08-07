@@ -43,7 +43,7 @@ class WidgetRepository @Inject constructor(
     val wifiProperties = getFlowMap(WifiProperty.values().toList())
 
     val subWifiProperties =
-        WifiProperty.IP.values()
+        WifiProperty.IPProperty.values()
             .flatMap { it.subProperties }
             .associateWith { subProperty ->
                 getFlow(subProperty)
