@@ -8,6 +8,8 @@ import com.w2sv.androidutils.ui.UnconfirmedStates
 import com.w2sv.androidutils.ui.UnconfirmedStatesComposition
 import kotlinx.coroutines.flow.Flow
 
+// TODO: move to AndroidUtils
+
 fun <K, V> ViewModel.getUnconfirmedStateMap(
     appliedFlowMap: Map<K, Flow<V>>,
     syncState: suspend (Map<K, V>) -> Unit

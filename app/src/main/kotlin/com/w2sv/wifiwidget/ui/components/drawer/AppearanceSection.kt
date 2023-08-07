@@ -50,10 +50,10 @@ internal fun AppearanceSection(
                 selected = selectedTheme,
                 onSelected = onThemeSelected,
                 modifier = Modifier
-                    .width(180.dp),
+                    .width(200.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 themeIndicatorModifier = Modifier
-                    .sizeIn(maxHeight = 92.dp, maxWidth = 24.dp)
+                    .sizeIn(maxHeight = 92.dp, maxWidth = 42.dp)
             )
         }
     }

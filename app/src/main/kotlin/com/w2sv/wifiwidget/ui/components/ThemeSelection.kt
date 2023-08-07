@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.toEasing
 
 @Composable
@@ -89,11 +90,16 @@ fun ThemeSelectionRow(
                 ThemeIndicator(
                     properties = properties,
                     isSelected = { properties.theme == selected },
-                    modifier = themeIndicatorModifier.weight(
-                        themeWeights.getOrDefault(
-                            properties.theme,
-                            1f
-                        )
+                    modifier = themeIndicatorModifier.conditional(
+                        condition = themeWeights.isNotEmpty(),
+                        modifier = {
+                            weight(
+                                themeWeights.getOrDefault(
+                                    properties.theme,
+                                    1f
+                                )
+                            )
+                        }
                     )
                 ) {
                     onSelected(properties.theme)
