@@ -2,8 +2,8 @@
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="ipv4">IPv4</string>
-    <string name="ipv6_local">IPv6 local</string>
-    <string name="ipv6_public">IPv6 public</string>
+    <string name="ipv6_local">IPv6 loc</string>
+    <string name="ipv6_public">IPv6 pub</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="link_speed">Link Speed</string>

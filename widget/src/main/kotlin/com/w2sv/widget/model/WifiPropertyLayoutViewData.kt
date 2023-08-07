@@ -9,5 +9,5 @@ internal sealed interface WifiPropertyLayoutViewData {
         val showAdditionalProperties: Boolean
     ) : WifiPropertyLayoutViewData
 
-    class WifiProperty(val label: String, val value: String) : WifiPropertyLayoutViewData
+    class WifiProperty(val label: CharSequence, val value: CharSequence) : WifiPropertyLayoutViewData
 }

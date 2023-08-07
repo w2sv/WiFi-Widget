@@ -60,7 +60,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                                     WifiPropertyLayoutViewData.WifiProperty(
                                         context.getString(it.viewData.labelRes)
                                             .run {
-                                                if (value.property == WifiProperty.IPv6Public)
+                                                if (value.addresses.size > 1)
                                                     "$this ${i + 1}"
                                                 else
                                                     this
