@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.confi
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,12 +35,14 @@ import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.components.drawer.UseDynamicColorsRow
+import com.w2sv.wifiwidget.ui.components.drawer.dynamicColorsSupported
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
@@ -73,11 +77,16 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_nightlight_24,
             modifier = Modifier.padding(bottom = 22.dp)
         )
+        val useDynamicColors by widgetConfigurationVM.useDynamicColors.collectAsState()
+        val customThemeIndicatorWeight by animateFloatAsState(
+            targetValue = if (useDynamicColors) 1e-6f else 1f,
+            label = ""
+        )
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
             customThemeIndicatorProperties = ThemeIndicatorProperties(
                 theme = Theme.Custom,
-                label = R.string.custom,
+                labelRes = R.string.custom,
                 buttonColoring = ButtonColor.Gradient(
                     circularTrifoldStripeBrush(
                         widgetConfigurationVM.customColorsMap.getValue(WidgetColor.Background)
@@ -93,6 +102,7 @@ fun ConfigColumn(
             onSelected = {
                 widgetConfigurationVM.theme.value = it
             },
+            themeWeights = mapOf(Theme.Custom to customThemeIndicatorWeight),
             themeIndicatorModifier = Modifier
                 .padding(horizontal = 12.dp)
                 .widthIn(max = 46.dp)
@@ -108,6 +118,16 @@ fun ConfigColumn(
                 widgetColors = widgetConfigurationVM.customColorsMap,
                 modifier = Modifier
                     .padding(top = 18.dp)
+            )
+        }
+
+        if (dynamicColorsSupported) {
+            UseDynamicColorsRow(
+                useDynamicColors = useDynamicColors,
+                onToggleDynamicColors = { widgetConfigurationVM.useDynamicColors.value = it },
+                modifier = Modifier
+                    .padding(horizontal = 14.dp)
+                    .padding(top = 22.dp)
             )
         }
 

@@ -1,9 +1,24 @@
 package com.w2sv.widget.model
 
+import android.content.Context
 import androidx.annotation.ColorInt
+import androidx.annotation.ColorRes
 
 data class WidgetColors(
     @ColorInt val background: Int,
     @ColorInt val primary: Int,
     @ColorInt val secondary: Int
-)
+) {
+    data class Resources(
+        @ColorRes val background: Int,
+        @ColorRes val primary: Int,
+        @ColorRes val secondary: Int
+    ) {
+        fun getColors(context: Context): WidgetColors =
+            WidgetColors(
+                context.getColor(background),
+                context.getColor(primary),
+                context.getColor(secondary)
+            )
+    }
+}

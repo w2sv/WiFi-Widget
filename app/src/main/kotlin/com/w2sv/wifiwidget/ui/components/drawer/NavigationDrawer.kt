@@ -34,8 +34,8 @@ fun NavigationDrawer(
                         AppearanceSection(
                             selectedTheme = inAppThemeVM.inAppTheme.collectAsState(Theme.SystemDefault).value,
                             onThemeSelected = { inAppThemeVM.saveInAppTheme(it) },
-                            useDynamicTheme = inAppThemeVM.useDynamicTheme.collectAsState(false).value,
-                            onToggleDynamicTheme = { inAppThemeVM.saveUseDynamicTheme(it) },
+                            useDynamicColors = inAppThemeVM.useDynamicTheme.collectAsState(false).value,
+                            onToggleDynamicColors = { inAppThemeVM.saveUseDynamicTheme(it) },
                             modifier = modifier
                         )
                     }

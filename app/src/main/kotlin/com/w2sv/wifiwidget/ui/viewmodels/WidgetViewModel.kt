@@ -74,6 +74,13 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
         )
     }
 
+    val useDynamicColors = getUnconfirmedStateFlow(
+        appliedFlow = repository.useDynamicColors,
+        syncState = {
+            repository.savUseDynamicColors(it)
+        }
+    )
+
     val theme = getUnconfirmedStateFlow(
         appliedFlow = repository.theme,
         syncState = {
@@ -94,11 +101,12 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
 
     val configuration = getUnconfirmedStatesComposition(
         unconfirmedStates = listOf(
-            wifiProperties,
-            subWifiProperties,
+            useDynamicColors,
             theme,
             customColorsMap,
             opacity,
+            wifiProperties,
+            subWifiProperties,
             buttonMap,
             refreshingParametersMap
         )

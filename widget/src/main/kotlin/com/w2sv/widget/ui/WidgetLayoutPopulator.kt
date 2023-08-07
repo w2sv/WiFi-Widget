@@ -34,7 +34,7 @@ class WidgetLayoutPopulator @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val colors by lazy {
-        appearance.theme.getColors(context)
+        appearance.getColors(context)
     }
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =

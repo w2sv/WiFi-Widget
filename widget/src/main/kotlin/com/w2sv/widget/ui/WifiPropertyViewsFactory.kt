@@ -88,7 +88,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
 
-        widgetColors = widgetRepository.appearance.getValueSynchronously().theme.getColors(context)
+        widgetColors = widgetRepository.appearance.getValueSynchronously().getColors(context)
     }
 
     override fun getCount(): Int = propertyViewData.size

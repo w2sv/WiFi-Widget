@@ -20,35 +20,22 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 
+val dynamicColorsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+
 @Composable
 internal fun AppearanceSection(
-    useDynamicTheme: Boolean,
-    onToggleDynamicTheme: (Boolean) -> Unit,
+    useDynamicColors: Boolean,
+    onToggleDynamicColors: (Boolean) -> Unit,
     selectedTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                JostText(
-                    text = stringResource(R.string.use_dynamic_colors),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                Switch(
-                    checked = useDynamicTheme,
-                    onCheckedChange = {
-                        onToggleDynamicTheme(
-                            it
-                        )
-                    }
-                )
-            }
+        if (dynamicColorsSupported) {
+            UseDynamicColorsRow(
+                useDynamicColors = useDynamicColors,
+                onToggleDynamicColors = onToggleDynamicColors
+            )
             Spacer(modifier = Modifier.height(12.dp))
         }
         Row(
@@ -68,5 +55,34 @@ internal fun AppearanceSection(
                 horizontalArrangement = Arrangement.SpaceBetween
             )
         }
+    }
+}
+
+@Composable
+fun UseDynamicColorsRow(
+    useDynamicColors: Boolean,
+    onToggleDynamicColors: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = horizontalArrangement,
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier)
+    ) {
+        JostText(
+            text = stringResource(R.string.use_dynamic_colors),
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Switch(
+            checked = useDynamicColors,
+            onCheckedChange = {
+                onToggleDynamicColors(
+                    it
+                )
+            }
+        )
     }
 }

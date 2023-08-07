@@ -15,13 +15,18 @@ import kotlinx.coroutines.flow.combine
 
 val WidgetRepository.appearance: Flow<WidgetAppearance>
     get() = combine(
-        theme,
-        customColors,
+        combine(
+            useDynamicColors,
+            theme,
+            customColors,
+            transform = { a, b, c -> Triple(a, b, c) }
+        ),
         opacity,
         refreshingParametersMap.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
         buttons,
-        transform = { theme, customColors, opacity, displayLastRefreshDateTime, buttons ->
+        transform = { (useDynamicColors, theme, customColors), opacity, displayLastRefreshDateTime, buttons ->
             WidgetAppearance(
+                useDynamicColors = useDynamicColors,
                 theme = when (theme) {
                     Theme.Light -> WidgetTheme.Light
                     Theme.SystemDefault -> WidgetTheme.DeviceDefault

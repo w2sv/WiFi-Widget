@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -45,6 +46,7 @@ fun ThemeSelectionRow(
     modifier: Modifier = Modifier,
     customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    themeWeights: Map<Theme, Float> = mapOf(),
     themeIndicatorModifier: Modifier = Modifier
 ) {
     Row(
@@ -52,42 +54,49 @@ fun ThemeSelectionRow(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        buildList {
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.Light,
-                    label = R.string.light,
-                    buttonColoring = ButtonColor.Uniform(Color.White)
-                )
-            )
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.SystemDefault,
-                    label = R.string.system_default,
-                    buttonColoring = ButtonColor.Gradient(
-                        Brush.linearGradient(
-                            0.5f to Color.White,
-                            0.5f to Color.Black,
-                        )
+        remember {
+            buildList {
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.Light,
+                        labelRes = R.string.light,
+                        buttonColoring = ButtonColor.Uniform(Color.White),
                     )
                 )
-            )
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.Dark,
-                    label = R.string.dark,
-                    buttonColoring = ButtonColor.Uniform(Color.Black)
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.SystemDefault,
+                        labelRes = R.string.system_default,
+                        buttonColoring = ButtonColor.Gradient(
+                            Brush.linearGradient(
+                                0.5f to Color.White,
+                                0.5f to Color.Black,
+                            )
+                        ),
+                    )
                 )
-            )
-            customThemeIndicatorProperties?.let {
-                add(it)
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.Dark,
+                        labelRes = R.string.dark,
+                        buttonColoring = ButtonColor.Uniform(Color.Black),
+                    )
+                )
+                customThemeIndicatorProperties?.let {
+                    add(it)
+                }
             }
         }
             .forEach { properties ->
                 ThemeIndicator(
                     properties = properties,
                     isSelected = { properties.theme == selected },
-                    modifier = themeIndicatorModifier
+                    modifier = themeIndicatorModifier.weight(
+                        themeWeights.getOrDefault(
+                            properties.theme,
+                            1f
+                        )
+                    )
                 ) {
                     onSelected(properties.theme)
                 }
@@ -98,8 +107,8 @@ fun ThemeSelectionRow(
 @Stable
 data class ThemeIndicatorProperties(
     val theme: Theme,
-    @StringRes val label: Int,
-    val buttonColoring: ButtonColor
+    @StringRes val labelRes: Int,
+    val buttonColoring: ButtonColor,
 )
 
 sealed class ButtonColor(val containerColor: Color) {
@@ -120,7 +129,7 @@ private fun ThemeIndicator(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         JostText(
-            text = stringResource(id = properties.label),
+            text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.padding(bottom = dimensionResource(id = R.dimen.margin_minimal))
@@ -128,7 +137,7 @@ private fun ThemeIndicator(
         ThemeButton(
             buttonColor = properties.buttonColoring,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
-                stringResource(id = properties.label)
+                stringResource(id = properties.labelRes)
             ),
             onClick = onClick,
             size = 36.dp,

@@ -3,6 +3,7 @@ package com.w2sv.data.storage
 import androidx.annotation.FloatRange
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.coroutines.getSynchronousMap
@@ -23,6 +24,12 @@ class WidgetRepository @Inject constructor(
 
     suspend fun saveTheme(theme: Theme) {
         save(Key.WIDGET_THEME, theme)
+    }
+
+    val useDynamicColors: Flow<Boolean> = getFlow(Key.USE_DYNAMIC_COLORS, false)
+
+    suspend fun savUseDynamicColors(value: Boolean) {
+        save(Key.USE_DYNAMIC_COLORS, value)
     }
 
     val customColorsMap = getFlowMap(WidgetColor.values().toList())
@@ -52,5 +59,6 @@ class WidgetRepository @Inject constructor(
     private object Key {
         val OPACITY = floatPreferencesKey("opacity")
         val WIDGET_THEME = intPreferencesKey("widgetTheme")
+        val USE_DYNAMIC_COLORS = booleanPreferencesKey("widgetConfiguration.useDynamicColor")
     }
 }
