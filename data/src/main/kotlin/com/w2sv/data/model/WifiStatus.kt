@@ -1,4 +1,4 @@
-package com.w2sv.widget.model
+package com.w2sv.data.model
 
 import android.content.Context
 import com.w2sv.data.networking.connectivityManager

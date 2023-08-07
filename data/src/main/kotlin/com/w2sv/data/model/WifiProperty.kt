@@ -55,7 +55,7 @@ enum class WifiProperty(
         ),
         {
             Value.getForIPProperty(
-                com.w2sv.data.model.WifiProperty.IPv4,
+                IPv4,
                 it.ipAddresses,
                 IPAddress.Type.V4
             )
@@ -73,10 +73,10 @@ enum class WifiProperty(
         ),
         {
             Value.getForIPProperty(
-                com.w2sv.data.model.WifiProperty.IPv6Local,
-                it.ipAddresses,
-                IPAddress.Type.V6,
-                { it.isLocal }
+                property = IPv6Local,
+                ipAddresses = it.ipAddresses,
+                type = IPAddress.Type.V6,
+                additionalFilterPredicate = { address -> address.isLocal }
             )
         },
         subProperties = listOf(
@@ -92,10 +92,10 @@ enum class WifiProperty(
         ),
         {
             Value.getForIPProperty(
-                com.w2sv.data.model.WifiProperty.IPv6Public,
-                it.ipAddresses,
-                IPAddress.Type.V6,
-                { !it.isLocal }
+                property = IPv6Public,
+                ipAddresses = it.ipAddresses,
+                type = IPAddress.Type.V6,
+                additionalFilterPredicate = { address -> !address.isLocal }
             )
         },
         subProperties = listOf(

@@ -20,7 +20,7 @@ import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetButtons
-import com.w2sv.widget.model.WifiStatus
+import com.w2sv.data.model.WifiStatus
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat

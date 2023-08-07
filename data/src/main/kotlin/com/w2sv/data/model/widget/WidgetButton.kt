@@ -1,4 +1,4 @@
-package com.w2sv.data.model
+package com.w2sv.data.model.widget
 
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
