@@ -13,6 +13,8 @@ import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.model.WifiStatus
+import com.w2sv.data.networking.WifiStatusMonitor
 import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.utils.getWifiWidgetIds
@@ -23,7 +25,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
@@ -32,6 +36,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val widgetRepository: WidgetRepository,
+    private val wifiStatusMonitor: WifiStatusMonitor,
     @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -43,6 +48,12 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
+
+    val wifiStatus = wifiStatusMonitor.wifiStatus.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        WifiStatus.get(context)
+    )
 
     // ========================
     // Widget Pin Listening
