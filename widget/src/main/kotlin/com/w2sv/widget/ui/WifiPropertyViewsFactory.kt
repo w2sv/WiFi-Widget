@@ -53,10 +53,8 @@ class WifiPropertyViewsFactory @Inject constructor(
 
                     is WifiProperty.Value.IPAddresses -> {
                         val filteredAddresses = when (val ipProperty = value.property) {
-                            WifiProperty.IPv4 -> value.addresses
-                            WifiProperty.IPv6 -> value.addresses.filter { address ->
-                                ipProperty as WifiProperty.IPv6
-
+                            is WifiProperty.IPv4 -> value.addresses
+                            is WifiProperty.IPv6 -> value.addresses.filter { address ->
                                 when {
                                     !ipSubProperties.getValue(ipProperty.local) -> !address.isLocal
                                     !ipSubProperties.getValue(ipProperty.public) -> address.isLocal
