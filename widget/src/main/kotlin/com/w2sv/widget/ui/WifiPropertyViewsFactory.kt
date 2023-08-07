@@ -19,8 +19,7 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class WifiPropertyViewsFactory @Inject constructor(
-    @ApplicationContext private val context: Context,
-    private val widgetRepository: WidgetRepository
+    @ApplicationContext private val context: Context, private val widgetRepository: WidgetRepository
 ) : RemoteViewsService.RemoteViewsFactory {
 
     private val valueGetterResources by lazy {
@@ -37,54 +36,65 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
 
-        val subProperties by lazy {
+        val ipSubProperties by lazy {
             widgetRepository.subWifiProperties.getSynchronousMap()
         }
 
         propertyViewData = buildList {
-            widgetRepository.getSetWifiProperties()
-                .forEach {
-                    when (val value = it.getValue(valueGetterResources)) {
-                        is WifiProperty.Value.Singular -> {
+            widgetRepository.getSetWifiProperties().forEach {
+                when (val value = it.getValue(valueGetterResources)) {
+                    is WifiProperty.Value.Singular -> {
+                        add(
+                            WifiPropertyLayoutViewData.WifiProperty(
+                                context.getString(it.viewData.labelRes), value.value
+                            )
+                        )
+                    }
+
+                    is WifiProperty.Value.IPAddresses -> {
+                        val filteredAddresses = when (value.property) {
+                            WifiProperty.IPv4 -> value.addresses
+                            WifiProperty.IPv6 -> value.addresses.filter { address ->
+                                if (!ipSubProperties.getValue(WifiProperty.SubProperty.IPv6Local)) {
+                                    !address.isLocal
+                                }
+                                if (!ipSubProperties.getValue(WifiProperty.SubProperty.IPv6Public)) {
+                                    address.isLocal
+                                } else {
+                                    true
+                                }
+                            }
+
+                            else -> throw Error()
+                        }
+                        filteredAddresses.forEachIndexed { i, address ->
                             add(
                                 WifiPropertyLayoutViewData.WifiProperty(
-                                    context.getString(it.viewData.labelRes),
-                                    value.value
+                                    context.getString(it.viewData.labelRes)
+                                        .run {
+                                            if (filteredAddresses.size > 1)
+                                                "$this #${i + 1}"
+                                            else
+                                                this
+                                        },
+                                    address.textualRepresentation
+                                )
+                            )
+                            add(
+                                WifiPropertyLayoutViewData.IPProperties(
+                                    ipAddress = address,
+                                    showPrefixLength = ipSubProperties.getValue(
+                                        if (value.property == WifiProperty.IPv4)
+                                            WifiProperty.SubProperty.IPv4PrefixLength
+                                        else
+                                            WifiProperty.SubProperty.IPv6PrefixLength
+                                    )
                                 )
                             )
                         }
-
-                        is WifiProperty.Value.IPAddresses -> {
-                            value.addresses.forEachIndexed { i, address ->
-                                add(
-                                    WifiPropertyLayoutViewData.WifiProperty(
-                                        context.getString(it.viewData.labelRes)
-                                            .run {
-                                                if (value.addresses.size > 1)
-                                                    "$this #${i + 1}"
-                                                else
-                                                    this
-                                            },
-                                        address.textualRepresentation
-                                    )
-                                )
-                                val showPrefixLength =
-                                    subProperties.getValue(value.property.subProperties.first())
-                                val showAdditionalProperties =
-                                    subProperties.getValue(value.property.subProperties.last())
-                                if (showPrefixLength || showAdditionalProperties) {
-                                    add(
-                                        WifiPropertyLayoutViewData.IPProperties(
-                                            address,
-                                            showPrefixLength,
-                                            showAdditionalProperties
-                                        )
-                                    )
-                                }
-                            }
-                        }
                     }
                 }
+            }
         }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
 
@@ -96,19 +106,18 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun getViewAt(position: Int): RemoteViews =
         when (val viewData = propertyViewData[position]) {
             is WifiPropertyLayoutViewData.WifiProperty -> {
-                RemoteViews(context.packageName, R.layout.wifi_property)
-                    .apply {
-                        setTextView(
-                            viewId = R.id.property_label_tv,
-                            text = viewData.label,
-                            color = widgetColors.primary
-                        )
-                        setTextView(
-                            viewId = R.id.property_value_tv,
-                            text = viewData.value,
-                            color = widgetColors.secondary
-                        )
-                    }
+                RemoteViews(context.packageName, R.layout.wifi_property).apply {
+                    setTextView(
+                        viewId = R.id.property_label_tv,
+                        text = viewData.label,
+                        color = widgetColors.primary
+                    )
+                    setTextView(
+                        viewId = R.id.property_value_tv,
+                        text = viewData.value,
+                        color = widgetColors.secondary
+                    )
+                }
             }
 
             is WifiPropertyLayoutViewData.IPProperties -> {
@@ -123,46 +132,46 @@ class WifiPropertyViewsFactory @Inject constructor(
                         )
                             .iterator()
 
-                        if (viewData.showPrefixLength) {
+                        fun addSubPropertyTV(text: String) {
                             setTextView(
                                 viewId = propertyTVIterator.next(),
-                                text = "/${viewData.ipAddress.prefixLength}",
+                                text = text,
                                 color = widgetColors.secondary
                             )
                         }
-                        if (viewData.showAdditionalProperties) {
-                            if (viewData.ipAddress.isLocal) {
-                                if (viewData.ipAddress.localAttributes.siteLocal) {
-                                    setTextView(
-                                        viewId = propertyTVIterator.next(),
-                                        text = "SiteLocal",
-                                        color = widgetColors.secondary
-                                    )
-                                }
-                                if (viewData.ipAddress.localAttributes.linkLocal) {
-                                    setTextView(
-                                        viewId = propertyTVIterator.next(),
-                                        text = "LinkLocal",
-                                        color = widgetColors.secondary
-                                    )
-                                }
-                            }
-                            if (viewData.ipAddress.isLoopback) {
-                                setTextView(
-                                    viewId = propertyTVIterator.next(),
-                                    text = "Loopback",
-                                    color = widgetColors.secondary
-                                )
-                            }
-                            if (viewData.ipAddress.isMultiCast) {
-                                setTextView(
-                                    viewId = propertyTVIterator.next(),
-                                    text = "Multicast",
-                                    color = widgetColors.secondary
-                                )
+
+                        fun addSubPropertyTVIfConditionMet(conditional: Boolean, text: String) {
+                            if (conditional) {
+                                addSubPropertyTV(text)
                             }
                         }
 
+                        // Prefix length
+                        addSubPropertyTVIfConditionMet(
+                            viewData.showPrefixLength, "/${viewData.ipAddress.prefixLength}"
+                        )
+
+                        // Local / Public
+                        if (viewData.ipAddress.isLocal) {
+                            addSubPropertyTVIfConditionMet(
+                                viewData.ipAddress.localAttributes.siteLocal, "SiteLocal"
+                            )
+                            addSubPropertyTVIfConditionMet(
+                                viewData.ipAddress.localAttributes.linkLocal, "LinkLocal"
+                            )
+                            addSubPropertyTVIfConditionMet(
+                                !viewData.ipAddress.localAttributes.siteLocal && !viewData.ipAddress.localAttributes.linkLocal,
+                                "Local"
+                            )
+                        } else {
+                            addSubPropertyTV("Public")
+                        }
+
+                        // Additional properties
+                        addSubPropertyTVIfConditionMet(viewData.ipAddress.isLoopback, "Loopback")
+                        addSubPropertyTVIfConditionMet(viewData.ipAddress.isMultiCast, "Multicast")
+
+                        // Hide all remaining sub-property views
                         propertyTVIterator.forEachRemaining {
                             setViewVisibility(it, View.GONE)
                         }
@@ -174,8 +183,7 @@ class WifiPropertyViewsFactory @Inject constructor(
 
     override fun getViewTypeCount(): Int = nViewTypes
 
-    override fun getItemId(position: Int): Long =
-        propertyViewData[position].hashCode().toLong()
+    override fun getItemId(position: Int): Long = propertyViewData[position].hashCode().toLong()
 
     override fun hasStableIds(): Boolean = true
 

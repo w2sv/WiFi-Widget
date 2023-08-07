@@ -64,12 +64,7 @@ internal fun WifiPropertySelection(
                     subPropertyIsCheckedMap = subPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Local,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = subPropertiesMap
-                ),
-                WifiPropertyCheckRowData(
-                    WifiProperty.IPv6Public,
+                    WifiProperty.IPv6,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = subPropertiesMap
                 ),

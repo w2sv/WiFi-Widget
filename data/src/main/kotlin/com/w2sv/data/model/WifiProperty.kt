@@ -61,46 +61,26 @@ enum class WifiProperty(
             )
         },
         subProperties = listOf(
-            SubProperty.PrefixLength(booleanPreferencesKey("IPv4.prefixLength")),
-            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv4.additionalProperties"))
+            SubProperty.IPv4PrefixLength,
         )
     ),
-    IPv6Local(
+    IPv6(
         ViewData(
-            R.string.ipv6_local,
-            R.string.ipv6_local_description,
+            R.string.ipv6,
+            R.string.ipv6_description,
             "https://en.wikipedia.org/wiki/IP_address"
         ),
         {
             Value.getForIPProperty(
-                property = IPv6Local,
+                property = IPv6,
                 ipAddresses = it.ipAddresses,
-                type = IPAddress.Type.V6,
-                additionalFilterPredicate = { address -> address.isLocal }
+                type = IPAddress.Type.V6
             )
         },
         subProperties = listOf(
-            SubProperty.PrefixLength(booleanPreferencesKey("IPv6Local.prefixLength")),
-            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv6Local.additionalProperties"))
-        )
-    ),
-    IPv6Public(
-        ViewData(
-            R.string.ipv6_public,
-            R.string.ipv6_public_description,
-            "https://en.wikipedia.org/wiki/IP_address"
-        ),
-        {
-            Value.getForIPProperty(
-                property = IPv6Public,
-                ipAddresses = it.ipAddresses,
-                type = IPAddress.Type.V6,
-                additionalFilterPredicate = { address -> !address.isLocal }
-            )
-        },
-        subProperties = listOf(
-            SubProperty.PrefixLength(booleanPreferencesKey("IPv6Public.prefixLength")),
-            SubProperty.AdditionalProperties(booleanPreferencesKey("IPv6Public.additionalProperties"))
+            SubProperty.IPv6Local,
+            SubProperty.IPv6Public,
+            SubProperty.IPv6PrefixLength
         )
     ),
     Frequency(
@@ -167,19 +147,15 @@ enum class WifiProperty(
         },
     );
 
-    sealed class SubProperty(
+    enum class SubProperty(
         @StringRes val labelRes: Int,
-        preferencesKey: Preferences.Key<Boolean>,
-        defaultValue: Boolean = true
-    ) : DataStoreEntry.UniType.Impl<Boolean>(preferencesKey, defaultValue) {
-
-        class PrefixLength(
-            preferencesKey: Preferences.Key<Boolean>
-        ) : SubProperty(R.string.prefix_length, preferencesKey)
-
-        class AdditionalProperties(
-            preferencesKey: Preferences.Key<Boolean>
-        ) : SubProperty(R.string.additional_properties, preferencesKey)
+        override val preferencesKey: Preferences.Key<Boolean>,
+        override val defaultValue: Boolean = true
+    ) : DataStoreEntry.UniType<Boolean> {
+        IPv4PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv4.PrefixLength")),
+        IPv6PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv6.PrefixLength")),
+        IPv6Local(R.string.local, booleanPreferencesKey("IPv6.Local")),
+        IPv6Public(R.string.public_, booleanPreferencesKey("IPv6.Public"))
     }
 
     data class ViewData(
@@ -196,11 +172,10 @@ enum class WifiProperty(
             fun getForIPProperty(
                 property: WifiProperty,
                 ipAddresses: List<IPAddress>?,
-                type: IPAddress.Type,
-                additionalFilterPredicate: (IPAddress) -> Boolean = { true }
+                type: IPAddress.Type
             ): Value =
                 ipAddresses
-                    ?.filter { it.type == type && additionalFilterPredicate(it) }
+                    ?.filter { it.type == type }
                     ?.let { addresses ->
                         IPAddresses(property, addresses)
                     }
