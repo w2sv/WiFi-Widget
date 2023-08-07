@@ -61,7 +61,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                                         context.getString(it.viewData.labelRes)
                                             .run {
                                                 if (value.addresses.size > 1)
-                                                    "$this ${i + 1}"
+                                                    "$this #${i + 1}"
                                                 else
                                                     this
                                             },
