@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.data.model.Theme
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateFlow
@@ -10,6 +11,7 @@ import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStatesComposition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -113,6 +115,11 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
     // ===========================
     // State change side effects
     // ===========================
+
+    val customThemeSelected = theme
+        .transform {
+            emit(it == Theme.Custom)
+        }
 
     val refreshingParametersChanged = MutableSharedFlow<Unit>()
 }
