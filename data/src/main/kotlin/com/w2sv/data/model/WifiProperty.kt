@@ -13,149 +13,36 @@ import com.w2sv.data.networking.getIPAddresses
 import com.w2sv.data.networking.wifiManager
 
 @Suppress("DEPRECATION")
-enum class WifiProperty(
+sealed class WifiProperty(
     val viewData: ViewData,
     val getValue: (ValueGetterResources) -> Value,
-    val subProperties: List<SubProperty> = listOf(),
     override val defaultValue: Boolean = true
 ) :
     DataStoreEntry.UniType<Boolean> {
 
-    SSID(
-        ViewData(
-            R.string.ssid,
-            R.string.ssid_description,
-            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID"
-        ),
-        {
-            Value.Singular(
-                it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
-            )
-        },
-        defaultValue = false
-    ),
-    BSSID(
-        ViewData(
-            R.string.bssid,
-            R.string.bssid_description,
-            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID"
-        ),
-        {
-            Value.Singular(
-                it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
-            )
-        },
-        defaultValue = false
-    ),
-    IPv4(
-        ViewData(
-            R.string.ipv4,
-            R.string.ipv4_description,
-            "https://en.wikipedia.org/wiki/IP_address"
-        ),
-        {
-            Value.getForIPProperty(
-                IPv4,
-                it.ipAddresses,
-                IPAddress.Type.V4
-            )
-        },
-        subProperties = listOf(
-            SubProperty.IPv4PrefixLength,
-        )
-    ),
-    IPv6(
-        ViewData(
-            R.string.ipv6,
-            R.string.ipv6_description,
-            "https://en.wikipedia.org/wiki/IP_address"
-        ),
-        {
-            Value.getForIPProperty(
-                property = IPv6,
-                ipAddresses = it.ipAddresses,
-                type = IPAddress.Type.V6
-            )
-        },
-        subProperties = listOf(
-            SubProperty.IPv6Local,
-            SubProperty.IPv6Public,
-            SubProperty.IPv6PrefixLength
-        )
-    ),
-    Frequency(
-        ViewData(
-            R.string.frequency,
-            R.string.frequency_description,
-            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
-        ),
-        { Value.Singular("${it.wifiManager.connectionInfo.frequency} MHz") },
-    ),
-    Channel(
-        ViewData(
-            R.string.channel,
-            R.string.channel_description,
-            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
-        ),
-        { Value.Singular(frequencyToChannel(it.wifiManager.connectionInfo.frequency).toString()) },
-    ),
-    LinkSpeed(
-        ViewData(
-            R.string.link_speed,
-            R.string.link_speed_description,
-            null
-        ),
-        { Value.Singular("${it.wifiManager.connectionInfo.linkSpeed} Mbps") },
-    ),
-    Gateway(
-        ViewData(
-            R.string.gateway,
-            R.string.gateway_description,
-            "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway"
-        ),
-        {
-            Value.Singular(
-                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.gateway)
-                    ?: IPAddress.Type.V4.fallbackAddress
-            )
-        },
-    ),
-    DNS(
-        ViewData(
-            R.string.dns,
-            R.string.dns_description,
-            "https://en.wikipedia.org/wiki/Domain_Name_System"
-        ),
-        {
-            Value.Singular(
-                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.dns1)
-                    ?: IPAddress.Type.V4.fallbackAddress
-            )
-        },
-    ),
-    DHCP(
-        ViewData(
-            R.string.dhcp,
-            R.string.dhcp_description,
-            "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol"
-        ),
-        {
-            Value.Singular(
-                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.serverAddress)
-                    ?: IPAddress.Type.V4.fallbackAddress
-            )
-        },
-    );
+    sealed interface IP {
+        val subProperties: List<SubProperty>
+        val prefixLengthSubProperty: SubProperty
 
-    enum class SubProperty(
-        @StringRes val labelRes: Int,
-        override val preferencesKey: Preferences.Key<Boolean>,
-        override val defaultValue: Boolean = true
-    ) : DataStoreEntry.UniType<Boolean> {
-        IPv4PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv4.PrefixLength")),
-        IPv6PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv6.PrefixLength")),
-        IPv6Local(R.string.local, booleanPreferencesKey("IPv6.Local")),
-        IPv6Public(R.string.public_, booleanPreferencesKey("IPv6.Public"))
+        enum class SubProperty(
+            @StringRes val labelRes: Int,
+            override val preferencesKey: Preferences.Key<Boolean>,
+            override val defaultValue: Boolean = true
+        ) : DataStoreEntry.UniType<Boolean> {
+            V4PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv4.PrefixLength")),
+            V6PrefixLength(R.string.prefix_length, booleanPreferencesKey("IPv6.PrefixLength")),
+            V6Local(R.string.local, booleanPreferencesKey("IPv6.Local")),
+            V6Public(R.string.public_, booleanPreferencesKey("IPv6.Public"))
+        }
+
+        companion object {
+            fun values(): Array<IP> {
+                return arrayOf(
+                    IPv4,
+                    IPv6
+                )
+            }
+        }
     }
 
     data class ViewData(
@@ -166,11 +53,11 @@ enum class WifiProperty(
 
     sealed interface Value {
         class Singular(val value: String) : Value
-        class IPAddresses(val property: WifiProperty, val addresses: List<IPAddress>) : Value
+        class IPAddresses(val property: IP, val addresses: List<IPAddress>) : Value
 
         companion object {
             fun getForIPProperty(
-                property: WifiProperty,
+                property: IP,
                 ipAddresses: List<IPAddress>?,
                 type: IPAddress.Type
             ): Value =
@@ -193,7 +80,182 @@ enum class WifiProperty(
         }
     }
 
-    override val preferencesKey: Preferences.Key<Boolean> = booleanPreferencesKey(name)
+    override val preferencesKey: Preferences.Key<Boolean> =
+        booleanPreferencesKey(this::class.simpleName!!)  // TODO
+
+    object SSID : WifiProperty(
+        ViewData(
+            R.string.ssid,
+            R.string.ssid_description,
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID"
+        ),
+        {
+            Value.Singular(
+                it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
+            )
+        },
+        defaultValue = false
+    )
+
+    object BSSID : WifiProperty(
+        ViewData(
+            R.string.bssid,
+            R.string.bssid_description,
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID"
+        ),
+        {
+            Value.Singular(
+                it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
+            )
+        },
+        defaultValue = false
+    )
+
+    object IPv4 :
+        WifiProperty(
+            ViewData(
+                R.string.ipv4,
+                R.string.ipv4_description,
+                "https://en.wikipedia.org/wiki/IP_address"
+            ),
+            {
+                Value.getForIPProperty(
+                    IPv4,
+                    it.ipAddresses,
+                    IPAddress.Type.V4
+                )
+            }
+        ),
+        IP {
+        override val subProperties = listOf(IP.SubProperty.V4PrefixLength)
+        override val prefixLengthSubProperty: IP.SubProperty = IP.SubProperty.V4PrefixLength
+    }
+
+    object IPv6 :
+        WifiProperty(
+            ViewData(
+                R.string.ipv6,
+                R.string.ipv6_description,
+                "https://en.wikipedia.org/wiki/IP_address"
+            ),
+            {
+                Value.getForIPProperty(
+                    property = IPv6,
+                    ipAddresses = it.ipAddresses,
+                    type = IPAddress.Type.V6
+                )
+            }
+        ),
+        IP {
+        override val subProperties: List<IP.SubProperty> = listOf(
+            IP.SubProperty.V6Local,
+            IP.SubProperty.V6Public,
+            IP.SubProperty.V6PrefixLength
+        )
+        override val prefixLengthSubProperty: IP.SubProperty = IP.SubProperty.V6PrefixLength
+    }
+
+    object Frequency : WifiProperty(
+        ViewData(
+            R.string.frequency,
+            R.string.frequency_description,
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
+        ),
+        { Value.Singular("${it.wifiManager.connectionInfo.frequency} MHz") },
+    )
+
+    object Channel : WifiProperty(
+        ViewData(
+            R.string.channel,
+            R.string.channel_description,
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
+        ),
+        { Value.Singular(frequencyToChannel(it.wifiManager.connectionInfo.frequency).toString()) },
+    )
+
+    object LinkSpeed : WifiProperty(
+        ViewData(
+            R.string.link_speed,
+            R.string.link_speed_description,
+            null
+        ),
+        { Value.Singular("${it.wifiManager.connectionInfo.linkSpeed} Mbps") },
+    )
+
+    object Gateway : WifiProperty(
+        ViewData(
+            R.string.gateway,
+            R.string.gateway_description,
+            "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway"
+        ),
+        {
+            Value.Singular(
+                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.gateway)
+                    ?: IPAddress.Type.V4.fallbackAddress
+            )
+        },
+    )
+
+    object DNS : WifiProperty(
+        ViewData(
+            R.string.dns,
+            R.string.dns_description,
+            "https://en.wikipedia.org/wiki/Domain_Name_System"
+        ),
+        {
+            Value.Singular(
+                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.dns1)
+                    ?: IPAddress.Type.V4.fallbackAddress
+            )
+        },
+    )
+
+    object DHCP : WifiProperty(
+        ViewData(
+            R.string.dhcp,
+            R.string.dhcp_description,
+            "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol"
+        ),
+        {
+            Value.Singular(
+                com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.serverAddress)
+                    ?: IPAddress.Type.V4.fallbackAddress
+            )
+        },
+    )
+
+    companion object {
+        fun values(): Array<WifiProperty> {
+            return arrayOf(
+                SSID,
+                BSSID,
+                IPv4,
+                IPv6,
+                Frequency,
+                Channel,
+                LinkSpeed,
+                Gateway,
+                DNS,
+                DHCP
+            )
+        }
+
+        fun valueOf(value: String): WifiProperty {
+            return when (value) {
+                "SSID" -> SSID
+                "BSSID" -> BSSID
+                "IPv4" -> IPv4
+                "IPv6" -> IPv6
+                "Frequency" -> Frequency
+                "Channel" -> Channel
+                "LinkSpeed" -> LinkSpeed
+                "Gateway" -> Gateway
+                "DNS" -> DNS
+                "DHCP" -> DHCP
+                else -> throw IllegalArgumentException("No object com.w2sv.data.model.WifiProperty.$value")
+            }
+        }
+    }
 }
 
 private const val DEFAULT_FALLBACK_VALUE = "Couldn't retrieve"

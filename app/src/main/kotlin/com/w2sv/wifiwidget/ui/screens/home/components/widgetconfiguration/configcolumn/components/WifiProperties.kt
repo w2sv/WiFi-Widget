@@ -19,7 +19,7 @@ class WifiPropertyCheckRowData(
     type: WifiProperty,
     isCheckedMap: MutableMap<WifiProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
-    val subPropertyIsCheckedMap: MutableMap<WifiProperty.SubProperty, Boolean> = mutableMapOf()
+    val subPropertyIsCheckedMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>? = null
 ) : PropertyCheckRowData<WifiProperty>(
     type,
     type.viewData.labelRes,
@@ -30,7 +30,7 @@ class WifiPropertyCheckRowData(
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
-    subPropertiesMap: MutableMap<WifiProperty.SubProperty, Boolean>,
+    ipSubPropertiesMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
     onInfoButtonClick: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier
@@ -61,12 +61,12 @@ internal fun WifiPropertySelection(
                 WifiPropertyCheckRowData(
                     WifiProperty.IPv4,
                     isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = subPropertiesMap
+                    subPropertyIsCheckedMap = ipSubPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.IPv6,
                     isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = subPropertiesMap
+                    subPropertyIsCheckedMap = ipSubPropertiesMap
                 ),
                 WifiPropertyCheckRowData(
                     WifiProperty.Frequency,
@@ -123,7 +123,7 @@ private fun WifiPropertyCheckRow(
                 )
             }
         )
-        if (data.type.subProperties.isNotEmpty()) {
+        if (data.type is WifiProperty.IP) {
             AnimatedVisibility(
                 visible = data.isChecked()
             ) {
@@ -133,7 +133,7 @@ private fun WifiPropertyCheckRow(
                             data = PropertyCheckRowData(
                                 subProperty,
                                 subProperty.labelRes,
-                                data.subPropertyIsCheckedMap
+                                data.subPropertyIsCheckedMap!!
                             )
                         )
                     }

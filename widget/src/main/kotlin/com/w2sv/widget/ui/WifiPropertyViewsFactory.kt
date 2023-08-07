@@ -55,10 +55,10 @@ class WifiPropertyViewsFactory @Inject constructor(
                         val filteredAddresses = when (value.property) {
                             WifiProperty.IPv4 -> value.addresses
                             WifiProperty.IPv6 -> value.addresses.filter { address ->
-                                if (!ipSubProperties.getValue(WifiProperty.SubProperty.IPv6Local)) {
+                                if (!ipSubProperties.getValue(WifiProperty.IP.SubProperty.V6Public)) {
                                     !address.isLocal
                                 }
-                                if (!ipSubProperties.getValue(WifiProperty.SubProperty.IPv6Public)) {
+                                if (!ipSubProperties.getValue(WifiProperty.IP.SubProperty.V6Local)) {
                                     address.isLocal
                                 } else {
                                     true
@@ -83,12 +83,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                             add(
                                 WifiPropertyLayoutViewData.IPProperties(
                                     ipAddress = address,
-                                    showPrefixLength = ipSubProperties.getValue(
-                                        if (value.property == WifiProperty.IPv4)
-                                            WifiProperty.SubProperty.IPv4PrefixLength
-                                        else
-                                            WifiProperty.SubProperty.IPv6PrefixLength
-                                    )
+                                    showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty)
                                 )
                             )
                         }

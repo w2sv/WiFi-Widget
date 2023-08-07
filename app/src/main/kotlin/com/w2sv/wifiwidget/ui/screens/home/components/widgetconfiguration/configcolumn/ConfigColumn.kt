@@ -88,7 +88,7 @@ fun ConfigColumn(
         )
         WifiPropertySelection(
             wifiPropertiesMap = widgetVM.wifiProperties,
-            subPropertiesMap = widgetVM.subWifiProperties,
+            ipSubPropertiesMap = widgetVM.subWifiProperties,
             allowLAPDependentPropertyCheckChange = { property, newValue ->
                 when (newValue) {
                     true -> {
