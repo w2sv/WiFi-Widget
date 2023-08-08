@@ -3,6 +3,7 @@ package com.w2sv.widget.model
 import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
+import com.w2sv.common.utils.getAlphaSetColor
 
 data class WidgetColors(
     @ColorInt val background: Int,
@@ -20,5 +21,9 @@ data class WidgetColors(
                 context.getColor(primary),
                 context.getColor(secondary)
             )
+    }
+
+    val ipSubPropertyBackgroundColor by lazy {
+        getAlphaSetColor(primary, 0.2f)
     }
 }

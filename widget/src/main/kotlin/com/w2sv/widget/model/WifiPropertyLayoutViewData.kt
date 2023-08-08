@@ -1,6 +1,7 @@
 package com.w2sv.widget.model
 
 import android.content.Context
+import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
 import com.w2sv.data.networking.IPAddress
@@ -48,11 +49,21 @@ internal sealed interface WifiPropertyLayoutViewData {
                         .iterator()
 
                     fun addSubPropertyTV(text: String) {
+                        val viewId = propertyTVIterator.next()
                         setTextView(
-                            viewId = propertyTVIterator.next(),
+                            viewId = viewId,
                             text = text,
                             color = widgetColors.secondary
                         )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//                            setColorStateList(
+//                                viewId,
+//                                "setBackgroundTintList",
+//                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
+//                            )
+                        } else {
+//                            setBackgroundColor(viewId, widgetColors.ipSubPropertyBackgroundColor)  TODO
+                        }
                     }
 
                     fun addSubPropertyTVIfConditionMet(conditional: Boolean, text: String) {
