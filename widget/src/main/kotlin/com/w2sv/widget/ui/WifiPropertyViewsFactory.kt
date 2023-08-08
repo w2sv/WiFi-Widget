@@ -65,13 +65,12 @@ class WifiPropertyViewsFactory @Inject constructor(
                         filteredAddresses.forEachIndexed { i, address ->
                             add(
                                 WifiPropertyLayoutViewData.WifiProperty(
-                                    context.getString(it.viewData.labelRes)
-                                        .run {
-                                            if (filteredAddresses.size > 1)
-                                                "$this #${i + 1}"
-                                            else
-                                                this
-                                        },
+                                    buildString {
+                                        append(context.getString(it.viewData.labelRes))
+                                        if (filteredAddresses.size > 1) {
+                                            append(" #${i + 1}")
+                                        }
+                                    },
                                     address.textualRepresentation
                                 )
                             )
