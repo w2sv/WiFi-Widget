@@ -16,6 +16,7 @@ import com.w2sv.data.networking.wifiManager
 sealed class WifiProperty(
     val viewData: ViewData,
     val getValue: (ValueGetterResources) -> Value,
+    override val preferencesKey: Preferences.Key<Boolean>,
     override val defaultValue: Boolean = true
 ) :
     DataStoreEntry.UniType<Boolean> {
@@ -23,8 +24,9 @@ sealed class WifiProperty(
     sealed class IPProperty(
         viewData: ViewData,
         getValue: (ValueGetterResources) -> Value,
+        preferencesKey: Preferences.Key<Boolean>,
         val prefixLengthSubProperty: SubProperty
-    ) : WifiProperty(viewData, getValue) {
+    ) : WifiProperty(viewData, getValue, preferencesKey) {
 
         open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
 
@@ -81,9 +83,6 @@ sealed class WifiProperty(
         }
     }
 
-    override val preferencesKey: Preferences.Key<Boolean> =
-        booleanPreferencesKey(this::class.simpleName!!)  // TODO
-
     object SSID : WifiProperty(
         ViewData(
             R.string.ssid,
@@ -95,6 +94,7 @@ sealed class WifiProperty(
                 it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
             )
         },
+        preferencesKey = booleanPreferencesKey("SSID"),
         defaultValue = false
     )
 
@@ -109,6 +109,7 @@ sealed class WifiProperty(
                 it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
             )
         },
+        preferencesKey = booleanPreferencesKey("BSSID"),
         defaultValue = false
     )
 
@@ -126,6 +127,7 @@ sealed class WifiProperty(
                     IPAddress.Type.V4
                 )
             },
+            preferencesKey = booleanPreferencesKey("IPv4"),
             SubProperty(
                 prefixLengthViewData,
                 booleanPreferencesKey("IPv4.PrefixLength")
@@ -146,6 +148,7 @@ sealed class WifiProperty(
                     type = IPAddress.Type.V6
                 )
             },
+            preferencesKey = booleanPreferencesKey("IPv6"),
             prefixLengthSubProperty = SubProperty(
                 viewData = prefixLengthViewData,
                 preferencesKey = booleanPreferencesKey("IPv6.PrefixLength")
@@ -174,6 +177,7 @@ sealed class WifiProperty(
             "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.frequency} MHz") },
+        preferencesKey = booleanPreferencesKey("Frequency"),
     )
 
     object Channel : WifiProperty(
@@ -183,6 +187,7 @@ sealed class WifiProperty(
             "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { Value.Singular(frequencyToChannel(it.wifiManager.connectionInfo.frequency).toString()) },
+        preferencesKey = booleanPreferencesKey("Channel")
     )
 
     object LinkSpeed : WifiProperty(
@@ -192,6 +197,7 @@ sealed class WifiProperty(
             null
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.linkSpeed} Mbps") },
+        preferencesKey = booleanPreferencesKey("LinkSpeed"),
     )
 
     object Gateway : WifiProperty(
@@ -206,6 +212,7 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
+        preferencesKey = booleanPreferencesKey("Gateway")
     )
 
     object DNS : WifiProperty(
@@ -220,6 +227,7 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
+        preferencesKey = booleanPreferencesKey("DNS")
     )
 
     object DHCP : WifiProperty(
@@ -234,6 +242,7 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
+        preferencesKey = booleanPreferencesKey("DHCP")
     )
 
     companion object {
