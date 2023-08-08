@@ -19,6 +19,7 @@ import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
@@ -52,6 +53,11 @@ internal fun HomeScreen(
                     scope.launch {
                         drawerState.open()
                     }
+                }
+            },
+            snackbarHost = {
+                SnackbarHost(homeScreenVM.snackbarHostState) { snackbarData ->
+                    AppSnackbar(snackbarData = snackbarData)
                 }
             }
         ) { paddingValues ->

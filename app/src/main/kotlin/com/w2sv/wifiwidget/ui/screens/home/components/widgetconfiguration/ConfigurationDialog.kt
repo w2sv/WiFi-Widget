@@ -15,13 +15,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
 
@@ -37,13 +37,14 @@ private fun WidgetConfigurationDialogPrev() {
 fun WidgetConfigurationDialog(
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
-    widgetConfigurationVM: WidgetViewModel = viewModel()
+    widgetVM: WidgetViewModel = viewModel(),
+    homeScreenVM: HomeScreenViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val onDismissRequest: () -> Unit = {
-        widgetConfigurationVM.onDismissWidgetConfigurationDialog()
+        widgetVM.onDismissWidgetConfigurationDialog()
         closeDialog()
     }
 
@@ -71,13 +72,13 @@ fun WidgetConfigurationDialog(
             },
             onApply = {
                 scope.launch {
-                    widgetConfigurationVM.configuration.sync()
+                    widgetVM.configuration.sync()
                     WidgetProvider.triggerDataRefresh(context)
-                    context.showToast(com.w2sv.wifiwidget.R.string.updated_widget_configuration)
+                    homeScreenVM.onWidgetConfigurationChanged()
                     closeDialog()
                 }
             },
-            applyButtonEnabled = widgetConfigurationVM.configuration.statesDissimilar.collectAsState().value,
+            applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsState().value,
             modifier = Modifier.fillMaxWidth()
         )
     }

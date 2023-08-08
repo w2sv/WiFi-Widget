@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
 import android.Manifest
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -11,9 +10,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.common.utils.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
 import slimber.log.i
@@ -61,9 +63,15 @@ fun LocationAccessPermissionRequest(
             false -> {
                 when (permissionState.isLaunchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
                     true -> {
-                        context.showToast(
-                            context.getString(R.string.go_to_app_settings_and_grant_location_access_permission),
-                            Toast.LENGTH_LONG
+                        homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                            ExtendedSnackbarVisuals(
+                                context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                                kind = SnackbarKind.Error,
+                                actionLabel = context.getString(R.string.go_to_settings),
+                                action = {
+                                    goToAppSettings(context)
+                                }
+                            )
                         )
                         homeScreenVM.lapRequestTrigger.reset()
                     }

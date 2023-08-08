@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.Manifest
 import android.content.Context
-import android.widget.Toast
+import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +17,9 @@ import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,6 +47,24 @@ class HomeScreenViewModel @Inject constructor(
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
 
+    val snackbarHostState = SnackbarHostState()
+
+    fun onWidgetConfigurationChanged() {
+        viewModelScope.launch {
+            snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                ExtendedSnackbarVisuals(
+                    message = buildString {
+                        append("Updated configuration")
+                        if (widgetIds.isNotEmpty()) {
+                            append(" of ${widgetIds.size} widget(s)")
+                        }
+                    },
+                    kind = SnackbarKind.Success
+                )
+            )
+        }
+    }
+
     // ========================
     // Widget Pin Listening
     // ========================
@@ -56,26 +77,41 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun onNewWidgetPinned(widgetId: Int, context: Context) {
         i { "Pinned new widget w ID=$widgetId" }
-        context.showToast(R.string.pinned_widget)
 
         viewModelScope.launch {
-            if (widgetRepository.wifiProperties.getValue(WifiProperty.SSID).first())
+            if (widgetRepository.wifiProperties.getValue(WifiProperty.SSID)
+                    .first() || widgetRepository.wifiProperties.getValue(WifiProperty.BSSID).first()
+            )
                 when {
-                    !context.isLocationEnabled -> context.showToast(
-                        R.string.on_pin_widget_wo_gps_enabled,
-                        Toast.LENGTH_LONG
+                    !context.isLocationEnabled -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                        ExtendedSnackbarVisuals(
+                            context.getString(R.string.on_pin_widget_wo_gps_enabled),
+                            SnackbarKind.Error
+                        )
                     )
 
-                    !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> context.showToast(
-                        R.string.on_pin_widget_wo_location_access_permission,
-                        Toast.LENGTH_LONG
+                    !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                        ExtendedSnackbarVisuals(
+                            context.getString(R.string.on_pin_widget_wo_location_access_permission),
+                            SnackbarKind.Error
+                        )
                     )
 
-                    (backgroundLocationAccessGrantRequired) && !context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) && !showBackgroundLocationAccessRational.value -> context.showToast(
-                        R.string.on_pin_widget_wo_background_location_access_permission,
-                        Toast.LENGTH_LONG
-                    )
+                    (backgroundLocationAccessGrantRequired) && !context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) && !showBackgroundLocationAccessRational.value ->
+                        snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                            ExtendedSnackbarVisuals(
+                                context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
+                                SnackbarKind.Error
+                            )
+                        )
                 }
+
+            snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                ExtendedSnackbarVisuals(
+                    message = context.getString(R.string.pinned_widget),
+                    kind = SnackbarKind.Success
+                )
+            )
         }
     }
 
