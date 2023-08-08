@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -23,6 +24,7 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
+import com.w2sv.wifiwidget.ui.screens.home.components.WifiPropertiesList
 import com.w2sv.wifiwidget.ui.screens.home.components.WifiStatusDisplay
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
@@ -72,6 +74,24 @@ internal fun HomeScreen(
                 Spacer(Modifier.weight(0.75f))
                 WifiStatusDisplay(wifiStatus = homeScreenVM.wifiStatus.collectAsState().value)
                 Spacer(Modifier.weight(0.75f))
+
+                val wifiPropertiesViewData by homeScreenVM.wifiPropertiesViewData.collectAsState()
+
+                AnimatedVisibility(visible = wifiPropertiesViewData != null) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(0.7f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            WifiPropertiesList(
+                                propertiesViewData = wifiPropertiesViewData!!,
+                                snackbarHostState = homeScreenVM.snackbarHostState
+                            )
+                        }
+                    }
+                }
+
                 Box(Modifier.weight(0.5f)) {
                     PinWidgetButton(
                         onClick = {

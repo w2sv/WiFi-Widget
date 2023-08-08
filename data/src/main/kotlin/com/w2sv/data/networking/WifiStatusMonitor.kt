@@ -2,6 +2,7 @@ package com.w2sv.data.networking
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
@@ -15,13 +16,28 @@ import javax.inject.Inject
 class WifiStatusMonitor @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    val wifiStatus: Flow<WifiStatus> = callbackFlow {
-        val connectivityManager = context.getConnectivityManager()
-        val wifiManager = context.getWifiManager()
+    private val connectivityManager = context.getConnectivityManager()
+    private val wifiManager = context.getWifiManager()
 
+    val wifiStatus: Flow<WifiStatus> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
                 channel.trySend(WifiStatus.Connected)
+            }
+
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                if (network == connectivityManager.activeNetwork) {
+                    channel.trySend(WifiStatus.Connected)
+                }
+            }
+
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                if (network == connectivityManager.activeNetwork) {
+                    channel.trySend(WifiStatus.Connected)
+                }
             }
 
             override fun onUnavailable() {

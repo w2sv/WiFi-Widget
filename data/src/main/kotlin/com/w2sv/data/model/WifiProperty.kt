@@ -7,10 +7,12 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.data.R
 import com.w2sv.data.networking.IPAddress
-import com.w2sv.data.networking.getConnectivityManager
 import com.w2sv.data.networking.frequencyToChannel
+import com.w2sv.data.networking.getConnectivityManager
 import com.w2sv.data.networking.getIPAddresses
 import com.w2sv.data.networking.getWifiManager
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 @Suppress("DEPRECATION")
 sealed class WifiProperty(
@@ -80,6 +82,12 @@ sealed class WifiProperty(
 
         val ipAddresses: List<IPAddress>? by lazy {
             context.getConnectivityManager().getIPAddresses()
+        }
+
+        class Provider @Inject constructor(@ApplicationContext private val context: Context) {
+
+            fun provide(): ValueGetterResources =
+                ValueGetterResources(context)
         }
     }
 

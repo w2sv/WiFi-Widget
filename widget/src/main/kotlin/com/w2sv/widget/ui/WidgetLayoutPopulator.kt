@@ -14,13 +14,13 @@ import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.getAlphaSetColor
+import com.w2sv.data.model.WifiStatus
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetButtons
-import com.w2sv.data.model.WifiStatus
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
@@ -52,7 +52,7 @@ class WidgetLayoutPopulator @Inject constructor(
         }
 
     private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
-        when (wifiStatus.isConnected) {
+        when (wifiStatus == WifiStatus.Connected) {
             true -> crossVisualize(
                 R.id.no_connection_available_layout, R.id.wifi_property_list_view
             )

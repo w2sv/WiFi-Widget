@@ -22,6 +22,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.screens.home.components.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,6 +30,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,7 +41,8 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val widgetRepository: WidgetRepository,
-    private val wifiStatusMonitor: WifiStatusMonitor,
+    private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
+    wifiStatusMonitor: WifiStatusMonitor,
     @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -69,11 +72,34 @@ class HomeScreenViewModel @Inject constructor(
             )
         }
     }
+
     val wifiStatus = wifiStatusMonitor.wifiStatus.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(),
         WifiStatus.Disabled
     )
+        .apply {
+            viewModelScope.launch {
+                collect { status ->
+                    _wifiProperties.value =
+                        if (status == WifiStatus.Connected) {
+                            val valueGetterResources =
+                                wifiPropertyValueGetterResourcesProvider.provide()
+                            WifiProperty.values().map { property ->
+                                WifiPropertyViewData(
+                                    property,
+                                    property.getValue(valueGetterResources)
+                                )
+                            }
+                        } else {
+                            null
+                        }
+                }
+            }
+        }
+
+    val wifiPropertiesViewData get() = _wifiProperties.asStateFlow()
+    private var _wifiProperties = MutableStateFlow<List<WifiPropertyViewData>?>(null)
 
     // ========================
     // Widget Pin Listening
