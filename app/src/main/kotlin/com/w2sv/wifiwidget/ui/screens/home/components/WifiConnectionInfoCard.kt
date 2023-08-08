@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiStatus
+import com.w2sv.wifiwidget.ui.components.JostText
 
 @Composable
 fun WifiConnectionInfoCard(
@@ -28,8 +31,16 @@ fun WifiConnectionInfoCard(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            JostText(
+                text = "WiFi Status",
+                color = MaterialTheme.colorScheme.tertiary,
+                fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+
             WifiStatusDisplay(wifiStatus = wifiStatus)
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
             AnimatedVisibility(visible = wifiPropertiesViewData != null) {
                 wifiPropertiesViewData?.let {
                     WifiPropertiesList(

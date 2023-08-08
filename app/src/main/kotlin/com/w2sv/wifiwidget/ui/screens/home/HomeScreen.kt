@@ -72,7 +72,7 @@ internal fun HomeScreen(
                 Spacer(Modifier.weight(0.3f))
                 Box(
                     modifier = Modifier
-                        .weight(1.4f)
+                        .weight(1.8f)
                         .fillMaxWidth(0.75f),
                     contentAlignment = Alignment.Center
                 ) {

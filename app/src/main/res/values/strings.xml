@@ -55,4 +55,5 @@
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>
     <string name="go_to_settings">Go to settings</string>
     <string name="click_to_go_to_your_device_wifi_settings">Click to go to your device WiFi settings.</string>
+    <string name="click_to_copy_to_clipboard">(Click to copy to clipboard)</string>
 </resources>

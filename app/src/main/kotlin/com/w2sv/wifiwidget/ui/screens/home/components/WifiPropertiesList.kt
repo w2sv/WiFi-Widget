@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiProperty
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
@@ -48,13 +49,13 @@ fun WifiPropertiesList(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 JostText(
-                    text = "Properties",
+                    text = stringResource(id = R.string.properties),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 17.sp,
                     modifier = Modifier.padding(bottom = 6.dp)
                 )
                 JostText(
-                    text = "(Click to copy to clipboard)",
+                    text = stringResource(R.string.click_to_copy_to_clipboard),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp
                 )

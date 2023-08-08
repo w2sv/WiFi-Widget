@@ -52,7 +52,7 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
             contentDescription = null,
             modifier = Modifier.size(42.dp)
         )
-        Spacer(modifier = Modifier.height(6.dp))
+        Spacer(modifier = Modifier.height(4.dp))
         JostText(text = stringResource(id = wifiStatus.labelRes))
     }
 }
