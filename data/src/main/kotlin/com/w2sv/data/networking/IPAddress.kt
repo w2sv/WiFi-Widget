@@ -31,8 +31,8 @@ class IPAddress(linkAddress: LinkAddress) {
 
     val isLoopback = linkAddress.address.isLoopbackAddress
 
-    val multiCastAttributes: MultiCastAttributes? = MultiCastAttributes.get(linkAddress.address)
-    val isMultiCast: Boolean get() = multiCastAttributes != null
+    //    val multiCastAttributes: MultiCastAttributes? = MultiCastAttributes.get(linkAddress.address)
+    val isMultiCast: Boolean = linkAddress.address.isMulticastAddress
 
     enum class Type(val fallbackAddress: String) {
         V4("0.0.0.0"),
@@ -56,26 +56,26 @@ class IPAddress(linkAddress: LinkAddress) {
         }
     }
 
-    data class MultiCastAttributes(
-        val global: Boolean,
-        val linkLocal: Boolean,
-        val nodeLocal: Boolean,
-        val orgLocal: Boolean,
-        val siteLocal: Boolean
-    ) {
-        companion object {
-            fun get(inetAddress: InetAddress): MultiCastAttributes? =
-                if (inetAddress.isMulticastAddress)
-                    MultiCastAttributes(
-                        inetAddress.isMCGlobal,
-                        inetAddress.isMCLinkLocal,
-                        inetAddress.isMCNodeLocal,
-                        inetAddress.isMCOrgLocal,
-                        inetAddress.isMCSiteLocal
-                    )
-                else null
-        }
-    }
+//    data class MultiCastAttributes(
+//        val global: Boolean,
+//        val linkLocal: Boolean,
+//        val nodeLocal: Boolean,
+//        val orgLocal: Boolean,
+//        val siteLocal: Boolean
+//    ) {
+//        companion object {
+//            fun get(inetAddress: InetAddress): MultiCastAttributes? =
+//                if (inetAddress.isMulticastAddress)
+//                    MultiCastAttributes(
+//                        inetAddress.isMCGlobal,
+//                        inetAddress.isMCLinkLocal,
+//                        inetAddress.isMCNodeLocal,
+//                        inetAddress.isMCOrgLocal,
+//                        inetAddress.isMCSiteLocal
+//                    )
+//                else null
+//        }
+//    }
 }
 
 fun ConnectivityManager.getIPAddresses(): List<IPAddress>? =
