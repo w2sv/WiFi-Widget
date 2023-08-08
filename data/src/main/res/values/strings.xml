@@ -23,6 +23,6 @@
     <string name="gateway_description">A Gateway is a device uniting the functionality of a modem, i.e., communicating with your ISP (Internet Service Provider), and a router, i.e., translating the data received by the modem and distributing it as WiFi signal to the client devices being present in the network.</string>
     <string name="dns_description">Domain Name System. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</string>
     <string name="dhcp_description">Dynamic Host Configuration Protocol. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</string>
-    <string name="local">Local</string>
-    <string name="public_">Public</string>
+    <string name="include_local">Include local</string>
+    <string name="include_public">Include public</string>
 </resources>

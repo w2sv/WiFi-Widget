@@ -60,7 +60,7 @@ internal fun <T> PropertyCheckRow(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
-                tint = color
+                tint = color,
             )
         },
         trailingIconButton = trailingIconButton
@@ -75,7 +75,7 @@ internal fun <T> SubPropertyCheckRow(
 ) {
     PropertyCheckRow(
         data = data,
-        modifier = modifier.padding(start = 22.dp),
+        modifier = modifier.padding(start = 28.dp),
         fontSize = 14.sp,
         makeText = ::bulletPointText,
         trailingIconButton = trailingIconButton

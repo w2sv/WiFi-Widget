@@ -149,11 +149,13 @@ sealed class WifiProperty(
                 booleanPreferencesKey("IPv6.PrefixLength")
             )
         ) {
-        val local = SubProperty(R.string.local, booleanPreferencesKey("IPv6.Local"))
-        val public = SubProperty(R.string.public_, booleanPreferencesKey("IPv6.Public"))
+        val includeLocal =
+            SubProperty(R.string.include_local, booleanPreferencesKey("IPv6.IncludeLocal"))
+        val includePublic =
+            SubProperty(R.string.include_public, booleanPreferencesKey("IPv6.IncludePublic"))
 
         override val subProperties: List<SubProperty> = listOf(
-            local, public, prefixLengthSubProperty
+            includeLocal, includePublic, prefixLengthSubProperty
         )
     }
 

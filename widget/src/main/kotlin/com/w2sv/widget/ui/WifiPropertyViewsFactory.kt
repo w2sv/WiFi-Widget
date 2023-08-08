@@ -56,8 +56,8 @@ class WifiPropertyViewsFactory @Inject constructor(
                             is WifiProperty.IPv4 -> value.addresses
                             is WifiProperty.IPv6 -> value.addresses.filter { address ->
                                 when {
-                                    !ipSubProperties.getValue(ipProperty.local) -> !address.isLocal
-                                    !ipSubProperties.getValue(ipProperty.public) -> address.isLocal
+                                    !ipSubProperties.getValue(ipProperty.includeLocal) -> !address.isLocal
+                                    !ipSubProperties.getValue(ipProperty.includePublic) -> address.isLocal
                                     else -> true
                                 }
                             }

@@ -141,8 +141,8 @@ private fun WifiPropertyCheckRow(
                                 isCheckedMap = data.subPropertyIsCheckedMap,
                                 allowCheckChange = { newValue ->
                                     mapOf(
-                                        WifiProperty.IPv6.local to WifiProperty.IPv6.public,
-                                        WifiProperty.IPv6.public to WifiProperty.IPv6.local,
+                                        WifiProperty.IPv6.includeLocal to WifiProperty.IPv6.includePublic,
+                                        WifiProperty.IPv6.includePublic to WifiProperty.IPv6.includeLocal,
                                     )[subProperty]
                                         ?.let { inverseSubProperty ->
                                             if (!newValue && !data.subPropertyIsCheckedMap.getValue(
