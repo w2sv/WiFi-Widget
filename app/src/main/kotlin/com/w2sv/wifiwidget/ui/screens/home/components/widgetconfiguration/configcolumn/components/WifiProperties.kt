@@ -7,8 +7,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogButtonData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
@@ -128,36 +128,49 @@ private fun WifiPropertyCheckRow(
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
-                Column {
-                    (data.type as WifiProperty.IPProperty).subProperties.forEach { subProperty ->
-                        SubPropertyCheckRow(
-                            data = PropertyCheckRowData(
-                                type = subProperty,
-                                labelRes = subProperty.viewData.labelRes,
-                                isCheckedMap = data.subPropertyIsCheckedMap,
-                                allowCheckChange = { newValue ->
-                                    mapOf(
-                                        WifiProperty.IPv6.includeLocal to WifiProperty.IPv6.includePublic,
-                                        WifiProperty.IPv6.includePublic to WifiProperty.IPv6.includeLocal,
-                                    )[subProperty]
-                                        ?.let { inverseSubProperty ->
-                                            if (!newValue && !data.subPropertyIsCheckedMap.getValue(
-                                                    inverseSubProperty
-                                                )
-                                            ) {
-                                                data.subPropertyIsCheckedMap[inverseSubProperty] =
-                                                    true
-                                            }
-                                        }
-
-                                    true
-                                }
-                            ),
-                            infoDialogButtonData = InfoDialogButtonData { showInfoDialog(subProperty.viewData.infoDialogData) }
-                        )
-                    }
-                }
+                IPSubPropertyCheckRows(
+                    subProperties = (data.type as WifiProperty.IPProperty).subProperties,
+                    subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
+                    showInfoDialog = showInfoDialog
+                )
             }
+        }
+    }
+}
+
+@Composable
+private fun IPSubPropertyCheckRows(
+    subProperties: List<WifiProperty.IPProperty.SubProperty>,
+    subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
+    showInfoDialog: (InfoDialogData) -> Unit
+) {
+    Column {
+        subProperties.forEach { subProperty ->
+            SubPropertyCheckRow(
+                data = PropertyCheckRowData(
+                    type = subProperty,
+                    labelRes = subProperty.viewData.labelRes,
+                    isCheckedMap = subPropertyIsCheckedMap,
+                    allowCheckChange = { newValue ->
+                        mapOf(
+                            WifiProperty.IPv6.includeLocal to WifiProperty.IPv6.includePublic,
+                            WifiProperty.IPv6.includePublic to WifiProperty.IPv6.includeLocal,
+                        )[subProperty]
+                            ?.let { inverseSubProperty ->
+                                if (!newValue && !subPropertyIsCheckedMap.getValue(
+                                        inverseSubProperty
+                                    )
+                                ) {
+                                    subPropertyIsCheckedMap[inverseSubProperty] =
+                                        true
+                                }
+                            }
+
+                        true
+                    }
+                ),
+                infoDialogButtonData = InfoDialogButtonData { showInfoDialog(subProperty.viewData.infoDialogData) }
+            )
         }
     }
 }
