@@ -23,6 +23,7 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
+import com.w2sv.wifiwidget.ui.screens.home.components.WifiStatusDisplay
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
@@ -68,7 +69,9 @@ internal fun HomeScreen(
                 Arrangement.SpaceBetween,
                 Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.weight(1.5f))
+                Spacer(Modifier.weight(0.75f))
+                WifiStatusDisplay(wifiStatus = homeScreenVM.wifiStatus.collectAsState().value)
+                Spacer(Modifier.weight(0.75f))
                 Box(Modifier.weight(0.5f)) {
                     PinWidgetButton(
                         onClick = {

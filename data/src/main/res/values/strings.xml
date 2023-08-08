@@ -27,4 +27,7 @@
     <string name="prefix_length_description">A network prefix length, often referred to as a subnet mask or subnet prefix length, is a numerical value that defines the size of a subnet within an IP address range. IP addresses are divided into two parts: the network portion and the host portion. The network prefix length determines how many bits in the IP address are used for the network part.\n\nFor example, in the IPv4 address \"192.168.1.1,\" if the network prefix length is 24, it means the first 24 bits are used to identify the network, and the remaining 8 bits are available for host addresses within that network. This allows for the subdivision of IP address space into smaller manageable segments called subnets, enabling efficient management and routing of network traffic.</string>
     <string name="include_local_description">If checked, local IPv6 addresses will be included.</string>
     <string name="include_public_description">If checked, public IPv6 addresses will be included.</string>
+    <string name="disabled">Disabled</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="connected">Connected</string>
 </resources>
