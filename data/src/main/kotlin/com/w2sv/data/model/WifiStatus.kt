@@ -7,8 +7,8 @@ import android.net.wifi.WifiManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.w2sv.data.R
-import com.w2sv.data.networking.connectivityManager
-import com.w2sv.data.networking.wifiManager
+import com.w2sv.data.networking.getConnectivityManager
+import com.w2sv.data.networking.getWifiManager
 
 enum class WifiStatus(
     val isConnected: Boolean,
@@ -22,9 +22,9 @@ enum class WifiStatus(
     companion object {
         fun get(context: Context): WifiStatus =
             when {
-                context.wifiManager.isWifiEnabled -> Disabled
+                context.getWifiManager().isWifiEnabled -> Disabled
                 else -> {
-                    when (context.connectivityManager.isWifiConnected) {
+                    when (context.getConnectivityManager().isWifiConnected) {
                         true, null -> Connected
                         false -> Disconnected
                     }

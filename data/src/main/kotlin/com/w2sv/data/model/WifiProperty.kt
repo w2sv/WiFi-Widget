@@ -7,10 +7,10 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.data.R
 import com.w2sv.data.networking.IPAddress
-import com.w2sv.data.networking.connectivityManager
+import com.w2sv.data.networking.getConnectivityManager
 import com.w2sv.data.networking.frequencyToChannel
 import com.w2sv.data.networking.getIPAddresses
-import com.w2sv.data.networking.wifiManager
+import com.w2sv.data.networking.getWifiManager
 
 @Suppress("DEPRECATION")
 sealed class WifiProperty(
@@ -75,11 +75,11 @@ sealed class WifiProperty(
 
     class ValueGetterResources(val context: Context) {
         val wifiManager by lazy {
-            context.wifiManager
+            context.getWifiManager()
         }
 
         val ipAddresses: List<IPAddress>? by lazy {
-            context.connectivityManager.getIPAddresses()
+            context.getConnectivityManager().getIPAddresses()
         }
     }
 

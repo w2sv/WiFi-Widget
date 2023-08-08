@@ -16,8 +16,8 @@ class WifiStatusMonitor @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
     val wifiStatus: Flow<WifiStatus> = callbackFlow {
-        val connectivityManager = context.connectivityManager
-        val wifiManager = context.wifiManager
+        val connectivityManager = context.getConnectivityManager()
+        val wifiManager = context.getWifiManager()
 
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
