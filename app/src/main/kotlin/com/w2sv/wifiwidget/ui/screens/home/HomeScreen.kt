@@ -10,7 +10,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -105,7 +104,7 @@ internal fun HomeScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-                CopyrightText(modifier = Modifier.padding(bottom = dimensionResource(R.dimen.margin_minimal)))
+                CopyrightText(modifier = Modifier.padding(bottom = 8.dp))
             }
         }
         homeScreenVM.lapRationalTrigger.collectAsState().value?.let { trigger ->
