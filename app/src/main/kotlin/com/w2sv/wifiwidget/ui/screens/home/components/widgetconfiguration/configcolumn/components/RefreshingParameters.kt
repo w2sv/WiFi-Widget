@@ -10,7 +10,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.widget.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.InfoIconButton
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogButtonData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
@@ -19,7 +20,7 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun RefreshingParametersSelection(
     widgetRefreshingMap: MutableMap<WidgetRefreshingParameter, Boolean>,
-    onRefreshPeriodicallyInfoIconClick: () -> Unit,
+    showInfoDialog: (InfoDialogData) -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -47,8 +48,13 @@ internal fun RefreshingParametersSelection(
     Column(modifier = modifier) {
         PropertyCheckRow(
             data = parameterViewData[0],
-            trailingIconButton = {
-                InfoIconButton(onClick = onRefreshPeriodicallyInfoIconClick, contentDescription = "")
+            infoDialogButtonData = InfoDialogButtonData {
+                showInfoDialog(
+                    InfoDialogData(
+                        labelRes = R.string.refresh_periodically,
+                        descriptionRes = R.string.refresh_periodically_info,
+                    )
+                )
             }
         )
         AnimatedVisibility(

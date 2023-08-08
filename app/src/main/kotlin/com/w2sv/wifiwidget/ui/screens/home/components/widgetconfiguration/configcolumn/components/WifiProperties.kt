@@ -6,10 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.InfoIconButton
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogButtonData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
@@ -34,12 +33,19 @@ class IPPropertyCheckRowData(
     allowCheckChange: (Boolean) -> Boolean = { true }
 ) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)
 
+private val WifiProperty.ViewData.infoDialogData: InfoDialogData
+    get() = InfoDialogData(
+        labelRes,
+        descriptionRes,
+        learnMoreUrl
+    )
+
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
     ipSubPropertiesMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
-    onInfoButtonClick: (WifiProperty) -> Unit,
+    showInfoDialog: (InfoDialogData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -104,7 +110,7 @@ internal fun WifiPropertySelection(
             .forEach {
                 WifiPropertyCheckRow(
                     data = it,
-                    onInfoButtonClick = { onInfoButtonClick(it.type) }
+                    showInfoDialog = showInfoDialog
                 )
             }
     }
@@ -113,22 +119,12 @@ internal fun WifiPropertySelection(
 @Composable
 private fun WifiPropertyCheckRow(
     data: WifiPropertyCheckRowData,
-    onInfoButtonClick: () -> Unit
+    showInfoDialog: (InfoDialogData) -> Unit
 ) {
-    val label = stringResource(id = data.labelRes)
-    val infoIconCD = stringResource(id = R.string.info_icon_cd).format(label)
-
     Column {
         PropertyCheckRow(
             data = data,
-            trailingIconButton = {
-                InfoIconButton(
-                    onClick = {
-                        onInfoButtonClick()
-                    },
-                    contentDescription = infoIconCD
-                )
-            }
+            infoDialogButtonData = InfoDialogButtonData { showInfoDialog(data.type.viewData.infoDialogData) }
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
@@ -137,7 +133,7 @@ private fun WifiPropertyCheckRow(
                         SubPropertyCheckRow(
                             data = PropertyCheckRowData(
                                 type = subProperty,
-                                labelRes = subProperty.labelRes,
+                                labelRes = subProperty.viewData.labelRes,
                                 isCheckedMap = data.subPropertyIsCheckedMap,
                                 allowCheckChange = { newValue ->
                                     mapOf(
@@ -156,7 +152,8 @@ private fun WifiPropertyCheckRow(
 
                                     true
                                 }
-                            )
+                            ),
+                            infoDialogButtonData = InfoDialogButtonData { showInfoDialog(subProperty.viewData.infoDialogData) }
                         )
                     }
                 }

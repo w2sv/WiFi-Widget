@@ -109,7 +109,7 @@ fun ConfigColumn(
                     false -> true
                 }
             },
-            onInfoButtonClick = { widgetVM.infoDialogProperty.value = it }
+            showInfoDialog = { widgetVM.infoDialogData.value = it }
         )
 
         SectionHeader(
@@ -129,9 +129,7 @@ fun ConfigColumn(
                     animateScrollTo(maxValue)
                 }
             },
-            onRefreshPeriodicallyInfoIconClick = {
-                widgetVM.refreshPeriodicallyInfoDialog.value = true
-            }
+            showInfoDialog = { widgetVM.infoDialogData.value = it }
         )
     }
 }

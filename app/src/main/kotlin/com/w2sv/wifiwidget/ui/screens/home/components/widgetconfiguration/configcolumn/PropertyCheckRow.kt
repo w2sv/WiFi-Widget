@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.bulletPointText
 import com.w2sv.wifiwidget.ui.theme.disabledColor
@@ -47,11 +48,14 @@ open class PropertyCheckRowData<T>(
     )
 }
 
+@Stable
+data class InfoDialogButtonData(val onClick: () -> Unit)
+
 @Composable
 internal fun <T> PropertyCheckRow(
     data: PropertyCheckRowData<T>,
     modifier: Modifier = Modifier,
-    trailingIconButton: (@Composable () -> Unit)? = null
+    infoDialogButtonData: InfoDialogButtonData? = null
 ) {
     PropertyCheckRow(
         data = data,
@@ -63,7 +67,7 @@ internal fun <T> PropertyCheckRow(
                 tint = color,
             )
         },
-        trailingIconButton = trailingIconButton
+        infoDialogButtonData = infoDialogButtonData
     )
 }
 
@@ -71,14 +75,14 @@ internal fun <T> PropertyCheckRow(
 internal fun <T> SubPropertyCheckRow(
     data: PropertyCheckRowData<T>,
     modifier: Modifier = Modifier,
-    trailingIconButton: (@Composable () -> Unit)? = null
+    infoDialogButtonData: InfoDialogButtonData? = null
 ) {
     PropertyCheckRow(
         data = data,
         modifier = modifier.padding(start = 28.dp),
         fontSize = 14.sp,
         makeText = ::bulletPointText,
-        trailingIconButton = trailingIconButton
+        infoDialogButtonData = infoDialogButtonData
     )
 }
 
@@ -89,9 +93,10 @@ private fun <T> PropertyCheckRow(
     makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,
     leadingIcon: (@Composable (Color) -> Unit)? = null,
-    trailingIconButton: (@Composable () -> Unit)? = null
+    infoDialogButtonData: InfoDialogButtonData? = null
 ) {
-    val checkBoxCD = stringResource(id = R.string.set_unset).format(data.labelRes)
+    val label = stringResource(id = data.labelRes)
+    val checkBoxCD = stringResource(id = R.string.set_unset, label)
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -102,7 +107,7 @@ private fun <T> PropertyCheckRow(
 
         leadingIcon?.invoke(color)
         JostText(
-            text = makeText(stringResource(id = data.labelRes)),
+            text = makeText(label),
             fontSize = fontSize,
             modifier = Modifier.weight(1.0f, true),
             color = color
@@ -118,6 +123,11 @@ private fun <T> PropertyCheckRow(
                 contentDescription = checkBoxCD
             }
         )
-        trailingIconButton?.invoke()
+        infoDialogButtonData?.let {
+            InfoIconButton(
+                onClick = it.onClick,
+                contentDescription = stringResource(id = R.string.info_icon_cd, label)
+            )
+        }
     }
 }

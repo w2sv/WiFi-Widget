@@ -29,7 +29,7 @@ sealed class WifiProperty(
         open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
 
         class SubProperty(
-            @StringRes val labelRes: Int,
+            val viewData: ViewData,
             override val preferencesKey: Preferences.Key<Boolean>,
             override val defaultValue: Boolean = true
         ) : DataStoreEntry.UniType<Boolean>
@@ -41,13 +41,15 @@ sealed class WifiProperty(
                     IPv6
                 )
             }
+
+            const val LEARN_MORE_URL = "https://en.wikipedia.org/wiki/IP_address"
         }
     }
 
     data class ViewData(
         @StringRes val labelRes: Int,
         @StringRes val descriptionRes: Int,
-        val learnMoreUrl: String?
+        val learnMoreUrl: String? = null
     )
 
     sealed interface Value {
@@ -115,7 +117,7 @@ sealed class WifiProperty(
             ViewData(
                 R.string.ipv4,
                 R.string.ipv4_description,
-                "https://en.wikipedia.org/wiki/IP_address"
+                LEARN_MORE_URL
             ),
             {
                 Value.getForIPProperty(
@@ -125,34 +127,40 @@ sealed class WifiProperty(
                 )
             },
             SubProperty(
-                R.string.prefix_length,
+                prefixLengthViewData,
                 booleanPreferencesKey("IPv4.PrefixLength")
             )
         )
 
     object IPv6 :
         IPProperty(
-            ViewData(
-                R.string.ipv6,
-                R.string.ipv6_description,
-                "https://en.wikipedia.org/wiki/IP_address"
+            viewData = ViewData(
+                labelRes = R.string.ipv6,
+                descriptionRes = R.string.ipv6_description,
+                learnMoreUrl = LEARN_MORE_URL
             ),
-            {
+            getValue = {
                 Value.getForIPProperty(
                     property = IPv6,
                     ipAddresses = it.ipAddresses,
                     type = IPAddress.Type.V6
                 )
             },
-            SubProperty(
-                R.string.prefix_length,
-                booleanPreferencesKey("IPv6.PrefixLength")
+            prefixLengthSubProperty = SubProperty(
+                viewData = prefixLengthViewData,
+                preferencesKey = booleanPreferencesKey("IPv6.PrefixLength")
             )
         ) {
         val includeLocal =
-            SubProperty(R.string.include_local, booleanPreferencesKey("IPv6.IncludeLocal"))
+            SubProperty(
+                ViewData(R.string.include_local, R.string.include_local_description),
+                booleanPreferencesKey("IPv6.IncludeLocal")
+            )
         val includePublic =
-            SubProperty(R.string.include_public, booleanPreferencesKey("IPv6.IncludePublic"))
+            SubProperty(
+                ViewData(R.string.include_public, R.string.include_public_description),
+                booleanPreferencesKey("IPv6.IncludePublic")
+            )
 
         override val subProperties: List<SubProperty> = listOf(
             includeLocal, includePublic, prefixLengthSubProperty
@@ -261,5 +269,11 @@ sealed class WifiProperty(
         }
     }
 }
+
+private val prefixLengthViewData = WifiProperty.ViewData(
+    R.string.prefix_length,
+    R.string.prefix_length_description,
+    "https://www.ibm.com/docs/en/ts3500-tape-library?topic=formats-subnet-masks-ipv4-prefixes-ipv6"
+)
 
 private const val DEFAULT_FALLBACK_VALUE = "Couldn't retrieve"

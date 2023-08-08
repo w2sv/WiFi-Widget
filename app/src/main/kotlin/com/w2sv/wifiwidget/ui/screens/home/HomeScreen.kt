@@ -123,25 +123,11 @@ internal fun HomeScreen(
                 }
             )
 
-            widgetConfigurationVM.infoDialogProperty.collectAsState().value?.let {
+            widgetConfigurationVM.infoDialogData.collectAsState().value?.let {
                 InfoDialog(
-                    labelRes = it.viewData.labelRes,
-                    descriptionRes = it.viewData.descriptionRes,
-                    learnMoreUrl = it.viewData.learnMoreUrl,
-                    onDismissRequest = { widgetConfigurationVM.infoDialogProperty.reset() }
+                    data = it,
+                    onDismissRequest = { widgetConfigurationVM.infoDialogData.reset() }
                 )
-            }
-
-            widgetConfigurationVM.refreshPeriodicallyInfoDialog.collectAsState().apply {
-                if (value) {
-                    InfoDialog(
-                        labelRes = R.string.refresh_periodically,
-                        descriptionRes = R.string.refresh_periodically_info,
-                        onDismissRequest = {
-                            widgetConfigurationVM.refreshPeriodicallyInfoDialog.value = false
-                        }
-                    )
-                }
             }
         }
         @SuppressLint("NewApi")
