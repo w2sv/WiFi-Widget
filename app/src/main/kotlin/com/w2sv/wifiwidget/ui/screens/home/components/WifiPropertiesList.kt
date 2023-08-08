@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,8 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.JostText
@@ -38,6 +41,25 @@ fun WifiPropertiesList(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
+        item {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                JostText(
+                    text = "Properties",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 17.sp,
+                    modifier = Modifier.padding(bottom = 6.dp)
+                )
+                JostText(
+                    text = "(Click to copy to clipboard)",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp
+                )
+            }
+        }
         items(propertiesViewData) { viewData ->
             val propertyName = stringResource(id = viewData.property.viewData.labelRes)
 
