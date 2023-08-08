@@ -21,7 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -53,37 +52,35 @@ fun ThemeSelectionRow(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        remember {
-            buildList {
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.Light,
-                        labelRes = R.string.light,
-                        buttonColoring = ButtonColor.Uniform(Color.White),
-                    )
+        buildList {
+            add(
+                ThemeIndicatorProperties(
+                    theme = Theme.Light,
+                    labelRes = R.string.light,
+                    buttonColoring = ButtonColor.Uniform(Color.White),
                 )
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.SystemDefault,
-                        labelRes = R.string.system_default,
-                        buttonColoring = ButtonColor.Gradient(
-                            Brush.linearGradient(
-                                0.5f to Color.White,
-                                0.5f to Color.Black,
-                            )
-                        ),
-                    )
+            )
+            add(
+                ThemeIndicatorProperties(
+                    theme = Theme.SystemDefault,
+                    labelRes = R.string.system_default,
+                    buttonColoring = ButtonColor.Gradient(
+                        Brush.linearGradient(
+                            0.5f to Color.White,
+                            0.5f to Color.Black,
+                        )
+                    ),
                 )
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.Dark,
-                        labelRes = R.string.dark,
-                        buttonColoring = ButtonColor.Uniform(Color.Black),
-                    )
+            )
+            add(
+                ThemeIndicatorProperties(
+                    theme = Theme.Dark,
+                    labelRes = R.string.dark,
+                    buttonColoring = ButtonColor.Uniform(Color.Black),
                 )
-                customThemeIndicatorProperties?.let {
-                    add(it)
-                }
+            )
+            customThemeIndicatorProperties?.let {
+                add(it)
             }
         }
             .forEach { properties ->
@@ -215,22 +212,3 @@ fun ThemeButton(
 }
 
 private const val BORDER_ANIMATION_DURATION = 500
-
-//@Preview
-//@Composable
-//fun Prev() {
-//    AppTheme {
-//        ThemeButton(
-//            ButtonColor.Gradient(
-//                Brush.linearGradient(
-//                    0.5f to Color.White,
-//                    0.5f to Color.Black,
-//                )
-//            ),
-//            "Device Default",
-//            {},
-//            32.dp,
-//            { true }
-//        )
-//    }
-//}
