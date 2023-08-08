@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">WiFi Widget</string>
     <string name="pin_widget">Pin Widget</string>
-    <string name="updated_widget_configuration">Updated Widget Configuration</string>
     <string name="pinned_widget">Pinned Widget</string>
     <string name="lap_dialog_text">If you want your device\'s SSID and/or BSSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
@@ -26,7 +25,6 @@
     <string name="opacity">Opacity</string>
     <string name="refreshing">Refreshing</string>
     <string name="tap_again_to_exit">Tap again to exit</string>
-    <string name="go_to_app_settings_and_grant_location_access_permission">Go to app settings and grant location access permission</string>
     <string name="opacity_slider_cd">Set the widget background opacity.</string>
     <string name="theme_button_cd">Set the %s theme.</string>
     <string name="learn_more">Learn more</string>
