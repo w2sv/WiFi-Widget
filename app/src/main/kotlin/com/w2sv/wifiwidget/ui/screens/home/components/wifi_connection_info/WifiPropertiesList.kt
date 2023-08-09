@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 
@@ -109,7 +109,7 @@ private fun WifiPropertyRow(
             .clickable {
                 clipboardManager.setText(AnnotatedString(value))
                 showSnackbar(
-                    ExtendedSnackbarVisuals(
+                    AppSnackbarVisuals(
                         message =  context.getString(R.string.copied_to_clipboard, propertyName),
                         kind = SnackbarKind.Success
                     )

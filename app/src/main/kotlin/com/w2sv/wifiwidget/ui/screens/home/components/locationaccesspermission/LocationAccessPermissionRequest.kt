@@ -13,7 +13,8 @@ import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.common.utils.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -64,13 +65,15 @@ fun LocationAccessPermissionRequest(
                 when (permissionState.isLaunchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
                     true -> {
                         homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                            ExtendedSnackbarVisuals(
+                            AppSnackbarVisuals(
                                 context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
                                 kind = SnackbarKind.Error,
-                                actionLabel = context.getString(R.string.go_to_settings),
-                                action = {
-                                    goToAppSettings(context)
-                                }
+                                action = SnackbarAction(
+                                    label = context.getString(R.string.go_to_settings),
+                                    callback = {
+                                        goToAppSettings(context)
+                                    }
+                                )
                             )
                         )
                         homeScreenVM.lapRequestTrigger.reset()
