@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -29,8 +29,6 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ExtendedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import kotlinx.coroutines.launch
 
 @Stable
 data class WifiPropertyViewData(val property: WifiProperty, val value: WifiProperty.Value)
@@ -38,7 +36,7 @@ data class WifiPropertyViewData(val property: WifiProperty, val value: WifiPrope
 @Composable
 fun WifiPropertiesList(
     propertiesViewData: List<WifiPropertyViewData>,
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SnackbarVisuals) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
@@ -69,7 +67,7 @@ fun WifiPropertiesList(
                     WifiPropertyRow(
                         propertyName = propertyName,
                         value = value.value,
-                        snackbarHostState = snackbarHostState
+                        showSnackbar = showSnackbar
                     )
                 }
 
@@ -79,14 +77,14 @@ fun WifiPropertiesList(
                             WifiPropertyRow(
                                 propertyName = "$propertyName #${i + 1}",
                                 value = address.textualRepresentation,
-                                snackbarHostState = snackbarHostState
+                                showSnackbar = showSnackbar
                             )
                         }
-                    } else {
+                    } else if (value.addresses.size == 1) {
                         WifiPropertyRow(
                             propertyName = propertyName,
                             value = value.addresses.first().textualRepresentation,
-                            snackbarHostState = snackbarHostState
+                            showSnackbar = showSnackbar
                         )
                     }
                 }
@@ -99,10 +97,10 @@ fun WifiPropertiesList(
 private fun WifiPropertyRow(
     propertyName: String,
     value: String,
-    snackbarHostState: SnackbarHostState
+    showSnackbar: (SnackbarVisuals) -> Unit
 ) {
     val clipboardManager = LocalClipboardManager.current
-    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -110,14 +108,12 @@ private fun WifiPropertyRow(
             .height(26.dp)
             .clickable {
                 clipboardManager.setText(AnnotatedString(value))
-                scope.launch {
-                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                        ExtendedSnackbarVisuals(
-                            message = "Copied $propertyName to clipboard",
-                            kind = SnackbarKind.Success
-                        )
+                showSnackbar(
+                    ExtendedSnackbarVisuals(
+                        message =  context.getString(R.string.copied_to_clipboard, propertyName),
+                        kind = SnackbarKind.Success
                     )
-                }
+                )
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween

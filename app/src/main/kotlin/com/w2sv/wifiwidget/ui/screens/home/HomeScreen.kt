@@ -22,6 +22,7 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
@@ -68,22 +69,28 @@ internal fun HomeScreen(
                 Arrangement.SpaceBetween,
                 Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.weight(0.3f))
+                Spacer(Modifier.weight(0.2f))
                 Box(
                     modifier = Modifier
-                        .weight(1.8f)
+                        .weight(0.7f)
                         .fillMaxWidth(0.75f),
                     contentAlignment = Alignment.Center
                 ) {
                     WifiConnectionInfoCard(
                         wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
                         wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
-                        snackbarHostState = homeScreenVM.snackbarHostState
+                        showSnackbar = {
+                            scope.launch {
+                                homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                                    it
+                                )
+                            }
+                        }
                     )
                 }
-                Spacer(Modifier.weight(0.3f))
+                Spacer(Modifier.weight(0.2f))
 
-                Box(Modifier.weight(0.5f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     PinWidgetButton(
                         onClick = {
                             when (homeScreenVM.lapRationalShown) {
@@ -92,11 +99,12 @@ internal fun HomeScreen(
 
                                 true -> attemptWifiWidgetPin(context)
                             }
-                        }
+                        },
+                        modifier = Modifier.size(180.dp, 60.dp)
                     )
-                }
-                Spacer(Modifier.weight(0.5f))
-                Box(Modifier.weight(1f)) {
+
+                    Spacer(modifier = Modifier.width(32.dp))
+
                     WidgetConfigurationDialogButton(
                         onClick = {
                             homeScreenVM.showWidgetConfigurationDialog.value = true
@@ -104,7 +112,9 @@ internal fun HomeScreen(
                         modifier = Modifier.size(32.dp)
                     )
                 }
-                CopyrightText(modifier = Modifier.padding(bottom = 8.dp))
+                Spacer(Modifier.weight(0.3f))
+
+                CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
             }
         }
         homeScreenVM.lapRationalTrigger.collectAsState().value?.let { trigger ->
@@ -174,7 +184,7 @@ internal fun HomeScreen(
 fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick = onClick,
-        modifier = modifier.defaultMinSize(160.dp, 60.dp),
+        modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
     ) {

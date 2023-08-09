@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +24,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 fun WifiConnectionInfoCard(
     wifiStatus: WifiStatus,
     wifiPropertiesViewData: List<WifiPropertyViewData>?,
-    snackbarHostState: SnackbarHostState,
+    showSnackbar: (SnackbarVisuals) -> Unit,
     modifier: Modifier = Modifier
 ) {
     ElevatedCard(modifier, elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)) {
@@ -48,7 +48,7 @@ fun WifiConnectionInfoCard(
                 wifiPropertiesViewData?.let {
                     WifiPropertiesList(
                         propertiesViewData = it,
-                        snackbarHostState = snackbarHostState,
+                        showSnackbar = showSnackbar,
                     )
                 }
             }

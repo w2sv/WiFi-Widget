@@ -57,4 +57,5 @@
     <string name="click_to_go_to_your_device_wifi_settings">Click to go to your device WiFi settings.</string>
     <string name="click_to_copy_to_clipboard">(Click to copy to clipboard)</string>
     <string name="wifi_status">WiFi Status</string>
+    <string name="copied_to_clipboard">Copied %1$s to clipboard</string>
 </resources>
