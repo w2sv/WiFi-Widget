@@ -20,13 +20,17 @@ enum class WifiStatus(
 
     companion object {
         fun get(context: Context): WifiStatus =
+            get(
+                wifiManager = context.getWifiManager(),
+                connectivityManager = context.getConnectivityManager()
+            )
+
+        fun get(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =
             when {
-                context.getWifiManager().isWifiEnabled -> Disabled
-                else -> {
-                    when (context.getConnectivityManager().isWifiConnected) {
-                        true, null -> Connected
-                        false -> Disconnected
-                    }
+                !wifiManager.isWifiEnabled -> Disabled
+                else -> when (connectivityManager.isWifiConnected) {
+                    false -> Disconnected
+                    else -> Connected
                 }
             }
 

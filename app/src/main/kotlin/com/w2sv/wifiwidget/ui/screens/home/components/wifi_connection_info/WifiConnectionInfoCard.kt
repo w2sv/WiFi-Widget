@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components
+package com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column

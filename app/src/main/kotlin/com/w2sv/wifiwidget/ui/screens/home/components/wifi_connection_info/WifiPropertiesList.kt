@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components
+package com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
