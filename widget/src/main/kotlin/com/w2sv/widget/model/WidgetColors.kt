@@ -24,6 +24,6 @@ data class WidgetColors(
     }
 
     val ipSubPropertyBackgroundColor by lazy {
-        getAlphaSetColor(primary, 0.2f)
+        getAlphaSetColor(primary, 0.25f)
     }
 }

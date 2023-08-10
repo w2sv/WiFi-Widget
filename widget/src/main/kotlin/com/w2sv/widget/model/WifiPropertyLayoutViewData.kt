@@ -1,9 +1,11 @@
 package com.w2sv.widget.model
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
+import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.data.networking.IPAddress
 import com.w2sv.widget.R
 import com.w2sv.widget.utils.setTextView
@@ -56,13 +58,13 @@ internal sealed interface WifiPropertyLayoutViewData {
                             color = widgetColors.secondary
                         )
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//                            setColorStateList(
-//                                viewId,
-//                                "setBackgroundTintList",
-//                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
-//                            )
+                            setColorStateList(
+                                viewId,
+                                "setBackgroundTintList",
+                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
+                            )
                         } else {
-//                            setBackgroundColor(viewId, widgetColors.ipSubPropertyBackgroundColor)  TODO
+                            setBackgroundColor(viewId, widgetColors.ipSubPropertyBackgroundColor)
                         }
                     }
 
