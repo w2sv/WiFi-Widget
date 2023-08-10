@@ -47,8 +47,7 @@ fun AppWidgetManager.attemptWifiWidgetPin(context: Context) {
             null,
             null
         )
-    }
-    else {
+    } else {
         context.showToast(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher)
     }
 }

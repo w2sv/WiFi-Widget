@@ -15,8 +15,8 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 sealed interface LAPRequestTrigger {
-    object PinWidgetButtonPress: LAPRequestTrigger
-    class PropertyCheckChange(val property: WifiProperty): LAPRequestTrigger
+    object PinWidgetButtonPress : LAPRequestTrigger
+    class PropertyCheckChange(val property: WifiProperty) : LAPRequestTrigger
 }
 
 @Composable
