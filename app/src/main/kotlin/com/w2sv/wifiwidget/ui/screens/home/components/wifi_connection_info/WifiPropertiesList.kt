@@ -126,7 +126,7 @@ private fun WifiPropertyRow(
         Spacer(modifier = Modifier.width(16.dp))
         JostText(
             text = value,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.tertiary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

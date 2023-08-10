@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -31,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,61 +86,76 @@ internal fun HomeScreen(
                 }
             }
         ) { paddingValues ->
-            ElevatedCard(
+            Column(
                 modifier = Modifier
                     .padding(paddingValues)
-                    .padding(16.dp)
                     .fillMaxSize(),
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
+                ElevatedCard(
                     modifier = Modifier
-                        .fillMaxSize(),
-                    Arrangement.SpaceBetween,
-                    Alignment.CenterHorizontally
+                        .padding(16.dp)
+                        .weight(0.8f)
+                        .fillMaxWidth(),
+                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
                 ) {
-                    Spacer(Modifier.weight(0.2f))
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .weight(0.7f)
-                            .fillMaxWidth(0.75f),
-                        contentAlignment = Alignment.Center
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.SpaceBetween,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        WifiConnectionInfoCard(
-                            wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
-                            wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
-                            showSnackbar = {
-                                scope.launch {
-                                    homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                                        it
-                                    )
+                        Spacer(Modifier.weight(0.15f))
+                        Box(
+                            modifier = Modifier
+                                .weight(0.8f)
+                                .fillMaxWidth(0.77f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            WifiConnectionInfoCard(
+                                wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
+                                wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
+                                showSnackbar = {
+                                    scope.launch {
+                                        homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                                            it
+                                        )
+                                    }
                                 }
+                            )
+                        }
+                        Spacer(Modifier.weight(0.2f))
+
+                        ElevatedCard(elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)) {
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = 24.dp, vertical = 32.dp)
+                                    .fillMaxWidth(0.85f),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                CardHeader(iconRes = R.drawable.ic_widgets_24, header = "Widget")
+                                Spacer(modifier = Modifier.height(32.dp))
+                                WidgetInteractionElementsRow(
+                                    onPinWidgetButtonClick = {
+                                        when (homeScreenVM.lapRationalShown) {
+                                            false -> homeScreenVM.lapRationalTrigger.value =
+                                                LAPRequestTrigger.PinWidgetButtonPress
+
+                                            true -> attemptWifiWidgetPin(context)
+                                        }
+                                    },
+                                    onWidgetConfigurationButtonClick = {
+                                        homeScreenVM.showWidgetConfigurationDialog.value = true
+                                    }
+                                )
                             }
-                        )
+                        }
+
+                        Spacer(Modifier.weight(0.3f))
                     }
-                    Spacer(Modifier.weight(0.2f))
-
-                    ElevatedCard(elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)) {
-                        WidgetInteractionElementsRow(
-                            onPinWidgetButtonClick = {
-                                when (homeScreenVM.lapRationalShown) {
-                                    false -> homeScreenVM.lapRationalTrigger.value =
-                                        LAPRequestTrigger.PinWidgetButtonPress
-
-                                    true -> attemptWifiWidgetPin(context)
-                                }
-                            },
-                            onWidgetConfigurationButtonClick = {
-                                homeScreenVM.showWidgetConfigurationDialog.value = true
-                            },
-                            modifier = Modifier.padding(vertical = 32.dp, horizontal = 24.dp)
-                        )
-                    }
-
-                    Spacer(Modifier.weight(0.3f))
-
-                    CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
                 }
+
+                CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
             }
         }
 
@@ -152,6 +170,31 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
+    }
+}
+
+@Composable
+fun CardHeader(@DrawableRes iconRes: Int, header: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(horizontal = 16.dp)
+    ) {
+        Box(modifier = Modifier.weight(0.3f)) {
+            Icon(
+                painter = painterResource(id = iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.secondary,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
+            JostText(
+                text = header,
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
+        Spacer(modifier = Modifier.weight(0.3f))
     }
 }
 
@@ -245,7 +288,7 @@ fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
         elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
     ) {
         JostText(
-            text = stringResource(R.string.pin_widget),
+            text = stringResource(R.string.pin),
             fontSize = 16.sp
         )
     }
