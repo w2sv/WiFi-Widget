@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.enumerationTag
 import com.w2sv.data.model.WifiProperty
+import com.w2sv.data.networking.IPAddress
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.JostText
@@ -80,13 +83,16 @@ fun WifiPropertiesList(
                                 value = address.textualRepresentation,
                                 showSnackbar = showSnackbar
                             )
+                            IPSubPropertiesRow(ipAddress = address)
                         }
                     } else if (value.addresses.size == 1) {
+                        val address = value.addresses.first()
                         WifiPropertyRow(
                             propertyName = propertyName,
-                            value = value.addresses.first().textualRepresentation,
+                            value = address.textualRepresentation,
                             showSnackbar = showSnackbar
                         )
+                        IPSubPropertiesRow(ipAddress = address)
                     }
                 }
             }
@@ -131,4 +137,53 @@ private fun WifiPropertyRow(
             overflow = TextOverflow.Ellipsis
         )
     }
+}
+
+@Composable
+private fun IPSubPropertiesRow(ipAddress: IPAddress, modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.End
+    ) {
+        @Composable
+        fun spacer() {
+            Spacer(modifier = Modifier.width(6.dp))
+        }
+
+        IPSubPropertyText(text = "/${ipAddress.prefixLength}")
+        spacer()
+        IPSubPropertyText(
+            text = when {
+                ipAddress.localAttributes.siteLocal -> "SiteLocal"
+                ipAddress.localAttributes.linkLocal -> "LinkLocal"
+                ipAddress.isLocal -> "Local"
+                else -> "Public"
+            }
+        )
+        if (ipAddress.isMultiCast) {
+            spacer()
+            IPSubPropertyText(text = "MultiCast")
+        }
+        if (ipAddress.isLoopback) {
+            spacer()
+            IPSubPropertyText(text = "Loopback")
+        }
+    }
+}
+
+@Composable
+private fun IPSubPropertyText(text: String) {
+    JostText(
+        text = text,
+        modifier = Modifier
+            .border(
+                width = 1.1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(vertical = 2.dp, horizontal = 6.dp),
+        color = MaterialTheme.colorScheme.tertiary,
+        fontSize = 11.sp
+    )
 }
