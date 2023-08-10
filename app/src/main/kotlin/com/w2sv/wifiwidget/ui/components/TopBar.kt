@@ -21,21 +21,21 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
         title = {
             JostText(
                 stringResource(id = R.string.app_name),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp),
             )
         },
         modifier = modifier,
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = stringResource(R.string.open_navigation_drawer),
-                    modifier = Modifier.size(dimensionResource(id = R.dimen.size_icon)),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    modifier = Modifier.size(dimensionResource(id = R.dimen.size_icon))
                 )
             }
         }

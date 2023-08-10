@@ -160,7 +160,7 @@ private fun ColumnScope.DrawerSheetSubHeader(
             .align(Alignment.CenterHorizontally),
         fontSize = 16.sp,
         fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.secondary
+        color = MaterialTheme.colorScheme.tertiary
     )
 }
 

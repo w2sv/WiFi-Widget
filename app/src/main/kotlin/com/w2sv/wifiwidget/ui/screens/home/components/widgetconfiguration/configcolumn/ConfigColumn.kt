@@ -148,7 +148,7 @@ private fun SectionHeader(
             Icon(
                 painterResource(id = iconRes),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary
+                tint = MaterialTheme.colorScheme.tertiary
             )
         }
         Box(modifier = Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
@@ -156,7 +156,7 @@ private fun SectionHeader(
                 text = stringResource(id = titleRes),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Spacer(modifier = Modifier.weight(0.3f))

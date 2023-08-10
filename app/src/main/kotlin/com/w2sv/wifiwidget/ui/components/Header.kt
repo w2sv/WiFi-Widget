@@ -27,7 +27,7 @@ fun Header(@DrawableRes iconRes: Int, @StringRes headerRes: Int) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -35,7 +35,7 @@ fun Header(@DrawableRes iconRes: Int, @StringRes headerRes: Int) {
             JostText(
                 text = stringResource(id = headerRes),
                 fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.secondary
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Spacer(modifier = Modifier.weight(0.3f))
