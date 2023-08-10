@@ -1,6 +1,8 @@
 package com.w2sv.data.model
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -63,31 +65,42 @@ sealed class WifiProperty(
         companion object {
             fun getForIPProperty(
                 property: IPProperty,
-                ipAddresses: List<IPAddress>?,
+                ipAddresses: List<IPAddress>,
                 type: IPAddress.Type
             ): Value =
                 ipAddresses
-                    ?.filter { it.type == type }
-                    ?.let { addresses ->
-                        IPAddresses(property, addresses)
+                    .filter { it.type == type }
+                    .run {
+                        if (isEmpty()) {
+                            Singular(type.fallbackAddress)
+                        } else {
+                            IPAddresses(property, this)
+                        }
                     }
-                    ?: Singular(type.fallbackAddress)
         }
     }
 
-    class ValueGetterResources(val context: Context) {
-        val wifiManager by lazy {
-            context.getWifiManager()
-        }
+    class ValueGetterResources(
+        val wifiManager: WifiManager,
+        val ipAddresses: List<IPAddress>
+    ) {
+        constructor(wifiManager: WifiManager, connectivityManager: ConnectivityManager) : this(
+            wifiManager,
+            connectivityManager.getIPAddresses()
+        )
 
-        val ipAddresses: List<IPAddress>? by lazy {
+        constructor(context: Context) : this(
+            context.getWifiManager(),
             context.getConnectivityManager().getIPAddresses()
-        }
+        )
 
         class Provider @Inject constructor(@ApplicationContext private val context: Context) {
 
+            private val wifiManager by lazy { context.getWifiManager() }
+            private val connectivityManager by lazy { context.getConnectivityManager() }
+
             fun provide(): ValueGetterResources =
-                ValueGetterResources(context)
+                ValueGetterResources(wifiManager, connectivityManager)
         }
     }
 

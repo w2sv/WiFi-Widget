@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.utils.enumerationTag
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
@@ -75,7 +76,7 @@ fun WifiPropertiesList(
                     if (value.addresses.size > 1) {
                         value.addresses.forEachIndexed { i, address ->
                             WifiPropertyRow(
-                                propertyName = "$propertyName #${i + 1}",
+                                propertyName = "$propertyName ${enumerationTag(i)}",
                                 value = address.textualRepresentation,
                                 showSnackbar = showSnackbar
                             )
@@ -110,7 +111,7 @@ private fun WifiPropertyRow(
                 clipboardManager.setText(AnnotatedString(value))
                 showSnackbar(
                     AppSnackbarVisuals(
-                        message =  context.getString(R.string.copied_to_clipboard, propertyName),
+                        message = context.getString(R.string.copied_to_clipboard, propertyName),
                         kind = SnackbarKind.Success
                     )
                 )

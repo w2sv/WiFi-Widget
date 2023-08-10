@@ -78,8 +78,8 @@ class IPAddress(linkAddress: LinkAddress) {
 //    }
 }
 
-fun ConnectivityManager.getIPAddresses(): List<IPAddress>? =
-    linkProperties?.linkAddresses?.map { IPAddress(it) }
+fun ConnectivityManager.getIPAddresses(): List<IPAddress> =
+    linkProperties?.linkAddresses?.map { IPAddress(it) } ?: listOf()
 
 /**
  * Reference: https://stackoverflow.com/a/52663352/12083276

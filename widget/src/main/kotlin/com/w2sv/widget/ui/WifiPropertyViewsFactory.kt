@@ -5,6 +5,7 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
+import com.w2sv.common.utils.enumerationTag
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.data.appearance
@@ -16,12 +17,10 @@ import javax.inject.Inject
 import kotlin.properties.Delegates
 
 class WifiPropertyViewsFactory @Inject constructor(
-    @ApplicationContext private val context: Context, private val widgetRepository: WidgetRepository
+    @ApplicationContext private val context: Context,
+    private val widgetRepository: WidgetRepository,
+    private val valueGetterResources: WifiProperty.ValueGetterResources
 ) : RemoteViewsService.RemoteViewsFactory {
-
-    private val valueGetterResources by lazy {
-        WifiProperty.ValueGetterResources(context)
-    }
 
     override fun onCreate() {}
 
@@ -65,7 +64,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                                     buildString {
                                         append(context.getString(it.viewData.labelRes))
                                         if (filteredAddresses.size > 1) {
-                                            append(" #${i + 1}")
+                                            append(" ${enumerationTag(i)}")
                                         }
                                     },
                                     address.textualRepresentation

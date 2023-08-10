@@ -81,16 +81,9 @@ class HomeScreenViewModel @Inject constructor(
         .apply {
             viewModelScope.launch {
                 collect { status ->
-                    _wifiProperties.value =
+                    _wifiPropertiesViewData.value =
                         if (status == WifiStatus.Connected) {
-                            val valueGetterResources =
-                                wifiPropertyValueGetterResourcesProvider.provide()
-                            WifiProperty.values().map { property ->
-                                WifiPropertyViewData(
-                                    property,
-                                    property.getValue(valueGetterResources)
-                                )
-                            }
+                            getWifiPropertiesViewData()
                         } else {
                             null
                         }
@@ -98,8 +91,25 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
 
-    val wifiPropertiesViewData get() = _wifiProperties.asStateFlow()
-    private var _wifiProperties = MutableStateFlow<List<WifiPropertyViewData>?>(null)
+    fun triggerWifiPropertiesViewDataRefresh() {
+        viewModelScope.launch {
+            _wifiPropertiesViewData.value = getWifiPropertiesViewData()
+        }
+    }
+
+    val wifiPropertiesViewData get() = _wifiPropertiesViewData.asStateFlow()
+    private var _wifiPropertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
+
+    private fun getWifiPropertiesViewData(): List<WifiPropertyViewData> {
+        val valueGetterResources =
+            wifiPropertyValueGetterResourcesProvider.provide()
+        return WifiProperty.values().map { property ->
+            WifiPropertyViewData(
+                property,
+                property.getValue(valueGetterResources)
+            )
+        }
+    }
 
     // ========================
     // Widget Pin Listening

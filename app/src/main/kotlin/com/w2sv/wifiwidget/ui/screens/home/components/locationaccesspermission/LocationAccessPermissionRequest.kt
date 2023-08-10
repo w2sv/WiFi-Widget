@@ -41,6 +41,7 @@ fun LocationAccessPermissionRequest(
                 when (permissionToGranted.values.all { it }) {
                     true -> {
                         onGranted(context)
+                        homeScreenVM.triggerWifiPropertiesViewDataRefresh()
                         if (backgroundLocationAccessGrantRequired) {
                             homeScreenVM.showBackgroundLocationAccessRational.value = true
                         }

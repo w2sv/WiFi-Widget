@@ -58,6 +58,3 @@ fun JostText(
 }
 
 private val jost = Font(R.font.jost).toFontFamily()
-
-fun bulletPointText(text: String): String =
-    "○ $text"

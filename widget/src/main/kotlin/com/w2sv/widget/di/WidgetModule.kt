@@ -34,4 +34,8 @@ object WidgetModule {
     @Provides
     fun setWifiProperties(widgetRepository: WidgetRepository): Set<WifiProperty> =
         widgetRepository.getSetWifiProperties()
+
+    @Provides
+    fun wifiPropertyGetterResources(@ApplicationContext context: Context): WifiProperty.ValueGetterResources =
+        WifiProperty.ValueGetterResources(context)
 }

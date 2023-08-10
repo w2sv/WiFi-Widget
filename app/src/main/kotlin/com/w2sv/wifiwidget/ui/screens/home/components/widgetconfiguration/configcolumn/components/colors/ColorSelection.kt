@@ -27,10 +27,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.utils.bulletPointText
 import com.w2sv.data.model.widget.WidgetColor
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.components.bulletPointText
 import com.w2sv.wifiwidget.ui.utils.toColor
 
 @Stable
