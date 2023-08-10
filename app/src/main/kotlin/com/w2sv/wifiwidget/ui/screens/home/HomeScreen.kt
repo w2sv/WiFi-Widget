@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,6 +43,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
+import com.w2sv.wifiwidget.ui.components.Header
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
@@ -121,7 +120,7 @@ internal fun HomeScreen(
                             .fillMaxWidth(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        CardHeader(iconRes = R.drawable.ic_widgets_24, header = "Widget")
+                        Header(iconRes = R.drawable.ic_widgets_24, headerRes = R.string.widget)
                         Spacer(modifier = Modifier.height(32.dp))
                         WidgetInteractionElementsRow(
                             onPinWidgetButtonClick = {
@@ -154,31 +153,6 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
-    }
-}
-
-@Composable
-fun CardHeader(@DrawableRes iconRes: Int, header: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(horizontal = 16.dp)
-    ) {
-        Box(modifier = Modifier.weight(0.3f)) {
-            Icon(
-                painter = painterResource(id = iconRes),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
-            JostText(
-                text = header,
-                fontSize = 20.sp,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-        Spacer(modifier = Modifier.weight(0.3f))
     }
 }
 

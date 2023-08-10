@@ -58,4 +58,5 @@
     <string name="click_to_copy_to_clipboard">(Click to copy to clipboard)</string>
     <string name="wifi_status">WiFi Status</string>
     <string name="copied_to_clipboard">Copied %1$s to clipboard</string>
+    <string name="widget">Widget</string>
 </resources>
