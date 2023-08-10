@@ -42,7 +42,7 @@ fun InfoDialog(
         text = {
             Column(
                 Modifier
-                    .sizeIn(maxHeight = 520.dp)
+                    .sizeIn(maxHeight = 360.dp)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
                 Arrangement.Center,

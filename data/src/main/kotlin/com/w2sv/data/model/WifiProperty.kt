@@ -301,7 +301,7 @@ sealed class WifiProperty(
 }
 
 private val prefixLengthViewData = WifiProperty.ViewData(
-    R.string.prefix_length,
+    R.string.show_prefix_length,
     R.string.prefix_length_description,
     "https://www.ibm.com/docs/en/ts3500-tape-library?topic=formats-subnet-masks-ipv4-prefixes-ipv6"
 )
