@@ -90,71 +90,55 @@ internal fun HomeScreen(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(),
+                verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                ElevatedCard(
+                Spacer(Modifier.weight(0.15f))
+                Box(
                     modifier = Modifier
-                        .padding(16.dp)
                         .weight(0.8f)
-                        .fillMaxWidth(),
-                    elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+                        .fillMaxWidth(0.77f),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceBetween,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(Modifier.weight(0.15f))
-                        Box(
-                            modifier = Modifier
-                                .weight(0.8f)
-                                .fillMaxWidth(0.77f),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            WifiConnectionInfoCard(
-                                wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
-                                wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
-                                showSnackbar = {
-                                    scope.launch {
-                                        homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                                            it
-                                        )
-                                    }
-                                }
-                            )
-                        }
-                        Spacer(Modifier.weight(0.2f))
-
-                        ElevatedCard(elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(horizontal = 24.dp, vertical = 32.dp)
-                                    .fillMaxWidth(0.85f),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                CardHeader(iconRes = R.drawable.ic_widgets_24, header = "Widget")
-                                Spacer(modifier = Modifier.height(32.dp))
-                                WidgetInteractionElementsRow(
-                                    onPinWidgetButtonClick = {
-                                        when (homeScreenVM.lapRationalShown) {
-                                            false -> homeScreenVM.lapRationalTrigger.value =
-                                                LAPRequestTrigger.PinWidgetButtonPress
-
-                                            true -> attemptWifiWidgetPin(context)
-                                        }
-                                    },
-                                    onWidgetConfigurationButtonClick = {
-                                        homeScreenVM.showWidgetConfigurationDialog.value = true
-                                    }
+                    WifiConnectionInfoCard(
+                        wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
+                        wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
+                        showSnackbar = {
+                            scope.launch {
+                                homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                                    it
                                 )
                             }
                         }
+                    )
+                }
+                Spacer(Modifier.weight(0.2f))
 
-                        Spacer(Modifier.weight(0.3f))
+                ElevatedCard(elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)) {
+                    Column(
+                        modifier = Modifier
+                            .padding(horizontal = 24.dp, vertical = 32.dp)
+                            .fillMaxWidth(0.8f),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CardHeader(iconRes = R.drawable.ic_widgets_24, header = "Widget")
+                        Spacer(modifier = Modifier.height(32.dp))
+                        WidgetInteractionElementsRow(
+                            onPinWidgetButtonClick = {
+                                when (homeScreenVM.lapRationalShown) {
+                                    false -> homeScreenVM.lapRationalTrigger.value =
+                                        LAPRequestTrigger.PinWidgetButtonPress
+
+                                    true -> attemptWifiWidgetPin(context)
+                                }
+                            },
+                            onWidgetConfigurationButtonClick = {
+                                homeScreenVM.showWidgetConfigurationDialog.value = true
+                            }
+                        )
                     }
                 }
-
+                Spacer(Modifier.weight(0.3f))
                 CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
             }
         }
