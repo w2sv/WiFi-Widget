@@ -45,7 +45,7 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
             }
             .semantics {
                 contentDescription =
-                    context.getString(R.string.click_to_go_to_your_device_wifi_settings)
+                    context.getString(R.string.go_to_wifi_settings_cd)
             }
     ) {
         Icon(
