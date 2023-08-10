@@ -91,10 +91,11 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
 
         homeScreenVM.triggerWifiPropertiesViewDataRefresh()
+        homeScreenVM.refreshWidgetIds()
     }
 
     /**

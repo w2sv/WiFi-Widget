@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.Manifest
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.SavedStateHandle
@@ -17,6 +18,7 @@ import com.w2sv.data.model.WifiStatus
 import com.w2sv.data.networking.WifiStatusMonitor
 import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.widget.di.PackageName
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
@@ -26,7 +28,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info.WifiPropertyViewData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -43,8 +44,9 @@ class HomeScreenViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val widgetRepository: WidgetRepository,
     private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
+    private val appWidgetManager: AppWidgetManager,
+    @PackageName private val packageName: String,
     wifiStatusMonitor: WifiStatusMonitor,
-    @ApplicationContext context: Context,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -58,16 +60,11 @@ class HomeScreenViewModel @Inject constructor(
 
     val snackbarHostState = SnackbarHostState()
 
-    fun onWidgetConfigurationChanged() {
+    fun onWidgetConfigurationChanged(context: Context) {
         viewModelScope.launch {
             snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                 AppSnackbarVisuals(
-                    message = buildString {
-                        append("Updated configuration")
-                        if (widgetIds.isNotEmpty()) {
-                            append(" of ${widgetIds.size} widget(s)")
-                        }
-                    },
+                    message = context.getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success
                 )
             )
@@ -173,8 +170,14 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private val widgetIds: MutableSet<Int> =
-        getWifiWidgetIds(context).toMutableSet()
+    private var widgetIds: MutableSet<Int> = getWidgetIds()
+
+    fun refreshWidgetIds() {
+        widgetIds = getWidgetIds()
+    }
+
+    private fun getWidgetIds(): MutableSet<Int> =
+        appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
 
     // =============
     // LAP := Location Access Permission

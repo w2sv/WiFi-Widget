@@ -74,7 +74,7 @@ fun WidgetConfigurationDialog(
                 scope.launch {
                     widgetVM.configuration.sync()
                     WidgetProvider.triggerDataRefresh(context)
-                    homeScreenVM.onWidgetConfigurationChanged()
+                    homeScreenVM.onWidgetConfigurationChanged(context)
                     closeDialog()
                 }
             },

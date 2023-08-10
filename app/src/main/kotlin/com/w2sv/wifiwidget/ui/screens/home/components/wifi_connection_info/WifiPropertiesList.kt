@@ -133,7 +133,6 @@ private fun WifiPropertyRow(
         Spacer(modifier = Modifier.width(16.dp))
         JostText(
             text = value,
-            color = MaterialTheme.colorScheme.tertiary,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -172,7 +171,6 @@ private fun IPSubPropertyText(text: String) {
                 shape = RoundedCornerShape(16.dp)
             )
             .padding(vertical = 2.dp, horizontal = 6.dp),
-        color = MaterialTheme.colorScheme.tertiary,
         fontSize = 11.sp
     )
 }

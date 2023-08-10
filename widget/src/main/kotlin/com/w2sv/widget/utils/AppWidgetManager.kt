@@ -1,6 +1,7 @@
 package com.w2sv.widget.utils
 
 import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import com.w2sv.androidutils.appwidgets.getAppWidgetIds
@@ -17,6 +18,20 @@ fun getWifiWidgetIds(context: Context): IntArray =
 
 fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
     getAppWidgetIds(context, WidgetProvider::class.java)
+
+fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
+    getAppWidgetIds(packageName, WidgetProvider::class.java)
+
+fun AppWidgetManager.getAppWidgetIds(
+    packageName: String,
+    appWidgetProviderClass: Class<out AppWidgetProvider>
+): IntArray =
+    getAppWidgetIds(
+        ComponentName(
+            packageName,
+            appWidgetProviderClass.name
+        )
+    )
 
 fun attemptWifiWidgetPin(context: Context) {
     context.appWidgetManager.attemptWifiWidgetPin(context)

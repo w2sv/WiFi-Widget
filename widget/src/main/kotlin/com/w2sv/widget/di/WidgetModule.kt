@@ -1,5 +1,6 @@
 package com.w2sv.widget.di
 
+import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
@@ -9,11 +10,17 @@ import com.w2sv.widget.data.appearance
 import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetRefreshing
+import com.w2sv.widget.utils.appWidgetManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Qualifier
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class PackageName
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -38,4 +45,13 @@ object WidgetModule {
     @Provides
     fun wifiPropertyGetterResources(@ApplicationContext context: Context): WifiProperty.ValueGetterResources =
         WifiProperty.ValueGetterResources(context)
+
+    @Provides
+    fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
+        context.appWidgetManager
+
+    @PackageName
+    @Provides
+    fun packageName(@ApplicationContext context: Context): String =
+        context.packageName
 }

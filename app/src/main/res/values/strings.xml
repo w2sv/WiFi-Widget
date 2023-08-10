@@ -59,4 +59,5 @@
     <string name="wifi_status">WiFi Status</string>
     <string name="copied_to_clipboard">Copied %1$s to clipboard</string>
     <string name="widget">Widget</string>
+    <string name="updated_widget_configuration">Updated widget configuration</string>
 </resources>
