@@ -31,6 +31,7 @@ import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.networking.IPAddress
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.InBetweenSpaced
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 
@@ -157,20 +158,6 @@ private fun IPSubPropertiesRow(ipAddress: IPAddress, modifier: Modifier = Modifi
                 )
             }
         )
-    }
-}
-
-@Composable
-fun <T> InBetweenSpaced(
-    elements: List<T>,
-    makeElement: @Composable (T) -> Unit,
-    spacer: @Composable () -> Unit
-) {
-    elements.forEachIndexed { index, element ->
-        makeElement(element)
-        if (index != elements.lastIndex) {
-            spacer()
-        }
     }
 }
 
