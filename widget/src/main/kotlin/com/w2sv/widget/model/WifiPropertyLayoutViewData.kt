@@ -66,36 +66,11 @@ internal sealed interface WifiPropertyLayoutViewData {
                         }
                     }
 
-                    fun addSubPropertyTVIfConditionMet(conditional: Boolean, text: String) {
-                        if (conditional) {
-                            addSubPropertyTV(text)
+                    ipAddress
+                        .getViewProperties(includePrefixLength = showPrefixLength)
+                        .forEach {
+                            addSubPropertyTV(it)
                         }
-                    }
-
-                    // Prefix length
-                    addSubPropertyTVIfConditionMet(
-                        showPrefixLength, "/${ipAddress.prefixLength}"
-                    )
-
-                    // Local / Public
-                    if (ipAddress.isLocal) {
-                        addSubPropertyTVIfConditionMet(
-                            ipAddress.localAttributes.siteLocal, "SiteLocal"
-                        )
-                        addSubPropertyTVIfConditionMet(
-                            ipAddress.localAttributes.linkLocal, "LinkLocal"
-                        )
-                        addSubPropertyTVIfConditionMet(
-                            !ipAddress.localAttributes.siteLocal && !ipAddress.localAttributes.linkLocal,
-                            "Local"
-                        )
-                    } else {
-                        addSubPropertyTV("Public")
-                    }
-
-                    // Additional properties
-                    addSubPropertyTVIfConditionMet(ipAddress.isLoopback, "Loopback")
-                    addSubPropertyTVIfConditionMet(ipAddress.isMultiCast, "Multicast")
 
                     // Hide all remaining sub-property views
                     propertyTVIterator.forEachRemaining {

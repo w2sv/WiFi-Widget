@@ -56,6 +56,34 @@ class IPAddress(linkAddress: LinkAddress) {
         }
     }
 
+    fun getViewProperties(includePrefixLength: Boolean): Sequence<String> = sequence {
+        if (includePrefixLength) {
+            yield("/$prefixLength")
+        }
+        if (isLocal) {
+            var yieldedSpecificLocalProperty = false
+            if (localAttributes.linkLocal) {
+                yield("LinkLocal")
+                yieldedSpecificLocalProperty = true
+            }
+            if (localAttributes.siteLocal) {
+                yield("SiteLocal")
+                yieldedSpecificLocalProperty = true
+            }
+            if (!yieldedSpecificLocalProperty) {
+                yield("Local")
+            }
+        } else {
+            yield("Public")
+        }
+        if (isMultiCast) {
+            yield("MultiCast")
+        }
+        if (isLoopback) {
+            yield("Loopback")
+        }
+    }
+
 //    data class MultiCastAttributes(
 //        val global: Boolean,
 //        val linkLocal: Boolean,

@@ -146,28 +146,30 @@ private fun IPSubPropertiesRow(ipAddress: IPAddress, modifier: Modifier = Modifi
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End
     ) {
-        @Composable
-        fun spacer() {
-            Spacer(modifier = Modifier.width(6.dp))
-        }
-
-        IPSubPropertyText(text = "/${ipAddress.prefixLength}")
-        spacer()
-        IPSubPropertyText(
-            text = when {
-                ipAddress.localAttributes.siteLocal -> "SiteLocal"
-                ipAddress.localAttributes.linkLocal -> "LinkLocal"
-                ipAddress.isLocal -> "Local"
-                else -> "Public"
+        InBetweenSpaced(
+            elements = ipAddress.getViewProperties(true).toList(),
+            makeElement = {
+                IPSubPropertyText(text = it)
+            },
+            spacer = {
+                Spacer(
+                    modifier = Modifier.width(6.dp)
+                )
             }
         )
-        if (ipAddress.isMultiCast) {
+    }
+}
+
+@Composable
+fun <T> InBetweenSpaced(
+    elements: List<T>,
+    makeElement: @Composable (T) -> Unit,
+    spacer: @Composable () -> Unit
+) {
+    elements.forEachIndexed { index, element ->
+        makeElement(element)
+        if (index != elements.lastIndex) {
             spacer()
-            IPSubPropertyText(text = "MultiCast")
-        }
-        if (ipAddress.isLoopback) {
-            spacer()
-            IPSubPropertyText(text = "Loopback")
         }
     }
 }
