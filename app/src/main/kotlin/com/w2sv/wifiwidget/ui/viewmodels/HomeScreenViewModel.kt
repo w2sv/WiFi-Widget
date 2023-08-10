@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -80,7 +81,7 @@ class HomeScreenViewModel @Inject constructor(
     )
         .apply {
             viewModelScope.launch {
-                collect { status ->
+                collectLatest { status ->
                     _wifiPropertiesViewData.value =
                         if (status == WifiStatus.Connected) {
                             getWifiPropertiesViewData()
@@ -89,16 +90,27 @@ class HomeScreenViewModel @Inject constructor(
                         }
                 }
             }
+            viewModelScope.launch {
+                wifiStatusMonitor.wifiPropertiesHaveChanged.collectLatest {
+                    if (value == WifiStatus.Connected) {
+                        refreshWifiPropertiesViewData()
+                    }
+                }
+            }
         }
 
     fun triggerWifiPropertiesViewDataRefresh() {
         viewModelScope.launch {
-            _wifiPropertiesViewData.value = getWifiPropertiesViewData()
+            refreshWifiPropertiesViewData()
         }
     }
 
     val wifiPropertiesViewData get() = _wifiPropertiesViewData.asStateFlow()
     private var _wifiPropertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
+
+    private fun refreshWifiPropertiesViewData() {
+        _wifiPropertiesViewData.value = getWifiPropertiesViewData()
+    }
 
     private fun getWifiPropertiesViewData(): List<WifiPropertyViewData> {
         val valueGetterResources =

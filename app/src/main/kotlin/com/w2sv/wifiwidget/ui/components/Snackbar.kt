@@ -68,7 +68,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 TextButton(
                     onClick = action.callback
                 ) {
-                    JostText(text = action.label, color = MaterialTheme.colorScheme.inversePrimary)
+                    JostText(text = action.label, color = MaterialTheme.colorScheme.primary)
                 }
             }
         }

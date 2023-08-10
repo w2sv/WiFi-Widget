@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.conflate
+import slimber.log.i
 import javax.inject.Inject
 
 class WifiStatusMonitor @Inject constructor(
@@ -18,6 +20,39 @@ class WifiStatusMonitor @Inject constructor(
 ) {
     private val connectivityManager = context.getConnectivityManager()
     private val wifiManager = context.getWifiManager()
+
+    private val networkRequest = NetworkRequest
+        .Builder()
+        .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+        .build()
+
+    val wifiPropertiesHaveChanged: Flow<Unit> = callbackFlow<Unit> {
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                if (network == connectivityManager.activeNetwork) {
+                    i { "onCapabilitiesChanged.send" }
+                    channel.trySend(Unit)
+                }
+            }
+
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                if (network == connectivityManager.activeNetwork) {
+                    i { "onLinkPropertiesChanged.send" }
+                    channel.trySend(Unit)
+                }
+            }
+        }
+
+        connectivityManager.registerNetworkCallback(networkRequest, callback)
+
+        awaitClose {
+            connectivityManager.unregisterNetworkCallback(callback)
+        }
+    }
+        .conflate()
 
     val wifiStatus: Flow<WifiStatus> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
@@ -29,13 +64,17 @@ class WifiStatusMonitor @Inject constructor(
                 network: Network,
                 networkCapabilities: NetworkCapabilities
             ) {
+                i { "onCapabilitiesChanged" }
                 if (network == connectivityManager.activeNetwork) {
+                    i { "onCapabilitiesChanged.send" }
                     channel.trySend(WifiStatus.Connected)
                 }
             }
 
             override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+                i { "onLinkPropertiesChanged" }
                 if (network == connectivityManager.activeNetwork) {
+                    i { "onLinkPropertiesChanged.send" }
                     channel.trySend(WifiStatus.Connected)
                 }
             }
@@ -50,9 +89,7 @@ class WifiStatusMonitor @Inject constructor(
         }
 
         connectivityManager.registerNetworkCallback(
-            NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .build(),
+            networkRequest,
             callback
         )
 
@@ -62,4 +99,5 @@ class WifiStatusMonitor @Inject constructor(
             connectivityManager.unregisterNetworkCallback(callback)
         }
     }
+        .conflate()
 }
