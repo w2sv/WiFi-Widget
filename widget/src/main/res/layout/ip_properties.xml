@@ -10,49 +10,48 @@
         android:id="@+id/ip_property_tv_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
         android:background="@drawable/rounded_corner_shape"
-        android:paddingHorizontal="6dp"
-        android:textSize="11sp"
+        android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
+        android:textSize="@dimen/ip_sub_property_font_size"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/ip_property_tv_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
         android:background="@drawable/rounded_corner_shape"
-        android:paddingHorizontal="6dp"
-        android:textSize="11sp"
+        android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
+        android:textSize="@dimen/ip_sub_property_font_size"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/ip_property_tv_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
         android:background="@drawable/rounded_corner_shape"
-        android:paddingHorizontal="6dp"
-        android:textSize="11sp"
+        android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
+        android:textSize="@dimen/ip_sub_property_font_size"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/ip_property_tv_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
+        android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
         android:background="@drawable/rounded_corner_shape"
-        android:paddingHorizontal="6dp"
-        android:textSize="11sp"
+        android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
+        android:textSize="@dimen/ip_sub_property_font_size"
         android:visibility="gone" />
 
     <TextView
         android:id="@+id/ip_property_tv_5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
         android:background="@drawable/rounded_corner_shape"
-        android:paddingHorizontal="6dp"
-        android:textSize="11sp"
+        android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
+        android:textSize="@dimen/ip_sub_property_font_size"
         android:visibility="gone" />
 </LinearLayout>

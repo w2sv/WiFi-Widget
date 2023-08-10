@@ -9,4 +9,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="min_width">160dp</dimen>
     <dimen name="min_height">100dp</dimen>
     <dimen name="min_resize_height">40dp</dimen>
+    <dimen name="ip_sub_property_font_size">11sp</dimen>
+    <dimen name="ip_sub_property_padding_horizontal">6dp</dimen>
+    <dimen name="ip_sub_property_margin_end">6dp</dimen>
 </resources>
