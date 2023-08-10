@@ -26,7 +26,7 @@ class WifiStatusMonitor @Inject constructor(
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
         .build()
 
-    val wifiPropertiesHaveChanged: Flow<Unit> = callbackFlow<Unit> {
+    val wifiPropertiesHaveChanged: Flow<Unit> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onCapabilitiesChanged(
                 network: Network,
