@@ -43,7 +43,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
-import com.w2sv.wifiwidget.ui.components.Header
+import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
@@ -120,7 +120,7 @@ internal fun HomeScreen(
                             .fillMaxWidth(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Header(iconRes = R.drawable.ic_widgets_24, headerRes = R.string.widget)
+                        IconHeader(iconRes = R.drawable.ic_widgets_24, headerRes = R.string.widget)
                         Spacer(modifier = Modifier.height(32.dp))
                         WidgetInteractionElementsRow(
                             onPinWidgetButtonClick = {

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Header(@DrawableRes iconRes: Int, @StringRes headerRes: Int) {
+fun IconHeader(@DrawableRes iconRes: Int, @StringRes headerRes: Int) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(horizontal = 16.dp)

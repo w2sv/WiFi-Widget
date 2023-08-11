@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.w2sv.data.model.WifiStatus
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.Header
+import com.w2sv.wifiwidget.ui.components.IconHeader
 
 @Composable
 fun WifiConnectionInfoCard(
@@ -34,7 +34,7 @@ fun WifiConnectionInfoCard(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Header(iconRes = R.drawable.ic_network_check_24, headerRes = R.string.wifi_status)
+            IconHeader(iconRes = R.drawable.ic_network_check_24, headerRes = R.string.wifi_status)
             Spacer(modifier = Modifier.height(16.dp))
 
             WifiStatusDisplay(wifiStatus = wifiStatus)
