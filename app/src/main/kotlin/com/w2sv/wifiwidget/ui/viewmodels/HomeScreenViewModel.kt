@@ -28,6 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info.WifiPropertyViewData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +47,7 @@ class HomeScreenViewModel @Inject constructor(
     private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
+    @ApplicationContext context: Context,
     wifiStatusMonitor: WifiStatusMonitor,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -120,6 +122,16 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
+    fun onStart(context: Context) {
+        triggerWifiPropertiesViewDataRefresh()
+        refreshWidgetIds()
+        onReceiveBackgroundLocationAccessGranted(
+            backgroundLocationAccessGrantRequired && context.hasPermission(
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            )
+        )
+    }
+
     // ========================
     // Widget Pin Listening
     // ========================
@@ -127,6 +139,23 @@ class HomeScreenViewModel @Inject constructor(
     fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
         if (widgetIds.add(widgetId)) {
             onNewWidgetPinned(widgetId, context)
+        }
+    }
+
+    private var backgroundLocationAccessGranted =
+        !backgroundLocationAccessGrantRequired || context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
+    fun onReceiveBackgroundLocationAccessGranted(granted: Boolean) {
+        if (granted && !backgroundLocationAccessGranted) {
+            backgroundLocationAccessGranted = true
+            viewModelScope.launch {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        "Your SSID/BSSID can now be reliably retrieved from the background",
+                        kind = SnackbarKind.Success
+                    )
+                )
+            }
         }
     }
 
@@ -152,7 +181,7 @@ class HomeScreenViewModel @Inject constructor(
                         )
                     )
 
-                    (backgroundLocationAccessGrantRequired) && !context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION) && !showBackgroundLocationAccessRational.value ->
+                    !backgroundLocationAccessGranted && !showBackgroundLocationAccessRational.value ->
                         snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                             AppSnackbarVisuals(
                                 context.getString(R.string.on_pin_widget_wo_background_location_access_permission),

@@ -94,8 +94,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
 
-        homeScreenVM.triggerWifiPropertiesViewDataRefresh()
-        homeScreenVM.refreshWidgetIds()
+        homeScreenVM.onStart(this)
     }
 
     /**
