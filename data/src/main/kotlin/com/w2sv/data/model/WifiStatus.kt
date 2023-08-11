@@ -6,9 +6,9 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.w2sv.androidutils.services.getConnectivityManager
+import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.data.R
-import com.w2sv.data.networking.getConnectivityManager
-import com.w2sv.data.networking.getWifiManager
 
 enum class WifiStatus(
     @StringRes val labelRes: Int,

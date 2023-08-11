@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.StyleRes
 import com.google.android.material.color.DynamicColors
-import com.w2sv.common.utils.isNightModeActiveCompat
+import com.w2sv.androidutils.generic.isNightModeActiveCompat
 import com.w2sv.widget.R
 
 sealed interface WidgetTheme {

@@ -11,8 +11,8 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
+import com.w2sv.androidutils.ui.getAlphaSetColor
 import com.w2sv.common.constants.Extra
-import com.w2sv.common.utils.getAlphaSetColor
 import com.w2sv.data.model.WifiStatus
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.R

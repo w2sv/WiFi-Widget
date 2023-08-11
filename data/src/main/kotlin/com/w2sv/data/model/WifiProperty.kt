@@ -7,12 +7,12 @@ import androidx.annotation.StringRes
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
+import com.w2sv.androidutils.services.getConnectivityManager
+import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.data.R
 import com.w2sv.data.networking.IPAddress
 import com.w2sv.data.networking.frequencyToChannel
-import com.w2sv.data.networking.getConnectivityManager
 import com.w2sv.data.networking.getIPAddresses
-import com.w2sv.data.networking.getWifiManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

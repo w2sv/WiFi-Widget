@@ -2,12 +2,12 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStateFlow
+import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStatesComposition
 import com.w2sv.data.model.Theme
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
-import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateFlow
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
-import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStatesComposition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

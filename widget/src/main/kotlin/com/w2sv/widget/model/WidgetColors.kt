@@ -3,7 +3,7 @@ package com.w2sv.widget.model
 import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
-import com.w2sv.common.utils.getAlphaSetColor
+import com.w2sv.androidutils.ui.getAlphaSetColor
 
 data class WidgetColors(
     @ColorInt val background: Int,

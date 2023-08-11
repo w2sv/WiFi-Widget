@@ -12,9 +12,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
-fun <T> Flow<T>.stateInWithInitial(scope: CoroutineScope, started: SharingStarted): StateFlow<T> =
-    stateIn(scope = scope, started = started, initialValue = getValueSynchronously())
-
 @Composable
 fun <T : R, R> Flow<T>.collectAsStateWithInitial(context: CoroutineContext = EmptyCoroutineContext): State<R> =
     collectAsState(getValueSynchronously(), context)

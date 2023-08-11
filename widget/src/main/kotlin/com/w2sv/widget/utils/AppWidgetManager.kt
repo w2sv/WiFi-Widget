@@ -22,17 +22,6 @@ fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
 fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
     getAppWidgetIds(packageName, WidgetProvider::class.java)
 
-fun AppWidgetManager.getAppWidgetIds(
-    packageName: String,
-    appWidgetProviderClass: Class<out AppWidgetProvider>
-): IntArray =
-    getAppWidgetIds(
-        ComponentName(
-            packageName,
-            appWidgetProviderClass.name
-        )
-    )
-
 fun attemptWifiWidgetPin(context: Context) {
     context.appWidgetManager.attemptWifiWidgetPin(context)
 }

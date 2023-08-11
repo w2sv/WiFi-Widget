@@ -6,6 +6,8 @@ import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import com.w2sv.androidutils.services.getConnectivityManager
+import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.data.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose

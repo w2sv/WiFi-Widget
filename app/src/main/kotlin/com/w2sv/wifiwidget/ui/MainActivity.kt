@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.w2sv.wifiwidget.ui
 
 import android.animation.ObjectAnimator
@@ -15,8 +13,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.w2sv.androidutils.coroutines.launchFlowCollections
 import com.w2sv.androidutils.generic.getIntExtraOrNull
-import com.w2sv.common.utils.launchFlowCollections
 import com.w2sv.data.model.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
