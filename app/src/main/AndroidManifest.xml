@@ -42,7 +42,7 @@
         </receiver>
 
         <receiver
-            android:name="com.w2sv.wifiwidget.ui.MainActivity$AppWidgetOptionsChangedReceiver"
+            android:name=".ui.AppWidgetOptionsChangedReceiver"
             tools:ignore="Instantiatable" />
 
         <service

@@ -145,7 +145,7 @@ class HomeScreenViewModel @Inject constructor(
     private var backgroundLocationAccessGranted =
         !backgroundLocationAccessGrantRequired || context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
-    fun onReceiveBackgroundLocationAccessGranted(granted: Boolean) {
+    private fun onReceiveBackgroundLocationAccessGranted(granted: Boolean) {
         if (granted && !backgroundLocationAccessGranted) {
             backgroundLocationAccessGranted = true
             viewModelScope.launch {
@@ -201,7 +201,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private var widgetIds: MutableSet<Int> = getWidgetIds()
 
-    fun refreshWidgetIds() {
+    private fun refreshWidgetIds() {
         widgetIds = getWidgetIds()
     }
 

@@ -4,9 +4,6 @@ package com.w2sv.wifiwidget.ui
 
 import android.animation.ObjectAnimator
 import android.appwidget.AppWidgetManager
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
@@ -17,11 +14,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.w2sv.androidutils.generic.getIntExtraOrNull
-import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
+import com.w2sv.common.utils.launchFlowCollections
 import com.w2sv.data.model.Theme
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
@@ -30,7 +25,7 @@ import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.InAppThemeViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.FlowCollector
 import slimber.log.i
 import javax.inject.Inject
 
@@ -44,37 +39,37 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
 
-    class AppWidgetOptionsChangedReceiver(
-        broadcastManager: LocalBroadcastManager,
-        callback: (Context?, Intent?) -> Unit
-    ) : SelfManagingLocalBroadcastReceiver.Impl(
-        broadcastManager,
-        IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED),
-        callback
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
-        handleSplashScreen {
-            homeScreenVM.onSplashScreenAnimationFinished()
-        }
+        handleSplashScreen(onAnimationFinished = { homeScreenVM.onSplashScreenAnimationFinished() })
 
         super.onCreate(savedInstanceState)
 
         lifecycle.addObserver(
-            AppWidgetOptionsChangedReceiver(LocalBroadcastManager.getInstance(this@MainActivity)) { _, intent ->
-                i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
+            AppWidgetOptionsChangedReceiver(
+                context = this,
+                callback = { _, intent ->
+                    i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
 
-                intent?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                    ?.let { widgetId ->
-                        homeScreenVM.onWidgetOptionsUpdated(
-                            widgetId,
-                            this@MainActivity
-                        )
-                    }
+                    intent
+                        ?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
+                        ?.let { widgetId ->
+                            homeScreenVM.onWidgetOptionsUpdated(
+                                widgetId,
+                                this
+                            )
+                        }
+                }
+            )
+        )
+        lifecycleScope.launchFlowCollections(
+            widgetVM.refreshingParametersChanged to FlowCollector {
+                widgetDataRefreshWorkerManager
+                    .applyChangedParameters()
+            },
+            homeScreenVM.exitApplication to FlowCollector {
+                finishAffinity()
             }
         )
-
-        lifecycleScope.subscribeToFlows()
 
         setContent {
             AppTheme(
@@ -91,14 +86,8 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        homeScreenVM.onStart(this)
-    }
-
     /**
-     * Sets SwipeUp exit animation and triggers call to [onAnimationFinished] in time.
+     * Sets SwipeUp exit animation and calls [onAnimationFinished].
      */
     private fun handleSplashScreen(onAnimationFinished: () -> Unit) {
         installSplashScreen().setOnExitAnimationListener { splashScreenViewProvider ->
@@ -120,17 +109,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun LifecycleCoroutineScope.subscribeToFlows() {
-        launch {
-            widgetVM.refreshingParametersChanged.collect {
-                widgetDataRefreshWorkerManager
-                    .applyChangedParameters()
-            }
-        }
-        launch {
-            homeScreenVM.exitApplication.collect {
-                finishAffinity()
-            }
-        }
+    override fun onStart() {
+        super.onStart()
+
+        homeScreenVM.onStart(this)
     }
 }
