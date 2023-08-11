@@ -26,7 +26,6 @@ build-and-publish-to-test-track:
 	@read
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in specified archive dir
-
 	@$(MAKE) build-aab
 
 	@echo "Publish Bundle"
