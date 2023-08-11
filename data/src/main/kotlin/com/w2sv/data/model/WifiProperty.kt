@@ -104,7 +104,7 @@ sealed class WifiProperty(
         }
     }
 
-    object SSID : WifiProperty(
+    data object SSID : WifiProperty(
         ViewData(
             R.string.ssid,
             R.string.ssid_description,
@@ -119,7 +119,7 @@ sealed class WifiProperty(
         defaultValue = false
     )
 
-    object BSSID : WifiProperty(
+    data object BSSID : WifiProperty(
         ViewData(
             R.string.bssid,
             R.string.bssid_description,
@@ -134,7 +134,7 @@ sealed class WifiProperty(
         defaultValue = false
     )
 
-    object IPv4 :
+    data object IPv4 :
         IPProperty(
             ViewData(
                 R.string.ipv4,
@@ -155,7 +155,7 @@ sealed class WifiProperty(
             )
         )
 
-    object IPv6 :
+    data object IPv6 :
         IPProperty(
             viewData = ViewData(
                 labelRes = R.string.ipv6,
@@ -191,7 +191,7 @@ sealed class WifiProperty(
         )
     }
 
-    object Frequency : WifiProperty(
+    data object Frequency : WifiProperty(
         ViewData(
             R.string.frequency,
             R.string.frequency_description,
@@ -201,7 +201,7 @@ sealed class WifiProperty(
         preferencesKey = booleanPreferencesKey("Frequency"),
     )
 
-    object Channel : WifiProperty(
+    data object Channel : WifiProperty(
         ViewData(
             R.string.channel,
             R.string.channel_description,
@@ -211,7 +211,7 @@ sealed class WifiProperty(
         preferencesKey = booleanPreferencesKey("Channel")
     )
 
-    object LinkSpeed : WifiProperty(
+    data object LinkSpeed : WifiProperty(
         ViewData(
             R.string.link_speed,
             R.string.link_speed_description,
@@ -221,7 +221,7 @@ sealed class WifiProperty(
         preferencesKey = booleanPreferencesKey("LinkSpeed"),
     )
 
-    object Gateway : WifiProperty(
+    data object Gateway : WifiProperty(
         ViewData(
             R.string.gateway,
             R.string.gateway_description,
@@ -236,7 +236,7 @@ sealed class WifiProperty(
         preferencesKey = booleanPreferencesKey("Gateway")
     )
 
-    object DNS : WifiProperty(
+    data object DNS : WifiProperty(
         ViewData(
             R.string.dns,
             R.string.dns_description,
@@ -251,7 +251,7 @@ sealed class WifiProperty(
         preferencesKey = booleanPreferencesKey("DNS")
     )
 
-    object DHCP : WifiProperty(
+    data object DHCP : WifiProperty(
         ViewData(
             R.string.dhcp,
             R.string.dhcp_description,
@@ -280,22 +280,6 @@ sealed class WifiProperty(
                 DNS,
                 DHCP
             )
-        }
-
-        fun valueOf(value: String): WifiProperty {
-            return when (value) {
-                "SSID" -> SSID
-                "BSSID" -> BSSID
-                "IPv4" -> IPv4
-                "IPv6" -> IPv6
-                "Frequency" -> Frequency
-                "Channel" -> Channel
-                "LinkSpeed" -> LinkSpeed
-                "Gateway" -> Gateway
-                "DNS" -> DNS
-                "DHCP" -> DHCP
-                else -> throw IllegalArgumentException("No object com.w2sv.data.model.WifiProperty.$value")
-            }
         }
     }
 }

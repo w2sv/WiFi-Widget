@@ -32,7 +32,7 @@ class WidgetRepository @Inject constructor(
         save(Key.USE_DYNAMIC_COLORS, value)
     }
 
-    val customColorsMap = getFlowMap(WidgetColor.values().toList())
+    val customColorsMap = getFlowMap(WidgetColor.entries)
 
     val opacity: Flow<Float> = getFlow(Key.OPACITY, 1.0f)
 
@@ -54,7 +54,7 @@ class WidgetRepository @Inject constructor(
 
     val refreshingParametersMap = getFlowMap(WidgetRefreshingParameter.values().toList())
 
-    val buttonMap = getFlowMap(WidgetButton.values().toList())
+    val buttonMap = getFlowMap(WidgetButton.entries)
 
     private object Key {
         val OPACITY = floatPreferencesKey("opacity")
