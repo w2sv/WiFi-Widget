@@ -63,7 +63,7 @@ fun LocationAccessPermissionRequest(
             }
 
             false -> {
-                when (permissionState.isLaunchingSuppressed(homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
+                when (permissionState.isLaunchingSuppressed(launchedAtLeastOnce = homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
                     true -> {
                         homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                             AppSnackbarVisuals(

@@ -42,13 +42,13 @@ sealed interface SnackbarKind {
     @get:Composable
     val iconTint: Color
 
-    object Error : SnackbarKind {
+    data object Error : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Warning
         override val iconTint: Color
             @Composable get() = MaterialTheme.colorScheme.error
     }
 
-    object Success : SnackbarKind {
+    data object Success : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color
             @Composable get() = MaterialTheme.colorScheme.primary

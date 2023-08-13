@@ -126,9 +126,10 @@ class HomeScreenViewModel @Inject constructor(
         triggerWifiPropertiesViewDataRefresh()
         refreshWidgetIds()
         onReceiveBackgroundLocationAccessGranted(
-            backgroundLocationAccessGrantRequired && context.hasPermission(
+            granted = backgroundLocationAccessGrantRequired && context.hasPermission(
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            )
+            ),
+            context = context
         )
     }
 
@@ -145,13 +146,13 @@ class HomeScreenViewModel @Inject constructor(
     private var backgroundLocationAccessGranted =
         !backgroundLocationAccessGrantRequired || context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
-    private fun onReceiveBackgroundLocationAccessGranted(granted: Boolean) {
+    private fun onReceiveBackgroundLocationAccessGranted(granted: Boolean, context: Context) {
         if (granted && !backgroundLocationAccessGranted) {
             backgroundLocationAccessGranted = true
             viewModelScope.launch {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
-                        "Your SSID/BSSID can now be reliably retrieved from the background",
+                        message = context.getString(R.string.your_ssid_bssid_can_now_be_reliably_retrieved_from_the_background),
                         kind = SnackbarKind.Success
                     )
                 )

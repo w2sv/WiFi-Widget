@@ -60,4 +60,5 @@
     <string name="copied_to_clipboard">Copied %1$s to clipboard</string>
     <string name="widget">Widget</string>
     <string name="updated_widget_configuration">Updated widget configuration</string>
+    <string name="your_ssid_bssid_can_now_be_reliably_retrieved_from_the_background">Your SSID/BSSID can now be reliably retrieved from the background</string>
 </resources>
