@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
@@ -19,35 +19,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ThemeSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.WifiPropertySelection
-import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
-
-@Preview
-@Composable
-private fun Prev() {
-    AppTheme {
-        ConfigColumn()
-    }
-}
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.ButtonSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.ThemeSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.UnconfirmedWidgetConfiguration
 
 @Composable
-fun ConfigColumn(
-    modifier: Modifier = Modifier,
-    widgetVM: WidgetViewModel = viewModel(),
-    homeScreenVM: HomeScreenViewModel = viewModel()
+internal fun WidgetConfigurationDialogContent(
+    widgetConfiguration: UnconfirmedWidgetConfiguration,
+    showInfoDialog: (InfoDialogData) -> Unit,
+    lapUIState: LocationAccessPermissionUIState,
+    modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
 
@@ -63,12 +53,12 @@ fun ConfigColumn(
         )
 
         ThemeSelection(
-            theme = widgetVM.theme.collectAsState().value,
-            customThemeSelected = widgetVM.customThemeSelected.collectAsState(initial = false).value,
-            setTheme = { widgetVM.theme.value = it },
-            useDynamicColors = widgetVM.useDynamicColors.collectAsState().value,
-            setUseDynamicColors = { widgetVM.useDynamicColors.value = it },
-            customColorsMap = widgetVM.customColorsMap
+            theme = widgetConfiguration.theme.collectAsState().value,
+            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsState(initial = false).value,
+            setTheme = { widgetConfiguration.theme.value = it },
+            useDynamicColors = widgetConfiguration.useDynamicColors.collectAsState().value,
+            setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
+            customColorsMap = widgetConfiguration.customColorsMap
         )
 
         SectionHeader(
@@ -76,9 +66,9 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_opacity_24,
         )
         OpacitySliderWithLabel(
-            opacity = widgetVM.opacity.collectAsState().value,
+            opacity = widgetConfiguration.opacity.collectAsState().value,
             onOpacityChanged = {
-                widgetVM.opacity.value = it
+                widgetConfiguration.opacity.value = it
             },
             modifier = Modifier.padding(horizontal = 6.dp)
         )
@@ -88,20 +78,24 @@ fun ConfigColumn(
             iconRes = R.drawable.ic_checklist_24,
         )
         WifiPropertySelection(
-            wifiPropertiesMap = widgetVM.wifiProperties,
-            ipSubPropertiesMap = widgetVM.subWifiProperties,
+            wifiPropertiesMap = widgetConfiguration.wifiProperties,
+            ipSubPropertiesMap = widgetConfiguration.subWifiProperties,
             allowLAPDependentPropertyCheckChange = { property, newValue ->
                 when (newValue) {
                     true -> {
-                        when (homeScreenVM.lapUIState.rationalShown) {
+                        when (lapUIState.rationalShown) {
                             false -> {
-                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
-                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(property)
+                                lapUIState.rationalTriggeringAction.value =
+                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(
+                                        property
+                                    )
                             }
 
                             true -> {
-                                homeScreenVM.lapUIState.requestLaunchingAction.value =
-                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(property)
+                                lapUIState.requestLaunchingAction.value =
+                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(
+                                        property
+                                    )
                             }
                         }
                         false
@@ -110,27 +104,27 @@ fun ConfigColumn(
                     false -> true
                 }
             },
-            showInfoDialog = { widgetVM.infoDialogData.value = it }
+            showInfoDialog = showInfoDialog
         )
 
         SectionHeader(
             titleRes = R.string.buttons,
             iconRes = R.drawable.ic_gamepad_24,
         )
-        ButtonSelection(widgetVM.buttonMap)
+        ButtonSelection(widgetConfiguration.buttonMap)
 
         SectionHeader(
             titleRes = R.string.refreshing,
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
         )
         RefreshingParametersSelection(
-            widgetRefreshingMap = widgetVM.refreshingParametersMap,
+            widgetRefreshingMap = widgetConfiguration.refreshingParametersMap,
             scrollToContentColumnBottom = {
                 with(scrollState) {
                     animateScrollTo(maxValue)
                 }
             },
-            showInfoDialog = { widgetVM.infoDialogData.value = it }
+            showInfoDialog = showInfoDialog
         )
     }
 }

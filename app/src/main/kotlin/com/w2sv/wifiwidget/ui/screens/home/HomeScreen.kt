@@ -50,8 +50,8 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.B
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.WidgetConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -189,9 +189,9 @@ private fun OverlayDialogs(
             is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
                 lapUIState = homeScreenVM.lapUIState,
                 onGranted = {
-                    widgetVM.wifiProperties[WifiProperty.SSID] = true
-                    widgetVM.wifiProperties[WifiProperty.BSSID] = true
-                    widgetVM.wifiProperties.sync()
+                    widgetVM.configuration.wifiProperties[WifiProperty.SSID] = true
+                    widgetVM.configuration.wifiProperties[WifiProperty.BSSID] = true
+                    widgetVM.configuration.wifiProperties.sync()
                     attemptWifiWidgetPin(context)
                 },
                 onDenied = {
@@ -202,7 +202,7 @@ private fun OverlayDialogs(
             is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
                 lapUIState = homeScreenVM.lapUIState,
                 onGranted = {
-                    widgetVM.wifiProperties[trigger.property] = true
+                    widgetVM.configuration.wifiProperties[trigger.property] = true
                 },
                 onDenied = {}
             )

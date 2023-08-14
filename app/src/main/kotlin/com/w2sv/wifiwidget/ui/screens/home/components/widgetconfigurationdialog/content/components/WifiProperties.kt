@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -7,11 +7,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogButtonData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.SubPropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogButtonData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.SubPropertyCheckRow
 
 @Stable
 open class WifiPropertyCheckRowData(

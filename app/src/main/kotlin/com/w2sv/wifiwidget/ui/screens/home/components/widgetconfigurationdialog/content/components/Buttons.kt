@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
@@ -6,8 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.widget.WidgetButton
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRowData
 
 @Composable
 internal fun ButtonSelection(
