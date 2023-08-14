@@ -18,10 +18,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Qualifier
 
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class PackageName
-
 @InstallIn(SingletonComponent::class)
 @Module
 object WidgetModule {
@@ -49,9 +45,4 @@ object WidgetModule {
     @Provides
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
         context.appWidgetManager
-
-    @PackageName
-    @Provides
-    fun packageName(@ApplicationContext context: Context): String =
-        context.packageName
 }
