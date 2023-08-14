@@ -16,12 +16,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.R
-import com.w2sv.widget.WidgetProvider
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.ConfigColumn
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
 
@@ -37,14 +35,15 @@ private fun WidgetConfigurationDialogPrev() {
 fun WidgetConfigurationDialog(
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
-    widgetVM: WidgetViewModel = viewModel(),
-    homeScreenVM: HomeScreenViewModel = viewModel()
+    widgetVM: WidgetViewModel = viewModel()
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
     val onDismissRequest: () -> Unit = {
-        widgetVM.onDismissWidgetConfigurationDialog()
+        scope.launch {
+            widgetVM.configuration.reset()
+        }
         closeDialog()
     }
 
@@ -71,12 +70,8 @@ fun WidgetConfigurationDialog(
                 onDismissRequest()
             },
             onApply = {
-                scope.launch {
-                    widgetVM.configuration.sync()
-                    WidgetProvider.triggerDataRefresh(context)
-                    homeScreenVM.onWidgetConfigurationChanged(context)
-                    closeDialog()
-                }
+                widgetVM.syncConfiguration(context)
+                closeDialog()
             },
             applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsState().value,
             modifier = Modifier.fillMaxWidth()

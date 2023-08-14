@@ -81,11 +81,11 @@ class LocationAccessPermissionUIState(
     val showBackgroundAccessRational = MutableStateFlow(false)
 
     var backgroundLocationAccessGranted =
-        getBackgroundLocationAccessGranted(context)
+        hasBackgroundLocationAccess(context)
         private set
 
     fun updateBackgroundAccessGranted(context: Context) {
-        if (!backgroundLocationAccessGranted && getBackgroundLocationAccessGranted(context)) {
+        if (!backgroundLocationAccessGranted && hasBackgroundLocationAccess(context)) {
             scope.launch {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
@@ -100,8 +100,8 @@ class LocationAccessPermissionUIState(
 }
 
 @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
-internal val backgroundLocationAccessGrantRequired: Boolean =
+val backgroundLocationAccessGrantRequired: Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
-private fun getBackgroundLocationAccessGranted(context: Context): Boolean =
+fun hasBackgroundLocationAccess(context: Context): Boolean =
     !backgroundLocationAccessGrantRequired || context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)

@@ -46,7 +46,6 @@ import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
@@ -102,13 +101,7 @@ internal fun HomeScreen(
                     WifiConnectionInfoCard(
                         wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
                         wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
-                        showSnackbar = {
-                            scope.launch {
-                                homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                                    it
-                                )
-                            }
-                        }
+                        showSnackbar = homeScreenVM::showSnackbar
                     )
                 }
                 Spacer(Modifier.weight(0.2f))

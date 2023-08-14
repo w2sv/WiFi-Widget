@@ -13,7 +13,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.w2sv.androidutils.coroutines.launchFlowCollections
 import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.Theme
@@ -23,7 +22,7 @@ import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.NavigationDrawerViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.launch
 import slimber.log.i
 
 @AndroidEntryPoint
@@ -53,7 +52,7 @@ class MainActivity : ComponentActivity() {
                     intent
                         ?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
                         ?.let { widgetId ->
-                            homeScreenVM.onWidgetOptionsUpdated(
+                            widgetVM.onWidgetOptionsUpdated(
                                 widgetId,
                                 this
                             )
@@ -61,11 +60,19 @@ class MainActivity : ComponentActivity() {
                 }
             )
         )
-        lifecycleScope.launchFlowCollections(
-            homeScreenVM.exitApplication to FlowCollector {
-                finishAffinity()
+
+        with(lifecycleScope) {
+            launch {
+                homeScreenVM.exitApplication.collect {
+                    finishAffinity()
+                }
             }
-        )
+            launch {
+                widgetVM.snackbarVisuals.collect {
+                    homeScreenVM.showSnackbar(it)
+                }
+            }
+        }
 
         setContent {
             AppTheme(
@@ -109,5 +116,6 @@ class MainActivity : ComponentActivity() {
         super.onStart()
 
         homeScreenVM.onStart(this)
+        widgetVM.refreshWidgetIds()
     }
 }
