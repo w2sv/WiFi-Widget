@@ -19,7 +19,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -105,7 +105,7 @@ class WidgetViewModel @Inject constructor(
     // Overlay dialogs
     // ========================
 
-    val infoDialogData: MutableStateFlow<InfoDialogData?> = MutableStateFlow(null)
+    val propertyInfoDialogData: MutableStateFlow<PropertyInfoDialogData?> = MutableStateFlow(null)
 
     // =========
     // Configuration

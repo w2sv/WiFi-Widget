@@ -10,17 +10,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.widget.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogButtonData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.SubPropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyInfoDialogData
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun RefreshingParametersSelection(
     widgetRefreshingMap: MutableMap<WidgetRefreshingParameter, Boolean>,
-    showInfoDialog: (InfoDialogData) -> Unit,
+    showInfoDialog: (PropertyInfoDialogData) -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -48,9 +47,9 @@ internal fun RefreshingParametersSelection(
     Column(modifier = modifier) {
         PropertyCheckRow(
             data = parameterViewData[0],
-            infoDialogButtonData = InfoDialogButtonData {
+            onInfoButtonClick = {
                 showInfoDialog(
-                    InfoDialogData(
+                    PropertyInfoDialogData(
                         labelRes = R.string.refresh_periodically,
                         descriptionRes = R.string.refresh_periodically_info,
                     )

@@ -53,7 +53,7 @@ fun WidgetConfigurationDialog(
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
-            showInfoDialog = { widgetVM.infoDialogData.value = it },
+            showInfoDialog = { widgetVM.propertyInfoDialogData.value = it },
             lapUIState = homeScreenViewModel.lapUIState,
             modifier = Modifier
                 .fillMaxWidth()

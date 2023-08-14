@@ -30,12 +30,13 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.ThemeSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.UnconfirmedWidgetConfiguration
 
 @Composable
 internal fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
-    showInfoDialog: (InfoDialogData) -> Unit,
+    showInfoDialog: (PropertyInfoDialogData) -> Unit,
     lapUIState: LocationAccessPermissionUIState,
     modifier: Modifier = Modifier
 ) {

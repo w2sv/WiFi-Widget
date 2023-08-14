@@ -3,49 +3,23 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogButtonData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.SubPropertyCheckRow
-
-@Stable
-open class WifiPropertyCheckRowData(
-    type: WifiProperty,
-    isCheckedMap: MutableMap<WifiProperty, Boolean>,
-    allowCheckChange: (Boolean) -> Boolean = { true },
-) : PropertyCheckRowData<WifiProperty>(
-    type,
-    type.viewData.labelRes,
-    isCheckedMap,
-    allowCheckChange
-)
-
-@Stable
-class IPPropertyCheckRowData(
-    type: WifiProperty.IPProperty,
-    isCheckedMap: MutableMap<WifiProperty, Boolean>,
-    val subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
-    allowCheckChange: (Boolean) -> Boolean = { true }
-) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)
-
-private val WifiProperty.ViewData.infoDialogData: InfoDialogData
-    get() = InfoDialogData(
-        labelRes,
-        descriptionRes,
-        learnMoreUrl
-    )
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.IPPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.WifiPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.infoDialogData
 
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
     ipSubPropertiesMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
-    showInfoDialog: (InfoDialogData) -> Unit,
+    showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -119,12 +93,12 @@ internal fun WifiPropertySelection(
 @Composable
 private fun WifiPropertyCheckRow(
     data: WifiPropertyCheckRowData,
-    showInfoDialog: (InfoDialogData) -> Unit
+    showInfoDialog: (PropertyInfoDialogData) -> Unit
 ) {
     Column {
         PropertyCheckRow(
             data = data,
-            infoDialogButtonData = InfoDialogButtonData { showInfoDialog(data.type.viewData.infoDialogData) }
+            onInfoButtonClick = { showInfoDialog(data.type.viewData.infoDialogData) }
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
@@ -142,7 +116,7 @@ private fun WifiPropertyCheckRow(
 private fun IPSubPropertyCheckRows(
     subProperties: List<WifiProperty.IPProperty.SubProperty>,
     subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
-    showInfoDialog: (InfoDialogData) -> Unit
+    showInfoDialog: (PropertyInfoDialogData) -> Unit
 ) {
     Column {
         subProperties.forEach { subProperty ->
@@ -169,7 +143,7 @@ private fun IPSubPropertyCheckRows(
                         true
                     }
                 ),
-                infoDialogButtonData = InfoDialogButtonData { showInfoDialog(subProperty.viewData.infoDialogData) }
+                onInfoButtonClick = { showInfoDialog(subProperty.viewData.infoDialogData) }
             )
         }
     }

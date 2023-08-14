@@ -51,7 +51,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.InfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -215,10 +215,10 @@ private fun OverlayDialogs(
             }
         )
 
-        widgetVM.infoDialogData.collectAsState().value?.let {
-            InfoDialog(
+        widgetVM.propertyInfoDialogData.collectAsState().value?.let {
+            PropertyInfoDialog(
                 data = it,
-                onDismissRequest = { widgetVM.infoDialogData.reset() }
+                onDismissRequest = { widgetVM.propertyInfoDialogData.reset() }
             )
         }
     }
