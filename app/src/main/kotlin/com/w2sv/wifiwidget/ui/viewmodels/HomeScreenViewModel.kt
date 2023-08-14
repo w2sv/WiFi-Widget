@@ -7,14 +7,12 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.model.WifiStatus
 import com.w2sv.data.networking.WifiStatusMonitor
 import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.data.storage.WidgetRepository
@@ -24,30 +22,25 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
-import com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info.WifiPropertyViewData
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiStatusUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
+    preferencesRepository: PreferencesRepository,
     private val widgetRepository: WidgetRepository,
-    private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
     @ApplicationContext context: Context,
+    wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
     wifiStatusMonitor: WifiStatusMonitor,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -73,64 +66,10 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    val wifiStatus = wifiStatusMonitor.wifiStatus.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(),
-        WifiStatus.Disabled
-    )
-        .apply {
-            viewModelScope.launch {
-                collectLatest { status ->
-                    _wifiPropertiesViewData.value =
-                        if (status == WifiStatus.Connected) {
-                            getWifiPropertiesViewData()
-                        } else {
-                            null
-                        }
-                }
-            }
-            viewModelScope.launch {
-                wifiStatusMonitor.wifiPropertiesHaveChanged.collectLatest {
-                    if (value == WifiStatus.Connected) {
-                        refreshWifiPropertiesViewData()
-                    }
-                }
-            }
-        }
-
-    fun triggerWifiPropertiesViewDataRefresh() {
-        viewModelScope.launch {
-            refreshWifiPropertiesViewData()
-        }
-    }
-
-    val wifiPropertiesViewData get() = _wifiPropertiesViewData.asStateFlow()
-    private var _wifiPropertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
-
-    private fun refreshWifiPropertiesViewData() {
-        _wifiPropertiesViewData.value = getWifiPropertiesViewData()
-    }
-
-    private fun getWifiPropertiesViewData(): List<WifiPropertyViewData> {
-        val valueGetterResources =
-            wifiPropertyValueGetterResourcesProvider.provide()
-        return WifiProperty.values().map { property ->
-            WifiPropertyViewData(
-                property,
-                property.getValue(valueGetterResources)
-            )
-        }
-    }
-
     fun onStart(context: Context) {
-        triggerWifiPropertiesViewDataRefresh()
+        wifiStatusUIState.triggerPropertiesViewDataRefresh()
         refreshWidgetIds()
-        onReceiveBackgroundLocationAccessGranted(
-            granted = backgroundLocationAccessGrantRequired && context.hasPermission(
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
-            ),
-            context = context
-        )
+        lapUIState.updateBackgroundAccessGranted(context = context)
     }
 
     // ========================
@@ -140,23 +79,6 @@ class HomeScreenViewModel @Inject constructor(
     fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
         if (widgetIds.add(widgetId)) {
             onNewWidgetPinned(widgetId, context)
-        }
-    }
-
-    private var backgroundLocationAccessGranted =
-        !backgroundLocationAccessGrantRequired || context.hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-
-    private fun onReceiveBackgroundLocationAccessGranted(granted: Boolean, context: Context) {
-        if (granted && !backgroundLocationAccessGranted) {
-            backgroundLocationAccessGranted = true
-            viewModelScope.launch {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                    AppSnackbarVisuals(
-                        message = context.getString(R.string.your_ssid_bssid_can_now_be_reliably_retrieved_from_the_background),
-                        kind = SnackbarKind.Success
-                    )
-                )
-            }
         }
     }
 
@@ -182,7 +104,7 @@ class HomeScreenViewModel @Inject constructor(
                         )
                     )
 
-                    !backgroundLocationAccessGranted && !showBackgroundLocationAccessRational.value ->
+                    !lapUIState.backgroundLocationAccessGranted ->
                         snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                             AppSnackbarVisuals(
                                 context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
@@ -209,37 +131,27 @@ class HomeScreenViewModel @Inject constructor(
     private fun getWidgetIds(): MutableSet<Int> =
         appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
 
-    // =============
-    // LAP := Location Access Permission
-    // =============
-
-    val lapRationalTrigger: MutableStateFlow<LAPRequestTrigger?> =
-        MutableStateFlow(null)
-
-    val lapRationalShown: Boolean
-        get() = preferencesRepository.locationAccessPermissionRationalShown.getValueSynchronously()
-
-    fun onLocationAccessPermissionRationalShown(trigger: LAPRequestTrigger) {
-        viewModelScope.launch {
-            preferencesRepository.saveLocationAccessPermissionRationalShown(true)
+    val lapUIState = LocationAccessPermissionUIState(
+        preferencesRepository = preferencesRepository,
+        snackbarHostState = snackbarHostState,
+        scope = viewModelScope,
+        context = context
+    )
+        .apply {
+            viewModelScope.launch {
+                newlyGranted.collect {
+                    if (it) {
+                        wifiStatusUIState.triggerPropertiesViewDataRefresh()
+                    }
+                }
+            }
         }
-        lapRationalTrigger.value = null
-        lapRequestTrigger.value = trigger
-    }
 
-    val lapRequestTrigger: MutableStateFlow<LAPRequestTrigger?> =
-        MutableStateFlow(null)
-
-    val lapRequestLaunchedAtLeastOnce: Boolean
-        get() = preferencesRepository.locationAccessPermissionRequestedAtLeastOnce.getValueSynchronously()
-
-    fun onLocationAccessPermissionRequested() {
-        viewModelScope.launch {
-            preferencesRepository.saveLocationAccessPermissionRequestedAtLeastOnce(true)
-        }
-    }
-
-    val showBackgroundLocationAccessRational = MutableStateFlow(false)
+    val wifiStatusUIState = WifiStatusUIState(
+        wifiPropertyValueGetterResourcesProvider,
+        wifiStatusMonitor,
+        viewModelScope
+    )
 
     // ==============
     // BackPress Handling

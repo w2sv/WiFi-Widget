@@ -48,12 +48,12 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info.WifiConnectionInfoCard
+import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -100,8 +100,8 @@ internal fun HomeScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     WifiConnectionInfoCard(
-                        wifiStatus = homeScreenVM.wifiStatus.collectAsState().value,
-                        wifiPropertiesViewData = homeScreenVM.wifiPropertiesViewData.collectAsState().value,
+                        wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
+                        wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
                         showSnackbar = {
                             scope.launch {
                                 homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
@@ -124,9 +124,9 @@ internal fun HomeScreen(
                         Spacer(modifier = Modifier.height(32.dp))
                         WidgetInteractionElementsRow(
                             onPinWidgetButtonClick = {
-                                when (homeScreenVM.lapRationalShown) {
-                                    false -> homeScreenVM.lapRationalTrigger.value =
-                                        LAPRequestTrigger.PinWidgetButtonPress
+                                when (homeScreenVM.lapUIState.rationalShown) {
+                                    false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                        LocationAccessPermissionRequiringAction.PinWidgetButtonPress
 
                                     true -> attemptWifiWidgetPin(context)
                                 }
@@ -184,16 +184,17 @@ private fun OverlayDialogs(
 ) {
     val context = LocalContext.current
 
-    homeScreenVM.lapRationalTrigger.collectAsState().value?.let { trigger ->
+    homeScreenVM.lapUIState.rationalTriggeringAction.collectAsState().value?.let {
         LocationAccessPermissionRationalDialog(
             onProceed = {
-                homeScreenVM.onLocationAccessPermissionRationalShown(trigger)
+                homeScreenVM.lapUIState.onRationalShown()
             }
         )
     }
-    homeScreenVM.lapRequestTrigger.collectAsState().value?.let { trigger ->
+    homeScreenVM.lapUIState.requestLaunchingAction.collectAsState().value?.let { trigger ->
         when (trigger) {
-            is LAPRequestTrigger.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+            is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+                lapUIState = homeScreenVM.lapUIState,
                 onGranted = {
                     widgetVM.wifiProperties[WifiProperty.SSID] = true
                     widgetVM.wifiProperties[WifiProperty.BSSID] = true
@@ -205,7 +206,8 @@ private fun OverlayDialogs(
                 }
             )
 
-            is LAPRequestTrigger.PropertyCheckChange -> LocationAccessPermissionRequest(
+            is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
+                lapUIState = homeScreenVM.lapUIState,
                 onGranted = {
                     widgetVM.wifiProperties[trigger.property] = true
                 },
@@ -228,10 +230,10 @@ private fun OverlayDialogs(
         }
     }
     @SuppressLint("NewApi")
-    if (homeScreenVM.showBackgroundLocationAccessRational.collectAsState().value) {
+    if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsState().value) {
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
-                homeScreenVM.showBackgroundLocationAccessRational.value = false
+                homeScreenVM.lapUIState.showBackgroundAccessRational.value = false
             }
         )
     }

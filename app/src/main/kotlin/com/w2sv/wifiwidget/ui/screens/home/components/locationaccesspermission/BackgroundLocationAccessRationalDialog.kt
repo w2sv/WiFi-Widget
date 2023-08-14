@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
 import android.Manifest
 import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -17,10 +16,6 @@ import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-
-@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
-internal val backgroundLocationAccessGrantRequired: Boolean =
-    Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalPermissionsApi::class)

@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn
 
+import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
@@ -24,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LAPRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.components.RefreshingParametersSelection
@@ -92,15 +93,15 @@ fun ConfigColumn(
             allowLAPDependentPropertyCheckChange = { property, newValue ->
                 when (newValue) {
                     true -> {
-                        when (homeScreenVM.lapRationalShown) {
+                        when (homeScreenVM.lapUIState.rationalShown) {
                             false -> {
-                                homeScreenVM.lapRationalTrigger.value =
-                                    LAPRequestTrigger.PropertyCheckChange(property)
+                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(property)
                             }
 
                             true -> {
-                                homeScreenVM.lapRequestTrigger.value =
-                                    LAPRequestTrigger.PropertyCheckChange(property)
+                                homeScreenVM.lapUIState.requestLaunchingAction.value =
+                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(property)
                             }
                         }
                         false
@@ -138,7 +139,7 @@ fun ConfigColumn(
 private fun SectionHeader(
     @StringRes titleRes: Int,
     @DrawableRes iconRes: Int,
-    modifier: Modifier = Modifier.padding(vertical = 22.dp)
+    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(vertical = 22.dp)
 ) {
     Row(
         modifier = modifier,

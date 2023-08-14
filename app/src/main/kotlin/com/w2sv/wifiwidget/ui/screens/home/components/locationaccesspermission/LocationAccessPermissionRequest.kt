@@ -6,27 +6,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.common.utils.isLaunchingSuppressed
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SnackbarAction
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
-import slimber.log.i
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationAccessPermissionRequest(
+    lapUIState: LocationAccessPermissionUIState,
     onGranted: suspend (Context) -> Unit,
-    onDenied: suspend (Context) -> Unit,
-    homeScreenVM: HomeScreenViewModel = viewModel()
+    onDenied: suspend (Context) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -41,48 +32,33 @@ fun LocationAccessPermissionRequest(
                 when (permissionToGranted.values.all { it }) {
                     true -> {
                         onGranted(context)
-                        homeScreenVM.triggerWifiPropertiesViewDataRefresh()
-                        if (backgroundLocationAccessGrantRequired) {
-                            homeScreenVM.showBackgroundLocationAccessRational.value = true
-                        }
+                        lapUIState.onGranted()
                     }
 
                     false -> onDenied(context)
                 }
-                homeScreenVM.lapRequestTrigger.reset()
+                lapUIState.requestLaunchingAction.reset()
             }
         }
     )
 
-    LaunchedEffect(key1 = permissionState.permissions) {
-        i { "All permissions granted = ${permissionState.allPermissionsGranted}" }
+    LaunchedEffect(Unit) {
         when (permissionState.allPermissionsGranted) {
             true -> {
                 onGranted(context)
-                homeScreenVM.lapRequestTrigger.reset()
+                lapUIState.requestLaunchingAction.reset()
             }
 
             false -> {
-                when (permissionState.isLaunchingSuppressed(launchedAtLeastOnce = homeScreenVM.lapRequestLaunchedAtLeastOnce)) {
+                when (permissionState.isLaunchingSuppressed(launchedBefore = lapUIState.requestLaunched)) {
                     true -> {
-                        homeScreenVM.snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                            AppSnackbarVisuals(
-                                context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                                kind = SnackbarKind.Error,
-                                action = SnackbarAction(
-                                    label = context.getString(R.string.go_to_settings),
-                                    callback = {
-                                        goToAppSettings(context)
-                                    }
-                                )
-                            )
-                        )
-                        homeScreenVM.lapRequestTrigger.reset()
+                        lapUIState.onRequestLaunchingSuppressed(context)
+                        lapUIState.requestLaunchingAction.reset()
                     }
 
                     false -> {
                         permissionState.launchMultiplePermissionRequest()
-                        homeScreenVM.onLocationAccessPermissionRequested()
+                        lapUIState.onRequestLaunched()
                     }
                 }
             }
