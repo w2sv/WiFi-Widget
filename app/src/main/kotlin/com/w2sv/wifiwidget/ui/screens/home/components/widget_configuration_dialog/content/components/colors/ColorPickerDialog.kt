@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.colors
+package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.colors
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width

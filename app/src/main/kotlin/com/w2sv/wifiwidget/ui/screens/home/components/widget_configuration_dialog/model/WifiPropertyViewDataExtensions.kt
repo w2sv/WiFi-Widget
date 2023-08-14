@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model
+package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model
 
 import com.w2sv.data.model.WifiProperty
 

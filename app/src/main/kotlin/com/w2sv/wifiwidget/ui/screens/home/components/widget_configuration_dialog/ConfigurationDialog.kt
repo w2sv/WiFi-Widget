@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog
+package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -17,7 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.widget.R
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.WidgetConfigurationDialogContent
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.WidgetConfigurationDialogContent
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch

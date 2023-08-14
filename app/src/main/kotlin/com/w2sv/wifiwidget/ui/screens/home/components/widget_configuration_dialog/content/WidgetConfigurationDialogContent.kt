@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content
+package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
@@ -23,15 +23,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.OpacitySliderWithLabel
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.ThemeSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.content.components.WifiPropertySelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfigurationdialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.ButtonSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.ThemeSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.UnconfirmedWidgetConfiguration
 
 @Composable
 internal fun WidgetConfigurationDialogContent(

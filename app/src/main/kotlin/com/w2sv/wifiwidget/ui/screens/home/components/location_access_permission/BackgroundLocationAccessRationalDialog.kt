@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
+package com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission
 
 import android.Manifest
 import android.os.Build
