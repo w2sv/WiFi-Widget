@@ -16,7 +16,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -36,7 +35,7 @@ object WidgetModule {
 
     @Provides
     fun setWifiProperties(widgetRepository: WidgetRepository): Set<WifiProperty> =
-        widgetRepository.getSetWifiProperties()
+        widgetRepository.getEnabledWifiProperties()
 
     @Provides
     fun wifiPropertyGetterResources(@ApplicationContext context: Context): WifiProperty.ValueGetterResources =

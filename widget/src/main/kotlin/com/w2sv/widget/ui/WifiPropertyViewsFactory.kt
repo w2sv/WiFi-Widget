@@ -37,7 +37,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         }
 
         propertyViewData = buildList {
-            widgetRepository.getSetWifiProperties().forEach {
+            widgetRepository.getEnabledWifiProperties().forEach {
                 when (val value = it.getValue(valueGetterResources)) {
                     is WifiProperty.Value.Singular -> {
                         add(

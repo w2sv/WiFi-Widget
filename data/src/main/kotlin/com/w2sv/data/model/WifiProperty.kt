@@ -20,17 +20,19 @@ import javax.inject.Inject
 sealed class WifiProperty(
     val viewData: ViewData,
     val getValue: (ValueGetterResources) -> Value,
-    override val preferencesKey: Preferences.Key<Boolean>,
-    override val defaultValue: Boolean = true
-) :
-    DataStoreEntry.UniType<Boolean> {
+    isEnabledDataStoreEntry: DataStoreEntry.UniType<Boolean>
+) : DataStoreEntry.UniType<Boolean> by isEnabledDataStoreEntry {
 
     sealed class IPProperty(
         viewData: ViewData,
         getValue: (ValueGetterResources) -> Value,
         preferencesKey: Preferences.Key<Boolean>,
         val prefixLengthSubProperty: SubProperty
-    ) : WifiProperty(viewData, getValue, preferencesKey) {
+    ) : WifiProperty(
+        viewData,
+        getValue,
+        DataStoreEntry.UniType.Impl(preferencesKey, defaultValue = false)
+    ) {
 
         open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
 
@@ -115,8 +117,10 @@ sealed class WifiProperty(
                 it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
             )
         },
-        preferencesKey = booleanPreferencesKey("SSID"),
-        defaultValue = false
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("SSID"),
+            defaultValue = false
+        )
     )
 
     data object BSSID : WifiProperty(
@@ -130,8 +134,10 @@ sealed class WifiProperty(
                 it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
             )
         },
-        preferencesKey = booleanPreferencesKey("BSSID"),
-        defaultValue = false
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("BSSID"),
+            defaultValue = false
+        )
     )
 
     data object IPv4 :
@@ -198,7 +204,10 @@ sealed class WifiProperty(
             "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.frequency} MHz") },
-        preferencesKey = booleanPreferencesKey("Frequency"),
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("Frequency"),
+            defaultValue = true
+        )
     )
 
     data object Channel : WifiProperty(
@@ -208,7 +217,10 @@ sealed class WifiProperty(
             "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
         ),
         { Value.Singular(frequencyToChannel(it.wifiManager.connectionInfo.frequency).toString()) },
-        preferencesKey = booleanPreferencesKey("Channel")
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("Channel"),
+            defaultValue = true
+        )
     )
 
     data object LinkSpeed : WifiProperty(
@@ -218,7 +230,10 @@ sealed class WifiProperty(
             null
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.linkSpeed} Mbps") },
-        preferencesKey = booleanPreferencesKey("LinkSpeed"),
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("LinkSpeed"),
+            defaultValue = true
+        )
     )
 
     data object Gateway : WifiProperty(
@@ -233,7 +248,10 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
-        preferencesKey = booleanPreferencesKey("Gateway")
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("Gateway"),
+            defaultValue = true
+        )
     )
 
     data object DNS : WifiProperty(
@@ -248,7 +266,10 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
-        preferencesKey = booleanPreferencesKey("DNS")
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("DNS"),
+            defaultValue = true
+        )
     )
 
     data object DHCP : WifiProperty(
@@ -263,7 +284,10 @@ sealed class WifiProperty(
                     ?: IPAddress.Type.V4.fallbackAddress
             )
         },
-        preferencesKey = booleanPreferencesKey("DHCP")
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("DHCP"),
+            defaultValue = true
+        )
     )
 
     companion object {

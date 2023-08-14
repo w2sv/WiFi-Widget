@@ -40,7 +40,7 @@ class WidgetRepository @Inject constructor(
         save(Key.OPACITY, opacity)
     }
 
-    val wifiProperties = getFlowMap(WifiProperty.values().toList())
+    val wifiProperties = getFlowMap(WifiProperty.values().map { it })
 
     val subWifiProperties =
         WifiProperty.IPProperty.values()
@@ -49,7 +49,7 @@ class WidgetRepository @Inject constructor(
                 getFlow(subProperty)
             }
 
-    fun getSetWifiProperties(): Set<WifiProperty> =
+    fun getEnabledWifiProperties(): Set<WifiProperty> =
         wifiProperties.getSynchronousMap().filterValues { it }.keys
 
     val refreshingParametersMap = getFlowMap(WidgetRefreshingParameter.values().toList())

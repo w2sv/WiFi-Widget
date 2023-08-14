@@ -1,15 +1,28 @@
 package com.w2sv.data.model.widget
 
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 
 enum class WidgetRefreshingParameter(
-    override val preferencesKey: Preferences.Key<Boolean>,
-    override val defaultValue: Boolean
-) : DataStoreEntry.UniType<Boolean> {
+    isEnabledDataStoreEntry: DataStoreEntry.UniType<Boolean>
+) : DataStoreEntry.UniType<Boolean> by isEnabledDataStoreEntry {
 
-    RefreshPeriodically(booleanPreferencesKey("RefreshPeriodically"), true),
-    RefreshOnLowBattery(booleanPreferencesKey("RefreshOnBatteryLow"), false),
-    DisplayLastRefreshDateTime(booleanPreferencesKey("ShowDateTime"), true)
+    RefreshPeriodically(
+        DataStoreEntry.UniType.Impl(
+            booleanPreferencesKey("RefreshPeriodically"),
+            true
+        )
+    ),
+    RefreshOnLowBattery(
+        DataStoreEntry.UniType.Impl(
+            booleanPreferencesKey("RefreshOnBatteryLow"),
+            false
+        )
+    ),
+    DisplayLastRefreshDateTime(
+        DataStoreEntry.UniType.Impl(
+            booleanPreferencesKey("ShowDateTime"),
+            true
+        )
+    )
 }
