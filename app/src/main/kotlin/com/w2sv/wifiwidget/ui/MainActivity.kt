@@ -15,30 +15,32 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.w2sv.androidutils.coroutines.launchFlowCollections
 import com.w2sv.androidutils.generic.getIntExtraOrNull
+import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.Theme
-import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.InAppThemeViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.NavigationDrawerViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.FlowCollector
 import slimber.log.i
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val homeScreenVM by viewModels<HomeScreenViewModel>()
     private val widgetVM by viewModels<WidgetViewModel>()
-    private val inAppThemeVM by viewModels<InAppThemeViewModel>()
-
-    @Inject
-    lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
+    private val navigationDrawerVM by viewModels<NavigationDrawerViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        handleSplashScreen(onAnimationFinished = { homeScreenVM.onSplashScreenAnimationFinished() })
+        handleSplashScreen(
+            onAnimationFinished = {
+                if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
+                    homeScreenVM.showWidgetConfigurationDialog.value = true
+                }
+            }
+        )
 
         super.onCreate(savedInstanceState)
 
@@ -60,10 +62,6 @@ class MainActivity : ComponentActivity() {
             )
         )
         lifecycleScope.launchFlowCollections(
-            widgetVM.refreshingParametersChanged to FlowCollector {
-                widgetDataRefreshWorkerManager
-                    .applyChangedParameters()
-            },
             homeScreenVM.exitApplication to FlowCollector {
                 finishAffinity()
             }
@@ -71,8 +69,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme(
-                useDynamicTheme = inAppThemeVM.useDynamicTheme.collectAsState(initial = false).value,
-                darkTheme = when (inAppThemeVM.inAppTheme.collectAsState(initial = Theme.SystemDefault).value) {
+                useDynamicTheme = navigationDrawerVM.useDynamicTheme.collectAsState(initial = false).value,
+                darkTheme = when (navigationDrawerVM.inAppTheme.collectAsState(initial = Theme.SystemDefault).value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.SystemDefault -> isSystemInDarkTheme()

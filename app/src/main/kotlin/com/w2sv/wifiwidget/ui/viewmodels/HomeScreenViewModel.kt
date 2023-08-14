@@ -4,14 +4,12 @@ import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
-import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.networking.WifiStatusMonitor
 import com.w2sv.data.storage.PreferencesRepository
@@ -41,15 +39,8 @@ class HomeScreenViewModel @Inject constructor(
     @PackageName private val packageName: String,
     @ApplicationContext context: Context,
     wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
-    wifiStatusMonitor: WifiStatusMonitor,
-    private val savedStateHandle: SavedStateHandle
+    wifiStatusMonitor: WifiStatusMonitor
 ) : ViewModel() {
-
-    fun onSplashScreenAnimationFinished() {
-        if (savedStateHandle.contains(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
-            showWidgetConfigurationDialog.value = true
-        }
-    }
 
     val showWidgetConfigurationDialog = MutableStateFlow(false)
 

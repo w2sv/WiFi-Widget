@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InAppThemeViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
+class NavigationDrawerViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
     ViewModel() {
 
     val inAppTheme by preferencesRepository::inAppTheme

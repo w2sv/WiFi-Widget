@@ -6,6 +6,7 @@ import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStatesComposition
 import com.w2sv.data.model.Theme
 import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.wifiwidget.ui.screens.home.components.widgetconfiguration.configcolumn.InfoDialogData
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +17,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class WidgetViewModel @Inject constructor(private val repository: WidgetRepository) :
+class WidgetViewModel @Inject constructor(
+    private val repository: WidgetRepository,
+    private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
+) :
     ViewModel() {
 
     // ==========
@@ -120,4 +124,9 @@ class WidgetViewModel @Inject constructor(private val repository: WidgetReposito
         }
 
     val refreshingParametersChanged = MutableSharedFlow<Unit>()
+        .apply {
+            viewModelScope.launch {
+                widgetDataRefreshWorkerManager.applyChangedParameters()
+            }
+        }
 }

@@ -8,14 +8,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.data.model.Theme
-import com.w2sv.wifiwidget.ui.viewmodels.InAppThemeViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.NavigationDrawerViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
-    inAppThemeVM: InAppThemeViewModel = viewModel(),
+    inAppThemeVM: NavigationDrawerViewModel = viewModel(),
     content: @Composable () -> Unit
 ) {
     val scope = rememberCoroutineScope()
