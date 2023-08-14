@@ -1,7 +1,6 @@
 package com.w2sv.widget.utils
 
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import com.w2sv.androidutils.appwidgets.getAppWidgetIds
