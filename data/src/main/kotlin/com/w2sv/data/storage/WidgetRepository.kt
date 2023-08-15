@@ -13,12 +13,28 @@ import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.model.widget.WidgetButton
 import com.w2sv.data.model.widget.WidgetColor
 import com.w2sv.data.model.widget.WidgetRefreshingParameter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class WidgetRepository @Inject constructor(
     dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore) {
+
+    val optionsChangedWidgetId get() = _optionsChangedWidgetId.asSharedFlow()
+    private val _optionsChangedWidgetId = MutableSharedFlow<Int>()
+
+    fun onWidgetOptionsChanged(widgetId: Int) {
+        CoroutineScope(Dispatchers.Default).launch {
+            _optionsChangedWidgetId.emit(widgetId)
+        }
+    }
 
     val theme: Flow<Theme> = getEnumFlow(Key.WIDGET_THEME, Theme.SystemDefault)
 

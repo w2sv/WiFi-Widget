@@ -41,10 +41,6 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver
-            android:name="com.w2sv.wifiwidget.ui.MainActivity$AppWidgetOptionsChangedReceiver"
-            tools:ignore="Instantiatable" />
-
         <service
             android:name="com.w2sv.widget.WifiPropertyViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />

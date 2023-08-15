@@ -28,6 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_connection_info.WifiPropertyViewData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,9 +47,20 @@ class HomeScreenViewModel @Inject constructor(
     private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
+    @ApplicationContext context: Context,
     wifiStatusMonitor: WifiStatusMonitor,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            widgetRepository.optionsChangedWidgetId.collect {
+                if (widgetIds.add(it)) {
+                    onNewWidgetPinned(it, context)
+                }
+            }
+        }
+    }
 
     fun onSplashScreenAnimationFinished() {
         if (savedStateHandle.contains(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
@@ -123,12 +135,6 @@ class HomeScreenViewModel @Inject constructor(
     // ========================
     // Widget Pin Listening
     // ========================
-
-    fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
-        if (widgetIds.add(widgetId)) {
-            onNewWidgetPinned(widgetId, context)
-        }
-    }
 
     private fun onNewWidgetPinned(widgetId: Int, context: Context) {
         i { "Pinned new widget w ID=$widgetId" }
