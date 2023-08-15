@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui
 
 import android.animation.ObjectAnimator
-import android.appwidget.AppWidgetManager
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
@@ -13,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
-import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.common.constants.Extra
 import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
@@ -23,7 +21,6 @@ import com.w2sv.wifiwidget.ui.viewmodels.NavigationDrawerViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import slimber.log.i
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,24 +39,6 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
-
-        lifecycle.addObserver(
-            AppWidgetOptionsChangedReceiver(
-                context = this,
-                callback = { _, intent ->
-                    i { "WifiWidgetOptionsChangedReceiver.onReceive | ${intent?.extras?.keySet()}" }
-
-                    intent
-                        ?.getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, -1)
-                        ?.let { widgetId ->
-                            widgetVM.onWidgetOptionsUpdated(
-                                widgetId,
-                                this
-                            )
-                        }
-                }
-            )
-        )
 
         with(lifecycleScope) {
             launch {

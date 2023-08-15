@@ -1,10 +1,1 @@
-[New Features]
-- Enabled the display of a theoretically unlimited number of IPv6 addresses
-- Prefix length display for all IP addresses alongside additional sub properties (SiteLocal, LinkLocal, Multicast, Loopback)
-- In-app WiFi Status display
-- In-app display of WiFi properties with copy-to-clipboard functionality on click
-- Decoupled static and dynamic widget themes
-
-[Changes]
-- Various UI improvements
-- Replaced most humdrum toasts by crispy snackbars, featuring icons and actions
+Fix F-Droid build

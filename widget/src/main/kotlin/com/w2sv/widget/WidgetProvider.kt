@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 package com.w2sv.widget
 
 import android.appwidget.AppWidgetManager
@@ -7,16 +5,19 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.w2sv.androidutils.generic.getIntExtraOrNull
+import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.ui.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
-import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class WidgetProvider : AppWidgetProvider() {
+
+    @Inject
+    lateinit var widgetRepository: WidgetRepository
 
     @Inject
     lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
@@ -69,9 +70,12 @@ class WidgetProvider : AppWidgetProvider() {
                 )
             }
 
-            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> context?.let {
-                // Forward intent as local broadcast for subscribed receivers
-                LocalBroadcastManager.getInstance(it).sendBroadcast(intent)
+            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> intent.getIntExtraOrNull(
+                AppWidgetManager.EXTRA_APPWIDGET_ID,
+                -1
+            )?.let { widgetId ->
+                i { "AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED | id = $widgetId" }
+                widgetRepository.onWidgetOptionsChanged(widgetId)
             }
         }
     }

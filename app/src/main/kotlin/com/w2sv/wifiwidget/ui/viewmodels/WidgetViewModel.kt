@@ -9,11 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStateFlow
+import com.w2sv.common.di.PackageName
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.storage.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
-import com.w2sv.widget.di.PackageName
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
@@ -23,6 +23,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialo
 import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,8 +40,19 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
+    @ApplicationContext context: Context
 ) :
     ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            repository.optionsChangedWidgetId.collect {
+                if (widgetIds.add(it)) {
+                    onNewWidgetPinned(it, context)
+                }
+            }
+        }
+    }
 
     val snackbarVisuals: Flow<SnackbarVisuals> get() = _snackbarVisuals.asSharedFlow()
     private val _snackbarVisuals = MutableSharedFlow<SnackbarVisuals>()

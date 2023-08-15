@@ -8,7 +8,9 @@ import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataSt
 import com.w2sv.data.model.Theme
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PreferencesRepository @Inject constructor(
     dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore) {
