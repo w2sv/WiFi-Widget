@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Stable

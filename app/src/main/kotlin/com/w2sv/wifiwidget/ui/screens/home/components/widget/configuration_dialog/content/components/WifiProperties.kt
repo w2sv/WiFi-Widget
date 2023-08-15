@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
@@ -6,13 +6,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.SubPropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.IPPropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.WifiPropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.infoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.SubPropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.IPPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.WifiPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.infoDialogData
 
 @Composable
 internal fun WifiPropertySelection(

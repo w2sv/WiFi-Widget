@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme

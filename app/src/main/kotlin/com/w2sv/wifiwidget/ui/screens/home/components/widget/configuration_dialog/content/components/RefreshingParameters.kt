@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -10,10 +10,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.widget.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.PropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.SubPropertyCheckRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.PropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.SubPropertyCheckRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyInfoDialogData
 import kotlinx.coroutines.launch
 
 @Composable

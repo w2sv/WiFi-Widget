@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +22,7 @@ import com.w2sv.common.utils.bulletPointText
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.components.JostText
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.theme.disabledColor
 
 @Composable

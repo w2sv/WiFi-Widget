@@ -1,37 +1,28 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionUIState
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.OpacitySliderWithLabel
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.ThemeSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.components.WifiPropertySelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components.ButtonSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components.RefreshingParametersSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components.ThemeSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.UnconfirmedWidgetConfiguration
 
 @Composable
 internal fun WidgetConfigurationDialogContent(
@@ -48,8 +39,8 @@ internal fun WidgetConfigurationDialogContent(
             .verticalScroll(scrollState)
     ) {
         SectionHeader(
-            titleRes = R.string.theme,
             iconRes = R.drawable.ic_nightlight_24,
+            headerRes = R.string.theme,
             modifier = Modifier.padding(bottom = 22.dp)
         )
 
@@ -63,8 +54,8 @@ internal fun WidgetConfigurationDialogContent(
         )
 
         SectionHeader(
-            titleRes = R.string.opacity,
             iconRes = R.drawable.ic_opacity_24,
+            headerRes = R.string.opacity,
         )
         OpacitySliderWithLabel(
             opacity = widgetConfiguration.opacity.collectAsState().value,
@@ -75,8 +66,8 @@ internal fun WidgetConfigurationDialogContent(
         )
 
         SectionHeader(
-            titleRes = R.string.properties,
             iconRes = R.drawable.ic_checklist_24,
+            headerRes = R.string.properties,
         )
         WifiPropertySelection(
             wifiPropertiesMap = widgetConfiguration.wifiProperties,
@@ -109,14 +100,14 @@ internal fun WidgetConfigurationDialogContent(
         )
 
         SectionHeader(
-            titleRes = R.string.buttons,
             iconRes = R.drawable.ic_gamepad_24,
+            headerRes = R.string.buttons,
         )
         ButtonSelection(widgetConfiguration.buttonMap)
 
         SectionHeader(
-            titleRes = R.string.refreshing,
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
+            headerRes = R.string.refreshing,
         )
         RefreshingParametersSelection(
             widgetRefreshingMap = widgetConfiguration.refreshingParametersMap,
@@ -132,29 +123,13 @@ internal fun WidgetConfigurationDialogContent(
 
 @Composable
 private fun SectionHeader(
-    @StringRes titleRes: Int,
     @DrawableRes iconRes: Int,
+    @StringRes headerRes: Int,
     @SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(vertical = 22.dp)
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
-            Icon(
-                painterResource(id = iconRes),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.tertiary
-            )
-        }
-        Box(modifier = Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
-            JostText(
-                text = stringResource(id = titleRes),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        }
-        Spacer(modifier = Modifier.weight(0.3f))
-    }
+    IconHeader(
+        iconRes = iconRes,
+        headerRes = headerRes,
+        modifier = modifier.padding(horizontal = 16.dp)
+    )
 }

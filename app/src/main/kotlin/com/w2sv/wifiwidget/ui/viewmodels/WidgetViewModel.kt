@@ -19,8 +19,8 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.hasBackgroundLocationAccess
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -65,12 +65,6 @@ class WidgetViewModel @Inject constructor(
 
     private fun getWidgetIds(): MutableSet<Int> =
         appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
-
-    fun onWidgetOptionsUpdated(widgetId: Int, context: Context) {
-        if (widgetIds.add(widgetId)) {
-            onNewWidgetPinned(widgetId, context)
-        }
-    }
 
     private fun onNewWidgetPinned(widgetId: Int, context: Context) {
         i { "Pinned new widget w ID=$widgetId" }

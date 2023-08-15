@@ -5,23 +5,11 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -32,26 +20,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.widget.utils.attemptWifiWidgetPin
-import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
-import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequiringAction
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widget_configuration_dialog.content.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionElementsRow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.WidgetConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -104,17 +91,11 @@ internal fun HomeScreen(
                         showSnackbar = homeScreenVM::showSnackbar
                     )
                 }
+
                 Spacer(Modifier.weight(0.2f))
 
-                ElevatedCard(elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp)) {
-                    Column(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp, vertical = 32.dp)
-                            .fillMaxWidth(0.8f),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        IconHeader(iconRes = R.drawable.ic_widgets_24, headerRes = R.string.widget)
-                        Spacer(modifier = Modifier.height(32.dp))
+                WidgetCard(
+                    widgetInteractionElementsRow = {
                         WidgetInteractionElementsRow(
                             onPinWidgetButtonClick = {
                                 when (homeScreenVM.lapUIState.rationalShown) {
@@ -128,8 +109,9 @@ internal fun HomeScreen(
                                 homeScreenVM.showWidgetConfigurationDialog.value = true
                             }
                         )
-                    }
-                }
+                    },
+                    modifier = Modifier.fillMaxWidth(0.8f)
+                )
                 Spacer(Modifier.weight(0.3f))
                 CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
             }
@@ -146,27 +128,6 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
-    }
-}
-
-@Composable
-private fun WidgetInteractionElementsRow(
-    onPinWidgetButtonClick: () -> Unit,
-    onWidgetConfigurationButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        PinWidgetButton(
-            onClick = onPinWidgetButtonClick,
-            modifier = Modifier.size(180.dp, 60.dp)
-        )
-
-        Spacer(modifier = Modifier.width(32.dp))
-
-        WidgetConfigurationDialogButton(
-            onClick = onWidgetConfigurationButtonClick,
-            modifier = Modifier.size(32.dp)
-        )
     }
 }
 
@@ -228,36 +189,6 @@ private fun OverlayDialogs(
             onDismissRequest = {
                 homeScreenVM.lapUIState.showBackgroundAccessRational.value = false
             }
-        )
-    }
-}
-
-@Composable
-fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    ElevatedButton(
-        onClick = onClick,
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
-    ) {
-        JostText(
-            text = stringResource(R.string.pin),
-            fontSize = 16.sp
-        )
-    }
-}
-
-@Composable
-fun WidgetConfigurationDialogButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    IconButton(onClick = onClick) {
-        Icon(
-            imageVector = Icons.Default.Settings,
-            contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
-            modifier = modifier,
-            tint = MaterialTheme.colorScheme.primary
         )
     }
 }
