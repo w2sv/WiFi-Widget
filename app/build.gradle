@@ -92,7 +92,6 @@ dependencies {
     implementation project(path: ':data')
 
     implementation libs.androidutils
-    implementation libs.kotlinutils
 
     // androidx
     implementation libs.androidx.core

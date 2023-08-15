@@ -20,7 +20,6 @@ dependencies {
     implementation libs.google.material
     implementation libs.slimber
     implementation libs.androidutils
-    implementation libs.kotlinutils
 
     implementation libs.google.hilt
     kapt libs.google.hilt.kapt

@@ -17,7 +17,6 @@ dependencies {
     implementation libs.androidx.core
     api libs.androidx.datastore.preferences
 
-    implementation libs.kotlinutils
     implementation libs.androidutils
     implementation libs.slimber
 

@@ -16,7 +16,6 @@ dependencies {
     implementation libs.androidx.appcompat
     implementation libs.accompanist.permissions
 
-    implementation libs.kotlinutils
     implementation libs.androidutils
     implementation libs.slimber
 
