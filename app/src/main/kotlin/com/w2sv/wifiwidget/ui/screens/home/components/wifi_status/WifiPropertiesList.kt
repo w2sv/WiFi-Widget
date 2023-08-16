@@ -81,7 +81,7 @@ fun WifiPropertiesList(
                         value.addresses.forEachIndexed { i, address ->
                             WifiPropertyRow(
                                 propertyName = "$propertyName ${enumerationTag(i)}",
-                                value = address.textualRepresentation,
+                                value = address.hostAddressRepresentation,
                                 showSnackbar = showSnackbar
                             )
                             IPSubPropertiesRow(ipAddress = address)
@@ -90,7 +90,7 @@ fun WifiPropertiesList(
                         val address = value.addresses.first()
                         WifiPropertyRow(
                             propertyName = propertyName,
-                            value = address.textualRepresentation,
+                            value = address.hostAddressRepresentation,
                             showSnackbar = showSnackbar
                         )
                         IPSubPropertiesRow(ipAddress = address)

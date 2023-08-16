@@ -67,7 +67,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                                             append(" ${enumerationTag(i)}")
                                         }
                                     },
-                                    address.textualRepresentation
+                                    address.hostAddressRepresentation
                                 )
                             )
                             add(

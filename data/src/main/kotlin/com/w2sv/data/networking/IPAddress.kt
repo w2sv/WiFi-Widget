@@ -7,9 +7,21 @@ import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-class IPAddress(linkAddress: LinkAddress) {
+data class IPAddress(
     @IntRange(from = 0, to = 128)
-    val prefixLength: Int = linkAddress.prefixLength
+    val prefixLength: Int,
+    private val hostAddress: String?,
+    val localAttributes: LocalAttributes,
+    val isLoopback: Boolean,
+    val isMulticast: Boolean
+) {
+    constructor(linkAddress: LinkAddress) : this(
+        linkAddress.prefixLength,
+        linkAddress.address.hostAddress,
+        LocalAttributes.get(linkAddress.address),
+        linkAddress.address.isLoopbackAddress,
+        linkAddress.address.isMulticastAddress
+    )
 
     /**
      * Reference: https://stackoverflow.com/a/33094601/12083276
@@ -23,16 +35,8 @@ class IPAddress(linkAddress: LinkAddress) {
     }
 
     val type: Type = if (prefixLength < 64) Type.V4 else Type.V6
-
-    val textualRepresentation: String = linkAddress.address.hostAddress ?: type.fallbackAddress
-
-    val localAttributes: LocalAttributes = LocalAttributes.get(linkAddress.address)
-    val isLocal: Boolean get() = localAttributes.properties.any { it }
-
-    val isLoopback = linkAddress.address.isLoopbackAddress
-
-    //    val multiCastAttributes: MultiCastAttributes? = MultiCastAttributes.get(linkAddress.address)
-    val isMultiCast: Boolean = linkAddress.address.isMulticastAddress
+    val hostAddressRepresentation: String = hostAddress ?: type.fallbackAddress
+    val isLocal: Boolean = localAttributes.properties.any { it }
 
     enum class Type(val fallbackAddress: String) {
         V4("0.0.0.0"),
@@ -76,8 +80,8 @@ class IPAddress(linkAddress: LinkAddress) {
         } else {
             yield("Public")
         }
-        if (isMultiCast) {
-            yield("MultiCast")
+        if (isMulticast) {
+            yield("Multicast")
         }
         if (isLoopback) {
             yield("Loopback")

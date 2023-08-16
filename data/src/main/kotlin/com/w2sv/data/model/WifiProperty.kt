@@ -116,6 +116,9 @@ sealed class WifiProperty(
             Value.Singular(
                 it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
             )
+//            Value.Singular(
+//                "Your-SSID"
+//            )
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("SSID"),
@@ -133,6 +136,9 @@ sealed class WifiProperty(
             Value.Singular(
                 it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
             )
+//            Value.Singular(
+//                "34:8A:7B:2F:94:1C"
+//            )
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("BSSID"),
@@ -174,6 +180,33 @@ sealed class WifiProperty(
                     ipAddresses = it.ipAddresses,
                     type = IPAddress.Type.V6
                 )
+//                Value.IPAddresses(
+//                    IPv6,
+//                    listOf(
+//                        IPAddress(
+//                            prefixLength = 64,
+//                            hostAddress = "fe80::abcd:1234:5678:ef01",
+//                            localAttributes = IPAddress.LocalAttributes(
+//                                linkLocal = true,
+//                                siteLocal = false,
+//                                anyLocal = false
+//                            ),
+//                            isLoopback = false,
+//                            isMulticast = false
+//                        ),
+//                        IPAddress(
+//                            prefixLength = 64,
+//                            hostAddress = "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+//                            localAttributes = IPAddress.LocalAttributes(
+//                                linkLocal = false,
+//                                siteLocal = false,
+//                                anyLocal = false
+//                            ),
+//                            isLoopback = false,
+//                            isMulticast = false
+//                        )
+//                    )
+//                )
             },
             preferencesKey = booleanPreferencesKey("IPv6"),
             prefixLengthSubProperty = SubProperty(
