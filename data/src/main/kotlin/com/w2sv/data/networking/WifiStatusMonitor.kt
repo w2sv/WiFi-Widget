@@ -66,7 +66,6 @@ class WifiStatusMonitor @Inject constructor(
                 network: Network,
                 networkCapabilities: NetworkCapabilities
             ) {
-                i { "onCapabilitiesChanged" }
                 if (network == connectivityManager.activeNetwork) {
                     i { "onCapabilitiesChanged.send" }
                     channel.trySend(WifiStatus.Connected)
@@ -74,7 +73,6 @@ class WifiStatusMonitor @Inject constructor(
             }
 
             override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-                i { "onLinkPropertiesChanged" }
                 if (network == connectivityManager.activeNetwork) {
                     i { "onLinkPropertiesChanged.send" }
                     channel.trySend(WifiStatus.Connected)
