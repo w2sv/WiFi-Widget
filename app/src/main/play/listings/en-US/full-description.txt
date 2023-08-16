@@ -1,17 +1,16 @@
-The widget configuration options include the:
-- <i>Color scheme</i>
+Widget configuration options include:
+- <i>Color scheme, where you may select between dynamic light/dark mode, static light/dark mode, or a completely customizable one</i>
 - <i>Background opacity</i>
 - <i>Connection properties to be displayed</i>
-- <i>Data refreshing parameters</i>
+- <i>Widget buttons to be included</i>
+- <i>Data refreshing parameters, including whether to display the 'last refreshed' date time</i>
+- <i>Widget size</i>
 
 WiFi connection properties displayed by the widget:
 - <i>SSID</i>
 - <i>BSSID</i>
-- <i>IPv4</i>
-- <i>Netmask</i>
-- <i>Local IPv6</i>
-- <i>First Public IPv6</i>
-- <i>Second Public IPv6</i>
+- <i>Local IPv4 address, including prefix length and additional information</i>
+- <i>Local & public IPv6 addresses, including prefix length and additional information</i>
 - <i>Frequency</i>
 - <i>Channel</i>
 - <i>Link Speed</i>

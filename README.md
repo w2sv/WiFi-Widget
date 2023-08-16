@@ -39,9 +39,11 @@
 
 <h2 align="center">Screenshots</h2>
 
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) |
-|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg) |
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg)   | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg)   |
+|------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg)   | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg)   |
+| ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/5.jpg)   | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/6.jpg)   |
 
 <h2 align="center">Credits</h2>
 
