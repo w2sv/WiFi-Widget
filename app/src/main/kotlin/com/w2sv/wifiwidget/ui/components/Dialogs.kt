@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.components
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,12 +26,11 @@ import com.w2sv.wifiwidget.ui.utils.conditional
 
 @Composable
 fun CustomDialog(
-    title: String,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    headerProperties: DialogHeaderProperties? = null,
     scrollState: ScrollState? = null,
-    icon: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
@@ -41,23 +42,34 @@ fun CustomDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(vertical = 24.dp, horizontal = 28.dp)
-                    .conditional(scrollState != null) {
-                        verticalScroll(scrollState!!)
-                    }
+                    .conditional(scrollState != null, { verticalScroll(scrollState!!) })
             ) {
-                icon?.let {
-                    it.invoke()
-                    Spacer(modifier = Modifier.height(12.dp))
+                headerProperties?.let {
+                    DialogHeader(properties = it)
                 }
-                JostText(
-                    text = title,
-                    style = MaterialTheme.typography.headlineSmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
                 content()
             }
         }
     }
+}
+
+@Stable
+data class DialogHeaderProperties(
+    val title: String,
+    val icon: (@Composable () -> Unit)? = null
+)
+
+@Composable
+fun DialogHeader(properties: DialogHeaderProperties) {
+    properties.icon?.let {
+        it.invoke()
+        Spacer(modifier = Modifier.height(12.dp))
+    }
+    JostText(
+        text = properties.title,
+        style = MaterialTheme.typography.headlineSmall
+    )
+    Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable

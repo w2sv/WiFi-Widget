@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -14,10 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.widget.R
+import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
+import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.WidgetConfigurationDialogContent
+import com.w2sv.wifiwidget.ui.utils.conditional
+import com.w2sv.wifiwidget.ui.utils.landscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -40,16 +43,18 @@ fun WidgetConfigurationDialog(
     }
 
     CustomDialog(
-        title = stringResource(id = com.w2sv.common.R.string.configure_widget),
+        headerProperties = DialogHeaderProperties(
+            title = stringResource(id = R.string.configure_widget),
+            icon = {
+                Icon(
+                    painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+        ),
         onDismissRequest = onDismissRequest,
-        icon = {
-            Icon(
-                painterResource(id = R.drawable.ic_settings_24),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        modifier = modifier
+        modifier = modifier.conditional(landscapeModeActivated, { fillMaxHeight() })
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
@@ -57,8 +62,8 @@ fun WidgetConfigurationDialog(
             lapUIState = homeScreenViewModel.lapUIState,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 16.dp)
-                .heightIn(260.dp, 420.dp)
+                .padding(top = 8.dp, bottom = 16.dp)
+                .fillMaxHeight(0.75f)
         )
         DialogButtonRow(
             onCancel = {

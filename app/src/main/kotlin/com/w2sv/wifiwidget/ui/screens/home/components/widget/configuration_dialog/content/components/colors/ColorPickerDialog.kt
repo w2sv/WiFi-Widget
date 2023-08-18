@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dial
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
+import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
@@ -34,9 +36,10 @@ internal fun ColorPickerDialog(
     }
 
     CustomDialog(
-        title = label,
+        headerProperties = DialogHeaderProperties(title = label),
         onDismissRequest = onDismissRequest,
-        modifier = modifier
+        modifier = modifier,
+        scrollState = rememberScrollState()
     ) {
         HSVColorPickerCircularWithSliders(
             initialColor = color,

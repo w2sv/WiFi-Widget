@@ -89,7 +89,7 @@ fun ThemeSelectionRow(
                     isSelected = { properties.theme == selected },
                     modifier = themeIndicatorModifier.conditional(
                         condition = themeWeights.isNotEmpty(),
-                        modifier = {
+                        onTrue = {
                             weight(
                                 themeWeights.getOrDefault(
                                     properties.theme,
