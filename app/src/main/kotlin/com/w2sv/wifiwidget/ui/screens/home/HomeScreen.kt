@@ -3,8 +3,9 @@ package com.w2sv.wifiwidget.ui.screens.home
 import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,6 +41,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionEl
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
+import com.w2sv.wifiwidget.ui.utils.landscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -71,49 +73,10 @@ internal fun HomeScreen(
                 }
             }
         ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(Modifier.weight(0.15f))
-                Box(
-                    modifier = Modifier
-                        .weight(0.8f)
-                        .fillMaxWidth(0.77f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    WifiConnectionInfoCard(
-                        wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
-                        wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
-                        showSnackbar = homeScreenVM::showSnackbar
-                    )
-                }
-
-                Spacer(Modifier.weight(0.2f))
-
-                WidgetCard(
-                    widgetInteractionElementsRow = {
-                        WidgetInteractionElementsRow(
-                            onPinWidgetButtonClick = {
-                                when (homeScreenVM.lapUIState.rationalShown) {
-                                    false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
-                                        LocationAccessPermissionRequiringAction.PinWidgetButtonPress
-
-                                    true -> attemptWifiWidgetPin(context)
-                                }
-                            },
-                            onWidgetConfigurationButtonClick = {
-                                homeScreenVM.showWidgetConfigurationDialog.value = true
-                            }
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(0.8f)
-                )
-                Spacer(Modifier.weight(0.3f))
-                CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
+            if (landscapeModeActivated) {
+                LandscapeMode(paddingValues = paddingValues)
+            } else {
+                PortraitMode(paddingValues = paddingValues)
             }
         }
 
@@ -128,6 +91,95 @@ internal fun HomeScreen(
                 false -> homeScreenVM.onBackPress(context)
             }
         }
+    }
+}
+
+@Composable
+fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewModel = viewModel()) {
+    val context = LocalContext.current
+
+    Row(
+        modifier = Modifier
+            .padding(paddingValues)
+            .padding(vertical = 16.dp)
+            .fillMaxSize(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        WifiConnectionInfoCard(
+            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
+            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
+            showSnackbar = homeScreenVM::showSnackbar,
+            modifier = Modifier.fillMaxWidth(0.4f)
+        )
+
+        WidgetCard(
+            widgetInteractionElementsRow = {
+                WidgetInteractionElementsRow(
+                    onPinWidgetButtonClick = {
+                        when (homeScreenVM.lapUIState.rationalShown) {
+                            false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+
+                            true -> attemptWifiWidgetPin(context)
+                        }
+                    },
+                    onWidgetConfigurationButtonClick = {
+                        homeScreenVM.showWidgetConfigurationDialog.value = true
+                    }
+                )
+            },
+            modifier = Modifier.fillMaxWidth(0.6f)
+        )
+    }
+}
+
+@Composable
+private fun PortraitMode(
+    paddingValues: PaddingValues,
+    homeScreenVM: HomeScreenViewModel = viewModel()
+) {
+    val context = LocalContext.current
+
+    Column(
+        modifier = Modifier
+            .padding(paddingValues)
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(Modifier.weight(0.15f))
+        WifiConnectionInfoCard(
+            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
+            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
+            showSnackbar = homeScreenVM::showSnackbar,
+            modifier = Modifier
+                .weight(0.8f)
+                .fillMaxWidth(0.77f)
+        )
+
+        Spacer(Modifier.weight(0.2f))
+
+        WidgetCard(
+            widgetInteractionElementsRow = {
+                WidgetInteractionElementsRow(
+                    onPinWidgetButtonClick = {
+                        when (homeScreenVM.lapUIState.rationalShown) {
+                            false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+
+                            true -> attemptWifiWidgetPin(context)
+                        }
+                    },
+                    onWidgetConfigurationButtonClick = {
+                        homeScreenVM.showWidgetConfigurationDialog.value = true
+                    }
+                )
+            },
+            modifier = Modifier.fillMaxWidth(0.8f)
+        )
+        Spacer(Modifier.weight(0.3f))
+        CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
     }
 }
 

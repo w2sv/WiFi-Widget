@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,7 +53,9 @@ internal fun WidgetInteractionElementsRow(
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         PinWidgetButton(
             onClick = onPinWidgetButtonClick,
-            modifier = Modifier.size(180.dp, 60.dp)
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .height(60.dp)
         )
 
         Spacer(modifier = Modifier.width(32.dp))
