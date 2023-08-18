@@ -1,5 +1,1 @@
-- Show confirmation snackbar on background location access granted
-- Fix typo
-- Slight UI consistency fix
-- Improve performance
-- Reduce app size
+- Fixed landscape mode UI
