@@ -2,6 +2,12 @@ SHELL=/bin/bash
 
 VERSION := $(shell ./get-version.sh)
 
+ktlint:
+	@ktlint --color
+
+ktlint-format:
+	@ktlint --format --color
+
 clean:
 	@echo "Clean"
 	@./gradlew clean
