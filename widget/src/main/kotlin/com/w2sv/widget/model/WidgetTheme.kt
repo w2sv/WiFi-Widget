@@ -23,7 +23,7 @@ sealed interface WidgetTheme {
                 nonDynamicResources.getColors(context)
     }
 
-    object Light : DayOrNight(
+    data object Light : DayOrNight(
         com.google.android.material.R.style.Theme_Material3_DynamicColors_Light,
         WidgetColors.Resources(
             R.color.background_light,
@@ -32,7 +32,7 @@ sealed interface WidgetTheme {
         )
     )
 
-    object Dark : DayOrNight(
+    data object Dark : DayOrNight(
         com.google.android.material.R.style.Theme_Material3_DynamicColors_Dark,
         WidgetColors.Resources(
             R.color.background_dark,
@@ -41,7 +41,7 @@ sealed interface WidgetTheme {
         )
     )
 
-    object DeviceDefault : WidgetTheme {
+    data object DeviceDefault : WidgetTheme {
         override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(
