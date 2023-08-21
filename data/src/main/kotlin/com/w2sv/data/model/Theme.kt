@@ -4,5 +4,5 @@ enum class Theme {
     Light,
     SystemDefault,
     Dark,
-    Custom
+    Custom,
 }

@@ -19,24 +19,27 @@ fun DialogButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    content: @Composable (RowScope.() -> Unit)
+    content: @Composable (RowScope.() -> Unit),
 ) {
     ElevatedButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        border = if (enabled)
+        border = if (enabled) {
             BorderStroke(
                 Dp.Hairline,
-                MaterialTheme.colorScheme.primary
-            ) else null,
+                MaterialTheme.colorScheme.primary,
+            )
+        } else {
+            null
+        },
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
         colors = ButtonDefaults.elevatedButtonColors(
             disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             contentColor = MaterialTheme.colorScheme.onPrimary,
-            containerColor = MaterialTheme.colorScheme.primary
+            containerColor = MaterialTheme.colorScheme.primary,
         ),
-        content = content
+        content = content,
     )
 }
 
@@ -46,9 +49,9 @@ fun InfoIconButton(onClick: () -> Unit, contentDescription: String) {
         InfoIcon(
             contentDescription = contentDescription,
             modifier = Modifier.size(
-                dimensionResource(id = R.dimen.size_icon)
+                dimensionResource(id = R.dimen.size_icon),
             ),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }

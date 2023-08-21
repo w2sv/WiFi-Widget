@@ -21,18 +21,18 @@ import androidx.compose.ui.unit.sp
 fun IconHeader(
     @DrawableRes iconRes: Int,
     @StringRes headerRes: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Box(modifier = Modifier.weight(0.3f)) {
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
         Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
@@ -40,7 +40,7 @@ fun IconHeader(
                 text = stringResource(id = headerRes),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.tertiary
+                color = MaterialTheme.colorScheme.tertiary,
             )
         }
         Spacer(modifier = Modifier.weight(0.3f))

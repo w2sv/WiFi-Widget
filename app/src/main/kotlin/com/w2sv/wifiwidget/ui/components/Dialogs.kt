@@ -30,19 +30,19 @@ fun CustomDialog(
     modifier: Modifier = Modifier,
     headerProperties: DialogHeaderProperties? = null,
     scrollState: ScrollState? = null,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
             modifier = modifier,
             shape = RoundedCornerShape(12.dp),
-            elevation = CardDefaults.elevatedCardElevation(16.dp)
+            elevation = CardDefaults.elevatedCardElevation(16.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(vertical = 24.dp, horizontal = 28.dp)
-                    .conditional(scrollState != null, { verticalScroll(scrollState!!) })
+                    .conditional(scrollState != null, { verticalScroll(scrollState!!) }),
             ) {
                 headerProperties?.let {
                     DialogHeader(properties = it)
@@ -56,7 +56,7 @@ fun CustomDialog(
 @Stable
 data class DialogHeaderProperties(
     val title: String,
-    val icon: (@Composable () -> Unit)? = null
+    val icon: (@Composable () -> Unit)? = null,
 )
 
 @Composable
@@ -67,7 +67,7 @@ fun DialogHeader(properties: DialogHeaderProperties) {
     }
     JostText(
         text = properties.title,
-        style = MaterialTheme.typography.headlineSmall
+        style = MaterialTheme.typography.headlineSmall,
     )
     Spacer(modifier = Modifier.height(8.dp))
 }
@@ -77,12 +77,12 @@ fun DialogButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     modifier: Modifier = Modifier,
-    applyButtonEnabled: Boolean = true
+    applyButtonEnabled: Boolean = true,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         DialogButton(onClick = onCancel) {
             JostText(text = stringResource(R.string.cancel))

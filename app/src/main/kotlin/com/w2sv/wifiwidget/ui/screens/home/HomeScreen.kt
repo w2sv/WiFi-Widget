@@ -32,15 +32,15 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.BackgroundLocationAccessRationalDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRationalDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequest
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionElementsRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.content.PropertyInfoDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiConnectionInfoCard
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.utils.landscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -49,7 +49,7 @@ import java.util.Calendar
 
 @Composable
 internal fun HomeScreen(
-    homeScreenVM: HomeScreenViewModel = viewModel()
+    homeScreenVM: HomeScreenViewModel = viewModel(),
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -57,7 +57,7 @@ internal fun HomeScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     NavigationDrawer(
-        state = drawerState
+        state = drawerState,
     ) {
         Scaffold(
             topBar = {
@@ -71,7 +71,7 @@ internal fun HomeScreen(
                 SnackbarHost(homeScreenVM.snackbarHostState) { snackbarData ->
                     AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
                 }
-            }
+            },
         ) { paddingValues ->
             if (landscapeModeActivated) {
                 LandscapeMode(paddingValues = paddingValues)
@@ -104,13 +104,13 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
             .padding(vertical = 16.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
+        horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         WifiConnectionInfoCard(
             wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
             wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
             showSnackbar = homeScreenVM::showSnackbar,
-            modifier = Modifier.fillMaxWidth(0.4f)
+            modifier = Modifier.fillMaxWidth(0.4f),
         )
 
         WidgetCard(
@@ -118,18 +118,19 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
                 WidgetInteractionElementsRow(
                     onPinWidgetButtonClick = {
                         when (homeScreenVM.lapUIState.rationalShown) {
-                            false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
-                                LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+                            false ->
+                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
 
                             true -> attemptWifiWidgetPin(context)
                         }
                     },
                     onWidgetConfigurationButtonClick = {
                         homeScreenVM.showWidgetConfigurationDialog.value = true
-                    }
+                    },
                 )
             },
-            modifier = Modifier.fillMaxWidth(0.6f)
+            modifier = Modifier.fillMaxWidth(0.6f),
         )
     }
 }
@@ -137,7 +138,7 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
 @Composable
 private fun PortraitMode(
     paddingValues: PaddingValues,
-    homeScreenVM: HomeScreenViewModel = viewModel()
+    homeScreenVM: HomeScreenViewModel = viewModel(),
 ) {
     val context = LocalContext.current
 
@@ -146,7 +147,7 @@ private fun PortraitMode(
             .padding(paddingValues)
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.15f))
         WifiConnectionInfoCard(
@@ -155,7 +156,7 @@ private fun PortraitMode(
             showSnackbar = homeScreenVM::showSnackbar,
             modifier = Modifier
                 .weight(0.8f)
-                .fillMaxWidth(0.77f)
+                .fillMaxWidth(0.77f),
         )
 
         Spacer(Modifier.weight(0.2f))
@@ -165,18 +166,19 @@ private fun PortraitMode(
                 WidgetInteractionElementsRow(
                     onPinWidgetButtonClick = {
                         when (homeScreenVM.lapUIState.rationalShown) {
-                            false -> homeScreenVM.lapUIState.rationalTriggeringAction.value =
-                                LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+                            false ->
+                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
 
                             true -> attemptWifiWidgetPin(context)
                         }
                     },
                     onWidgetConfigurationButtonClick = {
                         homeScreenVM.showWidgetConfigurationDialog.value = true
-                    }
+                    },
                 )
             },
-            modifier = Modifier.fillMaxWidth(0.8f)
+            modifier = Modifier.fillMaxWidth(0.8f),
         )
         Spacer(Modifier.weight(0.3f))
         CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
@@ -186,7 +188,7 @@ private fun PortraitMode(
 @Composable
 private fun OverlayDialogs(
     homeScreenVM: HomeScreenViewModel = viewModel(),
-    widgetVM: WidgetViewModel = viewModel()
+    widgetVM: WidgetViewModel = viewModel(),
 ) {
     val context = LocalContext.current
 
@@ -194,7 +196,7 @@ private fun OverlayDialogs(
         LocationAccessPermissionRationalDialog(
             onProceed = {
                 homeScreenVM.lapUIState.onRationalShown()
-            }
+            },
         )
     }
     homeScreenVM.lapUIState.requestLaunchingAction.collectAsState().value?.let { trigger ->
@@ -209,7 +211,7 @@ private fun OverlayDialogs(
                 },
                 onDenied = {
                     attemptWifiWidgetPin(context)
-                }
+                },
             )
 
             is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
@@ -217,7 +219,7 @@ private fun OverlayDialogs(
                 onGranted = {
                     widgetVM.configuration.wifiProperties[trigger.property] = true
                 },
-                onDenied = {}
+                onDenied = {},
             )
         }
     }
@@ -225,13 +227,13 @@ private fun OverlayDialogs(
         WidgetConfigurationDialog(
             closeDialog = {
                 homeScreenVM.showWidgetConfigurationDialog.value = false
-            }
+            },
         )
 
         widgetVM.propertyInfoDialogData.collectAsState().value?.let {
             PropertyInfoDialog(
                 data = it,
-                onDismissRequest = { widgetVM.propertyInfoDialogData.reset() }
+                onDismissRequest = { widgetVM.propertyInfoDialogData.reset() },
             )
         }
     }
@@ -240,7 +242,7 @@ private fun OverlayDialogs(
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
                 homeScreenVM.lapUIState.showBackgroundAccessRational.value = false
-            }
+            },
         )
     }
 }
@@ -251,6 +253,6 @@ private fun CopyrightText(modifier: Modifier = Modifier) {
         text = "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV",
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
-        modifier = modifier
+        modifier = modifier,
     )
 }

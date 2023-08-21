@@ -19,7 +19,7 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
             useDynamicColors,
             theme,
             customColors,
-            transform = { a, b, c -> Triple(a, b, c) }
+            transform = { a, b, c -> Triple(a, b, c) },
         ),
         opacity,
         refreshingParametersMap.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
@@ -32,14 +32,14 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
                     Theme.SystemDefault -> WidgetTheme.DeviceDefault
                     Theme.Dark -> WidgetTheme.Dark
                     Theme.Custom -> WidgetTheme.Custom(
-                        customColors
+                        customColors,
                     )
                 },
                 backgroundOpacity = opacity,
                 displayLastRefreshDateTime = displayLastRefreshDateTime,
-                buttons = buttons
+                buttons = buttons,
             )
-        }
+        },
     )
 
 val WidgetRepository.buttons: Flow<WidgetButtons>
@@ -49,7 +49,7 @@ val WidgetRepository.buttons: Flow<WidgetButtons>
         buttonMap.getValue(WidgetButton.GoToWidgetSettings),
         transform = { a, b, c ->
             WidgetButtons(refresh = a, goToWifiSettings = b, goToWidgetSettings = c)
-        }
+        },
     )
 
 val WidgetRepository.customColors: Flow<WidgetColors>
@@ -59,7 +59,7 @@ val WidgetRepository.customColors: Flow<WidgetColors>
         customColorsMap.getValue(WidgetColor.Secondary),
         transform = { background, labels, other ->
             WidgetColors(background, labels, other)
-        }
+        },
     )
 
 val WidgetRepository.refreshing: Flow<WidgetRefreshing>
@@ -69,7 +69,7 @@ val WidgetRepository.refreshing: Flow<WidgetRefreshing>
         transform = { refreshPeriodically, refreshOnLowBattery ->
             WidgetRefreshing(
                 refreshPeriodically = refreshPeriodically,
-                refreshOnLowBattery = refreshOnLowBattery
+                refreshOnLowBattery = refreshOnLowBattery,
             )
-        }
+        },
     )

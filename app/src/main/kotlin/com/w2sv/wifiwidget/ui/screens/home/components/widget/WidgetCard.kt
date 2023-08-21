@@ -28,19 +28,19 @@ import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 @Composable
 fun WidgetCard(
     widgetInteractionElementsRow: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
         content = {
             IconHeader(
                 iconRes = R.drawable.ic_widgets_24,
                 headerRes = R.string.widget,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp),
             )
             Spacer(modifier = Modifier.height(32.dp))
             widgetInteractionElementsRow()
         },
-        modifier = modifier
+        modifier = modifier,
     )
 }
 
@@ -48,21 +48,21 @@ fun WidgetCard(
 internal fun WidgetInteractionElementsRow(
     onPinWidgetButtonClick: () -> Unit,
     onWidgetConfigurationButtonClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
         PinWidgetButton(
             onClick = onPinWidgetButtonClick,
             modifier = Modifier
                 .fillMaxWidth(0.7f)
-                .height(60.dp)
+                .height(60.dp),
         )
 
         Spacer(modifier = Modifier.width(32.dp))
 
         WidgetConfigurationDialogButton(
             onClick = onWidgetConfigurationButtonClick,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
         )
     }
 }
@@ -73,11 +73,11 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
+        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp),
     ) {
         JostText(
             text = stringResource(R.string.pin),
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
     }
 }
@@ -85,14 +85,14 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
 @Composable
 private fun WidgetConfigurationDialogButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
             modifier = modifier,
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }

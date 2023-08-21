@@ -32,7 +32,7 @@ class WifiStatusMonitor @Inject constructor(
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onCapabilitiesChanged(
                 network: Network,
-                networkCapabilities: NetworkCapabilities
+                networkCapabilities: NetworkCapabilities,
             ) {
                 if (network == connectivityManager.activeNetwork) {
                     i { "onCapabilitiesChanged.send" }
@@ -64,7 +64,7 @@ class WifiStatusMonitor @Inject constructor(
 
             override fun onCapabilitiesChanged(
                 network: Network,
-                networkCapabilities: NetworkCapabilities
+                networkCapabilities: NetworkCapabilities,
             ) {
                 if (network == connectivityManager.activeNetwork) {
                     i { "onCapabilitiesChanged.send" }
@@ -90,7 +90,7 @@ class WifiStatusMonitor @Inject constructor(
 
         connectivityManager.registerNetworkCallback(
             networkRequest,
-            callback
+            callback,
         )
 
         channel.trySend(WifiStatus.get(context))

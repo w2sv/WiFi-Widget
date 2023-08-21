@@ -45,12 +45,12 @@ fun ThemeSelectionRow(
     customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     themeWeights: Map<Theme, Float> = mapOf(),
-    themeIndicatorModifier: Modifier = Modifier
+    themeIndicatorModifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         buildList {
             add(
@@ -58,7 +58,7 @@ fun ThemeSelectionRow(
                     theme = Theme.Light,
                     labelRes = R.string.light,
                     buttonColoring = ButtonColor.Uniform(Color.White),
-                )
+                ),
             )
             add(
                 ThemeIndicatorProperties(
@@ -68,16 +68,16 @@ fun ThemeSelectionRow(
                         Brush.linearGradient(
                             0.5f to Color.White,
                             0.5f to Color.Black,
-                        )
+                        ),
                     ),
-                )
+                ),
             )
             add(
                 ThemeIndicatorProperties(
                     theme = Theme.Dark,
                     labelRes = R.string.dark,
                     buttonColoring = ButtonColor.Uniform(Color.Black),
-                )
+                ),
             )
             customThemeIndicatorProperties?.let {
                 add(it)
@@ -93,11 +93,11 @@ fun ThemeSelectionRow(
                             weight(
                                 themeWeights.getOrDefault(
                                     properties.theme,
-                                    1f
-                                )
+                                    1f,
+                                ),
                             )
-                        }
-                    )
+                        },
+                    ),
                 ) {
                     onSelected(properties.theme)
                 }
@@ -122,27 +122,27 @@ private fun ThemeIndicator(
     properties: ThemeIndicatorProperties,
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         JostText(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(0.5f)
+            modifier = Modifier.weight(0.5f),
         )
         Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
             buttonColor = properties.buttonColoring,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
-                stringResource(id = properties.labelRes)
+                stringResource(id = properties.labelRes),
             ),
             onClick = onClick,
             isSelected = isSelected,
-            modifier = Modifier.weight(0.5f)
+            modifier = Modifier.weight(0.5f),
         )
     }
 }
@@ -153,7 +153,7 @@ fun ThemeButton(
     contentDescription: String,
     onClick: () -> Unit,
     isSelected: () -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val transition = updateTransition(targetState = isSelected(), label = "")
 
@@ -162,12 +162,13 @@ fun ThemeButton(
             if (targetState) {
                 tween(
                     durationMillis = BORDER_ANIMATION_DURATION,
-                    easing = OvershootInterpolator().toEasing()
+                    easing = OvershootInterpolator().toEasing(),
                 )
             } else {
                 tween(durationMillis = BORDER_ANIMATION_DURATION)
             }
-        }, label = ""
+        },
+        label = "",
     ) { state ->
         if (state) 3.dp else 0.dp
     }
@@ -177,12 +178,13 @@ fun ThemeButton(
             if (targetState) {
                 tween(
                     durationMillis = BORDER_ANIMATION_DURATION,
-                    easing = OvershootInterpolator().toEasing()
+                    easing = OvershootInterpolator().toEasing(),
                 )
             } else {
                 tween(durationMillis = BORDER_ANIMATION_DURATION)
             }
-        }, label = ""
+        },
+        label = "",
     ) { state ->
         if (state) MaterialTheme.colorScheme.primary else Color.Transparent
     }
@@ -199,14 +201,14 @@ fun ThemeButton(
                     if (buttonColor is ButtonColor.Gradient) {
                         drawCircle(
                             brush = buttonColor.brush,
-                            radius = (constraints.maxWidth / 2).toFloat()
+                            radius = (constraints.maxWidth / 2).toFloat(),
                         )
                     }
                 },
             colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
             onClick = onClick,
             shape = CircleShape,
-            border = BorderStroke(borderWidth, borderColor)
+            border = BorderStroke(borderWidth, borderColor),
         ) {}
     }
 }

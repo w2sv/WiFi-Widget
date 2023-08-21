@@ -12,17 +12,18 @@ import com.w2sv.data.R
 
 enum class WifiStatus(
     @StringRes val labelRes: Int,
-    @DrawableRes val iconRes: Int
+    @DrawableRes val iconRes: Int,
 ) {
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),
     Disconnected(R.string.disconnected, R.drawable.ic_wifi_find_24),
-    Connected(R.string.connected, R.drawable.ic_wifi_24);
+    Connected(R.string.connected, R.drawable.ic_wifi_24),
+    ;
 
     companion object {
         fun get(context: Context): WifiStatus =
             get(
                 wifiManager = context.getWifiManager(),
-                connectivityManager = context.getConnectivityManager()
+                connectivityManager = context.getConnectivityManager(),
             )
 
         fun get(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =

@@ -14,12 +14,12 @@ import androidx.compose.ui.unit.dp
 fun HomeScreenCard(content: @Composable ColumnScope.() -> Unit, modifier: Modifier = Modifier) {
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
-        modifier = modifier
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             content()
         }

@@ -27,24 +27,24 @@ internal fun AppearanceSection(
     onToggleDynamicColors: (Boolean) -> Unit,
     selectedTheme: Theme,
     onThemeSelected: (Theme) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         if (dynamicColorsSupported) {
             UseDynamicColorsRow(
                 useDynamicColors = useDynamicColors,
-                onToggleDynamicColors = onToggleDynamicColors
+                onToggleDynamicColors = onToggleDynamicColors,
             )
             Spacer(modifier = Modifier.height(12.dp))
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             JostText(
                 text = stringResource(id = R.string.theme),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
             ThemeSelectionRow(
                 selected = selectedTheme,
@@ -53,7 +53,7 @@ internal fun AppearanceSection(
                     .width(200.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 themeIndicatorModifier = Modifier
-                    .sizeIn(maxHeight = 92.dp, maxWidth = 42.dp)
+                    .sizeIn(maxHeight = 92.dp, maxWidth = 42.dp),
             )
         }
     }

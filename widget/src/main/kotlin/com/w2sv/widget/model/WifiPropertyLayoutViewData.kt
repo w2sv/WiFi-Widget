@@ -23,12 +23,12 @@ internal sealed interface WifiPropertyLayoutViewData {
                     setTextView(
                         viewId = R.id.property_label_tv,
                         text = label,
-                        color = widgetColors.primary
+                        color = widgetColors.primary,
                     )
                     setTextView(
                         viewId = R.id.property_value_tv,
                         text = value,
-                        color = widgetColors.secondary
+                        color = widgetColors.secondary,
                     )
                 }
     }
@@ -46,7 +46,7 @@ internal sealed interface WifiPropertyLayoutViewData {
                         R.id.ip_property_tv_2,
                         R.id.ip_property_tv_3,
                         R.id.ip_property_tv_4,
-                        R.id.ip_property_tv_5
+                        R.id.ip_property_tv_5,
                     )
                         .iterator()
 
@@ -55,13 +55,13 @@ internal sealed interface WifiPropertyLayoutViewData {
                         setTextView(
                             viewId = viewId,
                             text = text,
-                            color = widgetColors.secondary
+                            color = widgetColors.secondary,
                         )
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             setColorStateList(
                                 viewId,
                                 "setBackgroundTintList",
-                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
+                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor),
                             )
                         } else {
                             setBackgroundColor(viewId, widgetColors.ipSubPropertyBackgroundColor)

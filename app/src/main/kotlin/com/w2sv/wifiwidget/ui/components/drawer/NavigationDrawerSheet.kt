@@ -29,12 +29,12 @@ internal fun NavigationDrawerSheet(content: @Composable () -> Unit) {
                 .padding(bottom = 32.dp)
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Header(modifier = Modifier.padding(vertical = 32.dp))
             Divider(
                 modifier = Modifier
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 12.dp),
             )
             content()
         }
@@ -49,7 +49,7 @@ private fun Header(modifier: Modifier = Modifier) {
             null,
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
+                .background(MaterialTheme.colorScheme.primary),
         )
         VersionText(Modifier.padding(top = 26.dp))
     }
@@ -59,6 +59,6 @@ private fun Header(modifier: Modifier = Modifier) {
 private fun VersionText(modifier: Modifier = Modifier) {
     JostText(
         text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
-        modifier = modifier
+        modifier = modifier,
     )
 }

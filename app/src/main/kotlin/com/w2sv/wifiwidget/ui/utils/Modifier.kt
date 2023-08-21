@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 fun Modifier.conditional(
     condition: Boolean,
     onTrue: Modifier.() -> Modifier,
-    onFalse: (Modifier.() -> Modifier)? = null
+    onFalse: (Modifier.() -> Modifier)? = null,
 ): Modifier {
     return if (condition) {
         then(onTrue(Modifier))

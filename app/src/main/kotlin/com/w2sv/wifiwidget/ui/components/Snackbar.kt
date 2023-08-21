@@ -29,7 +29,7 @@ data class AppSnackbarVisuals(
     override val duration: SnackbarDuration = SnackbarDuration.Short,
     val action: SnackbarAction? = null,
     val kind: SnackbarKind? = null,
-    override val withDismissAction: Boolean = false
+    override val withDismissAction: Boolean = false,
 ) : SnackbarVisuals {
 
     override val actionLabel: String?
@@ -66,12 +66,12 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
         action = {
             visuals.action?.let { action ->
                 TextButton(
-                    onClick = action.callback
+                    onClick = action.callback,
                 ) {
                     JostText(text = action.label, color = MaterialTheme.colorScheme.primary)
                 }
             }
-        }
+        },
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             visuals.kind?.let { kind ->

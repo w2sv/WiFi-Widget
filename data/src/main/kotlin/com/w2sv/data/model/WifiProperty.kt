@@ -20,18 +20,18 @@ import javax.inject.Inject
 sealed class WifiProperty(
     val viewData: ViewData,
     val getValue: (ValueGetterResources) -> Value,
-    isEnabledDataStoreEntry: DataStoreEntry.UniType<Boolean>
+    isEnabledDataStoreEntry: DataStoreEntry.UniType<Boolean>,
 ) : DataStoreEntry.UniType<Boolean> by isEnabledDataStoreEntry {
 
     sealed class IPProperty(
         viewData: ViewData,
         getValue: (ValueGetterResources) -> Value,
         preferencesKey: Preferences.Key<Boolean>,
-        val prefixLengthSubProperty: SubProperty
+        val prefixLengthSubProperty: SubProperty,
     ) : WifiProperty(
         viewData,
         getValue,
-        DataStoreEntry.UniType.Impl(preferencesKey, defaultValue = false)
+        DataStoreEntry.UniType.Impl(preferencesKey, defaultValue = false),
     ) {
 
         open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
@@ -39,14 +39,14 @@ sealed class WifiProperty(
         class SubProperty(
             val viewData: ViewData,
             override val preferencesKey: Preferences.Key<Boolean>,
-            override val defaultValue: Boolean = true
+            override val defaultValue: Boolean = true,
         ) : DataStoreEntry.UniType<Boolean>
 
         companion object {
             fun values(): Array<IPProperty> {
                 return arrayOf(
                     IPv4,
-                    IPv6
+                    IPv6,
                 )
             }
 
@@ -57,7 +57,7 @@ sealed class WifiProperty(
     data class ViewData(
         @StringRes val labelRes: Int,
         @StringRes val descriptionRes: Int,
-        val learnMoreUrl: String? = null
+        val learnMoreUrl: String? = null,
     )
 
     sealed interface Value {
@@ -68,7 +68,7 @@ sealed class WifiProperty(
             fun getForIPProperty(
                 property: IPProperty,
                 ipAddresses: List<IPAddress>,
-                type: IPAddress.Type
+                type: IPAddress.Type,
             ): Value =
                 ipAddresses
                     .filter { it.type == type }
@@ -84,16 +84,16 @@ sealed class WifiProperty(
 
     class ValueGetterResources(
         val wifiManager: WifiManager,
-        val ipAddresses: List<IPAddress>
+        val ipAddresses: List<IPAddress>,
     ) {
         constructor(wifiManager: WifiManager, connectivityManager: ConnectivityManager) : this(
             wifiManager,
-            connectivityManager.getIPAddresses()
+            connectivityManager.getIPAddresses(),
         )
 
         constructor(context: Context) : this(
             context.getWifiManager(),
-            context.getConnectivityManager().getIPAddresses()
+            context.getConnectivityManager().getIPAddresses(),
         )
 
         class Provider @Inject constructor(@ApplicationContext private val context: Context) {
@@ -110,11 +110,11 @@ sealed class WifiProperty(
         ViewData(
             R.string.ssid,
             R.string.ssid_description,
-            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID"
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID",
         ),
         {
             Value.Singular(
-                it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE
+                it.wifiManager.connectionInfo.ssid?.replace("\"", "") ?: DEFAULT_FALLBACK_VALUE,
             )
 //            Value.Singular(
 //                "Your-SSID"
@@ -122,19 +122,19 @@ sealed class WifiProperty(
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("SSID"),
-            defaultValue = false
-        )
+            defaultValue = false,
+        ),
     )
 
     data object BSSID : WifiProperty(
         ViewData(
             R.string.bssid,
             R.string.bssid_description,
-            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID"
+            "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID",
         ),
         {
             Value.Singular(
-                it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE
+                it.wifiManager.connectionInfo.bssid ?: DEFAULT_FALLBACK_VALUE,
             )
 //            Value.Singular(
 //                "34:8A:7B:2F:94:1C"
@@ -142,8 +142,8 @@ sealed class WifiProperty(
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("BSSID"),
-            defaultValue = false
-        )
+            defaultValue = false,
+        ),
     )
 
     data object IPv4 :
@@ -151,20 +151,20 @@ sealed class WifiProperty(
             ViewData(
                 R.string.ipv4,
                 R.string.ipv4_description,
-                LEARN_MORE_URL
+                LEARN_MORE_URL,
             ),
             {
                 Value.getForIPProperty(
                     IPv4,
                     it.ipAddresses,
-                    IPAddress.Type.V4
+                    IPAddress.Type.V4,
                 )
             },
             preferencesKey = booleanPreferencesKey("IPv4"),
             SubProperty(
                 prefixLengthViewData,
-                booleanPreferencesKey("IPv4.PrefixLength")
-            )
+                booleanPreferencesKey("IPv4.PrefixLength"),
+            ),
         )
 
     data object IPv6 :
@@ -172,13 +172,13 @@ sealed class WifiProperty(
             viewData = ViewData(
                 labelRes = R.string.ipv6,
                 descriptionRes = R.string.ipv6_description,
-                learnMoreUrl = LEARN_MORE_URL
+                learnMoreUrl = LEARN_MORE_URL,
             ),
             getValue = {
                 Value.getForIPProperty(
                     property = IPv6,
                     ipAddresses = it.ipAddresses,
-                    type = IPAddress.Type.V6
+                    type = IPAddress.Type.V6,
                 )
 //                Value.IPAddresses(
 //                    IPv6,
@@ -211,22 +211,24 @@ sealed class WifiProperty(
             preferencesKey = booleanPreferencesKey("IPv6"),
             prefixLengthSubProperty = SubProperty(
                 viewData = prefixLengthViewData,
-                preferencesKey = booleanPreferencesKey("IPv6.PrefixLength")
-            )
+                preferencesKey = booleanPreferencesKey("IPv6.PrefixLength"),
+            ),
         ) {
         val includeLocal =
             SubProperty(
                 ViewData(R.string.include_local, R.string.include_local_description),
-                booleanPreferencesKey("IPv6.IncludeLocal")
+                booleanPreferencesKey("IPv6.IncludeLocal"),
             )
         val includePublic =
             SubProperty(
                 ViewData(R.string.include_public, R.string.include_public_description),
-                booleanPreferencesKey("IPv6.IncludePublic")
+                booleanPreferencesKey("IPv6.IncludePublic"),
             )
 
         override val subProperties: List<SubProperty> = listOf(
-            includeLocal, includePublic, prefixLengthSubProperty
+            includeLocal,
+            includePublic,
+            prefixLengthSubProperty,
         )
     }
 
@@ -234,93 +236,93 @@ sealed class WifiProperty(
         ViewData(
             R.string.frequency,
             R.string.frequency_description,
-            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.frequency} MHz") },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("Frequency"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     data object Channel : WifiProperty(
         ViewData(
             R.string.channel,
             R.string.channel_description,
-            "https://en.wikipedia.org/wiki/List_of_WLAN_channels"
+            "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
         ),
         { Value.Singular(frequencyToChannel(it.wifiManager.connectionInfo.frequency).toString()) },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("Channel"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     data object LinkSpeed : WifiProperty(
         ViewData(
             R.string.link_speed,
             R.string.link_speed_description,
-            null
+            null,
         ),
         { Value.Singular("${it.wifiManager.connectionInfo.linkSpeed} Mbps") },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("LinkSpeed"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     data object Gateway : WifiProperty(
         ViewData(
             R.string.gateway,
             R.string.gateway_description,
-            "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway"
+            "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway",
         ),
         {
             Value.Singular(
                 com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.gateway)
-                    ?: IPAddress.Type.V4.fallbackAddress
+                    ?: IPAddress.Type.V4.fallbackAddress,
             )
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("Gateway"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     data object DNS : WifiProperty(
         ViewData(
             R.string.dns,
             R.string.dns_description,
-            "https://en.wikipedia.org/wiki/Domain_Name_System"
+            "https://en.wikipedia.org/wiki/Domain_Name_System",
         ),
         {
             Value.Singular(
                 com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.dns1)
-                    ?: IPAddress.Type.V4.fallbackAddress
+                    ?: IPAddress.Type.V4.fallbackAddress,
             )
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("DNS"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     data object DHCP : WifiProperty(
         ViewData(
             R.string.dhcp,
             R.string.dhcp_description,
-            "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol"
+            "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol",
         ),
         {
             Value.Singular(
                 com.w2sv.data.networking.textualIPv4Representation(it.wifiManager.dhcpInfo.serverAddress)
-                    ?: IPAddress.Type.V4.fallbackAddress
+                    ?: IPAddress.Type.V4.fallbackAddress,
             )
         },
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("DHCP"),
-            defaultValue = true
-        )
+            defaultValue = true,
+        ),
     )
 
     companion object {
@@ -335,7 +337,7 @@ sealed class WifiProperty(
                 LinkSpeed,
                 Gateway,
                 DNS,
-                DHCP
+                DHCP,
             )
         }
     }
@@ -344,7 +346,7 @@ sealed class WifiProperty(
 private val prefixLengthViewData = WifiProperty.ViewData(
     R.string.show_prefix_length,
     R.string.prefix_length_description,
-    "https://www.ibm.com/docs/en/ts3500-tape-library?topic=formats-subnet-masks-ipv4-prefixes-ipv6"
+    "https://www.ibm.com/docs/en/ts3500-tape-library?topic=formats-subnet-masks-ipv4-prefixes-ipv6",
 )
 
 private const val DEFAULT_FALLBACK_VALUE = "Couldn't retrieve"

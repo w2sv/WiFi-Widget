@@ -13,14 +13,15 @@ sealed interface WidgetTheme {
 
     sealed class DayOrNight(
         @StyleRes private val dynamicWrapperTheme: Int,
-        private val nonDynamicResources: WidgetColors.Resources
+        private val nonDynamicResources: WidgetColors.Resources,
     ) : WidgetTheme {
 
         override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
-            if (useDynamicColors)
+            if (useDynamicColors) {
                 getDynamicWidgetColors(context, dynamicWrapperTheme)
-            else
+            } else {
                 nonDynamicResources.getColors(context)
+            }
     }
 
     data object Light : DayOrNight(
@@ -28,8 +29,8 @@ sealed interface WidgetTheme {
         WidgetColors.Resources(
             R.color.background_light,
             R.color.default_label,
-            R.color.foreground_light
-        )
+            R.color.foreground_light,
+        ),
     )
 
     data object Dark : DayOrNight(
@@ -37,8 +38,8 @@ sealed interface WidgetTheme {
         WidgetColors.Resources(
             R.color.background_dark,
             R.color.default_label,
-            R.color.foreground_dark
-        )
+            R.color.foreground_dark,
+        ),
     )
 
     data object DeviceDefault : WidgetTheme {
@@ -46,13 +47,13 @@ sealed interface WidgetTheme {
             if (useDynamicColors) {
                 getDynamicWidgetColors(
                     context,
-                    com.google.android.material.R.style.Theme_Material3_DynamicColors_DayNight
+                    com.google.android.material.R.style.Theme_Material3_DynamicColors_DayNight,
                 )
             } else {
                 (if (context.resources.configuration.isNightModeActiveCompat) Dark else Light)
                     .getColors(
                         context,
-                        false
+                        false,
                     )
             }
     }
@@ -65,21 +66,21 @@ sealed interface WidgetTheme {
 private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int): WidgetColors =
     DynamicColors.wrapContextIfAvailable(
         context,
-        wrapperTheme
+        wrapperTheme,
     )
         .obtainStyledAttributes(
             intArrayOf(
                 com.google.android.material.R.attr.colorSurface,
                 com.google.android.material.R.attr.colorPrimary,
-                com.google.android.material.R.attr.colorSecondary
-            )
+                com.google.android.material.R.attr.colorSecondary,
+            ),
         )
         .run {
             @SuppressLint("ResourceType")
             val colors = WidgetColors(
                 background = getColor(0, 0),
                 primary = getColor(1, 0),
-                secondary = getColor(2, 0)
+                secondary = getColor(2, 0),
             )
             recycle()
             colors

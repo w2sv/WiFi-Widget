@@ -48,7 +48,7 @@ class WidgetProvider : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent)  // Required for DI
+        super.onReceive(context, intent) // Required for DI
 
         i {
             "${this::class.java.simpleName}.onReceive | ${intent?.action} | ${
@@ -66,13 +66,13 @@ class WidgetProvider : AppWidgetProvider() {
                 onUpdate(
                     context,
                     appWidgetManager,
-                    appWidgetManager.getWifiWidgetIds(context)
+                    appWidgetManager.getWifiWidgetIds(context),
                 )
             }
 
             AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> intent.getIntExtraOrNull(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
-                -1
+                -1,
             )?.let { widgetId ->
                 i { "AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED | id = $widgetId" }
                 widgetRepository.onWidgetOptionsChanged(widgetId)
@@ -83,7 +83,7 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray
+        appWidgetIds: IntArray,
     ) {
         i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
@@ -96,10 +96,10 @@ class WidgetProvider : AppWidgetProvider() {
                     .populate(
                         RemoteViews(
                             context.packageName,
-                            R.layout.widget
+                            R.layout.widget,
                         ),
-                        id
-                    )
+                        id,
+                    ),
             )
         }
     }

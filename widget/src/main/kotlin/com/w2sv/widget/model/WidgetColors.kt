@@ -8,18 +8,18 @@ import com.w2sv.androidutils.ui.getAlphaSetColor
 data class WidgetColors(
     @ColorInt val background: Int,
     @ColorInt val primary: Int,
-    @ColorInt val secondary: Int
+    @ColorInt val secondary: Int,
 ) {
     data class Resources(
         @ColorRes val background: Int,
         @ColorRes val primary: Int,
-        @ColorRes val secondary: Int
+        @ColorRes val secondary: Int,
     ) {
         fun getColors(context: Context): WidgetColors =
             WidgetColors(
                 context.getColor(background),
                 context.getColor(primary),
-                context.getColor(secondary)
+                context.getColor(secondary),
             )
     }
 

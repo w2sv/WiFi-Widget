@@ -8,9 +8,9 @@ import com.w2sv.androidutils.lifecycle.SelfManagingLocalBroadcastReceiver
 
 class AppWidgetOptionsChangedReceiver(
     context: Context,
-    callback: (Context?, Intent?) -> Unit
+    callback: (Context?, Intent?) -> Unit,
 ) : SelfManagingLocalBroadcastReceiver.Impl(
     context,
     IntentFilter(AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED),
-    callback
+    callback,
 )

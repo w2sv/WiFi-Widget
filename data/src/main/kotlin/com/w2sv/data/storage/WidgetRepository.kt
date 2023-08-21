@@ -24,7 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 class WidgetRepository @Inject constructor(
-    dataStore: DataStore<Preferences>
+    dataStore: DataStore<Preferences>,
 ) : PreferencesDataStoreRepository(dataStore) {
 
     val optionsChangedWidgetId get() = _optionsChangedWidgetId.asSharedFlow()

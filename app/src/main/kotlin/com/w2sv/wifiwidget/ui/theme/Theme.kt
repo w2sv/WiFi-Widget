@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 fun AppTheme(
     useDynamicTheme: Boolean = false,
     darkTheme: Boolean = false,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     MaterialTheme(
         colorScheme = when {
@@ -22,7 +22,7 @@ fun AppTheme(
             useDynamicTheme && !darkTheme -> dynamicLightColorScheme(LocalContext.current)
             !useDynamicTheme && darkTheme -> darkColors
             else -> lightColors
-        }
+        },
     ) {
         content()
     }
@@ -59,7 +59,6 @@ private val lightColors = lightColorScheme(
     outlineVariant = md_theme_light_outlineVariant,
     scrim = md_theme_light_scrim,
 )
-
 
 private val darkColors = darkColorScheme(
     primary = md_theme_dark_primary,

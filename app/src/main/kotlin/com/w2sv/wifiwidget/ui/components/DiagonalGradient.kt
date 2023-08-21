@@ -8,8 +8,8 @@ fun diagonalGradient(lowerLeftCorner: Color, upperRightCorner: Color): Brush =
     Brush.linearGradient(
         listOf(
             lowerLeftCorner,
-            upperRightCorner
+            upperRightCorner,
         ),
         start = Offset(0f, Float.POSITIVE_INFINITY),
-        end = Offset(Float.POSITIVE_INFINITY, 0f)
+        end = Offset(Float.POSITIVE_INFINITY, 0f),
     )

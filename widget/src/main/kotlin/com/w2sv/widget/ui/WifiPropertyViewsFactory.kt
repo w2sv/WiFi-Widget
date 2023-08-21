@@ -19,7 +19,7 @@ import kotlin.properties.Delegates
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val valueGetterResources: WifiProperty.ValueGetterResources
+    private val valueGetterResources: WifiProperty.ValueGetterResources,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -42,8 +42,8 @@ class WifiPropertyViewsFactory @Inject constructor(
                     is WifiProperty.Value.Singular -> {
                         add(
                             WifiPropertyLayoutViewData.WifiProperty(
-                                context.getString(it.viewData.labelRes), value.value
-                            )
+                                context.getString(it.viewData.labelRes), value.value,
+                            ),
                         )
                     }
 
@@ -67,14 +67,14 @@ class WifiPropertyViewsFactory @Inject constructor(
                                             append(" ${enumerationTag(i)}")
                                         }
                                     },
-                                    address.hostAddressRepresentation
-                                )
+                                    address.hostAddressRepresentation,
+                                ),
                             )
                             add(
                                 WifiPropertyLayoutViewData.IPProperties(
                                     ipAddress = address,
-                                    showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty)
-                                )
+                                    showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty),
+                                ),
                             )
                         }
                     }

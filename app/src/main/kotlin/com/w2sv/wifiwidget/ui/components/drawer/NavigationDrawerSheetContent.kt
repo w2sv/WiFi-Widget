@@ -37,7 +37,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 @Composable
 internal fun NavigationDrawerSheetContent(
     closeDrawer: () -> Unit,
-    appearanceSection: @Composable (Modifier) -> Unit
+    appearanceSection: @Composable (Modifier) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -48,7 +48,7 @@ internal fun NavigationDrawerSheetContent(
                 SheetView.Custom {
                     appearanceSection(
                         Modifier
-                            .padding(top = 12.dp, bottom = 18.dp)
+                            .padding(top = 12.dp, bottom = 18.dp),
                     )
                 },
                 SheetView.SubHeader(R.string.support),
@@ -60,7 +60,7 @@ internal fun NavigationDrawerSheetContent(
                             .setType("text/plain")
                             .setText(context.getString(R.string.share_action_text))
                             .startChooser()
-                    }
+                    },
                 ),
                 SheetView.Item(
                     iconRes = R.drawable.ic_star_rate_24,
@@ -70,14 +70,14 @@ internal fun NavigationDrawerSheetContent(
                             it.startActivity(
                                 Intent(
                                     Intent.ACTION_VIEW,
-                                    Uri.parse(appPlayStoreUrl(it))
+                                    Uri.parse(appPlayStoreUrl(it)),
                                 )
-                                    .setPackage("com.android.vending")
+                                    .setPackage("com.android.vending"),
                             )
                         } catch (e: ActivityNotFoundException) {
                             it.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
                         }
-                    }
+                    },
                 ),
                 SheetView.SubHeader(R.string.legal),
                 SheetView.Item(
@@ -85,14 +85,14 @@ internal fun NavigationDrawerSheetContent(
                     labelRes = R.string.privacy_policy,
                     onClick = {
                         it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md")
-                    }
+                    },
                 ),
                 SheetView.Item(
                     iconRes = R.drawable.ic_copyright_24,
                     labelRes = R.string.license,
                     onClick = {
                         it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE")
-                    }
+                    },
                 ),
                 SheetView.SubHeader(R.string.about),
                 SheetView.Item(
@@ -100,15 +100,15 @@ internal fun NavigationDrawerSheetContent(
                     labelRes = R.string.creator,
                     onClick = {
                         it.openUrlWithActivityNotFoundHandling("https://play.google.com/store/apps/dev?id=6884111703871536890")
-                    }
+                    },
                 ),
                 SheetView.Item(
                     iconRes = R.drawable.ic_github_24,
                     labelRes = R.string.source,
                     onClick = {
                         it.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
-                    }
-                )
+                    },
+                ),
             )
         }
             .forEach {
@@ -134,24 +134,23 @@ private sealed interface SheetView {
     data class Item(
         @DrawableRes val iconRes: Int,
         @StringRes val labelRes: Int,
-        val onClick: (Context) -> Unit
+        val onClick: (Context) -> Unit,
     ) : SheetView
 
     @Stable
     data class SubHeader(
-        @StringRes val titleRes: Int
+        @StringRes val titleRes: Int,
     ) : SheetView
 
     data class Custom(
-        val content: @Composable () -> Unit
+        val content: @Composable () -> Unit,
     ) : SheetView
 }
-
 
 @Composable
 private fun ColumnScope.DrawerSheetSubHeader(
     @StringRes titleRes: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     JostText(
         text = stringResource(id = titleRes),
@@ -160,7 +159,7 @@ private fun ColumnScope.DrawerSheetSubHeader(
             .align(Alignment.CenterHorizontally),
         fontSize = 16.sp,
         fontWeight = FontWeight.SemiBold,
-        color = MaterialTheme.colorScheme.tertiary
+        color = MaterialTheme.colorScheme.tertiary,
     )
 }
 
@@ -168,7 +167,7 @@ private fun ColumnScope.DrawerSheetSubHeader(
 private fun DrawerSheetItem(
     item: SheetView.Item,
     closeDrawer: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
 
@@ -187,14 +186,14 @@ private fun DrawerSheetItem(
                 .size(size = dimensionResource(id = R.dimen.size_icon)),
             painter = painterResource(id = item.iconRes),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary,
         )
 
         JostText(
             text = stringResource(id = item.labelRes),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 18.sp,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
         )
     }
 }

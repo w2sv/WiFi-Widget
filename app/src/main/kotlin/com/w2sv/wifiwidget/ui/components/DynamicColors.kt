@@ -21,26 +21,26 @@ fun UseDynamicColorsRow(
     useDynamicColors: Boolean,
     onToggleDynamicColors: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = horizontalArrangement,
         modifier = Modifier
             .fillMaxWidth()
-            .then(modifier)
+            .then(modifier),
     ) {
         JostText(
             text = stringResource(R.string.use_dynamic_colors),
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
         Switch(
             checked = useDynamicColors,
             onCheckedChange = {
                 onToggleDynamicColors(
-                    it
+                    it,
                 )
-            }
+            },
         )
     }
 }

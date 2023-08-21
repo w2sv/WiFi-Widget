@@ -30,10 +30,10 @@ fun AppWidgetManager.attemptWifiWidgetPin(context: Context) {
         requestPinAppWidget(
             ComponentName(
                 context,
-                WidgetProvider::class.java
+                WidgetProvider::class.java,
             ),
             null,
-            null
+            null,
         )
     } else {
         context.showToast(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher)

@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.Flow
 
 fun <K, V> ViewModel.getUnconfirmedStateMap(
     appliedFlowMap: Map<K, Flow<V>>,
-    syncState: suspend (Map<K, V>) -> Unit
+    syncState: suspend (Map<K, V>) -> Unit,
 ): UnconfirmedStateMap<K, V> =
     UnconfirmedStateMap(
         coroutineScope = viewModelScope,
         appliedFlowMap = appliedFlowMap,
         makeSynchronousMutableMap = { it.getSynchronousMutableStateMap() },
-        syncState = syncState
+        syncState = syncState,
     )

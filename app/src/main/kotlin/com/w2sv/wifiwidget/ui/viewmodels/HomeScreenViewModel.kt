@@ -12,8 +12,8 @@ import com.w2sv.data.networking.WifiStatusMonitor
 import com.w2sv.data.storage.PreferencesRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.LocationAccessPermissionUIState
-import com.w2sv.wifiwidget.ui.screens.home.components.wifi_status.WifiStatusUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +26,7 @@ class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
     @ApplicationContext context: Context,
     wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
-    wifiStatusMonitor: WifiStatusMonitor
+    wifiStatusMonitor: WifiStatusMonitor,
 ) : ViewModel() {
 
     fun onStart(context: Context) {
@@ -56,7 +56,7 @@ class HomeScreenViewModel @Inject constructor(
         preferencesRepository = preferencesRepository,
         snackbarHostState = snackbarHostState,
         scope = viewModelScope,
-        context = context
+        context = context,
     )
         .apply {
             viewModelScope.launch {
@@ -71,7 +71,7 @@ class HomeScreenViewModel @Inject constructor(
     val wifiStatusUIState = WifiStatusUIState(
         wifiPropertyValueGetterResourcesProvider,
         wifiStatusMonitor,
-        viewModelScope
+        viewModelScope,
     )
 
     // ==============
@@ -89,12 +89,12 @@ class HomeScreenViewModel @Inject constructor(
                 viewModelScope.launch {
                     exitApplication.emit(Unit)
                 }
-            }
+            },
         )
     }
 
     private val backPressHandler = BackPressHandler(
         viewModelScope,
-        2500L
+        2500L,
     )
 }

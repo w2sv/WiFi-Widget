@@ -12,12 +12,12 @@ import androidx.compose.ui.graphics.Color
 fun InfoIcon(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    tint: Color = MaterialTheme.colorScheme.primary
+    tint: Color = MaterialTheme.colorScheme.primary,
 ) {
     Icon(
         imageVector = Icons.Outlined.Info,
         contentDescription = contentDescription,
         tint = tint,
-        modifier = modifier
+        modifier = modifier,
     )
 }

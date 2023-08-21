@@ -13,14 +13,14 @@ data class IPAddress(
     private val hostAddress: String?,
     val localAttributes: LocalAttributes,
     val isLoopback: Boolean,
-    val isMulticast: Boolean
+    val isMulticast: Boolean,
 ) {
     constructor(linkAddress: LinkAddress) : this(
         linkAddress.prefixLength,
         linkAddress.address.hostAddress,
         LocalAttributes.get(linkAddress.address),
         linkAddress.address.isLoopbackAddress,
-        linkAddress.address.isMulticastAddress
+        linkAddress.address.isMulticastAddress,
     )
 
     /**
@@ -29,9 +29,9 @@ data class IPAddress(
     fun getNetmask(): String {
         val shift = 0xffffffff shl (32 - prefixLength)
         return "${((shift and 0xff000000) shr 24) and 0xff}" +
-                ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-                ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-                ".${(shift and 0x000000ff) and 0xff}"
+            ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+            ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+            ".${(shift and 0x000000ff) and 0xff}"
     }
 
     val type: Type = if (prefixLength < 64) Type.V4 else Type.V6
@@ -40,13 +40,13 @@ data class IPAddress(
 
     enum class Type(val fallbackAddress: String) {
         V4("0.0.0.0"),
-        V6("::::::")
+        V6("::::::"),
     }
 
     data class LocalAttributes(
         val linkLocal: Boolean,
         val siteLocal: Boolean,
-        val anyLocal: Boolean
+        val anyLocal: Boolean,
     ) {
         val properties: List<Boolean> get() = listOf(linkLocal, siteLocal, anyLocal)
 
@@ -55,7 +55,7 @@ data class IPAddress(
                 LocalAttributes(
                     inetAddress.isLinkLocalAddress,
                     inetAddress.isSiteLocalAddress,
-                    inetAddress.isAnyLocalAddress
+                    inetAddress.isAnyLocalAddress,
                 )
         }
     }
@@ -122,6 +122,6 @@ fun textualIPv4Representation(address: Int): String? =
             .allocate(Integer.BYTES)
             .order(ByteOrder.LITTLE_ENDIAN)
             .putInt(address)
-            .array()
+            .array(),
     )
         .hostAddress

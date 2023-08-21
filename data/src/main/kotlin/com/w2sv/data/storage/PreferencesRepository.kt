@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PreferencesRepository @Inject constructor(
-    dataStore: DataStore<Preferences>
+    dataStore: DataStore<Preferences>,
 ) : PreferencesDataStoreRepository(dataStore) {
 
     val locationAccessPermissionRationalShown: Flow<Boolean> =

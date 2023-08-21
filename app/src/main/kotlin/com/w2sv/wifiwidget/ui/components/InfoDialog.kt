@@ -21,7 +21,7 @@ fun InfoDialog(
     text: String,
     modifier: Modifier = Modifier,
     learnMoreButton: (@Composable () -> Unit)? = null,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
 ) {
     AlertDialog(
         modifier = modifier,
@@ -36,7 +36,7 @@ fun InfoDialog(
             JostText(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         },
         text = {
@@ -46,11 +46,11 @@ fun InfoDialog(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
                 Arrangement.Center,
-                Alignment.CenterHorizontally
+                Alignment.CenterHorizontally,
             ) {
                 JostText(text = text, textAlign = TextAlign.Center)
                 learnMoreButton?.invoke()
             }
-        }
+        },
     )
 }

@@ -16,7 +16,7 @@ fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
     inAppThemeVM: NavigationDrawerViewModel = viewModel(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -36,13 +36,13 @@ fun NavigationDrawer(
                             onThemeSelected = { inAppThemeVM.saveInAppTheme(it) },
                             useDynamicColors = inAppThemeVM.useDynamicTheme.collectAsState(false).value,
                             onToggleDynamicColors = { inAppThemeVM.saveUseDynamicTheme(it) },
-                            modifier = modifier
+                            modifier = modifier,
                         )
-                    }
+                    },
                 )
             }
         },
-        drawerState = state
+        drawerState = state,
     ) {
         content()
     }

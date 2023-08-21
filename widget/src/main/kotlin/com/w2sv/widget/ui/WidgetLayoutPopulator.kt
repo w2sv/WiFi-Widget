@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 class WidgetLayoutPopulator @Inject constructor(
     private val appearance: WidgetAppearance,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) {
     private val colors by lazy {
         appearance.getColors(context)
@@ -41,11 +41,11 @@ class WidgetLayoutPopulator @Inject constructor(
         widget.apply {
             setContentLayout(
                 wifiStatus = WifiStatus.get(context),
-                appWidgetId = appWidgetId
+                appWidgetId = appWidgetId,
             )
             setBackgroundColor(
                 id = R.id.widget_layout,
-                color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
+                color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
             )
             setLastUpdatedTV()
             setButtons(buttons = appearance.buttons)
@@ -54,12 +54,14 @@ class WidgetLayoutPopulator @Inject constructor(
     private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
         when (wifiStatus == WifiStatus.Connected) {
             true -> crossVisualize(
-                R.id.no_connection_available_layout, R.id.wifi_property_list_view
+                R.id.no_connection_available_layout,
+                R.id.wifi_property_list_view,
             )
 
             false -> {
                 crossVisualize(
-                    R.id.wifi_property_list_view, R.id.no_connection_available_layout
+                    R.id.wifi_property_list_view,
+                    R.id.no_connection_available_layout,
                 )
             }
         }
@@ -72,7 +74,7 @@ class WidgetLayoutPopulator @Inject constructor(
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-                        }
+                        },
                 )
 
                 AppWidgetManager.getInstance(context)
@@ -83,12 +85,13 @@ class WidgetLayoutPopulator @Inject constructor(
                 setTextView(
                     viewId = R.id.wifi_status_tv,
                     text = context.getString(
-                        if (wifiStatus == WifiStatus.Disabled)
+                        if (wifiStatus == WifiStatus.Disabled) {
                             com.w2sv.common.R.string.wifi_disabled
-                        else
+                        } else {
                             com.w2sv.common.R.string.no_wifi_connection
+                        },
                     ),
-                    color = colors.secondary
+                    color = colors.secondary,
                 )
             }
         }
@@ -105,9 +108,10 @@ class WidgetLayoutPopulator @Inject constructor(
 
             val now = Date()
             setTextViewText(
-                R.id.last_updated_tv, "${
+                R.id.last_updated_tv,
+                "${
                     DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
-                } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}"
+                } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
             )
         } else {
             setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
@@ -117,15 +121,15 @@ class WidgetLayoutPopulator @Inject constructor(
     private fun RemoteViews.setButtons(buttons: WidgetButtons) {
         setViewVisibility(
             R.id.refresh_button,
-            if (buttons.refresh) View.VISIBLE else View.GONE
+            if (buttons.refresh) View.VISIBLE else View.GONE,
         )
         setViewVisibility(
             R.id.go_to_wifi_settings_button,
-            if (buttons.goToWifiSettings) View.VISIBLE else View.GONE
+            if (buttons.goToWifiSettings) View.VISIBLE else View.GONE,
         )
         setViewVisibility(
             R.id.go_to_widget_settings_button,
-            if (buttons.goToWidgetSettings) View.VISIBLE else View.GONE
+            if (buttons.goToWidgetSettings) View.VISIBLE else View.GONE,
         )
 
         setColorFilter(R.id.refresh_button, colors.primary)
@@ -138,8 +142,8 @@ class WidgetLayoutPopulator @Inject constructor(
                 context,
                 PendingIntentCode.RefreshWidgetData.ordinal,
                 WidgetProvider.getRefreshDataIntent(context),
-                PendingIntent.FLAG_IMMUTABLE
-            )
+                PendingIntent.FLAG_IMMUTABLE,
+            ),
         )
 
         setOnClickPendingIntent(
@@ -148,8 +152,8 @@ class WidgetLayoutPopulator @Inject constructor(
                 context,
                 PendingIntentCode.GoToWifiSettings.ordinal,
                 goToWifiSettingsIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            ),
         )
 
         setOnClickPendingIntent(
@@ -159,13 +163,15 @@ class WidgetLayoutPopulator @Inject constructor(
                 PendingIntentCode.LaunchHomeActivity.ordinal,
                 Intent.makeRestartActivityTask(
                     ComponentName(
-                        context, "com.w2sv.wifiwidget.ui.MainActivity"
-                    )
+                        context,
+                        "com.w2sv.wifiwidget.ui.MainActivity",
+                    ),
                 ).putExtra(
-                    Extra.OPEN_WIDGET_CONFIGURATION_DIALOG, true
+                    Extra.OPEN_WIDGET_CONFIGURATION_DIALOG,
+                    true,
                 ),
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+            ),
         )
     }
 }

@@ -18,9 +18,9 @@ import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.location_access_permission.hasBackgroundLocationAccess
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configuration_dialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -40,7 +40,7 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
 ) :
     ViewModel() {
 
@@ -71,38 +71,39 @@ class WidgetViewModel @Inject constructor(
 
         viewModelScope.launch {
             if (configuration.wifiProperties.getValue(WifiProperty.SSID) || configuration.wifiProperties.getValue(
-                    WifiProperty.BSSID
+                    WifiProperty.BSSID,
                 )
-            )
+            ) {
                 when {
                     !context.isLocationEnabled -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
                             context.getString(R.string.on_pin_widget_wo_gps_enabled),
-                            kind = SnackbarKind.Error
-                        )
+                            kind = SnackbarKind.Error,
+                        ),
                     )
 
                     !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
                             context.getString(R.string.on_pin_widget_wo_location_access_permission),
-                            kind = SnackbarKind.Error
-                        )
+                            kind = SnackbarKind.Error,
+                        ),
                     )
 
                     !hasBackgroundLocationAccess(context) ->
                         _snackbarVisuals.emit(
                             AppSnackbarVisuals(
                                 context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
-                                kind = SnackbarKind.Error
-                            )
+                                kind = SnackbarKind.Error,
+                            ),
                         )
                 }
+            }
 
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
                     message = context.getString(R.string.pinned_widget),
-                    kind = SnackbarKind.Success
-                )
+                    kind = SnackbarKind.Success,
+                ),
             )
         }
     }
@@ -121,17 +122,17 @@ class WidgetViewModel @Inject constructor(
         UnconfirmedWidgetConfiguration(
             getUnconfirmedStateMap(
                 appliedFlowMap = repository.wifiProperties,
-                syncState = { repository.saveMap(it) }
+                syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateMap(
                 repository.subWifiProperties,
-                syncState = { repository.saveMap(it) }
+                syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateMap(
                 appliedFlowMap = repository.buttonMap,
                 syncState = {
                     repository.saveMap(it)
-                }
+                },
             ),
             getUnconfirmedStateMap(
                 appliedFlowMap = repository.refreshingParametersMap,
@@ -140,29 +141,29 @@ class WidgetViewModel @Inject constructor(
                     withContext(Dispatchers.IO) {
                         widgetDataRefreshWorkerManager.applyChangedParameters()
                     }
-                }
+                },
             ),
             getUnconfirmedStateFlow(
                 appliedFlow = repository.useDynamicColors,
                 syncState = {
                     repository.savUseDynamicColors(it)
-                }
+                },
             ),
             getUnconfirmedStateFlow(
                 appliedFlow = repository.theme,
                 syncState = {
                     repository.saveTheme(it)
-                }
+                },
             ),
             getUnconfirmedStateMap(
                 appliedFlowMap = repository.customColorsMap,
-                syncState = { repository.saveMap(it) }
+                syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateFlow(
                 appliedFlow = repository.opacity,
-                syncState = { repository.saveOpacity(it) }
+                syncState = { repository.saveOpacity(it) },
             ),
-            scope = viewModelScope
+            scope = viewModelScope,
         )
     }
 
@@ -173,8 +174,8 @@ class WidgetViewModel @Inject constructor(
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
                     message = context.getString(R.string.updated_widget_configuration),
-                    kind = SnackbarKind.Success
-                )
+                    kind = SnackbarKind.Success,
+                ),
             )
         }
     }

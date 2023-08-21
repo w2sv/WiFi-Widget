@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 fun <T> InBetweenSpaced(
     elements: List<T>,
     makeElement: @Composable (T) -> Unit,
-    spacer: @Composable () -> Unit
+    spacer: @Composable () -> Unit,
 ) {
     elements.forEachIndexed { index, element ->
         makeElement(element)

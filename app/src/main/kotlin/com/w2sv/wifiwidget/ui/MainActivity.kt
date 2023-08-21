@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
                     homeScreenVM.showWidgetConfigurationDialog.value = true
                 }
-            }
+            },
         )
 
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     Theme.Dark -> true
                     Theme.SystemDefault -> isSystemInDarkTheme()
                     else -> throw Error()
-                }
+                },
             ) {
                 HomeScreen()
             }
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
                 splashScreenViewProvider.view,
                 View.TRANSLATION_Y,
                 0f,
-                -splashScreenViewProvider.view.height.toFloat()
+                -splashScreenViewProvider.view.height.toFloat(),
             )
                 .apply {
                     interpolator = AnticipateInterpolator()

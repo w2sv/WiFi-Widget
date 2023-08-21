@@ -12,7 +12,7 @@ fun circularTrifoldStripeBrush(a: Color, b: Color, c: Color): Brush =
         0.4f to a,
         0.4f to b,
         0.6f to b,
-        0.6f to c
+        0.6f to c,
     )
 
 fun circularTrifoldStripeBrush(colors: Triple<Color, Color, Color>): Brush =

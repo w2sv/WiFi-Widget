@@ -32,7 +32,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
 
     class Manager @Inject constructor(
         private val workManager: WorkManager,
-        private val widgetRepository: WidgetRepository
+        private val widgetRepository: WidgetRepository,
     ) {
 
         private val refreshing: WidgetRefreshing get() = widgetRepository.refreshing.getValueSynchronously()
@@ -54,10 +54,10 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
                     .setConstraints(
                         Constraints.Builder()
                             .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshing.refreshOnLowBattery)
-                            .build()
+                            .build(),
                     )
                     .setInitialDelay(refreshPeriod)
-                    .build()
+                    .build(),
             )
             i { "Enqueued $UNIQUE_WORK_NAME" }
         }
