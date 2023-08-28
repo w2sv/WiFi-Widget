@@ -15,7 +15,7 @@ fun Context.logConnectionInfo() {
     @Suppress("DEPRECATION")
     i {
         "wifiManager.connectionInfo: ${wifiManager.connectionInfo}\n" +
-            "wifiManager.dhcpInfo: ${wifiManager.dhcpInfo}\n" +
-            "connectivityManager.linkProperties: ${connectivityManager.linkProperties}"
+                "wifiManager.dhcpInfo: ${wifiManager.dhcpInfo}\n" +
+                "connectivityManager.linkProperties: ${connectivityManager.linkProperties}"
     }
 }
