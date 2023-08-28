@@ -33,7 +33,6 @@ sealed class WifiProperty(
         getValue,
         DataStoreEntry.UniType.Impl(preferencesKey, defaultValue = false),
     ) {
-
         open val subProperties: List<SubProperty> = listOf(prefixLengthSubProperty)
 
         class SubProperty(
