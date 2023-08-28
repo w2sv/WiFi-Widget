@@ -2,6 +2,9 @@ SHELL=/bin/bash
 
 VERSION := $(shell ./get-version.sh)
 
+optimize-drawables:
+	@avocado app/src/main/res/drawable/*.xml
+
 ktlint:
 	@ktlint --color
 

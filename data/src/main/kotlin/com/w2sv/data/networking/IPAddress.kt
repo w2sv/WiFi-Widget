@@ -29,9 +29,9 @@ data class IPAddress(
     fun getNetmask(): String {
         val shift = 0xffffffff shl (32 - prefixLength)
         return "${((shift and 0xff000000) shr 24) and 0xff}" +
-                ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-                ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-                ".${(shift and 0x000000ff) and 0xff}"
+            ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+            ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+            ".${(shift and 0x000000ff) and 0xff}"
     }
 
     val type: Type = if (prefixLength < 64) Type.V4 else Type.V6
