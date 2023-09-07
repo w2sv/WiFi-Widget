@@ -20,7 +20,7 @@ colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9'
 
 # Androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.6.1'
-androidx-core = 'androidx.core:core-ktx:1.10.1'
+androidx-core = 'androidx.core:core-ktx:1.12.0'
 androidx-localbroadcastmanager = 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 androidx-splashscreen = 'androidx.core:core-splashscreen:1.0.1'
 androidx-lifecycle-runtime = { module = 'androidx.lifecycle:lifecycle-runtime-ktx', version.ref = 'lifecycle' }
