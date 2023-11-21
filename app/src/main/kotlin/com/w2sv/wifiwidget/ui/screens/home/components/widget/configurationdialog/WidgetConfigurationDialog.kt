@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CustomDialog
@@ -73,7 +73,7 @@ fun WidgetConfigurationDialog(
                 widgetVM.syncConfiguration(context)
                 closeDialog()
             },
-            applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsState().value,
+            applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsStateWithLifecycle().value,
             modifier = Modifier.fillMaxWidth(),
         )
     }

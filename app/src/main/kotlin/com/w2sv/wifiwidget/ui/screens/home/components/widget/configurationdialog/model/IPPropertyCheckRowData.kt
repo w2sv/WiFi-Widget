@@ -5,8 +5,8 @@ import com.w2sv.data.model.WifiProperty
 
 @Stable
 class IPPropertyCheckRowData(
-    type: WifiProperty.IPProperty,
+    type: WidgetWifiProperty.IPProperty,
     isCheckedMap: MutableMap<WifiProperty, Boolean>,
-    val subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
+    val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
 ) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)

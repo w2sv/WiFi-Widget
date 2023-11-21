@@ -36,7 +36,7 @@ import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 
 @Stable
-data class WifiPropertyViewData(val property: WifiProperty, val value: WifiProperty.Value)
+data class WifiPropertyViewData(val property: WifiProperty, val value: WidgetWifiProperty.Value)
 
 @Composable
 fun WifiPropertiesList(
@@ -68,7 +68,7 @@ fun WifiPropertiesList(
             val propertyName = stringResource(id = viewData.property.viewData.labelRes)
 
             when (val value = viewData.value) {
-                is WifiProperty.Value.Singular -> {
+                is WidgetWifiProperty.Value.Singular -> {
                     WifiPropertyRow(
                         propertyName = propertyName,
                         value = value.value,
@@ -76,7 +76,7 @@ fun WifiPropertiesList(
                     )
                 }
 
-                is WifiProperty.Value.IPAddresses -> {
+                is WidgetWifiProperty.Value.IPAddresses -> {
                     if (value.addresses.size > 1) {
                         value.addresses.forEachIndexed { i, address ->
                             WifiPropertyRow(

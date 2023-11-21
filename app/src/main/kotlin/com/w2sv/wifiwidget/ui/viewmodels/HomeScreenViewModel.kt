@@ -25,7 +25,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
     @ApplicationContext context: Context,
-    wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
+    wifiPropertyValueGetterResourcesProvider: WidgetWifiProperty.ValueGetterResources.Provider,
     wifiStatusMonitor: WifiStatusMonitor,
 ) : ViewModel() {
 

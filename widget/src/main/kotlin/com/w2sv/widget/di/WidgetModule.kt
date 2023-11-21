@@ -38,8 +38,8 @@ object WidgetModule {
         widgetRepository.getEnabledWifiProperties()
 
     @Provides
-    fun wifiPropertyGetterResources(@ApplicationContext context: Context): WifiProperty.ValueGetterResources =
-        WifiProperty.ValueGetterResources(context)
+    fun wifiPropertyGetterResources(@ApplicationContext context: Context): WidgetWifiProperty.ValueGetterResources =
+        WidgetWifiProperty.ValueGetterResources(context)
 
     @Provides
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =

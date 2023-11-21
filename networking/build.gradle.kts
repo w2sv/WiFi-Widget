@@ -4,11 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.common)
-    implementation(projects.domain)
-
     implementation(libs.androidx.core)
-    implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.appcompat)
 
     implementation(libs.androidutils)
     implementation(libs.slimber)

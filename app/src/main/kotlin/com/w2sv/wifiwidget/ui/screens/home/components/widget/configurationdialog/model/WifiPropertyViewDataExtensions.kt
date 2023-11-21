@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import com.w2sv.data.model.WifiProperty
 
-val WifiProperty.ViewData.infoDialogData: PropertyInfoDialogData
+val WidgetWifiProperty.ViewData.infoDialogData: PropertyInfoDialogData
     get() = PropertyInfoDialogData(
         labelRes,
         descriptionRes,

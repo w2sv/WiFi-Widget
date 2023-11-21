@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -24,7 +23,7 @@ android {
         versionName = version.toString()
 
         // Store bundles as "{versionName}-{buildFlavor}.aab"
-        archivesName = versionName
+//        archivesName = versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -100,9 +99,10 @@ play {
 
 dependencies {
     // Project modules
-    implementation(project(":widget"))
-    implementation(project(":common"))
-    implementation(project(":data"))
+    implementation(projects.widget)
+    implementation(projects.common)
+    implementation(projects.domain)
+    implementation(projects.data)
 
     // Custom libraries
     implementation(libs.androidutils)
@@ -121,9 +121,9 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
     debugImplementation(libs.androidx.compose.ui.tooling)
-
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
+    implementation(libs.androidx.lifecycle.compose)
 
     // Other libraries
     implementation(libs.slimber)

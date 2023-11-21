@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.w2sv.data.model.WifiProperty
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.IPPropertyCheckRowData
@@ -16,9 +17,9 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 @Composable
 internal fun WifiPropertySelection(
-    wifiPropertiesMap: MutableMap<WifiProperty, Boolean>,
-    ipSubPropertiesMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
-    allowLAPDependentPropertyCheckChange: (WifiProperty, Boolean) -> Boolean,
+    wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
+    ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty, Boolean) -> Boolean,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -26,57 +27,57 @@ internal fun WifiPropertySelection(
         remember {
             listOf(
                 WifiPropertyCheckRowData(
-                    type = WifiProperty.SSID,
+                    type = WidgetWifiProperty.SSID,
                     isCheckedMap = wifiPropertiesMap,
                     allowCheckChange = {
                         allowLAPDependentPropertyCheckChange(
-                            WifiProperty.SSID,
+                            WidgetWifiProperty.SSID,
                             it,
                         )
                     },
                 ),
                 WifiPropertyCheckRowData(
-                    type = WifiProperty.BSSID,
+                    type = WidgetWifiProperty.BSSID,
                     isCheckedMap = wifiPropertiesMap,
                     allowCheckChange = {
                         allowLAPDependentPropertyCheckChange(
-                            WifiProperty.BSSID,
+                            WidgetWifiProperty.BSSID,
                             it,
                         )
                     },
                 ),
                 IPPropertyCheckRowData(
-                    WifiProperty.IPv4,
+                    WidgetWifiProperty.IPv4,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap,
                 ),
                 IPPropertyCheckRowData(
-                    WifiProperty.IPv6,
+                    WidgetWifiProperty.IPv6,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Frequency,
+                    WidgetWifiProperty.Frequency,
                     isCheckedMap = wifiPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Channel,
+                    WidgetWifiProperty.Channel,
                     isCheckedMap = wifiPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.LinkSpeed,
+                    WidgetWifiProperty.LinkSpeed,
                     isCheckedMap = wifiPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.Gateway,
+                    WidgetWifiProperty.Gateway,
                     isCheckedMap = wifiPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.DNS,
+                    WidgetWifiProperty.DNS,
                     isCheckedMap = wifiPropertiesMap,
                 ),
                 WifiPropertyCheckRowData(
-                    WifiProperty.DHCP,
+                    WidgetWifiProperty.DHCP,
                     isCheckedMap = wifiPropertiesMap,
                 ),
             )
@@ -103,7 +104,7 @@ private fun WifiPropertyCheckRow(
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
                 IPSubPropertyCheckRows(
-                    subProperties = (data.type as WifiProperty.IPProperty).subProperties,
+                    subProperties = (data.type as WidgetWifiProperty.IPProperty).subProperties,
                     subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
                     showInfoDialog = showInfoDialog,
                 )
@@ -114,8 +115,8 @@ private fun WifiPropertyCheckRow(
 
 @Composable
 private fun IPSubPropertyCheckRows(
-    subProperties: List<WifiProperty.IPProperty.SubProperty>,
-    subPropertyIsCheckedMap: MutableMap<WifiProperty.IPProperty.SubProperty, Boolean>,
+    subProperties: List<WidgetWifiProperty.IPProperty.SubProperty>,
+    subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
 ) {
     Column {
@@ -127,8 +128,8 @@ private fun IPSubPropertyCheckRows(
                     isCheckedMap = subPropertyIsCheckedMap,
                     allowCheckChange = { newValue ->
                         mapOf(
-                            WifiProperty.IPv6.includeLocal to WifiProperty.IPv6.includePublic,
-                            WifiProperty.IPv6.includePublic to WifiProperty.IPv6.includeLocal,
+                            WidgetWifiProperty.IPv6.includeLocal to WidgetWifiProperty.IPv6.includePublic,
+                            WidgetWifiProperty.IPv6.includePublic to WidgetWifiProperty.IPv6.includeLocal,
                         )[subProperty]
                             ?.let { inverseSubProperty ->
                                 if (!newValue && !subPropertyIsCheckedMap.getValue(

@@ -23,6 +23,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/networking" />
             <option value="$PROJECT_DIR$/plugins" />
             <option value="$PROJECT_DIR$/widget" />
           </set>

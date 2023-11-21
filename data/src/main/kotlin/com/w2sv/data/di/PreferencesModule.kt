@@ -26,4 +26,5 @@ object PreferencesModule {
         )
 }
 
-private val Context.sharedPreferencesName: String get() = packageName
+private val Context.sharedPreferencesName: String
+    get() = packageName

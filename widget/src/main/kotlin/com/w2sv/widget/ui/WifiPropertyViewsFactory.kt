@@ -19,7 +19,7 @@ import kotlin.properties.Delegates
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val valueGetterResources: WifiProperty.ValueGetterResources,
+    private val valueGetterResources: WidgetWifiProperty.ValueGetterResources,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -39,7 +39,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         propertyViewData = buildList {
             widgetRepository.getEnabledWifiProperties().forEach {
                 when (val value = it.getValue(valueGetterResources)) {
-                    is WifiProperty.Value.Singular -> {
+                    is WidgetWifiProperty.Value.Singular -> {
                         add(
                             WifiPropertyLayoutViewData.WifiProperty(
                                 context.getString(it.viewData.labelRes), value.value,
@@ -47,10 +47,10 @@ class WifiPropertyViewsFactory @Inject constructor(
                         )
                     }
 
-                    is WifiProperty.Value.IPAddresses -> {
+                    is WidgetWifiProperty.Value.IPAddresses -> {
                         val filteredAddresses = when (val ipProperty = value.property) {
-                            is WifiProperty.IPv4 -> value.addresses
-                            is WifiProperty.IPv6 -> value.addresses.filter { address ->
+                            is WidgetWifiProperty.IPv4 -> value.addresses
+                            is WidgetWifiProperty.IPv6 -> value.addresses.filter { address ->
                                 when {
                                     !ipSubProperties.getValue(ipProperty.includeLocal) -> !address.isLocal
                                     !ipSubProperties.getValue(ipProperty.includePublic) -> address.isLocal

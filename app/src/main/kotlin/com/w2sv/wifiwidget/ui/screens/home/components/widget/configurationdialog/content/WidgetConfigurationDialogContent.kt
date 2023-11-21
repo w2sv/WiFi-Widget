@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
@@ -45,10 +45,10 @@ internal fun WidgetConfigurationDialogContent(
         )
 
         ThemeSelection(
-            theme = widgetConfiguration.theme.collectAsState().value,
-            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsState(initial = false).value,
+            theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
+            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle(false).value,
             setTheme = { widgetConfiguration.theme.value = it },
-            useDynamicColors = widgetConfiguration.useDynamicColors.collectAsState().value,
+            useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
             setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
             customColorsMap = widgetConfiguration.customColorsMap,
         )
@@ -58,7 +58,7 @@ internal fun WidgetConfigurationDialogContent(
             headerRes = R.string.opacity,
         )
         OpacitySliderWithLabel(
-            opacity = widgetConfiguration.opacity.collectAsState().value,
+            opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
             onOpacityChanged = {
                 widgetConfiguration.opacity.value = it
             },

@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,17 +17,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.data.model.WifiProperty
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.utils.attemptWifiWidgetPin
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
@@ -44,16 +47,16 @@ import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiConnectionI
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable
 internal fun HomeScreen(
     homeScreenVM: HomeScreenViewModel = viewModel(),
+    context: Context = LocalContext.current,
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     NavigationDrawer(
@@ -107,8 +110,8 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         WifiConnectionInfoCard(
-            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
-            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
+            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
+            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
             showSnackbar = homeScreenVM::showSnackbar,
             modifier = Modifier.fillMaxWidth(0.4f),
         )
@@ -151,8 +154,8 @@ private fun PortraitMode(
     ) {
         Spacer(Modifier.weight(0.15f))
         WifiConnectionInfoCard(
-            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsState().value,
-            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsState().value,
+            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
+            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
             showSnackbar = homeScreenVM::showSnackbar,
             modifier = Modifier
                 .weight(0.8f)
@@ -192,20 +195,20 @@ private fun OverlayDialogs(
 ) {
     val context = LocalContext.current
 
-    homeScreenVM.lapUIState.rationalTriggeringAction.collectAsState().value?.let {
+    homeScreenVM.lapUIState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
         LocationAccessPermissionRationalDialog(
             onProceed = {
                 homeScreenVM.lapUIState.onRationalShown()
             },
         )
     }
-    homeScreenVM.lapUIState.requestLaunchingAction.collectAsState().value?.let { trigger ->
+    homeScreenVM.lapUIState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
         when (trigger) {
             is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
                 lapUIState = homeScreenVM.lapUIState,
                 onGranted = {
-                    widgetVM.configuration.wifiProperties[WifiProperty.SSID] = true
-                    widgetVM.configuration.wifiProperties[WifiProperty.BSSID] = true
+                    widgetVM.configuration.wifiProperties[WidgetWifiProperty.SSID] = true
+                    widgetVM.configuration.wifiProperties[WidgetWifiProperty.BSSID] = true
                     widgetVM.configuration.wifiProperties.sync()
                     attemptWifiWidgetPin(context)
                 },
@@ -223,14 +226,14 @@ private fun OverlayDialogs(
             )
         }
     }
-    if (homeScreenVM.showWidgetConfigurationDialog.collectAsState().value) {
+    if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {
         WidgetConfigurationDialog(
             closeDialog = {
                 homeScreenVM.showWidgetConfigurationDialog.value = false
             },
         )
 
-        widgetVM.propertyInfoDialogData.collectAsState().value?.let {
+        widgetVM.propertyInfoDialogData.collectAsStateWithLifecycle().value?.let {
             PropertyInfoDialog(
                 data = it,
                 onDismissRequest = { widgetVM.propertyInfoDialogData.reset() },
@@ -238,7 +241,7 @@ private fun OverlayDialogs(
         }
     }
     @SuppressLint("NewApi")
-    if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsState().value) {
+    if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
                 homeScreenVM.lapUIState.showBackgroundAccessRational.value = false
@@ -250,7 +253,7 @@ private fun OverlayDialogs(
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
     JostText(
-        text = "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV",
+        text = stringResource(R.string.copyright_text, Calendar.getInstance().get(Calendar.YEAR)),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
         modifier = modifier,

@@ -19,8 +19,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -32,7 +32,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.data.model.Theme
+import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.toEasing
@@ -52,35 +52,37 @@ fun ThemeSelectionRow(
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        buildList {
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.Light,
-                    labelRes = R.string.light,
-                    buttonColoring = ButtonColor.Uniform(Color.White),
-                ),
-            )
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.SystemDefault,
-                    labelRes = R.string.system_default,
-                    buttonColoring = ButtonColor.Gradient(
-                        Brush.linearGradient(
-                            0.5f to Color.White,
-                            0.5f to Color.Black,
+        remember(customThemeIndicatorProperties) {
+            buildList {
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.Light,
+                        labelRes = R.string.light,
+                        buttonColoring = ButtonColor.Uniform(Color.White),
+                    ),
+                )
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.SystemDefault,
+                        labelRes = R.string.system_default,
+                        buttonColoring = ButtonColor.Gradient(
+                            Brush.linearGradient(
+                                0.5f to Color.White,
+                                0.5f to Color.Black,
+                            ),
                         ),
                     ),
-                ),
-            )
-            add(
-                ThemeIndicatorProperties(
-                    theme = Theme.Dark,
-                    labelRes = R.string.dark,
-                    buttonColoring = ButtonColor.Uniform(Color.Black),
-                ),
-            )
-            customThemeIndicatorProperties?.let {
-                add(it)
+                )
+                add(
+                    ThemeIndicatorProperties(
+                        theme = Theme.Dark,
+                        labelRes = R.string.dark,
+                        buttonColoring = ButtonColor.Uniform(Color.Black),
+                    ),
+                )
+                customThemeIndicatorProperties?.let {
+                    add(it)
+                }
             }
         }
             .forEach { properties ->
@@ -105,7 +107,6 @@ fun ThemeSelectionRow(
     }
 }
 
-@Stable
 data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val labelRes: Int,

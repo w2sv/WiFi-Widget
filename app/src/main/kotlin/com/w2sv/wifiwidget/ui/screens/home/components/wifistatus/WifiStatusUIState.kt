@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class WifiStatusUIState(
-    private val wifiPropertyValueGetterResourcesProvider: WifiProperty.ValueGetterResources.Provider,
+    private val wifiPropertyValueGetterResourcesProvider: WidgetWifiProperty.ValueGetterResources.Provider,
     wifiStatusMonitor: WifiStatusMonitor,
     private val scope: CoroutineScope,
 ) {
@@ -57,7 +57,7 @@ class WifiStatusUIState(
     private fun getPropertiesViewData(): List<WifiPropertyViewData> {
         val valueGetterResources =
             wifiPropertyValueGetterResourcesProvider.provide()
-        return WifiProperty.values().map { property ->
+        return WidgetWifiProperty.values().map { property ->
             WifiPropertyViewData(
                 property,
                 property.getValue(valueGetterResources),

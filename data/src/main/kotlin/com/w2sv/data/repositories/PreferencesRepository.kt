@@ -5,8 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
-import com.w2sv.data.model.Theme
-import kotlinx.coroutines.flow.Flow
+import com.w2sv.domain.model.Theme
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,38 +14,15 @@ class PreferencesRepository @Inject constructor(
     dataStore: DataStore<Preferences>,
 ) : PreferencesDataStoreRepository(dataStore) {
 
-    val locationAccessPermissionRationalShown: Flow<Boolean> =
-        getFlow(Key.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN, false)
+    val locationAccessPermissionRationalShown =
+        getPersistedValue(booleanPreferencesKey("locationPermissionDialogAnswered"), false)
 
-    suspend fun saveLocationAccessPermissionRationalShown(value: Boolean) {
-        save(Key.LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN, value)
-    }
+    val locationAccessPermissionRequested = getPersistedValue(
+        booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce"),
+        false
+    )
 
-    val locationAccessPermissionRequested: Flow<Boolean> =
-        getFlow(Key.LOCATION_ACCESS_PERMISSION_REQUESTED, false)
+    val inAppTheme = getPersistedValue(intPreferencesKey("inAppTheme"), Theme.SystemDefault)
 
-    suspend fun saveLocationAccessPermissionRequestedAtLeastOnce(value: Boolean) {
-        save(Key.LOCATION_ACCESS_PERMISSION_REQUESTED, value)
-    }
-
-    val inAppTheme: Flow<Theme> = getEnumFlow(Key.IN_APP_THEME, Theme.SystemDefault)
-
-    val useDynamicTheme: Flow<Boolean> = getFlow(Key.USE_DYNAMIC_THEME, false)
-
-    suspend fun saveUseDynamicTheme(value: Boolean) {
-        save(Key.USE_DYNAMIC_THEME, value)
-    }
-
-    suspend fun saveInAppTheme(theme: Theme) {
-        save(Key.IN_APP_THEME, theme)
-    }
-
-    private object Key {
-        val LOCATION_ACCESS_PERMISSION_RATIONAL_SHOWN =
-            booleanPreferencesKey("locationPermissionDialogAnswered")
-        val LOCATION_ACCESS_PERMISSION_REQUESTED =
-            booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce")
-        val IN_APP_THEME = intPreferencesKey("inAppTheme")
-        val USE_DYNAMIC_THEME = booleanPreferencesKey("useDynamicTheme")
-    }
+    val useDynamicTheme = getPersistedValue(booleanPreferencesKey("useDynamicTheme"), false)
 }

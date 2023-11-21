@@ -1,18 +1,20 @@
 package com.w2sv.data.repositories
 
-import androidx.annotation.FloatRange
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.coroutines.getSynchronousMap
+import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
-import com.w2sv.data.model.Theme
-import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.model.widget.WidgetButton
-import com.w2sv.data.model.widget.WidgetColor
-import com.w2sv.data.model.widget.WidgetRefreshingParameter
+import com.w2sv.data.model.isEnabledDSE
+import com.w2sv.data.model.valueDSE
+import com.w2sv.domain.model.Theme
+import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetRefreshingParameter
+import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -36,45 +38,38 @@ class WidgetRepository @Inject constructor(
         }
     }
 
-    val theme: Flow<Theme> = getEnumFlow(Key.WIDGET_THEME, Theme.SystemDefault)
+    fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
+        getWidgetWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys
 
-    suspend fun saveTheme(theme: Theme) {
-        save(Key.WIDGET_THEME, theme)
+    // ================
+    // PersistedValue
+    // ================
+
+    val theme = getPersistedValue(intPreferencesKey("widgetTheme"), Theme.SystemDefault)
+
+    val useDynamicColors =
+        getPersistedValue(booleanPreferencesKey("widgetConfiguration.useDynamicColor"), false)
+
+    val opacity = getPersistedValue(floatPreferencesKey("opacity"), 1.0f)
+
+    // ================
+    // Map
+    // ================
+
+    fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>> =
+        getTypeToValueMap(WidgetColor.entries.associateBy { it.valueDSE })
+
+    fun getWidgetWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
+        getTypeToValueMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
+
+    fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> {
+        return getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
     }
 
-    val useDynamicColors: Flow<Boolean> = getFlow(Key.USE_DYNAMIC_COLORS, false)
-
-    suspend fun savUseDynamicColors(value: Boolean) {
-        save(Key.USE_DYNAMIC_COLORS, value)
+    fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> {
+        return getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
     }
 
-    val customColorsMap = getFlowMap(WidgetColor.entries)
-
-    val opacity: Flow<Float> = getFlow(Key.OPACITY, 1.0f)
-
-    suspend fun saveOpacity(@FloatRange(0.0, 1.0) opacity: Float) {
-        save(Key.OPACITY, opacity)
-    }
-
-    val wifiProperties = getFlowMap(WifiProperty.values().map { it })
-
-    val subWifiProperties =
-        WifiProperty.IPProperty.values()
-            .flatMap { it.subProperties }
-            .associateWith { subProperty ->
-                getFlow(subProperty)
-            }
-
-    fun getEnabledWifiProperties(): Set<WifiProperty> =
-        wifiProperties.getSynchronousMap().filterValues { it }.keys
-
-    val refreshingParametersMap = getFlowMap(WidgetRefreshingParameter.entries)
-
-    val buttonMap = getFlowMap(WidgetButton.entries)
-
-    private object Key {
-        val OPACITY = floatPreferencesKey("opacity")
-        val WIDGET_THEME = intPreferencesKey("widgetTheme")
-        val USE_DYNAMIC_COLORS = booleanPreferencesKey("widgetConfiguration.useDynamicColor")
-    }
+    private fun <E, V> getTypeToValueMap(dseToType: Map<DataStoreEntry.UniType<V>, E>): Map<E, Flow<V>> =
+        getFlowMap(dseToType.keys).mapKeys { (k, _) -> dseToType.getValue(k) }
 }

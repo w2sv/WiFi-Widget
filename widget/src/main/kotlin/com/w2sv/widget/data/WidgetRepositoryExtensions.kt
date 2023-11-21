@@ -22,7 +22,7 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
             transform = { a, b, c -> Triple(a, b, c) },
         ),
         opacity,
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
+        getRefreshingParametersEnablementMap().getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
         buttons,
         transform = { (useDynamicColors, theme, customColors), opacity, displayLastRefreshDateTime, buttons ->
             WidgetAppearance(
@@ -44,9 +44,9 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
 
 val WidgetRepository.buttons: Flow<WidgetButtons>
     get() = combine(
-        buttonMap.getValue(WidgetButton.Refresh),
-        buttonMap.getValue(WidgetButton.GoToWifiSettings),
-        buttonMap.getValue(WidgetButton.GoToWidgetSettings),
+        getButtonEnablementMap().getValue(WidgetButton.Refresh),
+        getButtonEnablementMap().getValue(WidgetButton.GoToWifiSettings),
+        getButtonEnablementMap().getValue(WidgetButton.GoToWidgetSettings),
         transform = { a, b, c ->
             WidgetButtons(refresh = a, goToWifiSettings = b, goToWidgetSettings = c)
         },
@@ -54,9 +54,9 @@ val WidgetRepository.buttons: Flow<WidgetButtons>
 
 val WidgetRepository.customColors: Flow<WidgetColors>
     get() = combine(
-        customColorsMap.getValue(WidgetColor.Background),
-        customColorsMap.getValue(WidgetColor.Primary),
-        customColorsMap.getValue(WidgetColor.Secondary),
+        getCustomColorsMap().getValue(WidgetColor.Background),
+        getCustomColorsMap().getValue(WidgetColor.Primary),
+        getCustomColorsMap().getValue(WidgetColor.Secondary),
         transform = { background, labels, other ->
             WidgetColors(background, labels, other)
         },
@@ -64,8 +64,8 @@ val WidgetRepository.customColors: Flow<WidgetColors>
 
 val WidgetRepository.refreshing: Flow<WidgetRefreshing>
     get() = combine(
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.RefreshPeriodically),
-        refreshingParametersMap.getValue(WidgetRefreshingParameter.RefreshOnLowBattery),
+        getRefreshingParametersEnablementMap().getValue(WidgetRefreshingParameter.RefreshPeriodically),
+        getRefreshingParametersEnablementMap().getValue(WidgetRefreshingParameter.RefreshOnLowBattery),
         transform = { refreshPeriodically, refreshOnLowBattery ->
             WidgetRefreshing(
                 refreshPeriodically = refreshPeriodically,

@@ -8,12 +8,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.collectAsState
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.w2sv.common.constants.Extra
-import com.w2sv.data.model.Theme
+import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -55,8 +55,12 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme(
-                useDynamicTheme = navigationDrawerVM.useDynamicTheme.collectAsState(initial = false).value,
-                darkTheme = when (navigationDrawerVM.inAppTheme.collectAsState(initial = Theme.SystemDefault).value) {
+                useDynamicTheme = navigationDrawerVM.useDynamicTheme.collectAsStateWithLifecycle(
+                    initialValue = false
+                ).value,
+                darkTheme = when (navigationDrawerVM.inAppTheme.collectAsStateWithLifecycle(
+                    initialValue = Theme.SystemDefault
+                ).value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.SystemDefault -> isSystemInDarkTheme()

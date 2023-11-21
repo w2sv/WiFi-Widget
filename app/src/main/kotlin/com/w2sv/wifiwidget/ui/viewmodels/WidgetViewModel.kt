@@ -10,7 +10,6 @@ import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStateFlow
 import com.w2sv.common.di.PackageName
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
@@ -70,8 +69,8 @@ class WidgetViewModel @Inject constructor(
         i { "Pinned new widget w ID=$widgetId" }
 
         viewModelScope.launch {
-            if (configuration.wifiProperties.getValue(WifiProperty.SSID) || configuration.wifiProperties.getValue(
-                    WifiProperty.BSSID,
+            if (configuration.wifiProperties.getValue(WidgetWifiProperty.SSID) || configuration.wifiProperties.getValue(
+                    WidgetWifiProperty.BSSID,
                 )
             ) {
                 when {
@@ -121,7 +120,7 @@ class WidgetViewModel @Inject constructor(
     val configuration by lazy {
         UnconfirmedWidgetConfiguration(
             getUnconfirmedStateMap(
-                appliedFlowMap = repository.wifiProperties,
+                appliedFlowMap = repository.getWidgetWifiPropertyEnablementMap(),
                 syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateMap(
@@ -129,13 +128,13 @@ class WidgetViewModel @Inject constructor(
                 syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateMap(
-                appliedFlowMap = repository.buttonMap,
+                appliedFlowMap = repository.getButtonEnablementMap(),
                 syncState = {
                     repository.saveMap(it)
                 },
             ),
             getUnconfirmedStateMap(
-                appliedFlowMap = repository.refreshingParametersMap,
+                appliedFlowMap = repository.getRefreshingParametersEnablementMap(),
                 syncState = {
                     repository.saveMap(it)
                     withContext(Dispatchers.IO) {
@@ -156,7 +155,7 @@ class WidgetViewModel @Inject constructor(
                 },
             ),
             getUnconfirmedStateMap(
-                appliedFlowMap = repository.customColorsMap,
+                appliedFlowMap = repository.getCustomColorsMap(),
                 syncState = { repository.saveMap(it) },
             ),
             getUnconfirmedStateFlow(

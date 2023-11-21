@@ -13,8 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.w2sv.wifiwidget.R
 
-@ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
-val dynamicColorsSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
+val dynamicColorsSupported
+    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 @Composable
 fun UseDynamicColorsRow(
