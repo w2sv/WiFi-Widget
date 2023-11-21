@@ -40,6 +40,8 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
+        <!--Services-->
+
         <service
             android:name="com.w2sv.widget.WifiPropertyViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />

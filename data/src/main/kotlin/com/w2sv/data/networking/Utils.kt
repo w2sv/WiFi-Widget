@@ -7,7 +7,8 @@ import com.w2sv.androidutils.services.getConnectivityManager
 import com.w2sv.androidutils.services.getWifiManager
 import slimber.log.i
 
-val ConnectivityManager.linkProperties: LinkProperties? get() = getLinkProperties(activeNetwork)
+val ConnectivityManager.linkProperties: LinkProperties?
+    get() = getLinkProperties(activeNetwork)
 
 fun Context.logConnectionInfo() {
     val wifiManager = getWifiManager()

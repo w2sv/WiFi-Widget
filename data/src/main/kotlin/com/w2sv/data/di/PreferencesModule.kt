@@ -19,7 +19,7 @@ object PreferencesModule {
 
     @Singleton
     @Provides
-    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+    fun preferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
         PreferenceDataStoreFactory.create(
             migrations = listOf(SharedPreferencesMigration(context, context.sharedPreferencesName)),
             produceFile = { context.preferencesDataStoreFile(context.sharedPreferencesName) },

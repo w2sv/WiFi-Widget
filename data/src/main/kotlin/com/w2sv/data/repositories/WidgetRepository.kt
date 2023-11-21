@@ -1,4 +1,4 @@
-package com.w2sv.data.storage
+package com.w2sv.data.repositories
 
 import androidx.annotation.FloatRange
 import androidx.datastore.core.DataStore
@@ -68,7 +68,7 @@ class WidgetRepository @Inject constructor(
     fun getEnabledWifiProperties(): Set<WifiProperty> =
         wifiProperties.getSynchronousMap().filterValues { it }.keys
 
-    val refreshingParametersMap = getFlowMap(WidgetRefreshingParameter.values().toList())
+    val refreshingParametersMap = getFlowMap(WidgetRefreshingParameter.entries)
 
     val buttonMap = getFlowMap(WidgetButton.entries)
 

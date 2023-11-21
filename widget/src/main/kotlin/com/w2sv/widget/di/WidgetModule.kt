@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetAppearance

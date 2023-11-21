@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.wifiwidget.ui.utils
 
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState

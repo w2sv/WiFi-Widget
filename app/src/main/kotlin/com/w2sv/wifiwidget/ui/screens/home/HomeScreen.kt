@@ -41,7 +41,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionEl
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiConnectionInfoCard
-import com.w2sv.wifiwidget.ui.utils.landscapeModeActivated
+import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ internal fun HomeScreen(
                 }
             },
         ) { paddingValues ->
-            if (landscapeModeActivated) {
+            if (isLandscapeModeActivated) {
                 LandscapeMode(paddingValues = paddingValues)
             } else {
                 PortraitMode(paddingValues = paddingValues)

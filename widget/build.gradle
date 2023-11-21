@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
-    implementation(project(":data"))
+    implementation(projects.common)
+    implementation(projects.data)
 
     implementation(libs.androidx.workmanager)
     implementation(libs.androidx.localbroadcastmanager)

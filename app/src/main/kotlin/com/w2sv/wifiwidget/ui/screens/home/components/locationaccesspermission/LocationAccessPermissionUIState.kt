@@ -8,7 +8,7 @@ import androidx.compose.material3.SnackbarHostState
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.androidutils.permissions.hasPermission
-import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.data.repositories.PreferencesRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarAction

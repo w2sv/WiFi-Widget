@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":common"))
+    implementation(projects.common)
 
     implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)

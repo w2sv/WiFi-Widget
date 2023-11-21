@@ -4,7 +4,7 @@ import com.w2sv.data.model.Theme
 import com.w2sv.data.model.widget.WidgetButton
 import com.w2sv.data.model.widget.WidgetColor
 import com.w2sv.data.model.widget.WidgetRefreshingParameter
-import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetButtons
 import com.w2sv.widget.model.WidgetColors

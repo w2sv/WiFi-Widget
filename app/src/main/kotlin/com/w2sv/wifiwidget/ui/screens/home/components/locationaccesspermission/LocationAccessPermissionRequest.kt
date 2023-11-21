@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.coroutines.reset
-import com.w2sv.common.utils.isLaunchingSuppressed
+import com.w2sv.wifiwidget.ui.utils.isLaunchingSuppressed
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)

@@ -7,7 +7,7 @@ import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.common.utils.enumerationTag
 import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.storage.WidgetRepository
+import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WifiPropertyLayoutViewData

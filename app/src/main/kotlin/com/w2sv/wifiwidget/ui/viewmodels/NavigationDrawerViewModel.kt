@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.data.model.Theme
-import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.data.repositories.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -20,7 +20,7 @@ import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.WidgetConfigurationDialogContent
 import com.w2sv.wifiwidget.ui.utils.conditional
-import com.w2sv.wifiwidget.ui.utils.landscapeModeActivated
+import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.launch
@@ -54,7 +54,7 @@ fun WidgetConfigurationDialog(
             },
         ),
         onDismissRequest = onDismissRequest,
-        modifier = modifier.conditional(landscapeModeActivated, { fillMaxHeight() }),
+        modifier = modifier.conditional(isLandscapeModeActivated, { fillMaxHeight() }),
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,

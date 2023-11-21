@@ -9,7 +9,7 @@ import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.networking.WifiStatusMonitor
-import com.w2sv.data.storage.PreferencesRepository
+import com.w2sv.data.repositories.PreferencesRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState

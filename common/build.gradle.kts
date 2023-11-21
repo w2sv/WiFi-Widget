@@ -6,7 +6,6 @@ plugins {
 dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
-    implementation(libs.accompanist.permissions)
 
     implementation(libs.androidutils)
     implementation(libs.slimber)
