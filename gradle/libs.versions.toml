@@ -2,25 +2,26 @@
 minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '34'
 
-agp = "8.1.1"
-kotlin = '1.9.0'
+agp = "8.2.0-rc03"
+kotlin = '1.9.10'
 java = '17'
+ksp = "1.9.10-1.0.13"
 
-compose-compiler = '1.5.1'
-compose-tooling = '1.5.0'
-hilt = '2.47'
-lifecycle = "2.6.1"
+compose-compiler = '1.5.3'
+compose-tooling = '1.5.4'
+hilt = '2.48.1'
+lifecycle = "2.6.2"
 
 [libraries]
 
 # Owned
-androidutils = 'com.github.w2sv:AndroidUtils:0.3.15-rc1'
+androidutils = 'com.github.w2sv:AndroidUtils:0.3.25-rc2'
 kotlinutils = 'com.github.w2sv:KotlinUtils:0.0.7-rc2'
 colorpicker = 'com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9'
 
 # Androidx
 androidx-appcompat = 'androidx.appcompat:appcompat:1.6.1'
-androidx-core = 'androidx.core:core-ktx:1.10.1'
+androidx-core = 'androidx.core:core-ktx:1.12.0'
 androidx-localbroadcastmanager = 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
 androidx-splashscreen = 'androidx.core:core-splashscreen:1.0.1'
 androidx-lifecycle-runtime = { module = 'androidx.lifecycle:lifecycle-runtime-ktx', version.ref = 'lifecycle' }
@@ -28,26 +29,39 @@ androidx-workmanager = 'androidx.work:work-runtime-ktx:2.8.1'
 androidx-datastore-preferences = 'androidx.datastore:datastore-preferences:1.0.0'
 
 # .Compose
-androidx-compose-bom = "androidx.compose:compose-bom:2023.08.00"
-androidx-compose-material3 = 'androidx.compose.material3:material3:1.1.1'
+androidx-compose-bom = "androidx.compose:compose-bom:2023.10.01"
+androidx-compose-material3 = 'androidx.compose.material3:material3:1.1.2'
 androidx-compose-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose-tooling' }
-androidx-compose-activity = 'androidx.activity:activity-compose:1.7.2'
+androidx-compose-activity = 'androidx.activity:activity-compose:1.8.1'
 androidx-compose-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
+androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 # Google
-google-material = 'com.google.android.material:material:1.9.0'
-google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
-google-hilt-kapt = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
+google-material = 'com.google.android.material:material:1.10.0'
 accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.32.0"
+
+# .Hilt
+google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
+google-hilt-compiler = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
 
 # Other
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
+
+# Plugins
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [plugins]
 application = { id = 'com.android.application', version.ref = 'agp' }
 library = { id = 'com.android.library', version.ref = 'agp' }
 kotlin = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 hilt = { id = 'com.google.dagger.hilt.android', version.ref = 'hilt' }
-play = { id = 'com.github.triplet.play', version = '3.8.4' }
+play = { id = 'com.github.triplet.play', version = '3.8.6' }
+ksp = { id = "com.google.devtools.ksp", version.ref = 'ksp' }
+
+# Plugins defined by the project
+wifiwidget-library = { id = "wifiwidget.library", version = "unspecified" }
+wifiwidget-hilt = { id = "wifiwidget.hilt", version = "unspecified" }

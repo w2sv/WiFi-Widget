@@ -1,26 +1,15 @@
 plugins {
-    alias libs.plugins.library
-    alias libs.plugins.kotlin
-    alias libs.plugins.hilt
-    id 'kotlin-kapt'
-}
-
-apply from: '../modulebase.gradle'
-
-android {
-    namespace 'com.w2sv.widget'
+    alias(libs.plugins.wifiwidget.library)
+    alias(libs.plugins.wifiwidget.hilt)
 }
 
 dependencies {
-    implementation project(path: ':common')
-    implementation project(path: ':data')
+    implementation(project(":common"))
+    implementation(project(":data"))
 
-    implementation libs.androidx.workmanager
-    implementation libs.androidx.localbroadcastmanager
-    implementation libs.google.material
-    implementation libs.slimber
-    implementation libs.androidutils
-
-    implementation libs.google.hilt
-    kapt libs.google.hilt.kapt
+    implementation(libs.androidx.workmanager)
+    implementation(libs.androidx.localbroadcastmanager)
+    implementation(libs.google.material)
+    implementation(libs.slimber)
+    implementation(libs.androidutils)
 }

@@ -16,8 +16,7 @@ enum class WifiStatus(
 ) {
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),
     Disconnected(R.string.disconnected, R.drawable.ic_wifi_find_24),
-    Connected(R.string.connected, R.drawable.ic_wifi_24),
-    ;
+    Connected(R.string.connected, R.drawable.ic_wifi_24);
 
     companion object {
         fun get(context: Context): WifiStatus =
