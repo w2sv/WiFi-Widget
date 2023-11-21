@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,6 +56,8 @@ sealed interface SnackbarKind {
     }
 }
 
+val LocalSnackbarHostState = compositionLocalOf { SnackbarHostState() }
+
 suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbarVisuals: SnackbarVisuals) {
     currentSnackbarData?.dismiss()
     showSnackbar(snackbarVisuals)
@@ -68,7 +71,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 TextButton(
                     onClick = action.callback,
                 ) {
-                    JostText(text = action.label, color = MaterialTheme.colorScheme.primary)
+                    AppFontText(text = action.label, color = MaterialTheme.colorScheme.primary)
                 }
             }
         },
@@ -78,7 +81,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 Icon(imageVector = kind.icon, contentDescription = null, tint = kind.iconTint)
                 Spacer(modifier = Modifier.width(10.dp))
             }
-            JostText(text = visuals.message)
+            AppFontText(text = visuals.message)
         }
     }
 }

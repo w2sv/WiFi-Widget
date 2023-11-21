@@ -4,11 +4,10 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.w2sv.data.model.WifiStatus
+import com.w2sv.domain.model.WifiStatus
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
@@ -17,7 +16,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 fun WifiConnectionInfoCard(
     wifiStatus: WifiStatus,
     wifiPropertiesViewData: List<WifiPropertyViewData>?,
-    showSnackbar: (SnackbarVisuals) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
@@ -36,7 +34,6 @@ fun WifiConnectionInfoCard(
                 wifiPropertiesViewData?.let {
                     WifiPropertiesList(
                         propertiesViewData = it,
-                        showSnackbar = showSnackbar,
                     )
                 }
             }

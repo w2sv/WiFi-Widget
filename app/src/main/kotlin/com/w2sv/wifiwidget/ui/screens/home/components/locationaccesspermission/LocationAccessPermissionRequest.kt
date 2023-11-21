@@ -2,26 +2,34 @@ package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
 import android.Manifest
 import android.content.Context
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.w2sv.androidutils.coroutines.reset
+import com.w2sv.androidutils.generic.goToAppSettings
+import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.components.SnackbarAction
+import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.utils.isLaunchingSuppressed
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationAccessPermissionRequest(
-    lapUIState: LocationAccessPermissionUIState,
+    lapUIState: LocationAccessPermissionState,
     onGranted: suspend (Context) -> Unit,
     onDenied: suspend (Context) -> Unit,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    context: Context = LocalContext.current,
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -37,7 +45,7 @@ fun LocationAccessPermissionRequest(
 
                     false -> onDenied(context)
                 }
-                lapUIState.requestLaunchingAction.reset()
+                lapUIState.setRequestLaunchingAction(null)
             }
         },
     )
@@ -46,14 +54,27 @@ fun LocationAccessPermissionRequest(
         when (permissionState.allPermissionsGranted) {
             true -> {
                 onGranted(context)
-                lapUIState.requestLaunchingAction.reset()
+                lapUIState.setRequestLaunchingAction(null)
             }
 
             false -> {
                 when (permissionState.isLaunchingSuppressed(launchedBefore = lapUIState.requestLaunched)) {
                     true -> {
-                        lapUIState.onRequestLaunchingSuppressed(context)
-                        lapUIState.requestLaunchingAction.reset()
+                        scope.launch {
+                            snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                                AppSnackbarVisuals(
+                                    context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                                    kind = SnackbarKind.Error,
+                                    action = SnackbarAction(
+                                        label = context.getString(R.string.go_to_settings),
+                                        callback = {
+                                            goToAppSettings(context)
+                                        },
+                                    ),
+                                ),
+                            )
+                        }
+                        lapUIState.setRequestLaunchingAction(null)
                     }
 
                     false -> {

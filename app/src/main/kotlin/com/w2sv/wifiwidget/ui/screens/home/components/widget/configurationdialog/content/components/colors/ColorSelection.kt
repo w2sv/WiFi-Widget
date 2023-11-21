@@ -27,9 +27,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
-import com.w2sv.data.model.widget.WidgetColor
+import com.w2sv.domain.model.WidgetColor
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.utils.toColor
 
 @Stable
@@ -111,7 +111,7 @@ private fun SectionCustomizationRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
-        JostText(
+        AppFontText(
             text = bulletPointText(sectionData.label),
             fontSize = 14.sp,
             modifier = Modifier.weight(0.4f),

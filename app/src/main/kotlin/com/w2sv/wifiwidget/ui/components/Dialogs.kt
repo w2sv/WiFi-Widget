@@ -65,7 +65,7 @@ fun DialogHeader(properties: DialogHeaderProperties) {
         it.invoke()
         Spacer(modifier = Modifier.height(12.dp))
     }
-    JostText(
+    AppFontText(
         text = properties.title,
         style = MaterialTheme.typography.headlineSmall,
     )
@@ -85,11 +85,11 @@ fun DialogButtonRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         DialogButton(onClick = onCancel) {
-            JostText(text = stringResource(R.string.cancel))
+            AppFontText(text = stringResource(R.string.cancel))
         }
         Spacer(modifier = Modifier.width(16.dp))
         DialogButton(onClick = onApply, enabled = applyButtonEnabled) {
-            JostText(text = stringResource(R.string.apply))
+            AppFontText(text = stringResource(R.string.apply))
         }
     }
 }

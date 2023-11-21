@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.IconHeader
-import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 
 @Composable
@@ -75,7 +75,7 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp),
     ) {
-        JostText(
+        AppFontText(
             text = stringResource(R.string.pin),
             fontSize = 16.sp,
         )

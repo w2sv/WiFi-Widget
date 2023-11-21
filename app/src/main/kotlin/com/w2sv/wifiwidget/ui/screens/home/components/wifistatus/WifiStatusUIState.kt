@@ -1,8 +1,9 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
-import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.model.WifiStatus
 import com.w2sv.data.networking.WifiStatusMonitor
+import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiStatus
+import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,7 @@ class WifiStatusUIState(
 ) {
     val status = wifiStatusMonitor.wifiStatus.stateIn(
         scope,
-        SharingStarted.WhileSubscribed(),
+        SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
         WifiStatus.Disabled,
     )
         .apply {
@@ -57,7 +58,7 @@ class WifiStatusUIState(
     private fun getPropertiesViewData(): List<WifiPropertyViewData> {
         val valueGetterResources =
             wifiPropertyValueGetterResourcesProvider.provide()
-        return WidgetWifiProperty.values().map { property ->
+        return WidgetWifiProperty.entries.map { property ->
             WifiPropertyViewData(
                 property,
                 property.getValue(valueGetterResources),

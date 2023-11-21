@@ -15,8 +15,10 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,15 +28,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.coroutines.reset
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
@@ -45,6 +48,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiConnectionInfoCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
+import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -53,8 +57,10 @@ import java.util.Calendar
 
 @Composable
 internal fun HomeScreen(
-    homeScreenVM: HomeScreenViewModel = viewModel(),
+    appViewModel: AppViewModel = viewModel(),
+    widgetVM: WidgetViewModel = viewModel(),
     context: Context = LocalContext.current,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -71,7 +77,7 @@ internal fun HomeScreen(
                 }
             },
             snackbarHost = {
-                SnackbarHost(homeScreenVM.snackbarHostState) { snackbarData ->
+                SnackbarHost(snackbarHostState) { snackbarData ->
                     AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
                 }
             },
@@ -85,22 +91,30 @@ internal fun HomeScreen(
 
         OverlayDialogs()
 
+        LaunchedEffect(snackbarHostState) {
+            widgetVM.snackbarVisuals.collect {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it)
+            }
+        }
+
         BackHandler {
             when (drawerState.isOpen) {
                 true -> scope.launch {
                     drawerState.close()
                 }
 
-                false -> homeScreenVM.onBackPress(context)
+                false -> appViewModel.onBackPress(context)
             }
         }
     }
 }
 
 @Composable
-fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewModel = viewModel()) {
-    val context = LocalContext.current
-
+fun LandscapeMode(
+    paddingValues: PaddingValues,
+    homeScreenVM: HomeScreenViewModel = viewModel(),
+    context: Context = LocalContext.current
+) {
     Row(
         modifier = Modifier
             .padding(paddingValues)
@@ -112,7 +126,6 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
         WifiConnectionInfoCard(
             wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
             wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
-            showSnackbar = homeScreenVM::showSnackbar,
             modifier = Modifier.fillMaxWidth(0.4f),
         )
 
@@ -129,7 +142,7 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
                         }
                     },
                     onWidgetConfigurationButtonClick = {
-                        homeScreenVM.showWidgetConfigurationDialog.value = true
+                        homeScreenVM.setShowWidgetConfigurationDialog(true)
                     },
                 )
             },
@@ -142,9 +155,8 @@ fun LandscapeMode(paddingValues: PaddingValues, homeScreenVM: HomeScreenViewMode
 private fun PortraitMode(
     paddingValues: PaddingValues,
     homeScreenVM: HomeScreenViewModel = viewModel(),
+    context: Context = LocalContext.current
 ) {
-    val context = LocalContext.current
-
     Column(
         modifier = Modifier
             .padding(paddingValues)
@@ -156,7 +168,6 @@ private fun PortraitMode(
         WifiConnectionInfoCard(
             wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
             wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
-            showSnackbar = homeScreenVM::showSnackbar,
             modifier = Modifier
                 .weight(0.8f)
                 .fillMaxWidth(0.77f),
@@ -177,7 +188,7 @@ private fun PortraitMode(
                         }
                     },
                     onWidgetConfigurationButtonClick = {
-                        homeScreenVM.showWidgetConfigurationDialog.value = true
+                        homeScreenVM.setShowWidgetConfigurationDialog(true)
                     },
                 )
             },
@@ -192,9 +203,8 @@ private fun PortraitMode(
 private fun OverlayDialogs(
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
+    context: Context = LocalContext.current
 ) {
-    val context = LocalContext.current
-
     homeScreenVM.lapUIState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
         LocationAccessPermissionRationalDialog(
             onProceed = {
@@ -229,14 +239,14 @@ private fun OverlayDialogs(
     if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {
         WidgetConfigurationDialog(
             closeDialog = {
-                homeScreenVM.showWidgetConfigurationDialog.value = false
+                homeScreenVM.setShowWidgetConfigurationDialog(false)
             },
         )
 
         widgetVM.propertyInfoDialogData.collectAsStateWithLifecycle().value?.let {
             PropertyInfoDialog(
                 data = it,
-                onDismissRequest = { widgetVM.propertyInfoDialogData.reset() },
+                onDismissRequest = { widgetVM.setPropertyInfoDialogData(null) },
             )
         }
     }
@@ -252,7 +262,7 @@ private fun OverlayDialogs(
 
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
-    JostText(
+    AppFontText(
         text = stringResource(R.string.copyright_text, Calendar.getInstance().get(Calendar.YEAR)),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,

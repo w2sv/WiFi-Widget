@@ -36,7 +36,7 @@ fun IconHeader(
             )
         }
         Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
-            JostText(
+            AppFontText(
                 text = stringResource(id = headerRes),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,

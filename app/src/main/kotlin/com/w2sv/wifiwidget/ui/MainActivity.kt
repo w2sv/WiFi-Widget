@@ -16,8 +16,8 @@ import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.NavigationDrawerViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -27,40 +27,29 @@ class MainActivity : ComponentActivity() {
 
     private val homeScreenVM by viewModels<HomeScreenViewModel>()
     private val widgetVM by viewModels<WidgetViewModel>()
-    private val navigationDrawerVM by viewModels<NavigationDrawerViewModel>()
+    private val appVM by viewModels<AppViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         handleSplashScreen(
             onAnimationFinished = {
                 if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
-                    homeScreenVM.showWidgetConfigurationDialog.value = true
+                    homeScreenVM.setShowWidgetConfigurationDialog(true)
                 }
             },
         )
 
         super.onCreate(savedInstanceState)
 
-        with(lifecycleScope) {
-            launch {
-                homeScreenVM.exitApplication.collect {
-                    finishAffinity()
-                }
-            }
-            launch {
-                widgetVM.snackbarVisuals.collect {
-                    homeScreenVM.showSnackbar(it)
-                }
+        lifecycleScope.launch {
+            appVM.exitApplication.collect {
+                finishAffinity()
             }
         }
 
         setContent {
             AppTheme(
-                useDynamicTheme = navigationDrawerVM.useDynamicTheme.collectAsStateWithLifecycle(
-                    initialValue = false
-                ).value,
-                darkTheme = when (navigationDrawerVM.inAppTheme.collectAsStateWithLifecycle(
-                    initialValue = Theme.SystemDefault
-                ).value) {
+                useDynamicTheme = appVM.useDynamicTheme.collectAsStateWithLifecycle().value,
+                darkTheme = when (appVM.inAppTheme.collectAsStateWithLifecycle().value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.SystemDefault -> isSystemInDarkTheme()

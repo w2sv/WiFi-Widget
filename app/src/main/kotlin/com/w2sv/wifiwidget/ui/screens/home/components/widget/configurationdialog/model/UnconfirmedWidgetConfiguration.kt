@@ -3,16 +3,16 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
-import com.w2sv.data.model.Theme
-import com.w2sv.data.model.WifiProperty
-import com.w2sv.data.model.widget.WidgetButton
-import com.w2sv.data.model.widget.WidgetColor
-import com.w2sv.data.model.widget.WidgetRefreshingParameter
+import com.w2sv.domain.model.Theme
+import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetRefreshingParameter
+import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.transform
 
 class UnconfirmedWidgetConfiguration(
-    val wifiProperties: UnconfirmedStateMap<WifiProperty, Boolean>,
+    val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
     val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
     val buttonMap: UnconfirmedStateMap<WidgetButton, Boolean>,
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,

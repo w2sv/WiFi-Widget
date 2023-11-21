@@ -24,7 +24,7 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
     TopAppBar(
         title = {
-            JostText(
+            AppFontText(
                 stringResource(id = R.string.app_name),
                 modifier = Modifier.padding(horizontal = 8.dp),
             )

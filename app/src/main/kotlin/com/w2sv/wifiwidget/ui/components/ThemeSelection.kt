@@ -129,7 +129,7 @@ private fun ThemeIndicator(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        JostText(
+        AppFontText(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,

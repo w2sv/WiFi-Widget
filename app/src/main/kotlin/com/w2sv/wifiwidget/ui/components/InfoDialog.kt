@@ -28,12 +28,12 @@ fun InfoDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             DialogButton(onClick = onDismissRequest) {
-                JostText(text = stringResource(R.string.close))
+                AppFontText(text = stringResource(R.string.close))
             }
         },
         icon = { InfoIcon() },
         title = {
-            JostText(
+            AppFontText(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -48,7 +48,7 @@ fun InfoDialog(
                 Arrangement.Center,
                 Alignment.CenterHorizontally,
             ) {
-                JostText(text = text, textAlign = TextAlign.Center)
+                AppFontText(text = text, textAlign = TextAlign.Center)
                 learnMoreButton?.invoke()
             }
         },

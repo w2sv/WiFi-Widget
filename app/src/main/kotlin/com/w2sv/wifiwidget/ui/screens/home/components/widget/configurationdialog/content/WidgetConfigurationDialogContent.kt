@@ -15,7 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionUIState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.RefreshingParametersSelection
@@ -28,7 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 internal fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
-    lapUIState: LocationAccessPermissionUIState,
+    lapUIState: LocationAccessPermissionState,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()

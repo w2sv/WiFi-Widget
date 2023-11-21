@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
+import android.content.Context
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +14,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -27,21 +29,26 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.enumerationTag
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.networking.IPAddress
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.InBetweenSpaced
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-@Stable
-data class WifiPropertyViewData(val property: WifiProperty, val value: WidgetWifiProperty.Value)
+data class WifiPropertyViewData(
+    val property: WidgetWifiProperty,
+    val value: WidgetWifiProperty.Value
+)
 
 @Composable
 fun WifiPropertiesList(
     propertiesViewData: List<WifiPropertyViewData>,
-    showSnackbar: (SnackbarVisuals) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
@@ -51,13 +58,13 @@ fun WifiPropertiesList(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                JostText(
+                AppFontText(
                     text = stringResource(id = R.string.properties),
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 17.sp,
                     modifier = Modifier.padding(bottom = 6.dp),
                 )
-                JostText(
+                AppFontText(
                     text = stringResource(R.string.click_to_copy_to_clipboard),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 12.sp,
@@ -72,7 +79,6 @@ fun WifiPropertiesList(
                     WifiPropertyRow(
                         propertyName = propertyName,
                         value = value.value,
-                        showSnackbar = showSnackbar,
                     )
                 }
 
@@ -82,7 +88,6 @@ fun WifiPropertiesList(
                             WifiPropertyRow(
                                 propertyName = "$propertyName ${enumerationTag(i)}",
                                 value = address.hostAddressRepresentation,
-                                showSnackbar = showSnackbar,
                             )
                             IPSubPropertiesRow(ipAddress = address)
                         }
@@ -91,7 +96,6 @@ fun WifiPropertiesList(
                         WifiPropertyRow(
                             propertyName = propertyName,
                             value = address.hostAddressRepresentation,
-                            showSnackbar = showSnackbar,
                         )
                         IPSubPropertiesRow(ipAddress = address)
                     }
@@ -105,33 +109,36 @@ fun WifiPropertiesList(
 private fun WifiPropertyRow(
     propertyName: String,
     value: String,
-    showSnackbar: (SnackbarVisuals) -> Unit,
+    modifier: Modifier = Modifier,
+    clipboardManager: ClipboardManager = LocalClipboardManager.current,
+    context: Context = LocalContext.current,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val clipboardManager = LocalClipboardManager.current
-    val context = LocalContext.current
-
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(26.dp)
             .clickable {
                 clipboardManager.setText(AnnotatedString(value))
-                showSnackbar(
-                    AppSnackbarVisuals(
-                        message = context.getString(R.string.copied_to_clipboard, propertyName),
-                        kind = SnackbarKind.Success,
-                    ),
-                )
+                scope.launch {
+                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                        AppSnackbarVisuals(
+                            message = context.getString(R.string.copied_to_clipboard, propertyName),
+                            kind = SnackbarKind.Success,
+                        ),
+                    )
+                }
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        JostText(
+        AppFontText(
             text = propertyName,
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        JostText(
+        AppFontText(
             text = value,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -162,7 +169,7 @@ private fun IPSubPropertiesRow(ipAddress: IPAddress, modifier: Modifier = Modifi
 
 @Composable
 private fun IPSubPropertyText(text: String) {
-    JostText(
+    AppFontText(
         text = text,
         modifier = Modifier
             .border(

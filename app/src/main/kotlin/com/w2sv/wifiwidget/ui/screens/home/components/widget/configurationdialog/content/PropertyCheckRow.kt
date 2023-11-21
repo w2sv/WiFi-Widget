@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
-import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.theme.disabledColor
 
@@ -80,7 +80,7 @@ private fun <T> PropertyCheckRow(
         val color = if (data.isChecked()) LocalContentColor.current else disabledColor()
 
         leadingIcon?.invoke(color)
-        JostText(
+        AppFontText(
             text = makeText(label),
             fontSize = fontSize,
             modifier = Modifier.weight(1.0f, true),

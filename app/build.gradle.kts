@@ -103,6 +103,7 @@ dependencies {
     implementation(projects.common)
     implementation(projects.domain)
     implementation(projects.data)
+    implementation(projects.networking)
 
     // Custom libraries
     implementation(libs.androidutils)

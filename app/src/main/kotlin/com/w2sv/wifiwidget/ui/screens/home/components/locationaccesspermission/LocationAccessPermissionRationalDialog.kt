@@ -8,9 +8,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
-import com.w2sv.wifiwidget.ui.components.JostText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
@@ -24,7 +24,7 @@ fun LocationAccessPermissionRationalDialog(
             InfoIcon()
         },
         text = {
-            JostText(
+            AppFontText(
                 text = stringResource(id = R.string.lap_dialog_text),
                 textAlign = TextAlign.Center,
             )
@@ -33,7 +33,7 @@ fun LocationAccessPermissionRationalDialog(
             DialogButton(
                 onClick = onProceed,
                 modifier = Modifier.fillMaxWidth(),
-            ) { JostText(text = stringResource(R.string.understood)) }
+            ) { AppFontText(text = stringResource(R.string.understood)) }
         },
         onDismissRequest = onProceed,
     )

@@ -8,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
-import com.w2sv.androidutils.ui.unconfirmed_state.getUnconfirmedStateFlow
+import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
+import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.common.di.PackageName
 import com.w2sv.data.repositories.WidgetRepository
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.utils.getWifiWidgetIds
@@ -20,7 +22,7 @@ import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.getUnconfirmedStateMap
+import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +30,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import slimber.log.i
@@ -53,7 +56,7 @@ class WidgetViewModel @Inject constructor(
         }
     }
 
-    val snackbarVisuals: Flow<SnackbarVisuals> get() = _snackbarVisuals.asSharedFlow()
+    val snackbarVisuals get() = _snackbarVisuals.asSharedFlow()
     private val _snackbarVisuals = MutableSharedFlow<SnackbarVisuals>()
 
     private var widgetIds: MutableSet<Int> = getWidgetIds()
@@ -111,60 +114,63 @@ class WidgetViewModel @Inject constructor(
     // Overlay dialogs
     // ========================
 
-    val propertyInfoDialogData: MutableStateFlow<PropertyInfoDialogData?> = MutableStateFlow(null)
+    val propertyInfoDialogData get() = _propertyInfoDialogData.asStateFlow()
+    private val _propertyInfoDialogData = MutableStateFlow<PropertyInfoDialogData?>(null)
+
+    fun setPropertyInfoDialogData(propertyInfoDialogData: PropertyInfoDialogData?) {
+        _propertyInfoDialogData.value = propertyInfoDialogData
+    }
 
     // =========
     // Configuration
     // =========
 
-    val configuration by lazy {
-        UnconfirmedWidgetConfiguration(
-            getUnconfirmedStateMap(
-                appliedFlowMap = repository.getWidgetWifiPropertyEnablementMap(),
-                syncState = { repository.saveMap(it) },
-            ),
-            getUnconfirmedStateMap(
-                repository.subWifiProperties,
-                syncState = { repository.saveMap(it) },
-            ),
-            getUnconfirmedStateMap(
-                appliedFlowMap = repository.getButtonEnablementMap(),
-                syncState = {
-                    repository.saveMap(it)
-                },
-            ),
-            getUnconfirmedStateMap(
-                appliedFlowMap = repository.getRefreshingParametersEnablementMap(),
-                syncState = {
-                    repository.saveMap(it)
-                    withContext(Dispatchers.IO) {
-                        widgetDataRefreshWorkerManager.applyChangedParameters()
-                    }
-                },
-            ),
-            getUnconfirmedStateFlow(
-                appliedFlow = repository.useDynamicColors,
-                syncState = {
-                    repository.savUseDynamicColors(it)
-                },
-            ),
-            getUnconfirmedStateFlow(
-                appliedFlow = repository.theme,
-                syncState = {
-                    repository.saveTheme(it)
-                },
-            ),
-            getUnconfirmedStateMap(
-                appliedFlowMap = repository.getCustomColorsMap(),
-                syncState = { repository.saveMap(it) },
-            ),
-            getUnconfirmedStateFlow(
-                appliedFlow = repository.opacity,
-                syncState = { repository.saveOpacity(it) },
-            ),
+    val configuration = UnconfirmedWidgetConfiguration(
+        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            persistedFlowMap = repository.getWifiPropertyEnablementMap(),
             scope = viewModelScope,
-        )
-    }
+            syncState = { repository.saveWifiPropertyEnablementMap(it) },
+        ),
+        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            repository.subWifiProperties,
+            syncState = { repository.saveMap(it) },
+        ),
+        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            persistedFlowMap = repository.getButtonEnablementMap(),
+            scope = viewModelScope,
+            syncState = {
+                repository.saveButtonEnablementMap(it)
+            },
+        ),
+        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            persistedFlowMap = repository.getRefreshingParametersEnablementMap(),
+            scope = viewModelScope,
+            syncState = {
+                repository.saveRefreshingParametersEnablementMap(it)
+                withContext(Dispatchers.IO) {
+                    widgetDataRefreshWorkerManager.applyChangedParameters()
+                }
+            },
+        ),
+        UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            persistedValue = repository.useDynamicColors
+        ),
+        UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            persistedValue = repository.theme
+        ),
+        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            persistedFlowMap = repository.getCustomColorsMap(),
+            scope = viewModelScope,
+            syncState = { repository.saveCustomColorsMap(it) },
+        ),
+        UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            persistedValue = repository.opacity
+        ),
+        scope = viewModelScope,
+    )
 
     fun syncConfiguration(context: Context) {
         viewModelScope.launch {

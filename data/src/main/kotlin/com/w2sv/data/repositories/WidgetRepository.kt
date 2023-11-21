@@ -39,7 +39,7 @@ class WidgetRepository @Inject constructor(
     }
 
     fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
-        getWidgetWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys
+        getWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys
 
     // ================
     // PersistedValue
@@ -56,18 +56,36 @@ class WidgetRepository @Inject constructor(
     // Map
     // ================
 
+    // TODO: look for singular save function
+
     fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>> =
         getTypeToValueMap(WidgetColor.entries.associateBy { it.valueDSE })
 
-    fun getWidgetWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
+    suspend fun saveCustomColorsMap(map: Map<WidgetColor, Int>) {
+        saveMap(map.mapKeys { (k, _) -> k.valueDSE })
+    }
+
+    fun getWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
         getTypeToValueMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
+
+    suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>) {
+        saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
+    }
 
     fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> {
         return getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
     }
 
+    suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
+        saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
+    }
+
     fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> {
         return getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
+    }
+
+    suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>) {
+        saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
     private fun <E, V> getTypeToValueMap(dseToType: Map<DataStoreEntry.UniType<V>, E>): Map<E, Flow<V>> =

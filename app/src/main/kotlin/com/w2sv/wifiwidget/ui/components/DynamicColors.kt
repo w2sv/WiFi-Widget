@@ -31,7 +31,7 @@ fun UseDynamicColorsRow(
             .fillMaxWidth()
             .then(modifier),
     ) {
-        JostText(
+        AppFontText(
             text = stringResource(R.string.use_dynamic_colors),
             color = MaterialTheme.colorScheme.onSurface,
         )

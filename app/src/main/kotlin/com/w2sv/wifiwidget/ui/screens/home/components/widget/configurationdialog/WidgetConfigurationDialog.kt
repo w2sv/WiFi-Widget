@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
+import android.content.Context
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -31,10 +33,9 @@ fun WidgetConfigurationDialog(
     modifier: Modifier = Modifier,
     widgetVM: WidgetViewModel = viewModel(),
     homeScreenViewModel: HomeScreenViewModel = viewModel(),
+    scope: CoroutineScope = rememberCoroutineScope(),
+    context: Context = LocalContext.current
 ) {
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
     val onDismissRequest: () -> Unit = {
         scope.launch {
             widgetVM.configuration.reset()
@@ -58,7 +59,7 @@ fun WidgetConfigurationDialog(
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
-            showInfoDialog = { widgetVM.propertyInfoDialogData.value = it },
+            showInfoDialog = widgetVM::setPropertyInfoDialogData,
             lapUIState = homeScreenViewModel.lapUIState,
             modifier = Modifier
                 .fillMaxWidth()

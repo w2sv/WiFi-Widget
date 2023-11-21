@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.w2sv.data.model.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.components.dynamicColorsSupported
@@ -42,7 +42,7 @@ internal fun AppearanceSection(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth(),
         ) {
-            JostText(
+            AppFontText(
                 text = stringResource(id = R.string.theme),
                 color = MaterialTheme.colorScheme.onSurface,
             )

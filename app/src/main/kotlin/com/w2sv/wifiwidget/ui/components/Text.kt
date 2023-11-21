@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.TextUnit
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun JostText(
+fun AppFontText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

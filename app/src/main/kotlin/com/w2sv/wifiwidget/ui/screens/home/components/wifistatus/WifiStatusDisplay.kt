@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -17,10 +18,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.data.model.WifiStatus
+import com.w2sv.domain.model.WifiStatus
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.JostText
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Preview
@@ -32,9 +33,11 @@ private fun WifiStatusDisplayPrev() {
 }
 
 @Composable
-fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-
+fun WifiStatusDisplay(
+    wifiStatus: WifiStatus,
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -55,6 +58,6 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
             tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(4.dp))
-        JostText(text = stringResource(id = wifiStatus.labelRes))
+        AppFontText(text = stringResource(id = wifiStatus.labelRes))
     }
 }
