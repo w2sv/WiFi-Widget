@@ -11,4 +11,5 @@ dependencies {
 
     implementation(libs.androidutils)
     implementation(libs.slimber)
+    implementation(libs.okhttp)
 }
