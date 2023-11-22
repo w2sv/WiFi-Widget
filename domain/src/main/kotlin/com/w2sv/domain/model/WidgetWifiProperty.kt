@@ -16,9 +16,12 @@ sealed class WidgetWifiProperty(
     sealed interface Value {
         @JvmInline
         value class String(val value: kotlin.String) : Value
-
         @JvmInline
         value class IPAddresses(val addresses: List<IPAddress>) : Value
+    }
+
+    interface ValueGetter {
+        operator fun invoke(properties: List<WidgetWifiProperty>): List<Value?>
     }
 
     data object SSID : WidgetWifiProperty(

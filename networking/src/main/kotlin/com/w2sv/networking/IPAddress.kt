@@ -10,13 +10,10 @@ import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
-fun ConnectivityManager.getIPAddresses(): List<IPAddress> =
-    linkProperties?.linkAddresses?.map { IPAddress(it) } ?: listOf()
-
 /**
  * Reference: https://stackoverflow.com/a/52663352/12083276
  */
-fun textualIPv4Representation(address: Int): String? =
+internal fun textualIPv4Representation(address: Int): String? =
     InetAddress.getByAddress(
         ByteBuffer
             .allocate(Integer.BYTES)
@@ -26,7 +23,7 @@ fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-fun getPublicIPAddress(httpClient: OkHttpClient): String? {
+internal fun getPublicIPAddress(httpClient: OkHttpClient): String? {
     i { "Getting public address" }
     val request = Request.Builder()
         .url("https://api.ipify.org")

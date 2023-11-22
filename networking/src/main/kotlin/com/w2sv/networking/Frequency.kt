@@ -3,9 +3,9 @@ package com.w2sv.networking
 /**
  * Reference: https://stackoverflow.com/a/58646104/12083276
  *
- * @param frequency in MHz
+ * @param frequency in MHz.
  */
-fun frequencyToChannel(frequency: Int): Int =
+internal fun frequencyToChannel(frequency: Int): Int =
     when {
         frequency <= 0 -> -1
         frequency == 2484 -> 14
