@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
-import com.w2sv.data.networking.WifiStatusMonitor
+import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT

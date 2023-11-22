@@ -4,6 +4,8 @@ plugins {
 }
 
 dependencies {
+    implementation(projects.domain)
+
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
 

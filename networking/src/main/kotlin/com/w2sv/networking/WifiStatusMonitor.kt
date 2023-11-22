@@ -1,4 +1,4 @@
-package com.w2sv.data.networking
+package com.w2sv.networking
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -8,7 +8,7 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import com.w2sv.androidutils.services.getConnectivityManager
 import com.w2sv.androidutils.services.getWifiManager
-import com.w2sv.data.model.WifiStatus
+import com.w2sv.domain.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -80,11 +80,11 @@ class WifiStatusMonitor @Inject constructor(
             }
 
             override fun onUnavailable() {
-                channel.trySend(WifiStatus.getNoConnectionPresentStatus(wifiManager))
+                channel.trySend(getNoConnectionPresentStatus(wifiManager))
             }
 
             override fun onLost(network: Network) {
-                channel.trySend(WifiStatus.getNoConnectionPresentStatus(wifiManager))
+                channel.trySend(getNoConnectionPresentStatus(wifiManager))
             }
         }
 
@@ -93,7 +93,7 @@ class WifiStatusMonitor @Inject constructor(
             callback,
         )
 
-        channel.trySend(WifiStatus.get(context))
+        channel.trySend(getWifiStatus(context))
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(callback)

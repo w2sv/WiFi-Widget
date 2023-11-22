@@ -13,6 +13,14 @@ sealed class WidgetWifiProperty(
         val learnMoreUrl: String? = null,
     )
 
+    sealed interface Value {
+        @JvmInline
+        value class String(val value: kotlin.String) : Value
+
+        @JvmInline
+        value class IPAddresses(val addresses: List<IPAddress>) : Value
+    }
+
     data object SSID : WidgetWifiProperty(
         ViewData(
             R.string.ssid,

@@ -1,4 +1,4 @@
-package com.w2sv.data.networking
+package com.w2sv.networking
 
 import android.content.Context
 import android.net.ConnectivityManager

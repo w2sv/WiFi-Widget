@@ -1,4 +1,4 @@
-package com.w2sv.data.networking
+package com.w2sv.networking
 
 /**
  * Reference: https://stackoverflow.com/a/58646104/12083276

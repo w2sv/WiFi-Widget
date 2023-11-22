@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.enumerationTag
-import com.w2sv.data.networking.IPAddress
+import com.w2sv.networking.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
@@ -75,7 +75,7 @@ fun WifiPropertiesList(
             val propertyName = stringResource(id = viewData.property.viewData.labelRes)
 
             when (val value = viewData.value) {
-                is WidgetWifiProperty.Value.Singular -> {
+                is WidgetWifiProperty.Value.String -> {
                     WifiPropertyRow(
                         propertyName = propertyName,
                         value = value.value,
