@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
-import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
+import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class WifiStatusUIState(
-    private val wifiPropertyValueGetterResourcesProvider: WidgetWifiProperty.ValueGetterResources.Provider,
+    private val widgetWifiPropertyValueGetter: WidgetWifiProperty.ValueGetter,
     wifiStatusMonitor: WifiStatusMonitor,
     private val scope: CoroutineScope,
 ) {
@@ -55,14 +55,9 @@ class WifiStatusUIState(
         _propertiesViewData.value = getPropertiesViewData()
     }
 
-    private fun getPropertiesViewData(): List<WifiPropertyViewData> {
-        val valueGetterResources =
-            wifiPropertyValueGetterResourcesProvider.provide()
-        return WidgetWifiProperty.entries.map { property ->
-            WifiPropertyViewData(
-                property,
-                property.getValue(valueGetterResources),
-            )
-        }
-    }
+    // TODO
+    private fun getPropertiesViewData(): List<WifiPropertyViewData> =
+        widgetWifiPropertyValueGetter(WidgetWifiProperty.entries)
+            .zip(WidgetWifiProperty.entries)
+            .map { WifiPropertyViewData(it.second, it.first) }
 }

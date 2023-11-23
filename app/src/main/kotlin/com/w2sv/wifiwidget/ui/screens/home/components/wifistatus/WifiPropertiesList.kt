@@ -29,12 +29,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.enumerationTag
-import com.w2sv.networking.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.InBetweenSpaced
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
@@ -78,7 +76,7 @@ fun WifiPropertiesList(
                 is WidgetWifiProperty.Value.String -> {
                     WifiPropertyRow(
                         propertyName = propertyName,
-                        value = value.value,
+                        value = value.value ?: "Couldn't retrieve",
                     )
                 }
 
@@ -89,7 +87,7 @@ fun WifiPropertiesList(
                                 propertyName = "$propertyName ${enumerationTag(i)}",
                                 value = address.hostAddressRepresentation,
                             )
-                            IPSubPropertiesRow(ipAddress = address)
+                            IPSubPropertiesRow(prefixLength = address.prefixLength)
                         }
                     } else if (value.addresses.size == 1) {
                         val address = value.addresses.first()
@@ -97,7 +95,7 @@ fun WifiPropertiesList(
                             propertyName = propertyName,
                             value = address.hostAddressRepresentation,
                         )
-                        IPSubPropertiesRow(ipAddress = address)
+                        IPSubPropertiesRow(prefixLength = address.prefixLength)
                     }
                 }
             }
@@ -147,23 +145,13 @@ private fun WifiPropertyRow(
 }
 
 @Composable
-private fun IPSubPropertiesRow(ipAddress: IPAddress, modifier: Modifier = Modifier) {
+private fun IPSubPropertiesRow(prefixLength: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
-        InBetweenSpaced(
-            elements = ipAddress.getViewProperties(true).toList(),
-            makeElement = {
-                IPSubPropertyText(text = it)
-            },
-            spacer = {
-                Spacer(
-                    modifier = Modifier.width(6.dp),
-                )
-            },
-        )
+        IPSubPropertyText(text = "/$prefixLength")
     }
 }
 

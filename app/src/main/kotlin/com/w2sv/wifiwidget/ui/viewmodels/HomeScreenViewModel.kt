@@ -3,8 +3,9 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.data.repositories.PreferencesRepository
+import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusUIState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +19,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
     @ApplicationContext context: Context,
-//    wifiPropertyValueGetterResourcesProvider: WidgetWifiProperty.ValueGetterResources.Provider,
+    widgetWifiPropertyValueGetter: WidgetWifiProperty.ValueGetter,
     wifiStatusMonitor: WifiStatusMonitor,
 ) : ViewModel() {
 
@@ -54,7 +55,7 @@ class HomeScreenViewModel @Inject constructor(
         }
 
     val wifiStatusUIState = WifiStatusUIState(
-        wifiPropertyValueGetterResourcesProvider,
+        widgetWifiPropertyValueGetter,
         wifiStatusMonitor,
         viewModelScope,
     )

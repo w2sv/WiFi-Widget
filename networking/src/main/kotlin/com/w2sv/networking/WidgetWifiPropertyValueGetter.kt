@@ -7,8 +7,9 @@ import com.w2sv.domain.model.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
+import javax.inject.Inject
 
-class WidgetWifiPropertyValueGetter(
+class WidgetWifiPropertyValueGetter @Inject constructor(
     @ApplicationContext private val context: Context,
     private val httpClient: OkHttpClient
 ) : WidgetWifiProperty.ValueGetter {
@@ -16,7 +17,7 @@ class WidgetWifiPropertyValueGetter(
     private val wifiManager by lazy { context.getWifiManager() }
     private val connectivityManager by lazy { context.getConnectivityManager() }
 
-    override fun invoke(properties: List<WidgetWifiProperty>): List<WidgetWifiProperty.Value?> {
+    override fun invoke(properties: List<WidgetWifiProperty>): List<WidgetWifiProperty.Value> {
         val systemIPAddresses by lazy { connectivityManager.getIPAddresses() }
 
         return properties.map { getPropertyValue(it, systemIPAddresses) }
@@ -26,51 +27,52 @@ class WidgetWifiPropertyValueGetter(
     private fun getPropertyValue(
         property: WidgetWifiProperty,
         systemIPAddresses: List<IPAddress>
-    ): WidgetWifiProperty.Value? =
+    ): WidgetWifiProperty.Value =
         when (property) {
             WidgetWifiProperty.SSID -> {
-                wifiManager.connectionInfo.ssid?.replace("\"", "")
-                    ?.let { WidgetWifiProperty.Value.String(it) }
+                WidgetWifiProperty.Value.String(wifiManager.connectionInfo.ssid?.replace("\"", ""))
             }
 
             WidgetWifiProperty.BSSID -> {
-                wifiManager.connectionInfo.bssid?.let { WidgetWifiProperty.Value.String(it) }
+                WidgetWifiProperty.Value.String(wifiManager.connectionInfo.bssid)
             }
 
             WidgetWifiProperty.LinkLocal -> {
-                systemIPAddresses.filter { it.localAttributes.linkLocal }.asValueOrNull()
+                WidgetWifiProperty.Value.IPAddresses(systemIPAddresses.filter { it.localAttributes.linkLocal })
             }
 
             WidgetWifiProperty.SiteLocal -> {
-                systemIPAddresses.filter { it.localAttributes.siteLocal }.asValueOrNull()
+                WidgetWifiProperty.Value.IPAddresses(systemIPAddresses.filter { it.localAttributes.siteLocal })
             }
 
             WidgetWifiProperty.UniqueLocal -> {
-                systemIPAddresses.filter { it.isUniqueLocal }.asValueOrNull()
+                WidgetWifiProperty.Value.IPAddresses(systemIPAddresses.filter { it.isUniqueLocal })
             }
 
             WidgetWifiProperty.GlobalUnicast -> {
-                systemIPAddresses.filter { it.isGlobalUnicast }.asValueOrNull()
+                WidgetWifiProperty.Value.IPAddresses(systemIPAddresses.filter { it.isGlobalUnicast })
             }
 
             WidgetWifiProperty.Public -> {
-                getPublicIPAddress(httpClient)?.let {
-                    WidgetWifiProperty.Value.IPAddresses(
-                        listOf(
-                            IPAddress(
-                                prefixLength = 0,
-                                hostAddress = it,
-                                localAttributes = IPAddress.LocalAttributes(
-                                    linkLocal = false,
-                                    siteLocal = false,
-                                    anyLocal = false
-                                ),
-                                isLoopback = false,
-                                isMulticast = false
+                WidgetWifiProperty.Value.IPAddresses(
+                    buildList {
+                        getPublicIPAddress(httpClient)?.let {
+                            add(
+                                IPAddress(
+                                    prefixLength = 0,
+                                    hostAddress = it,
+                                    localAttributes = IPAddress.LocalAttributes(
+                                        linkLocal = false,
+                                        siteLocal = false,
+                                        anyLocal = false
+                                    ),
+                                    isLoopback = false,
+                                    isMulticast = false
+                                )
                             )
-                        )
-                    )
-                }
+                        }
+                    }
+                )
             }
 
             WidgetWifiProperty.Frequency -> {
@@ -106,10 +108,4 @@ class WidgetWifiPropertyValueGetter(
                 )
             }
         }
-
-    private fun List<IPAddress>.asValueOrNull(): WidgetWifiProperty.Value.IPAddresses? =
-        if (isEmpty())
-            null
-        else
-            WidgetWifiProperty.Value.IPAddresses(this)
 }

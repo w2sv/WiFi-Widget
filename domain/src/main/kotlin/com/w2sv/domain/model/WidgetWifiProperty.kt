@@ -15,13 +15,14 @@ sealed class WidgetWifiProperty(
 
     sealed interface Value {
         @JvmInline
-        value class String(val value: kotlin.String) : Value
+        value class String(val value: kotlin.String?) : Value
+
         @JvmInline
         value class IPAddresses(val addresses: List<IPAddress>) : Value
     }
 
     interface ValueGetter {
-        operator fun invoke(properties: List<WidgetWifiProperty>): List<Value?>
+        operator fun invoke(properties: List<WidgetWifiProperty>): List<Value>
     }
 
     data object SSID : WidgetWifiProperty(
@@ -45,30 +46,29 @@ sealed class WidgetWifiProperty(
     sealed class IPProperty(
         viewData: ViewData,
         defaultIsEnabled: Boolean,
-        val prefixLengthViewData: ViewData?
     ) :
         WidgetWifiProperty(viewData, defaultIsEnabled) {
 
         sealed class V4AndV6(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
-            prefixLengthViewData: ViewData?
-        ) : IPProperty(viewData, defaultIsEnabled, prefixLengthViewData)
+        ) : IPProperty(viewData, defaultIsEnabled) {
+
+            data class EnabledTypes(val v4: Boolean, val v6: Boolean)
+
+            companion object {
+                val entries: List<V4AndV6>
+                    get() = listOf(LinkLocal, SiteLocal, Public)
+            }
+        }
 
         sealed class V6Only(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
-            prefixLengthViewData: ViewData?
-        ) : IPProperty(viewData, defaultIsEnabled, prefixLengthViewData)
+        ) : IPProperty(viewData, defaultIsEnabled)
 
         companion object {
             const val LEARN_MORE_URL = "https://en.wikipedia.org/wiki/IP_address"
-
-            val prefixLengthViewData = ViewData(
-                R.string.show_prefix_length,
-                R.string.prefix_length_description,
-                "https://www.ibm.com/docs/en/ts3500-tape-library?topic=formats-subnet-masks-ipv4-prefixes-ipv6",
-            )
         }
     }
 
@@ -80,7 +80,6 @@ sealed class WidgetWifiProperty(
                 LEARN_MORE_URL,
             ),
             true,
-            prefixLengthViewData
         )
 
     data object SiteLocal :
@@ -91,7 +90,6 @@ sealed class WidgetWifiProperty(
                 LEARN_MORE_URL,
             ),
             true,
-            prefixLengthViewData
         )
 
     data object UniqueLocal :
@@ -102,7 +100,6 @@ sealed class WidgetWifiProperty(
                 LEARN_MORE_URL,
             ),
             true,
-            prefixLengthViewData
         )
 
     data object GlobalUnicast :
@@ -113,7 +110,6 @@ sealed class WidgetWifiProperty(
                 LEARN_MORE_URL,
             ),
             true,
-            prefixLengthViewData
         )
 
     data object Public :
@@ -124,7 +120,6 @@ sealed class WidgetWifiProperty(
                 LEARN_MORE_URL,
             ),
             false,
-            prefixLengthViewData
         )
 
     data object Frequency : WidgetWifiProperty(

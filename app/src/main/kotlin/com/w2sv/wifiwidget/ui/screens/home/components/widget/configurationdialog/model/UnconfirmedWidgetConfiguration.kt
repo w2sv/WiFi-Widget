@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.transform
 
 class UnconfirmedWidgetConfiguration(
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
-    val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IPProperty.V4AndV6, WidgetWifiProperty.IPProperty.V4AndV6.EnabledTypes>,
     val buttonMap: UnconfirmedStateMap<WidgetButton, Boolean>,
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     val useDynamicColors: UnconfirmedStateFlow<Boolean>,

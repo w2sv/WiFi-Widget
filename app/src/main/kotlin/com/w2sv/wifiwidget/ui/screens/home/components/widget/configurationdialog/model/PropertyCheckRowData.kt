@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Stable
+import com.w2sv.domain.model.WidgetWifiProperty
 
 @Stable
 open class PropertyCheckRowData<T>(
@@ -24,3 +25,23 @@ open class PropertyCheckRowData<T>(
         allowCheckChange = allowCheckChange,
     )
 }
+
+@Stable
+open class WifiPropertyCheckRowData(
+    type: WidgetWifiProperty,
+    isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
+    allowCheckChange: (Boolean) -> Boolean = { true },
+) : PropertyCheckRowData<WidgetWifiProperty>(
+    type,
+    type.viewData.labelRes,
+    isCheckedMap,
+    allowCheckChange,
+)
+
+@Stable
+class IPPropertyCheckRowData(
+    type: WidgetWifiProperty.IPProperty,
+    isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
+    val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    allowCheckChange: (Boolean) -> Boolean = { true },
+) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)

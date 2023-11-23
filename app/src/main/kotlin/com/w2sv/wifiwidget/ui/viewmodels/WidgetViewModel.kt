@@ -26,7 +26,6 @@ import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAs
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -126,23 +125,24 @@ class WidgetViewModel @Inject constructor(
     // =========
 
     val configuration = UnconfirmedWidgetConfiguration(
-        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+        wifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
             persistedFlowMap = repository.getWifiPropertyEnablementMap(),
             scope = viewModelScope,
             syncState = { repository.saveWifiPropertyEnablementMap(it) },
         ),
-        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            repository.subWifiProperties,
-            syncState = { repository.saveMap(it) },
+        subWifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+            persistedFlowMap = repository.getEnabledAddressTypesMap(),
+            scope = viewModelScope,
+            syncState = { repository.saveEnabledAddressTypesMap(it) },
         ),
-        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+        buttonMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
             persistedFlowMap = repository.getButtonEnablementMap(),
             scope = viewModelScope,
             syncState = {
                 repository.saveButtonEnablementMap(it)
             },
         ),
-        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+        refreshingParametersMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
             persistedFlowMap = repository.getRefreshingParametersEnablementMap(),
             scope = viewModelScope,
             syncState = {
@@ -152,20 +152,20 @@ class WidgetViewModel @Inject constructor(
                 }
             },
         ),
-        UnconfirmedStateFlow(
+        useDynamicColors = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
             persistedValue = repository.useDynamicColors
         ),
-        UnconfirmedStateFlow(
+        theme = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
             persistedValue = repository.theme
         ),
-        UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
+        customColorsMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
             persistedFlowMap = repository.getCustomColorsMap(),
             scope = viewModelScope,
             syncState = { repository.saveCustomColorsMap(it) },
         ),
-        UnconfirmedStateFlow(
+        opacity = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
             persistedValue = repository.opacity
         ),

@@ -8,15 +8,30 @@ import com.w2sv.domain.model.WidgetColor
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 
+private val Any.basePreferencesKeyName: String
+    get() = this::class.simpleName!!
+
 internal val WidgetWifiProperty.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
-        preferencesKey = booleanPreferencesKey(this::class.simpleName!!),
+        preferencesKey = booleanPreferencesKey(basePreferencesKeyName),
         defaultValue = defaultIsEnabled,
+    )
+
+internal val WidgetWifiProperty.IPProperty.V4AndV6.isV4EnabledDse
+    get() = DataStoreEntry.UniType.Impl(
+        preferencesKey = booleanPreferencesKey("$basePreferencesKeyName.V4"),
+        defaultValue = true,
+    )
+
+internal val WidgetWifiProperty.IPProperty.V4AndV6.isV6EnabledDse
+    get() = DataStoreEntry.UniType.Impl(
+        preferencesKey = booleanPreferencesKey("$basePreferencesKeyName.V6"),
+        defaultValue = true,
     )
 
 internal val WidgetButton.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
-        preferencesKey = booleanPreferencesKey("WidgetButton.${this::class.simpleName!!}"),
+        preferencesKey = booleanPreferencesKey("WidgetButton.$basePreferencesKeyName"),
         defaultValue = true,
     )
 
