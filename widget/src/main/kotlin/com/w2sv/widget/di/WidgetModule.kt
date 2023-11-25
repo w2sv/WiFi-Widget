@@ -4,8 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.repositories.WidgetRepository
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetAppearance
@@ -34,12 +34,8 @@ object WidgetModule {
         widgetRepository.appearance.getValueSynchronously()
 
     @Provides
-    fun setWifiProperties(widgetRepository: WidgetRepository): Set<WifiProperty> =
+    fun enabledWidgetWifiProperties(widgetRepository: WidgetRepository): Set<WidgetWifiProperty> =
         widgetRepository.getEnabledWifiProperties()
-
-    @Provides
-    fun wifiPropertyGetterResources(@ApplicationContext context: Context): WidgetWifiProperty.ValueGetterResources =
-        WidgetWifiProperty.ValueGetterResources(context)
 
     @Provides
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =

@@ -17,17 +17,12 @@ internal val WidgetWifiProperty.isEnabledDSE
         defaultValue = defaultIsEnabled,
     )
 
-internal val WidgetWifiProperty.IPProperty.V4AndV6.isV4EnabledDse
-    get() = DataStoreEntry.UniType.Impl(
-        preferencesKey = booleanPreferencesKey("$basePreferencesKeyName.V4"),
-        defaultValue = true,
-    )
-
-internal val WidgetWifiProperty.IPProperty.V4AndV6.isV6EnabledDse
-    get() = DataStoreEntry.UniType.Impl(
-        preferencesKey = booleanPreferencesKey("$basePreferencesKeyName.V6"),
-        defaultValue = true,
-    )
+internal val WidgetWifiProperty.IPProperty.SubProperty.isEnabledDse
+    get() =
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("${property.basePreferencesKeyName}.${kind.basePreferencesKeyName}"),
+            defaultValue = true,
+        )
 
 internal val WidgetButton.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(

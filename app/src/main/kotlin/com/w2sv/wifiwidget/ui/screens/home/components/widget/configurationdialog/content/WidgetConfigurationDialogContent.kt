@@ -46,7 +46,9 @@ internal fun WidgetConfigurationDialogContent(
 
         ThemeSelection(
             theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
-            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle(false).value,
+            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle(
+                false
+            ).value,
             setTheme = { widgetConfiguration.theme.value = it },
             useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
             setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
@@ -77,17 +79,19 @@ internal fun WidgetConfigurationDialogContent(
                     true -> {
                         when (lapUIState.rationalShown) {
                             false -> {
-                                lapUIState.rationalTriggeringAction.value =
+                                lapUIState.setRationalTriggeringAction(
                                     LocationAccessPermissionRequiringAction.PropertyCheckChange(
                                         property,
                                     )
+                                )
                             }
 
                             true -> {
-                                lapUIState.requestLaunchingAction.value =
+                                lapUIState.setRequestLaunchingAction(
                                     LocationAccessPermissionRequiringAction.PropertyCheckChange(
                                         property,
                                     )
+                                )
                             }
                         }
                         false

@@ -9,8 +9,7 @@ import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
 import com.w2sv.data.model.isEnabledDSE
-import com.w2sv.data.model.isV4EnabledDse
-import com.w2sv.data.model.isV6EnabledDse
+import com.w2sv.data.model.isEnabledDse
 import com.w2sv.data.model.valueDSE
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
@@ -22,7 +21,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -75,28 +73,15 @@ class WidgetRepository @Inject constructor(
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    fun getEnabledAddressTypesMap(): Map<WidgetWifiProperty.IPProperty.V4AndV6, Flow<WidgetWifiProperty.IPProperty.V4AndV6.EnabledTypes>> =
-        WidgetWifiProperty.IPProperty.V4AndV6.entries
-            .associateWith {
-                listOf(
-                    it.isV4EnabledDse,
-                    it.isV6EnabledDse
-                )
-            }
-            .mapValues { (_, v) ->
-                combine(v.map { getFlow(it) }) { (v4Enabled, v6Enabled) ->
-                    WidgetWifiProperty.IPProperty.V4AndV6.EnabledTypes(
-                        v4 = v4Enabled,
-                        v6 = v6Enabled
-                    )
-                }
-            }
+    fun getIPSubPropertyEnablementMap(): Map<WidgetWifiProperty.IPProperty.SubProperty, Flow<Boolean>> =
+        getTypeToValueMap(
+            WidgetWifiProperty.IPProperty.entries
+                .flatMap { it.subProperties }
+                .associateBy { it.isEnabledDse }
+        )
 
-    suspend fun saveEnabledAddressTypesMap(map: Map<WidgetWifiProperty.IPProperty.V4AndV6, WidgetWifiProperty.IPProperty.V4AndV6.EnabledTypes>) {
-        map.forEach { (k, v) ->
-            save(k.isV4EnabledDse.preferencesKey, v.v4)
-            save(k.isV6EnabledDse.preferencesKey, v.v6)
-        }
+    suspend fun saveIPSubPropertyEnablementMap(map: Map<WidgetWifiProperty.IPProperty.SubProperty, Boolean>) {
+        saveMap(map.mapKeys { (k, _) -> k.isEnabledDse })
     }
 
     fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> {

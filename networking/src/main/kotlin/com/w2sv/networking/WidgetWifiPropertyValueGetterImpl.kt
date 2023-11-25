@@ -9,7 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
-class WidgetWifiPropertyValueGetter @Inject constructor(
+class WidgetWifiPropertyValueGetterImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val httpClient: OkHttpClient
 ) : WidgetWifiProperty.ValueGetter {
@@ -17,7 +17,7 @@ class WidgetWifiPropertyValueGetter @Inject constructor(
     private val wifiManager by lazy { context.getWifiManager() }
     private val connectivityManager by lazy { context.getConnectivityManager() }
 
-    override fun invoke(properties: List<WidgetWifiProperty>): List<WidgetWifiProperty.Value> {
+    override fun invoke(properties: Iterable<WidgetWifiProperty>): List<WidgetWifiProperty.Value> {
         val systemIPAddresses by lazy { connectivityManager.getIPAddresses() }
 
         return properties.map { getPropertyValue(it, systemIPAddresses) }

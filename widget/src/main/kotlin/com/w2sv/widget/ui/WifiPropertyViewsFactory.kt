@@ -5,9 +5,8 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.common.utils.enumerationTag
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.data.repositories.WidgetRepository
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WifiPropertyLayoutViewData
@@ -19,7 +18,7 @@ import kotlin.properties.Delegates
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val valueGetterResources: WidgetWifiProperty.ValueGetterResources,
+    private val valueGetter: WidgetWifiProperty.ValueGetter,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -33,53 +32,57 @@ class WifiPropertyViewsFactory @Inject constructor(
         i { "${this::class.simpleName}.onDataSetChanged" }
 
         val ipSubProperties by lazy {
-            widgetRepository.subWifiProperties.getSynchronousMap()
+            widgetRepository.getIPSubPropertyEnablementMap().getSynchronousMap()
         }
 
         propertyViewData = buildList {
-            widgetRepository.getEnabledWifiProperties().forEach {
-                when (val value = it.getValue(valueGetterResources)) {
-                    is WidgetWifiProperty.Value.Singular -> {
-                        add(
-                            WifiPropertyLayoutViewData.WifiProperty(
-                                context.getString(it.viewData.labelRes), value.value,
-                            ),
-                        )
-                    }
-
-                    is WidgetWifiProperty.Value.IPAddresses -> {
-                        val filteredAddresses = when (val ipProperty = value.property) {
-                            is WidgetWifiProperty.IPv4 -> value.addresses
-                            is WidgetWifiProperty.IPv6 -> value.addresses.filter { address ->
-                                when {
-                                    !ipSubProperties.getValue(ipProperty.includeLocal) -> !address.isLocal
-                                    !ipSubProperties.getValue(ipProperty.includePublic) -> address.isLocal
-                                    else -> true
-                                }
-                            }
-                        }
-                        filteredAddresses.forEachIndexed { i, address ->
+            widgetRepository.getEnabledWifiProperties().run {
+                zip(valueGetter(this))
+            }
+                .forEach { (property, value) ->
+                    when (value) {
+                        is WidgetWifiProperty.Value.String -> {
                             add(
                                 WifiPropertyLayoutViewData.WifiProperty(
-                                    buildString {
-                                        append(context.getString(it.viewData.labelRes))
-                                        if (filteredAddresses.size > 1) {
-                                            append(" ${enumerationTag(i)}")
-                                        }
-                                    },
-                                    address.hostAddressRepresentation,
-                                ),
-                            )
-                            add(
-                                WifiPropertyLayoutViewData.IPProperties(
-                                    ipAddress = address,
-                                    showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty),
+                                    context.getString(property.viewData.labelRes), value.value.toString(),
                                 ),
                             )
                         }
+                        else -> Unit
+
+//                        is WidgetWifiProperty.Value.IPAddresses -> {
+//                            val filteredAddresses = when (val ipProperty = value.property) {
+//                                is WidgetWifiProperty.IPv4 -> value.addresses
+//                                is WidgetWifiProperty.IPv6 -> value.addresses.filter { address ->
+//                                    when {
+//                                        !ipSubProperties.getValue(ipProperty.includeLocal) -> !address.isLocal
+//                                        !ipSubProperties.getValue(ipProperty.includePublic) -> address.isLocal
+//                                        else -> true
+//                                    }
+//                                }
+//                            }
+//                            filteredAddresses.forEachIndexed { i, address ->
+//                                add(
+//                                    WifiPropertyLayoutViewData.WifiProperty(
+//                                        buildString {
+//                                            append(context.getString(it.viewData.labelRes))
+//                                            if (filteredAddresses.size > 1) {
+//                                                append(" ${enumerationTag(i)}")
+//                                            }
+//                                        },
+//                                        address.hostAddressRepresentation,
+//                                    ),
+//                                )
+//                                add(
+//                                    WifiPropertyLayoutViewData.IPProperties(
+//                                        ipAddress = address,
+//                                        showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty),
+//                                    ),
+//                                )
+//                            }
+//                        }
                     }
                 }
-            }
         }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
 

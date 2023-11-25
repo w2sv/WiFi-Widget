@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.w2sv.data.model.WifiProperty
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
@@ -47,12 +46,27 @@ internal fun WifiPropertySelection(
                     },
                 ),
                 IPPropertyCheckRowData(
-                    WidgetWifiProperty.IPv4,
+                    WidgetWifiProperty.SiteLocal,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap,
                 ),
                 IPPropertyCheckRowData(
-                    WidgetWifiProperty.IPv6,
+                    WidgetWifiProperty.LinkLocal,
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = ipSubPropertiesMap,
+                ),
+                IPPropertyCheckRowData(
+                    WidgetWifiProperty.UniqueLocal,
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = ipSubPropertiesMap,
+                ),
+                IPPropertyCheckRowData(
+                    WidgetWifiProperty.GlobalUnicast,
+                    isCheckedMap = wifiPropertiesMap,
+                    subPropertyIsCheckedMap = ipSubPropertiesMap,
+                ),
+                IPPropertyCheckRowData(
+                    WidgetWifiProperty.Public,
                     isCheckedMap = wifiPropertiesMap,
                     subPropertyIsCheckedMap = ipSubPropertiesMap,
                 ),
@@ -106,7 +120,6 @@ private fun WifiPropertyCheckRow(
                 IPSubPropertyCheckRows(
                     subProperties = (data.type as WidgetWifiProperty.IPProperty).subProperties,
                     subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
-                    showInfoDialog = showInfoDialog,
                 )
             }
         }
@@ -117,34 +130,21 @@ private fun WifiPropertyCheckRow(
 private fun IPSubPropertyCheckRows(
     subProperties: List<WidgetWifiProperty.IPProperty.SubProperty>,
     subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
-    showInfoDialog: (PropertyInfoDialogData) -> Unit,
 ) {
     Column {
         subProperties.forEach { subProperty ->
             SubPropertyCheckRow(
                 data = PropertyCheckRowData(
                     type = subProperty,
-                    labelRes = subProperty.viewData.labelRes,
+                    labelRes = subProperty.kind.labelRes,
                     isCheckedMap = subPropertyIsCheckedMap,
                     allowCheckChange = { newValue ->
-                        mapOf(
-                            WidgetWifiProperty.IPv6.includeLocal to WidgetWifiProperty.IPv6.includePublic,
-                            WidgetWifiProperty.IPv6.includePublic to WidgetWifiProperty.IPv6.includeLocal,
-                        )[subProperty]
-                            ?.let { inverseSubProperty ->
-                                if (!newValue && !subPropertyIsCheckedMap.getValue(
-                                        inverseSubProperty,
-                                    )
-                                ) {
-                                    subPropertyIsCheckedMap[inverseSubProperty] =
-                                        true
-                                }
-                            }
-
-                        true
+                        !(
+                                !newValue
+                                        && subProperty.isAddressTypeEnablementProperty
+                                        && subPropertyIsCheckedMap.count { (k, v) -> k.isAddressTypeEnablementProperty && v } == 1)
                     },
                 ),
-                onInfoButtonClick = { showInfoDialog(subProperty.viewData.infoDialogData) },
             )
         }
     }

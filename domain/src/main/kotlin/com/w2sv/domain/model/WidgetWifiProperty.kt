@@ -22,7 +22,7 @@ sealed class WidgetWifiProperty(
     }
 
     interface ValueGetter {
-        operator fun invoke(properties: List<WidgetWifiProperty>): List<Value>
+        operator fun invoke(properties: Iterable<WidgetWifiProperty>): List<Value>
     }
 
     data object SSID : WidgetWifiProperty(
@@ -46,15 +46,59 @@ sealed class WidgetWifiProperty(
     sealed class IPProperty(
         viewData: ViewData,
         defaultIsEnabled: Boolean,
+        subPropertyKinds: List<SubProperty.Kind>
     ) :
         WidgetWifiProperty(viewData, defaultIsEnabled) {
+
+        val subProperties = subPropertyKinds.map { SubProperty(this, it) }
+
+        data class SubProperty(val property: IPProperty, val kind: Kind) {
+            sealed class Kind(@StringRes val labelRes: Int) {
+                data object ShowPrefixLength : Kind(R.string.show_prefix_length)
+            }
+
+            val isAddressTypeEnablementProperty: Boolean
+                get() = kind is V4AndV6.AddressTypeEnablement
+        }
+
+        sealed class V6Only(
+            viewData: ViewData,
+            defaultIsEnabled: Boolean,
+        ) : IPProperty(
+            viewData = viewData,
+            defaultIsEnabled = defaultIsEnabled,
+            subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)
+        ) {
+            companion object {
+                val entries: List<V6Only>
+                    get() = listOf(UniqueLocal, GlobalUnicast)
+            }
+        }
 
         sealed class V4AndV6(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
-        ) : IPProperty(viewData, defaultIsEnabled) {
+        ) : IPProperty(
+            viewData = viewData,
+            defaultIsEnabled = defaultIsEnabled,
+            subPropertyKinds = listOf(
+                SubProperty.Kind.ShowPrefixLength,
+                AddressTypeEnablement.V4Enabled,
+                AddressTypeEnablement.V6Enabled,
+            )
+        ) {
 
-            data class EnabledTypes(val v4: Boolean, val v6: Boolean)
+            sealed class AddressTypeEnablement(@StringRes labelRes: Int) :
+                SubProperty.Kind(labelRes) {
+
+                data object V4Enabled : AddressTypeEnablement(R.string.show_v4_addresses)
+                data object V6Enabled : AddressTypeEnablement(R.string.show_v6_addresses)
+
+                companion object {
+                    val entries: List<AddressTypeEnablement>
+                        get() = listOf(V4Enabled, V6Enabled)
+                }
+            }
 
             companion object {
                 val entries: List<V4AndV6>
@@ -62,13 +106,11 @@ sealed class WidgetWifiProperty(
             }
         }
 
-        sealed class V6Only(
-            viewData: ViewData,
-            defaultIsEnabled: Boolean,
-        ) : IPProperty(viewData, defaultIsEnabled)
-
         companion object {
             const val LEARN_MORE_URL = "https://en.wikipedia.org/wiki/IP_address"
+
+            val entries: List<IPProperty>
+                get() = V6Only.entries + V4AndV6.entries
         }
     }
 

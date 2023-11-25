@@ -6,7 +6,7 @@ import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
-import com.w2sv.data.networking.IPAddress
+import com.w2sv.domain.model.IPAddress
 import com.w2sv.widget.R
 import com.w2sv.widget.utils.setTextView
 
@@ -41,19 +41,10 @@ internal sealed interface WifiPropertyLayoutViewData {
         override fun inflateView(context: Context, widgetColors: WidgetColors): RemoteViews =
             RemoteViews(context.packageName, R.layout.ip_properties)
                 .apply {
-                    val propertyTVIterator = listOf(
-                        R.id.ip_property_tv_1,
-                        R.id.ip_property_tv_2,
-                        R.id.ip_property_tv_3,
-                        R.id.ip_property_tv_4,
-                        R.id.ip_property_tv_5,
-                    )
-                        .iterator()
 
-                    fun addSubPropertyTV(text: String) {
-                        val viewId = propertyTVIterator.next()
+                    fun addSubPropertyTV(text: String, textViewId: Int) {
                         setTextView(
-                            viewId = viewId,
+                            viewId = textViewId,
                             text = text,
                             color = widgetColors.secondary,
                         )
@@ -64,19 +55,17 @@ internal sealed interface WifiPropertyLayoutViewData {
                                 ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor),
                             )
                         } else {
-                            setBackgroundColor(viewId, widgetColors.ipSubPropertyBackgroundColor)
+                            setBackgroundColor(
+                                textViewId,
+                                widgetColors.ipSubPropertyBackgroundColor
+                            )
                         }
                     }
 
-                    ipAddress
-                        .getViewProperties(includePrefixLength = showPrefixLength)
-                        .forEach {
-                            addSubPropertyTV(it)
-                        }
-
-                    // Hide all remaining sub-property views
-                    propertyTVIterator.forEachRemaining {
-                        setViewVisibility(it, View.GONE)
+                    if (showPrefixLength) {
+                        addSubPropertyTV("${ipAddress.prefixLength}", R.id.ip_property_tv_1)
+                    } else {
+                        setViewVisibility(R.id.ip_property_tv_1, View.GONE)
                     }
                 }
     }

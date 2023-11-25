@@ -13,7 +13,8 @@ import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.androidutils.ui.getAlphaSetColor
 import com.w2sv.common.constants.Extra
-import com.w2sv.data.model.WifiStatus
+import com.w2sv.domain.model.WifiStatus
+import com.w2sv.networking.getWifiStatus
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
@@ -40,7 +41,7 @@ class WidgetLayoutPopulator @Inject constructor(
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget.apply {
             setContentLayout(
-                wifiStatus = WifiStatus.get(context),
+                wifiStatus = getWifiStatus(context),
                 appWidgetId = appWidgetId,
             )
             setBackgroundColor(

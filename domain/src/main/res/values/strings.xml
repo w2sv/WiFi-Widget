@@ -30,4 +30,7 @@
     <string name="disabled">Disabled</string>
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
+
+    <string name="show_v4_addresses">Show V4 Addresses</string>
+    <string name="show_v6_addresses">Show V6 Addresses</string>
 </resources>

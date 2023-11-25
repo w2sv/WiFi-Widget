@@ -17,6 +17,13 @@ class WifiStatusUIState(
     wifiStatusMonitor: WifiStatusMonitor,
     private val scope: CoroutineScope,
 ) {
+    val propertiesViewData get() = _propertiesViewData.asStateFlow()
+    private var _propertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
+
+    private fun refreshPropertiesViewData() {
+        _propertiesViewData.value = getPropertiesViewData()
+    }
+
     val status = wifiStatusMonitor.wifiStatus.stateIn(
         scope,
         SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
@@ -46,13 +53,6 @@ class WifiStatusUIState(
         scope.launch {
             refreshPropertiesViewData()
         }
-    }
-
-    val propertiesViewData get() = _propertiesViewData.asStateFlow()
-    private var _propertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
-
-    private fun refreshPropertiesViewData() {
-        _propertiesViewData.value = getPropertiesViewData()
     }
 
     // TODO

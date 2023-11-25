@@ -63,6 +63,7 @@ sealed interface WidgetTheme {
     }
 }
 
+@SuppressLint("ResourceType")
 private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int): WidgetColors =
     DynamicColors.wrapContextIfAvailable(
         context,
@@ -75,13 +76,10 @@ private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int
                 com.google.android.material.R.attr.colorSecondary,
             ),
         )
-        .run {
-            @SuppressLint("ResourceType")
-            val colors = WidgetColors(
-                background = getColor(0, 0),
-                primary = getColor(1, 0),
-                secondary = getColor(2, 0),
+        .use {
+            WidgetColors(
+                background = it.getColor(0, 0),
+                primary = it.getColor(1, 0),
+                secondary = it.getColor(2, 0),
             )
-            recycle()
-            colors
         }

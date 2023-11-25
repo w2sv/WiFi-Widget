@@ -135,8 +135,9 @@ fun LandscapeMode(
                     onPinWidgetButtonClick = {
                         when (homeScreenVM.lapUIState.rationalShown) {
                             false ->
-                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                homeScreenVM.lapUIState.setRationalTriggeringAction(
                                     LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+                                )
 
                             true -> attemptWifiWidgetPin(context)
                         }
@@ -181,8 +182,9 @@ private fun PortraitMode(
                     onPinWidgetButtonClick = {
                         when (homeScreenVM.lapUIState.rationalShown) {
                             false ->
-                                homeScreenVM.lapUIState.rationalTriggeringAction.value =
+                                homeScreenVM.lapUIState.setRationalTriggeringAction(
                                     LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+                                )
 
                             true -> attemptWifiWidgetPin(context)
                         }
@@ -254,7 +256,7 @@ private fun OverlayDialogs(
     if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
-                homeScreenVM.lapUIState.showBackgroundAccessRational.value = false
+                homeScreenVM.lapUIState.setShowBackgroundAccessRational(true)
             },
         )
     }

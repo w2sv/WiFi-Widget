@@ -103,13 +103,13 @@ class WifiStatusMonitor @Inject constructor(
         .conflate()
 }
 
-private fun getWifiStatus(context: Context): WifiStatus =
+fun getWifiStatus(context: Context): WifiStatus =
     getWifiStatus(
         wifiManager = context.getWifiManager(),
         connectivityManager = context.getConnectivityManager(),
     )
 
-private fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =
+fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =
     when {
         !wifiManager.isWifiEnabled -> WifiStatus.Disabled
         else -> when (connectivityManager.isWifiConnected) {

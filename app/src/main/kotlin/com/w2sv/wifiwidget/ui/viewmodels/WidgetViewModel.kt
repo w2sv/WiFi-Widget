@@ -131,9 +131,9 @@ class WidgetViewModel @Inject constructor(
             syncState = { repository.saveWifiPropertyEnablementMap(it) },
         ),
         subWifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getEnabledAddressTypesMap(),
+            persistedFlowMap = repository.getIPSubPropertyEnablementMap(),
             scope = viewModelScope,
-            syncState = { repository.saveEnabledAddressTypesMap(it) },
+            syncState = { repository.saveIPSubPropertyEnablementMap(it) },
         ),
         buttonMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
             persistedFlowMap = repository.getButtonEnablementMap(),
