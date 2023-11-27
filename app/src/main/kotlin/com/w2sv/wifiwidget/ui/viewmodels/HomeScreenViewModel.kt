@@ -19,7 +19,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
     @ApplicationContext context: Context,
-    widgetWifiPropertyValueGetter: WidgetWifiProperty.ValueGetter,
+    widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     wifiStatusMonitor: WifiStatusMonitor,
 ) : ViewModel() {
 
@@ -55,8 +55,8 @@ class HomeScreenViewModel @Inject constructor(
         }
 
     val wifiStatusUIState = WifiStatusUIState(
-        widgetWifiPropertyValueGetter,
-        wifiStatusMonitor,
-        viewModelScope,
+        widgetWifiPropertyValueViewDataFactory = widgetWifiPropertyValueViewDataFactory,
+        wifiStatusMonitor = wifiStatusMonitor,
+        scope = viewModelScope,
     )
 }

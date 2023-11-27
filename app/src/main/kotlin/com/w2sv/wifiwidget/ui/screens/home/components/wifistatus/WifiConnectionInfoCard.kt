@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
@@ -15,7 +16,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 @Composable
 fun WifiConnectionInfoCard(
     wifiStatus: WifiStatus,
-    wifiPropertiesViewData: List<WifiPropertyViewData>?,
+    wifiPropertiesViewData: List<WidgetWifiProperty.ValueViewData>?,
     modifier: Modifier = Modifier,
 ) {
     HomeScreenCard(

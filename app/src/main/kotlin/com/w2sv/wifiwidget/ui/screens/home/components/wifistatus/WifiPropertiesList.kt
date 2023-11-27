@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.utils.enumerationTag
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
@@ -39,14 +38,9 @@ import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-data class WifiPropertyViewData(
-    val property: WidgetWifiProperty,
-    val value: WidgetWifiProperty.Value
-)
-
 @Composable
 fun WifiPropertiesList(
-    propertiesViewData: List<WifiPropertyViewData>,
+    propertiesViewData: List<WidgetWifiProperty.ValueViewData>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
@@ -70,32 +64,21 @@ fun WifiPropertiesList(
             }
         }
         items(propertiesViewData) { viewData ->
-            val propertyName = stringResource(id = viewData.property.viewData.labelRes)
-
-            when (val value = viewData.value) {
-                is WidgetWifiProperty.Value.String -> {
+            when (viewData) {
+                is WidgetWifiProperty.ValueViewData.RegularProperty -> {
                     WifiPropertyRow(
-                        propertyName = propertyName,
-                        value = value.value ?: "Couldn't retrieve",
+                        propertyName = viewData.label,
+                        value = viewData.value
                     )
                 }
 
-                is WidgetWifiProperty.Value.IPAddresses -> {
-                    if (value.addresses.size > 1) {
-                        value.addresses.forEachIndexed { i, address ->
-                            WifiPropertyRow(
-                                propertyName = "$propertyName ${enumerationTag(i)}",
-                                value = address.hostAddressRepresentation,
-                            )
-                            IPSubPropertiesRow(prefixLength = address.prefixLength)
-                        }
-                    } else if (value.addresses.size == 1) {
-                        val address = value.addresses.first()
-                        WifiPropertyRow(
-                            propertyName = propertyName,
-                            value = address.hostAddressRepresentation,
-                        )
-                        IPSubPropertiesRow(prefixLength = address.prefixLength)
+                is WidgetWifiProperty.ValueViewData.IPProperty -> {
+                    WifiPropertyRow(
+                        propertyName = viewData.label,
+                        value = viewData.value,
+                    )
+                    viewData.prefixLengthText?.let {
+                        IPSubPropertiesRow(prefixLengthText = it)
                     }
                 }
             }
@@ -145,13 +128,13 @@ private fun WifiPropertyRow(
 }
 
 @Composable
-private fun IPSubPropertiesRow(prefixLength: Int, modifier: Modifier = Modifier) {
+private fun IPSubPropertiesRow(prefixLengthText: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
-        IPSubPropertyText(text = "/$prefixLength")
+        IPSubPropertyText(text = prefixLengthText)
     }
 }
 

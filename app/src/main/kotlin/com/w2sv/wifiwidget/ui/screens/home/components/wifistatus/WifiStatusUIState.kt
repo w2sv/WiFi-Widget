@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class WifiStatusUIState(
-    private val widgetWifiPropertyValueGetter: WidgetWifiProperty.ValueGetter,
+    private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     wifiStatusMonitor: WifiStatusMonitor,
     private val scope: CoroutineScope,
 ) {
     val propertiesViewData get() = _propertiesViewData.asStateFlow()
-    private var _propertiesViewData = MutableStateFlow<List<WifiPropertyViewData>?>(null)
+    private var _propertiesViewData = MutableStateFlow<List<WidgetWifiProperty.ValueViewData>?>(null)
 
     private fun refreshPropertiesViewData() {
         _propertiesViewData.value = getPropertiesViewData()
@@ -55,9 +55,6 @@ class WifiStatusUIState(
         }
     }
 
-    // TODO
-    private fun getPropertiesViewData(): List<WifiPropertyViewData> =
-        widgetWifiPropertyValueGetter(WidgetWifiProperty.entries)
-            .zip(WidgetWifiProperty.entries)
-            .map { WifiPropertyViewData(it.second, it.first) }
+    private fun getPropertiesViewData(): List<WidgetWifiProperty.ValueViewData> =
+        widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries)
 }

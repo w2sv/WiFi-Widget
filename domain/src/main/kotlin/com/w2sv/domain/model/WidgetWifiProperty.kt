@@ -13,16 +13,28 @@ sealed class WidgetWifiProperty(
         val learnMoreUrl: String? = null,
     )
 
-    sealed interface Value {
-        @JvmInline
-        value class String(val value: kotlin.String?) : Value
+    sealed interface ValueViewData {
+        val label: String
+        val value: String
 
-        @JvmInline
-        value class IPAddresses(val addresses: List<IPAddress>) : Value
-    }
+        data class RegularProperty(override val value: String, override val label: String) : ValueViewData
+        data class IPProperty(override val label: String, override val value: String, val prefixLengthText: String?) :
+            ValueViewData {
 
-    interface ValueGetter {
-        operator fun invoke(properties: Iterable<WidgetWifiProperty>): List<Value>
+            constructor(
+                label: String,
+                ipAddress: IPAddress,
+                showPrefixLength: Boolean
+            ) : this(
+                label = label,
+                value = ipAddress.hostAddressRepresentation,
+                prefixLengthText = if (showPrefixLength) "/${ipAddress.prefixLength}" else null
+            )
+        }
+
+        interface Factory {
+            operator fun invoke(properties: Iterable<WidgetWifiProperty>): List<ValueViewData>
+        }
     }
 
     data object SSID : WidgetWifiProperty(

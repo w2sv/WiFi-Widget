@@ -3,13 +3,12 @@ package com.w2sv.widget.ui
 import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
-import com.w2sv.widget.model.WifiPropertyLayoutViewData
+import com.w2sv.widget.model.WidgetPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import slimber.log.i
 import javax.inject.Inject
@@ -18,12 +17,12 @@ import kotlin.properties.Delegates
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val valueGetter: WidgetWifiProperty.ValueGetter,
+    private val valueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
 
-    private lateinit var propertyViewData: List<WifiPropertyLayoutViewData>
+    private lateinit var propertyViewData: List<WidgetPropertyView>
     private lateinit var widgetColors: WidgetColors
 
     private var nViewTypes by Delegates.notNull<Int>()
@@ -31,59 +30,18 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
 
-        val ipSubProperties by lazy {
-            widgetRepository.getIPSubPropertyEnablementMap().getSynchronousMap()
-        }
-
-        propertyViewData = buildList {
-            widgetRepository.getEnabledWifiProperties().run {
-                zip(valueGetter(this))
-            }
-                .forEach { (property, value) ->
-                    when (value) {
-                        is WidgetWifiProperty.Value.String -> {
-                            add(
-                                WifiPropertyLayoutViewData.WifiProperty(
-                                    context.getString(property.viewData.labelRes), value.value.toString(),
-                                ),
-                            )
+        propertyViewData = valueViewDataFactory(widgetRepository.getEnabledWifiProperties())
+            .flatMap { valueViewData ->
+                when(valueViewData) {
+                    is WidgetWifiProperty.ValueViewData.RegularProperty -> listOf(WidgetPropertyView.Property(valueViewData))
+                    is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
+                        add(WidgetPropertyView.Property(valueViewData))
+                        valueViewData.prefixLengthText?.let {
+                            add(WidgetPropertyView.PrefixLength(it))
                         }
-                        else -> Unit
-
-//                        is WidgetWifiProperty.Value.IPAddresses -> {
-//                            val filteredAddresses = when (val ipProperty = value.property) {
-//                                is WidgetWifiProperty.IPv4 -> value.addresses
-//                                is WidgetWifiProperty.IPv6 -> value.addresses.filter { address ->
-//                                    when {
-//                                        !ipSubProperties.getValue(ipProperty.includeLocal) -> !address.isLocal
-//                                        !ipSubProperties.getValue(ipProperty.includePublic) -> address.isLocal
-//                                        else -> true
-//                                    }
-//                                }
-//                            }
-//                            filteredAddresses.forEachIndexed { i, address ->
-//                                add(
-//                                    WifiPropertyLayoutViewData.WifiProperty(
-//                                        buildString {
-//                                            append(context.getString(it.viewData.labelRes))
-//                                            if (filteredAddresses.size > 1) {
-//                                                append(" ${enumerationTag(i)}")
-//                                            }
-//                                        },
-//                                        address.hostAddressRepresentation,
-//                                    ),
-//                                )
-//                                add(
-//                                    WifiPropertyLayoutViewData.IPProperties(
-//                                        ipAddress = address,
-//                                        showPrefixLength = ipSubProperties.getValue(value.property.prefixLengthSubProperty),
-//                                    ),
-//                                )
-//                            }
-//                        }
                     }
                 }
-        }
+            }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
 
         widgetColors = widgetRepository.appearance.getValueSynchronously().getColors(context)
@@ -92,7 +50,7 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun getCount(): Int = propertyViewData.size
 
     override fun getViewAt(position: Int): RemoteViews =
-        propertyViewData[position].inflateView(context, widgetColors)
+        propertyViewData[position].inflate(context.packageName, widgetColors)
 
     override fun getLoadingView(): RemoteViews? = null
 
