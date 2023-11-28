@@ -59,7 +59,6 @@ fun WidgetConfigurationDialog(
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
-            showInfoDialog = widgetVM::setPropertyInfoDialogData,
             lapUIState = homeScreenViewModel.lapUIState,
             modifier = Modifier
                 .fillMaxWidth()

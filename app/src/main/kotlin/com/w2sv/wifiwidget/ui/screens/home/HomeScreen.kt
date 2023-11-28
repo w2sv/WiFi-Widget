@@ -45,7 +45,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionElementsRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
@@ -89,7 +88,7 @@ internal fun HomeScreen(
             }
         }
 
-        OverlayDialogs()
+        Dialogs()
 
         LaunchedEffect(snackbarHostState) {
             widgetVM.snackbarVisuals.collect {
@@ -201,7 +200,7 @@ private fun PortraitMode(
 }
 
 @Composable
-private fun OverlayDialogs(
+private fun Dialogs(
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
     context: Context = LocalContext.current
@@ -243,13 +242,6 @@ private fun OverlayDialogs(
                 homeScreenVM.setShowWidgetConfigurationDialog(false)
             },
         )
-
-        widgetVM.propertyInfoDialogData.collectAsStateWithLifecycle().value?.let {
-            PropertyInfoDialog(
-                data = it,
-                onDismissRequest = { widgetVM.setPropertyInfoDialogData(null) },
-            )
-        }
     }
     @SuppressLint("NewApi")
     if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {

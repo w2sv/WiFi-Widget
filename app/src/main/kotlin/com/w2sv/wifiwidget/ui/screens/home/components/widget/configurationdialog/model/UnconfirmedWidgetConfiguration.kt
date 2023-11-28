@@ -8,8 +8,11 @@ import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetColor
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class UnconfirmedWidgetConfiguration(
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
@@ -35,7 +38,12 @@ class UnconfirmedWidgetConfiguration(
     coroutineScope = scope,
 ) {
     val customThemeSelected = theme
-        .transform {
-            emit(it == Theme.Custom)
+        .map {
+            it == Theme.Custom
         }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
+            initialValue = false
+        )
 }

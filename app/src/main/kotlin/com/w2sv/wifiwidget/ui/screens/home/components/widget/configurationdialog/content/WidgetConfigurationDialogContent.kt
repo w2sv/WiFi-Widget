@@ -8,6 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,11 +31,23 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 @Composable
 internal fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
-    showInfoDialog: (PropertyInfoDialogData) -> Unit,
     lapUIState: LocationAccessPermissionState,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+
+    var propertyInfoDialogData by remember {
+        mutableStateOf<PropertyInfoDialogData?>(null)
+    }
+        .apply {
+            value?.let {
+                PropertyInfoDialog(data = it, onDismissRequest = { value = null })
+            }
+        }
+
+    fun showInfoDialog(data: PropertyInfoDialogData) {
+        propertyInfoDialogData = data
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -46,9 +62,7 @@ internal fun WidgetConfigurationDialogContent(
 
         ThemeSelection(
             theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
-            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle(
-                false
-            ).value,
+            customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle().value,
             setTheme = { widgetConfiguration.theme.value = it },
             useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
             setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
@@ -100,7 +114,7 @@ internal fun WidgetConfigurationDialogContent(
                     false -> true
                 }
             },
-            showInfoDialog = showInfoDialog,
+            showInfoDialog = ::showInfoDialog,
         )
 
         SectionHeader(
@@ -120,7 +134,7 @@ internal fun WidgetConfigurationDialogContent(
                     animateScrollTo(maxValue)
                 }
             },
-            showInfoDialog = showInfoDialog,
+            showInfoDialog = ::showInfoDialog,
         )
     }
 }
