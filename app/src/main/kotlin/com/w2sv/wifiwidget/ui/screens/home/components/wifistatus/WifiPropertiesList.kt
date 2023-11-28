@@ -38,7 +38,6 @@ import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicab
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun WifiPropertiesList(
     propertiesViewData: List<WidgetWifiProperty.ValueViewData>,

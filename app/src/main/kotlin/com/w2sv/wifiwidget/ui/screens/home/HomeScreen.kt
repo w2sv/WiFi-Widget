@@ -110,7 +110,7 @@ internal fun HomeScreen(
 }
 
 @Composable
-fun LandscapeMode(
+private fun LandscapeMode(
     paddingValues: PaddingValues,
     homeScreenVM: HomeScreenViewModel = viewModel(),
     context: Context = LocalContext.current
