@@ -7,11 +7,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -23,7 +21,6 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.InfoIconButton
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.theme.disabledColor
 
 @Composable
 internal fun <T> PropertyCheckRow(
@@ -34,11 +31,10 @@ internal fun <T> PropertyCheckRow(
     PropertyCheckRow(
         data = data,
         modifier = modifier,
-        leadingIcon = { color: Color ->
+        leadingIcon = {
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
-                tint = color,
             )
         },
         onInfoButtonClick = onInfoButtonClick,
@@ -66,7 +62,7 @@ private fun <T> PropertyCheckRow(
     modifier: Modifier = Modifier,
     makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,
-    leadingIcon: (@Composable (Color) -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
     onInfoButtonClick: (() -> Unit)? = null,
 ) {
     val label = stringResource(id = data.labelRes)
@@ -77,14 +73,12 @@ private fun <T> PropertyCheckRow(
         modifier = modifier
             .fillMaxWidth(),
     ) {
-        val color = if (data.isChecked()) LocalContentColor.current else disabledColor()
 
-        leadingIcon?.invoke(color)
+        leadingIcon?.invoke()
         AppFontText(
             text = makeText(label),
             fontSize = fontSize,
             modifier = Modifier.weight(1.0f, true),
-            color = color,
         )
         Checkbox(
             checked = data.isChecked(),
