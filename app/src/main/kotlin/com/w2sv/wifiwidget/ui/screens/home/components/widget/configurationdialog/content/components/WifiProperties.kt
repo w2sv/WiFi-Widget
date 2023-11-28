@@ -2,10 +2,17 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.IPPropertyCheckRowData
@@ -18,87 +25,60 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
     ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
-    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty, Boolean) -> Boolean,
+    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.LocationAccessPermissionRequiring, Boolean) -> Boolean,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val indexToFirstSubTypeTitle = remember {
+        mapOf(
+            0 to "Location access requiring",
+            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size to "IP Addresses",
+            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size + WidgetWifiProperty.IPProperty.entries.size to "Other"
+        )
+    }
+
     Column(modifier = modifier) {
         remember {
-            listOf(
-                WifiPropertyCheckRowData(
-                    type = WidgetWifiProperty.SSID,
-                    isCheckedMap = wifiPropertiesMap,
-                    allowCheckChange = {
-                        allowLAPDependentPropertyCheckChange(
-                            WidgetWifiProperty.SSID,
-                            it,
+            WidgetWifiProperty.entries.map { property ->
+                when (property) {
+                    is WidgetWifiProperty.LocationAccessPermissionRequiring -> WifiPropertyCheckRowData(
+                        property = property,
+                        isCheckedMap = wifiPropertiesMap,
+                        allowCheckChange = {
+                            allowLAPDependentPropertyCheckChange(
+                                property,
+                                it,
+                            )
+                        },
+                    )
+
+                    is WidgetWifiProperty.IPProperty -> {
+                        IPPropertyCheckRowData(
+                            property = property,
+                            isCheckedMap = wifiPropertiesMap,
+                            subPropertyIsCheckedMap = ipSubPropertiesMap,
                         )
-                    },
-                ),
-                WifiPropertyCheckRowData(
-                    type = WidgetWifiProperty.BSSID,
-                    isCheckedMap = wifiPropertiesMap,
-                    allowCheckChange = {
-                        allowLAPDependentPropertyCheckChange(
-                            WidgetWifiProperty.BSSID,
-                            it,
-                        )
-                    },
-                ),
-                IPPropertyCheckRowData(
-                    WidgetWifiProperty.SiteLocal,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = ipSubPropertiesMap,
-                ),
-                IPPropertyCheckRowData(
-                    WidgetWifiProperty.LinkLocal,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = ipSubPropertiesMap,
-                ),
-                IPPropertyCheckRowData(
-                    WidgetWifiProperty.UniqueLocal,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = ipSubPropertiesMap,
-                ),
-                IPPropertyCheckRowData(
-                    WidgetWifiProperty.GlobalUnicast,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = ipSubPropertiesMap,
-                ),
-                IPPropertyCheckRowData(
-                    WidgetWifiProperty.Public,
-                    isCheckedMap = wifiPropertiesMap,
-                    subPropertyIsCheckedMap = ipSubPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.Frequency,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.Channel,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.LinkSpeed,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.Gateway,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.DNS,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-                WifiPropertyCheckRowData(
-                    WidgetWifiProperty.DHCP,
-                    isCheckedMap = wifiPropertiesMap,
-                ),
-            )
+                    }
+
+                    else -> WifiPropertyCheckRowData(
+                        property = property,
+                        isCheckedMap = wifiPropertiesMap,
+                    )
+                }
+            }
         }
-            .forEach {
+            .forEachIndexed { index, data ->
+                indexToFirstSubTypeTitle[index]?.let { subTypeTitle ->
+                    AppFontText(
+                        text = subTypeTitle,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
                 WifiPropertyCheckRow(
-                    data = it,
+                    data = data,
                     showInfoDialog = showInfoDialog,
                 )
             }
@@ -113,12 +93,12 @@ private fun WifiPropertyCheckRow(
     Column {
         PropertyCheckRow(
             data = data,
-            onInfoButtonClick = { showInfoDialog(data.type.viewData.infoDialogData) },
+            onInfoButtonClick = { showInfoDialog(data.property.viewData.infoDialogData) },
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
                 IPSubPropertyCheckRows(
-                    subProperties = (data.type as WidgetWifiProperty.IPProperty).subProperties,
+                    subProperties = (data.property as WidgetWifiProperty.IPProperty).subProperties,
                     subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
                 )
             }

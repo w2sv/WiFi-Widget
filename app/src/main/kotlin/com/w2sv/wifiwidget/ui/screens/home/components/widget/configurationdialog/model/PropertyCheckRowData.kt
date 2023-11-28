@@ -1,12 +1,12 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
 import androidx.annotation.StringRes
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.WidgetWifiProperty
 
-@Stable
+@Immutable
 open class PropertyCheckRowData<T>(
-    val type: T,
+    val property: T,
     @StringRes val labelRes: Int,
     val isChecked: () -> Boolean,
     val onCheckedChange: (Boolean) -> Unit,
@@ -18,7 +18,7 @@ open class PropertyCheckRowData<T>(
         isCheckedMap: MutableMap<T, Boolean>,
         allowCheckChange: (Boolean) -> Boolean = { true },
     ) : this(
-        type = type,
+        property = type,
         labelRes = labelRes,
         isChecked = { isCheckedMap.getValue(type) },
         onCheckedChange = { isCheckedMap[type] = it },
@@ -26,22 +26,22 @@ open class PropertyCheckRowData<T>(
     )
 }
 
-@Stable
+@Immutable
 open class WifiPropertyCheckRowData(
-    type: WidgetWifiProperty,
+    property: WidgetWifiProperty,
     isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
 ) : PropertyCheckRowData<WidgetWifiProperty>(
-    type,
-    type.viewData.labelRes,
+    property,
+    property.viewData.labelRes,
     isCheckedMap,
     allowCheckChange,
 )
 
-@Stable
+@Immutable
 class IPPropertyCheckRowData(
-    type: WidgetWifiProperty.IPProperty,
+    property: WidgetWifiProperty.IPProperty,
     isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
     val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
-) : WifiPropertyCheckRowData(type, isCheckedMap, allowCheckChange)
+) : WifiPropertyCheckRowData(property, isCheckedMap, allowCheckChange)
