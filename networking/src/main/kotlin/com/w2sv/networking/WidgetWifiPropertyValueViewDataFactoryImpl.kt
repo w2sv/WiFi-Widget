@@ -6,6 +6,10 @@ import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.domain.model.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
 import javax.inject.Inject
 
@@ -17,15 +21,23 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private val wifiManager by lazy { context.getWifiManager() }
     private val connectivityManager by lazy { context.getConnectivityManager() }
 
-    override fun invoke(properties: Iterable<WidgetWifiProperty>): List<WidgetWifiProperty.ValueViewData> {
+    override fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<WidgetWifiProperty.ValueViewData> {
         val systemIPAddresses by lazy { connectivityManager.getIPAddresses() }
 
-        return properties.flatMap {
-            when (it) {
-                is WidgetWifiProperty.IPProperty -> getIPPropertyViewData(it, systemIPAddresses)
-                else -> listOf(getRegularPropertyViewData(it))
+        return flow {
+            properties.forEach { property ->
+                when (property) {
+                    is WidgetWifiProperty.IPProperty -> getIPPropertyViewData(
+                        property,
+                        systemIPAddresses
+                    )
+                        .forEach { emit(it) }
+
+                    else -> emit(getRegularPropertyViewData(property))
+                }
             }
         }
+            .flowOn(Dispatchers.IO)
     }
 
     @Suppress("DEPRECATION")

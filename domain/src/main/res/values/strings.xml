@@ -1,8 +1,7 @@
 <resources>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
-    <string name="ipv4">IPv4</string>
-    <string name="ipv6">IPv6</string>
+    <string name="link_local">LinkLocal</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="link_speed">Link Speed</string>
@@ -33,4 +32,16 @@
 
     <string name="show_v4_addresses">Show V4 Addresses</string>
     <string name="show_v6_addresses">Show V6 Addresses</string>
+    <string name="site_local">SiteLocal</string>
+    <string name="unique_local">UniqueLocal</string>
+    <string name="global_unicast">GlobalUnicast</string>
+    <string name="public_">Public</string>
+
+    <string name="refresh">Refresh</string>
+    <string name="go_to_wifi_settings">Go to WiFi Settings</string>
+    <string name="go_to_widget_settings">Go to Widget Settings</string>
+
+    <string name="refresh_periodically">Refresh periodically</string>
+    <string name="refresh_on_low_battery">Refresh on low battery</string>
+    <string name="display_last_refresh_time">Display last refresh time</string>
 </resources>

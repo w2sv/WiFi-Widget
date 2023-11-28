@@ -2,6 +2,7 @@ package com.w2sv.domain.model
 
 import androidx.annotation.StringRes
 import com.w2sv.domain.R
+import kotlinx.coroutines.flow.Flow
 
 sealed class WidgetWifiProperty(
     val viewData: ViewData,
@@ -33,7 +34,7 @@ sealed class WidgetWifiProperty(
         }
 
         interface Factory {
-            operator fun invoke(properties: Iterable<WidgetWifiProperty>): List<ValueViewData>
+            operator fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<ValueViewData>
         }
     }
 
@@ -129,7 +130,7 @@ sealed class WidgetWifiProperty(
     data object LinkLocal :
         IPProperty.V4AndV6(
             ViewData(
-                R.string.ipv4,
+                R.string.link_local,
                 R.string.ipv4_description,
                 LEARN_MORE_URL,
             ),
@@ -139,7 +140,7 @@ sealed class WidgetWifiProperty(
     data object SiteLocal :
         IPProperty.V4AndV6(
             ViewData(
-                R.string.ipv4,
+                R.string.site_local,
                 R.string.ipv4_description,
                 LEARN_MORE_URL,
             ),
@@ -149,7 +150,7 @@ sealed class WidgetWifiProperty(
     data object UniqueLocal :
         IPProperty.V6Only(
             ViewData(
-                R.string.ipv4,
+                R.string.unique_local,
                 R.string.ipv4_description,
                 LEARN_MORE_URL,
             ),
@@ -159,7 +160,7 @@ sealed class WidgetWifiProperty(
     data object GlobalUnicast :
         IPProperty.V6Only(
             ViewData(
-                R.string.ipv4,
+                R.string.global_unicast,
                 R.string.ipv4_description,
                 LEARN_MORE_URL,
             ),
@@ -169,7 +170,7 @@ sealed class WidgetWifiProperty(
     data object Public :
         IPProperty.V4AndV6(
             ViewData(
-                R.string.ipv4,
+                R.string.public_,
                 R.string.ipv4_description,
                 LEARN_MORE_URL,
             ),

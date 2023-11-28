@@ -84,17 +84,15 @@ class WidgetRepository @Inject constructor(
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDse })
     }
 
-    fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> {
-        return getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
-    }
+    fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> =
+        getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
 
     suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> {
-        return getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
-    }
+    fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> =
+        getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
 
     suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 
 class WifiStatusUIState(
@@ -18,10 +19,14 @@ class WifiStatusUIState(
     private val scope: CoroutineScope,
 ) {
     val propertiesViewData get() = _propertiesViewData.asStateFlow()
-    private var _propertiesViewData = MutableStateFlow<List<WidgetWifiProperty.ValueViewData>?>(null)
+    private val _propertiesViewData =
+        MutableStateFlow<List<WidgetWifiProperty.ValueViewData>?>(null)
 
-    private fun refreshPropertiesViewData() {
-        _propertiesViewData.value = getPropertiesViewData()
+    fun triggerPropertiesViewDataRefresh() {
+        scope.launch {
+            _propertiesViewData.value =
+                widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries).toList()
+        }
     }
 
     val status = wifiStatusMonitor.wifiStatus.stateIn(
@@ -32,29 +37,19 @@ class WifiStatusUIState(
         .apply {
             scope.launch {
                 collectLatest { status ->
-                    _propertiesViewData.value =
-                        if (status == WifiStatus.Connected) {
-                            getPropertiesViewData()
-                        } else {
-                            null
-                        }
+                    if (status == WifiStatus.Connected) {
+                        triggerPropertiesViewDataRefresh()
+                    } else {
+                        _propertiesViewData.value = null
+                    }
                 }
             }
             scope.launch {
                 wifiStatusMonitor.wifiPropertiesHaveChanged.collectLatest {
                     if (value == WifiStatus.Connected) {
-                        refreshPropertiesViewData()
+                        triggerPropertiesViewDataRefresh()
                     }
                 }
             }
         }
-
-    fun triggerPropertiesViewDataRefresh() {
-        scope.launch {
-            refreshPropertiesViewData()
-        }
-    }
-
-    private fun getPropertiesViewData(): List<WidgetWifiProperty.ValueViewData> =
-        widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries)
 }

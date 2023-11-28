@@ -1,7 +1,5 @@
 package com.w2sv.networking
 
-import android.net.ConnectivityManager
-import com.w2sv.domain.model.IPAddress
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException

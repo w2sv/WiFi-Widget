@@ -14,6 +14,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -22,35 +23,22 @@ internal fun RefreshingParametersSelection(
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier,
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val scope = rememberCoroutineScope()
     val parameterViewData = remember {
-        listOf(
-            PropertyCheckRowData(
-                type = WidgetRefreshingParameter.RefreshPeriodically,
-                labelRes = R.string.refresh_periodically,
-                isCheckedMap = widgetRefreshingMap,
-            ),
-            PropertyCheckRowData(
-                type = WidgetRefreshingParameter.RefreshOnLowBattery,
-                labelRes = R.string.refresh_on_low_battery,
-                isCheckedMap = widgetRefreshingMap,
-            ),
-            PropertyCheckRowData(
-                type = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
-                labelRes = R.string.display_last_refresh_time,
-                isCheckedMap = widgetRefreshingMap,
-            ),
-        )
+        WidgetRefreshingParameter.entries.map {
+            PropertyCheckRowData(it, it.labelRes, widgetRefreshingMap)
+        }
     }
 
+    // TODO: try to simplify
     Column(modifier = modifier) {
         PropertyCheckRow(
             data = parameterViewData[0],
             onInfoButtonClick = {
                 showInfoDialog(
                     PropertyInfoDialogData(
-                        labelRes = R.string.refresh_periodically,
+                        labelRes = parameterViewData[0].labelRes,
                         descriptionRes = R.string.refresh_periodically_info,
                     ),
                 )

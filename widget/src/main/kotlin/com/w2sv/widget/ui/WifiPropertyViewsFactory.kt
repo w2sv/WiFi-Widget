@@ -10,6 +10,8 @@ import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetPropertyView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import slimber.log.i
 import javax.inject.Inject
 import kotlin.properties.Delegates
@@ -30,18 +32,21 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
 
-        propertyViewData = valueViewDataFactory(widgetRepository.getEnabledWifiProperties())
-            .flatMap { valueViewData ->
-                when(valueViewData) {
-                    is WidgetWifiProperty.ValueViewData.RegularProperty -> listOf(WidgetPropertyView.Property(valueViewData))
-                    is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
-                        add(WidgetPropertyView.Property(valueViewData))
-                        valueViewData.prefixLengthText?.let {
-                            add(WidgetPropertyView.PrefixLength(it))
+        runBlocking {
+            propertyViewData = valueViewDataFactory(widgetRepository.getEnabledWifiProperties())
+                .toList()
+                .flatMap { valueViewData ->
+                    when(valueViewData) {
+                        is WidgetWifiProperty.ValueViewData.RegularProperty -> listOf(WidgetPropertyView.Property(valueViewData))
+                        is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
+                            add(WidgetPropertyView.Property(valueViewData))
+                            valueViewData.prefixLengthText?.let {
+                                add(WidgetPropertyView.PrefixLength(it))
+                            }
                         }
                     }
                 }
-            }
+        }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
 
         widgetColors = widgetRepository.appearance.getValueSynchronously().getColors(context)
