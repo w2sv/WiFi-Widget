@@ -29,33 +29,33 @@ class WifiStatusMonitor @Inject constructor(
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
         .build()
 
-    val wifiPropertiesHaveChanged: Flow<Unit> = callbackFlow {
-        val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onCapabilitiesChanged(
-                network: Network,
-                networkCapabilities: NetworkCapabilities,
-            ) {
-                if (network == connectivityManager.activeNetwork) {
-                    i { "onCapabilitiesChanged.send" }
-                    channel.trySend(Unit)
-                }
-            }
-
-            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-                if (network == connectivityManager.activeNetwork) {
-                    i { "onLinkPropertiesChanged.send" }
-                    channel.trySend(Unit)
-                }
-            }
-        }
-
-        connectivityManager.registerNetworkCallback(networkRequest, callback)
-
-        awaitClose {
-            connectivityManager.unregisterNetworkCallback(callback)
-        }
-    }
-        .conflate()
+//    val wifiPropertiesHaveChanged: Flow<Unit> = callbackFlow {
+//        val callback = object : ConnectivityManager.NetworkCallback() {
+//            override fun onCapabilitiesChanged(
+//                network: Network,
+//                networkCapabilities: NetworkCapabilities,
+//            ) {
+//                if (network == connectivityManager.activeNetwork) {
+//                    i { "onCapabilitiesChanged.send" }
+//                    channel.trySend(Unit)
+//                }
+//            }
+//
+//            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
+//                if (network == connectivityManager.activeNetwork) {
+//                    i { "onLinkPropertiesChanged.send" }
+//                    channel.trySend(Unit)
+//                }
+//            }
+//        }
+//
+//        connectivityManager.registerNetworkCallback(networkRequest, callback)
+//
+//        awaitClose {
+//            connectivityManager.unregisterNetworkCallback(callback)
+//        }
+//    }
+//        .conflate()
 
     val wifiStatus: Flow<WifiStatus> = callbackFlow {
         val callback = object : ConnectivityManager.NetworkCallback() {

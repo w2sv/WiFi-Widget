@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
+import slimber.log.i
 import javax.inject.Inject
 
 class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
@@ -22,7 +23,9 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private val connectivityManager by lazy { context.getConnectivityManager() }
 
     override fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<WidgetWifiProperty.ValueViewData> {
-        val systemIPAddresses by lazy { connectivityManager.getIPAddresses() }
+        val systemIPAddresses by lazy {
+            connectivityManager.getIPAddresses().also { i { "IPAddresses: $it" } }
+        }
 
         return flow {
             properties.forEach { property ->

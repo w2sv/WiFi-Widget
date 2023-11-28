@@ -1,22 +1,23 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
+import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 
 @Composable
-fun WifiConnectionInfoCard(
-    wifiStatus: WifiStatus,
-    wifiPropertiesViewData: List<WidgetWifiProperty.ValueViewData>?,
+fun WifiStatusCard(
+    wifiState: WifiState,
     modifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
@@ -28,14 +29,17 @@ fun WifiConnectionInfoCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            WifiStatusDisplay(wifiStatus = wifiStatus)
-            Spacer(modifier = Modifier.height(12.dp))
+            WifiStatusDisplay(wifiStatus = wifiState.status)
 
-            AnimatedVisibility(visible = wifiPropertiesViewData != null) {
-                wifiPropertiesViewData?.let {
-                    WifiPropertiesList(
-                        propertiesViewData = it,
-                    )
+            AnimatedVisibility(visible = wifiState.status == WifiStatus.Connected) {
+                wifiState.propertyViewData?.let {
+                    Column {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        WifiPropertiesList(
+                            propertiesViewData = it,
+                            modifier = Modifier.fillMaxHeight(0.22f)
+                        )
+                    }
                 }
             }
         },

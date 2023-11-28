@@ -46,7 +46,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionElementsRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyInfoDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiConnectionInfoCard
+import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -123,10 +123,10 @@ fun LandscapeMode(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        WifiConnectionInfoCard(
-            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
-            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
-            modifier = Modifier.fillMaxWidth(0.4f),
+        WifiStatusCard(
+            wifiState = homeScreenVM.wifiState.collectAsStateWithLifecycle().value,
+            modifier = Modifier
+                .fillMaxWidth(0.4f),
         )
 
         WidgetCard(
@@ -166,11 +166,9 @@ private fun PortraitMode(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.15f))
-        WifiConnectionInfoCard(
-            wifiStatus = homeScreenVM.wifiStatusUIState.status.collectAsStateWithLifecycle().value,
-            wifiPropertiesViewData = homeScreenVM.wifiStatusUIState.propertiesViewData.collectAsStateWithLifecycle().value,
+        WifiStatusCard(
+            wifiState = homeScreenVM.wifiState.collectAsStateWithLifecycle().value,
             modifier = Modifier
-                .weight(0.8f)
                 .fillMaxWidth(0.77f),
         )
 
@@ -194,7 +192,8 @@ private fun PortraitMode(
                     },
                 )
             },
-            modifier = Modifier.fillMaxWidth(0.8f),
+            modifier = Modifier
+                .fillMaxWidth(0.8f),
         )
         Spacer(Modifier.weight(0.3f))
         CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
