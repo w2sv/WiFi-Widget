@@ -37,9 +37,9 @@
     <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
     <string name="legal">Legal</string>
     <string name="about">About</string>
-    <string name="support">Support</string>
+    <string name="support_the_app">Support the app</string>
     <string name="license">License</string>
-    <string name="creator">Creator</string>
+    <string name="developer">Developer</string>
     <string name="use_dynamic_colors">Use dynamic colors</string>
     <string name="appearance">Appearance</string>
     <string name="buttons">Buttons</string>

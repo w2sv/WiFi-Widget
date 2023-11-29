@@ -3,6 +3,8 @@ package com.w2sv.wifiwidget.ui.components.drawer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -26,16 +28,12 @@ internal fun NavigationDrawerSheet(content: @Composable () -> Unit) {
     ModalDrawerSheet {
         Column(
             modifier = Modifier
-                .padding(bottom = 32.dp)
-                .padding(horizontal = 24.dp)
+                .padding(vertical = 32.dp, horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Header(modifier = Modifier.padding(vertical = 32.dp))
-            Divider(
-                modifier = Modifier
-                    .padding(bottom = 12.dp),
-            )
+            Header()
+            Divider(modifier = Modifier.padding(top = 18.dp, bottom = 16.dp))
             content()
         }
     }
@@ -51,7 +49,8 @@ private fun Header(modifier: Modifier = Modifier) {
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary),
         )
-        VersionText(Modifier.padding(top = 26.dp))
+        Spacer(modifier = Modifier.height(22.dp))
+        VersionText()
     }
 }
 

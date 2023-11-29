@@ -74,8 +74,10 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                         textualIPv4Representation(wifiManager.dhcpInfo.dns1)
                             ?: IPAddress.Type.V4.fallbackAddress
                     )
-                    textualIPv4Representation(wifiManager.dhcpInfo.dns2)?.let {
-                        add(it)
+                    textualIPv4Representation(wifiManager.dhcpInfo.dns2)?.let { address ->
+                        if (address != IPAddress.Type.V4.fallbackAddress) {
+                            add(address)
+                        }
                     }
                 }
             }

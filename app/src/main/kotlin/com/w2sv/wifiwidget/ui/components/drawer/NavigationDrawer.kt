@@ -7,8 +7,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -16,10 +16,9 @@ fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
     inAppThemeVM: AppViewModel = viewModel(),
+    scope: CoroutineScope = rememberCoroutineScope(),
     content: @Composable () -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
@@ -32,13 +31,9 @@ fun NavigationDrawer(
                     },
                     appearanceSection = { modifier ->
                         AppearanceSection(
-                            selectedTheme = inAppThemeVM.inAppTheme.collectAsStateWithLifecycle(
-                                Theme.SystemDefault
-                            ).value,
+                            selectedTheme = inAppThemeVM.inAppTheme.collectAsStateWithLifecycle().value,
                             onThemeSelected = { inAppThemeVM.saveInAppTheme(it) },
-                            useDynamicColors = inAppThemeVM.useDynamicTheme.collectAsStateWithLifecycle(
-                                false
-                            ).value,
+                            useDynamicColors = inAppThemeVM.useDynamicTheme.collectAsStateWithLifecycle().value,
                             onToggleDynamicColors = { inAppThemeVM.saveUseDynamicTheme(it) },
                             modifier = modifier,
                         )
@@ -47,7 +42,6 @@ fun NavigationDrawer(
             }
         },
         drawerState = state,
-    ) {
-        content()
-    }
+        content = content
+    )
 }
