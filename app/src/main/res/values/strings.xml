@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">WiFi Widget</string>
     <string name="pin">Pin</string>
-    <string name="pinned_widget">Pinned Widget</string>
+    <string name="pinned_widget">Pinned Widget.</string>
     <string name="lap_dialog_text">If you want your device\'s SSID and/or BSSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="understood">Understood</string>
@@ -12,9 +12,9 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="rate">Rate</string>
     <string name="share">Share</string>
-    <string name="on_pin_widget_wo_gps_enabled">(B)SSID display requires GPS to be enabled!</string>
-    <string name="on_pin_widget_wo_location_access_permission">(B)SSID display requires location access permission!</string>
-    <string name="on_pin_widget_wo_background_location_access_permission">Persistent (B)SSID display requires continuous location access permission!</string>
+    <string name="on_pin_widget_wo_gps_enabled">(B)SSID display requires GPS to be enabled.</string>
+    <string name="on_pin_widget_wo_location_access_permission">(B)SSID display requires location access permission.</string>
+    <string name="on_pin_widget_wo_background_location_access_permission">Persistent (B)SSID display requires continuous location access permission.</string>
     <string name="background_location_access_rational">In order for your SSID and/or BSSID to be retrieved while the app is running in the background, you\'ll need to grant location access all the time.</string>
     <string name="light">Light</string>
     <string name="system_default">System Default</string>
@@ -51,9 +51,9 @@
     <string name="go_to_wifi_settings_cd">Go to your devices WiFi settings.</string>
     <string name="click_to_copy_to_clipboard">Click to copy to clipboard</string>
     <string name="wifi_status">WiFi Status</string>
-    <string name="copied_to_clipboard">Copied %1$s to clipboard</string>
+    <string name="copied_to_clipboard">Copied %1$s to clipboard.</string>
     <string name="widget">Widget</string>
-    <string name="updated_widget_configuration">Updated widget configuration</string>
+    <string name="updated_widget_configuration">Updated widget configuration.</string>
     <string name="your_ssid_bssid_can_now_be_reliably_retrieved_from_the_background">Your SSID/BSSID can now be reliably retrieved from the background</string>
     <string name="copyright_text">© 2022 - %1$s | W2SV</string>
     <string name="ip">IP</string>

@@ -70,7 +70,7 @@ fun WidgetConfigurationDialog(
                 onDismissRequest()
             },
             onApply = {
-                widgetVM.syncConfiguration(context)
+                widgetVM.configuration.launchSync()
                 closeDialog()
             },
             applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsStateWithLifecycle().value,

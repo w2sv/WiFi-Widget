@@ -24,6 +24,7 @@ class UnconfirmedWidgetConfiguration(
     val customColorsMap: UnconfirmedStateMap<WidgetColor, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
     scope: CoroutineScope,
+    onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
         wifiProperties,
@@ -36,6 +37,7 @@ class UnconfirmedWidgetConfiguration(
         opacity,
     ),
     coroutineScope = scope,
+    onStateSynced = onStateSynced
 ) {
     val customThemeSelected = theme
         .map {

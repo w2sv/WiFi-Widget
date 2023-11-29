@@ -156,11 +156,7 @@ class WidgetViewModel @Inject constructor(
             persistedValue = repository.opacity
         ),
         scope = viewModelScope,
-    )
-
-    fun syncConfiguration(context: Context) {
-        viewModelScope.launch {
-            configuration.sync()
+        onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
@@ -169,5 +165,5 @@ class WidgetViewModel @Inject constructor(
                 ),
             )
         }
-    }
+    )
 }
