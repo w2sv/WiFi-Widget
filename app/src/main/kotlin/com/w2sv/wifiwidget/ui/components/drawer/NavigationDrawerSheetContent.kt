@@ -7,115 +7,129 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
+import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.components.dynamicColorsSupported
+import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
 @Composable
 internal fun NavigationDrawerSheetContent(
     closeDrawer: () -> Unit,
-    appearanceSection: @Composable (Modifier) -> Unit,
-    context: Context = LocalContext.current
+    modifier: Modifier = Modifier,
+    context: Context = LocalContext.current,
+    appVM: AppViewModel = viewModel()
 ) {
-    Column(horizontalAlignment = Alignment.Start) {
+    Column(modifier = modifier) {
         remember {
-            listOf(
-                SheetView.SubHeader(R.string.appearance),
-                SheetView.Custom {
-                    appearanceSection(
-                        Modifier
-                            .padding(top = 12.dp, bottom = 18.dp),
+            buildList {
+                add(Element.Header(R.string.appearance))
+                add(Element.LabelledItem.Custom(R.drawable.ic_nightlight_24, R.string.theme) {
+                    ThemeSelectionRow(
+                        selected = appVM.theme.collectAsStateWithLifecycle().value,
+                        onSelected = appVM::saveTheme,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 22.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        themeIndicatorModifier = Modifier
+                            .sizeIn(maxHeight = 92.dp, maxWidth = 42.dp),
                     )
-                },
-                SheetView.SubHeader(R.string.legal),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_policy_24,
-                    labelRes = R.string.privacy_policy,
-                    onClick = {
-                        context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md")
-                    },
-                ),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_copyright_24,
-                    labelRes = R.string.license,
-                    onClick = {
-                        context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE")
-                    },
-                ),
-                SheetView.SubHeader(R.string.support_the_app),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_share_24,
-                    labelRes = R.string.share,
-                    onClick = {
-                        ShareCompat.IntentBuilder(context)
-                            .setType("text/plain")
-                            .setText(context.getString(R.string.share_action_text))
-                            .startChooser()
-                    },
-                ),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_star_rate_24,
-                    labelRes = R.string.rate,
-                    onClick = {
-                        try {
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(appPlayStoreUrl(context)),
-                                )
-                                    .setPackage("com.android.vending"),
+                })
+                if (dynamicColorsSupported) {
+                    add(Element.LabelledItem.Custom(
+                        iconRes = R.drawable.ic_palette_24,
+                        labelRes = R.string.use_dynamic_colors,
+                    ) {
+                        RightAligned {
+                            Switch(
+                                checked = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
+                                onCheckedChange = appVM::saveUseDynamicColors
                             )
-                        } catch (e: ActivityNotFoundException) {
-                            context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
                         }
-                    },
-                ),
-                SheetView.SubHeader(R.string.about),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_developer_24,
-                    labelRes = R.string.developer,
-                    onClick = {
-                        context.openUrlWithActivityNotFoundHandling("https://play.google.com/store/apps/dev?id=6884111703871536890")
-                    },
-                ),
-                SheetView.Item(
-                    iconRes = R.drawable.ic_github_24,
-                    labelRes = R.string.source,
-                    onClick = {
-                        context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
-                    },
-                ),
-            )
+                    })
+                }
+                add(Element.Header(R.string.legal))
+                add(
+                    Element.LabelledItem.Clickable(
+                        R.drawable.ic_policy_24,
+                        R.string.privacy_policy
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/FileNavigator/blob/main/PRIVACY-POLICY.md")
+                    })
+                add(Element.LabelledItem.Clickable(R.drawable.ic_copyright_24, R.string.license) {
+                    context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/FileNavigator/blob/main/LICENSE.md")
+                })
+                add(Element.Header(R.string.support_the_app))
+                add(Element.LabelledItem.Clickable(R.drawable.ic_star_rate_24, R.string.rate) {
+                    try {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(appPlayStoreUrl(context))
+                            ).setPackage("com.android.vending")
+                        )
+                    } catch (e: ActivityNotFoundException) {
+                        context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
+                    }
+                })
+                add(Element.LabelledItem.Clickable(R.drawable.ic_share_24, R.string.share) {
+                    ShareCompat.IntentBuilder(context)
+                        .setType("text/plain")
+                        .setText(context.getString(R.string.share_action_text))
+                        .startChooser()
+                })
+                add(Element.Header(R.string.about))
+                add(Element.LabelledItem.Clickable(R.drawable.ic_developer_24, R.string.developer) {
+                    context.openUrlWithActivityNotFoundHandling("https://play.google.com/store/apps/dev?id=6884111703871536890")
+                })
+                add(Element.LabelledItem.Clickable(R.drawable.ic_github_24, R.string.source) {
+                    context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
+                })
+            }
         }
             .forEach {
                 when (it) {
-                    is SheetView.Item -> {
-                        DrawerSheetItem(item = it, closeDrawer = closeDrawer)
+                    is Element.LabelledItem -> {
+                        LabelledItem(
+                            item = it,
+                            closeDrawer = closeDrawer,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                        )
                     }
 
-                    is SheetView.SubHeader -> {
-                        DrawerSheetSubHeader(
+                    is Element.Header -> {
+                        SubHeader(
                             titleRes = it.titleRes,
                             modifier = Modifier
                                 .padding(vertical = 4.dp)
@@ -123,7 +137,7 @@ internal fun NavigationDrawerSheetContent(
                         )
                     }
 
-                    is SheetView.Custom -> {
+                    is Element.Custom -> {
                         it.content()
                     }
                 }
@@ -131,55 +145,76 @@ internal fun NavigationDrawerSheetContent(
     }
 }
 
-private sealed interface SheetView {
-    data class Item(
-        @DrawableRes val iconRes: Int,
-        @StringRes val labelRes: Int,
-        val onClick: () -> Unit,
-    ) : SheetView
+@Composable
+fun RowScope.RightAligned(content: @Composable () -> Unit) {
+    Spacer(modifier = Modifier.weight(1f))
+    content()
+}
 
-    data class SubHeader(
-        @StringRes val titleRes: Int,
-    ) : SheetView
+private sealed interface Element {
+
+    interface LabelledItem : Element {
+        val iconRes: Int
+        val labelRes: Int
+
+        data class Clickable(
+            @DrawableRes override val iconRes: Int,
+            @StringRes override val labelRes: Int,
+            val onClick: () -> Unit
+        ) : LabelledItem
+
+        data class Custom(
+            @DrawableRes override val iconRes: Int,
+            @StringRes override val labelRes: Int,
+            val content: @Composable RowScope.() -> Unit
+        ) : LabelledItem
+    }
 
     data class Custom(
-        val content: @Composable () -> Unit,
-    ) : SheetView
+        val content: @Composable () -> Unit
+    ) : Element
+
+    data class Header(
+        @StringRes val titleRes: Int,
+    ) : Element
 }
 
 @Composable
-private fun DrawerSheetSubHeader(
+private fun SubHeader(
     @StringRes titleRes: Int,
     modifier: Modifier = Modifier,
 ) {
     AppFontText(
         text = stringResource(id = titleRes),
         modifier = modifier,
-        fontSize = 18.sp,
+        fontSize = 16.sp,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.tertiary,
     )
 }
 
 @Composable
-private fun DrawerSheetItem(
-    item: SheetView.Item,
+private fun LabelledItem(
+    item: Element.LabelledItem,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-                item.onClick()
-                closeDrawer()
-            }
-            .padding(vertical = 14.dp),
+            .then(
+                if (item is Element.LabelledItem.Clickable)
+                    Modifier.clickable {
+                        item.onClick()
+                        closeDrawer()
+                    }
+                else
+                    Modifier
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
-                .size(size = dimensionResource(id = R.dimen.size_icon)),
+                .size(size = 28.dp),
             painter = painterResource(id = item.iconRes),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
@@ -188,8 +223,12 @@ private fun DrawerSheetItem(
         AppFontText(
             text = stringResource(id = item.labelRes),
             modifier = Modifier.padding(start = 16.dp),
-            fontSize = 18.sp,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
         )
+
+        if (item is Element.LabelledItem.Custom) {
+            item.content(this)
+        }
     }
 }

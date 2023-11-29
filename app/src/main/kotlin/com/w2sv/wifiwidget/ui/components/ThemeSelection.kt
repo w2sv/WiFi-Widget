@@ -149,7 +149,7 @@ private fun ThemeIndicator(
 }
 
 @Composable
-fun ThemeButton(
+private fun ThemeButton(
     buttonColor: ButtonColor,
     contentDescription: String,
     onClick: () -> Unit,

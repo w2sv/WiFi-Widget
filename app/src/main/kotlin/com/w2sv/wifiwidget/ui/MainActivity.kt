@@ -48,8 +48,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppTheme(
-                useDynamicTheme = appVM.useDynamicTheme.collectAsStateWithLifecycle().value,
-                darkTheme = when (appVM.inAppTheme.collectAsStateWithLifecycle().value) {
+                useDynamicTheme = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
+                darkTheme = when (appVM.theme.collectAsStateWithLifecycle().value) {
                     Theme.Light -> false
                     Theme.Dark -> true
                     Theme.SystemDefault -> isSystemInDarkTheme()

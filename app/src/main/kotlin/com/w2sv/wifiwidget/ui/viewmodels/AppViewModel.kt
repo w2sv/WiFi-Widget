@@ -20,23 +20,23 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
     ViewModel() {
 
-    val inAppTheme = preferencesRepository.inAppTheme.stateIn(
+    val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT)
     )
 
-    val useDynamicTheme = preferencesRepository.useDynamicTheme.stateIn(
+    val useDynamicColors = preferencesRepository.useDynamicTheme.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT)
     )
 
-    fun saveInAppTheme(theme: Theme) {
+    fun saveTheme(theme: Theme) {
         viewModelScope.launch {
             preferencesRepository.inAppTheme.save(theme)
         }
     }
 
-    fun saveUseDynamicTheme(value: Boolean) {
+    fun saveUseDynamicColors(value: Boolean) {
         viewModelScope.launch {
             preferencesRepository.useDynamicTheme.save(value)
         }
