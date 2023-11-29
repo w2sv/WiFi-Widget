@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -24,8 +24,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -47,51 +51,50 @@ fun WifiPropertiesList(
         modifier = modifier
     ) {
         item {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                AppFontText(
-                    text = stringResource(id = R.string.properties),
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 17.sp,
-                    modifier = Modifier.padding(bottom = 6.dp),
-                )
-                AppFontText(
-                    text = stringResource(R.string.click_to_copy_to_clipboard),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 12.sp,
-                )
-            }
+            HeaderRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 6.dp)
+            )
         }
         items(propertiesViewData) { viewData ->
-            when (viewData) {
-                is WidgetWifiProperty.ValueViewData.NonIP -> {
-                    WifiPropertyRow(
-                        propertyName = viewData.label,
-                        value = viewData.value
-                    )
-                }
-
-                is WidgetWifiProperty.ValueViewData.IPProperty -> {
-                    WifiPropertyRow(
-                        propertyName = viewData.label,
-                        value = viewData.value,
-                    )
-                    viewData.prefixLengthText?.let {
-                        IPSubPropertiesRow(prefixLengthText = it)
-                    }
-                }
+            WifiPropertyDisplay(
+                viewData = viewData,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 26.dp)
+            )
+            (viewData as? WidgetWifiProperty.ValueViewData.IPProperty)?.prefixLengthText?.let {
+                PrefixLengthDisplay(prefixLengthText = it, modifier = Modifier.fillMaxWidth())
             }
         }
     }
 }
 
 @Composable
-private fun WifiPropertyRow(
-    propertyName: String,
-    value: String,
+private fun HeaderRow(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier,
+    ) {
+        AppFontText(
+            text = stringResource(id = R.string.properties),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 17.sp,
+        )
+        AppFontText(
+            text = stringResource(R.string.click_to_copy_to_clipboard),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp,
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
+private fun WifiPropertyDisplay(
+    viewData: WidgetWifiProperty.ValueViewData,
     modifier: Modifier = Modifier,
     clipboardManager: ClipboardManager = LocalClipboardManager.current,
     context: Context = LocalContext.current,
@@ -100,14 +103,15 @@ private fun WifiPropertyRow(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .height(26.dp)
             .clickable {
-                clipboardManager.setText(AnnotatedString(value))
+                clipboardManager.setText(AnnotatedString(viewData.value))
                 scope.launch {
                     snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                         AppSnackbarVisuals(
-                            message = context.getString(R.string.copied_to_clipboard, propertyName),
+                            message = context.getString(
+                                R.string.copied_to_clipboard,
+                                viewData.label
+                            ),
                             kind = SnackbarKind.Success,
                         ),
                     )
@@ -117,22 +121,34 @@ private fun WifiPropertyRow(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         AppFontText(
-            text = propertyName,
+            text = buildAnnotatedString {
+                if (viewData is WidgetWifiProperty.ValueViewData.IPProperty) {
+                    append(stringResource(R.string.ip))
+                    withStyle(
+                        SpanStyle(
+                            baselineShift = BaselineShift.Subscript,
+                            fontSize = 12.sp,
+                        )
+                    ) {
+                        append(viewData.label)
+                    }
+                } else {
+                    append(viewData.label)
+                }
+            },
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.width(16.dp))
         AppFontText(
-            text = value,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+            text = viewData.value,
         )
     }
 }
 
 @Composable
-private fun IPSubPropertiesRow(prefixLengthText: String, modifier: Modifier = Modifier) {
+private fun PrefixLengthDisplay(prefixLengthText: String, modifier: Modifier = Modifier) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
@@ -146,11 +162,11 @@ private fun IPSubPropertyText(text: String) {
         text = text,
         modifier = Modifier
             .border(
-                width = 1.1.dp,
+                width = Dp.Hairline,
                 color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(12.dp),
             )
-            .padding(vertical = 2.dp, horizontal = 6.dp),
+            .padding(vertical = 2.dp, horizontal = 8.dp),
         fontSize = 11.sp,
     )
 }

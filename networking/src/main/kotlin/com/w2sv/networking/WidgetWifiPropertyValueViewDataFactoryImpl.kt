@@ -170,7 +170,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                 add(makeViewData(propertyLabel, values.first()))
             } else {
                 values.forEachIndexed { index, value ->
-                    add(makeViewData("$propertyLabel #${index + 1}", value))
+                    add(makeViewData("$propertyLabel ${index + 1}", value))
                 }
             }
         }
