@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.androidutils.generic.getIntExtraOrNull
-import com.w2sv.data.repositories.WidgetRepository
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.ui.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint

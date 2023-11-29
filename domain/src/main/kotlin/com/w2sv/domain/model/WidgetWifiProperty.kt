@@ -18,7 +18,7 @@ sealed interface WidgetWifiProperty {
         val label: String
         val value: String
 
-        data class RegularProperty(override val value: String, override val label: String) :
+        data class NonIP(override val value: String, override val label: String) :
             ValueViewData
 
         data class IPProperty(
@@ -44,19 +44,13 @@ sealed interface WidgetWifiProperty {
         }
     }
 
-    sealed interface SubType : WidgetWifiProperty {
-        val subType: Class<out SubType>
-            get() = when (this) {
-                is LocationAccessPermissionRequiring -> LocationAccessPermissionRequiring::class.java
-                is IPProperty -> IPProperty::class.java
-                is Other -> Other::class.java
-            }
-    }
+    sealed interface SubType : WidgetWifiProperty
+    sealed interface NonIP : SubType
 
     sealed class LocationAccessPermissionRequiring(
         override val viewData: ViewData,
         override val defaultIsEnabled: Boolean
-    ) : SubType {
+    ) : NonIP {
 
         companion object {
             val entries: List<LocationAccessPermissionRequiring>
@@ -64,7 +58,7 @@ sealed interface WidgetWifiProperty {
         }
     }
 
-    sealed class IPProperty(
+    sealed class IP(
         override val viewData: ViewData,
         override val defaultIsEnabled: Boolean,
         subPropertyKinds: List<SubProperty.Kind>
@@ -73,7 +67,10 @@ sealed interface WidgetWifiProperty {
 
         val subProperties = subPropertyKinds.map { SubProperty(this, it) }
 
-        data class SubProperty(val property: IPProperty, val kind: Kind) {
+        val showPrefixLengthSubProperty: SubProperty
+            get() = SubProperty(this, SubProperty.Kind.ShowPrefixLength)
+
+        data class SubProperty(val property: IP, val kind: Kind) {
             sealed class Kind(@StringRes val labelRes: Int) {
                 data object ShowPrefixLength : Kind(R.string.show_prefix_length)
             }
@@ -85,7 +82,7 @@ sealed interface WidgetWifiProperty {
         sealed class V6Only(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
-        ) : IPProperty(
+        ) : IP(
             viewData = viewData,
             defaultIsEnabled = defaultIsEnabled,
             subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)
@@ -99,7 +96,7 @@ sealed interface WidgetWifiProperty {
         sealed class V4AndV6(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
-        ) : IPProperty(
+        ) : IP(
             viewData = viewData,
             defaultIsEnabled = defaultIsEnabled,
             subPropertyKinds = listOf(
@@ -108,6 +105,11 @@ sealed interface WidgetWifiProperty {
                 AddressTypeEnablement.V6Enabled,
             )
         ) {
+            val v4EnabledSubProperty: SubProperty
+                get() = SubProperty(this, AddressTypeEnablement.V4Enabled)
+
+            val v6EnabledSubProperty: SubProperty
+                get() = SubProperty(this, AddressTypeEnablement.V6Enabled)
 
             sealed class AddressTypeEnablement(@StringRes labelRes: Int) :
                 SubProperty.Kind(labelRes) {
@@ -130,7 +132,7 @@ sealed interface WidgetWifiProperty {
         companion object {
             const val LEARN_MORE_URL = "https://en.wikipedia.org/wiki/IP_address"
 
-            val entries: List<IPProperty>
+            val entries: List<IP>
                 get() = V6Only.entries + V4AndV6.entries
         }
     }
@@ -139,7 +141,7 @@ sealed interface WidgetWifiProperty {
         override val viewData: ViewData,
         override val defaultIsEnabled: Boolean
     ) :
-        SubType
+        NonIP
 
     data object SSID : LocationAccessPermissionRequiring(
         ViewData(
@@ -159,7 +161,7 @@ sealed interface WidgetWifiProperty {
         false
     )
 
-    data object LinkLocal : IPProperty.V4AndV6(
+    data object LinkLocal : IP.V4AndV6(
         ViewData(
             R.string.link_local,
             R.string.ipv4_description,
@@ -169,7 +171,7 @@ sealed interface WidgetWifiProperty {
     )
 
     data object SiteLocal :
-        IPProperty.V4AndV6(
+        IP.V4AndV6(
             ViewData(
                 R.string.site_local,
                 R.string.ipv4_description,
@@ -179,7 +181,7 @@ sealed interface WidgetWifiProperty {
         )
 
     data object UniqueLocal :
-        IPProperty.V6Only(
+        IP.V6Only(
             ViewData(
                 R.string.unique_local,
                 R.string.ipv4_description,
@@ -189,7 +191,7 @@ sealed interface WidgetWifiProperty {
         )
 
     data object GlobalUnicast :
-        IPProperty.V6Only(
+        IP.V6Only(
             ViewData(
                 R.string.global_unicast,
                 R.string.ipv4_description,
@@ -199,7 +201,7 @@ sealed interface WidgetWifiProperty {
         )
 
     data object Public :
-        IPProperty.V4AndV6(
+        IP.V4AndV6(
             ViewData(
                 R.string.public_,
                 R.string.ipv4_description,

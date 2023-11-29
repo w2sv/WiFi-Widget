@@ -1,5 +1,6 @@
 package com.w2sv.networking
 
+import com.w2sv.domain.model.IPAddress
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.IOException
@@ -21,15 +22,25 @@ internal fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-internal fun getPublicIPAddress(httpClient: OkHttpClient): String? {
+internal fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
     i { "Getting public address" }
+
     val request = Request.Builder()
-        .url("https://api.ipify.org")
+        .url(
+            when (type) {
+                IPAddress.Type.V4 -> "https://api.ipify.org"
+                IPAddress.Type.V6 -> "https://api64.ipify.org"
+            }
+        )
         .build()
 
     try {
-        val response = httpClient.newCall(request).execute()
-        return response.body?.string().also { i { "Got public address" } }
+        return httpClient
+            .newCall(request)
+            .execute()
+            .body
+            ?.string()
+            .also { i { "Got public address" } }
     } catch (_: IOException) {
         i { "getPublicIPAddress.exception" }
     }

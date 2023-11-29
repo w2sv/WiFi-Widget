@@ -24,7 +24,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
-    ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.LocationAccessPermissionRequiring, Boolean) -> Boolean,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
@@ -33,7 +33,7 @@ internal fun WifiPropertySelection(
         mapOf(
             0 to "Location access requiring",
             WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size to "IP Addresses",
-            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size + WidgetWifiProperty.IPProperty.entries.size to "Other"
+            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
         )
     }
 
@@ -52,7 +52,7 @@ internal fun WifiPropertySelection(
                         },
                     )
 
-                    is WidgetWifiProperty.IPProperty -> {
+                    is WidgetWifiProperty.IP -> {
                         IPPropertyCheckRowData(
                             property = property,
                             isCheckedMap = wifiPropertiesMap,
@@ -98,7 +98,7 @@ private fun WifiPropertyCheckRow(
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
                 IPSubPropertyCheckRows(
-                    subProperties = (data.property as WidgetWifiProperty.IPProperty).subProperties,
+                    subProperties = (data.property as WidgetWifiProperty.IP).subProperties,
                     subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
                 )
             }
@@ -108,8 +108,8 @@ private fun WifiPropertyCheckRow(
 
 @Composable
 private fun IPSubPropertyCheckRows(
-    subProperties: List<WidgetWifiProperty.IPProperty.SubProperty>,
-    subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    subProperties: List<WidgetWifiProperty.IP.SubProperty>,
+    subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
 ) {
     Column {
         subProperties.forEach { subProperty ->

@@ -17,7 +17,7 @@ internal val WidgetWifiProperty.isEnabledDSE
         defaultValue = defaultIsEnabled,
     )
 
-internal val WidgetWifiProperty.IPProperty.SubProperty.isEnabledDse
+internal val WidgetWifiProperty.IP.SubProperty.isEnabledDse
     get() =
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("${property.preferencesKeyName}.${kind.preferencesKeyName}"),

@@ -40,8 +40,8 @@ open class WifiPropertyCheckRowData(
 
 @Immutable
 class IPPropertyCheckRowData(
-    property: WidgetWifiProperty.IPProperty,
+    property: WidgetWifiProperty.IP,
     isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
-    val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     allowCheckChange: (Boolean) -> Boolean = { true },
 ) : WifiPropertyCheckRowData(property, isCheckedMap, allowCheckChange)

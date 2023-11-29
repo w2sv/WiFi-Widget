@@ -6,7 +6,7 @@ import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.androidutils.permissions.hasPermission
-import com.w2sv.data.repositories.PreferencesRepository
+import com.w2sv.domain.repository.PreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,7 +52,7 @@ class LocationAccessPermissionState(
     }
 
     val requestLaunchingAction get() = _requestLaunchingAction.asStateFlow()
-    val _requestLaunchingAction: MutableStateFlow<LocationAccessPermissionRequiringAction?> =
+    private val _requestLaunchingAction: MutableStateFlow<LocationAccessPermissionRequiringAction?> =
         MutableStateFlow(null)
 
     fun setRequestLaunchingAction(value: LocationAccessPermissionRequiringAction?) {
@@ -69,7 +69,7 @@ class LocationAccessPermissionState(
     }
 
     val showBackgroundAccessRational get() = _showBackgroundAccessRational.asStateFlow()
-    val _showBackgroundAccessRational = MutableStateFlow(false)
+    private val _showBackgroundAccessRational = MutableStateFlow(false)
 
     fun setShowBackgroundAccessRational(value: Boolean) {
         _showBackgroundAccessRational.value = value

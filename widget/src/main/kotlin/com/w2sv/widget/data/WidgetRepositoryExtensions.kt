@@ -1,10 +1,10 @@
 package com.w2sv.widget.data
 
-import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetColor
 import com.w2sv.domain.model.WidgetRefreshingParameter
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetButtons
 import com.w2sv.widget.model.WidgetColors

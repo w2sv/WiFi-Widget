@@ -67,7 +67,7 @@ fun WifiPropertiesList(
         }
         items(propertiesViewData) { viewData ->
             when (viewData) {
-                is WidgetWifiProperty.ValueViewData.RegularProperty -> {
+                is WidgetWifiProperty.ValueViewData.NonIP -> {
                     WifiPropertyRow(
                         propertyName = viewData.label,
                         value = viewData.value

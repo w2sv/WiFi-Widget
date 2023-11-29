@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class UnconfirmedWidgetConfiguration(
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
-    val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IPProperty.SubProperty, Boolean>,
+    val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     val buttonMap: UnconfirmedStateMap<WidgetButton, Boolean>,
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     val useDynamicColors: UnconfirmedStateFlow<Boolean>,

@@ -31,7 +31,7 @@ data class IPAddress(
                 ".${(shift and 0x000000ff) and 0xff}"
     }
 
-    val type: Type = if (prefixLength < 64) Type.V4 else Type.V6
+    val type: Type = if (prefixLength < Type.V6.minPrefixLength) Type.V4 else Type.V6
     val hostAddressRepresentation: String = hostAddress ?: type.fallbackAddress
 
     val isUniqueLocal: Boolean
@@ -40,9 +40,9 @@ data class IPAddress(
     val isGlobalUnicast: Boolean
         get() = hostAddressRepresentation.startsWith("2000::/3")
 
-    enum class Type(val fallbackAddress: String) {
-        V4("0.0.0.0"),
-        V6("::::::"),
+    enum class Type(val minPrefixLength: Int, val fallbackAddress: String) {
+        V4(0, "0.0.0.0"),
+        V6(64, "::::::"),
     }
 
     data class LocalAttributes(

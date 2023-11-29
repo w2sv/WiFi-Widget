@@ -1,4 +1,4 @@
-package com.w2sv.data.repositories
+package com.w2sv.data.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -16,6 +16,7 @@ import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetColor
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.repository.WidgetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,32 +27,33 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WidgetRepository @Inject constructor(
+class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
-) : PreferencesDataStoreRepository(dataStore) {
+) : PreferencesDataStoreRepository(dataStore),
+    WidgetRepository {
 
-    val optionsChangedWidgetId get() = _optionsChangedWidgetId.asSharedFlow()
+    override val optionsChangedWidgetId get() = _optionsChangedWidgetId.asSharedFlow()
     private val _optionsChangedWidgetId = MutableSharedFlow<Int>()
 
-    fun onWidgetOptionsChanged(widgetId: Int) {
+    override fun onWidgetOptionsChanged(widgetId: Int) {
         CoroutineScope(Dispatchers.Default).launch {
             _optionsChangedWidgetId.emit(widgetId)
         }
     }
 
-    fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
+    override fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
         getWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys
 
     // ================
     // PersistedValue
     // ================
 
-    val theme = getPersistedValue(intPreferencesKey("widgetTheme"), Theme.SystemDefault)
+    override val theme = getPersistedValue(intPreferencesKey("widgetTheme"), Theme.SystemDefault)
 
-    val useDynamicColors =
+    override val useDynamicColors =
         getPersistedValue(booleanPreferencesKey("widgetConfiguration.useDynamicColor"), false)
 
-    val opacity = getPersistedValue(floatPreferencesKey("opacity"), 1.0f)
+    override val opacity = getPersistedValue(floatPreferencesKey("opacity"), 1.0f)
 
     // ================
     // Map
@@ -59,42 +61,42 @@ class WidgetRepository @Inject constructor(
 
     // TODO: look for singular save function
 
-    fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>> =
+    override fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>> =
         getTypeToValueMap(WidgetColor.entries.associateBy { it.valueDSE })
 
-    suspend fun saveCustomColorsMap(map: Map<WidgetColor, Int>) {
+    override suspend fun saveCustomColorsMap(map: Map<WidgetColor, Int>) {
         saveMap(map.mapKeys { (k, _) -> k.valueDSE })
     }
 
-    fun getWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
+    override fun getWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
         getTypeToValueMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
 
-    suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>) {
+    override suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    fun getIPSubPropertyEnablementMap(): Map<WidgetWifiProperty.IPProperty.SubProperty, Flow<Boolean>> =
+    override fun getIPSubPropertyEnablementMap(): Map<WidgetWifiProperty.IP.SubProperty, Flow<Boolean>> =
         getTypeToValueMap(
-            WidgetWifiProperty.IPProperty.entries
+            WidgetWifiProperty.IP.entries
                 .flatMap { it.subProperties }
                 .associateBy { it.isEnabledDse }
         )
 
-    suspend fun saveIPSubPropertyEnablementMap(map: Map<WidgetWifiProperty.IPProperty.SubProperty, Boolean>) {
+    override suspend fun saveIPSubPropertyEnablementMap(map: Map<WidgetWifiProperty.IP.SubProperty, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDse })
     }
 
-    fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> =
+    override fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> =
         getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
 
-    suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
+    override suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> =
+    override fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> =
         getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
 
-    suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>) {
+    override suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 

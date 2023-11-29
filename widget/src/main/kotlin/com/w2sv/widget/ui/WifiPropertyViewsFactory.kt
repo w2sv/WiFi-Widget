@@ -4,8 +4,8 @@ import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetPropertyView
@@ -37,7 +37,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                 .toList()
                 .flatMap { valueViewData ->
                     when(valueViewData) {
-                        is WidgetWifiProperty.ValueViewData.RegularProperty -> listOf(WidgetPropertyView.Property(valueViewData))
+                        is WidgetWifiProperty.ValueViewData.NonIP -> listOf(WidgetPropertyView.Property(valueViewData))
                         is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
                             add(WidgetPropertyView.Property(valueViewData))
                             valueViewData.prefixLengthText?.let {

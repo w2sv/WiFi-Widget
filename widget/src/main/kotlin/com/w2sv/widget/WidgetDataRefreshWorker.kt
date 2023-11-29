@@ -9,7 +9,7 @@ import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.data.repositories.WidgetRepository
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i

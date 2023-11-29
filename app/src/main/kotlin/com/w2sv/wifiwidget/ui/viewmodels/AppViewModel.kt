@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.data.repositories.PreferencesRepository
 import com.w2sv.domain.model.Theme
+import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel

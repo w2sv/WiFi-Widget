@@ -11,8 +11,8 @@ import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.common.di.PackageName
-import com.w2sv.data.repositories.WidgetRepository
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.utils.getWifiWidgetIds
