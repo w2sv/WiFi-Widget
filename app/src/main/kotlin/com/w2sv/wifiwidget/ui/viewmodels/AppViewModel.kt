@@ -1,10 +1,8 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.eventhandling.BackPressHandler
-import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
@@ -16,8 +14,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val BACK_PRESS_CONFIRMATION_WINDOW = 2500L
+
 @HiltViewModel
-class AppViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository) :
+class AppViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepository,
+) :
     ViewModel() {
 
     val theme = preferencesRepository.inAppTheme.stateIn(
@@ -49,10 +51,15 @@ class AppViewModel @Inject constructor(private val preferencesRepository: Prefer
     val exitApplication get() = _exitApplication.asSharedFlow()
     private val _exitApplication = MutableSharedFlow<Unit>()
 
-    fun onBackPress(context: Context) {
+    /**
+     * @return Optional toast message string resource id.
+     */
+    fun onBackPress(): Int? {
+        var messageResId: Int? = null
+
         backPressHandler.invoke(
             onFirstPress = {
-                context.showToast(context.getString(R.string.tap_again_to_exit))
+                messageResId = R.string.tap_again_to_exit
             },
             onSecondPress = {
                 viewModelScope.launch {
@@ -60,10 +67,12 @@ class AppViewModel @Inject constructor(private val preferencesRepository: Prefer
                 }
             },
         )
+
+        return messageResId
     }
 
     private val backPressHandler = BackPressHandler(
         viewModelScope,
-        2500L,
+        BACK_PRESS_CONFIRMATION_WINDOW
     )
 }
