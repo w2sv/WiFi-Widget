@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.res.Resources
 import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,6 +41,7 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
+    private val resources: Resources,
     @ApplicationContext context: Context,
 ) :
     ViewModel() {
@@ -61,7 +63,7 @@ class WidgetViewModel @Inject constructor(
             viewModelScope.launch {
                 _snackbarVisuals.emit(
                     AppSnackbarVisuals(
-                        message = "Widget pinning not supported by your device launcher.",
+                        message = resources.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
                         kind = SnackbarKind.Error
                     )
                 )

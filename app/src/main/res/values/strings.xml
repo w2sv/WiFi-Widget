@@ -36,7 +36,7 @@
     <string name="share_action_text">Check out WiFi Widget!\nhttps://play.google.com/store/apps/details?id=com.w2sv.wifiwidget</string>
     <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
     <string name="legal">Legal</string>
-    <string name="about">About</string>
+    <string name="more">More</string>
     <string name="support_the_app">Support the app</string>
     <string name="license">License</string>
     <string name="developer">Developer</string>
@@ -57,4 +57,5 @@
     <string name="your_ssid_bssid_can_now_be_reliably_retrieved_from_the_background">Your SSID/BSSID can now be reliably retrieved from the background</string>
     <string name="copyright_text">© 2022 - %1$s | W2SV</string>
     <string name="ip">IP</string>
+    <string name="report_a_bug">Report a bug</string>
 </resources>

@@ -41,6 +41,15 @@ import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.dynamicColorsSupported
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
+private object AppUrl {
+    const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE.md"
+    const val PRIVACY_POLICY = "https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md"
+    const val GITHUB_REPOSITORY = "https://github.com/w2sv/WiFi-Widget"
+    const val CREATE_ISSUE = "https://github.com/w2sv/WiFi-Widget/issues/new"
+    const val GOOGLE_PLAY_DEVELOPER_PAGE =
+        "https://play.google.com/store/apps/dev?id=6884111703871536890"
+}
+
 @Composable
 internal fun NavigationDrawerSheetContent(
     closeDrawer: () -> Unit,
@@ -83,10 +92,10 @@ internal fun NavigationDrawerSheetContent(
                         R.drawable.ic_policy_24,
                         R.string.privacy_policy
                     ) {
-                        context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/FileNavigator/blob/main/PRIVACY-POLICY.md")
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.PRIVACY_POLICY)
                     })
                 add(Element.LabelledItem.Clickable(R.drawable.ic_copyright_24, R.string.license) {
-                    context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/FileNavigator/blob/main/LICENSE.md")
+                    context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
                 })
                 add(Element.Header(R.string.support_the_app))
                 add(Element.LabelledItem.Clickable(R.drawable.ic_star_rate_24, R.string.rate) {
@@ -107,12 +116,19 @@ internal fun NavigationDrawerSheetContent(
                         .setText(context.getString(R.string.share_action_text))
                         .startChooser()
                 })
-                add(Element.Header(R.string.about))
+                add(
+                    Element.LabelledItem.Clickable(
+                        R.drawable.ic_bug_report_24px,
+                        R.string.report_a_bug
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)
+                    })
+                add(Element.Header(R.string.more))
                 add(Element.LabelledItem.Clickable(R.drawable.ic_developer_24, R.string.developer) {
-                    context.openUrlWithActivityNotFoundHandling("https://play.google.com/store/apps/dev?id=6884111703871536890")
+                    context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
                 })
                 add(Element.LabelledItem.Clickable(R.drawable.ic_github_24, R.string.source) {
-                    context.openUrlWithActivityNotFoundHandling("https://github.com/w2sv/WiFi-Widget")
+                    context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
                 })
             }
         }
