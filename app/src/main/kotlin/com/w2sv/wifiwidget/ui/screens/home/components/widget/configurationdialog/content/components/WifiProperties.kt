@@ -25,15 +25,15 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
     ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.LocationAccessPermissionRequiring, Boolean) -> Boolean,
+    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.LocationAccessRequiring, Boolean) -> Boolean,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val indexToFirstSubTypeTitle = remember {
         mapOf(
             0 to "Location access requiring",
-            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size to "IP Addresses",
-            WidgetWifiProperty.LocationAccessPermissionRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
+            WidgetWifiProperty.LocationAccessRequiring.entries.size to "IP Addresses",
+            WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
         )
     }
 
@@ -41,7 +41,7 @@ internal fun WifiPropertySelection(
         remember {
             WidgetWifiProperty.entries.map { property ->
                 when (property) {
-                    is WidgetWifiProperty.LocationAccessPermissionRequiring -> WifiPropertyCheckRowData(
+                    is WidgetWifiProperty.LocationAccessRequiring -> WifiPropertyCheckRowData(
                         property = property,
                         isCheckedMap = wifiPropertiesMap,
                         allowCheckChange = {

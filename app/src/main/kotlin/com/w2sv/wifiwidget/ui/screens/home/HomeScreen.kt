@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
@@ -43,8 +42,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetInteractionElementsRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
@@ -112,7 +109,6 @@ internal fun HomeScreen(
 private fun LandscapeMode(
     paddingValues: PaddingValues,
     homeScreenVM: HomeScreenViewModel = viewModel(),
-    context: Context = LocalContext.current
 ) {
     Row(
         modifier = Modifier
@@ -129,23 +125,6 @@ private fun LandscapeMode(
         )
 
         WidgetCard(
-            widgetInteractionElementsRow = {
-                WidgetInteractionElementsRow(
-                    onPinWidgetButtonClick = {
-                        when (homeScreenVM.lapUIState.rationalShown) {
-                            false ->
-                                homeScreenVM.lapUIState.setRationalTriggeringAction(
-                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
-                                )
-
-                            true -> attemptWifiWidgetPin(context)
-                        }
-                    },
-                    onWidgetConfigurationButtonClick = {
-                        homeScreenVM.setShowWidgetConfigurationDialog(true)
-                    },
-                )
-            },
             modifier = Modifier.fillMaxWidth(0.6f),
         )
     }
@@ -155,7 +134,6 @@ private fun LandscapeMode(
 private fun PortraitMode(
     paddingValues: PaddingValues,
     homeScreenVM: HomeScreenViewModel = viewModel(),
-    context: Context = LocalContext.current
 ) {
     Column(
         modifier = Modifier
@@ -174,23 +152,6 @@ private fun PortraitMode(
         Spacer(Modifier.weight(0.2f))
 
         WidgetCard(
-            widgetInteractionElementsRow = {
-                WidgetInteractionElementsRow(
-                    onPinWidgetButtonClick = {
-                        when (homeScreenVM.lapUIState.rationalShown) {
-                            false ->
-                                homeScreenVM.lapUIState.setRationalTriggeringAction(
-                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
-                                )
-
-                            true -> attemptWifiWidgetPin(context)
-                        }
-                    },
-                    onWidgetConfigurationButtonClick = {
-                        homeScreenVM.setShowWidgetConfigurationDialog(true)
-                    },
-                )
-            },
             modifier = Modifier
                 .fillMaxWidth(0.8f),
         )
@@ -203,7 +164,6 @@ private fun PortraitMode(
 private fun Dialogs(
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
-    context: Context = LocalContext.current
 ) {
     homeScreenVM.lapUIState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
         LocationAccessPermissionRationalDialog(
@@ -220,10 +180,10 @@ private fun Dialogs(
                     widgetVM.configuration.wifiProperties[WidgetWifiProperty.SSID] = true
                     widgetVM.configuration.wifiProperties[WidgetWifiProperty.BSSID] = true
                     widgetVM.configuration.wifiProperties.sync()
-                    attemptWifiWidgetPin(context)
+                    widgetVM.attemptWidgetPin()
                 },
                 onDenied = {
-                    attemptWifiWidgetPin(context)
+                    widgetVM.attemptWidgetPin()
                 },
             )
 
@@ -235,13 +195,6 @@ private fun Dialogs(
                 onDenied = {},
             )
         }
-    }
-    if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {
-        WidgetConfigurationDialog(
-            closeDialog = {
-                homeScreenVM.setShowWidgetConfigurationDialog(false)
-            },
-        )
     }
     @SuppressLint("NewApi")
     if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {

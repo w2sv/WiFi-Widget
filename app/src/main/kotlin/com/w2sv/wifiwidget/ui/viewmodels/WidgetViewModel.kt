@@ -52,6 +52,15 @@ class WidgetViewModel @Inject constructor(
         }
     }
 
+    fun attemptWidgetPin() {
+        viewModelScope.launch {
+            _attemptWidgetPin.emit(Unit)
+        }
+    }
+
+    val attemptWidgetPin get() = _attemptWidgetPin.asSharedFlow()
+    private val _attemptWidgetPin = MutableSharedFlow<Unit>()
+
     val snackbarVisuals get() = _snackbarVisuals.asSharedFlow()
     private val _snackbarVisuals = MutableSharedFlow<SnackbarVisuals>()
 
@@ -68,9 +77,10 @@ class WidgetViewModel @Inject constructor(
         i { "Pinned new widget w ID=$widgetId" }
 
         viewModelScope.launch {
-            if (configuration.wifiProperties.getValue(WidgetWifiProperty.SSID) || configuration.wifiProperties.getValue(
-                    WidgetWifiProperty.BSSID,
-                )
+            if (WidgetWifiProperty.LocationAccessRequiring.entries
+                    .any {
+                        configuration.wifiProperties.persistedStateFlowMap.getValue(it).value
+                    }
             ) {
                 when {
                     !context.isLocationEnabled -> _snackbarVisuals.emit(

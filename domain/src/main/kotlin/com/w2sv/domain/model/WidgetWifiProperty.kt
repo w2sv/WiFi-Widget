@@ -47,13 +47,13 @@ sealed interface WidgetWifiProperty {
     sealed interface SubType : WidgetWifiProperty
     sealed interface NonIP : SubType
 
-    sealed class LocationAccessPermissionRequiring(
+    sealed class LocationAccessRequiring(
         override val viewData: ViewData,
         override val defaultIsEnabled: Boolean
     ) : NonIP {
 
         companion object {
-            val entries: List<LocationAccessPermissionRequiring>
+            val entries: List<LocationAccessRequiring>
                 get() = listOf(SSID, BSSID)
         }
     }
@@ -143,7 +143,7 @@ sealed interface WidgetWifiProperty {
     ) :
         NonIP
 
-    data object SSID : LocationAccessPermissionRequiring(
+    data object SSID : LocationAccessRequiring(
         ViewData(
             R.string.ssid,
             R.string.ssid_description,
@@ -152,7 +152,7 @@ sealed interface WidgetWifiProperty {
         true
     )
 
-    data object BSSID : LocationAccessPermissionRequiring(
+    data object BSSID : LocationAccessRequiring(
         ViewData(
             R.string.bssid,
             R.string.bssid_description,

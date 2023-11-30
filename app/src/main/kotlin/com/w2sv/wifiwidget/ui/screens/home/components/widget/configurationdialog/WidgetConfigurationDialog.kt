@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
-import android.content.Context
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -9,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,7 +32,6 @@ fun WidgetConfigurationDialog(
     widgetVM: WidgetViewModel = viewModel(),
     homeScreenViewModel: HomeScreenViewModel = viewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    context: Context = LocalContext.current
 ) {
     val onDismissRequest: () -> Unit = {
         scope.launch {

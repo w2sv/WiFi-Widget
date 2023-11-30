@@ -20,15 +20,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 
 @Composable
 fun WidgetCard(
-    widgetInteractionElementsRow: @Composable () -> Unit,
     modifier: Modifier = Modifier,
+    homeScreenVM: HomeScreenViewModel = viewModel(),
+    widgetVM: WidgetViewModel = viewModel(),
 ) {
     HomeScreenCard(
         content = {
@@ -38,31 +45,42 @@ fun WidgetCard(
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Spacer(modifier = Modifier.height(32.dp))
-            widgetInteractionElementsRow()
+
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+                PinWidgetButton(
+                    onClick = {
+                        when (homeScreenVM.lapUIState.rationalShown) {
+                            false ->
+                                homeScreenVM.lapUIState.setRationalTriggeringAction(
+                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
+                                )
+
+                            true -> widgetVM.attemptWidgetPin()
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(60.dp),
+                )
+
+                Spacer(modifier = Modifier.width(32.dp))
+
+                WidgetConfigurationDialogButton(
+                    onClick = {
+                        homeScreenVM.setShowWidgetConfigurationDialog(true)
+                    },
+                    modifier = Modifier.size(32.dp),
+                )
+            }
         },
         modifier = modifier,
     )
-}
 
-@Composable
-internal fun WidgetInteractionElementsRow(
-    onPinWidgetButtonClick: () -> Unit,
-    onWidgetConfigurationButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
-        PinWidgetButton(
-            onClick = onPinWidgetButtonClick,
-            modifier = Modifier
-                .fillMaxWidth(0.7f)
-                .height(60.dp),
-        )
-
-        Spacer(modifier = Modifier.width(32.dp))
-
-        WidgetConfigurationDialogButton(
-            onClick = onWidgetConfigurationButtonClick,
-            modifier = Modifier.size(32.dp),
+    if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {
+        WidgetConfigurationDialog(
+            closeDialog = {
+                homeScreenVM.setShowWidgetConfigurationDialog(false)
+            },
         )
     }
 }

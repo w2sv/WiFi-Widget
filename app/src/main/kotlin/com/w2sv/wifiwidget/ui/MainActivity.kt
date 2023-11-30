@@ -12,8 +12,10 @@ import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
+import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
@@ -44,6 +46,9 @@ class MainActivity : ComponentActivity() {
             appVM.exitApplication.collect {
                 finishAffinity()
             }
+        }
+        lifecycleScope.collectFromFlow(widgetVM.attemptWidgetPin) {
+            attemptWifiWidgetPin(this)
         }
 
         setContent {
