@@ -10,20 +10,26 @@ import com.w2sv.widget.data.appearance
 import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetRefreshing
-import com.w2sv.widget.utils.appWidgetManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 object WidgetModule {
 
     @Provides
+    @Singleton
     fun workManager(@ApplicationContext context: Context): WorkManager =
         WorkManager.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
+        AppWidgetManager.getInstance(context)
 
     @Provides
     fun widgetRefreshing(widgetRepository: WidgetRepository): WidgetRefreshing =
@@ -36,8 +42,4 @@ object WidgetModule {
     @Provides
     fun enabledWidgetWifiProperties(widgetRepository: WidgetRepository): Set<WidgetWifiProperty> =
         widgetRepository.getEnabledWifiProperties()
-
-    @Provides
-    fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
-        context.appWidgetManager
 }

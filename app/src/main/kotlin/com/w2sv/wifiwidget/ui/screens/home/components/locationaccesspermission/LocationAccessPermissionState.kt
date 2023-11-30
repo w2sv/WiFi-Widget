@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
     private val scope: CoroutineScope,
-    context: Context,
+    private val context: Context,
 ) {
     val newlyGranted get() = _newlyGranted.asSharedFlow()
     private val _newlyGranted = MutableSharedFlow<Boolean>()
@@ -80,7 +80,7 @@ class LocationAccessPermissionState(
     /**
      * @return Boolean, representing whether access has been newly granted.
      */
-    fun updateBackgroundAccessGranted(context: Context): Boolean {
+    fun updateBackgroundAccessGranted(context: Context = this.context): Boolean {
         if (!backgroundLocationAccessGranted && hasBackgroundLocationAccess(context)) {
             backgroundLocationAccessGranted = true
             return true

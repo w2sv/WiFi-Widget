@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
@@ -15,6 +16,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
+import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
@@ -43,30 +45,36 @@ class WidgetViewModel @Inject constructor(
     ViewModel() {
 
     init {
-        viewModelScope.launch {
-            repository.optionsChangedWidgetId.collect {
-                if (widgetIds.add(it)) {
-                    onNewWidgetPinned(it, context)
-                }
+        viewModelScope.collectFromFlow(repository.optionsChangedWidgetId) {
+            if (widgetIds.add(it)) {
+                onNewWidgetPinned(it, context)
             }
         }
     }
 
-    fun attemptWidgetPin() {
-        viewModelScope.launch {
-            _attemptWidgetPin.emit(Unit)
-        }
+    fun onStart() {
+        refreshWidgetIds()
     }
 
-    val attemptWidgetPin get() = _attemptWidgetPin.asSharedFlow()
-    private val _attemptWidgetPin = MutableSharedFlow<Unit>()
+    fun attemptWidgetPin() {
+        if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
+            viewModelScope.launch {
+                _snackbarVisuals.emit(
+                    AppSnackbarVisuals(
+                        message = "Widget pinning not supported by your device launcher.",
+                        kind = SnackbarKind.Error
+                    )
+                )
+            }
+        }
+    }
 
     val snackbarVisuals get() = _snackbarVisuals.asSharedFlow()
     private val _snackbarVisuals = MutableSharedFlow<SnackbarVisuals>()
 
     private var widgetIds: MutableSet<Int> = getWidgetIds()
 
-    fun refreshWidgetIds() {
+    private fun refreshWidgetIds() {
         widgetIds = getWidgetIds()
     }
 
@@ -85,14 +93,14 @@ class WidgetViewModel @Inject constructor(
                 when {
                     !context.isLocationEnabled -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
-                            context.getString(R.string.on_pin_widget_wo_gps_enabled),
+                            message = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                             kind = SnackbarKind.Error,
                         ),
                     )
 
                     !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
-                            context.getString(R.string.on_pin_widget_wo_location_access_permission),
+                            message = context.getString(R.string.on_pin_widget_wo_location_access_permission),
                             kind = SnackbarKind.Error,
                         ),
                     )
@@ -100,7 +108,7 @@ class WidgetViewModel @Inject constructor(
                     !hasBackgroundLocationAccess(context) ->
                         _snackbarVisuals.emit(
                             AppSnackbarVisuals(
-                                context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
+                                message = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                                 kind = SnackbarKind.Error,
                             ),
                         )

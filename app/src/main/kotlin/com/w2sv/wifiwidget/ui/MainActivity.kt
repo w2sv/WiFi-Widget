@@ -15,14 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
-import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,13 +40,8 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            appVM.exitApplication.collect {
-                finishAffinity()
-            }
-        }
-        lifecycleScope.collectFromFlow(widgetVM.attemptWidgetPin) {
-            attemptWifiWidgetPin(this)
+        lifecycleScope.collectFromFlow(appVM.exitApplication) {
+            finishAffinity()
         }
 
         setContent {
@@ -92,7 +85,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
 
-        homeScreenVM.onStart(this)
-        widgetVM.refreshWidgetIds()
+        homeScreenVM.onStart()
+        widgetVM.onStart()
     }
 }

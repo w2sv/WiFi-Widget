@@ -165,17 +165,17 @@ private fun Dialogs(
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
 ) {
-    homeScreenVM.lapUIState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
+    homeScreenVM.lapState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
         LocationAccessPermissionRationalDialog(
             onProceed = {
-                homeScreenVM.lapUIState.onRationalShown()
+                homeScreenVM.lapState.onRationalShown()
             },
         )
     }
-    homeScreenVM.lapUIState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
+    homeScreenVM.lapState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
         when (trigger) {
             is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
-                lapUIState = homeScreenVM.lapUIState,
+                lapUIState = homeScreenVM.lapState,
                 onGranted = {
                     widgetVM.configuration.wifiProperties[WidgetWifiProperty.SSID] = true
                     widgetVM.configuration.wifiProperties[WidgetWifiProperty.BSSID] = true
@@ -188,7 +188,7 @@ private fun Dialogs(
             )
 
             is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
-                lapUIState = homeScreenVM.lapUIState,
+                lapUIState = homeScreenVM.lapState,
                 onGranted = {
                     widgetVM.configuration.wifiProperties[trigger.property] = true
                 },
@@ -197,10 +197,10 @@ private fun Dialogs(
         }
     }
     @SuppressLint("NewApi")
-    if (homeScreenVM.lapUIState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
+    if (homeScreenVM.lapState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
-                homeScreenVM.lapUIState.setShowBackgroundAccessRational(true)
+                homeScreenVM.lapState.setShowBackgroundAccessRational(true)
             },
         )
     }

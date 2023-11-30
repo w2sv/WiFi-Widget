@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
@@ -27,9 +28,9 @@ class HomeScreenViewModel @Inject constructor(
     wifiStatusMonitor: WifiStatusMonitor,
 ) : ViewModel() {
 
-    fun onStart(context: Context) {
+    fun onStart() {
         triggerPropertiesViewDataRefresh()
-        lapUIState.updateBackgroundAccessGranted(context = context)
+        lapState.updateBackgroundAccessGranted()
     }
 
     val showWidgetConfigurationDialog get() = _showWidgetConfigurationDialog.asStateFlow()
@@ -39,18 +40,14 @@ class HomeScreenViewModel @Inject constructor(
         _showWidgetConfigurationDialog.value = value
     }
 
-    val lapUIState = LocationAccessPermissionState(
+    val lapState = LocationAccessPermissionState(
         preferencesRepository = preferencesRepository,
         scope = viewModelScope,
         context = context,
     )
         .apply {
-            viewModelScope.launch {
-                newlyGranted.collect {
-                    if (it) {
-                        triggerPropertiesViewDataRefresh()
-                    }
-                }
+            viewModelScope.collectFromFlow(newlyGranted) {
+                triggerPropertiesViewDataRefresh()
             }
         }
 
