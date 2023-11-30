@@ -20,10 +20,9 @@ import javax.inject.Inject
 
 class WifiStatusMonitor @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val wifiManager: WifiManager,
+    private val connectivityManager: ConnectivityManager
 ) {
-    private val connectivityManager = context.getConnectivityManager()
-    private val wifiManager = context.getWifiManager()
-
     private val networkRequest = NetworkRequest
         .Builder()
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)

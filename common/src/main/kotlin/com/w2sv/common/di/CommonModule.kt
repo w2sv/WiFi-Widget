@@ -1,6 +1,7 @@
 package com.w2sv.common.di
 
 import android.content.Context
+import android.content.res.Resources
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +21,8 @@ object CommonModule {
     @Provides
     fun packageName(@ApplicationContext context: Context): String =
         context.packageName
+
+    @Provides
+    fun resources(@ApplicationContext context: Context): Resources =
+        context.resources
 }

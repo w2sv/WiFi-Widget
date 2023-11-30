@@ -1,13 +1,12 @@
 package com.w2sv.networking
 
-import android.content.Context
+import android.content.res.Resources
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.androidutils.services.getConnectivityManager
-import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.domain.model.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -19,13 +18,12 @@ import javax.inject.Inject
 private const val COULDNT_RETRIEVE = "Couldn't retrieve"
 
 class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val httpClient: OkHttpClient,
-    private val widgetRepository: WidgetRepository
+    private val wifiManager: WifiManager,
+    private val connectivityManager: ConnectivityManager,
+    private val widgetRepository: WidgetRepository,
+    private val resources: Resources
 ) : WidgetWifiProperty.ValueViewData.Factory {
-
-    private val wifiManager by lazy { context.getWifiManager() }
-    private val connectivityManager by lazy { context.getConnectivityManager() }
 
     override fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<WidgetWifiProperty.ValueViewData> {
         val systemIPAddresses by lazy {
@@ -166,7 +164,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
-            val propertyLabel = context.getString(property.viewData.labelRes)
+            val propertyLabel = resources.getString(property.viewData.labelRes)
 
             if (values.size == 1) {
                 add(makeViewData(propertyLabel, values.first()))
