@@ -166,6 +166,8 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                                     isMCOrgLocal = false
                                 )
                             )
+                        } else {
+                            i { "Discarded $addressRepresentation" }
                         }
                     }
                 }

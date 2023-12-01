@@ -58,7 +58,7 @@ data class IPAddress(
         val ofCorrectFormat: (String) -> Boolean
     ) {
         V4(0, "0.0.0.0", { it.removeAlphanumeric() == "..." }),
-        V6(64, "::::::", { it.removeAlphanumeric() == "::::::" }),
+        V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" }),
     }
 }
 
