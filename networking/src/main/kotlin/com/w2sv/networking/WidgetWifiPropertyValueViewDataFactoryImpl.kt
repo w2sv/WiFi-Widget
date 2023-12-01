@@ -20,8 +20,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
 
-private const val COULDNT_RETRIEVE = "Couldn't retrieve"
-
 class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
     private val wifiManager: WifiManager,
@@ -46,21 +44,27 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
         return flow {
             properties
                 .forEach { property ->
-                    when (property) {
-                        is WidgetWifiProperty.IP -> getIPPropertyViewData(
-                            property = property,
-                            systemIPAddresses = systemIPAddresses,
-                            subPropertyEnablementMap = ipSubPropertyEnablementMap
-                        )
-                            .forEach { emit(it) }
-
-                        is WidgetWifiProperty.NonIP -> getNonIPPropertyViewData(property)
-                            .forEach { emit(it) }
-                    }
+                    property
+                        .getPropertyViewData(systemIPAddresses, ipSubPropertyEnablementMap)
+                        .forEach { emit(it) }
                 }
         }
             .flowOn(Dispatchers.IO)
     }
+
+    private suspend fun WidgetWifiProperty.getPropertyViewData(
+        systemIPAddresses: List<IPAddress>,
+        subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+    ): List<WidgetWifiProperty.ValueViewData> =
+        when (this) {
+            is WidgetWifiProperty.NonIP -> getNonIPPropertyViewData(this)
+
+            is WidgetWifiProperty.IP -> getIPPropertyViewData(
+                property = this,
+                systemIPAddresses = systemIPAddresses,
+                subPropertyEnablementMap = subPropertyEnablementMap
+            )
+        }
 
     private fun getNonIPPropertyViewData(
         property: WidgetWifiProperty.NonIP
@@ -75,9 +79,9 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     @Suppress("DEPRECATION")
     private fun WidgetWifiProperty.NonIP.getValues(): List<String> =
-        when (this) {
-            WidgetWifiProperty.DNS -> {
-                buildList {
+        buildList {
+            when (this@getValues) {
+                WidgetWifiProperty.DNS -> {
                     add(
                         textualIPv4Representation(wifiManager.dhcpInfo.dns1)
                             ?: IPAddress.Type.V4.fallbackAddress
@@ -88,26 +92,30 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                         }
                     }
                 }
+
+                WidgetWifiProperty.SSID -> add(
+                    wifiManager.connectionInfo.ssid?.replace("\"", "")
+                        ?: resources.getString(R.string.couldnt_retrieve)
+                )
+
+                WidgetWifiProperty.BSSID -> add(
+                    wifiManager.connectionInfo.bssid
+                        ?: resources.getString(R.string.couldnt_retrieve)
+                )
+
+                WidgetWifiProperty.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
+                WidgetWifiProperty.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
+                WidgetWifiProperty.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
+                WidgetWifiProperty.Gateway -> add(
+                    textualIPv4Representation(wifiManager.dhcpInfo.gateway)
+                        ?: IPAddress.Type.V4.fallbackAddress
+                )
+
+                WidgetWifiProperty.DHCP -> add(
+                    textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
+                        ?: IPAddress.Type.V4.fallbackAddress
+                )
             }
-
-            else -> listOf(
-                when (this) {
-                    WidgetWifiProperty.SSID -> wifiManager.connectionInfo.ssid?.replace("\"", "")
-                        ?: COULDNT_RETRIEVE
-
-                    WidgetWifiProperty.BSSID -> wifiManager.connectionInfo.bssid ?: COULDNT_RETRIEVE
-                    WidgetWifiProperty.Frequency -> "${wifiManager.connectionInfo.frequency} MHz"
-                    WidgetWifiProperty.Channel -> frequencyToChannel(wifiManager.connectionInfo.frequency).toString()
-                    WidgetWifiProperty.LinkSpeed -> "${wifiManager.connectionInfo.linkSpeed} Mbps"
-                    WidgetWifiProperty.Gateway -> textualIPv4Representation(wifiManager.dhcpInfo.gateway)
-                        ?: IPAddress.Type.V4.fallbackAddress
-
-                    WidgetWifiProperty.DHCP -> textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
-                        ?: IPAddress.Type.V4.fallbackAddress
-
-                    else -> throw Error()
-                }
-            )
         }
 
     private suspend fun getIPPropertyViewData(
@@ -150,26 +158,22 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             WidgetWifiProperty.Public -> buildList {
                 IPAddress.Type.entries.forEach { type ->
                     getPublicIPAddress(httpClient, type)?.let { addressRepresentation ->
-                        if (type.ofCorrectFormat(addressRepresentation)) {
-                            add(
-                                IPAddress(
-                                    prefixLength = type.minPrefixLength,
-                                    hostAddress = addressRepresentation,
-                                    isLinkLocal = false,
-                                    isSiteLocal = false,
-                                    isAnyLocal = false,
-                                    isLoopback = false,
-                                    isMulticast = false,
-                                    isMCGlobal = false,
-                                    isMCLinkLocal = false,
-                                    isMCSiteLocal = false,
-                                    isMCNodeLocal = false,
-                                    isMCOrgLocal = false
-                                )
+                        add(
+                            IPAddress(
+                                prefixLength = type.minPrefixLength,
+                                hostAddress = addressRepresentation,
+                                isLinkLocal = false,
+                                isSiteLocal = false,
+                                isAnyLocal = false,
+                                isLoopback = false,
+                                isMulticast = false,
+                                isMCGlobal = false,
+                                isMCLinkLocal = false,
+                                isMCSiteLocal = false,
+                                isMCNodeLocal = false,
+                                isMCOrgLocal = false
                             )
-                        } else {
-                            i { "Discarded $addressRepresentation" }
-                        }
+                        )
                     }
                 }
             }
