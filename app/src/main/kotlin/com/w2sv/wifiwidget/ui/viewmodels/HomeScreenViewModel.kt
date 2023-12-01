@@ -12,10 +12,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
@@ -81,6 +81,6 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getPropertyViewData(): List<WidgetWifiProperty.ValueViewData> =
-        widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries).toList()
+    private fun getPropertyViewData(): Flow<WidgetWifiProperty.ValueViewData> =
+        widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries)
 }

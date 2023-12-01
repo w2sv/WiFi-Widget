@@ -58,4 +58,5 @@
     <string name="copyright_text">© 2022 - %1$s | W2SV</string>
     <string name="ip">IP</string>
     <string name="report_a_bug">Report a bug</string>
+    <string name="getting_data">Getting data...</string>
 </resources>

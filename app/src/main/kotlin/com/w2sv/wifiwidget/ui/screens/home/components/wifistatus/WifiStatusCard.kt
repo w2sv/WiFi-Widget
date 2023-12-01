@@ -35,7 +35,7 @@ fun WifiStatusCard(
                 wifiState.propertyViewData?.let {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
-                        WifiPropertiesList(
+                        WifiPropertiesDisplay(
                             propertiesViewData = it,
                             modifier = Modifier.fillMaxHeight(0.22f)
                         )
