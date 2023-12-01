@@ -21,6 +21,12 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.WifiPropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
 
+private val indexToFirstSubTypeTitle = mapOf(
+    0 to "Location access requiring",
+    WidgetWifiProperty.LocationAccessRequiring.entries.size to "IP Addresses",
+    WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
+)
+
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
@@ -29,14 +35,6 @@ internal fun WifiPropertySelection(
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val indexToFirstSubTypeTitle = remember {
-        mapOf(
-            0 to "Location access requiring",
-            WidgetWifiProperty.LocationAccessRequiring.entries.size to "IP Addresses",
-            WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
-        )
-    }
-
     Column(modifier = modifier) {
         remember {
             WidgetWifiProperty.entries.map { property ->

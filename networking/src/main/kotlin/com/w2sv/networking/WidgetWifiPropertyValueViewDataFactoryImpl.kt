@@ -7,13 +7,14 @@ import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import slimber.log.i
-import java.io.IOException
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -109,7 +110,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private fun getIPPropertyViewData(
+    private suspend fun getIPPropertyViewData(
         property: WidgetWifiProperty.IP,
         systemIPAddresses: List<IPAddress>,
         subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
@@ -140,7 +141,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             }
         )
 
-    private fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
+    private suspend fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
             WidgetWifiProperty.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
             WidgetWifiProperty.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
@@ -205,7 +206,7 @@ private fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-private fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
+private suspend fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
     i { "Getting public address for $type" }
 
     val request = Request.Builder()
@@ -217,18 +218,30 @@ private fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): 
         )
         .build()
 
-    try {
-        return httpClient
-            .newCall(request)
-            .execute()
-            .body
-            ?.string()
-            .also { i { "Got public address for $type" } }
-    } catch (_: IOException) {
-        i { "getPublicIPAddress.exception" }
+    return try {
+        withTimeout(5_000) {
+            httpClient
+                .newCall(request)
+                .execute()
+                .body
+                ?.string()
+                ?.let { address ->
+                    if (type.ofCorrectFormat(address))
+                        address.also { i { "Got public address for $type" } }
+                    else
+                        null.also { i { "Discarded $address obtained for $type" } }
+                }
+        }
+    } catch (e: Exception) {
+        i {
+            if (e is TimeoutCancellationException) {
+                "Timed out trying to get public $type address"
+            } else {
+                "Caught $e"
+            }
+        }
+        null
     }
-
-    return null
 }
 
 /**

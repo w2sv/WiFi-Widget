@@ -49,7 +49,7 @@ internal fun <T> SubPropertyCheckRow(
 ) {
     PropertyCheckRow(
         data = data,
-        modifier = modifier.padding(start = 28.dp),
+        modifier = modifier.padding(start = 16.dp),
         fontSize = 14.sp,
         makeText = ::bulletPointText,
         onInfoButtonClick = onInfoButtonClick,
