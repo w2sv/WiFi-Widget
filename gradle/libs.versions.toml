@@ -8,7 +8,7 @@ java = '17'
 
 compose-compiler = '1.5.1'
 compose-tooling = '1.5.0'
-hilt = '2.47'
+hilt = '2.49'
 lifecycle = "2.6.1"
 
 [libraries]
