@@ -1,14 +1,10 @@
 package com.w2sv.wifiwidget.ui
 
-import android.animation.ObjectAnimator
 import android.os.Bundle
-import android.view.View
-import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,15 +26,13 @@ class MainActivity : ComponentActivity() {
     private val appVM by viewModels<AppViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        handleSplashScreen(
-            onAnimationFinished = {
-                if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
-                    homeScreenVM.setShowWidgetConfigurationDialog(true)
-                }
-            },
-        )
+        installSplashScreen()
 
         super.onCreate(savedInstanceState)
+
+        if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
+            homeScreenVM.setShowWidgetConfigurationDialog(true)
+        }
 
         lifecycleScope.collectFromFlow(appVM.exitApplication) {
             finishAffinity()
@@ -56,29 +50,6 @@ class MainActivity : ComponentActivity() {
             ) {
                 HomeScreen()
             }
-        }
-    }
-
-    /**
-     * Sets SwipeUp exit animation and calls [onAnimationFinished].
-     */
-    private fun handleSplashScreen(onAnimationFinished: () -> Unit) {
-        installSplashScreen().setOnExitAnimationListener { splashScreenViewProvider ->
-            ObjectAnimator.ofFloat(
-                splashScreenViewProvider.view,
-                View.TRANSLATION_Y,
-                0f,
-                -splashScreenViewProvider.view.height.toFloat(),
-            )
-                .apply {
-                    interpolator = AnticipateInterpolator()
-                    duration = 400L
-                    doOnEnd {
-                        splashScreenViewProvider.remove()
-                        onAnimationFinished()
-                    }
-                }
-                .start()
         }
     }
 
