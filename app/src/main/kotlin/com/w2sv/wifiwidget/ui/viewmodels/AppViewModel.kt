@@ -6,7 +6,6 @@ import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,12 +23,12 @@ class AppViewModel @Inject constructor(
 
     val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT)
+        SharingStarted.Eagerly
     )
 
     val useDynamicColors = preferencesRepository.useDynamicTheme.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT)
+        SharingStarted.Eagerly
     )
 
     fun saveTheme(theme: Theme) {

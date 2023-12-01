@@ -204,7 +204,7 @@ private fun textualIPv4Representation(address: Int): String? =
         .hostAddress
 
 private fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
-    i { "Getting public address" }
+    i { "Getting public address for $type" }
 
     val request = Request.Builder()
         .url(
@@ -221,7 +221,7 @@ private fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): 
             .execute()
             .body
             ?.string()
-            .also { i { "Got public address" } }
+            .also { i { "Got public address for $type" } }
     } catch (_: IOException) {
         i { "getPublicIPAddress.exception" }
     }
