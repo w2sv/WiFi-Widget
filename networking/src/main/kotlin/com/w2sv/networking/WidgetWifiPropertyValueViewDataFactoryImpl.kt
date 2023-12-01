@@ -4,7 +4,6 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.domain.model.IPAddress
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,7 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import slimber.log.i
+import java.io.IOException
+import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 import javax.inject.Inject
 
 private const val COULDNT_RETRIEVE = "Couldn't retrieve"
@@ -130,8 +134,8 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             makeViewData = { label, ipAddress ->
                 WidgetWifiProperty.ValueViewData.IPProperty(
                     label = label,
-                    ipAddress = ipAddress,
-                    showPrefixLength = subPropertyEnablementMap.getValue(property.showPrefixLengthSubProperty)
+                    value = ipAddress.hostAddressRepresentation,
+                    prefixLengthText = if (subPropertyEnablementMap[property.showPrefixLengthSubProperty] == true) "/${ipAddress.prefixLength}" else null
                 )
             }
         )
@@ -185,3 +189,60 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             }
         }
 }
+
+/**
+ * Reference: https://stackoverflow.com/a/52663352/12083276
+ */
+private fun textualIPv4Representation(address: Int): String? =
+    InetAddress.getByAddress(
+        ByteBuffer
+            .allocate(Integer.BYTES)
+            .order(ByteOrder.LITTLE_ENDIAN)
+            .putInt(address)
+            .array(),
+    )
+        .hostAddress
+
+private fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
+    i { "Getting public address" }
+
+    val request = Request.Builder()
+        .url(
+            when (type) {
+                IPAddress.Type.V4 -> "https://api.ipify.org"
+                IPAddress.Type.V6 -> "https://api64.ipify.org"
+            }
+        )
+        .build()
+
+    try {
+        return httpClient
+            .newCall(request)
+            .execute()
+            .body
+            ?.string()
+            .also { i { "Got public address" } }
+    } catch (_: IOException) {
+        i { "getPublicIPAddress.exception" }
+    }
+
+    return null
+}
+
+/**
+ * Reference: https://stackoverflow.com/a/58646104/12083276
+ *
+ * @param frequency in MHz.
+ */
+private fun frequencyToChannel(frequency: Int): Int =
+    when {
+        frequency <= 0 -> -1
+        frequency == 2484 -> 14
+        frequency < 2484 -> (frequency - 2407) / 5
+        frequency in 4910..4980 -> (frequency - 4000) / 5
+        frequency < 5925 -> (frequency - 5000) / 5
+        frequency == 5935 -> 2
+        frequency <= 45000 -> (frequency - 5950) / 5
+        frequency in 58320..70200 -> (frequency - 56160) / 2160
+        else -> -1
+    }

@@ -3,7 +3,6 @@ package com.w2sv.networking
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.NetworkCapabilities
-import com.w2sv.domain.model.IPAddress
 
 internal fun ConnectivityManager.getIPAddresses(): List<IPAddress> =
     linkProperties?.linkAddresses?.map { IPAddress(it) } ?: listOf()

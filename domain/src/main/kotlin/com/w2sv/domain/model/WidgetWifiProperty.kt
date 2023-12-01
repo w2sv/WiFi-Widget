@@ -25,19 +25,7 @@ sealed interface WidgetWifiProperty {
             override val label: String,
             override val value: String,
             val prefixLengthText: String?
-        ) :
-            ValueViewData {
-
-            constructor(
-                label: String,
-                ipAddress: IPAddress,
-                showPrefixLength: Boolean
-            ) : this(
-                label = label,
-                value = ipAddress.hostAddressRepresentation,
-                prefixLengthText = if (showPrefixLength) "/${ipAddress.prefixLength}" else null
-            )
-        }
+        ) : ValueViewData
 
         interface Factory {
             operator fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<ValueViewData>
@@ -96,14 +84,17 @@ sealed interface WidgetWifiProperty {
         sealed class V4AndV6(
             viewData: ViewData,
             defaultIsEnabled: Boolean,
+            includePrefixLength: Boolean
         ) : IP(
             viewData = viewData,
             defaultIsEnabled = defaultIsEnabled,
-            subPropertyKinds = listOf(
-                SubProperty.Kind.ShowPrefixLength,
-                AddressTypeEnablement.V4Enabled,
-                AddressTypeEnablement.V6Enabled,
-            )
+            subPropertyKinds = buildList {
+                if (includePrefixLength) {
+                    add(SubProperty.Kind.ShowPrefixLength)
+                }
+                add(AddressTypeEnablement.V4Enabled)
+                add(AddressTypeEnablement.V6Enabled)
+            }
         ) {
             val v4EnabledSubProperty: SubProperty
                 get() = SubProperty(this, AddressTypeEnablement.V4Enabled)
@@ -161,15 +152,6 @@ sealed interface WidgetWifiProperty {
         false
     )
 
-    data object LinkLocal : IP.V4AndV6(
-        ViewData(
-            R.string.link_local,
-            R.string.ipv4_description,
-            LEARN_MORE_URL,
-        ),
-        true,
-    )
-
     data object SiteLocal :
         IP.V4AndV6(
             ViewData(
@@ -178,7 +160,18 @@ sealed interface WidgetWifiProperty {
                 LEARN_MORE_URL,
             ),
             true,
+            true
         )
+
+    data object LinkLocal : IP.V4AndV6(
+        ViewData(
+            R.string.link_local,
+            R.string.ipv4_description,
+            LEARN_MORE_URL,
+        ),
+        true,
+        true
+    )
 
     data object UniqueLocal :
         IP.V6Only(
@@ -208,6 +201,7 @@ sealed interface WidgetWifiProperty {
                 LEARN_MORE_URL,
             ),
             false,
+            false
         )
 
     data object Frequency : Other(
@@ -270,8 +264,8 @@ sealed interface WidgetWifiProperty {
                 return listOf(
                     SSID,
                     BSSID,
-                    LinkLocal,
                     SiteLocal,
+                    LinkLocal,
                     UniqueLocal,
                     GlobalUnicast,
                     Public,

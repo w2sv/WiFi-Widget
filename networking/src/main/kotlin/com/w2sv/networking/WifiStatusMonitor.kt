@@ -7,8 +7,6 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
-import com.w2sv.androidutils.services.getConnectivityManager
-import com.w2sv.androidutils.services.getWifiManager
 import com.w2sv.domain.model.WifiStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
@@ -73,21 +71,3 @@ class WifiStatusMonitor @Inject constructor(
     }
         .conflate()
 }
-
-fun getWifiStatus(context: Context): WifiStatus =
-    getWifiStatus(
-        wifiManager = context.getWifiManager(),
-        connectivityManager = context.getConnectivityManager(),
-    )
-
-fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =
-    when {
-        !wifiManager.isWifiEnabled -> WifiStatus.Disabled
-        else -> when (connectivityManager.isWifiConnected) {
-            false -> WifiStatus.Disconnected
-            else -> WifiStatus.Connected
-        }
-    }
-
-private fun getNoConnectionPresentStatus(wifiManager: WifiManager): WifiStatus =
-    if (wifiManager.isWifiEnabled) WifiStatus.Disconnected else WifiStatus.Disabled

@@ -1,49 +1,66 @@
 package com.w2sv.networking
 
-import com.w2sv.domain.model.IPAddress
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okio.IOException
-import slimber.log.i
-import java.net.InetAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
+import android.net.LinkAddress
+import androidx.annotation.IntRange
 
-/**
- * Reference: https://stackoverflow.com/a/52663352/12083276
- */
-internal fun textualIPv4Representation(address: Int): String? =
-    InetAddress.getByAddress(
-        ByteBuffer
-            .allocate(Integer.BYTES)
-            .order(ByteOrder.LITTLE_ENDIAN)
-            .putInt(address)
-            .array(),
+data class IPAddress(
+    @IntRange(from = 0, to = 128) val prefixLength: Int,
+    private val hostAddress: String?,
+    val isLinkLocal: Boolean,
+    val isSiteLocal: Boolean,
+    val isAnyLocal: Boolean,
+    val isLoopback: Boolean,
+    val isMulticast: Boolean,
+    val isMCGlobal: Boolean,
+    val isMCLinkLocal: Boolean,
+    val isMCSiteLocal: Boolean,
+    val isMCNodeLocal: Boolean,
+    val isMCOrgLocal: Boolean
+) {
+    constructor(linkAddress: LinkAddress) : this(
+        prefixLength = linkAddress.prefixLength,
+        hostAddress = linkAddress.address.hostAddress,
+        isLinkLocal = linkAddress.address.isLinkLocalAddress,
+        isSiteLocal = linkAddress.address.isSiteLocalAddress,
+        isAnyLocal = linkAddress.address.isAnyLocalAddress,
+        isLoopback = linkAddress.address.isLoopbackAddress,
+        isMulticast = linkAddress.address.isMulticastAddress,
+        isMCGlobal = linkAddress.address.isMCGlobal,
+        isMCLinkLocal = linkAddress.address.isMCLinkLocal,
+        isMCSiteLocal = linkAddress.address.isMCSiteLocal,
+        isMCNodeLocal = linkAddress.address.isMCNodeLocal,
+        isMCOrgLocal = linkAddress.address.isMCOrgLocal,
     )
-        .hostAddress
 
-internal fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
-    i { "Getting public address" }
-
-    val request = Request.Builder()
-        .url(
-            when (type) {
-                IPAddress.Type.V4 -> "https://api.ipify.org"
-                IPAddress.Type.V6 -> "https://api64.ipify.org"
-            }
-        )
-        .build()
-
-    try {
-        return httpClient
-            .newCall(request)
-            .execute()
-            .body
-            ?.string()
-            .also { i { "Got public address" } }
-    } catch (_: IOException) {
-        i { "getPublicIPAddress.exception" }
+    /**
+     * Reference: https://stackoverflow.com/a/33094601/12083276
+     */
+    fun getNetmask(): String {
+        val shift = 0xffffffff shl (32 - prefixLength)
+        return "${((shift and 0xff000000) shr 24) and 0xff}" +
+                ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+                ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+                ".${(shift and 0x000000ff) and 0xff}"
     }
 
-    return null
+    val type: Type = if (prefixLength < Type.V6.minPrefixLength) Type.V4 else Type.V6
+    val hostAddressRepresentation: String = hostAddress ?: type.fallbackAddress
+
+    val isUniqueLocal: Boolean
+        get() = hostAddressRepresentation.startsWith("fc00::/7")
+
+    val isGlobalUnicast: Boolean
+        get() = !isSiteLocal && !isLinkLocal && !isAnyLocal && !isMulticast
+
+    enum class Type(
+        val minPrefixLength: Int,
+        val fallbackAddress: String,
+        val ofCorrectFormat: (String) -> Boolean
+    ) {
+        V4(0, "0.0.0.0", { it.removeAlphanumeric() == "..." }),
+        V6(64, "::::::", { it.removeAlphanumeric() == "::::::" }),
+    }
 }
+
+private fun String.removeAlphanumeric(): String =
+    replace(Regex("\\w"), "")
