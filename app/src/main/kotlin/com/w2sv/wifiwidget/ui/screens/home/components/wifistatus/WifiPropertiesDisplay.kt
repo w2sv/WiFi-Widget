@@ -2,6 +2,11 @@ package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
 import android.content.Context
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,7 +72,17 @@ fun WifiPropertiesDisplay(
         viewData = propertiesViewData.toList()
     }
 
-    AnimatedContent(targetState = viewData.isEmpty(), label = "", modifier = modifier) {
+    AnimatedContent(
+        targetState = viewData.isEmpty(),
+        label = "",
+        modifier = modifier.fillMaxWidth(),
+        transitionSpec = {
+            (fadeIn() + slideInVertically())
+                .togetherWith(
+                    fadeOut() + slideOutVertically()
+                )
+        }
+    ) {
         if (it) {
             LoadingPlaceholder()
         } else {
