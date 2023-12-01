@@ -27,7 +27,12 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     override fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<WidgetWifiProperty.ValueViewData> {
         val systemIPAddresses by lazy {
-            connectivityManager.getIPAddresses().also { i { "IPAddresses: $it" } }
+            connectivityManager.getIPAddresses()
+//                .also {
+//                    it.forEachIndexed { index, ipAddress ->
+//                        i { "IPAddress #${index + 1}: $ipAddress" }
+//                    }
+//                }
         }
         val ipSubPropertyEnablementMap by lazy {
             widgetRepository.getIPSubPropertyEnablementMap().getSynchronousMap()
@@ -133,26 +138,31 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     private fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
-            WidgetWifiProperty.LinkLocal -> systemIPAddresses.filter { it.localAttributes.linkLocal }
-            WidgetWifiProperty.SiteLocal -> systemIPAddresses.filter { it.localAttributes.siteLocal }
+            WidgetWifiProperty.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
+            WidgetWifiProperty.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
             WidgetWifiProperty.UniqueLocal -> systemIPAddresses.filter { it.isUniqueLocal }
             WidgetWifiProperty.GlobalUnicast -> systemIPAddresses.filter { it.isGlobalUnicast }
             WidgetWifiProperty.Public -> buildList {
-                IPAddress.Type.entries.forEach {
-                    getPublicIPAddress(httpClient, it)?.let { addressRepresentation ->
-                        add(
-                            IPAddress(
-                                prefixLength = it.minPrefixLength,
-                                hostAddress = addressRepresentation,
-                                localAttributes = IPAddress.LocalAttributes(
-                                    linkLocal = false,
-                                    siteLocal = false,
-                                    anyLocal = false
-                                ),
-                                isLoopback = false,
-                                isMulticast = false
+                IPAddress.Type.entries.forEach { type ->
+                    getPublicIPAddress(httpClient, type)?.let { addressRepresentation ->
+                        if (type.ofCorrectFormat(addressRepresentation)) {
+                            add(
+                                IPAddress(
+                                    prefixLength = type.minPrefixLength,
+                                    hostAddress = addressRepresentation,
+                                    isLinkLocal = false,
+                                    isSiteLocal = false,
+                                    isAnyLocal = false,
+                                    isLoopback = false,
+                                    isMulticast = false,
+                                    isMCGlobal = false,
+                                    isMCLinkLocal = false,
+                                    isMCSiteLocal = false,
+                                    isMCNodeLocal = false,
+                                    isMCOrgLocal = false
+                                )
                             )
-                        )
+                        }
                     }
                 }
             }

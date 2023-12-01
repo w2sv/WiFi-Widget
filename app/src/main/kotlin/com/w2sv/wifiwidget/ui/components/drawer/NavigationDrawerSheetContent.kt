@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -39,6 +38,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.dynamicColorsSupported
+import com.w2sv.wifiwidget.ui.utils.RightAligned
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
 private object AppUrl {
@@ -104,7 +104,8 @@ internal fun NavigationDrawerSheetContent(
                             Intent(
                                 Intent.ACTION_VIEW,
                                 Uri.parse(appPlayStoreUrl(context))
-                            ).setPackage("com.android.vending")
+                            )
+                                .setPackage("com.android.vending")
                         )
                     } catch (e: ActivityNotFoundException) {
                         context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
@@ -159,12 +160,6 @@ internal fun NavigationDrawerSheetContent(
                 }
             }
     }
-}
-
-@Composable
-fun RowScope.RightAligned(content: @Composable () -> Unit) {
-    Spacer(modifier = Modifier.weight(1f))
-    content()
 }
 
 private sealed interface Element {

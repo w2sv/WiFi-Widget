@@ -2,22 +2,34 @@ package com.w2sv.domain.model
 
 import android.net.LinkAddress
 import androidx.annotation.IntRange
-import java.net.InetAddress
 
 data class IPAddress(
-    @IntRange(from = 0, to = 128)
-    val prefixLength: Int,
+    @IntRange(from = 0, to = 128) val prefixLength: Int,
     private val hostAddress: String?,
-    val localAttributes: LocalAttributes,
+    val isLinkLocal: Boolean,
+    val isSiteLocal: Boolean,
+    val isAnyLocal: Boolean,
     val isLoopback: Boolean,
     val isMulticast: Boolean,
+    val isMCGlobal: Boolean,
+    val isMCLinkLocal: Boolean,
+    val isMCSiteLocal: Boolean,
+    val isMCNodeLocal: Boolean,
+    val isMCOrgLocal: Boolean
 ) {
     constructor(linkAddress: LinkAddress) : this(
-        linkAddress.prefixLength,
-        linkAddress.address.hostAddress,
-        LocalAttributes(linkAddress.address),
-        linkAddress.address.isLoopbackAddress,
-        linkAddress.address.isMulticastAddress,
+        prefixLength = linkAddress.prefixLength,
+        hostAddress = linkAddress.address.hostAddress,
+        isLinkLocal = linkAddress.address.isLinkLocalAddress,
+        isSiteLocal = linkAddress.address.isSiteLocalAddress,
+        isAnyLocal = linkAddress.address.isAnyLocalAddress,
+        isLoopback = linkAddress.address.isLoopbackAddress,
+        isMulticast = linkAddress.address.isMulticastAddress,
+        isMCGlobal = linkAddress.address.isMCGlobal,
+        isMCLinkLocal = linkAddress.address.isMCLinkLocal,
+        isMCSiteLocal = linkAddress.address.isMCSiteLocal,
+        isMCNodeLocal = linkAddress.address.isMCNodeLocal,
+        isMCOrgLocal = linkAddress.address.isMCOrgLocal,
     )
 
     /**
@@ -38,22 +50,13 @@ data class IPAddress(
         get() = hostAddressRepresentation.startsWith("fc00::/7")
 
     val isGlobalUnicast: Boolean
-        get() = hostAddressRepresentation.startsWith("2000::/3")
+        get() = !isSiteLocal && !isLinkLocal && !isAnyLocal && !isMulticast
 
-    enum class Type(val minPrefixLength: Int, val fallbackAddress: String) {
-        V4(0, "0.0.0.0"),
-        V6(64, "::::::"),
-    }
-
-    data class LocalAttributes(
-        val linkLocal: Boolean,
-        val siteLocal: Boolean,
-        val anyLocal: Boolean,
-    ) {
-        constructor(inetAddress: InetAddress) : this(
-            linkLocal = inetAddress.isLinkLocalAddress,
-            siteLocal = inetAddress.isSiteLocalAddress,
-            anyLocal = inetAddress.isAnyLocalAddress,
-        )
+    enum class Type(val minPrefixLength: Int, val fallbackAddress: String, val ofCorrectFormat: (String) -> Boolean) {
+        V4(0, "0.0.0.0", {it.removeAlphanumeric() == "..."}),
+        V6(64, "::::::", {it.removeAlphanumeric() == "::::::"}),
     }
 }
+
+private fun String.removeAlphanumeric(): String =
+    replace(Regex("\\w"), "")
