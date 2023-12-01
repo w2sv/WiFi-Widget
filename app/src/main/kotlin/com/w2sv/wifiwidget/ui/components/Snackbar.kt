@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
@@ -19,17 +20,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 
 data class SnackbarAction(val label: String, val callback: () -> Unit)
 
 data class AppSnackbarVisuals(
-    override val message: String,
+    val msg: CharSequence,
     override val duration: SnackbarDuration = SnackbarDuration.Short,
     val action: SnackbarAction? = null,
     val kind: SnackbarKind? = null,
     override val withDismissAction: Boolean = false,
 ) : SnackbarVisuals {
+
+    override val message: String
+        get() = msg as String
 
     override val actionLabel: String?
         get() = action?.label
@@ -69,7 +74,10 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 TextButton(
                     onClick = action.callback,
                 ) {
-                    AppFontText(text = action.label, color = MaterialTheme.colorScheme.primary)
+                    AppFontText(
+                        text = action.label,
+                        color = SnackbarDefaults.actionColor
+                    )
                 }
             }
         },
@@ -79,7 +87,11 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 Icon(imageVector = kind.icon, contentDescription = null, tint = kind.iconTint)
                 Spacer(modifier = Modifier.width(10.dp))
             }
-            AppFontText(text = visuals.message)
+            if (visuals.msg is AnnotatedString) {
+                AppFontText(text = visuals.msg)
+            } else {
+                AppFontText(text = visuals.message)
+            }
         }
     }
 }

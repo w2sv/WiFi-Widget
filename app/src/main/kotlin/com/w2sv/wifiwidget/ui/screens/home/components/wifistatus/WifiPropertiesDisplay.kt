@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -173,6 +174,24 @@ private fun WifiPropertyDisplay(
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
+    val label = buildAnnotatedString {
+        if (viewData is WidgetWifiProperty.ValueViewData.IPProperty) {
+            append(stringResource(R.string.ip))
+            withStyle(
+                SpanStyle(
+                    baselineShift = BaselineShift.Subscript,
+                    fontSize = 12.sp,
+                )
+            ) {
+                append(viewData.label)
+            }
+        } else {
+            append(viewData.label)
+        }
+    }
+
+    val snackbarActionColor = SnackbarDefaults.actionColor
+
     Row(
         modifier = modifier
             .clickable {
@@ -180,12 +199,15 @@ private fun WifiPropertyDisplay(
                 scope.launch {
                     snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                         AppSnackbarVisuals(
-                            message = context.getString(
-                                R.string.copied_to_clipboard,
-                                viewData.label
-                            ),
+                            msg = buildAnnotatedString {
+                                append("${context.getString(R.string.copied)} ")
+                                withStyle(SpanStyle(color = snackbarActionColor)) {
+                                    append(label)
+                                }
+                                append(" ${context.getString(R.string.to_clipboard)}.")
+                            },
                             kind = SnackbarKind.Success,
-                        ),
+                        )
                     )
                 }
             },
@@ -193,21 +215,7 @@ private fun WifiPropertyDisplay(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         AppFontText(
-            text = buildAnnotatedString {
-                if (viewData is WidgetWifiProperty.ValueViewData.IPProperty) {
-                    append(stringResource(R.string.ip))
-                    withStyle(
-                        SpanStyle(
-                            baselineShift = BaselineShift.Subscript,
-                            fontSize = 12.sp,
-                        )
-                    ) {
-                        append(viewData.label)
-                    }
-                } else {
-                    append(viewData.label)
-                }
-            },
+            text = label,
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.width(16.dp))

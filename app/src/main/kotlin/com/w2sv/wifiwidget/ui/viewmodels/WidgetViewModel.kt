@@ -63,7 +63,7 @@ class WidgetViewModel @Inject constructor(
             viewModelScope.launch {
                 _snackbarVisuals.emit(
                     AppSnackbarVisuals(
-                        message = resources.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
+                        msg = resources.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
                         kind = SnackbarKind.Error
                     )
                 )
@@ -95,14 +95,14 @@ class WidgetViewModel @Inject constructor(
                 when {
                     !context.isLocationEnabled -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
-                            message = context.getString(R.string.on_pin_widget_wo_gps_enabled),
+                            msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                             kind = SnackbarKind.Error,
                         ),
                     )
 
                     !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
                         AppSnackbarVisuals(
-                            message = context.getString(R.string.on_pin_widget_wo_location_access_permission),
+                            msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
                             kind = SnackbarKind.Error,
                         ),
                     )
@@ -110,7 +110,7 @@ class WidgetViewModel @Inject constructor(
                     !hasBackgroundLocationAccess(context) ->
                         _snackbarVisuals.emit(
                             AppSnackbarVisuals(
-                                message = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
+                                msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                                 kind = SnackbarKind.Error,
                             ),
                         )
@@ -119,7 +119,7 @@ class WidgetViewModel @Inject constructor(
 
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
-                    message = context.getString(R.string.pinned_widget),
+                    msg = context.getString(R.string.pinned_widget),
                     kind = SnackbarKind.Success,
                 ),
             )
@@ -180,7 +180,7 @@ class WidgetViewModel @Inject constructor(
             WidgetProvider.triggerDataRefresh(context)
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
-                    message = context.getString(R.string.updated_widget_configuration),
+                    msg = context.getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success,
                 ),
             )
