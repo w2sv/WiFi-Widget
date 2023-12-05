@@ -29,7 +29,7 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun onStart() {
-        triggerPropertiesViewDataRefresh()
+        triggerWifiPropertiesViewDataRefresh()
         lapState.updateBackgroundAccessGranted()
     }
 
@@ -47,7 +47,7 @@ class HomeScreenViewModel @Inject constructor(
     )
         .apply {
             viewModelScope.collectFromFlow(newlyGranted) {
-                triggerPropertiesViewDataRefresh()
+                triggerWifiPropertiesViewDataRefresh()
             }
         }
 
@@ -62,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
                     value = WifiState(
                         status = it,
                         propertyViewData = if (it == WifiStatus.Connected)
-                            getPropertyViewData()
+                            getWifiPropertyViewData()
                         else
                             null
                     ).also { i { "Emitted $it" } }
@@ -70,17 +70,17 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
 
-    private fun triggerPropertiesViewDataRefresh() {
+    private fun triggerWifiPropertiesViewDataRefresh() {
         viewModelScope.launch {
             if (wifiStatus.lastOrNull() == WifiStatus.Connected) {
                 _wifiState.value = WifiState(
                     status = WifiStatus.Connected,
-                    propertyViewData = getPropertyViewData()
+                    propertyViewData = getWifiPropertyViewData()
                 )
             }
         }
     }
 
-    private fun getPropertyViewData(): Flow<WidgetWifiProperty.ValueViewData> =
+    private fun getWifiPropertyViewData(): Flow<WidgetWifiProperty.ValueViewData> =
         widgetWifiPropertyValueViewDataFactory(WidgetWifiProperty.entries)
 }

@@ -28,6 +28,10 @@ sealed interface WidgetWifiProperty {
         ) : ValueViewData
 
         interface Factory {
+            /**
+             * @return Flow of [ValueViewData], the element-order of which corresponds to the one of the [properties].
+             * One [WidgetWifiProperty] may result in the the creation of multiple [ValueViewData] elements.
+             */
             operator fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<ValueViewData>
         }
     }
