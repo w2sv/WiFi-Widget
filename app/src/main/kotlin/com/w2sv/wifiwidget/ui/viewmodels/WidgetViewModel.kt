@@ -87,7 +87,7 @@ class WidgetViewModel @Inject constructor(
         i { "Pinned new widget w ID=$widgetId" }
 
         viewModelScope.launch {
-            if (WidgetWifiProperty.LocationAccessRequiring.entries
+            if (WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
                     .any {
                         configuration.wifiProperties.persistedStateFlowMap.getValue(it).value
                     }

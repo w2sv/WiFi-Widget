@@ -180,8 +180,9 @@ private fun Dialogs(
             is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
                 lapUIState = homeScreenVM.lapState,
                 onGranted = {
-                    widgetVM.configuration.wifiProperties[WidgetWifiProperty.SSID] = true
-                    widgetVM.configuration.wifiProperties[WidgetWifiProperty.BSSID] = true
+                    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
+                        widgetVM.configuration.wifiProperties[it] = true
+                    }
                     widgetVM.configuration.wifiProperties.sync()
                     widgetVM.attemptWidgetPin()
                 },

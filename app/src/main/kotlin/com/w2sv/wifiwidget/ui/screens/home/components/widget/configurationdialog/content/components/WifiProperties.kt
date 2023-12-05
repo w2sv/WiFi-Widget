@@ -24,15 +24,15 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 private val firstIndexToSubTypeTitleResId = mapOf(
     0 to R.string.location_access_requiring,
-    WidgetWifiProperty.LocationAccessRequiring.entries.size to R.string.ip_addresses,
-    WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to R.string.other
+    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.size to R.string.ip_addresses,
+    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to R.string.other
 )
 
 @Composable
 internal fun WifiPropertySelection(
     wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
     ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.LocationAccessRequiring, Boolean) -> Boolean,
+    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.NonIP.LocationAccessRequiring, Boolean) -> Boolean,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,7 +40,7 @@ internal fun WifiPropertySelection(
         val propertyCheckRowData = remember {
             WidgetWifiProperty.entries.map { property ->
                 when (property) {
-                    is WidgetWifiProperty.LocationAccessRequiring -> WifiPropertyCheckRowData(
+                    is WidgetWifiProperty.NonIP.LocationAccessRequiring -> WifiPropertyCheckRowData(
                         property = property,
                         isCheckedMap = wifiPropertiesMap,
                         allowCheckChange = {
@@ -59,7 +59,7 @@ internal fun WifiPropertySelection(
                         )
                     }
 
-                    else -> WifiPropertyCheckRowData(
+                    is WidgetWifiProperty.NonIP.Other -> WifiPropertyCheckRowData(
                         property = property,
                         isCheckedMap = wifiPropertiesMap,
                     )

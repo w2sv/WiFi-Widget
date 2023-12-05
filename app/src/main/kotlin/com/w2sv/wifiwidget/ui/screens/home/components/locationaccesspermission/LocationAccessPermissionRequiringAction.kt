@@ -4,6 +4,6 @@ import com.w2sv.domain.model.WidgetWifiProperty
 
 sealed interface LocationAccessPermissionRequiringAction {
     data object PinWidgetButtonPress : LocationAccessPermissionRequiringAction
-    class PropertyCheckChange(val property: WidgetWifiProperty.LocationAccessRequiring) :
+    class PropertyCheckChange(val property: WidgetWifiProperty.NonIP.LocationAccessRequiring) :
         LocationAccessPermissionRequiringAction
 }

@@ -81,7 +81,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private fun WidgetWifiProperty.NonIP.getValues(): List<String> =
         buildList {
             when (this@getValues) {
-                WidgetWifiProperty.DNS -> {
+                WidgetWifiProperty.NonIP.Other.DNS -> {
                     add(
                         textualIPv4Representation(wifiManager.dhcpInfo.dns1)
                             ?: IPAddress.Type.V4.fallbackAddress
@@ -93,25 +93,25 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                     }
                 }
 
-                WidgetWifiProperty.SSID -> add(
+                WidgetWifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
                     wifiManager.connectionInfo.ssid?.replace("\"", "")
                         ?: resources.getString(R.string.couldnt_retrieve)
                 )
 
-                WidgetWifiProperty.BSSID -> add(
+                WidgetWifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
                     wifiManager.connectionInfo.bssid
                         ?: resources.getString(R.string.couldnt_retrieve)
                 )
 
-                WidgetWifiProperty.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
-                WidgetWifiProperty.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
-                WidgetWifiProperty.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
-                WidgetWifiProperty.Gateway -> add(
+                WidgetWifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
+                WidgetWifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
+                WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
+                WidgetWifiProperty.NonIP.Other.Gateway -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.gateway)
                         ?: IPAddress.Type.V4.fallbackAddress
                 )
 
-                WidgetWifiProperty.DHCP -> add(
+                WidgetWifiProperty.NonIP.Other.DHCP -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
                         ?: IPAddress.Type.V4.fallbackAddress
                 )
@@ -151,13 +151,13 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
-            WidgetWifiProperty.Loopback -> systemIPAddresses.filter { it.isLoopback }
-            WidgetWifiProperty.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
-            WidgetWifiProperty.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
-            WidgetWifiProperty.UniqueLocal -> systemIPAddresses.filter { it.isUniqueLocal }
-            WidgetWifiProperty.Multicast -> systemIPAddresses.filter { it.isMulticast }
-            WidgetWifiProperty.GlobalUnicast -> systemIPAddresses.filter { it.isGlobalUnicast }
-            WidgetWifiProperty.Public -> buildList {
+            WidgetWifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filter { it.isLoopback }
+            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
+            WidgetWifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
+            WidgetWifiProperty.IP.V6Only.UniqueLocal -> systemIPAddresses.filter { it.isUniqueLocal }
+            WidgetWifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filter { it.isMulticast }
+            WidgetWifiProperty.IP.V6Only.GlobalUnicast -> systemIPAddresses.filter { it.isGlobalUnicast }
+            WidgetWifiProperty.IP.V4AndV6.Public -> buildList {
                 IPAddress.Type.entries.forEach { type ->
                     getPublicIPAddress(httpClient, type)?.let { addressRepresentation ->
                         add(
