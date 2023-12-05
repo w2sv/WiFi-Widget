@@ -46,11 +46,17 @@ data class IPAddress(
     val type: Type = if (prefixLength < Type.V6.minPrefixLength) Type.V4 else Type.V6
     val hostAddressRepresentation: String = hostAddress ?: type.fallbackAddress
 
+    val isLocal: Boolean
+        get() = isSiteLocal || isLinkLocal
+
+    /**
+     * @see <a href="https://networklessons.com/ipv6/ipv6-address-types">reference</a>
+     */
     val isUniqueLocal: Boolean
-        get() = hostAddressRepresentation.startsWith("fc00::/7")
+        get() = hostAddressRepresentation.run { startsWith("fc") || startsWith("fd") }
 
     val isGlobalUnicast: Boolean
-        get() = !isSiteLocal && !isLinkLocal && !isAnyLocal && !isMulticast
+        get() = !isLocal && !isMulticast
 
     enum class Type(
         val minPrefixLength: Int,

@@ -95,35 +95,25 @@ private fun WifiPropertyCheckRow(
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
-                IPSubPropertyCheckRows(
-                    subProperties = (data.property as WidgetWifiProperty.IP).subProperties,
-                    subPropertyIsCheckedMap = data.subPropertyIsCheckedMap,
-                )
+                Column {
+                    remember {
+                        (data.property as WidgetWifiProperty.IP).subProperties
+                            .map { subProperty ->
+                                PropertyCheckRowData(
+                                    type = subProperty,
+                                    labelRes = subProperty.kind.labelRes,
+                                    isCheckedMap = data.subPropertyIsCheckedMap,
+                                    allowCheckChange = { newValue ->
+                                        newValue ||
+                                                !(subProperty.isAddressTypeEnablementProperty)
+                                    },
+                                )
+                            }
+                    }.forEach {
+                        SubPropertyCheckRow(data = it)
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun IPSubPropertyCheckRows(
-    subProperties: List<WidgetWifiProperty.IP.SubProperty>,
-    subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-) {
-    Column {
-        subProperties.forEach { subProperty ->
-            SubPropertyCheckRow(
-                data = PropertyCheckRowData(
-                    type = subProperty,
-                    labelRes = subProperty.kind.labelRes,
-                    isCheckedMap = subPropertyIsCheckedMap,
-                    allowCheckChange = { newValue ->
-                        !(
-                                !newValue
-                                        && subProperty.isAddressTypeEnablementProperty
-                                        && subPropertyIsCheckedMap.count { (k, v) -> k.isAddressTypeEnablementProperty && v } == 1)
-                    },
-                ),
-            )
         }
     }
 }

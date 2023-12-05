@@ -151,9 +151,11 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
+            WidgetWifiProperty.Loopback -> systemIPAddresses.filter { it.isLoopback }
             WidgetWifiProperty.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
             WidgetWifiProperty.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
             WidgetWifiProperty.UniqueLocal -> systemIPAddresses.filter { it.isUniqueLocal }
+            WidgetWifiProperty.Multicast -> systemIPAddresses.filter { it.isMulticast }
             WidgetWifiProperty.GlobalUnicast -> systemIPAddresses.filter { it.isGlobalUnicast }
             WidgetWifiProperty.Public -> buildList {
                 IPAddress.Type.entries.forEach { type ->

@@ -116,7 +116,7 @@ sealed interface WidgetWifiProperty {
 
             companion object {
                 val entries: List<V4AndV6>
-                    get() = listOf(LinkLocal, SiteLocal, Public)
+                    get() = listOf(Loopback, LinkLocal, SiteLocal, Multicast, Public)
             }
         }
 
@@ -124,7 +124,15 @@ sealed interface WidgetWifiProperty {
             const val LEARN_MORE_URL = "https://en.wikipedia.org/wiki/IP_address"
 
             val entries: List<IP>
-                get() = V6Only.entries + V4AndV6.entries
+                get() = listOf(
+                    Loopback,
+                    LinkLocal,
+                    SiteLocal,
+                    UniqueLocal,
+                    GlobalUnicast,
+                    Multicast,
+                    Public
+                )
         }
     }
 
@@ -132,7 +140,12 @@ sealed interface WidgetWifiProperty {
         override val viewData: ViewData,
         override val defaultIsEnabled: Boolean
     ) :
-        NonIP
+        NonIP {
+        companion object {
+            val entries: List<Other>
+                get() = listOf(Frequency, Channel, LinkSpeed, Gateway, DNS, DHCP)
+        }
+    }
 
     data object SSID : LocationAccessRequiring(
         ViewData(
@@ -150,6 +163,16 @@ sealed interface WidgetWifiProperty {
             "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID",
         ),
         false
+    )
+
+    data object Loopback : IP.V4AndV6(
+        ViewData(
+            R.string.loopback,
+            R.string.ipv4_description,
+            LEARN_MORE_URL,
+        ),
+        true,
+        true
     )
 
     data object SiteLocal :
@@ -182,6 +205,16 @@ sealed interface WidgetWifiProperty {
             ),
             true,
         )
+
+    data object Multicast : IP.V4AndV6(
+        ViewData(
+            R.string.multicast,
+            R.string.ipv4_description,
+            LEARN_MORE_URL,
+        ),
+        true,
+        true
+    )
 
     data object GlobalUnicast :
         IP.V6Only(
@@ -261,21 +294,7 @@ sealed interface WidgetWifiProperty {
     companion object {
         val entries: List<WidgetWifiProperty>
             get() {
-                return listOf(
-                    SSID,
-                    BSSID,
-                    SiteLocal,
-                    LinkLocal,
-                    UniqueLocal,
-                    GlobalUnicast,
-                    Public,
-                    Frequency,
-                    Channel,
-                    LinkSpeed,
-                    Gateway,
-                    DNS,
-                    DHCP,
-                )
+                return LocationAccessRequiring.entries + IP.entries + Other.entries
             }
     }
 }

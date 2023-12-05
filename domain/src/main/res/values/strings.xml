@@ -32,10 +32,12 @@
 
     <string name="show_v4_addresses">Show V4 Addresses</string>
     <string name="show_v6_addresses">Show V6 Addresses</string>
+    <string name="loopback">Loopback</string>
     <string name="site_local">SiteLocal</string>
     <string name="unique_local">UniqueLocal</string>
     <string name="global_unicast">GlobalUnicast</string>
     <string name="public_">Public</string>
+    <string name="multicast">Multicast</string>
 
     <string name="refresh">Refresh</string>
     <string name="go_to_wifi_settings">Go to WiFi Settings</string>
