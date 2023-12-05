@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
+import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import javax.inject.Inject
@@ -28,5 +29,5 @@ class PreferencesRepositoryImpl @Inject constructor(
         getPersistedValue(intPreferencesKey("inAppTheme"), Theme.SystemDefault)
 
     override val useDynamicTheme =
-        getPersistedValue(booleanPreferencesKey("useDynamicTheme"), false)
+        getPersistedValue(booleanPreferencesKey("useDynamicTheme"), dynamicColorsSupported)
 }

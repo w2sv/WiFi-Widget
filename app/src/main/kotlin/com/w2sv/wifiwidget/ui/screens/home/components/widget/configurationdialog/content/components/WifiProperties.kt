@@ -116,9 +116,13 @@ private fun WifiPropertyCheckRow(
                                 labelRes = subProperty.kind.labelRes,
                                 isCheckedMap = data.subPropertyIsCheckedMap,
                                 allowCheckChange = { newValue ->
-                                    newValue || !subProperty.isAddressTypeEnablementProperty || data.subPropertyIsCheckedMap.count { (k, v) ->
-                                        k.isAddressTypeEnablementProperty && v
-                                    } != 1
+                                    (data.property as? WidgetWifiProperty.IP.V4AndV6)?.let { v4AndV6Property ->
+                                        newValue || !subProperty.isAddressTypeEnablementProperty || v4AndV6Property.addressTypeEnablementSubProperties.all {
+                                            data.subPropertyIsCheckedMap.getValue(
+                                                it
+                                            )
+                                        }
+                                    } ?: true
                                 },
                             )
                         }

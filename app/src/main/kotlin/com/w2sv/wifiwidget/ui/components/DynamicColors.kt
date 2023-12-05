@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.ui.components
 
-import android.os.Build
-import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,10 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.w2sv.wifiwidget.R
-
-@get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
-val dynamicColorsSupported
-    get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
 @Composable
 fun UseDynamicColorsRow(

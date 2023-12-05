@@ -178,6 +178,12 @@ sealed interface WidgetWifiProperty {
             val v6EnabledSubProperty: SubProperty
                 get() = SubProperty(this, AddressTypeEnablement.V6Enabled)
 
+            val addressTypeEnablementSubProperties: List<SubProperty>
+                get() = listOf(
+                    v4EnabledSubProperty,
+                    v6EnabledSubProperty
+                )
+
             sealed class AddressTypeEnablement(@StringRes labelRes: Int) :
                 SubProperty.Kind(labelRes) {
 

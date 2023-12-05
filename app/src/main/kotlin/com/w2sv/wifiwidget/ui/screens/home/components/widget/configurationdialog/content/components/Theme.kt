@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColor
 import com.w2sv.wifiwidget.R
@@ -17,7 +18,6 @@ import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
-import com.w2sv.wifiwidget.ui.components.dynamicColorsSupported
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush

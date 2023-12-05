@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
+import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
 import com.w2sv.data.model.valueDSE
@@ -51,7 +52,10 @@ class WidgetRepositoryImpl @Inject constructor(
     override val theme = getPersistedValue(intPreferencesKey("widgetTheme"), Theme.SystemDefault)
 
     override val useDynamicColors =
-        getPersistedValue(booleanPreferencesKey("widgetConfiguration.useDynamicColor"), false)
+        getPersistedValue(
+            booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
+            dynamicColorsSupported
+        )
 
     override val opacity = getPersistedValue(floatPreferencesKey("opacity"), 1.0f)
 

@@ -204,7 +204,7 @@ private fun Dialogs(
     if (homeScreenVM.lapState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
         BackgroundLocationAccessRationalDialog(
             onDismissRequest = {
-                homeScreenVM.lapState.setShowBackgroundAccessRational(true)
+                homeScreenVM.lapState.setShowBackgroundAccessRational(false)
             },
         )
     }

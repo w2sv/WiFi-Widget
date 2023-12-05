@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="no_location_access">No location access</string>
+    <string name="no_location_access">&lt;No location access&gt;</string>
 </resources>
