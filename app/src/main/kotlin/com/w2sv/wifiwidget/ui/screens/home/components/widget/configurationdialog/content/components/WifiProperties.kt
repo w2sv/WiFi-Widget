@@ -2,16 +2,17 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
@@ -21,10 +22,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.WifiPropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
 
-private val indexToFirstSubTypeTitle = mapOf(
-    0 to "Location access requiring",
-    WidgetWifiProperty.LocationAccessRequiring.entries.size to "IP Addresses",
-    WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to "Other"
+private val firstIndexToSubTypeTitleResId = mapOf(
+    0 to R.string.location_access_requiring,
+    WidgetWifiProperty.LocationAccessRequiring.entries.size to R.string.ip_addresses,
+    WidgetWifiProperty.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to R.string.other
 )
 
 @Composable
@@ -36,7 +37,7 @@ internal fun WifiPropertySelection(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        remember {
+        val propertyCheckRowData = remember {
             WidgetWifiProperty.entries.map { property ->
                 when (property) {
                     is WidgetWifiProperty.LocationAccessRequiring -> WifiPropertyCheckRowData(
@@ -65,22 +66,32 @@ internal fun WifiPropertySelection(
                 }
             }
         }
-            .forEachIndexed { index, data ->
-                indexToFirstSubTypeTitle[index]?.let { subTypeTitle ->
-                    AppFontText(
-                        text = subTypeTitle,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier.align(Alignment.CenterHorizontally)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                }
-                WifiPropertyCheckRow(
-                    data = data,
-                    showInfoDialog = showInfoDialog,
+
+        propertyCheckRowData.forEachIndexed { index, data ->
+            firstIndexToSubTypeTitleResId[index]?.let { resId ->
+                PropertySubTypeHeader(
+                    title = stringResource(id = resId),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 8.dp)
                 )
             }
+            WifiPropertyCheckRow(
+                data = data,
+                showInfoDialog = showInfoDialog,
+            )
+        }
     }
+}
+
+@Composable
+private fun PropertySubTypeHeader(title: String, modifier: Modifier = Modifier) {
+    AppFontText(
+        text = title,
+        color = MaterialTheme.colorScheme.secondary,
+        fontWeight = FontWeight.SemiBold,
+        modifier = modifier
+    )
 }
 
 @Composable
@@ -95,21 +106,22 @@ private fun WifiPropertyCheckRow(
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
+                val subPropertyCheckRowData = remember {
+                    (data.property as WidgetWifiProperty.IP).subProperties
+                        .map { subProperty ->
+                            PropertyCheckRowData(
+                                type = subProperty,
+                                labelRes = subProperty.kind.labelRes,
+                                isCheckedMap = data.subPropertyIsCheckedMap,
+                                allowCheckChange = { newValue ->
+                                    newValue ||
+                                            !(subProperty.isAddressTypeEnablementProperty)
+                                },
+                            )
+                        }
+                }
                 Column {
-                    remember {
-                        (data.property as WidgetWifiProperty.IP).subProperties
-                            .map { subProperty ->
-                                PropertyCheckRowData(
-                                    type = subProperty,
-                                    labelRes = subProperty.kind.labelRes,
-                                    isCheckedMap = data.subPropertyIsCheckedMap,
-                                    allowCheckChange = { newValue ->
-                                        newValue ||
-                                                !(subProperty.isAddressTypeEnablementProperty)
-                                    },
-                                )
-                            }
-                    }.forEach {
+                    subPropertyCheckRowData.forEach {
                         SubPropertyCheckRow(data = it)
                     }
                 }

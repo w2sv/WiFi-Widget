@@ -2,6 +2,7 @@ package com.w2sv.networking
 
 import android.net.LinkAddress
 import androidx.annotation.IntRange
+import com.w2sv.common.utils.removeAlphanumeric
 
 data class IPAddress(
     @IntRange(from = 0, to = 128) val prefixLength: Int,
@@ -67,6 +68,3 @@ data class IPAddress(
         V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" }),
     }
 }
-
-private fun String.removeAlphanumeric(): String =
-    replace(Regex("\\w"), "")
