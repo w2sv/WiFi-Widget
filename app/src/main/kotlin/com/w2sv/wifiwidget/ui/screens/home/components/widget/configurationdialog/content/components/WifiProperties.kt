@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
+import com.w2sv.wifiwidget.ui.components.InBetweenSpaced
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.PropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.SubPropertyCheckRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.IPPropertyCheckRowData
@@ -102,11 +104,11 @@ private fun WifiPropertyCheckRow(
     Column {
         PropertyCheckRow(
             data = data,
-            onInfoButtonClick = { showInfoDialog(data.property.viewData.infoDialogData) },
+            onInfoButtonClick = { showInfoDialog(data.property.infoDialogData) },
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
-                val subPropertyCheckRowData = remember {
+                SubPropertyRows(subPropertyCheckRowData = remember(data.property) {
                     (data.property as WidgetWifiProperty.IP).subProperties
                         .map { subProperty ->
                             PropertyCheckRowData(
@@ -114,18 +116,31 @@ private fun WifiPropertyCheckRow(
                                 labelRes = subProperty.kind.labelRes,
                                 isCheckedMap = data.subPropertyIsCheckedMap,
                                 allowCheckChange = { newValue ->
-                                    newValue ||
-                                            !(subProperty.isAddressTypeEnablementProperty)
+                                    newValue || !subProperty.isAddressTypeEnablementProperty || data.subPropertyIsCheckedMap.count { (k, v) ->
+                                        k.isAddressTypeEnablementProperty && v
+                                    } != 1
                                 },
                             )
                         }
-                }
-                Column {
-                    subPropertyCheckRowData.forEach {
-                        SubPropertyCheckRow(data = it)
-                    }
-                }
+                })
             }
+        }
+    }
+}
+
+@Composable
+private fun SubPropertyRows(subPropertyCheckRowData: List<PropertyCheckRowData<WidgetWifiProperty.IP.SubProperty>>) {
+    Column {
+        InBetweenSpaced(
+            elements = subPropertyCheckRowData,
+            makeElement = { SubPropertyCheckRow(data = it) }
+        ) {
+            Divider(
+                modifier = Modifier.padding(
+                    vertical = 2.dp,
+                    horizontal = 16.dp
+                )
+            )
         }
     }
 }

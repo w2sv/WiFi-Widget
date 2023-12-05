@@ -9,7 +9,7 @@ data class PropertyInfoDialogData(
     val learnMoreUrl: String? = null,
 )
 
-val WidgetWifiProperty.ViewData.infoDialogData: PropertyInfoDialogData
+val WidgetWifiProperty.infoDialogData: PropertyInfoDialogData
     get() = PropertyInfoDialogData(
         labelRes,
         descriptionRes,

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="couldnt_retrieve">Couldn\'t retrieve</string>
+    <string name="no_location_access">No location access</string>
 </resources>

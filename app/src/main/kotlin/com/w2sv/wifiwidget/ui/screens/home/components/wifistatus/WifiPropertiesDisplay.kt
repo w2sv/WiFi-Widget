@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -80,7 +79,7 @@ fun WifiPropertiesDisplay(
         transitionSpec = {
             (fadeIn() + slideInVertically())
                 .togetherWith(
-                    fadeOut() + slideOutVertically()
+                    fadeOut()
                 )
         }
     ) {
@@ -124,7 +123,7 @@ private fun PropertiesList(
             HeaderRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 6.dp)
+                    .padding(bottom = 2.dp)
             )
         }
         items(viewData) { viewData ->

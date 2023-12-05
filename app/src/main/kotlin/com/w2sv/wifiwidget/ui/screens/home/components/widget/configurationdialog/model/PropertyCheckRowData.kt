@@ -33,7 +33,7 @@ open class WifiPropertyCheckRowData(
     allowCheckChange: (Boolean) -> Boolean = { true },
 ) : PropertyCheckRowData<WidgetWifiProperty>(
     property,
-    property.viewData.labelRes,
+    property.labelRes,
     isCheckedMap,
     allowCheckChange,
 )

@@ -4,13 +4,11 @@ import androidx.annotation.StringRes
 import com.w2sv.domain.R
 import kotlinx.coroutines.flow.Flow
 
-sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Boolean) {
-
-    data class ViewData(
-        @StringRes val labelRes: Int,
-        @StringRes val descriptionRes: Int,
-        val learnMoreUrl: String? = null,
-    )
+sealed interface WidgetWifiProperty {
+    val labelRes: Int
+    val descriptionRes: Int
+    val learnMoreUrl: String?
+    val defaultIsEnabled: Boolean
 
     sealed interface ValueViewData {
         val label: String
@@ -34,29 +32,26 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
         }
     }
 
-    sealed class NonIP(viewData: ViewData, defaultIsEnabled: Boolean) :
-        WidgetWifiProperty(viewData, defaultIsEnabled) {
+    sealed interface NonIP : WidgetWifiProperty {
 
         sealed class LocationAccessRequiring(
-            viewData: ViewData,
-            defaultIsEnabled: Boolean
-        ) : NonIP(viewData, defaultIsEnabled) {
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
+            override val learnMoreUrl: String?,
+            override val defaultIsEnabled: Boolean
+        ) : NonIP {
 
             data object SSID : LocationAccessRequiring(
-                ViewData(
-                    R.string.ssid,
-                    R.string.ssid_description,
-                    "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID",
-                ),
+                R.string.ssid,
+                R.string.ssid_description,
+                "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID",
                 true
             )
 
             data object BSSID : LocationAccessRequiring(
-                ViewData(
-                    R.string.bssid,
-                    R.string.bssid_description,
-                    "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID",
-                ),
+                R.string.bssid,
+                R.string.bssid_description,
+                "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID",
                 false
             )
 
@@ -67,62 +62,51 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
         }
 
         sealed class Other(
-            viewData: ViewData,
-            defaultIsEnabled: Boolean
-        ) :
-            NonIP(viewData, defaultIsEnabled) {
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
+            override val learnMoreUrl: String?,
+            override val defaultIsEnabled: Boolean
+        ) : NonIP {
 
             data object Frequency : Other(
-                ViewData(
-                    R.string.frequency,
-                    R.string.frequency_description,
-                    "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
-                ),
+                R.string.frequency,
+                R.string.frequency_description,
+                "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
                 true
             )
 
             data object Channel : Other(
-                ViewData(
-                    R.string.channel,
-                    R.string.channel_description,
-                    "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
-                ),
+                R.string.channel,
+                R.string.channel_description,
+                "https://en.wikipedia.org/wiki/List_of_WLAN_channels",
                 true
             )
 
             data object LinkSpeed : Other(
-                ViewData(
-                    R.string.link_speed,
-                    R.string.link_speed_description,
-                    null,
-                ),
+                R.string.link_speed,
+                R.string.link_speed_description,
+                null,
                 true
             )
 
             data object Gateway : Other(
-                ViewData(
-                    R.string.gateway,
-                    R.string.gateway_description,
-                    "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway",
-                ),
+                R.string.gateway,
+                R.string.gateway_description,
+                "https://en.wikipedia.org/wiki/Gateway_(telecommunications)#Network_gateway",
                 true
             )
 
             data object DNS : Other(
-                ViewData(
-                    R.string.dns,
-                    R.string.dns_description,
-                    "https://en.wikipedia.org/wiki/Domain_Name_System",
-                ),
+                R.string.dns,
+                R.string.dns_description,
+                "https://en.wikipedia.org/wiki/Domain_Name_System",
                 true
             )
 
             data object DHCP : Other(
-                ViewData(
-                    R.string.dhcp,
-                    R.string.dhcp_description,
-                    "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol",
-                ),
+                R.string.dhcp,
+                R.string.dhcp_description,
+                "https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol",
                 true
             )
 
@@ -133,12 +117,7 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
         }
     }
 
-    sealed class IP(
-        viewData: ViewData,
-        defaultIsEnabled: Boolean,
-        subPropertyKinds: List<SubProperty.Kind>
-    ) :
-        WidgetWifiProperty(viewData, defaultIsEnabled) {
+    sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WidgetWifiProperty {
 
         val subProperties = subPropertyKinds.map { SubProperty(this, it) }
 
@@ -155,41 +134,36 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
         }
 
         sealed class V6Only(
-            viewData: ViewData,
-            defaultIsEnabled: Boolean,
-        ) : IP(
-            viewData = viewData,
-            defaultIsEnabled = defaultIsEnabled,
-            subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)
-        ) {
-            data object UniqueLocal :
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
+            override val learnMoreUrl: String?,
+            override val defaultIsEnabled: Boolean,
+        ) : IP(subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)) {
+
+            data object ULA :
                 V6Only(
-                    ViewData(
-                        R.string.unique_local,
-                        R.string.ipv4_description,
-                        LEARN_MORE_URL,
-                    ),
+                    R.string.ula,
+                    R.string.unique_local_description,
+                    LEARN_MORE_URL,
                     true,
                 )
 
-            data object GlobalUnicast :
+            data object GUA :
                 V6Only(
-                    ViewData(
-                        R.string.global_unicast,
-                        R.string.ipv4_description,
-                        LEARN_MORE_URL,
-                    ),
+                    R.string.gua,
+                    R.string.global_unicast_description,
+                    LEARN_MORE_URL,
                     true,
                 )
         }
 
         sealed class V4AndV6(
-            viewData: ViewData,
-            defaultIsEnabled: Boolean,
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
+            override val learnMoreUrl: String?,
+            override val defaultIsEnabled: Boolean,
             includePrefixLength: Boolean
         ) : IP(
-            viewData = viewData,
-            defaultIsEnabled = defaultIsEnabled,
             subPropertyKinds = buildList {
                 if (includePrefixLength) {
                     add(SubProperty.Kind.ShowPrefixLength)
@@ -217,53 +191,43 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
             }
 
             data object Loopback : V4AndV6(
-                ViewData(
-                    R.string.loopback,
-                    R.string.ipv4_description,
-                    LEARN_MORE_URL,
-                ),
+                R.string.loopback,
+                R.string.loopback_description,
+                LEARN_MORE_URL,
                 true,
                 true
             )
 
             data object SiteLocal :
                 V4AndV6(
-                    ViewData(
-                        R.string.site_local,
-                        R.string.ipv4_description,
-                        LEARN_MORE_URL,
-                    ),
+                    R.string.site_local,
+                    R.string.site_local_description,
+                    LEARN_MORE_URL,
                     true,
                     true
                 )
 
             data object LinkLocal : V4AndV6(
-                ViewData(
-                    R.string.link_local,
-                    R.string.ipv4_description,
-                    LEARN_MORE_URL,
-                ),
+                R.string.link_local,
+                R.string.link_local_description,
+                LEARN_MORE_URL,
                 true,
                 true
             )
 
             data object Multicast : V4AndV6(
-                ViewData(
-                    R.string.multicast,
-                    R.string.ipv4_description,
-                    LEARN_MORE_URL,
-                ),
+                R.string.multicast,
+                R.string.multicast_description,
+                LEARN_MORE_URL,
                 true,
                 true
             )
 
             data object Public :
                 V4AndV6(
-                    ViewData(
-                        R.string.public_,
-                        R.string.ipv4_description,
-                        LEARN_MORE_URL,
-                    ),
+                    R.string.public_,
+                    R.string.public_description,
+                    LEARN_MORE_URL,
                     false,
                     false
                 )
@@ -275,11 +239,11 @@ sealed class WidgetWifiProperty(val viewData: ViewData, val defaultIsEnabled: Bo
             val entries: List<IP>
                 get() = listOf(
                     V4AndV6.Loopback,
-                    V4AndV6.LinkLocal,
                     V4AndV6.SiteLocal,
-                    V6Only.UniqueLocal,
-                    V6Only.GlobalUnicast,
+                    V4AndV6.LinkLocal,
+                    V6Only.ULA,
                     V4AndV6.Multicast,
+                    V6Only.GUA,
                     V4AndV6.Public
                 )
         }

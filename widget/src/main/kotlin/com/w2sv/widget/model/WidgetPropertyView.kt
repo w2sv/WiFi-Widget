@@ -62,7 +62,7 @@ private fun inflatePrefixLengthLayout(
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     setColorStateList(
-                        viewId,
+                        textViewId,
                         "setBackgroundTintList",
                         ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor),
                     )

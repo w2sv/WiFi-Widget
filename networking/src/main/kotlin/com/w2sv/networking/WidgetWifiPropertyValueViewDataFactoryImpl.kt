@@ -94,13 +94,16 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                 }
 
                 WidgetWifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
-                    wifiManager.connectionInfo.ssid?.replace("\"", "")
-                        ?: resources.getString(R.string.couldnt_retrieve)
+                    wifiManager.connectionInfo.ssid
+                        ?.replace("\"", "")
+                        .takeIf { it != "<unknown ssid>" }
+                        ?: resources.getString(R.string.no_location_access)
                 )
 
                 WidgetWifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
                     wifiManager.connectionInfo.bssid
-                        ?: resources.getString(R.string.couldnt_retrieve)
+                        ?.takeIf { it != "02:00:00:00:00:00" }
+                        ?: resources.getString(R.string.no_location_access)
                 )
 
                 WidgetWifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
@@ -152,11 +155,11 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private suspend fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
             WidgetWifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filter { it.isLoopback }
-            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
             WidgetWifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
-            WidgetWifiProperty.IP.V6Only.UniqueLocal -> systemIPAddresses.filter { it.isUniqueLocal }
+            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
+            WidgetWifiProperty.IP.V6Only.ULA -> systemIPAddresses.filter { it.isUniqueLocal }
             WidgetWifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filter { it.isMulticast }
-            WidgetWifiProperty.IP.V6Only.GlobalUnicast -> systemIPAddresses.filter { it.isGlobalUnicast }
+            WidgetWifiProperty.IP.V6Only.GUA -> systemIPAddresses.filter { it.isGlobalUnicast }
             WidgetWifiProperty.IP.V4AndV6.Public -> buildList {
                 IPAddress.Type.entries.forEach { type ->
                     getPublicIPAddress(httpClient, type)?.let { addressRepresentation ->
@@ -168,12 +171,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                                 isSiteLocal = false,
                                 isAnyLocal = false,
                                 isLoopback = false,
-                                isMulticast = false,
-                                isMCGlobal = false,
-                                isMCLinkLocal = false,
-                                isMCSiteLocal = false,
-                                isMCNodeLocal = false,
-                                isMCOrgLocal = false
+                                isMulticast = false
                             )
                         )
                     }
@@ -187,7 +185,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
-            val propertyLabel = resources.getString(property.viewData.labelRes)
+            val propertyLabel = resources.getString(property.labelRes)
 
             if (values.size == 1) {
                 add(makeViewData(propertyLabel, values.first()))
