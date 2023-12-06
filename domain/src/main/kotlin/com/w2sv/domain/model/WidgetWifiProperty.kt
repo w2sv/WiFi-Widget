@@ -45,7 +45,7 @@ sealed interface WidgetWifiProperty {
                 R.string.ssid,
                 R.string.ssid_description,
                 "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID",
-                true
+                false
             )
 
             data object BSSID : LocationAccessRequiring(
