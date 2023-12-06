@@ -36,8 +36,13 @@ class WifiPropertyViewsFactory @Inject constructor(
             propertyViewData = valueViewDataFactory(widgetRepository.getEnabledWifiProperties())
                 .toList()
                 .flatMap { valueViewData ->
-                    when(valueViewData) {
-                        is WidgetWifiProperty.ValueViewData.NonIP -> listOf(WidgetPropertyView.Property(valueViewData))
+                    when (valueViewData) {
+                        is WidgetWifiProperty.ValueViewData.NonIP -> listOf(
+                            WidgetPropertyView.Property(
+                                valueViewData
+                            )
+                        )
+
                         is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
                             add(WidgetPropertyView.Property(valueViewData))
                             valueViewData.prefixLengthText?.let {
