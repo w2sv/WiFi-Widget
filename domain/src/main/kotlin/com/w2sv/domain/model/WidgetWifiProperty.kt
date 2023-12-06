@@ -119,6 +119,8 @@ sealed interface WidgetWifiProperty {
 
     sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WidgetWifiProperty {
 
+        abstract val subscriptResId: Int
+
         val subProperties = subPropertyKinds.map { SubProperty(this, it) }
 
         val showPrefixLengthSubProperty: SubProperty
@@ -135,6 +137,7 @@ sealed interface WidgetWifiProperty {
 
         sealed class V6Only(
             @StringRes override val labelRes: Int,
+            @StringRes override val subscriptResId: Int,
             @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean,
@@ -142,6 +145,7 @@ sealed interface WidgetWifiProperty {
 
             data object ULA :
                 V6Only(
+                    R.string.unique_local,
                     R.string.ula,
                     R.string.unique_local_description,
                     LEARN_MORE_URL,
@@ -150,6 +154,7 @@ sealed interface WidgetWifiProperty {
 
             data object GUA :
                 V6Only(
+                    R.string.global_unicast,
                     R.string.gua,
                     R.string.global_unicast_description,
                     LEARN_MORE_URL,
@@ -159,6 +164,7 @@ sealed interface WidgetWifiProperty {
 
         sealed class V4AndV6(
             @StringRes override val labelRes: Int,
+            @StringRes override val subscriptResId: Int,
             @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean,
@@ -189,14 +195,10 @@ sealed interface WidgetWifiProperty {
 
                 data object V4Enabled : AddressTypeEnablement(R.string.show_v4_addresses)
                 data object V6Enabled : AddressTypeEnablement(R.string.show_v6_addresses)
-
-                companion object {
-                    val entries: List<AddressTypeEnablement>
-                        get() = listOf(V4Enabled, V6Enabled)
-                }
             }
 
             data object Loopback : V4AndV6(
+                R.string.loopback,
                 R.string.loopback,
                 R.string.loopback_description,
                 LEARN_MORE_URL,
@@ -207,6 +209,7 @@ sealed interface WidgetWifiProperty {
             data object SiteLocal :
                 V4AndV6(
                     R.string.site_local,
+                    R.string.site_local_short,
                     R.string.site_local_description,
                     LEARN_MORE_URL,
                     true,
@@ -215,6 +218,7 @@ sealed interface WidgetWifiProperty {
 
             data object LinkLocal : V4AndV6(
                 R.string.link_local,
+                R.string.link_local_short,
                 R.string.link_local_description,
                 LEARN_MORE_URL,
                 true,
@@ -223,6 +227,7 @@ sealed interface WidgetWifiProperty {
 
             data object Multicast : V4AndV6(
                 R.string.multicast,
+                R.string.mc,
                 R.string.multicast_description,
                 LEARN_MORE_URL,
                 true,
@@ -231,6 +236,7 @@ sealed interface WidgetWifiProperty {
 
             data object Public :
                 V4AndV6(
+                    R.string.public_,
                     R.string.public_,
                     R.string.public_description,
                     LEARN_MORE_URL,

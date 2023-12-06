@@ -185,7 +185,14 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
-            val propertyLabel = resources.getString(property.labelRes)
+            val propertyLabel = resources.getString(
+                property.run {
+                    if (this is WidgetWifiProperty.IP)
+                        subscriptResId
+                    else
+                        labelRes
+                }
+            )
 
             if (values.size == 1) {
                 add(makeViewData(propertyLabel, values.first()))
