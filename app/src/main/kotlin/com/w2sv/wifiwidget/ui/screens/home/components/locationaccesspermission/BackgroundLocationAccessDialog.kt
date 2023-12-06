@@ -1,35 +1,25 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
-import android.Manifest
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
-import com.w2sv.wifiwidget.ui.theme.AppTheme
 
-@RequiresApi(Build.VERSION_CODES.Q)
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun BackgroundLocationAccessRationalDialog(onDismissRequest: () -> Unit) {
-    val permissionState: PermissionState =
-        rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-
+fun BackgroundLocationAccessDialog(
+    launchPermissionRequest: () -> Unit,
+    onDismissRequest: () -> Unit
+) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             DialogButton(
                 onClick = {
-                    permissionState.launchPermissionRequest()
+                    launchPermissionRequest()
                     onDismissRequest()
                 },
             ) {
@@ -48,13 +38,4 @@ fun BackgroundLocationAccessRationalDialog(onDismissRequest: () -> Unit) {
             AppFontText(text = stringResource(id = R.string.background_location_access_rational))
         },
     )
-}
-
-@RequiresApi(Build.VERSION_CODES.Q)
-@Preview
-@Composable
-private fun Prev() {
-    AppTheme {
-        BackgroundLocationAccessRationalDialog {}
-    }
 }

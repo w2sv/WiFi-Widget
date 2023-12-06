@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
@@ -38,10 +41,11 @@ import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessRationalDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
@@ -49,12 +53,15 @@ import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun HomeScreen(
     appViewModel: AppViewModel = viewModel(),
+    homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
     context: Context = LocalContext.current,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
@@ -91,6 +98,19 @@ internal fun HomeScreen(
         LaunchedEffect(snackbarHostState) {
             widgetVM.snackbarVisuals.collect {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it)
+            }
+        }
+
+        val permissionState: PermissionState? = if (backgroundLocationAccessGrantRequired)
+            rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        else
+            null
+
+        with(homeScreenVM.lapState.launchBackgroundAccessPermissionRequest) {
+            LaunchedEffect(this) {
+                collectLatest {
+                    permissionState?.launchPermissionRequest()
+                }
             }
         }
 
@@ -200,9 +220,11 @@ private fun Dialogs(
             )
         }
     }
-    @SuppressLint("NewApi")
     if (homeScreenVM.lapState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
-        BackgroundLocationAccessRationalDialog(
+        BackgroundLocationAccessDialog(
+            launchPermissionRequest = {
+                homeScreenVM.lapState.launchBackgroundAccessPermissionRequest()
+            },
             onDismissRequest = {
                 homeScreenVM.lapState.setShowBackgroundAccessRational(false)
             },

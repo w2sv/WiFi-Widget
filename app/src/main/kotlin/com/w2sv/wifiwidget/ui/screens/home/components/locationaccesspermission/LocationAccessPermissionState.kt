@@ -16,15 +16,16 @@ import kotlinx.coroutines.launch
 
 class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
+    private val _launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>,
     private val scope: CoroutineScope,
     private val context: Context,
 ) {
     val newlyGranted get() = _newlyGranted.asSharedFlow()
-    private val _newlyGranted = MutableSharedFlow<Boolean>()
+    private val _newlyGranted = MutableSharedFlow<Unit>()
 
     fun onGranted() {
         scope.launch {
-            _newlyGranted.emit(true)
+            _newlyGranted.emit(Unit)
         }
         if (backgroundLocationAccessGrantRequired) {
             _showBackgroundAccessRational.value = true
@@ -75,14 +76,23 @@ class LocationAccessPermissionState(
         _showBackgroundAccessRational.value = value
     }
 
-    private var backgroundLocationAccessGranted = hasBackgroundLocationAccess(context)
+    private var backgroundAccessGranted = hasBackgroundLocationAccess(context)
+
+    val launchBackgroundAccessPermissionRequest
+        get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
+
+    fun launchBackgroundAccessPermissionRequest() {
+        scope.launch {
+            _launchBackgroundLocationAccessPermissionRequest.emit(Unit)
+        }
+    }
 
     /**
      * @return Boolean, representing whether access has been newly granted.
      */
     fun updateBackgroundAccessGranted(context: Context = this.context): Boolean {
-        if (!backgroundLocationAccessGranted && hasBackgroundLocationAccess(context)) {
-            backgroundLocationAccessGranted = true
+        if (!backgroundAccessGranted && hasBackgroundLocationAccess(context)) {
+            backgroundAccessGranted = true
             return true
         }
         return false

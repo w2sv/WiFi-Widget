@@ -8,11 +8,13 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.networking.WifiStatusMonitor
+import com.w2sv.wifiwidget.ui.di.LaunchBackgroundLocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.lastOrNull
@@ -26,6 +28,7 @@ class HomeScreenViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     wifiStatusMonitor: WifiStatusMonitor,
+    @LaunchBackgroundLocationAccessPermissionRequest launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>
 ) : ViewModel() {
 
     fun onStart() {
@@ -42,6 +45,7 @@ class HomeScreenViewModel @Inject constructor(
 
     val lapState = LocationAccessPermissionState(
         preferencesRepository = preferencesRepository,
+        _launchBackgroundLocationAccessPermissionRequest = launchBackgroundLocationAccessPermissionRequest,
         scope = viewModelScope,
         context = context,
     )

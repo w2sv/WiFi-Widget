@@ -8,6 +8,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
+import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
@@ -21,7 +22,9 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.di.LaunchBackgroundLocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
@@ -43,6 +46,7 @@ class WidgetViewModel @Inject constructor(
     @PackageName private val packageName: String,
     private val resources: Resources,
     @ApplicationContext context: Context,
+    @LaunchBackgroundLocationAccessPermissionRequest private val launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>
 ) :
     ViewModel() {
 
@@ -104,6 +108,10 @@ class WidgetViewModel @Inject constructor(
                         AppSnackbarVisuals(
                             msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
                             kind = SnackbarKind.Error,
+                            action = SnackbarAction(
+                                label = resources.getString(R.string.grant),
+                                callback = { goToAppSettings(context) }
+                            )
                         ),
                     )
 
@@ -112,6 +120,16 @@ class WidgetViewModel @Inject constructor(
                             AppSnackbarVisuals(
                                 msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                                 kind = SnackbarKind.Error,
+                                action = SnackbarAction(
+                                    label = resources.getString(R.string.grant),
+                                    callback = {
+                                        viewModelScope.launch {
+                                            launchBackgroundLocationAccessPermissionRequest.emit(
+                                                Unit
+                                            )
+                                        }
+                                    }
+                                )
                             ),
                         )
                 }
