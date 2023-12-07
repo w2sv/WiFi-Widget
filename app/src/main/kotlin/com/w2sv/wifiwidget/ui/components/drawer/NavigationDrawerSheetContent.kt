@@ -42,7 +42,7 @@ import com.w2sv.wifiwidget.ui.utils.RightAligned
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
 private object AppUrl {
-    const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE.md"
+    const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"
     const val PRIVACY_POLICY = "https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md"
     const val GITHUB_REPOSITORY = "https://github.com/w2sv/WiFi-Widget"
     const val CREATE_ISSUE = "https://github.com/w2sv/WiFi-Widget/issues/new"

@@ -10,7 +10,7 @@ import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 
 @Composable
-fun BackgroundLocationAccessDialog(
+fun BackgroundLocationAccessRational(
     launchPermissionRequest: () -> Unit,
     onDismissRequest: () -> Unit
 ) {

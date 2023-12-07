@@ -91,7 +91,7 @@ internal fun WidgetConfigurationDialogContent(
             allowLAPDependentPropertyCheckChange = { property, newValue ->
                 when (newValue) {
                     true -> {
-                        when (lapUIState.rationalShown) {
+                        when (lapUIState.rationalShown.value) {
                             false -> {
                                 lapUIState.setRationalTriggeringAction(
                                     LocationAccessPermissionRequiringAction.PropertyCheckChange(

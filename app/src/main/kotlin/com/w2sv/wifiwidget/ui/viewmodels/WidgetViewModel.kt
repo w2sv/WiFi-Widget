@@ -14,6 +14,7 @@ import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.common.di.PackageName
+import com.w2sv.common.utils.trigger
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
@@ -24,7 +25,6 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.di.LaunchBackgroundLocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
@@ -45,8 +45,7 @@ class WidgetViewModel @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
     private val resources: Resources,
-    @ApplicationContext context: Context,
-    @LaunchBackgroundLocationAccessPermissionRequest private val launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>
+    @ApplicationContext context: Context
 ) :
     ViewModel() {
 
@@ -87,6 +86,9 @@ class WidgetViewModel @Inject constructor(
     private fun getWidgetIds(): MutableSet<Int> =
         appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
 
+    val launchBackgroundLocationAccessPermissionRequest get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
+    private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
+
     private fun onNewWidgetPinned(widgetId: Int, context: Context) {
         i { "Pinned new widget w ID=$widgetId" }
 
@@ -124,9 +126,7 @@ class WidgetViewModel @Inject constructor(
                                     label = resources.getString(R.string.grant),
                                     callback = {
                                         viewModelScope.launch {
-                                            launchBackgroundLocationAccessPermissionRequest.emit(
-                                                Unit
-                                            )
+                                            _launchBackgroundLocationAccessPermissionRequest.trigger()
                                         }
                                     }
                                 )
@@ -134,7 +134,6 @@ class WidgetViewModel @Inject constructor(
                         )
                 }
             }
-
             _snackbarVisuals.emit(
                 AppSnackbarVisuals(
                     msg = context.getString(R.string.pinned_widget),

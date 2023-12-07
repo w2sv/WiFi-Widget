@@ -37,6 +37,9 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.collectFromFlow(appVM.exitApplication) {
             finishAffinity()
         }
+        lifecycleScope.collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
+            homeScreenVM.lapState.launchBackgroundAccessPermissionRequest()
+        }
 
         setContent {
             AppTheme(

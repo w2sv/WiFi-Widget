@@ -7,9 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.generic.goToAppSettings
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
@@ -17,13 +20,46 @@ import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.utils.isLaunchingSuppressed
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@Composable
+fun LocationAccessPermissionRequestLauncher(
+    lapState: LocationAccessPermissionState,
+    widgetVM: WidgetViewModel = viewModel()
+) {
+    lapState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
+        when (trigger) {
+            is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+                lapState = lapState,
+                onGranted = {
+                    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
+                        widgetVM.configuration.wifiProperties[it] = true
+                    }
+                    widgetVM.configuration.wifiProperties.sync()
+                    widgetVM.attemptWidgetPin()
+                },
+                onDenied = {
+                    widgetVM.attemptWidgetPin()
+                },
+            )
+
+            is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
+                lapState = lapState,
+                onGranted = {
+                    widgetVM.configuration.wifiProperties[trigger.property] = true
+                },
+                onDenied = {},
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun LocationAccessPermissionRequest(
-    lapUIState: LocationAccessPermissionState,
+private fun LocationAccessPermissionRequest(
+    lapState: LocationAccessPermissionState,
     onGranted: suspend (Context) -> Unit,
     onDenied: suspend (Context) -> Unit,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
@@ -40,48 +76,42 @@ fun LocationAccessPermissionRequest(
                 when (permissionToGranted.values.all { it }) {
                     true -> {
                         onGranted(context)
-                        lapUIState.onGranted()
+                        lapState.onGranted()
                     }
 
                     false -> onDenied(context)
                 }
-                lapUIState.setRequestLaunchingAction(null)
+                lapState.onRequestLaunched()
+                lapState.setRequestLaunchingAction(null)
             }
         },
     )
 
-    LaunchedEffect(Unit) {
-        when (permissionState.allPermissionsGranted) {
-            true -> {
+    LaunchedEffect(permissionState) {
+        when {
+            permissionState.allPermissionsGranted -> {
                 onGranted(context)
-                lapUIState.setRequestLaunchingAction(null)
+                lapState.setRequestLaunchingAction(null)
             }
 
-            false -> {
-                when (permissionState.isLaunchingSuppressed(launchedBefore = lapUIState.requestLaunched)) {
-                    true -> {
-                        scope.launch {
-                            snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                                AppSnackbarVisuals(
-                                    context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                                    kind = SnackbarKind.Error,
-                                    action = SnackbarAction(
-                                        label = context.getString(R.string.go_to_settings),
-                                        callback = {
-                                            goToAppSettings(context)
-                                        },
-                                    ),
-                                ),
-                            )
-                        }
-                        lapUIState.setRequestLaunchingAction(null)
-                    }
+            permissionState.isLaunchingSuppressed(launchedBefore = lapState.requestLaunched.value) -> {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                        kind = SnackbarKind.Error,
+                        action = SnackbarAction(
+                            label = context.getString(R.string.go_to_settings),
+                            callback = {
+                                goToAppSettings(context)
+                            },
+                        ),
+                    ),
+                )
+                lapState.setRequestLaunchingAction(null)
+            }
 
-                    false -> {
-                        permissionState.launchMultiplePermissionRequest()
-                        lapUIState.onRequestLaunched()
-                    }
-                }
+            else -> {
+                permissionState.launchMultiplePermissionRequest()
             }
         }
     }

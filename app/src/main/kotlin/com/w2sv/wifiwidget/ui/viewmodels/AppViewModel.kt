@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.eventhandling.BackPressHandler
+import com.w2sv.common.utils.trigger
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
@@ -62,7 +63,7 @@ class AppViewModel @Inject constructor(
             },
             onSecondPress = {
                 viewModelScope.launch {
-                    _exitApplication.emit(Unit)
+                    _exitApplication.trigger()
                 }
             },
         )

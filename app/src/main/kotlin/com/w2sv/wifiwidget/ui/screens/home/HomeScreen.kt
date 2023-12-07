@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
-import android.Manifest
 import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
@@ -28,11 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.notifying.showToast
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
@@ -41,10 +36,9 @@ import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationalDialog
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessPermissionRequestLauncher
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationals
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestLauncher
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
@@ -53,13 +47,11 @@ import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun HomeScreen(
+fun HomeScreen(
     appViewModel: AppViewModel = viewModel(),
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
@@ -93,24 +85,16 @@ internal fun HomeScreen(
             }
         }
 
-        Dialogs()
+        LocationAccessPermissionRationals(homeScreenVM.lapState)
+
+        if (backgroundLocationAccessGrantRequired) {
+            BackgroundLocationAccessPermissionRequestLauncher(trigger = homeScreenVM.lapState.launchBackgroundAccessPermissionRequest)
+        }
+        LocationAccessPermissionRequestLauncher(lapState = homeScreenVM.lapState)
 
         LaunchedEffect(snackbarHostState) {
             widgetVM.snackbarVisuals.collect {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it)
-            }
-        }
-
-        val permissionState: PermissionState? = if (backgroundLocationAccessGrantRequired)
-            rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-        else
-            null
-
-        with(homeScreenVM.lapState.launchBackgroundAccessPermissionRequest) {
-            LaunchedEffect(this) {
-                collectLatest {
-                    permissionState?.launchPermissionRequest()
-                }
             }
         }
 
@@ -180,55 +164,6 @@ private fun PortraitMode(
         )
         Spacer(Modifier.weight(0.3f))
         CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
-    }
-}
-
-@Composable
-private fun Dialogs(
-    homeScreenVM: HomeScreenViewModel = viewModel(),
-    widgetVM: WidgetViewModel = viewModel(),
-) {
-    homeScreenVM.lapState.rationalTriggeringAction.collectAsStateWithLifecycle().value?.let {
-        LocationAccessPermissionRationalDialog(
-            onProceed = {
-                homeScreenVM.lapState.onRationalShown()
-            },
-        )
-    }
-    homeScreenVM.lapState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
-        when (trigger) {
-            is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
-                lapUIState = homeScreenVM.lapState,
-                onGranted = {
-                    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
-                        widgetVM.configuration.wifiProperties[it] = true
-                    }
-                    widgetVM.configuration.wifiProperties.sync()
-                    widgetVM.attemptWidgetPin()
-                },
-                onDenied = {
-                    widgetVM.attemptWidgetPin()
-                },
-            )
-
-            is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
-                lapUIState = homeScreenVM.lapState,
-                onGranted = {
-                    widgetVM.configuration.wifiProperties[trigger.property] = true
-                },
-                onDenied = {},
-            )
-        }
-    }
-    if (homeScreenVM.lapState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
-        BackgroundLocationAccessDialog(
-            launchPermissionRequest = {
-                homeScreenVM.lapState.launchBackgroundAccessPermissionRequest()
-            },
-            onDismissRequest = {
-                homeScreenVM.lapState.setShowBackgroundAccessRational(false)
-            },
-        )
     }
 }
 

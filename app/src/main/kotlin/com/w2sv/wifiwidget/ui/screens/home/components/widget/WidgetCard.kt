@@ -49,7 +49,7 @@ fun WidgetCard(
             Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
                 PinWidgetButton(
                     onClick = {
-                        when (homeScreenVM.lapState.rationalShown) {
+                        when (homeScreenVM.lapState.rationalShown.value) {
                             false ->
                                 homeScreenVM.lapState.setRationalTriggeringAction(
                                     LocationAccessPermissionRequiringAction.PinWidgetButtonPress

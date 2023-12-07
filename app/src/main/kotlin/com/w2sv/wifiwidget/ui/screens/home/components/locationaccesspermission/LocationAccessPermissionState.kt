@@ -4,19 +4,19 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
-import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.androidutils.permissions.hasPermission
+import com.w2sv.common.utils.trigger
 import com.w2sv.domain.repository.PreferencesRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
-    private val _launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>,
     private val scope: CoroutineScope,
     private val context: Context,
 ) {
@@ -25,7 +25,7 @@ class LocationAccessPermissionState(
 
     fun onGranted() {
         scope.launch {
-            _newlyGranted.emit(Unit)
+            _newlyGranted.trigger()
         }
         if (backgroundLocationAccessGrantRequired) {
             _showBackgroundAccessRational.value = true
@@ -40,16 +40,17 @@ class LocationAccessPermissionState(
         _rationalTriggeringAction.value = value
     }
 
-    val rationalShown: Boolean
-        get() = preferencesRepository.locationAccessPermissionRationalShown.getValueSynchronously()
+    val rationalShown = preferencesRepository.locationAccessPermissionRationalShown.stateIn(
+        scope = scope,
+        started = SharingStarted.Eagerly
+    )
 
     fun onRationalShown() {
         scope.launch {
             preferencesRepository.locationAccessPermissionRationalShown.save(true)
         }
-        val triggeringAction = rationalTriggeringAction.value
-        _rationalTriggeringAction.value = null
-        _requestLaunchingAction.value = triggeringAction
+        setRequestLaunchingAction(rationalTriggeringAction.value)
+        setRationalTriggeringAction(null)
     }
 
     val requestLaunchingAction get() = _requestLaunchingAction.asStateFlow()
@@ -60,8 +61,10 @@ class LocationAccessPermissionState(
         _requestLaunchingAction.value = value
     }
 
-    val requestLaunched: Boolean
-        get() = preferencesRepository.locationAccessPermissionRequested.getValueSynchronously()
+    val requestLaunched = preferencesRepository.locationAccessPermissionRequested.stateIn(
+        scope = scope,
+        started = SharingStarted.Eagerly
+    )
 
     fun onRequestLaunched() {
         scope.launch {
@@ -80,10 +83,11 @@ class LocationAccessPermissionState(
 
     val launchBackgroundAccessPermissionRequest
         get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
+    private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
 
     fun launchBackgroundAccessPermissionRequest() {
         scope.launch {
-            _launchBackgroundLocationAccessPermissionRequest.emit(Unit)
+            _launchBackgroundLocationAccessPermissionRequest.trigger()
         }
     }
 

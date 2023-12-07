@@ -8,16 +8,15 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.networking.WifiStatusMonitor
-import com.w2sv.wifiwidget.ui.di.LaunchBackgroundLocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
@@ -28,7 +27,6 @@ class HomeScreenViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     wifiStatusMonitor: WifiStatusMonitor,
-    @LaunchBackgroundLocationAccessPermissionRequest launchBackgroundLocationAccessPermissionRequest: MutableSharedFlow<Unit>
 ) : ViewModel() {
 
     fun onStart() {
@@ -45,7 +43,6 @@ class HomeScreenViewModel @Inject constructor(
 
     val lapState = LocationAccessPermissionState(
         preferencesRepository = preferencesRepository,
-        _launchBackgroundLocationAccessPermissionRequest = launchBackgroundLocationAccessPermissionRequest,
         scope = viewModelScope,
         context = context,
     )
@@ -55,7 +52,11 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
 
-    private val wifiStatus by wifiStatusMonitor::wifiStatus
+    private val wifiStatus = wifiStatusMonitor.wifiStatus.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly,
+        WifiStatus.Disconnected
+    )
 
     val wifiState get() = _wifiState.asStateFlow()
     private val _wifiState = MutableStateFlow(WifiState(WifiStatus.Disconnected, null))
@@ -75,13 +76,11 @@ class HomeScreenViewModel @Inject constructor(
         }
 
     private fun triggerWifiPropertiesViewDataRefresh() {
-        viewModelScope.launch {
-            if (wifiStatus.lastOrNull() == WifiStatus.Connected) {
-                _wifiState.value = WifiState(
-                    status = WifiStatus.Connected,
-                    propertyViewData = getWifiPropertyViewData()
-                )
-            }
+        if (wifiStatus.value == WifiStatus.Connected) {
+            _wifiState.value = WifiState(
+                status = WifiStatus.Connected,
+                propertyViewData = getWifiPropertyViewData()
+            )
         }
     }
 
