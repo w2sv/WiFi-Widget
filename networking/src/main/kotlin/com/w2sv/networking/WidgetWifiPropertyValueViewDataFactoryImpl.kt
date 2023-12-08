@@ -3,9 +3,7 @@ package com.w2sv.networking
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.domain.repository.WidgetRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -24,21 +22,16 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
-    private val widgetRepository: WidgetRepository,
     private val resources: Resources
 ) : WidgetWifiProperty.ValueViewData.Factory {
 
-    override fun invoke(properties: Iterable<WidgetWifiProperty>): Flow<WidgetWifiProperty.ValueViewData> {
+    override fun invoke(
+        properties: Iterable<WidgetWifiProperty>,
+        ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+    ): Flow<WidgetWifiProperty.ValueViewData> {
+
         val systemIPAddresses by lazy {
             connectivityManager.getIPAddresses()
-//                .also {
-//                    it.forEachIndexed { index, ipAddress ->
-//                        i { "IPAddress #${index + 1}: $ipAddress" }
-//                    }
-//                }
-        }
-        val ipSubPropertyEnablementMap by lazy {
-            widgetRepository.getIPSubPropertyEnablementMap().getSynchronousMap()
         }
 
         return flow {
@@ -218,7 +211,7 @@ private fun textualIPv4Representation(address: Int): String? =
         .hostAddress
 
 private suspend fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
-    i { "Getting public address for $type" }
+    i { "Getting public $type address" }
 
     val request = Request.Builder()
         .url(
@@ -238,9 +231,9 @@ private suspend fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress
                 ?.string()
                 ?.let { address ->
                     if (type.ofCorrectFormat(address))
-                        address.also { i { "Got public address for $type" } }
+                        address.also { i { "Got public $type address" } }
                     else
-                        null.also { i { "Discarded $address obtained for $type" } }
+                        null.also { i { "Discarded obtained $type address $address due to incorrect format" } }
                 }
         }
     } catch (e: Exception) {

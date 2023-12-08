@@ -27,11 +27,9 @@ import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
@@ -56,24 +54,43 @@ import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
+import slimber.log.i
 
 @Composable
 fun WifiPropertiesDisplay(
     propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>,
     modifier: Modifier = Modifier,
 ) {
-    var viewData by remember {
-        mutableStateOf(emptyList<WidgetWifiProperty.ValueViewData>())
+    val viewDataList = remember {
+        mutableStateListOf<WidgetWifiProperty.ValueViewData>()
     }
 
     LaunchedEffect(propertiesViewData) {
-        viewData = propertiesViewData.toList()
+        var lastCollectedIndex = -1
+        propertiesViewData
+            .onCompletion {
+                i{"lastCollectedIndex=$lastCollectedIndex"}
+                with(viewDataList) {
+                    if (lastIndex > lastCollectedIndex) {
+                        removeRange(lastCollectedIndex + 1, lastIndex)
+                    }
+                }
+            }
+            .collectIndexed { index, value ->
+                try {
+                    viewDataList[index] = value
+                } catch (_: IndexOutOfBoundsException) {
+                    viewDataList.add(value)
+                }
+                lastCollectedIndex = index
+            }
     }
 
     AnimatedContent(
-        targetState = viewData.isEmpty(),
+        targetState = viewDataList.isEmpty(),
         label = "",
         modifier = modifier.fillMaxWidth(),
         transitionSpec = {
@@ -86,7 +103,7 @@ fun WifiPropertiesDisplay(
         if (it) {
             LoadingPlaceholder()
         } else {
-            PropertiesList(viewData = viewData)
+            PropertiesList(viewData = viewDataList)
         }
     }
 }

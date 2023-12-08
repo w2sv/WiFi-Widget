@@ -1,6 +1,5 @@
 package com.w2sv.networking
 
-import android.content.Context
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
@@ -8,7 +7,6 @@ import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
 import com.w2sv.domain.model.WifiStatus
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -17,7 +15,6 @@ import slimber.log.i
 import javax.inject.Inject
 
 class WifiStatusMonitor @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager
 ) {
@@ -27,9 +24,18 @@ class WifiStatusMonitor @Inject constructor(
         .build()
 
     val wifiStatus: Flow<WifiStatus> = callbackFlow {
+        // Send initial value
+        channel.trySend(
+            getWifiStatus(
+                wifiManager,
+                connectivityManager
+            )
+                .also { i { "Sent $it as initial" } }
+        )
+
         val callback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network) {
-                channel.trySend(WifiStatus.Connected)
+                channel.trySend(WifiStatus.Connected.also { i { "Sent $it onAvailable" } })
             }
 
             override fun onCapabilitiesChanged(
@@ -37,24 +43,28 @@ class WifiStatusMonitor @Inject constructor(
                 networkCapabilities: NetworkCapabilities,
             ) {
                 if (network == connectivityManager.activeNetwork) {
-                    i { "onCapabilitiesChanged.send" }
-                    channel.trySend(WifiStatus.Connected)
+                    channel.trySend(WifiStatus.Connected.also { i { "Sent $it onCapabilitiesChanged" } })
                 }
             }
 
             override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
                 if (network == connectivityManager.activeNetwork) {
-                    i { "onLinkPropertiesChanged.send" }
-                    channel.trySend(WifiStatus.Connected)
+                    channel.trySend(WifiStatus.Connected.also { i { "Sent $it onLinkPropertiesChanged" } })
                 }
             }
 
             override fun onUnavailable() {
-                channel.trySend(getNoConnectionPresentStatus(wifiManager))
+                channel.trySend(
+                    wifiManager.getNoConnectionPresentStatus()
+                        .also { i { "Sent $it onUnavailable" } }
+                )
             }
 
             override fun onLost(network: Network) {
-                channel.trySend(getNoConnectionPresentStatus(wifiManager))
+                channel.trySend(
+                    wifiManager.getNoConnectionPresentStatus()
+                        .also { i { "Sent $it onLost" } }
+                )
             }
         }
 
@@ -62,8 +72,6 @@ class WifiStatusMonitor @Inject constructor(
             networkRequest,
             callback,
         )
-
-        channel.trySend(getWifiStatus(context))
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(callback)

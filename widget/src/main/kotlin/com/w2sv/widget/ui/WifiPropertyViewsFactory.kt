@@ -3,6 +3,7 @@ package com.w2sv.widget.ui
 import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
@@ -32,8 +33,12 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
 
-        runBlocking {
-            propertyViewData = valueViewDataFactory(widgetRepository.getEnabledWifiProperties())
+        runBlocking {  // TODO
+            propertyViewData = valueViewDataFactory(
+                properties = widgetRepository.getEnabledWifiProperties(),
+                ipSubPropertyEnablementMap = widgetRepository.getIPSubPropertyEnablementMap()
+                    .getSynchronousMap()
+            )
                 .toList()
                 .flatMap { valueViewData ->
                     when (valueViewData) {

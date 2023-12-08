@@ -1,5 +1,4 @@
 [versions]
-# Sdks
 minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '34'
 

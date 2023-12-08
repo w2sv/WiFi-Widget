@@ -25,6 +25,9 @@ class WidgetProvider : AppWidgetProvider() {
     @Inject
     lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
 
+    @Inject
+    lateinit var appWidgetManager: AppWidgetManager
+
     /**
      * Called upon the first AppWidget instance being created.
      *
@@ -61,8 +64,6 @@ class WidgetProvider : AppWidgetProvider() {
                 context ?: return
 
                 // Refresh data
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-
                 onUpdate(
                     context,
                     appWidgetManager,

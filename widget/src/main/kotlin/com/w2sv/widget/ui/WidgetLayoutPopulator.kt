@@ -14,7 +14,7 @@ import com.w2sv.androidutils.appwidgets.setColorFilter
 import com.w2sv.androidutils.ui.getAlphaSetColor
 import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.WifiStatus
-import com.w2sv.networking.getWifiStatus
+import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
@@ -33,42 +33,35 @@ import javax.inject.Inject
 class WidgetLayoutPopulator @Inject constructor(
     private val appearance: WidgetAppearance,
     @ApplicationContext private val context: Context,
+    private val appWidgetManager: AppWidgetManager,
+    private val wifiStatusGetter: WifiStatusGetter
 ) {
     private val colors by lazy {
         appearance.getColors(context)
     }
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
-        widget.apply {
-            setContentLayout(
-                wifiStatus = getWifiStatus(context),
-                appWidgetId = appWidgetId,
-            )
-            setBackgroundColor(
-                id = R.id.widget_layout,
-                color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
-            )
-            setLastUpdatedTV()
-            setButtons(buttons = appearance.buttons)
-        }
-
-    private fun RemoteViews.setContentLayout(wifiStatus: WifiStatus, appWidgetId: Int) {
-        when (wifiStatus == WifiStatus.Connected) {
-            true -> crossVisualize(
-                R.id.no_connection_available_layout,
-                R.id.wifi_property_list_view,
-            )
-
-            false -> {
-                crossVisualize(
-                    R.id.wifi_property_list_view,
-                    R.id.no_connection_available_layout,
+        widget
+            .apply {
+                setContentLayout(
+                    appWidgetId = appWidgetId,
                 )
+                setBackgroundColor(
+                    id = R.id.widget_layout,
+                    color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
+                )
+                setLastUpdatedTV()
+                setButtons(buttons = appearance.buttons)
             }
-        }
 
-        when (wifiStatus) {
+    private fun RemoteViews.setContentLayout(appWidgetId: Int) {
+        when (val wifiStatus = wifiStatusGetter()) {
             WifiStatus.Connected -> {
+                crossVisualize(
+                    R.id.no_connection_available_layout,
+                    R.id.wifi_property_list_view,
+                )
+
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
                     Intent(context, WifiPropertyViewsService::class.java)
@@ -78,11 +71,16 @@ class WidgetLayoutPopulator @Inject constructor(
                         },
                 )
 
-                AppWidgetManager.getInstance(context)
+                appWidgetManager
                     .notifyAppWidgetViewDataChanged(appWidgetId, R.id.wifi_property_list_view)
             }
 
             else -> {
+                crossVisualize(
+                    R.id.wifi_property_list_view,
+                    R.id.no_connection_available_layout,
+                )
+
                 setTextView(
                     viewId = R.id.wifi_status_tv,
                     text = context.getString(
