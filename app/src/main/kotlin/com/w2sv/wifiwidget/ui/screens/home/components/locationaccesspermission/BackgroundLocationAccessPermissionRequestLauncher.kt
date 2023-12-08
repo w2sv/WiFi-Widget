@@ -14,7 +14,8 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BackgroundLocationAccessPermissionRequestLauncher(trigger: SharedFlow<Unit>) {
-    val permissionState = rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    val permissionState =
+        rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
     LaunchedEffect(trigger) {
         trigger.collectLatest {

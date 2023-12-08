@@ -49,8 +49,9 @@ class LocationAccessPermissionState(
         scope.launch {
             preferencesRepository.locationAccessPermissionRationalShown.save(true)
         }
-        setRequestLaunchingAction(rationalTriggeringAction.value)
+        val action = rationalTriggeringAction.value
         setRationalTriggeringAction(null)
+        setRequestLaunchingAction(action)
     }
 
     val requestLaunchingAction get() = _requestLaunchingAction.asStateFlow()

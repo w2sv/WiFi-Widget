@@ -12,6 +12,7 @@ import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.utils.styledTextResource
 
 @Composable
 fun LocationAccessPermissionRationalDialog(
@@ -25,7 +26,7 @@ fun LocationAccessPermissionRationalDialog(
         },
         text = {
             AppFontText(
-                text = stringResource(id = R.string.lap_dialog_text),
+                text = styledTextResource(id = R.string.lap_dialog_text),
                 textAlign = TextAlign.Center,
             )
         },

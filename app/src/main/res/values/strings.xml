@@ -2,7 +2,7 @@
     <string name="app_name">WiFi Widget</string>
     <string name="pin">Pin</string>
     <string name="pinned_widget">Pinned Widget.</string>
-    <string name="lap_dialog_text">If you want your device\'s SSID and/or BSSID to be displayed amongst the WiFi properties, you\'ll have to grant location access permission.</string>
+    <string name="lap_dialog_text"><![CDATA[If you want your device\'s <b>SSID</b> and/or <b>BSSID</b> to be displayed amongst the WiFi properties, you\'ll have to grant <b>Location Access Permission</b>.<br><br>If you don\'t feel comfortable with granting the permission that's absolutely fine - your SSID &amp; BSSID will simply be excluded from the WiFi properties!]]></string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
     <string name="understood">Understood</string>
     <string name="close">Close</string>

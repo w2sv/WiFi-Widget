@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
@@ -64,30 +65,7 @@ fun WifiPropertiesDisplay(
     propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>,
     modifier: Modifier = Modifier,
 ) {
-    val viewDataList = remember {
-        mutableStateListOf<WidgetWifiProperty.ValueViewData>()
-    }
-
-    LaunchedEffect(propertiesViewData) {
-        var lastCollectedIndex = -1
-        propertiesViewData
-            .onCompletion {
-                i{"lastCollectedIndex=$lastCollectedIndex"}
-                with(viewDataList) {
-                    if (lastIndex > lastCollectedIndex) {
-                        removeRange(lastCollectedIndex + 1, lastIndex)
-                    }
-                }
-            }
-            .collectIndexed { index, value ->
-                try {
-                    viewDataList[index] = value
-                } catch (_: IndexOutOfBoundsException) {
-                    viewDataList.add(value)
-                }
-                lastCollectedIndex = index
-            }
-    }
+    val viewDataList = getUpdatedViewDataList(propertiesViewData = propertiesViewData)
 
     AnimatedContent(
         targetState = viewDataList.isEmpty(),
@@ -106,6 +84,41 @@ fun WifiPropertiesDisplay(
             PropertiesList(viewData = viewDataList)
         }
     }
+}
+
+@Composable
+fun getUpdatedViewDataList(propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>): SnapshotStateList<WidgetWifiProperty.ValueViewData> {
+    val viewDataList = remember {
+        mutableStateListOf<WidgetWifiProperty.ValueViewData>()
+    }
+
+    LaunchedEffect(propertiesViewData) {
+        i { "Collecting viewDataList" }
+        var lastCollectedIndex = -1
+
+        propertiesViewData
+            .onCompletion {
+                i { "lastCollectedIndex=$lastCollectedIndex" }
+                if (lastCollectedIndex != -1) {
+                    with(viewDataList) {
+                        if (lastIndex > lastCollectedIndex) {
+                            removeRange(lastCollectedIndex + 1, size)
+                            i { "Removed range ${lastCollectedIndex + 1}-$size" }
+                        }
+                    }
+                }
+            }
+            .collectIndexed { index, value ->
+                try {
+                    viewDataList[index] = value
+                } catch (_: IndexOutOfBoundsException) {
+                    viewDataList.add(value)
+                }
+                lastCollectedIndex = index
+            }
+    }
+
+    return viewDataList
 }
 
 @Composable
