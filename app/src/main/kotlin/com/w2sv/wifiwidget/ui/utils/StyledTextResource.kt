@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.text.HtmlCompat
 
 /**
- * From https://stackoverflow.com/a/77319763/12083276
+ * @see <a href="From https://stackoverflow.com/a/77319763/12083276">Reference</a>
  */
 @Composable
 @ReadOnlyComposable

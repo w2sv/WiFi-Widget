@@ -8,6 +8,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
+import com.w2sv.wifiwidget.ui.utils.styledTextResource
 
 @Composable
 fun BackgroundLocationAccessRational(
@@ -35,7 +36,7 @@ fun BackgroundLocationAccessRational(
             InfoIcon()
         },
         text = {
-            AppFontText(text = stringResource(id = R.string.background_location_access_rational))
+            AppFontText(text = styledTextResource(id = R.string.background_location_access_rational))
         },
     )
 }

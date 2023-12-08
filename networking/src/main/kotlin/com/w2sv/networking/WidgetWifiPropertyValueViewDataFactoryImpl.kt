@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -14,6 +13,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import slimber.log.i
 import java.net.InetAddress
+import java.net.SocketTimeoutException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
@@ -238,7 +238,7 @@ private suspend fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress
         }
     } catch (e: Exception) {
         i {
-            if (e is TimeoutCancellationException) {
+            if (e is SocketTimeoutException) {
                 "Timed out trying to get public $type address"
             } else {
                 "Caught $e"

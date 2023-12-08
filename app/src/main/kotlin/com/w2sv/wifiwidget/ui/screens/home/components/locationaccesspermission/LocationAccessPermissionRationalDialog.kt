@@ -26,7 +26,7 @@ fun LocationAccessPermissionRationalDialog(
         },
         text = {
             AppFontText(
-                text = styledTextResource(id = R.string.lap_dialog_text),
+                text = styledTextResource(id = R.string.location_access_permission_rational),
                 textAlign = TextAlign.Center,
             )
         },

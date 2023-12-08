@@ -243,7 +243,7 @@ sealed interface WidgetWifiProperty {
                     R.string.public_,
                     R.string.public_description,
                     LEARN_MORE_URL,
-                    false,
+                    true,
                     false
                 )
         }
