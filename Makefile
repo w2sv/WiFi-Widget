@@ -38,7 +38,7 @@ build-and-publish:
 	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n 3. Pushed the latest changes\n\n Otherwise cancel target now."
 	@read																			
 
-	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in specified archive dir
+	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
 	@$(MAKE) build-aab
 	@$(MAKE) build-apk

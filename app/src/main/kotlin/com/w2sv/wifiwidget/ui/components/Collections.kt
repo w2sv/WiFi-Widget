@@ -1,10 +1,11 @@
 package com.w2sv.wifiwidget.ui.components
 
 import androidx.compose.runtime.Composable
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun <T> InBetweenSpaced(
-    elements: List<T>,
+    elements: ImmutableList<T>,
     makeElement: @Composable (T) -> Unit,
     spacer: @Composable () -> Unit,
 ) {

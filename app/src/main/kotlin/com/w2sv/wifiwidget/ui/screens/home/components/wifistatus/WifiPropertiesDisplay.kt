@@ -53,6 +53,8 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectIndexed
@@ -81,7 +83,7 @@ fun WifiPropertiesDisplay(
         if (it) {
             LoadingPlaceholder()
         } else {
-            PropertiesList(viewData = viewDataList)
+            PropertiesList(viewData = viewDataList.toImmutableList())
         }
     }
 }
@@ -143,7 +145,7 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
 
 @Composable
 private fun PropertiesList(
-    viewData: List<WidgetWifiProperty.ValueViewData>,
+    viewData: ImmutableList<WidgetWifiProperty.ValueViewData>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(

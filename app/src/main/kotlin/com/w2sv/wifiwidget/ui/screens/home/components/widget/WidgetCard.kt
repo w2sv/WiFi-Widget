@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,7 @@ fun WidgetCard(
     widgetVM: WidgetViewModel = viewModel(),
 ) {
     HomeScreenCard(
+        modifier = modifier,
         content = {
             IconHeader(
                 iconRes = R.drawable.ic_widgets_24,
@@ -46,7 +48,7 @@ fun WidgetCard(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
                 PinWidgetButton(
                     onClick = {
                         when (homeScreenVM.lapState.rationalShown.value) {
@@ -73,7 +75,6 @@ fun WidgetCard(
                 )
             }
         },
-        modifier = modifier,
     )
 
     if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {

@@ -15,6 +15,8 @@ compose-compiler = '1.5.5'
 compose-tooling = '1.5.4'
 lifecycle = "2.6.2"
 okhttp = "4.12.0"
+compose-lint-checks = "1.2.0"
+kotlinxCollectionsImmutable = "0.3.6"
 
 [libraries]
 
@@ -50,8 +52,10 @@ google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' 
 google-hilt-compiler = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
 
 # Other
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 slimber = 'com.github.PaulWoitaschek:Slimber:2.0.0'
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 
 # Plugins
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

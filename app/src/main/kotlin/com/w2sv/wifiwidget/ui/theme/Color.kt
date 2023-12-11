@@ -1,12 +1,10 @@
 package com.w2sv.wifiwidget.ui.theme
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
-@Composable
-fun disabledColor(): Color =
-    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+object AppColor {
+    val success = Color(12, 173, 34, 200)
+}
 
 val md_theme_light_primary = Color(0xFF00696F)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)

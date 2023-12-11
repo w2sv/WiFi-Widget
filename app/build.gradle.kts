@@ -22,7 +22,7 @@ android {
         versionCode = project.findProperty("versionCode")!!.toString().toInt()
         versionName = version.toString()
 
-        // Name created bundles "{versionName}-{buildFlavor}.aab"
+        // Name built bundles "{versionName}-{buildFlavor}.aab"
         setProperty("archivesBaseName", versionName)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -86,7 +86,7 @@ android {
         enableAggregatingTask = true  // Fixes warning
     }
 
-    // Name created apks "{versionName}.apk"
+    // Name built apks "{versionName}.apk"
     applicationVariants.all {
         outputs
             .forEach { output ->
@@ -114,6 +114,7 @@ dependencies {
 
     // Custom libraries
     implementation(libs.androidutils)
+    implementation(libs.colorpicker)
 
     // AndroidX libraries
     implementation(libs.androidx.core)
@@ -132,9 +133,10 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
+    implementation(libs.accompanist.permissions)
 
     // Other libraries
     implementation(libs.slimber)
-    implementation(libs.colorpicker)
-    implementation(libs.accompanist.permissions)
+    lintChecks(libs.compose.lint.checks)
+    implementation(libs.kotlinx.collections.immutable)
 }

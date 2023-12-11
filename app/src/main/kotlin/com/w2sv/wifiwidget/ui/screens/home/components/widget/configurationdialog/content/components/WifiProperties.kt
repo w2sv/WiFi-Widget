@@ -23,6 +23,8 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.WifiPropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 private val firstIndexToSubTypeTitleResId = mapOf(
     0 to R.string.location_access_requiring,
@@ -108,32 +110,35 @@ private fun WifiPropertyCheckRow(
         )
         if (data is IPPropertyCheckRowData) {
             AnimatedVisibility(visible = data.isChecked()) {
-                SubPropertyRows(subPropertyCheckRowData = remember(data.property) {
-                    (data.property as WidgetWifiProperty.IP).subProperties
-                        .map { subProperty ->
-                            PropertyCheckRowData(
-                                type = subProperty,
-                                labelRes = subProperty.kind.labelRes,
-                                isCheckedMap = data.subPropertyIsCheckedMap,
-                                allowCheckChange = { newValue ->
-                                    (data.property as? WidgetWifiProperty.IP.V4AndV6)?.let { v4AndV6Property ->
-                                        newValue || !subProperty.isAddressTypeEnablementProperty || v4AndV6Property.addressTypeEnablementSubProperties.all {
-                                            data.subPropertyIsCheckedMap.getValue(
-                                                it
-                                            )
-                                        }
-                                    } ?: true
-                                },
-                            )
-                        }
-                })
+                SubPropertyRows(
+                    subPropertyCheckRowData = remember(data.property) {
+                        (data.property as WidgetWifiProperty.IP).subProperties
+                            .map { subProperty ->
+                                PropertyCheckRowData(
+                                    type = subProperty,
+                                    labelRes = subProperty.kind.labelRes,
+                                    isCheckedMap = data.subPropertyIsCheckedMap,
+                                    allowCheckChange = { newValue ->
+                                        (data.property as? WidgetWifiProperty.IP.V4AndV6)?.let { v4AndV6Property ->
+                                            newValue || !subProperty.isAddressTypeEnablementProperty || v4AndV6Property.addressTypeEnablementSubProperties.all {
+                                                data.subPropertyIsCheckedMap.getValue(
+                                                    it
+                                                )
+                                            }
+                                        } ?: true
+                                    },
+                                )
+                            }
+                            .toPersistentList()
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun SubPropertyRows(subPropertyCheckRowData: List<PropertyCheckRowData<WidgetWifiProperty.IP.SubProperty>>) {
+private fun SubPropertyRows(subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<WidgetWifiProperty.IP.SubProperty>>) {
     Column {
         InBetweenSpaced(
             elements = subPropertyCheckRowData,

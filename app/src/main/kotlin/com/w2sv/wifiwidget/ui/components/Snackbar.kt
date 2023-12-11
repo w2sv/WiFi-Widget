@@ -15,7 +15,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,7 +60,7 @@ sealed interface SnackbarKind {
     }
 }
 
-val LocalSnackbarHostState = compositionLocalOf { SnackbarHostState() }
+val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 
 suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbarVisuals: SnackbarVisuals) {
     currentSnackbarData?.dismiss()
@@ -68,7 +68,7 @@ suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbar
 }
 
 @Composable
-fun AppSnackbar(visuals: AppSnackbarVisuals) {
+fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
     Snackbar(
         action = {
             visuals.action?.let { action ->
@@ -82,6 +82,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals) {
                 }
             }
         },
+        modifier = modifier
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             visuals.kind?.let { kind ->

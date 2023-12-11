@@ -4,6 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -19,14 +22,17 @@ internal fun OpacitySliderWithLabel(
     onOpacityChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
+    val label by remember {
+        derivedStateOf { "${(opacity * 100).roundToInt()}%" }
+    }
 
     Column(modifier = modifier) {
         AppFontText(
-            text = "${(opacity * 100).roundToInt()}%",
+            text = label,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = modifier.align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+        val context = LocalContext.current
         Slider(
             value = opacity,
             onValueChange = onOpacityChanged,

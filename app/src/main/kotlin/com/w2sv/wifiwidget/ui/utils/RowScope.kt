@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun RowScope.RightAligned(content: @Composable () -> Unit) {
-    Spacer(modifier = Modifier.weight(1f))
+fun RowScope.RightAligned(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Spacer(modifier = modifier.weight(1f))
     content()
 }

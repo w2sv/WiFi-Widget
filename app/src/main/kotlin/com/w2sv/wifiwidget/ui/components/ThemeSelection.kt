@@ -36,16 +36,18 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.toEasing
+import kotlinx.collections.immutable.ImmutableMap
+import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
 fun ThemeSelectionRow(
     selected: Theme,
     onSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier,
+    themeIndicatorModifier: Modifier = Modifier,
     customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    themeWeights: Map<Theme, Float> = mapOf(),
-    themeIndicatorModifier: Modifier = Modifier,
+    themeWeights: ImmutableMap<Theme, Float> = persistentMapOf(),
 ) {
     Row(
         modifier = modifier,

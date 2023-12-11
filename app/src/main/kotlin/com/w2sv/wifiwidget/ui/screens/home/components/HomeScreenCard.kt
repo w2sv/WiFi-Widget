@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HomeScreenCard(content: @Composable ColumnScope.() -> Unit, modifier: Modifier = Modifier) {
+fun HomeScreenCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
         modifier = modifier,

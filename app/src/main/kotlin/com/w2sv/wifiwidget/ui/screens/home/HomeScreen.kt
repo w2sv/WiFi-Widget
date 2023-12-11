@@ -52,6 +52,7 @@ import java.util.Calendar
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     appViewModel: AppViewModel = viewModel(),
     homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
@@ -63,6 +64,7 @@ fun HomeScreen(
 
     NavigationDrawer(
         state = drawerState,
+        modifier = modifier
     ) {
         Scaffold(
             topBar = {

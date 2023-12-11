@@ -3,13 +3,17 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -19,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppFontText
-import com.w2sv.wifiwidget.ui.components.InfoIconButton
+import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 
 @Composable
@@ -97,5 +101,22 @@ private fun <T> PropertyCheckRow(
                 contentDescription = stringResource(id = R.string.info_icon_cd, label),
             )
         }
+    }
+}
+
+@Composable
+private fun InfoIconButton(
+    onClick: () -> Unit,
+    contentDescription: String,
+    modifier: Modifier = Modifier
+) {
+    IconButton(onClick = onClick, modifier = modifier) {
+        InfoIcon(
+            contentDescription = contentDescription,
+            modifier = Modifier.size(
+                dimensionResource(id = R.dimen.size_icon),
+            ),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }

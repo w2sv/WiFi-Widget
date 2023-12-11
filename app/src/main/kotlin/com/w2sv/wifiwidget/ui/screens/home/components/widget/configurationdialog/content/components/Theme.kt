@@ -22,6 +22,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
+import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
 fun ThemeSelection(
@@ -31,8 +32,9 @@ fun ThemeSelection(
     useDynamicColors: Boolean,
     setUseDynamicColors: (Boolean) -> Unit,
     customColorsMap: MutableMap<WidgetColor, Int>,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         val customThemeIndicatorWeight by animateFloatAsState(
             targetValue = if (useDynamicColors) EPSILON else 1f,
             label = "",
@@ -58,7 +60,7 @@ fun ThemeSelection(
             ),
             selected = theme,
             onSelected = setTheme,
-            themeWeights = mapOf(Theme.Custom to customThemeIndicatorWeight),
+            themeWeights = persistentMapOf(Theme.Custom to customThemeIndicatorWeight),
             themeIndicatorModifier = Modifier
                 .padding(horizontal = 12.dp)
                 .sizeIn(maxHeight = 92.dp),

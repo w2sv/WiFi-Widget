@@ -15,7 +15,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -53,23 +53,25 @@ fun CustomDialog(
     }
 }
 
-@Stable
+@Immutable
 data class DialogHeaderProperties(
     val title: String,
     val icon: (@Composable () -> Unit)? = null,
 )
 
 @Composable
-fun DialogHeader(properties: DialogHeaderProperties) {
-    properties.icon?.let {
-        it.invoke()
-        Spacer(modifier = Modifier.height(12.dp))
+fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifier) {
+    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+        properties.icon?.let {
+            it.invoke()
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+        AppFontText(
+            text = properties.title,
+            style = MaterialTheme.typography.headlineSmall,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
     }
-    AppFontText(
-        text = properties.title,
-        style = MaterialTheme.typography.headlineSmall,
-    )
-    Spacer(modifier = Modifier.height(8.dp))
 }
 
 @Composable
