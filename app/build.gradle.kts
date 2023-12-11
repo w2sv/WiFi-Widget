@@ -23,7 +23,7 @@ android {
         versionName = version.toString()
 
         // Store bundles as "{versionName}-{buildFlavor}.aab"
-//        archivesName = versionName
+        setProperty("archivesBaseName", versionName)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -86,11 +86,14 @@ android {
         enableAggregatingTask = true
     }
 
-//    applicationVariants.configureEach { variant ->
-//        variant.outputs.configureEach {
-//            outputFileName = "${variant.versionName}.apk"
-//        }
-//    }
+    applicationVariants.all {
+        outputs
+            .forEach { output ->
+                (output as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
+                    "${versionName}.apk"
+            }
+    }
+
 }
 
 // https://github.com/Triple-T/gradle-play-publisher
