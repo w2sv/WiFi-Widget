@@ -1,1 +1,4 @@
-- Added monochromatic launcher icon
+- Enabled display of public IP addresses retrieved from ipify.org
+- Reworked IP address categorization
+- Fixed the bug that led to the WiFi properties being displayed in-app even upon no WiFi connection being present
+- Various UI improvements
