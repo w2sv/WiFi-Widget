@@ -22,7 +22,7 @@ android {
         versionCode = project.findProperty("versionCode")!!.toString().toInt()
         versionName = version.toString()
 
-        // Store bundles as "{versionName}-{buildFlavor}.aab"
+        // Name created bundles "{versionName}-{buildFlavor}.aab"
         setProperty("archivesBaseName", versionName)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -83,9 +83,10 @@ android {
     }
 
     hilt {
-        enableAggregatingTask = true
+        enableAggregatingTask = true  // Fixes warning
     }
 
+    // Name created apks "{versionName}.apk"
     applicationVariants.all {
         outputs
             .forEach { output ->

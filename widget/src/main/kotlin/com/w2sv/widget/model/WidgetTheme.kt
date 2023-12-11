@@ -3,6 +3,7 @@ package com.w2sv.widget.model
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.StyleRes
+import androidx.core.content.res.use
 import com.google.android.material.color.DynamicColors
 import com.w2sv.androidutils.generic.isNightModeActiveCompat
 import com.w2sv.widget.R

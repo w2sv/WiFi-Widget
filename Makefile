@@ -5,12 +5,6 @@ VERSION := $(shell ./get-version.sh)
 optimize-drawables:
 	@avocado app/src/main/res/drawable/*.xml
 
-ktlint:
-	@ktlint --color
-
-ktlint-format:
-	@ktlint --format --color
-
 clean:
 	@echo "Clean"
 	@./gradlew clean
