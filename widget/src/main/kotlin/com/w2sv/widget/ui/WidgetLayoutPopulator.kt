@@ -165,10 +165,11 @@ class WidgetLayoutPopulator @Inject constructor(
                         context,
                         "com.w2sv.wifiwidget.ui.MainActivity",
                     ),
-                ).putExtra(
-                    Extra.OPEN_WIDGET_CONFIGURATION_DIALOG,
-                    true,
-                ),
+                )
+                    .putExtra(
+                        Extra.OPEN_WIDGET_CONFIGURATION_DIALOG,
+                        true,
+                    ),
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
             ),
         )

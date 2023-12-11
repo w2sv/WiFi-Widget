@@ -58,7 +58,6 @@
             android:layout_marginStart="6dp"
 
             android:textSize="14sp"
-            android:textStyle="italic"
             tools:ignore="RelativeOverlap" />
 
         <LinearLayout

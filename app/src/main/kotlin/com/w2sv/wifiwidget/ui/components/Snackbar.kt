@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import com.w2sv.wifiwidget.ui.theme.AppColor
 
 data class SnackbarAction(val label: String, val callback: () -> Unit)
 
@@ -55,7 +56,7 @@ sealed interface SnackbarKind {
     data object Success : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color
-            @Composable get() = MaterialTheme.colorScheme.primary
+            @Composable get() = AppColor.success
     }
 }
 

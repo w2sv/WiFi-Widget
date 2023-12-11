@@ -2,14 +2,18 @@ package com.w2sv.widget.model
 
 import android.content.res.ColorStateList
 import android.os.Build
+import android.text.Spanned
+import android.text.style.RelativeSizeSpan
 import android.widget.RemoteViews
+import androidx.core.text.buildSpannedString
+import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.widget.R
 import com.w2sv.widget.utils.setTextView
 
 internal sealed interface WidgetPropertyView {
-    class Property(val property: WidgetWifiProperty.ValueViewData) : WidgetPropertyView
+    class Property(val viewData: WidgetWifiProperty.ValueViewData) : WidgetPropertyView
     class PrefixLength(val value: String) : WidgetPropertyView
 
     fun inflate(
@@ -18,7 +22,7 @@ internal sealed interface WidgetPropertyView {
     ): RemoteViews =
         when (this) {
             is Property -> {
-                inflateWifiPropertyLayout(packageName, property.label, property.value, widgetColors)
+                inflateWifiPropertyLayout(packageName, viewData, widgetColors)
             }
 
             is PrefixLength -> {
@@ -27,22 +31,37 @@ internal sealed interface WidgetPropertyView {
         }
 }
 
+private const val IP_LABEL = "IP"
+
 private fun inflateWifiPropertyLayout(
     packageName: String,
-    label: String,
-    value: String,
+    viewData: WidgetWifiProperty.ValueViewData,
     widgetColors: WidgetColors
 ): RemoteViews =
     RemoteViews(packageName, R.layout.wifi_property)
         .apply {
             setTextView(
                 viewId = R.id.property_label_tv,
-                text = label,
+                text = if (viewData is WidgetWifiProperty.ValueViewData.NonIP)
+                    viewData.label
+                else
+                    buildSpannedString {
+                        append(IP_LABEL)
+                        subscript {
+                            append(viewData.label)
+                            setSpan(
+                                RelativeSizeSpan(0.8f),
+                                IP_LABEL.length,
+                                viewData.label.length + IP_LABEL.length,
+                                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+                            )
+                        }
+                    },
                 color = widgetColors.primary,
             )
             setTextView(
                 viewId = R.id.property_value_tv,
-                text = value,
+                text = viewData.value,
                 color = widgetColors.secondary,
             )
         }

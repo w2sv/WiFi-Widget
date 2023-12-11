@@ -7,6 +7,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 @SuppressLint("NewApi")
@@ -26,6 +27,10 @@ fun AppTheme(
     ) {
         content()
     }
+}
+
+object AppColor {
+    val success = Color(12, 173, 34, 200)
 }
 
 private val lightColors = lightColorScheme(
