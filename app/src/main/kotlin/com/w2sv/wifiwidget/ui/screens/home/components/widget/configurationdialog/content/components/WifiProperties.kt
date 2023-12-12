@@ -70,8 +70,9 @@ private fun PropertySubTypeHeader(title: String, modifier: Modifier = Modifier) 
 private fun WifiPropertyCheckRow(
     data: WifiPropertyCheckRowData,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(modifier = modifier) {
         PropertyCheckRow(
             data = data,
             onInfoButtonClick = { showInfoDialog(data.property.infoDialogData) },
@@ -106,18 +107,22 @@ private fun WifiPropertyCheckRow(
 }
 
 @Composable
-private fun SubPropertyRows(subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<WidgetWifiProperty.IP.SubProperty>>) {
-    Column {
+private fun SubPropertyRows(
+    subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<WidgetWifiProperty.IP.SubProperty>>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
         InBetweenSpaced(
             elements = subPropertyCheckRowData,
-            makeElement = { SubPropertyCheckRow(data = it) }
-        ) {
-            Divider(
-                modifier = Modifier.padding(
-                    vertical = 2.dp,
-                    horizontal = 16.dp
+            makeElement = { SubPropertyCheckRow(data = it) },
+            spacer = {
+                Divider(
+                    modifier = Modifier.padding(
+                        vertical = 2.dp,
+                        horizontal = 16.dp
+                    )
                 )
-            )
-        }
+            }
+        )
     }
 }
