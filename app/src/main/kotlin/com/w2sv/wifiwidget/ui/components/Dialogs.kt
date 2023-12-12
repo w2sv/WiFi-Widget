@@ -62,7 +62,10 @@ data class DialogHeaderProperties(
 
 @Composable
 fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifier) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         properties.icon?.let {
             it.invoke()
             Spacer(modifier = Modifier.height(12.dp))

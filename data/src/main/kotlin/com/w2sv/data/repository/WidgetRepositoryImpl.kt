@@ -14,7 +14,7 @@ import com.w2sv.data.model.isEnabledDse
 import com.w2sv.data.model.valueDSE
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
@@ -65,10 +65,10 @@ class WidgetRepositoryImpl @Inject constructor(
 
     // TODO: look for singular save function
 
-    override fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>> =
-        getTypeToValueMap(WidgetColor.entries.associateBy { it.valueDSE })
+    override fun getCustomColorsMap(): Map<WidgetColorSection, Flow<Int>> =
+        getTypeToValueMap(WidgetColorSection.entries.associateBy { it.valueDSE })
 
-    override suspend fun saveCustomColorsMap(map: Map<WidgetColor, Int>) {
+    override suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>) {
         saveMap(map.mapKeys { (k, _) -> k.valueDSE })
     }
 

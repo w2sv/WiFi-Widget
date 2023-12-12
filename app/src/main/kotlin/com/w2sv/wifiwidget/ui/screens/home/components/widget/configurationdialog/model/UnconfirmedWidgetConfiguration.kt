@@ -1,11 +1,12 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
+import androidx.compose.runtime.Stable
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+@Stable
 class UnconfirmedWidgetConfiguration(
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
     val subWifiProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
@@ -21,7 +23,7 @@ class UnconfirmedWidgetConfiguration(
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     val useDynamicColors: UnconfirmedStateFlow<Boolean>,
     val theme: UnconfirmedStateFlow<Theme>,
-    val customColorsMap: UnconfirmedStateMap<WidgetColor, Int>,
+    val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
     scope: CoroutineScope,
     onStateSynced: suspend () -> Unit

@@ -4,7 +4,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.domain.model.WidgetButton
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 
@@ -36,13 +36,13 @@ internal val WidgetButton.isEnabledDSE
         defaultValue = true,
     )
 
-internal val WidgetColor.valueDSE
+internal val WidgetColorSection.valueDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = intPreferencesKey(
             when (this) {
-                WidgetColor.Background -> "Background"
-                WidgetColor.Primary -> "Labels"
-                WidgetColor.Secondary -> "Other"
+                WidgetColorSection.Background -> "Background"
+                WidgetColorSection.Primary -> "Labels"
+                WidgetColorSection.Secondary -> "Other"
             }
         ),
         defaultValue = defaultValue,

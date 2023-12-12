@@ -29,7 +29,7 @@ internal fun ColorPickerDialog(
     applyColor: (Color) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var color by remember {
+    var color by remember(appliedColor) {
         mutableStateOf(
             appliedColor,
         )

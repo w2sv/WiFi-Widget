@@ -17,13 +17,13 @@ import com.w2sv.wifiwidget.R
 import kotlin.math.roundToInt
 
 @Composable
-internal fun OpacitySliderWithLabel(
-    opacity: Float,
+fun OpacitySliderWithLabel(
+    getOpacity: () -> Float,
     onOpacityChanged: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val label by remember {
-        derivedStateOf { "${(opacity * 100).roundToInt()}%" }
+        derivedStateOf { "${(getOpacity() * 100).roundToInt()}%" }
     }
 
     Column(modifier = modifier) {
@@ -34,7 +34,7 @@ internal fun OpacitySliderWithLabel(
         )
         val context = LocalContext.current
         Slider(
-            value = opacity,
+            value = getOpacity(),
             onValueChange = onOpacityChanged,
             modifier = Modifier
                 .semantics {

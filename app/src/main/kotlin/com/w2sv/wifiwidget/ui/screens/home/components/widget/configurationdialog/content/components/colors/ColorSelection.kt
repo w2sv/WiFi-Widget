@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -25,40 +24,24 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.toColor
-import kotlinx.collections.immutable.ImmutableMap
-
-private data class WidgetColorSectionData(
-    val widgetColor: WidgetColor,
-    val getColor: () -> Color,
-)
 
 @Composable
 fun ColorSelection(
-    customColors: ImmutableMap<WidgetColor, Int>,
-    setCustomColor: (WidgetColor, Color) -> Unit,
+    getCustomColor: (WidgetColorSection) -> Color,
+    setCustomColor: (WidgetColorSection, Color) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val sectionData = remember {
-        WidgetColor.entries.map {
-            WidgetColorSectionData(
-                widgetColor = it,
-                getColor = { customColors.getValue(it).toColor() },
-            )
-        }
-    }
-
     var showDialogFor by rememberSaveable {
-        mutableStateOf<WidgetColorSectionData?>(null)
+        mutableStateOf<WidgetColorSection?>(null)
     }
         .apply {
-            value?.let { color ->
+            value?.let { colorSection ->
                 ColorPickerDialog(
-                    label = stringResource(id = color.widgetColor.labelRes),
-                    appliedColor = color.getColor(),
-                    applyColor = { setCustomColor(color.widgetColor, it) },
+                    label = stringResource(id = colorSection.labelRes),
+                    appliedColor = getCustomColor(colorSection),
+                    applyColor = { setCustomColor(colorSection, it) },
                     onDismissRequest = {
                         value = null
                     },
@@ -70,9 +53,10 @@ fun ColorSelection(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier,
     ) {
-        sectionData.forEach {
+        WidgetColorSection.entries.forEach {
             SectionCustomizationRow(
-                sectionData = it,
+                label = stringResource(id = it.labelRes),
+                getColor = { getCustomColor(it) },
                 onClick = { showDialogFor = it },
                 modifier = Modifier.padding(vertical = 4.dp),
             )
@@ -82,31 +66,31 @@ fun ColorSelection(
 
 @Composable
 private fun SectionCustomizationRow(
-    sectionData: WidgetColorSectionData,
+    label: String,
+    getColor: () -> Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val colorPickerButtonCD =
-        stringResource(
-            id = R.string.color_picker_button_cd,
-            stringResource(id = sectionData.widgetColor.labelRes)
-        )
-
     Row(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         Text(
-            text = bulletPointText(stringResource(id = sectionData.widgetColor.labelRes)),
+            text = bulletPointText(label),
             fontSize = 14.sp,
             modifier = Modifier.weight(0.4f),
         )
+        val colorPickerButtonCD =
+            stringResource(
+                id = R.string.color_picker_button_cd,
+                label
+            )
         Button(
             modifier = modifier
                 .size(36.dp)
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = sectionData.getColor(),
+                containerColor = getColor(),
             ),
             onClick = onClick,
             shape = CircleShape,

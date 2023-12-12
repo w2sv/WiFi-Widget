@@ -17,6 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
@@ -26,12 +28,17 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.RefreshingParametersSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ThemeSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.WifiPropertySelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.IPPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import kotlinx.collections.immutable.toImmutableMap
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.WifiPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.utils.toColor
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
-internal fun WidgetConfigurationDialogContent(
+fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     lapUIState: LocationAccessPermissionState,
     modifier: Modifier = Modifier,
@@ -68,7 +75,7 @@ internal fun WidgetConfigurationDialogContent(
             setTheme = { widgetConfiguration.theme.value = it },
             useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
             setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
-            customColorMap = widgetConfiguration.customColorsMap.toImmutableMap(),
+            getCustomColor = { widgetConfiguration.customColorsMap.getValue(it).toColor() },
             setCustomColor = { colorSection, color ->
                 widgetConfiguration.customColorsMap[colorSection] = color.toArgb()
             }
@@ -78,8 +85,9 @@ internal fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_opacity_24,
             headerRes = R.string.opacity,
         )
+        val opacity by widgetConfiguration.opacity.collectAsStateWithLifecycle()
         OpacitySliderWithLabel(
-            opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
+            getOpacity = { opacity },
             onOpacityChanged = {
                 widgetConfiguration.opacity.value = it
             },
@@ -91,33 +99,56 @@ internal fun WidgetConfigurationDialogContent(
             headerRes = R.string.properties,
         )
         WifiPropertySelection(
-            wifiPropertiesMap = widgetConfiguration.wifiProperties,
-            ipSubPropertiesMap = widgetConfiguration.subWifiProperties,
-            allowLAPDependentPropertyCheckChange = { property, newValue ->
-                when (newValue) {
-                    true -> {
-                        when (lapUIState.rationalShown.value) {
-                            false -> {
-                                lapUIState.setRationalTriggeringAction(
-                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(
-                                        property,
-                                    )
+            remember {
+                WidgetWifiProperty.entries
+                    .map { property ->
+                        when (property) {
+                            is WidgetWifiProperty.NonIP.LocationAccessRequiring -> WifiPropertyCheckRowData(
+                                property = property,
+                                isCheckedMap = widgetConfiguration.wifiProperties,
+                                allowCheckChange = { newValue ->
+                                    when (newValue) {
+                                        true -> {
+                                            when (lapUIState.rationalShown.value) {
+                                                false -> {
+                                                    lapUIState.setRationalTriggeringAction(
+                                                        LocationAccessPermissionRequiringAction.PropertyCheckChange(
+                                                            property,
+                                                        )
+                                                    )
+                                                }
+
+                                                true -> {
+                                                    lapUIState.setRequestLaunchingAction(
+                                                        LocationAccessPermissionRequiringAction.PropertyCheckChange(
+                                                            property,
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                            false
+                                        }
+
+                                        false -> true
+                                    }
+                                }
+                            )
+
+                            is WidgetWifiProperty.IP -> {
+                                IPPropertyCheckRowData(
+                                    property = property,
+                                    isCheckedMap = widgetConfiguration.wifiProperties,
+                                    subPropertyIsCheckedMap = widgetConfiguration.subWifiProperties,
                                 )
                             }
 
-                            true -> {
-                                lapUIState.setRequestLaunchingAction(
-                                    LocationAccessPermissionRequiringAction.PropertyCheckChange(
-                                        property,
-                                    )
-                                )
-                            }
+                            is WidgetWifiProperty.NonIP.Other -> WifiPropertyCheckRowData(
+                                property = property,
+                                isCheckedMap = widgetConfiguration.wifiProperties,
+                            )
                         }
-                        false
                     }
-
-                    false -> true
-                }
+                    .toPersistentList()
             },
             showInfoDialog = ::showInfoDialog,
         )
@@ -126,14 +157,28 @@ internal fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_gamepad_24,
             headerRes = R.string.buttons,
         )
-        ButtonSelection(widgetConfiguration.buttonMap)
+        ButtonSelection(
+            remember {
+                WidgetButton.entries.map {
+                    PropertyCheckRowData(
+                        type = it,
+                        labelRes = it.labelRes,
+                        isCheckedMap = widgetConfiguration.buttonMap
+                    )
+                }
+                    .toImmutableList()
+            }
+        )
 
         SectionHeader(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             headerRes = R.string.refreshing,
         )
         RefreshingParametersSelection(
-            widgetRefreshingMap = widgetConfiguration.refreshingParametersMap,
+            parameterIsChecked = { widgetConfiguration.refreshingParametersMap.getValue(it) },
+            onParameterCheckedChanged = { parameter, value ->
+                widgetConfiguration.refreshingParametersMap[parameter] = value
+            },
             scrollToContentColumnBottom = {
                 with(scrollState) {
                     animateScrollTo(maxValue)

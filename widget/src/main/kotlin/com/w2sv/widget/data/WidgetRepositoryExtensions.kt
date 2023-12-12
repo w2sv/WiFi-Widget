@@ -2,7 +2,7 @@ package com.w2sv.widget.data
 
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
@@ -54,9 +54,9 @@ val WidgetRepository.buttons: Flow<WidgetButtons>
 
 val WidgetRepository.customColors: Flow<WidgetColors>
     get() = combine(
-        getCustomColorsMap().getValue(WidgetColor.Background),
-        getCustomColorsMap().getValue(WidgetColor.Primary),
-        getCustomColorsMap().getValue(WidgetColor.Secondary),
+        getCustomColorsMap().getValue(WidgetColorSection.Background),
+        getCustomColorsMap().getValue(WidgetColorSection.Primary),
+        getCustomColorsMap().getValue(WidgetColorSection.Secondary),
         transform = { background, labels, other ->
             WidgetColors(background, labels, other)
         },

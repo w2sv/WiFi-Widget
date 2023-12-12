@@ -3,7 +3,7 @@ package com.w2sv.domain.repository
 import com.w2sv.androidutils.datastorage.datastore.preferences.PersistedValue
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetButton
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.flow.Flow
@@ -18,8 +18,8 @@ interface WidgetRepository {
     fun onWidgetOptionsChanged(widgetId: Int)
     fun getEnabledWifiProperties(): Set<WidgetWifiProperty>
 
-    fun getCustomColorsMap(): Map<WidgetColor, Flow<Int>>
-    suspend fun saveCustomColorsMap(map: Map<WidgetColor, Int>)
+    fun getCustomColorsMap(): Map<WidgetColorSection, Flow<Int>>
+    suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>)
 
     fun getWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>>
     suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>)

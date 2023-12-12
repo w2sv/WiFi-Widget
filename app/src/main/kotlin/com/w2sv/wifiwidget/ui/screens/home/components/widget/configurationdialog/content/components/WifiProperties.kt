@@ -33,44 +33,12 @@ private val firstIndexToSubTypeTitleResId = mapOf(
 )
 
 @Composable
-internal fun WifiPropertySelection(
-    wifiPropertiesMap: MutableMap<WidgetWifiProperty, Boolean>,
-    ipSubPropertiesMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    allowLAPDependentPropertyCheckChange: (WidgetWifiProperty.NonIP.LocationAccessRequiring, Boolean) -> Boolean,
+fun WifiPropertySelection(
+    propertyCheckRowData: ImmutableList<WifiPropertyCheckRowData>,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        val propertyCheckRowData = remember {
-            WidgetWifiProperty.entries.map { property ->
-                when (property) {
-                    is WidgetWifiProperty.NonIP.LocationAccessRequiring -> WifiPropertyCheckRowData(
-                        property = property,
-                        isCheckedMap = wifiPropertiesMap,
-                        allowCheckChange = {
-                            allowLAPDependentPropertyCheckChange(
-                                property,
-                                it,
-                            )
-                        },
-                    )
-
-                    is WidgetWifiProperty.IP -> {
-                        IPPropertyCheckRowData(
-                            property = property,
-                            isCheckedMap = wifiPropertiesMap,
-                            subPropertyIsCheckedMap = ipSubPropertiesMap,
-                        )
-                    }
-
-                    is WidgetWifiProperty.NonIP.Other -> WifiPropertyCheckRowData(
-                        property = property,
-                        isCheckedMap = wifiPropertiesMap,
-                    )
-                }
-            }
-        }
-
         propertyCheckRowData.forEachIndexed { index, data ->
             firstIndexToSubTypeTitleResId[index]?.let { resId ->
                 PropertySubTypeHeader(

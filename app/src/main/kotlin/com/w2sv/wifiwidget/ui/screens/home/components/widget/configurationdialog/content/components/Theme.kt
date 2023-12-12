@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetColor
+import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
@@ -22,8 +22,6 @@ import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
-import com.w2sv.wifiwidget.ui.utils.toColor
-import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
@@ -33,8 +31,8 @@ fun ThemeSelection(
     setTheme: (Theme) -> Unit,
     useDynamicColors: Boolean,
     setUseDynamicColors: (Boolean) -> Unit,
-    customColorMap: ImmutableMap<WidgetColor, Int>,
-    setCustomColor: (WidgetColor, Color) -> Unit,
+    getCustomColor: (WidgetColorSection) -> Color,
+    setCustomColor: (WidgetColorSection, Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -52,12 +50,9 @@ fun ThemeSelection(
                 labelRes = R.string.custom,
                 buttonColoring = ButtonColor.Gradient(
                     circularTrifoldStripeBrush(
-                        customColorMap.getValue(WidgetColor.Background)
-                            .toColor(),
-                        customColorMap.getValue(WidgetColor.Primary)
-                            .toColor(),
-                        customColorMap.getValue(WidgetColor.Secondary)
-                            .toColor(),
+                        getCustomColor(WidgetColorSection.Background),
+                        getCustomColor(WidgetColorSection.Primary),
+                        getCustomColor(WidgetColorSection.Secondary),
                     ),
                 ),
             ),
@@ -71,7 +66,7 @@ fun ThemeSelection(
 
         AnimatedVisibility(visible = customThemeSelected) {
             ColorSelection(
-                customColors = customColorMap,
+                getCustomColor = getCustomColor,
                 setCustomColor = setCustomColor,
                 modifier = Modifier
                     .padding(top = 18.dp),

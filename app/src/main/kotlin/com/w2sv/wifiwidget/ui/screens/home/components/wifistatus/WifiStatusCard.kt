@@ -21,6 +21,7 @@ fun WifiStatusCard(
     modifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
+        modifier = modifier,
         content = {
             IconHeader(
                 iconRes = R.drawable.ic_network_check_24,
@@ -43,6 +44,5 @@ fun WifiStatusCard(
                 }
             }
         },
-        modifier = modifier,
     )
 }

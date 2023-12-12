@@ -18,17 +18,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun RefreshingParametersSelection(
-    widgetRefreshingMap: MutableMap<WidgetRefreshingParameter, Boolean>,
+fun RefreshingParametersSelection(
+    parameterIsChecked: (WidgetRefreshingParameter) -> Boolean,
+    onParameterCheckedChanged: (WidgetRefreshingParameter, Boolean) -> Unit,
     showInfoDialog: (PropertyInfoDialogData) -> Unit,
     scrollToContentColumnBottom: suspend () -> Unit,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val parameterViewData = remember {
-        WidgetRefreshingParameter.entries.map {
-            PropertyCheckRowData(it, it.labelRes, widgetRefreshingMap)
-        }
+        WidgetRefreshingParameter.entries
+            .map { parameter ->
+                PropertyCheckRowData(
+                    property = parameter,
+                    labelRes = parameter.labelRes,
+                    isChecked = { parameterIsChecked(parameter) },
+                    onCheckedChange = { onParameterCheckedChanged(parameter, it) })
+            }
     }
 
     // TODO: try to simplify

@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,7 +47,7 @@ fun WidgetCard(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxSize()) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(
                     onClick = {
                         when (homeScreenVM.lapState.rationalShown.value) {
