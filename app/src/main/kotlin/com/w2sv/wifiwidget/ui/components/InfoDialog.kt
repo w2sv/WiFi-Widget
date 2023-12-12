@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,12 +29,12 @@ fun InfoDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             DialogButton(onClick = onDismissRequest) {
-                AppFontText(text = stringResource(R.string.close))
+                Text(text = stringResource(R.string.close))
             }
         },
         icon = { InfoIcon() },
         title = {
-            AppFontText(
+            Text(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
@@ -48,7 +49,7 @@ fun InfoDialog(
                 Arrangement.Center,
                 Alignment.CenterHorizontally,
             ) {
-                AppFontText(text = text, textAlign = TextAlign.Center)
+                Text(text = text, textAlign = TextAlign.Center)
                 learnMoreButton?.invoke()
             }
         },

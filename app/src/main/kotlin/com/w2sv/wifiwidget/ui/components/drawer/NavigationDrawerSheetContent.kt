@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -36,7 +37,6 @@ import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.utils.RightAligned
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
@@ -195,7 +195,7 @@ private fun SubHeader(
     @StringRes titleRes: Int,
     modifier: Modifier = Modifier,
 ) {
-    AppFontText(
+    Text(
         text = stringResource(id = titleRes),
         modifier = modifier,
         fontSize = 16.sp,
@@ -231,7 +231,7 @@ private fun LabelledItem(
             tint = MaterialTheme.colorScheme.primary,
         )
 
-        AppFontText(
+        Text(
             text = stringResource(id = item.labelRes),
             modifier = Modifier.padding(start = 16.dp),
             fontSize = 16.sp,

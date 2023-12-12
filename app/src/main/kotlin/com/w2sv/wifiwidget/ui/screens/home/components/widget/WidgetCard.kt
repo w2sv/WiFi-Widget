@@ -15,6 +15,7 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
@@ -94,7 +94,7 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
         elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp),
     ) {
-        AppFontText(
+        Text(
             text = stringResource(R.string.pin),
             fontSize = 16.sp,
         )

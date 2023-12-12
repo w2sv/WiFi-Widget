@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -13,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import kotlin.math.roundToInt
 
 @Composable
@@ -27,7 +27,7 @@ internal fun OpacitySliderWithLabel(
     }
 
     Column(modifier = modifier) {
-        AppFontText(
+        Text(
             text = label,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)

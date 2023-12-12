@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.R
@@ -27,6 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.WifiPropertySelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
+import kotlinx.collections.immutable.toImmutableMap
 
 @Composable
 internal fun WidgetConfigurationDialogContent(
@@ -66,7 +68,10 @@ internal fun WidgetConfigurationDialogContent(
             setTheme = { widgetConfiguration.theme.value = it },
             useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
             setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
-            customColorsMap = widgetConfiguration.customColorsMap,
+            customColorMap = widgetConfiguration.customColorsMap.toImmutableMap(),
+            setCustomColor = { colorSection, color ->
+                widgetConfiguration.customColorsMap[colorSection] = color.toArgb()
+            }
         )
 
         SectionHeader(

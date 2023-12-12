@@ -10,6 +10,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 
@@ -79,7 +79,7 @@ private fun <T> PropertyCheckRow(
     ) {
 
         leadingIcon?.invoke()
-        AppFontText(
+        Text(
             text = makeText(label),
             fontSize = fontSize,
             modifier = Modifier.weight(1.0f, true),

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Preview
@@ -58,6 +58,6 @@ fun WifiStatusDisplay(
             tint = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(4.dp))
-        AppFontText(text = stringResource(id = wifiStatus.labelRes))
+        Text(text = stringResource(id = wifiStatus.labelRes))
     }
 }

@@ -13,6 +13,7 @@ import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -75,7 +76,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
                 TextButton(
                     onClick = action.callback,
                 ) {
-                    AppFontText(
+                    Text(
                         text = action.label,
                         color = SnackbarDefaults.actionColor
                     )
@@ -90,9 +91,9 @@ fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.width(10.dp))
             }
             if (visuals.msg is AnnotatedString) {
-                AppFontText(text = visuals.msg)
+                Text(text = visuals.msg)
             } else {
-                AppFontText(text = visuals.message)
+                Text(text = visuals.message)
             }
         }
     }

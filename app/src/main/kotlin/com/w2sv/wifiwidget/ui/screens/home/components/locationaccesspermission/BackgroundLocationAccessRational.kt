@@ -5,7 +5,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.utils.styledTextResource
@@ -36,7 +35,7 @@ fun BackgroundLocationAccessRational(
             InfoIcon()
         },
         text = {
-            AppFontText(text = styledTextResource(id = R.string.background_location_access_rational))
+            Text(text = styledTextResource(id = R.string.background_location_access_rational))
         },
     )
 }

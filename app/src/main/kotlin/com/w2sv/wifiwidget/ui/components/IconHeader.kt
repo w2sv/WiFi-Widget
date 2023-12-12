@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +37,7 @@ fun IconHeader(
             )
         }
         Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
-            AppFontText(
+            Text(
                 text = stringResource(id = headerRes),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,

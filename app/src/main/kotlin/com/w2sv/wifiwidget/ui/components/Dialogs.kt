@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
@@ -66,7 +67,7 @@ fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifi
             it.invoke()
             Spacer(modifier = Modifier.height(12.dp))
         }
-        AppFontText(
+        Text(
             text = properties.title,
             style = MaterialTheme.typography.headlineSmall,
         )
@@ -87,11 +88,11 @@ fun DialogButtonRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         DialogButton(onClick = onCancel) {
-            AppFontText(text = stringResource(R.string.cancel))
+            Text(text = stringResource(R.string.cancel))
         }
         Spacer(modifier = Modifier.width(16.dp))
         DialogButton(onClick = onApply, enabled = applyButtonEnabled) {
-            AppFontText(text = stringResource(R.string.apply))
+            Text(text = stringResource(R.string.apply))
         }
     }
 }

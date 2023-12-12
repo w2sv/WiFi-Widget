@@ -25,6 +25,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
@@ -48,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
@@ -135,7 +135,7 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         Spacer(modifier = Modifier.height(10.dp))
-        AppFontText(
+        Text(
             text = stringResource(R.string.getting_data),
             fontSize = 14.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -182,12 +182,12 @@ private fun HeaderRow(modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier,
     ) {
-        AppFontText(
+        Text(
             text = stringResource(id = R.string.properties),
             fontWeight = FontWeight.SemiBold,
             fontSize = 17.sp,
         )
-        AppFontText(
+        Text(
             text = stringResource(R.string.click_to_copy_to_clipboard),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 12.sp,
@@ -245,12 +245,12 @@ private fun WifiPropertyDisplay(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-        AppFontText(
+        Text(
             text = label,
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.width(16.dp))
-        AppFontText(
+        Text(
             text = viewData.value,
         )
     }
@@ -269,7 +269,7 @@ private fun PrefixLengthDisplay(prefixLengthText: String, modifier: Modifier = M
 
 @Composable
 private fun IPSubPropertyText(text: String) {
-    AppFontText(
+    Text(
         text = text,
         modifier = Modifier
             .border(

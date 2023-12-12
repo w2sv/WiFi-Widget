@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
@@ -22,6 +23,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import com.w2sv.wifiwidget.ui.utils.toColor
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
 
 @Composable
@@ -31,7 +33,8 @@ fun ThemeSelection(
     setTheme: (Theme) -> Unit,
     useDynamicColors: Boolean,
     setUseDynamicColors: (Boolean) -> Unit,
-    customColorsMap: MutableMap<WidgetColor, Int>,
+    customColorMap: ImmutableMap<WidgetColor, Int>,
+    setCustomColor: (WidgetColor, Color) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -49,11 +52,11 @@ fun ThemeSelection(
                 labelRes = R.string.custom,
                 buttonColoring = ButtonColor.Gradient(
                     circularTrifoldStripeBrush(
-                        customColorsMap.getValue(WidgetColor.Background)
+                        customColorMap.getValue(WidgetColor.Background)
                             .toColor(),
-                        customColorsMap.getValue(WidgetColor.Primary)
+                        customColorMap.getValue(WidgetColor.Primary)
                             .toColor(),
-                        customColorsMap.getValue(WidgetColor.Secondary)
+                        customColorMap.getValue(WidgetColor.Secondary)
                             .toColor(),
                     ),
                 ),
@@ -68,7 +71,8 @@ fun ThemeSelection(
 
         AnimatedVisibility(visible = customThemeSelected) {
             ColorSelection(
-                widgetColors = customColorsMap,
+                customColors = customColorMap,
+                setCustomColor = setCustomColor,
                 modifier = Modifier
                     .padding(top = 18.dp),
             )

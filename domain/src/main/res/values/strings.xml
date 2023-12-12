@@ -52,4 +52,7 @@
     <string name="unique_local">Unique Local</string>
     <string name="global_unicast">Global Unicast</string>
     <string name="mc">MC</string>
+    <string name="background">Background</string>
+    <string name="primary">Primary</string>
+    <string name="secondary">Secondary</string>
 </resources>

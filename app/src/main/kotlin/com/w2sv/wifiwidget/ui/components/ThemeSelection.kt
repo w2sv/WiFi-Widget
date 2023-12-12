@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -131,7 +132,7 @@ private fun ThemeIndicator(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        AppFontText(
+        Text(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,

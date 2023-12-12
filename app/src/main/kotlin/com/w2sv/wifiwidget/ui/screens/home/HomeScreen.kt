@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppFontText
 import com.w2sv.wifiwidget.ui.components.AppSnackbar
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.AppTopBar
@@ -171,7 +171,7 @@ private fun PortraitMode(
 
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
-    AppFontText(
+    Text(
         text = stringResource(R.string.copyright_text, Calendar.getInstance().get(Calendar.YEAR)),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
