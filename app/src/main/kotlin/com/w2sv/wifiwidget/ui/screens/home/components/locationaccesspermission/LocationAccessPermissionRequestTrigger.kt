@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
 
 import com.w2sv.domain.model.WidgetWifiProperty
 
-sealed interface LocationAccessPermissionRequiringAction {
-    data object PinWidgetButtonPress : LocationAccessPermissionRequiringAction
+sealed interface LocationAccessPermissionRequestTrigger {
+    data object InitialAppEntry : LocationAccessPermissionRequestTrigger
     class PropertyCheckChange(val property: WidgetWifiProperty.NonIP.LocationAccessRequiring) :
-        LocationAccessPermissionRequiringAction
+        LocationAccessPermissionRequestTrigger
 }

@@ -29,28 +29,22 @@ fun LocationAccessPermissionRequestLauncher(
     lapState: LocationAccessPermissionState,
     widgetVM: WidgetViewModel = viewModel()
 ) {
-    lapState.requestLaunchingAction.collectAsStateWithLifecycle().value?.let { trigger ->
+    lapState.requestTrigger.collectAsStateWithLifecycle().value?.let { trigger ->
         when (trigger) {
-            is LocationAccessPermissionRequiringAction.PinWidgetButtonPress -> LocationAccessPermissionRequest(
+            is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> LocationAccessPermissionRequest(
+                lapState = lapState,
+                onGranted = {
+                    widgetVM.configuration.wifiProperties[trigger.property] = true
+                },
+            )
+
+            is LocationAccessPermissionRequestTrigger.InitialAppEntry -> LocationAccessPermissionRequest(
                 lapState = lapState,
                 onGranted = {
                     WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
                         widgetVM.configuration.wifiProperties[it] = true
                     }
-                    widgetVM.configuration.wifiProperties.sync()
-                    widgetVM.attemptWidgetPin()
                 },
-                onDenied = {
-                    widgetVM.attemptWidgetPin()
-                },
-            )
-
-            is LocationAccessPermissionRequiringAction.PropertyCheckChange -> LocationAccessPermissionRequest(
-                lapState = lapState,
-                onGranted = {
-                    widgetVM.configuration.wifiProperties[trigger.property] = true
-                },
-                onDenied = {},
             )
         }
     }
@@ -61,7 +55,6 @@ fun LocationAccessPermissionRequestLauncher(
 private fun LocationAccessPermissionRequest(
     lapState: LocationAccessPermissionState,
     onGranted: suspend (Context) -> Unit,
-    onDenied: suspend (Context) -> Unit,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     context: Context = LocalContext.current,
     scope: CoroutineScope = rememberCoroutineScope()
@@ -73,25 +66,21 @@ private fun LocationAccessPermissionRequest(
         ),
         onPermissionsResult = { permissionToGranted ->
             scope.launch {
-                when (permissionToGranted.values.all { it }) {
-                    true -> {
-                        onGranted(context)
-                        lapState.onGranted()
-                    }
-
-                    false -> onDenied(context)
+                if (permissionToGranted.values.all { it }) {
+                    onGranted(context)
+                    lapState.onGranted()
                 }
                 lapState.onRequestLaunched()
-                lapState.setRequestLaunchingAction(null)
+                lapState.setRequestTrigger(null)
             }
         },
     )
 
-    LaunchedEffect(permissionState) {
+    LaunchedEffect(Unit) {
         when {
             permissionState.allPermissionsGranted -> {
                 onGranted(context)
-                lapState.setRequestLaunchingAction(null)
+                lapState.setRequestTrigger(null)
             }
 
             permissionState.isLaunchingSuppressed(launchedBefore = lapState.requestLaunched.value) -> {
@@ -107,7 +96,7 @@ private fun LocationAccessPermissionRequest(
                         ),
                     ),
                 )
-                lapState.setRequestLaunchingAction(null)
+                lapState.setRequestTrigger(null)
             }
 
             else -> {

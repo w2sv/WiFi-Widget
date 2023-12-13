@@ -21,7 +21,7 @@ import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.OpacitySliderWithLabel
@@ -109,23 +109,11 @@ fun WidgetConfigurationDialogContent(
                                 allowCheckChange = { newValue ->
                                     when (newValue) {
                                         true -> {
-                                            when (lapUIState.rationalShown.value) {
-                                                false -> {
-                                                    lapUIState.setRationalTriggeringAction(
-                                                        LocationAccessPermissionRequiringAction.PropertyCheckChange(
-                                                            property,
-                                                        )
-                                                    )
-                                                }
-
-                                                true -> {
-                                                    lapUIState.setRequestLaunchingAction(
-                                                        LocationAccessPermissionRequiringAction.PropertyCheckChange(
-                                                            property,
-                                                        )
-                                                    )
-                                                }
-                                            }
+                                            lapUIState.setRequestTrigger(
+                                                LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                                    property,
+                                                )
+                                            )
                                             false
                                         }
 

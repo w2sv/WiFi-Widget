@@ -26,7 +26,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequiringAction
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -50,14 +49,7 @@ fun WidgetCard(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(
                     onClick = {
-                        when (homeScreenVM.lapState.rationalShown.value) {
-                            false ->
-                                homeScreenVM.lapState.setRationalTriggeringAction(
-                                    LocationAccessPermissionRequiringAction.PinWidgetButtonPress
-                                )
-
-                            true -> widgetVM.attemptWidgetPin()
-                        }
+                        widgetVM.attemptWidgetPin()
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)

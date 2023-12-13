@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
     private val scope: CoroutineScope,
-    private val context: Context,
 ) {
     val newlyGranted get() = _newlyGranted.asSharedFlow()
     private val _newlyGranted = MutableSharedFlow<Unit>()
@@ -32,14 +31,6 @@ class LocationAccessPermissionState(
         }
     }
 
-    val rationalTriggeringAction get() = _rationalTriggeringAction.asStateFlow()
-    private val _rationalTriggeringAction: MutableStateFlow<LocationAccessPermissionRequiringAction?> =
-        MutableStateFlow(null)
-
-    fun setRationalTriggeringAction(value: LocationAccessPermissionRequiringAction?) {
-        _rationalTriggeringAction.value = value
-    }
-
     val rationalShown = preferencesRepository.locationAccessPermissionRationalShown.stateIn(
         scope = scope,
         started = SharingStarted.Eagerly
@@ -49,17 +40,15 @@ class LocationAccessPermissionState(
         scope.launch {
             preferencesRepository.locationAccessPermissionRationalShown.save(true)
         }
-        val action = rationalTriggeringAction.value
-        setRationalTriggeringAction(null)
-        setRequestLaunchingAction(action)
+        setRequestTrigger(LocationAccessPermissionRequestTrigger.InitialAppEntry)
     }
 
-    val requestLaunchingAction get() = _requestLaunchingAction.asStateFlow()
-    private val _requestLaunchingAction: MutableStateFlow<LocationAccessPermissionRequiringAction?> =
+    val requestTrigger get() = _requestTrigger.asStateFlow()
+    private val _requestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
         MutableStateFlow(null)
 
-    fun setRequestLaunchingAction(value: LocationAccessPermissionRequiringAction?) {
-        _requestLaunchingAction.value = value
+    fun setRequestTrigger(value: LocationAccessPermissionRequestTrigger?) {
+        _requestTrigger.value = value
     }
 
     val requestLaunched = preferencesRepository.locationAccessPermissionRequested.stateIn(
@@ -80,8 +69,6 @@ class LocationAccessPermissionState(
         _showBackgroundAccessRational.value = value
     }
 
-    private var backgroundAccessGranted = hasBackgroundLocationAccess(context)
-
     val launchBackgroundAccessPermissionRequest
         get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
     private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
@@ -90,17 +77,6 @@ class LocationAccessPermissionState(
         scope.launch {
             _launchBackgroundLocationAccessPermissionRequest.trigger()
         }
-    }
-
-    /**
-     * @return Boolean, representing whether access has been newly granted.
-     */
-    fun updateBackgroundAccessGranted(context: Context = this.context): Boolean {
-        if (!backgroundAccessGranted && hasBackgroundLocationAccess(context)) {
-            backgroundAccessGranted = true
-            return true
-        }
-        return false
     }
 }
 

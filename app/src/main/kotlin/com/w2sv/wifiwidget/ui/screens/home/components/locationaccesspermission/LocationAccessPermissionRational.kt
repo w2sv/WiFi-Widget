@@ -15,7 +15,7 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.styledTextResource
 
 @Composable
-fun LocationAccessPermissionRationalDialog(
+fun LocationAccessPermissionRational(
     onProceed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -44,6 +44,6 @@ fun LocationAccessPermissionRationalDialog(
 @Composable
 private fun Prev() {
     AppTheme {
-        LocationAccessPermissionRationalDialog({})
+        LocationAccessPermissionRational({})
     }
 }

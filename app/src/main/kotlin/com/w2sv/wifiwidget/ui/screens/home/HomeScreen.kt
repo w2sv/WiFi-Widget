@@ -89,10 +89,10 @@ fun HomeScreen(
 
         LocationAccessPermissionRationals(homeScreenVM.lapState)
 
+        LocationAccessPermissionRequestLauncher(lapState = homeScreenVM.lapState)
         if (backgroundLocationAccessGrantRequired) {
             BackgroundLocationAccessPermissionRequestLauncher(trigger = homeScreenVM.lapState.launchBackgroundAccessPermissionRequest)
         }
-        LocationAccessPermissionRequestLauncher(lapState = homeScreenVM.lapState)
 
         LaunchedEffect(snackbarHostState) {
             widgetVM.snackbarVisuals.collect {

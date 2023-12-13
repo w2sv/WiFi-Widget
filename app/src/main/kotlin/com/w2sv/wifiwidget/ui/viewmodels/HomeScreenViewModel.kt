@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
@@ -12,7 +11,6 @@ import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,20 +21,17 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
-    @ApplicationContext context: Context,
-    private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     wifiStatusMonitor: WifiStatusMonitor,
+    private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
 ) : ViewModel() {
 
     fun onStart() {
         refreshWifiPropertyViewData()
-        lapState.updateBackgroundAccessGranted()
     }
 
     val lapState = LocationAccessPermissionState(
         preferencesRepository = preferencesRepository,
         scope = viewModelScope,
-        context = context,
     )
 
     private fun setWifiState(wifiStatus: WifiStatus) {
