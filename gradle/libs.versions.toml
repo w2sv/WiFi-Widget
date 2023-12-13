@@ -37,7 +37,7 @@ androidx-compose-material3 = 'androidx.compose.material3:material3:1.1.2'
 androidx-compose-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose-tooling' }
-androidx-compose-activity = 'androidx.activity:activity-compose:1.8.1'
+androidx-compose-activity = 'androidx.activity:activity-compose:1.8.2'
 androidx-compose-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
