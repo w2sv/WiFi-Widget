@@ -36,10 +36,9 @@ import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessPermissionRequestLauncher
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationals
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessPermissionHandler
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionHandler
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
@@ -87,11 +86,11 @@ fun HomeScreen(
             }
         }
 
-        LocationAccessPermissionRationals(homeScreenVM.lapState)
-
-        LocationAccessPermissionRequest(lapState = homeScreenVM.lapState)
-        if (backgroundLocationAccessGrantRequired) {
-            BackgroundLocationAccessPermissionRequestLauncher(trigger = homeScreenVM.lapState.launchBackgroundAccessRequest)
+        LocationAccessPermissionHandler(state = homeScreenVM.lapState)
+        homeScreenVM.lapState.backgroundAccessState?.let {
+            if (backgroundLocationAccessGrantRequired) {
+                BackgroundLocationAccessPermissionHandler(state = it)
+            }
         }
 
         LaunchedEffect(snackbarHostState) {

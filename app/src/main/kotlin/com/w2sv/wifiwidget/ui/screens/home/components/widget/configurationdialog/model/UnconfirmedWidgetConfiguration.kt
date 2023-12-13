@@ -9,11 +9,13 @@ import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @Stable
 class UnconfirmedWidgetConfiguration(
@@ -25,7 +27,7 @@ class UnconfirmedWidgetConfiguration(
     val theme: UnconfirmedStateFlow<Theme>,
     val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
-    scope: CoroutineScope,
+    private val scope: CoroutineScope,
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
@@ -50,4 +52,25 @@ class UnconfirmedWidgetConfiguration(
             started = SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
             initialValue = false
         )
+
+    fun onLocationAccessPermissionStatusChanged(isGranted: Boolean, trigger: LocationAccessPermissionRequestTrigger?) {
+        when {
+            !isGranted -> {
+                setLocationAccessRequiringPropertyEnablementAndSync(false)
+            }
+            trigger is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
+                setLocationAccessRequiringPropertyEnablementAndSync(true)
+            }
+            trigger is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
+                wifiProperties[trigger.property] = true
+            }
+        }
+    }
+
+    private fun setLocationAccessRequiringPropertyEnablementAndSync(enabled: Boolean) {
+        WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
+            wifiProperties[it] = enabled
+        }
+        scope.launch { wifiProperties.sync() }
+    }
 }

@@ -8,7 +8,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.networking.WifiStatusMonitor
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -60,7 +60,7 @@ class HomeScreenViewModel @Inject constructor(
     private val _wifiState = MutableStateFlow(WifiState(WifiStatus.Disconnected, null))
 
     private fun refreshWifiPropertyViewData() {
-        if (wifiStatus.replayCache.firstOrNull() == WifiStatus.Connected) {
+        if (wifiStatus.replayCache.lastOrNull() == WifiStatus.Connected) {
             setWifiState(WifiStatus.Connected)
         }
     }

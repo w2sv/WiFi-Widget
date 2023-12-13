@@ -15,7 +15,7 @@
     <string name="on_pin_widget_wo_gps_enabled">(B)SSID display requires your GPS to be enabled.</string>
     <string name="on_pin_widget_wo_location_access_permission">(B)SSID display requires location access permission.</string>
     <string name="on_pin_widget_wo_background_location_access_permission">Persistent (B)SSID display requires location access all the time.</string>
-    <string name="background_location_access_rational"><![CDATA[In order for your SSID and/or BSSID to be updated from the widget, that is, while the app is only running in the background, you\'ll need to grant <b>Location Access all the time</b>!]]></string>
+    <string name="background_location_access_rational"><![CDATA[In order for your SSID and/or BSSID to be updated from the widget, that is, while the app is only running in the background, you\'ll need to grant <b>Location Access all the time</b>.]]></string>
     <string name="light">Light</string>
     <string name="system_default">System Default</string>
     <string name="custom">Custom</string>

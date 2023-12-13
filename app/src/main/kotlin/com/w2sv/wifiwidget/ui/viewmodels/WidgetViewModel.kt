@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
-import android.Manifest
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Resources
@@ -8,8 +7,6 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
-import com.w2sv.androidutils.generic.goToAppSettings
-import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
@@ -25,7 +22,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.hasBackgroundLocationAccess
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.hasBackgroundLocationAccess
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -106,16 +103,16 @@ class WidgetViewModel @Inject constructor(
                         ),
                     )
 
-                    !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
-                        AppSnackbarVisuals(
-                            msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
-                            kind = SnackbarKind.Error,
-                            action = SnackbarAction(
-                                label = resources.getString(R.string.grant),
-                                callback = { goToAppSettings(context) }
-                            )
-                        ),
-                    )
+//                    !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
+//                        AppSnackbarVisuals(
+//                            msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
+//                            kind = SnackbarKind.Error,
+//                            action = SnackbarAction(
+//                                label = resources.getString(R.string.grant),
+//                                callback = { goToAppSettings(context) }
+//                            )
+//                        ),
+//                    )
 
                     !hasBackgroundLocationAccess(context) ->
                         _snackbarVisuals.emit(

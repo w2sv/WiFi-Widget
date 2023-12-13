@@ -11,9 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -42,18 +40,11 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
             homeScreenVM.lapState.launchBackgroundAccessPermissionRequest()
         }
-        lifecycleScope.collectFromFlow(homeScreenVM.lapState.grantInducingTrigger) { trigger ->
-            when (trigger) {
-                is LocationAccessPermissionRequestTrigger.InitialAppEntry -> {
-                    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach { property ->
-                        widgetVM.configuration.wifiProperties[property] = true
-                    }
-                    widgetVM.configuration.launchSync()
-                }
-                is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
-                    widgetVM.configuration.wifiProperties[trigger.property] = true
-                }
-            }
+        lifecycleScope.collectFromFlow(homeScreenVM.lapState.grantTrigger) {
+            widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
+        }
+        lifecycleScope.collectFromFlow(homeScreenVM.lapState.isGranted) {
+            widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
         }
 
         setContent {

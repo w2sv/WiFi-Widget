@@ -22,7 +22,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ButtonSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.RefreshingParametersSelection
@@ -109,7 +109,7 @@ fun WidgetConfigurationDialogContent(
                                 allowCheckChange = { newValue ->
                                     (!newValue || lapState.isGranted.value).also {
                                         if (!it) {
-                                            lapState.setRequestTrigger(
+                                            lapState.launchRequest(
                                                 LocationAccessPermissionRequestTrigger.PropertyCheckChange(
                                                     property,
                                                 )
