@@ -42,12 +42,13 @@ class WidgetViewModel @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
     private val resources: Resources,
+    optionsChanged: WidgetProvider.OptionsChanged,
     @ApplicationContext context: Context
 ) :
     ViewModel() {
 
     init {
-        viewModelScope.collectFromFlow(repository.optionsChangedWidgetId) {
+        viewModelScope.collectFromFlow(optionsChanged.widgetId) {
             if (widgetIds.add(it)) {
                 i { "Pinned new widget w ID=$it" }
                 onNewWidgetPinned(context)

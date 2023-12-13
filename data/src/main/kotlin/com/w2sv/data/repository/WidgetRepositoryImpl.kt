@@ -18,12 +18,7 @@ import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,15 +27,6 @@ class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
 ) : PreferencesDataStoreRepository(dataStore),
     WidgetRepository {
-
-    override val optionsChangedWidgetId get() = _optionsChangedWidgetId.asSharedFlow()
-    private val _optionsChangedWidgetId = MutableSharedFlow<Int>()
-
-    override fun onWidgetOptionsChanged(widgetId: Int) {
-        CoroutineScope(Dispatchers.Default).launch {
-            _optionsChangedWidgetId.emit(widgetId)
-        }
-    }
 
     override fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
         getWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys

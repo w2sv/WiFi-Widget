@@ -9,13 +9,10 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.flow.Flow
 
 interface WidgetRepository {
-    val optionsChangedWidgetId: Flow<Int>
-
     val theme: PersistedValue.EnumValued<Theme>
     val useDynamicColors: PersistedValue.UniTyped<Boolean>
     val opacity: PersistedValue.UniTyped<Float>
 
-    fun onWidgetOptionsChanged(widgetId: Int)
     fun getEnabledWifiProperties(): Set<WidgetWifiProperty>
 
     fun getCustomColorsMap(): Map<WidgetColorSection, Flow<Int>>
