@@ -49,7 +49,8 @@ class WidgetViewModel @Inject constructor(
     init {
         viewModelScope.collectFromFlow(repository.optionsChangedWidgetId) {
             if (widgetIds.add(it)) {
-                onNewWidgetPinned(it, context)
+                i { "Pinned new widget w ID=$it" }
+                onNewWidgetPinned(context)
             }
         }
     }
@@ -86,9 +87,7 @@ class WidgetViewModel @Inject constructor(
     val launchBackgroundLocationAccessPermissionRequest get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
     private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
 
-    private fun onNewWidgetPinned(widgetId: Int, context: Context) {
-        i { "Pinned new widget w ID=$widgetId" }
-
+    private fun onNewWidgetPinned(context: Context) {
         viewModelScope.launch {
             if (WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
                     .any {

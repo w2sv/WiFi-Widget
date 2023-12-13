@@ -9,7 +9,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
-import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
@@ -30,22 +29,7 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        if (intent.hasExtra(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG)) {
-            homeScreenVM.setShowWidgetConfigurationDialog(true)
-        }
-
-        lifecycleScope.collectFromFlow(appVM.exitApplication) {
-            finishAffinity()
-        }
-        lifecycleScope.collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
-            homeScreenVM.lapState.launchBackgroundAccessPermissionRequest()
-        }
-        lifecycleScope.collectFromFlow(homeScreenVM.lapState.grantTrigger) {
-            widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
-        }
-        lifecycleScope.collectFromFlow(homeScreenVM.lapState.isGranted) {
-            widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
-        }
+        collectFromFlows()
 
         setContent {
             AppTheme(
@@ -59,6 +43,21 @@ class MainActivity : ComponentActivity() {
             ) {
                 HomeScreen()
             }
+        }
+    }
+
+    private fun collectFromFlows() {
+        lifecycleScope.collectFromFlow(appVM.exitApplication) {
+            finishAffinity()
+        }
+        lifecycleScope.collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
+            homeScreenVM.lapState.backgroundAccessState?.launchRequest()
+        }
+        lifecycleScope.collectFromFlow(homeScreenVM.lapState.grantTrigger) {
+            widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
+        }
+        lifecycleScope.collectFromFlow(homeScreenVM.lapState.isGranted) {
+            widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
         }
     }
 

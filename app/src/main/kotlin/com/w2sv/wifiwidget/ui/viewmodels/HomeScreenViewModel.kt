@@ -1,8 +1,10 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
+import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.collectLatestFromFlow
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
@@ -23,6 +25,7 @@ class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
     wifiStatusMonitor: WifiStatusMonitor,
     private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     fun onStart() {
@@ -78,7 +81,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     val showWidgetConfigurationDialog get() = _showWidgetConfigurationDialog.asStateFlow()
-    private val _showWidgetConfigurationDialog = MutableStateFlow(false)
+    private val _showWidgetConfigurationDialog =
+        MutableStateFlow(savedStateHandle.get<Boolean>(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG) == true)
 
     fun setShowWidgetConfigurationDialog(value: Boolean) {
         _showWidgetConfigurationDialog.value = value
