@@ -7,14 +7,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun LocationAccessPermissionRationals(
     lapState: LocationAccessPermissionState,
 ) {
-    lapState.rationalShown.collectAsStateWithLifecycle().value.let {
-        if (!it) {
-            LocationAccessPermissionRational(
-                onProceed = {
-                    lapState.onRationalShown()
-                },
-            )
-        }
+    if (lapState.showRational.collectAsStateWithLifecycle().value) {
+        LocationAccessPermissionRational(
+            onProceed = {
+                lapState.onRationalShown()
+            },
+        )
     }
     if (lapState.showBackgroundAccessRational.collectAsStateWithLifecycle().value) {
         BackgroundLocationAccessRational(
@@ -22,7 +20,7 @@ fun LocationAccessPermissionRationals(
                 lapState.launchBackgroundAccessPermissionRequest()
             },
             onDismissRequest = {
-                lapState.setShowBackgroundAccessRational(false)
+                lapState.dismissBackgroundAccessRational()
             },
         )
     }

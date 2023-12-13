@@ -67,7 +67,7 @@ class HomeScreenViewModel @Inject constructor(
 
     init {
         with(viewModelScope) {
-            collectFromFlow(lapState.newlyGranted) {
+            collectFromFlow(lapState.isGranted) {
                 refreshWifiPropertyViewData()
             }
             collectLatestFromFlow(wifiStatus) { status ->

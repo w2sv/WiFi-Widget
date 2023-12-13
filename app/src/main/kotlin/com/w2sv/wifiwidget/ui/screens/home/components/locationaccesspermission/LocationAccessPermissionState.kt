@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
+import com.w2sv.androidutils.coroutines.collectFromFlow
+import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.androidutils.permissions.hasPermission
 import com.w2sv.common.utils.trigger
 import com.w2sv.domain.repository.PreferencesRepository
@@ -19,22 +21,63 @@ class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
     private val scope: CoroutineScope,
 ) {
-    val newlyGranted get() = _newlyGranted.asSharedFlow()
-    private val _newlyGranted = MutableSharedFlow<Unit>()
+    val isGranted get() = _isGranted.asStateFlow()
+    private val _isGranted = MutableStateFlow(false)
+        .also {
+            scope.collectFromFlow(it) { isGrantedCollected ->
+                if (isGrantedCollected) {
+                    requestTrigger.value?.let { nonNullRequestTrigger ->
+                        _grantInducingTrigger.emit(nonNullRequestTrigger)
+                        _requestTrigger.value = null
+                        if (backgroundLocationAccessGrantRequired) {
+                            _showBackgroundAccessRational.value = true
+                        }
+                    }
+                }
+            }
+        }
 
-    fun onGranted() {
-        scope.launch {
-            _newlyGranted.trigger()
-        }
-        if (backgroundLocationAccessGrantRequired) {
-            _showBackgroundAccessRational.value = true
-        }
+    fun setIsGranted(value: Boolean) {
+        _isGranted.value = value
     }
 
-    val rationalShown = preferencesRepository.locationAccessPermissionRationalShown.stateIn(
+    val grantInducingTrigger get() = _grantInducingTrigger.asSharedFlow()
+    private val _grantInducingTrigger = MutableSharedFlow<LocationAccessPermissionRequestTrigger>()
+
+    // ===================
+    // Request triggering
+    // ===================
+
+    val requestTrigger get() = _requestTrigger.asStateFlow()
+    private val _requestTrigger = MutableStateFlow<LocationAccessPermissionRequestTrigger?>(null)
+
+    fun setRequestTrigger(value: LocationAccessPermissionRequestTrigger?) {
+        _requestTrigger.value = value
+    }
+
+    val requestLaunchedBefore = preferencesRepository.locationAccessPermissionRequested.stateIn(
         scope = scope,
         started = SharingStarted.Eagerly
     )
+
+    fun onRequestLaunched() {
+        if (!requestLaunchedBefore.value) {
+            preferencesRepository.locationAccessPermissionRequested.launchSave(true, scope)
+        }
+    }
+
+    // ===================
+    // Rational
+    // ===================
+
+    val showRational = preferencesRepository.locationAccessPermissionRationalShown
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly
+        )
+        .mapState {
+            !it
+        }
 
     fun onRationalShown() {
         scope.launch {
@@ -43,39 +86,28 @@ class LocationAccessPermissionState(
         setRequestTrigger(LocationAccessPermissionRequestTrigger.InitialAppEntry)
     }
 
-    val requestTrigger get() = _requestTrigger.asStateFlow()
-    private val _requestTrigger: MutableStateFlow<LocationAccessPermissionRequestTrigger?> =
-        MutableStateFlow(null)
-
-    fun setRequestTrigger(value: LocationAccessPermissionRequestTrigger?) {
-        _requestTrigger.value = value
-    }
-
-    val requestLaunched = preferencesRepository.locationAccessPermissionRequested.stateIn(
-        scope = scope,
-        started = SharingStarted.Eagerly
-    )
-
-    fun onRequestLaunched() {
-        scope.launch {
-            preferencesRepository.locationAccessPermissionRequested.save(true)
-        }
-    }
+    // ===================
+    // Background access rational
+    // ===================
 
     val showBackgroundAccessRational get() = _showBackgroundAccessRational.asStateFlow()
     private val _showBackgroundAccessRational = MutableStateFlow(false)
 
-    fun setShowBackgroundAccessRational(value: Boolean) {
-        _showBackgroundAccessRational.value = value
+    fun dismissBackgroundAccessRational() {
+        _showBackgroundAccessRational.value = false
     }
 
-    val launchBackgroundAccessPermissionRequest
-        get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
-    private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
+    // ===================
+    // Background access requesting
+    // ===================
+
+    val launchBackgroundAccessRequest
+        get() = _launchBackgroundAccessRequest.asSharedFlow()
+    private val _launchBackgroundAccessRequest = MutableSharedFlow<Unit>()
 
     fun launchBackgroundAccessPermissionRequest() {
         scope.launch {
-            _launchBackgroundLocationAccessPermissionRequest.trigger()
+            _launchBackgroundAccessRequest.trigger()
         }
     }
 }

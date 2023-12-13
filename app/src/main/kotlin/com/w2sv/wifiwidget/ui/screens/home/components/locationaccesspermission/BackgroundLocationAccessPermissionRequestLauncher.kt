@@ -8,7 +8,6 @@ import androidx.compose.runtime.LaunchedEffect
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalPermissionsApi::class)
@@ -18,7 +17,7 @@ fun BackgroundLocationAccessPermissionRequestLauncher(trigger: SharedFlow<Unit>)
         rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
     LaunchedEffect(trigger) {
-        trigger.collectLatest {
+        trigger.collect {
             permissionState.launchPermissionRequest()
         }
     }

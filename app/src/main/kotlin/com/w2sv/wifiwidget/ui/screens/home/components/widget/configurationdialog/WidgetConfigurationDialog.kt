@@ -56,7 +56,7 @@ fun WidgetConfigurationDialog(
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
-            lapUIState = homeScreenViewModel.lapState,
+            lapState = homeScreenViewModel.lapState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 16.dp)

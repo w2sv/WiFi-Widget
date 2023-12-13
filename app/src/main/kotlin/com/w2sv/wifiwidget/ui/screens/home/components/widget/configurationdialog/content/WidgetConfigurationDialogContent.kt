@@ -40,7 +40,7 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
-    lapUIState: LocationAccessPermissionState,
+    lapState: LocationAccessPermissionState,
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
@@ -107,17 +107,14 @@ fun WidgetConfigurationDialogContent(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
-                                    when (newValue) {
-                                        true -> {
-                                            lapUIState.setRequestTrigger(
+                                    (!newValue || lapState.isGranted.value).also {
+                                        if (!it) {
+                                            lapState.setRequestTrigger(
                                                 LocationAccessPermissionRequestTrigger.PropertyCheckChange(
                                                     property,
                                                 )
                                             )
-                                            false
                                         }
-
-                                        false -> true
                                     }
                                 }
                             )

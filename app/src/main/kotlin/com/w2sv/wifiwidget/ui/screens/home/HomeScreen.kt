@@ -38,7 +38,7 @@ import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessPermissionRequestLauncher
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRationals
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestLauncher
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequest
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
@@ -89,9 +89,9 @@ fun HomeScreen(
 
         LocationAccessPermissionRationals(homeScreenVM.lapState)
 
-        LocationAccessPermissionRequestLauncher(lapState = homeScreenVM.lapState)
+        LocationAccessPermissionRequest(lapState = homeScreenVM.lapState)
         if (backgroundLocationAccessGrantRequired) {
-            BackgroundLocationAccessPermissionRequestLauncher(trigger = homeScreenVM.lapState.launchBackgroundAccessPermissionRequest)
+            BackgroundLocationAccessPermissionRequestLauncher(trigger = homeScreenVM.lapState.launchBackgroundAccessRequest)
         }
 
         LaunchedEffect(snackbarHostState) {
@@ -172,7 +172,10 @@ private fun PortraitMode(
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(R.string.copyright_text, Calendar.getInstance().get(Calendar.YEAR)),
+        text = stringResource(
+            R.string.copyright_text,
+            Calendar.getInstance().get(Calendar.YEAR)
+        ),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
         modifier = modifier,
