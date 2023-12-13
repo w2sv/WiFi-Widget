@@ -11,10 +11,11 @@ import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
-import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
+
+private val REFRESH_PERIOD = Duration.ofMinutes(15L)
 
 class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -34,29 +35,26 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         private val workManager: WorkManager,
         private val widgetRepository: WidgetRepository,
     ) {
-
-        private val refreshing: WidgetRefreshing get() = widgetRepository.refreshing.getValueSynchronously()
-
         fun applyChangedParameters() {
+            val refreshing = widgetRepository.refreshing.getValueSynchronously()
+
             when (refreshing.refreshPeriodically) {
-                true -> enableWorker()
+                true -> enableWorker(refreshing.refreshOnLowBattery)
                 false -> cancelWorker()
             }
         }
 
-        fun enableWorker() {
-            val refreshPeriod = Duration.ofMinutes(15L)
-
+        private fun enableWorker(refreshOnLowBattery: Boolean) {
             workManager.enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
-                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(refreshPeriod)
+                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(REFRESH_PERIOD)
                     .setConstraints(
                         Constraints.Builder()
-                            .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshing.refreshOnLowBattery)
+                            .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshOnLowBattery)
                             .build(),
                     )
-                    .setInitialDelay(refreshPeriod)
+                    .setInitialDelay(REFRESH_PERIOD)
                     .build(),
             )
             i { "Enqueued $UNIQUE_WORK_NAME" }
@@ -70,6 +68,6 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
     }
 
     companion object {
-        private val UNIQUE_WORK_NAME get() = WidgetDataRefreshWorker::class.java.simpleName
+        private val UNIQUE_WORK_NAME = WidgetDataRefreshWorker::class.java.simpleName
     }
 }
