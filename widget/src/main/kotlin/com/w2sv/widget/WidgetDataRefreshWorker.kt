@@ -2,6 +2,7 @@ package com.w2sv.widget
 
 import android.content.Context
 import android.os.PowerManager
+import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -11,17 +12,24 @@ import androidx.work.WorkerParameters
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private val REFRESH_PERIOD = Duration.ofMinutes(15L)
 
-class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
+@HiltWorker
+class WidgetDataRefreshWorker @AssistedInject constructor(
+    @Assisted appContext: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val powerManager: PowerManager
+) : Worker(appContext, workerParams) {
 
     override fun doWork(): Result {
-        when (applicationContext.getSystemService(PowerManager::class.java).isInteractive) {
+        when (powerManager.isInteractive) {
             false -> i { "System not interactive; Skipping Widget Data refresh" }
             true -> {
                 WidgetProvider.triggerDataRefresh(applicationContext)
@@ -31,6 +39,7 @@ class WidgetDataRefreshWorker(context: Context, workerParams: WorkerParameters) 
         return Result.success()
     }
 
+    @Singleton
     class Manager @Inject constructor(
         private val workManager: WorkManager,
         private val widgetRepository: WidgetRepository,

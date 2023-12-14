@@ -39,17 +39,18 @@ androidx-compose-material3 = 'androidx.compose.material3:material3:1.1.2'
 androidx-compose-ui = { module = 'androidx.compose.ui:ui', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling-preview = { module = 'androidx.compose.ui:ui-tooling-preview', version.ref = 'compose-tooling' }
 androidx-compose-ui-tooling = { module = 'androidx.compose.ui:ui-tooling', version.ref = 'compose-tooling' }
-androidx-compose-activity = 'androidx.activity:activity-compose:1.8.1'
+androidx-compose-activity = 'androidx.activity:activity-compose:1.8.2'
 androidx-compose-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel-compose', version.ref = 'lifecycle' }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 # Google
-google-material = 'com.google.android.material:material:1.10.0'
+google-material = 'com.google.android.material:material:1.11.0'
 accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.32.0"
 
 # .Hilt
 google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
 google-hilt-compiler = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
+androidx-hilt-work =  "androidx.hilt:hilt-work:1.1.0"
 
 # Other
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }

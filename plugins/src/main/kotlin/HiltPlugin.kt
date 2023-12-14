@@ -12,6 +12,7 @@ class HiltPlugin : Plugin<Project> {
 
             dependencies {
                 "implementation"(libs.findLibrary("google.hilt").get())
+                "implementation"(libs.findLibrary("androidx.hilt.work").get())
                 "ksp"(libs.findLibrary("google.hilt.compiler").get())
             }
         }

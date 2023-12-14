@@ -93,6 +93,11 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
+        val widgetView = RemoteViews(
+            context.packageName,
+            R.layout.widget,
+        )
+
         appWidgetIds.forEach { id ->
             i { "updateWidget | appWidgetId=$id" }
 
@@ -100,11 +105,8 @@ class WidgetProvider : AppWidgetProvider() {
                 id,
                 widgetLayoutPopulator
                     .populate(
-                        RemoteViews(
-                            context.packageName,
-                            R.layout.widget,
-                        ),
-                        id,
+                        widget = widgetView,
+                        appWidgetId = id,
                     ),
             )
         }
