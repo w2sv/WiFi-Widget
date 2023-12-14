@@ -116,9 +116,13 @@ data class ThemeIndicatorProperties(
     val buttonColoring: ButtonColor,
 )
 
-sealed class ButtonColor(val containerColor: Color) {
-    class Uniform(color: Color) : ButtonColor(color)
-    class Gradient(val brush: Brush) : ButtonColor(Color.Transparent)
+sealed interface ButtonColor {
+    val containerColor: Color
+
+    data class Uniform(override val containerColor: Color) : ButtonColor
+    data class Gradient(val brush: Brush) : ButtonColor {
+        override val containerColor: Color = Color.Transparent
+    }
 }
 
 @Composable
