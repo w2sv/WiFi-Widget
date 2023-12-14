@@ -41,7 +41,9 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
 
-        widgetDataRefreshWorkerManager.applyChangedParameters()
+        CoroutineScope(Dispatchers.Default).launch {
+            widgetDataRefreshWorkerManager.applyChangedParameters()
+        }
     }
 
     /**

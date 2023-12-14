@@ -5,12 +5,9 @@ import android.content.Context
 import android.os.PowerManager
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.appearance
-import com.w2sv.widget.data.refreshing
 import com.w2sv.widget.model.WidgetAppearance
-import com.w2sv.widget.model.WidgetRefreshing
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,14 +35,6 @@ object WidgetModule {
         context.getSystemService(PowerManager::class.java)
 
     @Provides
-    fun widgetRefreshing(widgetRepository: WidgetRepository): WidgetRefreshing =
-        widgetRepository.refreshing.getValueSynchronously()
-
-    @Provides
     fun widgetAppearance(widgetRepository: WidgetRepository): WidgetAppearance =
         widgetRepository.appearance.getValueSynchronously()
-
-    @Provides
-    fun enabledWidgetWifiProperties(widgetRepository: WidgetRepository): Set<WidgetWifiProperty> =
-        widgetRepository.getEnabledWifiProperties()
 }

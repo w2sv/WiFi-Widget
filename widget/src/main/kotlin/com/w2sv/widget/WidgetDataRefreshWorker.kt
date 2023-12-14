@@ -9,11 +9,11 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.flow.lastOrNull
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
@@ -44,12 +44,12 @@ class WidgetDataRefreshWorker @AssistedInject constructor(
         private val workManager: WorkManager,
         private val widgetRepository: WidgetRepository,
     ) {
-        fun applyChangedParameters() {
-            val refreshing = widgetRepository.refreshing.getValueSynchronously()
-
-            when (refreshing.refreshPeriodically) {
-                true -> enableWorker(refreshing.refreshOnLowBattery)
-                false -> cancelWorker()
+        suspend fun applyChangedParameters() {
+            widgetRepository.refreshing.lastOrNull()?.apply {
+                when (refreshPeriodically) {
+                    true -> enableWorker(refreshOnLowBattery)
+                    false -> cancelWorker()
+                }
             }
         }
 

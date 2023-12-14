@@ -27,11 +27,9 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import slimber.log.i
 import javax.inject.Inject
 
@@ -167,9 +165,7 @@ class WidgetViewModel @Inject constructor(
             scope = viewModelScope,
             syncState = {
                 repository.saveRefreshingParametersEnablementMap(it)
-                withContext(Dispatchers.IO) {
-                    widgetDataRefreshWorkerManager.applyChangedParameters()
-                }
+                widgetDataRefreshWorkerManager.applyChangedParameters()
             },
         ),
         useDynamicColors = UnconfirmedStateFlow(
