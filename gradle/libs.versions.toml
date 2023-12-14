@@ -42,7 +42,7 @@ androidx-compose-viewmodel = { module = 'androidx.lifecycle:lifecycle-viewmodel-
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 
 # Google
-google-material = 'com.google.android.material:material:1.10.0'
+google-material = 'com.google.android.material:material:1.11.0'
 accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.32.0"
 
 # .Hilt
