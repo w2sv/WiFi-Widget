@@ -42,8 +42,6 @@ fun WidgetConfigurationDialogContent(
     lapState: LocationAccessPermissionState,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-
     var propertyInfoDialogData by remember {
         mutableStateOf<PropertyInfoDialogData?>(null)
     }
@@ -60,7 +58,7 @@ fun WidgetConfigurationDialogContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .verticalScroll(scrollState),
+            .verticalScroll(rememberScrollState()),
     ) {
         SectionHeader(
             iconRes = R.drawable.ic_nightlight_24,
@@ -84,9 +82,8 @@ fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_opacity_24,
             headerRes = R.string.opacity,
         )
-        val opacity by widgetConfiguration.opacity.collectAsStateWithLifecycle()
         OpacitySliderWithLabel(
-            getOpacity = { opacity },
+            opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
             onOpacityChanged = {
                 widgetConfiguration.opacity.value = it
             },
@@ -106,15 +103,16 @@ fun WidgetConfigurationDialogContent(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
-                                    (!newValue || lapState.isGranted.value).also {
-                                        if (!it) {
-                                            lapState.launchRequest(
-                                                LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                                    property,
+                                    (!newValue || lapState.isGranted.value)
+                                        .also {
+                                            if (!it) {
+                                                lapState.launchRequest(
+                                                    LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                                        property,
+                                                    )
                                                 )
-                                            )
+                                            }
                                         }
-                                    }
                                 },
                                 infoDialogData = property.infoDialogData
                             )
