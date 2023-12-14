@@ -1,47 +1,34 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
-import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WidgetProperty
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-open class PropertyCheckRowData<T>(
+data class PropertyCheckRowData<T : WidgetProperty>(
     val property: T,
-    @StringRes val labelRes: Int,
     val isChecked: () -> Boolean,
     val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true },
+    val subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
+    val infoDialogData: PropertyInfoDialogData? = null
 ) {
-    constructor(
-        property: T,
-        @StringRes labelRes: Int,
-        isCheckedMap: MutableMap<T, Boolean>,
-        allowCheckChange: (Boolean) -> Boolean = { true },
-    ) : this(
-        property = property,
-        labelRes = labelRes,
-        isChecked = { isCheckedMap.getValue(property) },
-        onCheckedChange = { isCheckedMap[property] = it },
-        allowCheckChange = allowCheckChange,
-    )
+    companion object {
+        fun <T : WidgetProperty> fromMutableMap(
+            property: T,
+            isCheckedMap: MutableMap<T, Boolean>,
+            allowCheckChange: (Boolean) -> Boolean = { true },
+            subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
+            infoDialogData: PropertyInfoDialogData? = null
+        ): PropertyCheckRowData<T> =
+            PropertyCheckRowData(
+                property = property,
+                isChecked = { isCheckedMap.getValue(property) },
+                onCheckedChange = { isCheckedMap[property] = it },
+                allowCheckChange = allowCheckChange,
+                subPropertyCheckRowData = subPropertyCheckRowData,
+                infoDialogData = infoDialogData
+            )
+    }
 }
-
-@Immutable
-open class WifiPropertyCheckRowData(
-    property: WidgetWifiProperty,
-    isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
-    allowCheckChange: (Boolean) -> Boolean = { true },
-) : PropertyCheckRowData<WidgetWifiProperty>(
-    property,
-    property.labelRes,
-    isCheckedMap,
-    allowCheckChange,
-)
-
-@Immutable
-class IPPropertyCheckRowData(
-    property: WidgetWifiProperty.IP,
-    isCheckedMap: MutableMap<WidgetWifiProperty, Boolean>,
-    val subPropertyIsCheckedMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    allowCheckChange: (Boolean) -> Boolean = { true },
-) : WifiPropertyCheckRowData(property, isCheckedMap, allowCheckChange)

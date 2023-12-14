@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,7 +19,7 @@ import com.w2sv.wifiwidget.ui.components.ButtonColor
 import com.w2sv.wifiwidget.ui.components.ThemeIndicatorProperties
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.colors.ColorSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.colors.ColorSelection
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import kotlinx.collections.immutable.persistentMapOf

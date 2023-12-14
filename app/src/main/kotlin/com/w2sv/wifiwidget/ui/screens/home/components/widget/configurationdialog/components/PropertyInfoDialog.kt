@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import android.content.Context
 import androidx.compose.foundation.layout.padding

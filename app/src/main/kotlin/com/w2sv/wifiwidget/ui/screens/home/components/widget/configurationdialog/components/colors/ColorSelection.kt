@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.colors
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.colors
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

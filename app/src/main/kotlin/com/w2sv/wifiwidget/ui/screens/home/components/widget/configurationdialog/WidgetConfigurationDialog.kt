@@ -17,7 +17,6 @@ import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.WidgetConfigurationDialogContent
 import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel

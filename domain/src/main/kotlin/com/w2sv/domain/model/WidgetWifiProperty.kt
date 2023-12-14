@@ -4,8 +4,7 @@ import androidx.annotation.StringRes
 import com.w2sv.domain.R
 import kotlinx.coroutines.flow.Flow
 
-sealed interface WidgetWifiProperty {
-    val labelRes: Int
+sealed interface WidgetWifiProperty : WidgetProperty {
     val descriptionRes: Int
     val learnMoreUrl: String?
     val defaultIsEnabled: Boolean
@@ -129,7 +128,11 @@ sealed interface WidgetWifiProperty {
         val showPrefixLengthSubProperty: SubProperty
             get() = SubProperty(this, SubProperty.Kind.ShowPrefixLength)
 
-        data class SubProperty(val property: IP, val kind: Kind) {
+        data class SubProperty(val property: IP, val kind: Kind) : WidgetProperty {
+
+            override val labelRes: Int
+                get() = kind.labelRes
+
             sealed class Kind(@StringRes val labelRes: Int) {
                 data object ShowPrefixLength : Kind(R.string.show_prefix_length)
             }

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
@@ -18,23 +18,22 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ButtonSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.OpacitySliderWithLabel
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.RefreshingParametersSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.ThemeSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.content.components.WifiPropertySelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.IPPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ThemeSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.WifiPropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.utils.toColor
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -98,12 +97,12 @@ fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_checklist_24,
             headerRes = R.string.properties,
         )
-        WifiPropertySelection(
+        PropertyCheckRows(
             remember {
                 WidgetWifiProperty.entries
                     .map { property ->
                         when (property) {
-                            is WidgetWifiProperty.NonIP.LocationAccessRequiring -> WifiPropertyCheckRowData(
+                            is WidgetWifiProperty.NonIP.LocationAccessRequiring -> PropertyCheckRowData.fromMutableMap(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
@@ -116,20 +115,39 @@ fun WidgetConfigurationDialogContent(
                                             )
                                         }
                                     }
-                                }
+                                },
+                                infoDialogData = property.infoDialogData
                             )
 
                             is WidgetWifiProperty.IP -> {
-                                IPPropertyCheckRowData(
+                                PropertyCheckRowData.fromMutableMap(
                                     property = property,
                                     isCheckedMap = widgetConfiguration.wifiProperties,
-                                    subPropertyIsCheckedMap = widgetConfiguration.subWifiProperties,
+                                    subPropertyCheckRowData = property.subProperties
+                                        .map { subProperty ->
+                                            PropertyCheckRowData.fromMutableMap(
+                                                property = subProperty,
+                                                isCheckedMap = widgetConfiguration.subWifiProperties,
+                                                allowCheckChange = { newValue ->
+                                                    (property as? WidgetWifiProperty.IP.V4AndV6)?.let { v4AndV6Property ->
+                                                        newValue || !subProperty.isAddressTypeEnablementProperty || v4AndV6Property.addressTypeEnablementSubProperties.all {
+                                                            widgetConfiguration.subWifiProperties.getValue(
+                                                                it
+                                                            )
+                                                        }
+                                                    } ?: true
+                                                }
+                                            )
+                                        }
+                                        .toPersistentList(),
+                                    infoDialogData = property.infoDialogData
                                 )
                             }
 
-                            is WidgetWifiProperty.NonIP.Other -> WifiPropertyCheckRowData(
+                            is WidgetWifiProperty.NonIP.Other -> PropertyCheckRowData.fromMutableMap(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
+                                infoDialogData = property.infoDialogData
                             )
                         }
                     }
@@ -142,16 +160,15 @@ fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_gamepad_24,
             headerRes = R.string.buttons,
         )
-        ButtonSelection(
-            remember {
+        PropertyCheckRows(
+            dataList = remember {
                 WidgetButton.entries.map {
-                    PropertyCheckRowData(
+                    PropertyCheckRowData.fromMutableMap(
                         property = it,
-                        labelRes = it.labelRes,
                         isCheckedMap = widgetConfiguration.buttonMap
                     )
                 }
-                    .toImmutableList()
+                    .toPersistentList()
             }
         )
 
@@ -159,17 +176,30 @@ fun WidgetConfigurationDialogContent(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             headerRes = R.string.refreshing,
         )
-        RefreshingParametersSelection(
-            parameterIsChecked = { widgetConfiguration.refreshingParametersMap.getValue(it) },
-            onParameterCheckedChanged = { parameter, value ->
-                widgetConfiguration.refreshingParametersMap[parameter] = value
+        PropertyCheckRows(
+            dataList = remember {
+                persistentListOf(
+                    PropertyCheckRowData.fromMutableMap(
+                        property = WidgetRefreshingParameter.RefreshPeriodically,
+                        isCheckedMap = widgetConfiguration.refreshingParametersMap,
+                        infoDialogData = PropertyInfoDialogData(
+                            labelRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
+                            descriptionRes = R.string.refresh_periodically_info
+                        ),
+                        subPropertyCheckRowData = persistentListOf(
+                            PropertyCheckRowData.fromMutableMap(
+                                property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                                isCheckedMap = widgetConfiguration.refreshingParametersMap
+                            )
+                        )
+                    ),
+                    PropertyCheckRowData.fromMutableMap(
+                        property = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
+                        isCheckedMap = widgetConfiguration.refreshingParametersMap
+                    )
+                )
             },
-            scrollToContentColumnBottom = {
-                with(scrollState) {
-                    animateScrollTo(maxValue)
-                }
-            },
-            showInfoDialog = ::showInfoDialog,
+            showInfoDialog = ::showInfoDialog
         )
     }
 }
