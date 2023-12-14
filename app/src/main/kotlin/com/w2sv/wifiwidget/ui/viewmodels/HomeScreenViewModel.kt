@@ -42,7 +42,7 @@ class HomeScreenViewModel @Inject constructor(
             status = wifiStatus,
             propertyViewData = if (wifiStatus == WifiStatus.Connected)
                 widgetWifiPropertyValueViewDataFactory(
-                    properties = WidgetWifiProperty.entries,
+                    properties = if (lapState.isGranted.value) WidgetWifiProperty.entries else WidgetWifiProperty.IP.entries + WidgetWifiProperty.NonIP.Other.entries,
                     ipSubPropertyEnablementMap = allIpSubPropertiesEnabled
                 )
             else
