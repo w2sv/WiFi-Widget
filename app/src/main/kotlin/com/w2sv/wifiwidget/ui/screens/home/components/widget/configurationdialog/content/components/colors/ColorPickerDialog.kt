@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
-internal fun ColorPickerDialog(
+fun ColorPickerDialog(
     label: String,
     appliedColor: Color,
     onDismissRequest: () -> Unit,

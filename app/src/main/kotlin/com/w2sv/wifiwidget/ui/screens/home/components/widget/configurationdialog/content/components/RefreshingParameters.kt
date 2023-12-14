@@ -33,7 +33,8 @@ fun RefreshingParametersSelection(
                     property = parameter,
                     labelRes = parameter.labelRes,
                     isChecked = { parameterIsChecked(parameter) },
-                    onCheckedChange = { onParameterCheckedChanged(parameter, it) })
+                    onCheckedChange = { onParameterCheckedChanged(parameter, it) }
+                )
             }
     }
 

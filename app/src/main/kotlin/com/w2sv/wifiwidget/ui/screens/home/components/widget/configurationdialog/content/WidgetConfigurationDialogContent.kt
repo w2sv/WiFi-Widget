@@ -146,7 +146,7 @@ fun WidgetConfigurationDialogContent(
             remember {
                 WidgetButton.entries.map {
                     PropertyCheckRowData(
-                        type = it,
+                        property = it,
                         labelRes = it.labelRes,
                         isCheckedMap = widgetConfiguration.buttonMap
                     )

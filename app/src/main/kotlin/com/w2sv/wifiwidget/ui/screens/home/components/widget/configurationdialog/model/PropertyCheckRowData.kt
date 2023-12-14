@@ -13,15 +13,15 @@ open class PropertyCheckRowData<T>(
     val allowCheckChange: (Boolean) -> Boolean = { true },
 ) {
     constructor(
-        type: T,
+        property: T,
         @StringRes labelRes: Int,
         isCheckedMap: MutableMap<T, Boolean>,
         allowCheckChange: (Boolean) -> Boolean = { true },
     ) : this(
-        property = type,
+        property = property,
         labelRes = labelRes,
-        isChecked = { isCheckedMap.getValue(type) },
-        onCheckedChange = { isCheckedMap[type] = it },
+        isChecked = { isCheckedMap.getValue(property) },
+        onCheckedChange = { isCheckedMap[property] = it },
         allowCheckChange = allowCheckChange,
     )
 }

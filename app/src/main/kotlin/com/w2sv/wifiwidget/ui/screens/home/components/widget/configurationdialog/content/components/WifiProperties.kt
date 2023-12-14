@@ -84,7 +84,7 @@ private fun WifiPropertyCheckRow(
                         (data.property as WidgetWifiProperty.IP).subProperties
                             .map { subProperty ->
                                 PropertyCheckRowData(
-                                    type = subProperty,
+                                    property = subProperty,
                                     labelRes = subProperty.kind.labelRes,
                                     isCheckedMap = data.subPropertyIsCheckedMap,
                                     allowCheckChange = { newValue ->

@@ -27,7 +27,7 @@ import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 
 @Composable
-internal fun <T> PropertyCheckRow(
+fun <T> PropertyCheckRow(
     data: PropertyCheckRowData<T>,
     modifier: Modifier = Modifier,
     onInfoButtonClick: (() -> Unit)? = null,
@@ -46,7 +46,7 @@ internal fun <T> PropertyCheckRow(
 }
 
 @Composable
-internal fun <T> SubPropertyCheckRow(
+fun <T> SubPropertyCheckRow(
     data: PropertyCheckRowData<T>,
     modifier: Modifier = Modifier,
     onInfoButtonClick: (() -> Unit)? = null,
