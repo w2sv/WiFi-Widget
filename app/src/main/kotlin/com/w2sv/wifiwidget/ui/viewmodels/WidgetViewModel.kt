@@ -101,17 +101,6 @@ class WidgetViewModel @Inject constructor(
                         ),
                     )
 
-//                    !context.hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) -> _snackbarVisuals.emit(
-//                        AppSnackbarVisuals(
-//                            msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
-//                            kind = SnackbarKind.Error,
-//                            action = SnackbarAction(
-//                                label = resources.getString(R.string.grant),
-//                                callback = { goToAppSettings(context) }
-//                            )
-//                        ),
-//                    )
-
                     !hasBackgroundLocationAccess(context) ->
                         _snackbarVisuals.emit(
                             AppSnackbarVisuals(

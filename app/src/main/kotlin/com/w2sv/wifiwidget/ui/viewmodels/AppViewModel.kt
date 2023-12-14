@@ -14,8 +14,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val BACK_PRESS_CONFIRMATION_WINDOW = 2500L
-
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
@@ -72,7 +70,7 @@ class AppViewModel @Inject constructor(
     }
 
     private val backPressHandler = BackPressHandler(
-        viewModelScope,
-        BACK_PRESS_CONFIRMATION_WINDOW
+        coroutineScope = viewModelScope,
+        confirmationWindowDuration = 2500L
     )
 }

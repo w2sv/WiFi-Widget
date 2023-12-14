@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 import slimber.log.i
 
 @Composable
-fun WifiPropertiesDisplay(
+fun WifiPropertyDisplay(
     propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>,
     modifier: Modifier = Modifier,
 ) {
