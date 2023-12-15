@@ -3,26 +3,30 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.collectLatestFromFlow
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
+import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     preferencesRepository: PreferencesRepository,
+    widgetRepository: WidgetRepository,
     wifiStatusMonitor: WifiStatusMonitor,
     private val widgetWifiPropertyValueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
     savedStateHandle: SavedStateHandle
@@ -37,13 +41,34 @@ class HomeScreenViewModel @Inject constructor(
         scope = viewModelScope,
     )
 
+    private val wifiPropertyEnablementMap =
+        widgetRepository.getWifiPropertyEnablementMap().mapValues { (_, v) ->
+            v.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
+                true
+            )
+        }
+    private val ipSubPropertyEnablementMap =
+        widgetRepository.getIPSubPropertyEnablementMap().mapValues { (_, v) ->
+            v.stateIn(
+                viewModelScope,
+                SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
+                true
+            )
+        }
+
     private fun setWifiState(wifiStatus: WifiStatus) {
         _wifiState.value = WifiState(
             status = wifiStatus,
             propertyViewData = if (wifiStatus == WifiStatus.Connected)
                 widgetWifiPropertyValueViewDataFactory(
-                    properties = if (lapState.isGranted.value) WidgetWifiProperty.entries else WidgetWifiProperty.IP.entries + WidgetWifiProperty.NonIP.Other.entries,
-                    ipSubPropertyEnablementMap = allIpSubPropertiesEnabled
+                    properties = wifiPropertyEnablementMap.keys.filter {
+                        wifiPropertyEnablementMap.getValue(
+                            it
+                        ).value
+                    },
+                    ipSubPropertyEnablementMap = ipSubPropertyEnablementMap.mapValues { (_, v) -> v.value }
                 )
             else
                 null
@@ -56,26 +81,29 @@ class HomeScreenViewModel @Inject constructor(
     private val wifiStatus = wifiStatusMonitor.wifiStatus.shareIn(
         viewModelScope,
         SharingStarted.Eagerly,
-        1
     )
 
     val wifiState get() = _wifiState.asStateFlow()
     private val _wifiState = MutableStateFlow(WifiState(WifiStatus.Disconnected, null))
 
     private fun refreshWifiPropertyViewData() {
-        if (wifiStatus.replayCache.lastOrNull() == WifiStatus.Connected) {
+        if (wifiState.value.status == WifiStatus.Connected) {
             setWifiState(WifiStatus.Connected)
         }
     }
 
     init {
         with(viewModelScope) {
-            collectFromFlow(lapState.isGranted) {
-                refreshWifiPropertyViewData()
-            }
             collectLatestFromFlow(wifiStatus) { status ->
                 i { "Collected WifiStatus=$status" }
                 setWifiState(status)
+            }
+            collectLatestFromFlow(
+                (wifiPropertyEnablementMap.values + ipSubPropertyEnablementMap.values)
+                    .merge()
+            ) {
+                i { "Refreshing on property enablement change" }
+                refreshWifiPropertyViewData()
             }
         }
     }
@@ -88,7 +116,3 @@ class HomeScreenViewModel @Inject constructor(
         _showWidgetConfigurationDialog.value = value
     }
 }
-
-private val allIpSubPropertiesEnabled = WidgetWifiProperty.IP.entries
-    .flatMap { it.subProperties }
-    .associateWith { true }

@@ -94,6 +94,10 @@ fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_checklist_24,
             headerRes = R.string.properties,
         )
+
+        fun moreThanOneWifiPropertyChecked(): Boolean =
+            widgetConfiguration.wifiProperties.values.count { it } > 1
+
         PropertyCheckRows(
             remember {
                 WidgetWifiProperty.entries
@@ -103,8 +107,8 @@ fun WidgetConfigurationDialogContent(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
-                                    (!newValue || lapState.isGranted.value)
-                                        .also {
+                                    if (newValue) {
+                                        lapState.isGranted.value.also {
                                             if (!it) {
                                                 lapState.launchRequest(
                                                     LocationAccessPermissionRequestTrigger.PropertyCheckChange(
@@ -113,6 +117,9 @@ fun WidgetConfigurationDialogContent(
                                                 )
                                             }
                                         }
+                                    } else {
+                                        moreThanOneWifiPropertyChecked()
+                                    }
                                 },
                                 infoDialogData = property.infoDialogData
                             )
@@ -121,6 +128,9 @@ fun WidgetConfigurationDialogContent(
                                 PropertyCheckRowData.fromMutableMap(
                                     property = property,
                                     isCheckedMap = widgetConfiguration.wifiProperties,
+                                    allowCheckChange = { isCheckedNew ->
+                                        isCheckedNew || moreThanOneWifiPropertyChecked()
+                                    },
                                     subPropertyCheckRowData = property.subProperties
                                         .map { subProperty ->
                                             PropertyCheckRowData.fromMutableMap(
@@ -145,7 +155,10 @@ fun WidgetConfigurationDialogContent(
                             is WidgetWifiProperty.NonIP.Other -> PropertyCheckRowData.fromMutableMap(
                                 property = property,
                                 isCheckedMap = widgetConfiguration.wifiProperties,
-                                infoDialogData = property.infoDialogData
+                                allowCheckChange = { isCheckedNew ->
+                                    isCheckedNew || moreThanOneWifiPropertyChecked()
+                                },
+                                infoDialogData = property.infoDialogData,
                             )
                         }
                     }
