@@ -40,6 +40,9 @@ sealed interface LocationAccessPermissionStatus {
     class Granted(val trigger: LocationAccessPermissionRequestTrigger?) :
         LocationAccessPermissionStatus
 
+    val isGranted: Boolean
+        get() = this is Granted
+
     companion object {
         fun get(isGranted: Boolean): LocationAccessPermissionStatus =
             if (isGranted) Granted(null) else NotGranted

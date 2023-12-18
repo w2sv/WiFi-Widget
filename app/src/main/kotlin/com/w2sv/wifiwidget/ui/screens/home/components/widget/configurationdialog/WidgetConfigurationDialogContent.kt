@@ -108,7 +108,7 @@ fun WidgetConfigurationDialogContent(
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
                                     if (newValue) {
-                                        lapState.isGranted.value.also {
+                                        (lapState.status.value?.isGranted == true).also {
                                             if (!it) {
                                                 lapState.launchRequest(
                                                     LocationAccessPermissionRequestTrigger.PropertyCheckChange(
