@@ -1,6 +1,8 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Stable
+import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
@@ -9,6 +11,9 @@ import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
@@ -28,6 +33,7 @@ class UnconfirmedWidgetConfiguration(
     val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
     private val scope: CoroutineScope,
+    private val sharedSnackbarVisuals: SharedSnackbarVisuals,
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
@@ -53,24 +59,58 @@ class UnconfirmedWidgetConfiguration(
             initialValue = false
         )
 
-    fun onLocationAccessPermissionStatusChanged(isGranted: Boolean, trigger: LocationAccessPermissionRequestTrigger?) {
+    fun onLocationAccessPermissionStatusChanged(
+        isGranted: Boolean,
+        trigger: LocationAccessPermissionRequestTrigger?
+    ) {
         when {
             !isGranted -> {
-                setLocationAccessRequiringPropertyEnablementAndSync(false)
+                val changedProperties = setLocationAccessRequiringPropertyEnablementAndSync(false)
+                if (changedProperties.isNotEmpty()) {
+                    scope.launchDelayed(1_000) {
+                        sharedSnackbarVisuals.emit(
+                            AppSnackbarVisuals(
+                                msg = buildString {
+                                    append("Disabled ${changedProperties.first()} ")
+                                    changedProperties.getOrNull(1)?.let {
+                                        append("& $it ")
+                                    }
+                                    append("due to location access having been revoked.")
+                                },
+                                duration = SnackbarDuration.Long,
+                                kind = SnackbarKind.Error
+                            )
+                        )
+                    }
+                }
             }
+
             trigger is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
                 setLocationAccessRequiringPropertyEnablementAndSync(true)
             }
+
             trigger is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
                 wifiProperties[trigger.property] = true
             }
         }
     }
 
-    private fun setLocationAccessRequiringPropertyEnablementAndSync(enabled: Boolean) {
+    /**
+     * @return Boolean, representing whether anything has been changed.
+     */
+    private fun setLocationAccessRequiringPropertyEnablementAndSync(value: Boolean): List<WidgetWifiProperty.NonIP.LocationAccessRequiring> {
+        val changedProperties = mutableListOf<WidgetWifiProperty.NonIP.LocationAccessRequiring>()
         WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
-            wifiProperties[it] = enabled
+            if (wifiProperties.persistedStateFlowMap.getValue(it).value != value) {
+                wifiProperties[it] = value
+                changedProperties.add(it)
+            }
         }
-        scope.launch { wifiProperties.sync() }
+
+        if (changedProperties.isNotEmpty()) {
+            scope.launch { wifiProperties.sync() }
+        }
+
+        return changedProperties
     }
 }

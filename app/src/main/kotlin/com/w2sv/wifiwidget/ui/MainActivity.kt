@@ -47,17 +47,19 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun collectFromFlows() {
-        lifecycleScope.collectFromFlow(appVM.exitApplication) {
-            finishAffinity()
-        }
-        lifecycleScope.collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
-            homeScreenVM.lapState.backgroundAccessState?.launchRequest()
-        }
-        lifecycleScope.collectFromFlow(homeScreenVM.lapState.grantTrigger) {
-            widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
-        }
-        lifecycleScope.collectFromFlow(homeScreenVM.lapState.isGranted) {
-            widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
+        with(lifecycleScope) {
+            collectFromFlow(appVM.exitApplication) {
+                finishAffinity()
+            }
+            collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
+                homeScreenVM.lapState.backgroundAccessState?.launchRequest()
+            }
+            collectFromFlow(homeScreenVM.lapState.grantTrigger) {
+                widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
+            }
+            collectFromFlow(homeScreenVM.lapState.isGranted) {
+                widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
+            }
         }
     }
 

@@ -7,6 +7,7 @@ import com.w2sv.common.utils.trigger
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,8 +18,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
+    sharedSnackbarVisuals: SharedSnackbarVisuals
 ) :
     ViewModel() {
+
+    val sharedSnackbarVisuals by sharedSnackbarVisuals::flow
 
     val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,

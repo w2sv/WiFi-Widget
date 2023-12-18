@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.viewmodels
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.res.Resources
-import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
@@ -20,6 +19,7 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.hasBackgroundLocationAccess
@@ -40,6 +40,7 @@ class WidgetViewModel @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
     private val resources: Resources,
+    private val sharedSnackbarVisuals: SharedSnackbarVisuals,
     optionsChanged: WidgetProvider.OptionsChanged,
     @ApplicationContext context: Context
 ) :
@@ -61,7 +62,7 @@ class WidgetViewModel @Inject constructor(
     fun attemptWidgetPin() {
         if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
             viewModelScope.launch {
-                _snackbarVisuals.emit(
+                sharedSnackbarVisuals.emit(
                     AppSnackbarVisuals(
                         msg = resources.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
                         kind = SnackbarKind.Error
@@ -70,9 +71,6 @@ class WidgetViewModel @Inject constructor(
             }
         }
     }
-
-    val snackbarVisuals get() = _snackbarVisuals.asSharedFlow()
-    private val _snackbarVisuals = MutableSharedFlow<SnackbarVisuals>()
 
     private var widgetIds: MutableSet<Int> = getWidgetIds()
 
@@ -94,7 +92,7 @@ class WidgetViewModel @Inject constructor(
                     }
             ) {
                 when {
-                    !context.isLocationEnabled -> _snackbarVisuals.emit(
+                    !context.isLocationEnabled -> sharedSnackbarVisuals.emit(
                         AppSnackbarVisuals(
                             msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                             kind = SnackbarKind.Error,
@@ -102,7 +100,7 @@ class WidgetViewModel @Inject constructor(
                     )
 
                     !hasBackgroundLocationAccess(context) ->
-                        _snackbarVisuals.emit(
+                        sharedSnackbarVisuals.emit(
                             AppSnackbarVisuals(
                                 msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                                 kind = SnackbarKind.Error,
@@ -118,7 +116,7 @@ class WidgetViewModel @Inject constructor(
                         )
                 }
             }
-            _snackbarVisuals.emit(
+            sharedSnackbarVisuals.emit(
                 AppSnackbarVisuals(
                     msg = context.getString(R.string.pinned_widget),
                     kind = SnackbarKind.Success,
@@ -175,14 +173,15 @@ class WidgetViewModel @Inject constructor(
             persistedValue = repository.opacity
         ),
         scope = viewModelScope,
+        sharedSnackbarVisuals = sharedSnackbarVisuals,
         onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
-            _snackbarVisuals.emit(
+            sharedSnackbarVisuals.emit(
                 AppSnackbarVisuals(
                     msg = context.getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success,
                 ),
             )
-        }
+        },
     )
 }

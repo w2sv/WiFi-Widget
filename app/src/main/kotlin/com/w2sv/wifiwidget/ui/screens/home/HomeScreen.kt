@@ -44,7 +44,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -54,7 +53,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     appViewModel: AppViewModel = viewModel(),
     homeScreenVM: HomeScreenViewModel = viewModel(),
-    widgetVM: WidgetViewModel = viewModel(),
     context: Context = LocalContext.current,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     scope: CoroutineScope = rememberCoroutineScope()
@@ -94,7 +92,7 @@ fun HomeScreen(
         }
 
         LaunchedEffect(snackbarHostState) {
-            widgetVM.snackbarVisuals.collect {
+            appViewModel.sharedSnackbarVisuals.collect {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it)
             }
         }
