@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.w2sv.domain.model.WifiStatus
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
@@ -30,14 +29,14 @@ fun WifiStatusCard(
             )
             Spacer(modifier = Modifier.height(16.dp))
 
-            WifiStatusDisplay(wifiStatus = wifiState.status)
+            WifiStatusDisplay(wifiState.status)
 
-            AnimatedVisibility(visible = wifiState.status == WifiStatus.Connected) {
-                wifiState.propertyViewData?.let {
+            AnimatedVisibility(visible = wifiState is WifiState.Connected) {
+                (wifiState as? WifiState.Connected)?.let {
                     Column {
                         Spacer(modifier = Modifier.height(12.dp))
                         WifiPropertyDisplay(
-                            propertiesViewData = it,
+                            propertiesViewData = it.propertyViewData,
                             modifier = Modifier.fillMaxHeight(0.22f)
                         )
                     }

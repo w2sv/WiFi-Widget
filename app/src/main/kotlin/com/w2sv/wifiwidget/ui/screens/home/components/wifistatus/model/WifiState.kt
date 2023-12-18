@@ -6,7 +6,10 @@ import com.w2sv.domain.model.WifiStatus
 import kotlinx.coroutines.flow.Flow
 
 @Immutable
-data class WifiState(
-    val status: WifiStatus,
-    val propertyViewData: Flow<WidgetWifiProperty.ValueViewData>?
-)
+sealed class WifiState(
+    val status: WifiStatus
+) {
+    data object Disabled: WifiState(WifiStatus.Disabled)
+    data object Disconnected: WifiState(WifiStatus.Disconnected)
+    class Connected(val propertyViewData: Flow<WidgetWifiProperty.ViewData>) : WifiState(WifiStatus.Connected)
+}

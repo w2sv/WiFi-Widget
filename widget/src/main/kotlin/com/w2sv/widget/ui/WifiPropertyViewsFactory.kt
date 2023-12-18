@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val valueViewDataFactory: WidgetWifiProperty.ValueViewData.Factory,
+    private val viewDataFactory: WidgetWifiProperty.ViewData.Factory,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -34,7 +34,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         i { "${this::class.simpleName}.onDataSetChanged" }
 
         runBlocking {  // TODO
-            propertyViewData = valueViewDataFactory(
+            propertyViewData = viewDataFactory(
                 properties = widgetRepository.getEnabledWifiProperties(),
                 ipSubPropertyEnablementMap = widgetRepository.getIPSubPropertyEnablementMap()
                     .getSynchronousMap()
@@ -42,13 +42,13 @@ class WifiPropertyViewsFactory @Inject constructor(
                 .toList()
                 .flatMap { valueViewData ->
                     when (valueViewData) {
-                        is WidgetWifiProperty.ValueViewData.NonIP -> listOf(
+                        is WidgetWifiProperty.ViewData.NonIP -> listOf(
                             WidgetPropertyView.Property(
                                 valueViewData
                             )
                         )
 
-                        is WidgetWifiProperty.ValueViewData.IPProperty -> buildList<WidgetPropertyView> {
+                        is WidgetWifiProperty.ViewData.IPProperty -> buildList<WidgetPropertyView> {
                             add(WidgetPropertyView.Property(valueViewData))
                             valueViewData.prefixLengthText?.let {
                                 add(WidgetPropertyView.PrefixLength(it))

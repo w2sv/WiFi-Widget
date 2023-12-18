@@ -64,10 +64,10 @@ import slimber.log.i
 
 @Composable
 fun WifiPropertyDisplay(
-    propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>,
+    propertiesViewData: Flow<WidgetWifiProperty.ViewData>,
     modifier: Modifier = Modifier,
 ) {
-    val viewDataList = getUpdatedViewDataList(propertiesViewData = propertiesViewData)
+    val viewDataList = rememberRefreshingViewDataList(propertiesViewData = propertiesViewData)
 
     AnimatedContent(
         targetState = viewDataList.isEmpty(),
@@ -89,9 +89,9 @@ fun WifiPropertyDisplay(
 }
 
 @Composable
-fun getUpdatedViewDataList(propertiesViewData: Flow<WidgetWifiProperty.ValueViewData>): SnapshotStateList<WidgetWifiProperty.ValueViewData> {
+fun rememberRefreshingViewDataList(propertiesViewData: Flow<WidgetWifiProperty.ViewData>): SnapshotStateList<WidgetWifiProperty.ViewData> {
     val viewDataList = remember {
-        mutableStateListOf<WidgetWifiProperty.ValueViewData>()
+        mutableStateListOf<WidgetWifiProperty.ViewData>()
     }
 
     LaunchedEffect(propertiesViewData) {
@@ -145,7 +145,7 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
 
 @Composable
 private fun PropertiesList(
-    viewData: ImmutableList<WidgetWifiProperty.ValueViewData>,
+    viewData: ImmutableList<WidgetWifiProperty.ViewData>,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -165,7 +165,7 @@ private fun PropertiesList(
                     .fillMaxWidth()
                     .heightIn(min = 26.dp)
             )
-            (viewData as? WidgetWifiProperty.ValueViewData.IPProperty)?.prefixLengthText?.let {
+            (viewData as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
                 PrefixLengthDisplay(
                     prefixLengthText = it,
                     modifier = Modifier.fillMaxWidth()
@@ -198,7 +198,7 @@ private fun HeaderRow(modifier: Modifier = Modifier) {
 
 @Composable
 private fun WifiPropertyDisplay(
-    viewData: WidgetWifiProperty.ValueViewData,
+    viewData: WidgetWifiProperty.ViewData,
     modifier: Modifier = Modifier,
     clipboardManager: ClipboardManager = LocalClipboardManager.current,
     context: Context = LocalContext.current,
@@ -206,7 +206,7 @@ private fun WifiPropertyDisplay(
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val label = buildAnnotatedString {
-        if (viewData is WidgetWifiProperty.ValueViewData.IPProperty) {
+        if (viewData is WidgetWifiProperty.ViewData.IPProperty) {
             append(stringResource(R.string.ip))
             withStyle(
                 SpanStyle(

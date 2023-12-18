@@ -9,28 +9,28 @@ sealed interface WidgetWifiProperty : WidgetProperty {
     val learnMoreUrl: String?
     val defaultIsEnabled: Boolean
 
-    sealed interface ValueViewData {
+    sealed interface ViewData {
         val label: String
         val value: String
 
         data class NonIP(override val value: String, override val label: String) :
-            ValueViewData
+            ViewData
 
         data class IPProperty(
             override val label: String,
             override val value: String,
             val prefixLengthText: String?
-        ) : ValueViewData
+        ) : ViewData
 
         interface Factory {
             /**
-             * @return Flow of [ValueViewData], the element-order of which corresponds to the one of the [properties].
-             * One [WidgetWifiProperty] may result in the the creation of multiple [ValueViewData] elements.
+             * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
+             * One [WidgetWifiProperty] may result in the the creation of multiple [ViewData] elements.
              */
             operator fun invoke(
                 properties: Iterable<WidgetWifiProperty>,
                 ipSubPropertyEnablementMap: Map<IP.SubProperty, Boolean>
-            ): Flow<ValueViewData>
+            ): Flow<ViewData>
         }
     }
 

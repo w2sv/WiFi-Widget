@@ -13,7 +13,7 @@ import com.w2sv.widget.R
 import com.w2sv.widget.utils.setTextView
 
 internal sealed interface WidgetPropertyView {
-    class Property(val viewData: WidgetWifiProperty.ValueViewData) : WidgetPropertyView
+    class Property(val viewData: WidgetWifiProperty.ViewData) : WidgetPropertyView
     class PrefixLength(val value: String) : WidgetPropertyView
 
     fun inflate(
@@ -35,14 +35,14 @@ private const val IP_LABEL = "IP"
 
 private fun inflateWifiPropertyLayout(
     packageName: String,
-    viewData: WidgetWifiProperty.ValueViewData,
+    viewData: WidgetWifiProperty.ViewData,
     widgetColors: WidgetColors
 ): RemoteViews =
     RemoteViews(packageName, R.layout.wifi_property)
         .apply {
             setTextView(
                 viewId = R.id.property_label_tv,
-                text = if (viewData is WidgetWifiProperty.ValueViewData.NonIP)
+                text = if (viewData is WidgetWifiProperty.ViewData.NonIP)
                     viewData.label
                 else
                     buildSpannedString {

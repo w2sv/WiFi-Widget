@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 interface NetworkingBinderModule {
 
     @Binds
-    fun widgetWifiPropertyValueGetter(instance: WidgetWifiPropertyValueViewDataFactoryImpl): WidgetWifiProperty.ValueViewData.Factory
+    fun widgetWifiPropertyValueGetter(instance: WidgetWifiPropertyValueViewDataFactoryImpl): WidgetWifiProperty.ViewData.Factory
 }
