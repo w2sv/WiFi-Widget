@@ -35,6 +35,11 @@ sealed interface LocationAccessPermissionRequestTrigger {
         LocationAccessPermissionRequestTrigger
 }
 
+sealed interface LocationAccessPermissionStatus {
+    data object NotGranted: LocationAccessPermissionStatus
+    class Granted(val trigger: LocationAccessPermissionRequestTrigger?): LocationAccessPermissionStatus
+}
+
 @Composable
 fun LocationAccessPermissionHandler(state: LocationAccessPermissionState) {
     if (state.showRational.collectAsStateWithLifecycle().value) {
@@ -96,7 +101,7 @@ private fun LocationAccessPermissionRequest(state: LocationAccessPermissionState
 
     // Set lapState.isGranted on permission status change
     LaunchedEffect(permissionState.allPermissionsGranted) {
-        state.setIsGranted(permissionState.allPermissionsGranted)
+        state.setStatus(permissionState.allPermissionsGranted)
     }
 
     val context = LocalContext.current

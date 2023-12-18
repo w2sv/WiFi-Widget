@@ -28,9 +28,6 @@ class WidgetRepositoryImpl @Inject constructor(
 ) : PreferencesDataStoreRepository(dataStore),
     WidgetRepository {
 
-    override fun getEnabledWifiProperties(): Set<WidgetWifiProperty> =
-        getWifiPropertyEnablementMap().getSynchronousMap().filterValues { it }.keys
-
     // ================
     // PersistedValue
     // ================

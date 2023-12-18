@@ -13,8 +13,6 @@ interface WidgetRepository {
     val useDynamicColors: PersistedValue.UniTyped<Boolean>
     val opacity: PersistedValue.UniTyped<Float>
 
-    fun getEnabledWifiProperties(): Set<WidgetWifiProperty>
-
     fun getCustomColorsMap(): Map<WidgetColorSection, Flow<Int>>
     suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>)
 

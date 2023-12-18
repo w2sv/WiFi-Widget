@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.runtime.Stable
 import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
@@ -15,6 +14,7 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
@@ -60,11 +60,10 @@ class UnconfirmedWidgetConfiguration(
         )
 
     fun onLocationAccessPermissionStatusChanged(
-        isGranted: Boolean,
-        trigger: LocationAccessPermissionRequestTrigger?
+        status: LocationAccessPermissionStatus
     ) {
-        when {
-            !isGranted -> {
+        when (status) {
+            is LocationAccessPermissionStatus.NotGranted -> {
                 val changedProperties = setLocationAccessRequiringPropertyEnablementAndSync(false)
                 if (changedProperties.isNotEmpty()) {
                     scope.launchDelayed(1_000) {
@@ -77,7 +76,6 @@ class UnconfirmedWidgetConfiguration(
                                     }
                                     append("due to location access having been revoked.")
                                 },
-                                duration = SnackbarDuration.Long,
                                 kind = SnackbarKind.Error
                             )
                         )
@@ -85,12 +83,18 @@ class UnconfirmedWidgetConfiguration(
                 }
             }
 
-            trigger is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
-                setLocationAccessRequiringPropertyEnablementAndSync(true)
-            }
+            is LocationAccessPermissionStatus.Granted -> {
+                when (status.trigger) {
+                    is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
+                        setLocationAccessRequiringPropertyEnablementAndSync(true)
+                    }
 
-            trigger is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
-                wifiProperties[trigger.property] = true
+                    is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
+                        wifiProperties[status.trigger.property] = true
+                    }
+
+                    else -> Unit
+                }
             }
         }
     }

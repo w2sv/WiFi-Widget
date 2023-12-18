@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +42,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.backgroundLocationAccessGrantRequired
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
+import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -77,10 +79,12 @@ fun HomeScreen(
                 }
             },
         ) { paddingValues ->
+            val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
+
             if (isLandscapeModeActivated) {
-                LandscapeMode(paddingValues = paddingValues)
+                LandscapeMode(paddingValues = paddingValues, wifiState = wifiState)
             } else {
-                PortraitMode(paddingValues = paddingValues)
+                PortraitMode(paddingValues = paddingValues, wifiState = wifiState)
             }
         }
 
@@ -114,7 +118,7 @@ fun HomeScreen(
 @Composable
 private fun LandscapeMode(
     paddingValues: PaddingValues,
-    homeScreenVM: HomeScreenViewModel = viewModel(),
+    wifiState: WifiState,
 ) {
     Row(
         modifier = Modifier
@@ -125,7 +129,7 @@ private fun LandscapeMode(
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
         WifiStatusCard(
-            wifiState = homeScreenVM.wifiState.collectAsStateWithLifecycle().value,
+            wifiState = wifiState,
             modifier = Modifier
                 .fillMaxWidth(0.4f),
         )
@@ -139,7 +143,7 @@ private fun LandscapeMode(
 @Composable
 private fun PortraitMode(
     paddingValues: PaddingValues,
-    homeScreenVM: HomeScreenViewModel = viewModel(),
+    wifiState: WifiState,
 ) {
     Column(
         modifier = Modifier
@@ -150,7 +154,7 @@ private fun PortraitMode(
     ) {
         Spacer(Modifier.weight(0.15f))
         WifiStatusCard(
-            wifiState = homeScreenVM.wifiState.collectAsStateWithLifecycle().value,
+            wifiState = wifiState,
             modifier = Modifier
                 .fillMaxWidth(0.77f),
         )

@@ -54,11 +54,8 @@ class MainActivity : ComponentActivity() {
             collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
                 homeScreenVM.lapState.backgroundAccessState?.launchRequest()
             }
-            collectFromFlow(homeScreenVM.lapState.grantTrigger) {
-                widgetVM.configuration.onLocationAccessPermissionStatusChanged(true, it)
-            }
-            collectFromFlow(homeScreenVM.lapState.isGranted) {
-                widgetVM.configuration.onLocationAccessPermissionStatusChanged(it, null)
+            collectFromFlow(homeScreenVM.lapState.status) {
+                widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
             }
         }
     }

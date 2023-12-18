@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.collectLatestFromFlow
+import com.w2sv.common.utils.enabledKeys
+import com.w2sv.common.utils.stateIn
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
@@ -23,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
 import slimber.log.i
 import javax.inject.Inject
 
@@ -37,7 +38,7 @@ class HomeScreenViewModel @Inject constructor(
 ) : ViewModel() {
 
     fun onStart() {
-        wifiStateEmitter.refreshPropertyViewData()
+        wifiStateEmitter.refreshPropertyViewDataIfConnected()
     }
 
     val lapState = LocationAccessPermissionState(
@@ -46,22 +47,16 @@ class HomeScreenViewModel @Inject constructor(
     )
 
     private val wifiStateEmitter = WifiStateEmitter(
-        wifiPropertyEnablementMap = widgetRepository.getWifiPropertyEnablementMap()
-            .mapValues { (_, v) ->
-                v.stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
-                    true
-                )
-            },
-        ipSubPropertyEnablementMap = widgetRepository.getIPSubPropertyEnablementMap()
-            .mapValues { (_, v) ->
-                v.stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
-                    true
-                )
-            },
+        wifiPropertyEnablementMap = widgetRepository.getWifiPropertyEnablementMap().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
+            true
+        ),
+        ipSubPropertyEnablementMap = widgetRepository.getIPSubPropertyEnablementMap().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
+            true
+        ),
         wifiStatusFlow = wifiStatusMonitor.wifiStatus.shareIn(
             viewModelScope,
             SharingStarted.Eagerly
@@ -93,12 +88,8 @@ class WifiStateEmitter(
 
     private fun getPropertyViewData(): Flow<WidgetWifiProperty.ViewData> =
         widgetWifiPropertyViewDataFactory(
-            properties = wifiPropertyEnablementMap.keys.filter {
-                wifiPropertyEnablementMap.getValue(
-                    it
-                ).value
-            },
-            ipSubPropertyEnablementMap = ipSubPropertyEnablementMap.mapValues { (_, v) -> v.value }
+            properties = wifiPropertyEnablementMap.enabledKeys,
+            ipSubProperties = ipSubPropertyEnablementMap.enabledKeys.toSet(),
         )
 
     private fun setState(wifiStatus: WifiStatus) {
@@ -114,9 +105,9 @@ class WifiStateEmitter(
             }
     }
 
-    fun refreshPropertyViewData() {
+    fun refreshPropertyViewDataIfConnected() {
         if (state.value is WifiState.Connected) {
-            setState(WifiStatus.Connected)
+            _state.value = WifiState.Connected(getPropertyViewData())
         }
     }
 
@@ -131,7 +122,7 @@ class WifiStateEmitter(
                     .merge()
             ) {
                 i { "Refreshing on property enablement change" }
-                refreshPropertyViewData()
+                refreshPropertyViewDataIfConnected()
             }
         }
     }

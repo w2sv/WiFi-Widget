@@ -29,7 +29,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
              */
             operator fun invoke(
                 properties: Iterable<WidgetWifiProperty>,
-                ipSubPropertyEnablementMap: Map<IP.SubProperty, Boolean>
+                ipSubProperties: Set<IP.SubProperty>
             ): Flow<ViewData>
         }
     }

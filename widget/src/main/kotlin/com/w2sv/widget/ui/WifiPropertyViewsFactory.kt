@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.w2sv.androidutils.coroutines.getSynchronousMap
+import com.w2sv.common.utils.enabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.appearance
@@ -35,9 +36,13 @@ class WifiPropertyViewsFactory @Inject constructor(
 
         runBlocking {  // TODO
             propertyViewData = viewDataFactory(
-                properties = widgetRepository.getEnabledWifiProperties(),
-                ipSubPropertyEnablementMap = widgetRepository.getIPSubPropertyEnablementMap()
+                properties = widgetRepository.getWifiPropertyEnablementMap()
                     .getSynchronousMap()
+                    .enabledKeys,
+                ipSubProperties = widgetRepository.getIPSubPropertyEnablementMap()
+                    .getSynchronousMap()
+                    .enabledKeys
+                    .toSet(),
             )
                 .toList()
                 .flatMap { valueViewData ->

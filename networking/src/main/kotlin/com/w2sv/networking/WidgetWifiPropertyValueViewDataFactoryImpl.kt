@@ -27,7 +27,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     override fun invoke(
         properties: Iterable<WidgetWifiProperty>,
-        ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): Flow<WidgetWifiProperty.ViewData> {
 
         val systemIPAddresses by lazy {
@@ -38,7 +38,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             properties
                 .forEach { property ->
                     property
-                        .getPropertyViewData(systemIPAddresses, ipSubPropertyEnablementMap)
+                        .getPropertyViewData(systemIPAddresses, ipSubProperties)
                         .forEach { emit(it) }
                 }
         }
@@ -47,7 +47,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WidgetWifiProperty.getPropertyViewData(
         systemIPAddresses: List<IPAddress>,
-        subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData> =
         when (this) {
             is WidgetWifiProperty.NonIP -> getNonIPPropertyViewData(this)
@@ -55,7 +55,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             is WidgetWifiProperty.IP -> getIPPropertyViewData(
                 property = this,
                 systemIPAddresses = systemIPAddresses,
-                subPropertyEnablementMap = subPropertyEnablementMap
+                ipSubProperties = ipSubProperties
             )
         }
 
@@ -117,7 +117,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
     private suspend fun getIPPropertyViewData(
         property: WidgetWifiProperty.IP,
         systemIPAddresses: List<IPAddress>,
-        subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData.IPProperty> =
         getPropertyViewData(
             property = property,
@@ -126,7 +126,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                 .run {
                     if (property is WidgetWifiProperty.IP.V4AndV6)
                         filter {
-                            subPropertyEnablementMap.getValue(
+                            ipSubProperties.contains(
                                 when (it.type) {
                                     IPAddress.Type.V4 -> property.v4EnabledSubProperty
                                     IPAddress.Type.V6 -> property.v6EnabledSubProperty
@@ -140,7 +140,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.ViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
-                    prefixLengthText = if (subPropertyEnablementMap[property.showPrefixLengthSubProperty] == true) "/${ipAddress.prefixLength}" else null
+                    prefixLengthText = if (ipSubProperties.contains(property.showPrefixLengthSubProperty)) "/${ipAddress.prefixLength}" else null
                 )
             }
         )

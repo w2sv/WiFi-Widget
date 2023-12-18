@@ -4,6 +4,7 @@ import androidx.compose.runtime.Stable
 import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,12 +19,13 @@ class LocationAccessPermissionState(
     private val preferencesRepository: PreferencesRepository,
     private val scope: CoroutineScope,
 ) {
-    val isGranted get() = _isGranted.asStateFlow()
-    private val _isGranted = MutableStateFlow(false)
+    val status get() = _status.asStateFlow()
+    private val _status =
+        MutableStateFlow<LocationAccessPermissionStatus>(LocationAccessPermissionStatus.NotGranted)
 
-    fun setIsGranted(value: Boolean) {
-        _isGranted.value = value
-        i { "Set isGranted=$value" }
+    fun setStatus(status: LocationAccessPermissionStatus) {
+        _status.value = status
+        i { "Set isGranted=$status" }
     }
 
     // ===================
@@ -57,17 +59,11 @@ class LocationAccessPermissionState(
         }
         if (granted) {
             previousRequestTrigger?.let {
-                scope.launch {
-                    _grantTrigger.emit(it)
-                    i { "Emitted grantTrigger=$it" }
-                }
+                setStatus(LocationAccessPermissionStatus.Granted(it))
             }
-            backgroundAccessState?.showRational(true)
         }
+        backgroundAccessState?.showRational(true)
     }
-
-    val grantTrigger get() = _grantTrigger.asSharedFlow()
-    private val _grantTrigger = MutableSharedFlow<LocationAccessPermissionRequestTrigger>()
 
     // ===================
     // Rational
