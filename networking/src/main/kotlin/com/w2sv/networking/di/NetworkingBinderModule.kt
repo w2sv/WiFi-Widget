@@ -1,7 +1,7 @@
 package com.w2sv.networking.di
 
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.networking.WidgetWifiPropertyValueViewDataFactoryImpl
+import com.w2sv.networking.WidgetWifiPropertyViewDataFactoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,5 +12,5 @@ import dagger.hilt.components.SingletonComponent
 interface NetworkingBinderModule {
 
     @Binds
-    fun widgetWifiPropertyValueGetter(instance: WidgetWifiPropertyValueViewDataFactoryImpl): WidgetWifiProperty.ViewData.Factory
+    fun widgetWifiPropertyValueGetter(instance: WidgetWifiPropertyViewDataFactoryImpl): WidgetWifiProperty.ViewData.Factory
 }

@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.collectLatestFromFlow
-import com.w2sv.common.utils.enabledKeys
 import com.w2sv.common.utils.stateIn
+import com.w2sv.common.utils.valueEnabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PreferencesRepository
@@ -88,8 +88,8 @@ class WifiStateEmitter(
 
     private fun getPropertyViewData(): Flow<WidgetWifiProperty.ViewData> =
         widgetWifiPropertyViewDataFactory(
-            properties = wifiPropertyEnablementMap.enabledKeys,
-            ipSubProperties = ipSubPropertyEnablementMap.enabledKeys.toSet(),
+            properties = wifiPropertyEnablementMap.valueEnabledKeys,
+            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys.toSet(),
         )
 
     private fun setState(wifiStatus: WifiStatus) {

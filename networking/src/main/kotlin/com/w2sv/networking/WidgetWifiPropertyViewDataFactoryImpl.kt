@@ -18,7 +18,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
 
-class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
+class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
@@ -50,21 +50,17 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
         ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData> =
         when (this) {
-            is WidgetWifiProperty.NonIP -> getNonIPPropertyViewData(this)
+            is WidgetWifiProperty.NonIP -> getViewData()
 
-            is WidgetWifiProperty.IP -> getIPPropertyViewData(
-                property = this,
+            is WidgetWifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
                 ipSubProperties = ipSubProperties
             )
         }
 
-    private fun getNonIPPropertyViewData(
-        property: WidgetWifiProperty.NonIP
-    ): List<WidgetWifiProperty.ViewData.NonIP> =
+    private fun WidgetWifiProperty.NonIP.getViewData(): List<WidgetWifiProperty.ViewData.NonIP> =
         getPropertyViewData(
-            property = property,
-            values = property.getValues(),
+            values = getValues(),
             makeViewData = { label, value ->
                 WidgetWifiProperty.ViewData.NonIP(value, label)
             }
@@ -114,22 +110,19 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private suspend fun getIPPropertyViewData(
-        property: WidgetWifiProperty.IP,
+    private suspend fun WidgetWifiProperty.IP.getViewData(
         systemIPAddresses: List<IPAddress>,
         ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData.IPProperty> =
         getPropertyViewData(
-            property = property,
-            values = property
-                .getAddresses(systemIPAddresses)
+            values = getAddresses(systemIPAddresses)
                 .run {
-                    if (property is WidgetWifiProperty.IP.V4AndV6)
+                    if (this is WidgetWifiProperty.IP.V4AndV6)
                         filter {
                             ipSubProperties.contains(
                                 when (it.type) {
-                                    IPAddress.Type.V4 -> property.v4EnabledSubProperty
-                                    IPAddress.Type.V6 -> property.v6EnabledSubProperty
+                                    IPAddress.Type.V4 -> v4EnabledSubProperty
+                                    IPAddress.Type.V6 -> v6EnabledSubProperty
                                 }
                             )
                         }
@@ -140,7 +133,7 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.ViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
-                    prefixLengthText = if (ipSubProperties.contains(property.showPrefixLengthSubProperty)) "/${ipAddress.prefixLength}" else null
+                    prefixLengthText = if (ipSubProperties.contains(showPrefixLengthSubProperty)) "/${ipAddress.prefixLength}" else null
                 )
             }
         )
@@ -172,14 +165,13 @@ class WidgetWifiPropertyValueViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private fun <T, R> getPropertyViewData(
-        property: WidgetWifiProperty,
+    private fun <T, R> WidgetWifiProperty.getPropertyViewData(
         values: List<T>,
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
             val propertyLabel = resources.getString(
-                property.run {
+                run {
                     if (this is WidgetWifiProperty.IP)
                         subscriptResId
                     else

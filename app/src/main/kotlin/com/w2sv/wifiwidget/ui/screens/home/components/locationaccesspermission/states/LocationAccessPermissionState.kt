@@ -21,7 +21,7 @@ class LocationAccessPermissionState(
 ) {
     val status get() = _status.asStateFlow()
     private val _status =
-        MutableStateFlow<LocationAccessPermissionStatus>(LocationAccessPermissionStatus.NotGranted)
+        MutableStateFlow<LocationAccessPermissionStatus?>(null)
 
     fun setStatus(status: LocationAccessPermissionStatus) {
         _status.value = status

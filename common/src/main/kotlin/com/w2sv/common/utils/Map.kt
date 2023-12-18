@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 val <T> Map<T, Boolean>.enabledKeys: List<T>
     get() = keys.filter { getValue(it) }
 
-val <T> Map<T, StateFlow<Boolean>>.enabledKeys: List<T>
+val <T> Map<T, StateFlow<Boolean>>.valueEnabledKeys: List<T>
     get() = keys.filter { getValue(it).value }
 
 fun <K, V> Map<K, Flow<V>>.stateIn(

@@ -16,6 +16,7 @@ import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import slimber.log.i
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -55,7 +56,10 @@ class MainActivity : ComponentActivity() {
                 homeScreenVM.lapState.backgroundAccessState?.launchRequest()
             }
             collectFromFlow(homeScreenVM.lapState.status) {
-                widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
+                if (it != null) {
+                    i { "Collected $it" }
+                    widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
+                }
             }
         }
     }
