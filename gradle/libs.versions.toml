@@ -8,7 +8,7 @@ kotlin = '1.9.20'
 java = '17'
 ksp = "1.9.20-1.0.14"
 triplet-play = '3.8.6'
-hilt = '2.49'
+hilt = '2.50'
 
 # Libraries
 compose-compiler = '1.5.5'
