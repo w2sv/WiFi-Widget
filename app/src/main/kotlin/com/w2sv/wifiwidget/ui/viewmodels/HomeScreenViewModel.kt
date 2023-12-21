@@ -16,12 +16,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.shareIn
 import slimber.log.i
 import javax.inject.Inject
 
@@ -56,10 +54,7 @@ class HomeScreenViewModel @Inject constructor(
             SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
             true
         ),
-        wifiStatusFlow = wifiStatusMonitor.wifiStatus.shareIn(
-            viewModelScope,
-            SharingStarted.Eagerly
-        ),
+        wifiStatusFlow = wifiStatusMonitor.wifiStatus,
         widgetWifiPropertyViewDataFactory = widgetWifiPropertyViewDataFactory,
         scope = viewModelScope
     )
@@ -70,7 +65,7 @@ class HomeScreenViewModel @Inject constructor(
 private class WifiStateEmitter(
     private val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>>,
     private val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>>,
-    private val wifiStatusFlow: SharedFlow<WifiStatus>,
+    private val wifiStatusFlow: Flow<WifiStatus>,
     private val widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
     scope: CoroutineScope
 ) {

@@ -38,14 +38,14 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             properties
                 .forEach { property ->
                     property
-                        .getPropertyViewData(systemIPAddresses, ipSubProperties)
+                        .getViewData(systemIPAddresses, ipSubProperties)
                         .forEach { emit(it) }
                 }
         }
             .flowOn(Dispatchers.IO)
     }
 
-    private suspend fun WidgetWifiProperty.getPropertyViewData(
+    private suspend fun WidgetWifiProperty.getViewData(
         systemIPAddresses: List<IPAddress>,
         ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData> =
@@ -59,7 +59,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         }
 
     private fun WidgetWifiProperty.NonIP.getViewData(): List<WidgetWifiProperty.ViewData.NonIP> =
-        getPropertyViewData(
+        getViewData(
             values = getValues(),
             makeViewData = { label, value ->
                 WidgetWifiProperty.ViewData.NonIP(value, label)
@@ -114,7 +114,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         systemIPAddresses: List<IPAddress>,
         ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData.IPProperty> =
-        getPropertyViewData(
+        getViewData(
             values = getAddresses(systemIPAddresses)
                 .run {
                     if (this is WidgetWifiProperty.IP.V4AndV6)
@@ -165,14 +165,14 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private fun <T, R> WidgetWifiProperty.getPropertyViewData(
+    private fun <T, R: WidgetWifiProperty.ViewData> WidgetWifiProperty.getViewData(
         values: List<T>,
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
             val propertyLabel = resources.getString(
                 run {
-                    if (this is WidgetWifiProperty.IP)
+                    if (this@getViewData is WidgetWifiProperty.IP)
                         subscriptResId
                     else
                         labelRes

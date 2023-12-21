@@ -37,7 +37,7 @@ fun WifiStatusCard(
                         Spacer(modifier = Modifier.height(12.dp))
                         WifiPropertyDisplay(
                             propertiesViewData = it.propertyViewData,
-                            modifier = Modifier.fillMaxHeight(0.22f)
+                            modifier = Modifier.fillMaxHeight(0.25f)
                         )
                     }
                 }
