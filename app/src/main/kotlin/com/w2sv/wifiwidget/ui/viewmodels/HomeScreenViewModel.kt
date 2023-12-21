@@ -1,18 +1,15 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.common.constants.Extra
 import com.w2sv.common.utils.collectLatestFromFlow
 import com.w2sv.common.utils.stateIn
 import com.w2sv.common.utils.valueEnabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
-import com.w2sv.domain.repository.PreferencesRepository
+import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,21 +27,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    preferencesRepository: PreferencesRepository,
+    val permissionRepository: PermissionRepository,
     widgetRepository: WidgetRepository,
     wifiStatusMonitor: WifiStatusMonitor,
     widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
-    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     fun onStart() {
         wifiStateEmitter.refreshPropertyViewDataIfConnected()
     }
 
-    val lapState = LocationAccessPermissionState(
-        preferencesRepository = preferencesRepository,
-        scope = viewModelScope,
-    )
+    fun saveLocationAccessPermissionRequestLaunched() {
+        permissionRepository.locationAccessPermissionRequested.launchSave(true, viewModelScope)
+    }
+
+    fun saveLocationAccessRationalShown() {
+        permissionRepository.locationAccessPermissionRationalShown.launchSave(true, viewModelScope)
+    }
 
     private val wifiStateEmitter = WifiStateEmitter(
         wifiPropertyEnablementMap = widgetRepository.getWifiPropertyEnablementMap().stateIn(
@@ -66,17 +65,9 @@ class HomeScreenViewModel @Inject constructor(
     )
 
     val wifiState by wifiStateEmitter::state
-
-    val showWidgetConfigurationDialog get() = _showWidgetConfigurationDialog.asStateFlow()
-    private val _showWidgetConfigurationDialog =
-        MutableStateFlow(savedStateHandle.get<Boolean>(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG) == true)
-
-    fun setShowWidgetConfigurationDialog(value: Boolean) {
-        _showWidgetConfigurationDialog.value = value
-    }
 }
 
-class WifiStateEmitter(
+private class WifiStateEmitter(
     private val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>>,
     private val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>>,
     private val wifiStatusFlow: SharedFlow<WifiStatus>,

@@ -16,7 +16,6 @@ import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import slimber.log.i
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -29,8 +28,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-        collectFromFlows()
 
         setContent {
             AppTheme(
@@ -45,22 +42,9 @@ class MainActivity : ComponentActivity() {
                 HomeScreen()
             }
         }
-    }
 
-    private fun collectFromFlows() {
-        with(lifecycleScope) {
-            collectFromFlow(appVM.exitApplication) {
-                finishAffinity()
-            }
-            collectFromFlow(widgetVM.launchBackgroundLocationAccessPermissionRequest) {
-                homeScreenVM.lapState.backgroundAccessState?.launchRequest()
-            }
-            collectFromFlow(homeScreenVM.lapState.status) {
-                if (it != null) {
-                    i { "Collected $it" }
-                    widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
-                }
-            }
+        lifecycleScope.collectFromFlow(appVM.exitApplication) {
+            finishAffinity()
         }
     }
 
@@ -68,6 +52,6 @@ class MainActivity : ComponentActivity() {
         super.onStart()
 
         homeScreenVM.onStart()
-        widgetVM.onStart()
+        widgetVM.refreshWidgetIds()
     }
 }

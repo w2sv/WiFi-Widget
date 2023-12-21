@@ -10,15 +10,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,12 +36,13 @@ import com.w2sv.wifiwidget.ui.components.AppTopBar
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.BackgroundLocationAccessPermissionHandler
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionHandler
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.backgroundLocationAccessGrantRequired
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessRationals
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
+import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -56,11 +56,16 @@ fun HomeScreen(
     appViewModel: AppViewModel = viewModel(),
     homeScreenVM: HomeScreenViewModel = viewModel(),
     context: Context = LocalContext.current,
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    scope: CoroutineScope = rememberCoroutineScope()
+    scope: CoroutineScope = rememberCoroutineScope(),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+    locationAccessState: LocationAccessState = rememberLocationAccessPermissionState(
+        permissionRepository = homeScreenVM.permissionRepository,
+        saveLocationAccessPermissionRequestLaunched = homeScreenVM::saveLocationAccessPermissionRequestLaunched,
+        saveLocationAccessRationalShown = homeScreenVM::saveLocationAccessRationalShown,
+        mutableSharedSnackbarVisuals = appViewModel.mutableSharedSnackbarVisuals,
+        scope = scope
+    )
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
     NavigationDrawer(
         state = drawerState,
         modifier = modifier
@@ -74,6 +79,12 @@ fun HomeScreen(
                 }
             },
             snackbarHost = {
+                val snackbarHostState = LocalSnackbarHostState.current
+
+                FlowCollectionEffect(appViewModel.sharedSnackbarVisuals) {
+                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
+                }
+
                 SnackbarHost(snackbarHostState) { snackbarData ->
                     AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
                 }
@@ -82,24 +93,21 @@ fun HomeScreen(
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
             if (isLandscapeModeActivated) {
-                LandscapeMode(paddingValues = paddingValues, wifiState = wifiState)
+                LandscapeMode(
+                    paddingValues = paddingValues,
+                    wifiState = wifiState,
+                    locationAccessState = locationAccessState
+                )
             } else {
-                PortraitMode(paddingValues = paddingValues, wifiState = wifiState)
+                PortraitMode(
+                    paddingValues = paddingValues,
+                    wifiState = wifiState,
+                    locationAccessState = locationAccessState
+                )
             }
         }
 
-        LocationAccessPermissionHandler(state = homeScreenVM.lapState)
-        homeScreenVM.lapState.backgroundAccessState?.let {
-            if (backgroundLocationAccessGrantRequired) {
-                BackgroundLocationAccessPermissionHandler(state = it)
-            }
-        }
-
-        LaunchedEffect(snackbarHostState) {
-            appViewModel.sharedSnackbarVisuals.collect {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it)
-            }
-        }
+        LocationAccessRationals(state = locationAccessState)
 
         BackHandler {
             when (drawerState.isOpen) {
@@ -119,6 +127,7 @@ fun HomeScreen(
 private fun LandscapeMode(
     paddingValues: PaddingValues,
     wifiState: WifiState,
+    locationAccessState: LocationAccessState,
 ) {
     Row(
         modifier = Modifier
@@ -135,6 +144,7 @@ private fun LandscapeMode(
         )
 
         WidgetCard(
+            locationAccessState = locationAccessState,
             modifier = Modifier.fillMaxWidth(0.6f),
         )
     }
@@ -144,6 +154,7 @@ private fun LandscapeMode(
 private fun PortraitMode(
     paddingValues: PaddingValues,
     wifiState: WifiState,
+    locationAccessState: LocationAccessState,
 ) {
     Column(
         modifier = Modifier
@@ -162,6 +173,7 @@ private fun PortraitMode(
         Spacer(Modifier.weight(0.2f))
 
         WidgetCard(
+            locationAccessState = locationAccessState,
             modifier = Modifier
                 .fillMaxWidth(0.8f),
         )

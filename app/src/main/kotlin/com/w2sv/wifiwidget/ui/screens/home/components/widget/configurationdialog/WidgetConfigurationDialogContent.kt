@@ -23,7 +23,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessPermissionState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
@@ -39,10 +39,10 @@ import kotlinx.collections.immutable.toPersistentList
 @Composable
 fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
-    lapState: LocationAccessPermissionState,
+    locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
 ) {
-    var propertyInfoDialogData by remember {
+    var propertyInfoDialogData by remember {  // TODO: make rememberSavable
         mutableStateOf<PropertyInfoDialogData?>(null)
     }
         .apply {
@@ -108,9 +108,9 @@ fun WidgetConfigurationDialogContent(
                                 isCheckedMap = widgetConfiguration.wifiProperties,
                                 allowCheckChange = { newValue ->
                                     if (newValue) {
-                                        (lapState.status.value?.isGranted == true).also {
+                                        (locationAccessState.isGranted).also {
                                             if (!it) {
-                                                lapState.launchRequest(
+                                                locationAccessState.launchRequest(
                                                     LocationAccessPermissionRequestTrigger.PropertyCheckChange(
                                                         property,
                                                     )

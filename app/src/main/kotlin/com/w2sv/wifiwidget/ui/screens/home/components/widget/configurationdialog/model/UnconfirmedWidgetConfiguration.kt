@@ -11,8 +11,8 @@ import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
@@ -33,7 +33,7 @@ class UnconfirmedWidgetConfiguration(
     val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
     private val scope: CoroutineScope,
-    private val sharedSnackbarVisuals: SharedSnackbarVisuals,
+    private val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
@@ -59,6 +59,12 @@ class UnconfirmedWidgetConfiguration(
             initialValue = false
         )
 
+    val anyLocationAccessRequiringPropertyEnabled: Boolean
+        get() = WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
+            .any {
+                wifiProperties.persistedStateFlowMap.getValue(it).value
+            }
+
     fun onLocationAccessPermissionStatusChanged(
         status: LocationAccessPermissionStatus
     ) {
@@ -67,7 +73,7 @@ class UnconfirmedWidgetConfiguration(
                 val changedProperties = setLocationAccessRequiringPropertyEnablementAndSync(false)
                 if (changedProperties.isNotEmpty()) {
                     scope.launchDelayed(1_000) {
-                        sharedSnackbarVisuals.emit(
+                        mutableSharedSnackbarVisuals.emit {
                             AppSnackbarVisuals(
                                 msg = buildString {
                                     append("Disabled ${changedProperties.first()} ")
@@ -78,7 +84,7 @@ class UnconfirmedWidgetConfiguration(
                                 },
                                 kind = SnackbarKind.Error
                             )
-                        )
+                        }
                     }
                 }
             }
@@ -100,7 +106,7 @@ class UnconfirmedWidgetConfiguration(
     }
 
     /**
-     * @return Boolean, representing whether anything has been changed.
+     * @return LocationAccessRequiring WidgetWifiProperties that have been changed.
      */
     private fun setLocationAccessRequiringPropertyEnablementAndSync(value: Boolean): List<WidgetWifiProperty.NonIP.LocationAccessRequiring> {
         val changedProperties = mutableListOf<WidgetWifiProperty.NonIP.LocationAccessRequiring>()

@@ -1,7 +1,9 @@
 package com.w2sv.data.di
 
+import com.w2sv.data.repository.PermissionRepositoryImpl
 import com.w2sv.data.repository.PreferencesRepositoryImpl
 import com.w2sv.data.repository.WidgetRepositoryImpl
+import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.domain.repository.WidgetRepository
 import dagger.Binds
@@ -18,4 +20,7 @@ interface RepositoryBinderModule {
 
     @Binds
     fun preferencesRepository(impl: PreferencesRepositoryImpl): PreferencesRepository
+
+    @Binds
+    fun permissionRepository(impl: PermissionRepositoryImpl): PermissionRepository
 }

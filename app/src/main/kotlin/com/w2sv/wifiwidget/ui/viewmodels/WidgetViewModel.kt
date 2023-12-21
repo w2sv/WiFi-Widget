@@ -2,16 +2,14 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.res.Resources
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
-import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
+import com.w2sv.common.constants.Extra
 import com.w2sv.common.di.PackageName
-import com.w2sv.common.utils.trigger
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
@@ -19,16 +17,16 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SharedSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.hasBackgroundLocationAccess
+import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
@@ -39,95 +37,66 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
-    private val resources: Resources,
-    private val sharedSnackbarVisuals: SharedSnackbarVisuals,
+    private val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
     optionsChanged: WidgetProvider.OptionsChanged,
-    @ApplicationContext context: Context
+    @ApplicationContext context: Context,
+    savedStateHandle: SavedStateHandle
 ) :
     ViewModel() {
 
-    init {
-        viewModelScope.collectFromFlow(optionsChanged.widgetId) {
-            if (widgetIds.add(it)) {
-                i { "Pinned new widget w ID=$it" }
-                onNewWidgetPinned(context)
-            }
-        }
-    }
-
-    fun onStart() {
-        refreshWidgetIds()
-    }
-
-    fun attemptWidgetPin() {
-        if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
-            viewModelScope.launch {
-                sharedSnackbarVisuals.emit(
-                    AppSnackbarVisuals(
-                        msg = resources.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
-                        kind = SnackbarKind.Error
-                    )
-                )
-            }
-        }
-    }
+    // =========
+    // IDs
+    // =========
 
     private var widgetIds: MutableSet<Int> = getWidgetIds()
 
-    private fun refreshWidgetIds() {
+    fun refreshWidgetIds() {
         widgetIds = getWidgetIds()
     }
 
     private fun getWidgetIds(): MutableSet<Int> =
         appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
 
-    val launchBackgroundLocationAccessPermissionRequest get() = _launchBackgroundLocationAccessPermissionRequest.asSharedFlow()
-    private val _launchBackgroundLocationAccessPermissionRequest = MutableSharedFlow<Unit>()
+    // =========
+    // Pinning
+    // =========
 
-    private fun onNewWidgetPinned(context: Context) {
-        viewModelScope.launch {
-            if (WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
-                    .any {
-                        configuration.wifiProperties.persistedStateFlowMap.getValue(it).value
-                    }
-            ) {
-                when {
-                    !context.isLocationEnabled -> sharedSnackbarVisuals.emit(
-                        AppSnackbarVisuals(
-                            msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
-                            kind = SnackbarKind.Error,
-                        ),
+    fun attemptWidgetPin() {
+        if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
+            viewModelScope.launch {
+                mutableSharedSnackbarVisuals.emit {
+                    AppSnackbarVisuals(
+                        msg = it.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
+                        kind = SnackbarKind.Error
                     )
-
-                    !hasBackgroundLocationAccess(context) ->
-                        sharedSnackbarVisuals.emit(
-                            AppSnackbarVisuals(
-                                msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
-                                kind = SnackbarKind.Error,
-                                action = SnackbarAction(
-                                    label = resources.getString(R.string.grant),
-                                    callback = {
-                                        viewModelScope.launch {
-                                            _launchBackgroundLocationAccessPermissionRequest.trigger()
-                                        }
-                                    }
-                                )
-                            ),
-                        )
                 }
             }
-            sharedSnackbarVisuals.emit(
-                AppSnackbarVisuals(
-                    msg = context.getString(R.string.pinned_widget),
-                    kind = SnackbarKind.Success,
-                ),
-            )
+        }
+    }
+
+    val newWidgetPinned get() = _newWidgetPinned.asSharedFlow()
+    private val _newWidgetPinned = MutableSharedFlow<Unit>()
+
+    init {
+        viewModelScope.collectFromFlow(optionsChanged.widgetId) {
+            if (widgetIds.add(it)) {
+                _newWidgetPinned.emit(Unit)
+                i { "Pinned new widget w ID=$it" }
+            }
         }
     }
 
     // =========
     // Configuration
     // =========
+
+    val showConfigurationDialog get() = _showConfigurationDialog.asStateFlow()
+    private val _showConfigurationDialog =
+        MutableStateFlow(savedStateHandle.get<Boolean>(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG) == true)
+
+    fun setShowConfigurationDialog(value: Boolean) {
+        _showConfigurationDialog.value = value
+    }
 
     val configuration = UnconfirmedWidgetConfiguration(
         wifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
@@ -173,15 +142,15 @@ class WidgetViewModel @Inject constructor(
             persistedValue = repository.opacity
         ),
         scope = viewModelScope,
-        sharedSnackbarVisuals = sharedSnackbarVisuals,
+        mutableSharedSnackbarVisuals = mutableSharedSnackbarVisuals,
         onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
-            sharedSnackbarVisuals.emit(
+            mutableSharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
-                    msg = context.getString(R.string.updated_widget_configuration),
+                    msg = it.getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success,
-                ),
-            )
+                )
+            }
         },
     )
 }

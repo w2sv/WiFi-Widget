@@ -17,19 +17,19 @@ import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun WidgetConfigurationDialog(
+    locationAccessState: LocationAccessState,
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
     widgetVM: WidgetViewModel = viewModel(),
-    homeScreenViewModel: HomeScreenViewModel = viewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val onDismissRequest: () -> Unit = {
@@ -55,7 +55,7 @@ fun WidgetConfigurationDialog(
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
-            lapState = homeScreenViewModel.lapState,
+            locationAccessState = locationAccessState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 16.dp)

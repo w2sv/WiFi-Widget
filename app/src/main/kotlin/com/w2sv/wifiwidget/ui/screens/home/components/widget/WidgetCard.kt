@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
+import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,26 +15,37 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.IconHeader
+import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.components.SnackbarAction
+import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.BackgroundLocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun WidgetCard(
+    locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
-    homeScreenVM: HomeScreenViewModel = viewModel(),
     widgetVM: WidgetViewModel = viewModel(),
 ) {
     HomeScreenCard(
@@ -60,7 +72,7 @@ fun WidgetCard(
 
                 WidgetConfigurationDialogButton(
                     onClick = {
-                        homeScreenVM.setShowWidgetConfigurationDialog(true)
+                        widgetVM.setShowConfigurationDialog(true)
                     },
                     modifier = Modifier.size(32.dp),
                 )
@@ -68,11 +80,69 @@ fun WidgetCard(
         },
     )
 
-    if (homeScreenVM.showWidgetConfigurationDialog.collectAsStateWithLifecycle().value) {
+    NewWidgetPinnedSnackbar(
+        newWidgetPinned = widgetVM.newWidgetPinned,
+        anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
+        backgroundAccessState = locationAccessState.backgroundAccessState
+    )
+
+    // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
+    FlowCollectionEffect(locationAccessState.newStatus) {
+        widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
+    }
+
+    if (widgetVM.showConfigurationDialog.collectAsStateWithLifecycle().value) {
         WidgetConfigurationDialog(
+            locationAccessState = locationAccessState,
             closeDialog = {
-                homeScreenVM.setShowWidgetConfigurationDialog(false)
+                widgetVM.setShowConfigurationDialog(false)
             },
+        )
+    }
+}
+
+/**
+ * Shows Snackbar on collection from [newWidgetPinned].
+ */
+@Composable
+private fun NewWidgetPinnedSnackbar(
+    newWidgetPinned: Flow<Unit>,
+    anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
+    backgroundAccessState: BackgroundLocationAccessState?,
+    context: Context = LocalContext.current,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+) {
+    FlowCollectionEffect(newWidgetPinned) {
+        if (anyLocationAccessRequiringPropertyEnabled()) {
+            when {
+                // Warn about (B)SSID not being displayed if device GPS is disabled
+                !context.isLocationEnabled -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
+                        kind = SnackbarKind.Error,
+                    )
+                )
+
+                // Warn about (B)SSID not being reliably displayed if background location access not granted
+                backgroundAccessState?.isGranted == false -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
+                        kind = SnackbarKind.Error,
+                        action = SnackbarAction(
+                            label = context.getString(R.string.grant),
+                            callback = {
+                                backgroundAccessState.launchRequest()
+                            }
+                        )
+                    )
+                )
+            }
+        }
+        snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+            AppSnackbarVisuals(
+                msg = context.getString(R.string.pinned_widget),
+                kind = SnackbarKind.Success,
+            )
         )
     }
 }

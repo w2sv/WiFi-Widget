@@ -17,14 +17,6 @@ class PreferencesRepositoryImpl @Inject constructor(
 ) : PreferencesDataStoreRepository(dataStore),
     PreferencesRepository {
 
-    override val locationAccessPermissionRationalShown =
-        getPersistedValue(booleanPreferencesKey("locationPermissionDialogAnswered"), false)
-
-    override val locationAccessPermissionRequested = getPersistedValue(
-        booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce"),
-        false
-    )
-
     override val inAppTheme =
         getPersistedValue(intPreferencesKey("inAppTheme"), Theme.SystemDefault)
 

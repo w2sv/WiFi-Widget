@@ -11,11 +11,6 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 // TODO: export to AndroidUtils
-suspend fun MutableSharedFlow<Unit>.trigger() {
-    emit(Unit)
-}
-
-// TODO: export to AndroidUtils
 fun <T> CoroutineScope.collectLatestFromFlow(
     flow: Flow<T>,
     context: CoroutineContext = EmptyCoroutineContext,
