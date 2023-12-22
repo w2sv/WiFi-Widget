@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.location.LocationManager
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,6 +34,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
+    val locationManager: LocationManager,
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,

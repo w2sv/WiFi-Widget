@@ -1,6 +1,8 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
 import android.content.Context
+import android.location.LocationManager
+import android.os.Build
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.services.isLocationEnabled
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.IconHeader
@@ -83,7 +84,8 @@ fun WidgetCard(
     NewWidgetPinnedSnackbar(
         newWidgetPinned = widgetVM.newWidgetPinned,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
-        backgroundAccessState = locationAccessState.backgroundAccessState
+        backgroundAccessState = locationAccessState.backgroundAccessState,
+        locationManager = widgetVM.locationManager
     )
 
     // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
@@ -109,6 +111,7 @@ private fun NewWidgetPinnedSnackbar(
     newWidgetPinned: Flow<Unit>,
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
     backgroundAccessState: BackgroundLocationAccessState?,
+    locationManager: LocationManager,
     context: Context = LocalContext.current,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 ) {
@@ -116,7 +119,7 @@ private fun NewWidgetPinnedSnackbar(
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                !context.isLocationEnabled -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !locationManager.isLocationEnabled -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                         kind = SnackbarKind.Error,

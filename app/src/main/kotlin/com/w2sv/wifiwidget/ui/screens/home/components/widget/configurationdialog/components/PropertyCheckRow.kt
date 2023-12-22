@@ -68,7 +68,6 @@ fun PropertyCheckRows(
                                 makeElement = {
                                     SubPropertyCheckRow(
                                         data = it,
-                                        modifier = it.modifier
                                     )
                                 },
                                 spacer = {
@@ -144,7 +143,8 @@ private fun PropertyCheckRow(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .then(data.modifier),
     ) {
 
         leadingIcon?.invoke()
