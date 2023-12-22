@@ -34,10 +34,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import kotlinx.collections.immutable.ImmutableList
 
-private val firstIndexToSubTypeTitleResId = mapOf(
-    0 to R.string.location_access_requiring,
-    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.size to R.string.ip_addresses,
-    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.size + WidgetWifiProperty.IP.entries.size to R.string.other
+private val propertyToSubTitleResId = mapOf(
+    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
+    WidgetWifiProperty.IP.entries.first() to R.string.ip_addresses,
+    WidgetWifiProperty.NonIP.Other.entries.first() to R.string.other
 )
 
 @Composable
@@ -48,18 +48,19 @@ fun PropertyCheckRows(
 ) {
     Column(modifier = modifier) {
         dataList
-            .forEachIndexed { index, data ->
-                if (data.property is WidgetWifiProperty) {
-                    firstIndexToSubTypeTitleResId[index]?.let { resId ->
-                        PropertySubTypeHeader(
-                            title = stringResource(id = resId),
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(bottom = 8.dp)
-                        )
-                    }
+            .forEach { data ->
+                // Display PropertySubTypeHeader if applicable
+                propertyToSubTitleResId[data.property as? WidgetWifiProperty]?.let { resId ->
+                    PropertySubTypeHeader(
+                        title = stringResource(id = resId),
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 8.dp)
+                    )
                 }
                 PropertyCheckRow(data = data, showInfoDialog = showInfoDialog)
+
+                // Display subPropertyCheckRowData if present and property checked
                 if (data.subPropertyCheckRowData.isNotEmpty()) {
                     AnimatedVisibility(visible = data.isChecked()) {
                         Column {
