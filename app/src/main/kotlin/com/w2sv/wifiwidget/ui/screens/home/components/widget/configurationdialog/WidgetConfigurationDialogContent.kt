@@ -32,7 +32,11 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
+import com.w2sv.wifiwidget.ui.utils.ShakeConfig
+import com.w2sv.wifiwidget.ui.utils.ShakeController
+import com.w2sv.wifiwidget.ui.utils.shake
 import com.w2sv.wifiwidget.ui.utils.toColor
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 
@@ -94,76 +98,11 @@ fun WidgetConfigurationDialogContent(
             iconRes = R.drawable.ic_checklist_24,
             headerRes = R.string.properties,
         )
-
-        fun moreThanOneWifiPropertyChecked(): Boolean =
-            widgetConfiguration.wifiProperties.values.count { it } > 1
-
         PropertyCheckRows(
-            remember {
-                WidgetWifiProperty.entries
-                    .map { property ->
-                        when (property) {
-                            is WidgetWifiProperty.NonIP.LocationAccessRequiring -> PropertyCheckRowData.fromMutableMap(
-                                property = property,
-                                isCheckedMap = widgetConfiguration.wifiProperties,
-                                allowCheckChange = { newValue ->
-                                    if (newValue) {
-                                        (locationAccessState.isGranted).also {
-                                            if (!it) {
-                                                locationAccessState.launchRequest(
-                                                    LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                                        property,
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        moreThanOneWifiPropertyChecked()
-                                    }
-                                },
-                                infoDialogData = property.infoDialogData
-                            )
-
-                            is WidgetWifiProperty.IP -> {
-                                PropertyCheckRowData.fromMutableMap(
-                                    property = property,
-                                    isCheckedMap = widgetConfiguration.wifiProperties,
-                                    allowCheckChange = { isCheckedNew ->
-                                        isCheckedNew || moreThanOneWifiPropertyChecked()
-                                    },
-                                    subPropertyCheckRowData = property.subProperties
-                                        .map { subProperty ->
-                                            PropertyCheckRowData.fromMutableMap(
-                                                property = subProperty,
-                                                isCheckedMap = widgetConfiguration.subWifiProperties,
-                                                allowCheckChange = { newValue ->
-                                                    (property as? WidgetWifiProperty.IP.V4AndV6)?.let { v4AndV6Property ->
-                                                        newValue || !subProperty.isAddressTypeEnablementProperty || v4AndV6Property.addressTypeEnablementSubProperties.all {
-                                                            widgetConfiguration.subWifiProperties.getValue(
-                                                                it
-                                                            )
-                                                        }
-                                                    } ?: true
-                                                }
-                                            )
-                                        }
-                                        .toPersistentList(),
-                                    infoDialogData = property.infoDialogData
-                                )
-                            }
-
-                            is WidgetWifiProperty.NonIP.Other -> PropertyCheckRowData.fromMutableMap(
-                                property = property,
-                                isCheckedMap = widgetConfiguration.wifiProperties,
-                                allowCheckChange = { isCheckedNew ->
-                                    isCheckedNew || moreThanOneWifiPropertyChecked()
-                                },
-                                infoDialogData = property.infoDialogData,
-                            )
-                        }
-                    }
-                    .toPersistentList()
-            },
+            rememberWidgetWifiPropertyCheckRowData(
+                widgetConfiguration = widgetConfiguration,
+                locationAccessState = locationAccessState
+            ),
             showInfoDialog = ::showInfoDialog,
         )
 
@@ -214,6 +153,119 @@ fun WidgetConfigurationDialogContent(
         )
     }
 }
+
+@Composable
+private fun rememberWidgetWifiPropertyCheckRowData(
+    widgetConfiguration: UnconfirmedWidgetConfiguration,
+    locationAccessState: LocationAccessState,
+): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
+
+    fun moreThanOneWifiPropertyChecked(): Boolean =
+        widgetConfiguration.wifiProperties.values.count { it } > 1
+
+    val v4AndV6EnablementShakeControllerMap: Map<WidgetWifiProperty.IP.SubProperty, ShakeController> =
+        remember {
+            widgetConfiguration.ipSubProperties.keys
+                .filter { it.isAddressTypeEnablementProperty }
+                .associateWith { ShakeController() }
+        }
+
+    return remember {
+        WidgetWifiProperty.entries
+            .map { property ->
+                when (property) {
+                    is WidgetWifiProperty.NonIP.LocationAccessRequiring -> PropertyCheckRowData.fromMutableMap(
+                        property = property,
+                        isCheckedMap = widgetConfiguration.wifiProperties,
+                        allowCheckChange = { newValue ->
+                            if (newValue) {
+                                (locationAccessState.isGranted).also {
+                                    if (!it) {
+                                        locationAccessState.launchRequest(
+                                            LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                                property,
+                                            )
+                                        )
+                                    }
+                                }
+                            } else {
+                                moreThanOneWifiPropertyChecked()
+                            }
+                        },
+                        infoDialogData = property.infoDialogData
+                    )
+
+                    is WidgetWifiProperty.IP -> {
+                        PropertyCheckRowData.fromMutableMap(
+                            property = property,
+                            isCheckedMap = widgetConfiguration.wifiProperties,
+                            allowCheckChange = { isCheckedNew ->
+                                isCheckedNew || moreThanOneWifiPropertyChecked()
+                            },
+                            subPropertyCheckRowData = property.subProperties
+                                .map { subProperty ->
+                                    val shakeController =
+                                        v4AndV6EnablementShakeControllerMap[subProperty]
+
+                                    PropertyCheckRowData.fromMutableMap(
+                                        property = subProperty,
+                                        isCheckedMap = widgetConfiguration.ipSubProperties,
+                                        allowCheckChange = { newValue ->
+                                            subProperty.allowCheckChange(
+                                                newValue,
+                                                widgetConfiguration.ipSubProperties
+                                            )
+                                                .also {
+                                                    if (!it) {
+                                                        shakeController?.shake(shakeConfig)
+                                                    }
+                                                }
+                                        },
+                                        modifier = shakeController?.let { Modifier.shake(it) }
+                                            ?: Modifier
+                                    )
+                                }
+                                .toPersistentList(),
+                            infoDialogData = property.infoDialogData
+                        )
+                    }
+
+                    is WidgetWifiProperty.NonIP.Other -> PropertyCheckRowData.fromMutableMap(
+                        property = property,
+                        isCheckedMap = widgetConfiguration.wifiProperties,
+                        allowCheckChange = { isCheckedNew ->
+                            isCheckedNew || moreThanOneWifiPropertyChecked()
+                        },
+                        infoDialogData = property.infoDialogData,
+                    )
+                }
+            }
+            .toPersistentList()
+    }
+}
+
+private val shakeConfig = ShakeConfig(
+    iterations = 2,
+    translateX = 12.5f,
+    stiffness = 20_000f
+)
+
+private fun WidgetWifiProperty.IP.SubProperty.allowCheckChange(
+    newValue: Boolean,
+    subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+): Boolean =
+    when (val capturedKind = kind) {
+        is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
+            newValue || subPropertyEnablementMap.getValue(
+                WidgetWifiProperty.IP.SubProperty(
+                    property = property,
+                    kind = capturedKind.opposingAddressTypeEnablement
+                )
+            )
+        }
+
+        else -> true
+    }
 
 @Composable
 private fun SectionHeader(

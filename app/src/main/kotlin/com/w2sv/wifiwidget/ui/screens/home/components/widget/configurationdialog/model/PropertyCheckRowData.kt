@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -12,7 +13,8 @@ data class PropertyCheckRowData<T : WidgetProperty>(
     val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true },
     val subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
-    val infoDialogData: PropertyInfoDialogData? = null
+    val infoDialogData: PropertyInfoDialogData? = null,
+    val modifier: Modifier = Modifier
 ) {
     companion object {
         fun <T : WidgetProperty> fromMutableMap(
@@ -20,7 +22,8 @@ data class PropertyCheckRowData<T : WidgetProperty>(
             isCheckedMap: MutableMap<T, Boolean>,
             allowCheckChange: (Boolean) -> Boolean = { true },
             subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
-            infoDialogData: PropertyInfoDialogData? = null
+            infoDialogData: PropertyInfoDialogData? = null,
+            modifier: Modifier = Modifier
         ): PropertyCheckRowData<T> =
             PropertyCheckRowData(
                 property = property,
@@ -28,7 +31,8 @@ data class PropertyCheckRowData<T : WidgetProperty>(
                 onCheckedChange = { isCheckedMap[property] = it },
                 allowCheckChange = allowCheckChange,
                 subPropertyCheckRowData = subPropertyCheckRowData,
-                infoDialogData = infoDialogData
+                infoDialogData = infoDialogData,
+                modifier = modifier
             )
     }
 }

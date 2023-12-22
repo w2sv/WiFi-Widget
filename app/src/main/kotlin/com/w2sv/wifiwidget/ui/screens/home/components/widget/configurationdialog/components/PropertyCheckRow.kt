@@ -65,7 +65,12 @@ fun PropertyCheckRows(
                         Column {
                             InBetweenSpaced(
                                 elements = data.subPropertyCheckRowData,
-                                makeElement = { SubPropertyCheckRow(data = it) },
+                                makeElement = {
+                                    SubPropertyCheckRow(
+                                        data = it,
+                                        modifier = it.modifier
+                                    )
+                                },
                                 spacer = {
                                     Divider(
                                         modifier = Modifier.padding(
