@@ -1,8 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
-import android.content.Context
-import android.location.LocationManager
-import android.os.Build
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +14,6 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,9 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.w2sv.common.utils.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.IconHeader
+import com.w2sv.wifiwidget.ui.components.LocalLocationManager
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
@@ -85,7 +83,6 @@ fun WidgetCard(
         newWidgetPinned = widgetVM.newWidgetPinned,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
         backgroundAccessState = locationAccessState.backgroundAccessState,
-        locationManager = widgetVM.locationManager
     )
 
     // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
@@ -110,16 +107,17 @@ fun WidgetCard(
 private fun NewWidgetPinnedSnackbar(
     newWidgetPinned: Flow<Unit>,
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
-    backgroundAccessState: BackgroundLocationAccessState?,
-    locationManager: LocationManager,
-    context: Context = LocalContext.current,
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+    backgroundAccessState: BackgroundLocationAccessState?
 ) {
+    val context = LocalContext.current
+    val snackbarHostState = LocalSnackbarHostState.current
+    val locationManager = LocalLocationManager.current
+
     FlowCollectionEffect(newWidgetPinned) {
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && !locationManager.isLocationEnabled -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                locationManager.isLocationEnabledCompat == false -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                         kind = SnackbarKind.Error,

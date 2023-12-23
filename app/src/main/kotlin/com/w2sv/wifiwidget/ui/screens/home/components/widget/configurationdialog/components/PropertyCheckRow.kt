@@ -34,12 +34,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import kotlinx.collections.immutable.ImmutableList
 
-private val propertyToSubTitleResId = mapOf(
-    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
-    WidgetWifiProperty.IP.entries.first() to R.string.ip_addresses,
-    WidgetWifiProperty.NonIP.Other.entries.first() to R.string.other
-)
-
 @Composable
 fun PropertyCheckRows(
     dataList: ImmutableList<PropertyCheckRowData<*>>,
@@ -86,6 +80,12 @@ fun PropertyCheckRows(
             }
     }
 }
+
+private val propertyToSubTitleResId = mapOf(
+    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
+    WidgetWifiProperty.IP.entries.first() to R.string.ip_addresses,
+    WidgetWifiProperty.NonIP.Other.entries.first() to R.string.other
+)
 
 @Composable
 private fun PropertySubTypeHeader(title: String, modifier: Modifier = Modifier) {

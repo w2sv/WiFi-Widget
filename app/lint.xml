@@ -2,6 +2,6 @@
 <lint>
     <issue id="NotificationPermission" severity="ignore" />
     <issue id="ComposeCompositionLocalUsage">
-        <option name="allowed-composition-locals" value="LocalSnackbarHostState" />
+        <option name="allowed-composition-locals" value="LocalSnackbarHostState,LocalLocationManager" />
     </issue>
 </lint>
