@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ fun rememberShakeController(key1: Any? = null): ShakeController {
     return remember(key1) { ShakeController() }
 }
 
+@Stable
 class ShakeController {
     fun shake(shakeConfig: ShakeConfig) {
         this.config = shakeConfig
@@ -37,7 +39,7 @@ class ShakeController {
 @Immutable
 data class ShakeConfig(
     val iterations: Int,
-    val translateX: Float = 0f,
+    val translateX: Float,
     val stiffness: Float = Spring.StiffnessMedium,
 )
 
