@@ -2,7 +2,6 @@ package com.w2sv.widget.di
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.os.PowerManager
 import androidx.work.WorkManager
 import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.repository.WidgetRepository
@@ -28,11 +27,6 @@ object WidgetModule {
     @Singleton
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
         AppWidgetManager.getInstance(context)
-
-    @Provides
-    @Singleton
-    fun powerManager(@ApplicationContext context: Context): PowerManager =
-        context.getSystemService(PowerManager::class.java)
 
     @Provides
     fun widgetAppearance(widgetRepository: WidgetRepository): WidgetAppearance =
