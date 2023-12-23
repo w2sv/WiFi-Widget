@@ -19,8 +19,8 @@ fun PropertyInfoDialog(
     data: PropertyInfoDialogData,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current
 ) {
+    val context: Context = LocalContext.current
     InfoDialog(
         modifier = modifier,
         title = stringResource(id = data.labelRes),

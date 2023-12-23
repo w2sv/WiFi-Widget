@@ -8,10 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -26,7 +23,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ThemeSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
@@ -44,21 +40,9 @@ import kotlinx.collections.immutable.toPersistentList
 fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     locationAccessState: LocationAccessState,
+    showPropertyInfoDialog: (PropertyInfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var propertyInfoDialogData by remember {  // TODO: make rememberSavable
-        mutableStateOf<PropertyInfoDialogData?>(null)
-    }
-        .apply {
-            value?.let {
-                PropertyInfoDialog(data = it, onDismissRequest = { value = null })
-            }
-        }
-
-    fun showInfoDialog(data: PropertyInfoDialogData) {
-        propertyInfoDialogData = data
-    }
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -103,7 +87,7 @@ fun WidgetConfigurationDialogContent(
                 widgetConfiguration = widgetConfiguration,
                 locationAccessState = locationAccessState
             ),
-            showInfoDialog = ::showInfoDialog,
+            showInfoDialog = showPropertyInfoDialog,
         )
 
         SectionHeader(
@@ -149,7 +133,7 @@ fun WidgetConfigurationDialogContent(
                     )
                 )
             },
-            showInfoDialog = ::showInfoDialog
+            showInfoDialog = showPropertyInfoDialog
         )
     }
 }
@@ -278,7 +262,7 @@ private fun WidgetWifiProperty.IP.SubProperty.allowCheckChange(
                 )
             )
         }
-/
+
         else -> true
     }
 

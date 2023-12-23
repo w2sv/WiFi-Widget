@@ -18,6 +18,7 @@ import com.w2sv.wifiwidget.ui.components.CustomDialog
 import com.w2sv.wifiwidget.ui.components.DialogButtonRow
 import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -51,16 +52,25 @@ fun WidgetConfigurationDialog(
             },
         ),
         onDismissRequest = onDismissRequest,
-        modifier = modifier.conditional(isLandscapeModeActivated, { fillMaxHeight() }),
+        modifier = modifier.conditional(
+            condition = isLandscapeModeActivated,
+            onTrue = { fillMaxHeight() }
+        ),
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetVM.configuration,
             locationAccessState = locationAccessState,
+            showPropertyInfoDialog = widgetVM::setPropertyInfoDialogData,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 16.dp)
                 .fillMaxHeight(0.75f),
         )
+        widgetVM.propertyInfoDialogData.collectAsStateWithLifecycle().value?.let {
+            PropertyInfoDialog(
+                data = it,
+                onDismissRequest = { widgetVM.setPropertyInfoDialogData(null) })
+        }
         DialogButtonRow(
             onCancel = {
                 onDismissRequest()

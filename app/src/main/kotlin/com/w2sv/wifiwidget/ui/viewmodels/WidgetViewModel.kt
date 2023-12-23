@@ -19,12 +19,14 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -96,6 +98,13 @@ class WidgetViewModel @Inject constructor(
 
     fun setShowConfigurationDialog(value: Boolean) {
         _showConfigurationDialog.value = value
+    }
+
+    val propertyInfoDialogData: StateFlow<PropertyInfoDialogData?> get() = _propertyInfoDialogData.asStateFlow()
+    private val _propertyInfoDialogData = MutableStateFlow<PropertyInfoDialogData?>(null)
+
+    fun setPropertyInfoDialogData(value: PropertyInfoDialogData?) {
+        _propertyInfoDialogData.value = value
     }
 
     val configuration = UnconfirmedWidgetConfiguration(
