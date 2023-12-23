@@ -2,10 +2,9 @@ package com.w2sv.widget.model
 
 import android.content.res.ColorStateList
 import android.os.Build
-import android.text.Spanned
-import android.text.style.RelativeSizeSpan
 import android.widget.RemoteViews
 import androidx.core.text.buildSpannedString
+import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -48,13 +47,9 @@ private fun inflateWifiPropertyLayout(
                     buildSpannedString {
                         append(IP_LABEL)
                         subscript {
-                            append(viewData.label)
-                            setSpan(
-                                RelativeSizeSpan(0.8f),
-                                IP_LABEL.length,
-                                viewData.label.length + IP_LABEL.length,
-                                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-                            )
+                            scale(0.8f) {
+                                append(viewData.label)
+                            }
                         }
                     },
                 color = widgetColors.primary,
