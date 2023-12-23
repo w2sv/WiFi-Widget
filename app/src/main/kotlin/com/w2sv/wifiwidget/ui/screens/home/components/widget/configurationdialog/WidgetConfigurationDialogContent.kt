@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetButton
@@ -27,7 +29,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.infoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.getInfoDialogData
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
 import com.w2sv.wifiwidget.ui.utils.shake
@@ -110,6 +112,7 @@ fun WidgetConfigurationDialogContent(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             headerRes = R.string.refreshing,
         )
+        val context: Context = LocalContext.current
         PropertyCheckRows(
             dataList = remember {
                 persistentListOf(
@@ -117,8 +120,8 @@ fun WidgetConfigurationDialogContent(
                         property = WidgetRefreshingParameter.RefreshPeriodically,
                         isCheckedMap = widgetConfiguration.refreshingParametersMap,
                         infoDialogData = PropertyInfoDialogData(
-                            labelRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
-                            descriptionRes = R.string.refresh_periodically_info
+                            title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
+                            description = context.getString(R.string.refresh_periodically_info)
                         ),
                         subPropertyCheckRowData = persistentListOf(
                             PropertyCheckRowData.fromMutableMap(
@@ -158,6 +161,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                 .associateWith { ShakeController() }
         }
 
+    val context = LocalContext.current
     return remember {
         WidgetWifiProperty.entries
             .map { property ->
@@ -235,7 +239,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
 
                         else -> persistentListOf()
                     },
-                    infoDialogData = property.infoDialogData,
+                    infoDialogData = property.getInfoDialogData(context),
                     modifier = Modifier.shake(shakeController)
                 )
             }

@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
@@ -15,6 +16,11 @@ fun DialogButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    colors: ButtonColors = ButtonDefaults.elevatedButtonColors(
+        disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = MaterialTheme.colorScheme.primary,
+    ),
     content: @Composable (RowScope.() -> Unit),
 ) {
     ElevatedButton(
@@ -30,11 +36,7 @@ fun DialogButton(
             null
         },
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
-        colors = ButtonDefaults.elevatedButtonColors(
-            disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            containerColor = MaterialTheme.colorScheme.primary,
-        ),
+        colors = colors,
         content = content,
     )
 }

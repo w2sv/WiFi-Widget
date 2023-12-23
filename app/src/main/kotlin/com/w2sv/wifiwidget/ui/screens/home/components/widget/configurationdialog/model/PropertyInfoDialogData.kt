@@ -1,17 +1,22 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
-import androidx.annotation.StringRes
+import android.content.Context
 import com.w2sv.domain.model.WidgetWifiProperty
 
 data class PropertyInfoDialogData(
-    @StringRes val labelRes: Int,
-    @StringRes val descriptionRes: Int,
+    val title: String,
+    val description: String,
     val learnMoreUrl: String? = null,
 )
 
-val WidgetWifiProperty.infoDialogData: PropertyInfoDialogData
-    get() = PropertyInfoDialogData(
-        labelRes,
-        descriptionRes,
-        learnMoreUrl,
+fun WidgetWifiProperty.getInfoDialogData(context: Context): PropertyInfoDialogData =
+    PropertyInfoDialogData(
+        title = buildString {
+            append(context.getString(labelRes))
+            if (this@getInfoDialogData is WidgetWifiProperty.IP) {
+                append(" Address")
+            }
+        },
+        description = context.getString(descriptionRes),
+        learnMoreUrl = learnMoreUrl,
     )
