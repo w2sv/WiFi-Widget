@@ -24,8 +24,6 @@
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
 
-    <string name="show_v4_addresses">Show IPv4 Addresses</string>
-    <string name="show_v6_addresses">Show IPv6 Addresses</string>
     <string name="loopback">Loopback</string>
     <string name="site_local">Site Local</string>
     <string name="site_local_short">SiteLocal</string>
@@ -34,6 +32,8 @@
     <string name="public_">Public</string>
     <string name="multicast">Multicast</string>
 
+    <string name="ipv4">IPv4</string>
+    <string name="ipv6">IPv6</string>
     <string name="refresh">Refresh</string>
     <string name="go_to_wifi_settings">Go to WiFi Settings</string>
     <string name="go_to_widget_settings">Go to Widget Settings</string>

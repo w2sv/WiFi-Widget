@@ -177,11 +177,11 @@ sealed interface WidgetWifiProperty : WidgetProperty {
             includePrefixLength: Boolean
         ) : IP(
             subPropertyKinds = buildList {
+                add(AddressTypeEnablement.V4Enabled)
+                add(AddressTypeEnablement.V6Enabled)
                 if (includePrefixLength) {
                     add(SubProperty.Kind.ShowPrefixLength)
                 }
-                add(AddressTypeEnablement.V4Enabled)
-                add(AddressTypeEnablement.V6Enabled)
             }
         ) {
             val v4EnabledSubProperty: SubProperty
@@ -195,11 +195,11 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
                 abstract val opposingAddressTypeEnablement: AddressTypeEnablement
 
-                data object V4Enabled : AddressTypeEnablement(R.string.show_v4_addresses) {
+                data object V4Enabled : AddressTypeEnablement(R.string.ipv4) {
                     override val opposingAddressTypeEnablement: AddressTypeEnablement = V6Enabled
                 }
 
-                data object V6Enabled : AddressTypeEnablement(R.string.show_v6_addresses) {
+                data object V6Enabled : AddressTypeEnablement(R.string.ipv6) {
                     override val opposingAddressTypeEnablement: AddressTypeEnablement = V4Enabled
                 }
             }

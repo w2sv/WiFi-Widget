@@ -12,7 +12,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
     val isChecked: () -> Boolean,
     val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true },
-    val subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
+    val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
     val infoDialogData: PropertyInfoDialogData? = null,
     val modifier: Modifier = Modifier
 ) {
@@ -30,7 +30,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
                 isChecked = { isCheckedMap.getValue(property) },
                 onCheckedChange = { isCheckedMap[property] = it },
                 allowCheckChange = allowCheckChange,
-                subPropertyCheckRowData = subPropertyCheckRowData,
+                subPropertyCheckRowDataList = subPropertyCheckRowData,
                 infoDialogData = infoDialogData,
                 modifier = modifier
             )

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -28,10 +28,10 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.InBetweenSpaced
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.utils.conditional
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -52,34 +52,63 @@ fun PropertyCheckRows(
                             .padding(bottom = 8.dp)
                     )
                 }
-                PropertyCheckRow(data = data, showInfoDialog = showInfoDialog)
+                PropertyCheckRow(
+                    data = data,
+                    showInfoDialog = showInfoDialog,
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowRight,
+                            contentDescription = null,
+                        )
+                    }
+                )
 
                 // Display subPropertyCheckRowData if present and property checked
-                if (data.subPropertyCheckRowData.isNotEmpty()) {
+                if (data.subPropertyCheckRowDataList.isNotEmpty()) {
                     AnimatedVisibility(visible = data.isChecked()) {
-                        Column {
-                            InBetweenSpaced(
-                                elements = data.subPropertyCheckRowData,
-                                makeElement = {
-                                    SubPropertyCheckRow(
-                                        data = it,
-                                    )
-                                },
-                                spacer = {
-                                    Divider(
-                                        modifier = Modifier.padding(
-                                            vertical = 2.dp,
-                                            horizontal = 16.dp
-                                        )
-                                    )
-                                }
-                            )
-                        }
+                        SubPropertyCheckRowColumn(
+                            dataList = data.subPropertyCheckRowDataList,
+                            modifier = Modifier.padding(start = 16.dp)
+                        )
                     }
                 }
             }
     }
 }
+
+@Composable
+private fun SubPropertyCheckRowColumn(
+    dataList: ImmutableList<PropertyCheckRowData<*>>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        dataList.forEach { checkRowData ->
+            if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
+                Text(
+                    text = stringResource(R.string.versions),
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = subPropertyTextColor,
+                )
+            }
+            PropertyCheckRow(
+                data = checkRowData,
+                modifier = Modifier.conditional(
+                    condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
+                    onTrue = { padding(start = 16.dp) }
+                ),
+                fontSize = 14.sp,
+                makeText = ::bulletPointText,
+                textColor = subPropertyTextColor
+            )
+        }
+    }
+}
+
+private val subPropertyTextColor
+    @Composable
+    get() = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
 
 private val propertyToSubTitleResId = mapOf(
     WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
@@ -101,40 +130,9 @@ private fun PropertySubTypeHeader(title: String, modifier: Modifier = Modifier) 
 private fun PropertyCheckRow(
     data: PropertyCheckRowData<*>,
     modifier: Modifier = Modifier,
-    showInfoDialog: ((PropertyInfoDialogData) -> Unit)? = null,
-) {
-    PropertyCheckRow(
-        data = data,
-        modifier = modifier,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = null,
-            )
-        },
-        showInfoDialog = showInfoDialog,
-    )
-}
-
-@Composable
-private fun SubPropertyCheckRow(
-    data: PropertyCheckRowData<*>,
-    modifier: Modifier = Modifier,
-) {
-    PropertyCheckRow(
-        data = data,
-        modifier = modifier.padding(start = 16.dp),
-        fontSize = 14.sp,
-        makeText = ::bulletPointText,
-    )
-}
-
-@Composable
-private fun PropertyCheckRow(
-    data: PropertyCheckRowData<*>,
-    modifier: Modifier = Modifier,
     makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,
+    textColor: Color = Color.Unspecified,
     leadingIcon: (@Composable () -> Unit)? = null,
     showInfoDialog: ((PropertyInfoDialogData) -> Unit)? = null,
 ) {
@@ -153,6 +151,7 @@ private fun PropertyCheckRow(
             text = makeText(label),
             fontSize = fontSize,
             modifier = Modifier.weight(1.0f, true),
+            color = textColor
         )
         Checkbox(
             checked = data.isChecked(),
