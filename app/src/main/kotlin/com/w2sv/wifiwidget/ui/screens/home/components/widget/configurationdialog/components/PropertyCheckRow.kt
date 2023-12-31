@@ -1,11 +1,13 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Checkbox
@@ -45,11 +47,13 @@ fun PropertyCheckRows(
             .forEach { data ->
                 // Display PropertySubTypeHeader if applicable
                 propertyToSubTitleResId[data.property as? WidgetWifiProperty]?.let { resId ->
-                    PropertySubTypeHeader(
-                        title = stringResource(id = resId),
+                    Text(
+                        text = stringResource(id = resId),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier
                             .align(Alignment.CenterHorizontally)
-                            .padding(bottom = 8.dp)
+                            .padding(top = 4.dp, bottom = 8.dp)
                     )
                 }
                 PropertyCheckRow(
@@ -68,7 +72,12 @@ fun PropertyCheckRows(
                     AnimatedVisibility(visible = data.isChecked()) {
                         SubPropertyCheckRowColumn(
                             dataList = data.subPropertyCheckRowDataList,
-                            modifier = Modifier.padding(start = 16.dp)
+                            modifier = Modifier
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .padding(start = 16.dp)
                         )
                     }
                 }
@@ -81,15 +90,16 @@ private fun SubPropertyCheckRowColumn(
     dataList: ImmutableList<PropertyCheckRowData<*>>,
     modifier: Modifier = Modifier
 ) {
+    val fontSize = 14.sp
+
     Column(modifier = modifier) {
         dataList.forEach { checkRowData ->
             if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
                 Text(
                     text = stringResource(R.string.versions),
-                    modifier = Modifier.padding(vertical = 2.dp),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = subPropertyTextColor,
+                    modifier = Modifier.padding(top = 8.dp),
+                    fontSize = fontSize,
+                    fontWeight = FontWeight.SemiBold
                 )
             }
             PropertyCheckRow(
@@ -98,17 +108,12 @@ private fun SubPropertyCheckRowColumn(
                     condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
                     onTrue = { padding(start = 16.dp) }
                 ),
-                fontSize = 14.sp,
+                fontSize = fontSize,
                 makeText = ::bulletPointText,
-                textColor = subPropertyTextColor
             )
         }
     }
 }
-
-private val subPropertyTextColor
-    @Composable
-    get() = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)
 
 private val propertyToSubTitleResId = mapOf(
     WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
@@ -117,21 +122,12 @@ private val propertyToSubTitleResId = mapOf(
 )
 
 @Composable
-private fun PropertySubTypeHeader(title: String, modifier: Modifier = Modifier) {
-    Text(
-        text = title,
-        color = MaterialTheme.colorScheme.secondary,
-        fontWeight = FontWeight.SemiBold,
-        modifier = modifier
-    )
-}
-
-@Composable
 private fun PropertyCheckRow(
     data: PropertyCheckRowData<*>,
     modifier: Modifier = Modifier,
     makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,
+    fontWeight: FontWeight = FontWeight.Normal,
     textColor: Color = Color.Unspecified,
     leadingIcon: (@Composable () -> Unit)? = null,
     showInfoDialog: ((PropertyInfoDialogData) -> Unit)? = null,
@@ -150,6 +146,7 @@ private fun PropertyCheckRow(
         Text(
             text = makeText(label),
             fontSize = fontSize,
+            fontWeight = fontWeight,
             modifier = Modifier.weight(1.0f, true),
             color = textColor
         )
