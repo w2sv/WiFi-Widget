@@ -1,4 +1,5 @@
-- Enabled display of public IP addresses retrieved from ipify.org
-- Reworked IP address categorization
-- Fixed the bug that led to the WiFi properties being displayed in-app even upon no WiFi connection being present
-- Various UI improvements
+- Facilitated location access permission management
+- Enabled automatic disablement of location requiring properties upon revoking location access permission
+- Aligned properties being displayed in-app with the selected widget properties
+- Fixed in-app property display bug that would randomly make certain properties disappear
+- UI & performance improvements

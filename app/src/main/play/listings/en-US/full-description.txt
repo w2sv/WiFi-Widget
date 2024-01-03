@@ -1,28 +1,28 @@
 <b>Introducing WiFi Widget – Your Ultimate Connection Companion!</b>
 
-🚀 <i>Unleash the power of information at your fingertips with WiFi Widget, the open-source, ad-free app that elevates your connectivity experience. Say goodbye to the hassle of navigating through settings – this sleek and modern UI puts your WiFi details front and center in a fully customizable widget!</i>
+🚀 Unleash the power of information at your fingertips with WiFi Widget, the open-source, ad-free app that elevates your connectivity experience. Say goodbye to the hassle of navigating through settings – this sleek and modern UI puts your WiFi details front and center in a fully customizable widget!
 
 <b>Key Features:</b>
-🎨 <i>Modern UI with Light and Dark Themes:</i> Tailor the app to your style by choosing between light and dark themes.
-🔧 <i>Fully Configurable Widget:</i> Craft the perfect widget for your needs by adjusting appearance, WiFi properties, button display, size, and data refresh parameters.
+🎨 <b>Modern UI with Light and Dark Themes:</b> Tailor the app to your style by choosing between light and dark themes.
+🔧 <b>Fully Configurable Widget:</b> Craft the perfect widget for your needs by adjusting appearance, WiFi properties, button display, size, and data refresh parameters.
 
 <b>WiFi Properties at a Glance:</b>
-📡 <i>SSID, BSSID:</i> Easily identify your network.
-🌐 <i>IP Addresses:</i> Explore detailed categories like loopback, site local, link local, ULA, multicast, global unicast, and public. Individually enable or disable them based on your preference.
-📶 <i>Frequency, Channel, Link Speed:</i> Dive deep into your WiFi connection details.
-🌐 <i>Gateway, DNS, DHCP:</i> Understand the core elements of your network setup.
+📡 <b>SSID, BSSID:</b> Easily identify your network.
+🌐 <b>IP Addresses:</b> Explore detailed categories like loopback, site local, link local, ULA, multicast, global unicast, and public. Individually enable or disable them based on your preference.
+📶 <b>Frequency, Channel, Link Speed:</b> Dive deep into your WiFi connection details.
+🌐 <b>Gateway, DNS, DHCP:</b> Understand the core elements of your network setup.
 
 <b>Widget Customization Galore:</b>
-🖌️ <i>Appearance Settings:</i> Choose between light and dark themes. Customize widget colors and background opacity. Select which buttons are to be displayed.
-📏 <i>Size Options:</i> Adjust the widget to seamlessly integrate into your home screen.
-🔄 <i>Data Refreshing:</i> Stay up-to-date with configurable data refresh intervals.
+🖌️ <b>Appearance Settings:</b> Choose between light and dark themes. Customize widget colors and background opacity. Select which buttons are to be displayed.
+📏 <b>Size Options:</b> Adjust the widget to seamlessly integrate into your home screen.
+🔄 <b>Data Refreshing:</b> Stay up-to-date with configurable data refresh intervals.
 
 <b>No Ads, No Hassle:</b>
 🚫 Enjoy an uninterrupted experience – WiFi Widget is completely ad-free!
 
 <b>Simplify your connectivity and make a statement on your home screen. Download WiFi Widget now and take control of your WiFi experience!</b>
 
-Source code available under the <a href="https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE">GPL-3.0 license</a> at <a href="https://github.com/w2sv/WiFi-Widget">GitHub</a>.
+Source code available under the GPL-3.0 license at https://github.com/w2sv/WiFi-Widget.
 
 <b>Credits:</b>
-Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> licensed under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.
+Logo foreground by Hilmy Abiyyu Asad https://freeicons.io/profile/75801, licensed under Creative Commons(Attribution 3.0 unported) https://creativecommons.org/licenses/by/3.0/.
