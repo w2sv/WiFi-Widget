@@ -8,6 +8,10 @@ plugins {
     alias(libs.plugins.wifiwidget.hilt)
 }
 
+kotlin {
+    jvmToolchain(libs.versions.java.get().toInt())
+}
+
 android {
     val packageName = "com.w2sv.wifiwidget"
 
@@ -71,15 +75,6 @@ android {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
         }
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.java.get()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
     }
 
     hilt {
