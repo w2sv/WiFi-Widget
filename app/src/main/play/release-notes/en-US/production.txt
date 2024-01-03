@@ -1,5 +1,5 @@
-- Facilitated location access permission management
+- Simplified location access permission management
 - Enabled automatic disablement of location requiring properties upon revoking location access permission
 - Aligned properties being displayed in-app with the selected widget properties
-- Fixed in-app property display bug that would randomly make certain properties disappear
+- Fixed in-app property display bug, that would randomly make certain properties disappear
 - UI & performance improvements
