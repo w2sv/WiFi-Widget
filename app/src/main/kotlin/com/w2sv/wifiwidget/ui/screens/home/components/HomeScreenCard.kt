@@ -18,7 +18,7 @@ fun HomeScreenCard(modifier: Modifier = Modifier, content: @Composable ColumnSco
     ) {
         Column(
             modifier = Modifier
-                .padding(22.dp),
+                .padding(vertical = 22.dp, horizontal = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             content = content
         )

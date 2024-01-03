@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -18,6 +17,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 fun WifiStatusCard(
     wifiState: WifiState,
     modifier: Modifier = Modifier,
+    propertyDisplayModifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
         modifier = modifier,
@@ -37,11 +37,11 @@ fun WifiStatusCard(
                         Spacer(modifier = Modifier.height(12.dp))
                         WifiPropertyDisplay(
                             propertiesViewData = it.propertyViewData,
-                            modifier = Modifier.fillMaxHeight(0.25f)
+                            modifier = propertyDisplayModifier
                         )
                     }
                 }
             }
-        },
+        }
     )
 }

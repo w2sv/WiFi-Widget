@@ -35,9 +35,10 @@ private fun WifiStatusDisplayPrev() {
 @Composable
 fun WifiStatusDisplay(
     wifiStatus: WifiStatus,
-    modifier: Modifier = Modifier,
-    context: Context = LocalContext.current
+    modifier: Modifier = Modifier
 ) {
+    val context: Context = LocalContext.current
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier

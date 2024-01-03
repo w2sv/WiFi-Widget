@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -141,11 +142,13 @@ private fun LandscapeMode(
             wifiState = wifiState,
             modifier = Modifier
                 .fillMaxWidth(0.4f),
+            propertyDisplayModifier = Modifier
+                .fillMaxHeight()
         )
 
         WidgetCard(
             locationAccessState = locationAccessState,
-            modifier = Modifier.fillMaxWidth(0.6f),
+            modifier = Modifier.fillMaxWidth(0.7f),
         )
     }
 }
@@ -168,6 +171,8 @@ private fun PortraitMode(
             wifiState = wifiState,
             modifier = Modifier
                 .fillMaxWidth(0.77f),
+            propertyDisplayModifier = Modifier
+                .fillMaxHeight(0.28f)
         )
 
         Spacer(Modifier.weight(0.2f))
