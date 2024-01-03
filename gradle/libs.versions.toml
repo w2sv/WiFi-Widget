@@ -50,7 +50,7 @@ accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.32.0
 # .Hilt
 google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
 google-hilt-compiler = { module = 'com.google.dagger:hilt-android-compiler', version.ref = 'hilt' }
-androidx-hilt-work =  "androidx.hilt:hilt-work:1.1.0"
+androidx-hilt-work = "androidx.hilt:hilt-work:1.1.0"
 
 # Other
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }

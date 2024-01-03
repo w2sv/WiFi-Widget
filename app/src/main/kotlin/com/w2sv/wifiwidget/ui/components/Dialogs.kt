@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -36,7 +35,7 @@ fun CustomDialog(
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
             modifier = modifier,
-            shape = RoundedCornerShape(12.dp),
+            shape = MaterialTheme.shapes.medium,
             elevation = CardDefaults.elevatedCardElevation(16.dp),
         ) {
             Column(

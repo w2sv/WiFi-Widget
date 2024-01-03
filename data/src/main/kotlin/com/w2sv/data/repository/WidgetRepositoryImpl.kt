@@ -5,7 +5,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.androidutils.coroutines.getSynchronousMap
 import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
 import com.w2sv.common.utils.dynamicColorsSupported

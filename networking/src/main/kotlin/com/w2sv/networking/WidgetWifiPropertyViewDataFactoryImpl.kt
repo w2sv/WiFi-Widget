@@ -165,7 +165,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private fun <T, R: WidgetWifiProperty.ViewData> WidgetWifiProperty.getViewData(
+    private fun <T, R : WidgetWifiProperty.ViewData> WidgetWifiProperty.getViewData(
         values: List<T>,
         makeViewData: (String, T) -> R
     ): List<R> =

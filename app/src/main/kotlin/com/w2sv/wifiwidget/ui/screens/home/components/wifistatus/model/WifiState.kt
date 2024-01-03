@@ -9,7 +9,8 @@ import kotlinx.coroutines.flow.Flow
 sealed class WifiState(
     val status: WifiStatus
 ) {
-    data object Disabled: WifiState(WifiStatus.Disabled)
-    data object Disconnected: WifiState(WifiStatus.Disconnected)
-    class Connected(val propertyViewData: Flow<WidgetWifiProperty.ViewData>) : WifiState(WifiStatus.Connected)
+    data object Disabled : WifiState(WifiStatus.Disabled)
+    data object Disconnected : WifiState(WifiStatus.Disconnected)
+    class Connected(val propertyViewData: Flow<WidgetWifiProperty.ViewData>) :
+        WifiState(WifiStatus.Connected)
 }

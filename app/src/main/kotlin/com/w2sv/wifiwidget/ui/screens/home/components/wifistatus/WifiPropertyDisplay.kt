@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDefaults
@@ -304,7 +303,7 @@ private fun IPSubPropertyText(text: String) {
             .border(
                 width = Dp.Hairline,
                 color = MaterialTheme.colorScheme.primary,
-                shape = RoundedCornerShape(12.dp),
+                shape = MaterialTheme.shapes.medium,
             )
             .padding(vertical = 2.dp, horizontal = 8.dp),
         fontSize = 11.sp,
