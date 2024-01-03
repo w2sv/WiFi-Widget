@@ -25,10 +25,10 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.conditional
 
 @Composable
-fun CustomDialog(
+fun AppDialog(
     onDismissRequest: () -> Unit,
+    header: DialogHeader,
     modifier: Modifier = Modifier,
-    headerProperties: DialogHeaderProperties? = null,
     scrollState: ScrollState? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -44,9 +44,7 @@ fun CustomDialog(
                     .padding(vertical = 24.dp, horizontal = 28.dp)
                     .conditional(scrollState != null, { verticalScroll(scrollState!!) }),
             ) {
-                headerProperties?.let {
-                    DialogHeader(properties = it)
-                }
+                DialogHeader(properties = header)
                 content()
             }
         }
@@ -54,13 +52,13 @@ fun CustomDialog(
 }
 
 @Immutable
-data class DialogHeaderProperties(
+data class DialogHeader(
     val title: String,
     val icon: (@Composable () -> Unit)? = null,
 )
 
 @Composable
-fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifier) {
+private fun DialogHeader(properties: DialogHeader, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -78,7 +76,7 @@ fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifi
 }
 
 @Composable
-fun DialogButtonRow(
+fun DialogBottomButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     modifier: Modifier = Modifier,

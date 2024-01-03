@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.wifiwidget.ui.components.CustomDialog
-import com.w2sv.wifiwidget.ui.components.DialogButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
+import com.w2sv.wifiwidget.ui.components.AppDialog
+import com.w2sv.wifiwidget.ui.components.DialogBottomButtonRow
+import com.w2sv.wifiwidget.ui.components.DialogHeader
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
@@ -35,8 +35,8 @@ fun ColorPickerDialog(
         )
     }
 
-    CustomDialog(
-        headerProperties = DialogHeaderProperties(title = label),
+    AppDialog(
+        header = DialogHeader(title = label),
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         scrollState = rememberScrollState(),
@@ -51,7 +51,7 @@ fun ColorPickerDialog(
             textColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(220.dp),
         )
-        DialogButtonRow(
+        DialogBottomButtonRow(
             onCancel = onDismissRequest,
             onApply = {
                 applyColor(color)

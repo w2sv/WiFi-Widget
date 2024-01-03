@@ -9,6 +9,16 @@ clean:
 	@echo "Clean"
 	@./gradlew clean
 
+lint:
+	@./gradlew lint
+
+check:
+	@./gradlew check
+
+# ==============
+# Building
+# ==============
+
 build-aab:
 	@echo "Build AAB"
 	@./gradlew :app:bundleRelease --console verbose

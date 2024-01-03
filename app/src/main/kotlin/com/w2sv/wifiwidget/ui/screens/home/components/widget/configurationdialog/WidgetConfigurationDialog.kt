@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.R
-import com.w2sv.wifiwidget.ui.components.CustomDialog
-import com.w2sv.wifiwidget.ui.components.DialogButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
+import com.w2sv.wifiwidget.ui.components.AppDialog
+import com.w2sv.wifiwidget.ui.components.DialogBottomButtonRow
+import com.w2sv.wifiwidget.ui.components.DialogHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.utils.conditional
@@ -40,8 +40,8 @@ fun WidgetConfigurationDialog(
         closeDialog()
     }
 
-    CustomDialog(
-        headerProperties = DialogHeaderProperties(
+    AppDialog(
+        header = DialogHeader(
             title = stringResource(id = R.string.configure_widget),
             icon = {
                 Icon(
@@ -71,7 +71,7 @@ fun WidgetConfigurationDialog(
                 data = it,
                 onDismissRequest = { widgetVM.setPropertyInfoDialogData(null) })
         }
-        DialogButtonRow(
+        DialogBottomButtonRow(
             onCancel = {
                 onDismissRequest()
             },

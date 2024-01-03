@@ -24,8 +24,8 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 
 @Composable
-internal fun NavigationDrawerSheet(content: @Composable () -> Unit) {
-    ModalDrawerSheet {
+fun NavigationDrawerSheet(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    ModalDrawerSheet(modifier = modifier) {
         Column(
             modifier = Modifier
                 .padding(vertical = 32.dp, horizontal = 24.dp)
