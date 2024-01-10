@@ -13,7 +13,7 @@ hilt = '2.50'
 # Libraries
 compose-compiler = '1.5.7'
 compose-tooling = '1.5.4'
-lifecycle = "2.6.2"
+lifecycle = "2.7.0"
 okhttp = "4.12.0"
 compose-lint-checks = "1.2.0"
 kotlinxCollectionsImmutable = "0.3.7"
