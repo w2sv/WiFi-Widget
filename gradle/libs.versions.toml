@@ -3,7 +3,7 @@ minSdk = '26'  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = '34'
 
 # Plugins
-agp = "8.2.0"
+agp = "8.2.2"
 kotlin = '1.9.21'
 java = '17'
 ksp = "1.9.21-1.0.16"
