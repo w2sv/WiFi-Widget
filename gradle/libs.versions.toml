@@ -12,7 +12,7 @@ hilt = '2.50'
 
 # Libraries
 compose-compiler = '1.5.7'
-compose-tooling = '1.5.4'
+compose-tooling = '1.6.0'
 lifecycle = "2.6.2"
 okhttp = "4.12.0"
 compose-lint-checks = "1.2.0"
