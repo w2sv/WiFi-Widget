@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.Text
@@ -33,7 +33,7 @@ fun NavigationDrawerSheet(modifier: Modifier = Modifier, content: @Composable ()
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Header()
-            Divider(modifier = Modifier.padding(top = 18.dp, bottom = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(top = 18.dp, bottom = 16.dp))
             content()
         }
     }

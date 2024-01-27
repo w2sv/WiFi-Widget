@@ -305,7 +305,7 @@ private fun IPSubPropertyText(text: String) {
                 color = MaterialTheme.colorScheme.primary,
                 shape = MaterialTheme.shapes.medium,
             )
-            .padding(vertical = 2.dp, horizontal = 8.dp),
+            .padding(horizontal = 8.dp),
         fontSize = 11.sp,
     )
 }
