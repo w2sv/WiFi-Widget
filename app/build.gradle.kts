@@ -89,7 +89,6 @@ android {
                     "${versionName}.apk"
             }
     }
-
 }
 
 // https://github.com/Triple-T/gradle-play-publisher

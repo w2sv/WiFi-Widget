@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +26,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.ui.theme.AppColor
 
+@Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
 
+@Immutable
 data class AppSnackbarVisuals(
     val msg: CharSequence,
     override val duration: SnackbarDuration = SnackbarDuration.Short,
@@ -42,18 +45,21 @@ data class AppSnackbarVisuals(
         get() = action?.label
 }
 
+@Immutable
 sealed interface SnackbarKind {
     val icon: ImageVector
 
     @get:Composable
     val iconTint: Color
 
+    @Immutable
     data object Error : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Warning
         override val iconTint: Color
             @Composable get() = MaterialTheme.colorScheme.error
     }
 
+    @Immutable
     data object Success : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color

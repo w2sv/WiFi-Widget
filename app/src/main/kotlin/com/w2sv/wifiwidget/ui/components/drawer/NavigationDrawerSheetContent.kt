@@ -54,10 +54,11 @@ private object AppUrl {
 internal fun NavigationDrawerSheetContent(
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
-    context: Context = LocalContext.current,
     appVM: AppViewModel = viewModel()
 ) {
     Column(modifier = modifier) {
+        val context: Context = LocalContext.current
+
         remember {
             buildList {
                 add(Element.Header(R.string.appearance))
