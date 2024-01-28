@@ -46,7 +46,7 @@ androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-co
 
 # Google
 google-material = 'com.google.android.material:material:1.11.0'
-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.32.0"
+accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.34.0"
 
 # .Hilt
 google-hilt = { module = 'com.google.dagger:hilt-android', version.ref = 'hilt' }
