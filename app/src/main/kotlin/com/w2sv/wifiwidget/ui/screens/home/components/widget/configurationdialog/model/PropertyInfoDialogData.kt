@@ -1,8 +1,10 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
 import android.content.Context
+import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.WidgetWifiProperty
 
+@Immutable
 data class PropertyInfoDialogData(
     val title: String,
     val description: String,

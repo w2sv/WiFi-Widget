@@ -55,7 +55,6 @@ fun WidgetConfigurationDialogContent(
             headerRes = R.string.theme,
             modifier = Modifier.padding(bottom = 22.dp),
         )
-
         ThemeSelection(
             theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
             customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle().value,
@@ -85,7 +84,7 @@ fun WidgetConfigurationDialogContent(
             headerRes = R.string.properties,
         )
         PropertyCheckRows(
-            rememberWidgetWifiPropertyCheckRowData(
+            dataList = rememberWidgetWifiPropertyCheckRowData(
                 widgetConfiguration = widgetConfiguration,
                 locationAccessState = locationAccessState
             ),
@@ -146,23 +145,11 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     locationAccessState: LocationAccessState,
 ): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
-
-    val widgetWifiPropertyShakeControllerMap: Map<WidgetWifiProperty, ShakeController> = remember {
-        WidgetWifiProperty.entries.associateWith { ShakeController(shakeConfig) }
-    }
-
-    val v4AndV6EnablementShakeControllerMap: Map<WidgetWifiProperty.IP.SubProperty, ShakeController> =
-        remember {
-            widgetConfiguration.ipSubProperties.keys
-                .filter { it.isAddressTypeEnablementProperty }
-                .associateWith { ShakeController(shakeConfig) }
-        }
-
     val context = LocalContext.current
     return remember {
         WidgetWifiProperty.entries
             .map { property ->
-                val shakeController = widgetWifiPropertyShakeControllerMap.getValue(property)
+                val shakeController = ShakeController(shakeConfig)
 
                 PropertyCheckRowData.fromMutableMap(
                     property = property,
@@ -205,7 +192,10 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                             property.subProperties
                                 .map { subProperty ->
                                     val subPropertyShakeController =
-                                        v4AndV6EnablementShakeControllerMap[subProperty]
+                                        if (subProperty.isAddressTypeEnablementProperty)
+                                            ShakeController(shakeConfig)
+                                        else
+                                            null
 
                                     PropertyCheckRowData.fromMutableMap(
                                         property = subProperty,
@@ -217,8 +207,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                             )
                                                 .also {
                                                     if (!it) {
-                                                        subPropertyShakeController?.shake(
-                                                        )
+                                                        subPropertyShakeController?.shake()
                                                     }
                                                 }
                                         },
@@ -233,7 +222,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                 .toPersistentList()
                         }
 
-                        else -> persistentListOf()
+                        else -> null
                     },
                     infoDialogData = property.getInfoDialogData(context),
                     modifier = Modifier.shake(shakeController)

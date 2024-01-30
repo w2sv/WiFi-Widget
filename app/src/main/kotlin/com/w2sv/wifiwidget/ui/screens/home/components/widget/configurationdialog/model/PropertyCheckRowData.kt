@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class PropertyCheckRowData<T : WidgetProperty>(
@@ -12,7 +11,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
     val isChecked: () -> Boolean,
     val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true },
-    val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
+    val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>>? = null,
     val infoDialogData: PropertyInfoDialogData? = null,
     val modifier: Modifier = Modifier
 ) {
@@ -21,7 +20,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
             property: T,
             isCheckedMap: MutableMap<T, Boolean>,
             allowCheckChange: (Boolean) -> Boolean = { true },
-            subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
+            subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>>? = null,
             infoDialogData: PropertyInfoDialogData? = null,
             modifier: Modifier = Modifier
         ): PropertyCheckRowData<T> =

@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +29,7 @@ import com.w2sv.common.utils.bulletPointText
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIcon
+import com.w2sv.wifiwidget.ui.components.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.utils.conditional
@@ -67,50 +67,17 @@ fun PropertyCheckRows(
                 )
 
                 // Display subPropertyCheckRowData if present and property checked
-                if (data.subPropertyCheckRowDataList.isNotEmpty()) {
+                data.subPropertyCheckRowDataList?.let {
                     AnimatedVisibility(visible = data.isChecked()) {
                         SubPropertyCheckRowColumn(
-                            dataList = data.subPropertyCheckRowDataList,
+                            dataList = it,
                             modifier = Modifier
-                                .background(
-                                    color = MaterialTheme.colorScheme.background,
-                                    shape = MaterialTheme.shapes.medium
-                                )
-                                .padding(start = 16.dp)
+                                .nestedListBackground()
+                                .padding(start = subPropertyListPadding)
                         )
                     }
                 }
             }
-    }
-}
-
-@Composable
-private fun SubPropertyCheckRowColumn(
-    dataList: ImmutableList<PropertyCheckRowData<*>>,
-    modifier: Modifier = Modifier
-) {
-    val fontSize = 14.sp
-
-    Column(modifier = modifier) {
-        dataList.forEach { checkRowData ->
-            if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
-                Text(
-                    text = stringResource(R.string.versions),
-                    modifier = Modifier.padding(top = 8.dp),
-                    fontSize = fontSize,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-            PropertyCheckRow(
-                data = checkRowData,
-                modifier = Modifier.conditional(
-                    condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
-                    onTrue = { padding(start = 16.dp) }
-                ),
-                fontSize = fontSize,
-                makeText = ::bulletPointText,
-            )
-        }
     }
 }
 
@@ -119,6 +86,38 @@ private val propertyToSubTitleResId = mapOf(
     WidgetWifiProperty.IP.entries.first() to R.string.ip_addresses,
     WidgetWifiProperty.NonIP.Other.entries.first() to R.string.other
 )
+
+@Composable
+private fun SubPropertyCheckRowColumn(
+    dataList: ImmutableList<PropertyCheckRowData<*>>,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        dataList.forEach { checkRowData ->
+            if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
+                Text(
+                    text = stringResource(R.string.versions),
+                    modifier = Modifier.padding(top = subPropertyListPadding),
+                    fontSize = subPropertyCheckRowColumnFontSize,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+            PropertyCheckRow(
+                data = checkRowData,
+                modifier = Modifier.conditional(
+                    condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
+                    onTrue = { padding(start = addressVersionEnablementStartPadding) }
+                ),
+                fontSize = subPropertyCheckRowColumnFontSize,
+                makeText = ::bulletPointText,
+            )
+        }
+    }
+}
+
+private val subPropertyCheckRowColumnFontSize = 14.sp
+private val subPropertyListPadding = 12.dp
+private val addressVersionEnablementStartPadding = 16.dp
 
 @Composable
 private fun PropertyCheckRow(
@@ -140,7 +139,6 @@ private fun PropertyCheckRow(
             .fillMaxWidth()
             .then(data.modifier),
     ) {
-
         leadingIcon?.invoke()
         Text(
             text = makeText(label),
