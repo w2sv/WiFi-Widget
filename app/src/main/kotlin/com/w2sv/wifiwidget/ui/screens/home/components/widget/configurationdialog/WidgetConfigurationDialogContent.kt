@@ -151,14 +151,14 @@ private fun rememberWidgetWifiPropertyCheckRowData(
         widgetConfiguration.wifiProperties.values.count { it } > 1
 
     val widgetWifiPropertyShakeControllerMap: Map<WidgetWifiProperty, ShakeController> = remember {
-        WidgetWifiProperty.entries.associateWith { ShakeController() }
+        WidgetWifiProperty.entries.associateWith { ShakeController(shakeConfig) }
     }
 
     val v4AndV6EnablementShakeControllerMap: Map<WidgetWifiProperty.IP.SubProperty, ShakeController> =
         remember {
             widgetConfiguration.ipSubProperties.keys
                 .filter { it.isAddressTypeEnablementProperty }
-                .associateWith { ShakeController() }
+                .associateWith { ShakeController(shakeConfig) }
         }
 
     val context = LocalContext.current
@@ -189,7 +189,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                             })
                                 .also {
                                     if (!it) {
-                                        shakeController.shake(shakeConfig)
+                                        shakeController.shake()
                                     }
                                 }
                         }
@@ -198,7 +198,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                             (isCheckedNew || moreThanOneWifiPropertyChecked()).also {
                                 if (!it) {
                                     shakeController
-                                        .shake(shakeConfig)
+                                        .shake()
                                 }
                             }
                         }
@@ -221,7 +221,6 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                                 .also {
                                                     if (!it) {
                                                         subPropertyShakeController?.shake(
-                                                            shakeConfig
                                                         )
                                                     }
                                                 }

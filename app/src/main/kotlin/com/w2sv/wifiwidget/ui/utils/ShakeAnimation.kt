@@ -1,10 +1,11 @@
 package com.w2sv.wifiwidget.ui.utils
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.offset
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -15,24 +16,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.unit.dp
-import kotlin.math.roundToInt
-
-@Composable
-fun rememberShakeController(key1: Any? = null): ShakeController {
-    return remember(key1) { ShakeController() }
-}
 
 @Stable
-class ShakeController {
-    fun shake(shakeConfig: ShakeConfig) {
-        this.config = shakeConfig
+class ShakeController(private val config: ShakeConfig) {
+    fun shake() {
+        doShake = true
     }
 
-    var config: ShakeConfig? by mutableStateOf(null)
-        private set
+    internal suspend fun animate(animatable: Animatable<Float, AnimationVector1D>) {
+        for (i in 0..config.iterations) {
+            animatable.animateTo(
+                targetValue = if (i % 2 == 0) config.translateX else -config.translateX,
+                animationSpec = spring(
+                    stiffness = config.stiffness,
+                )
+            )
+        }
+        animatable.animateTo(0f)
+        reset()
+    }
 
-    internal fun resetConfig() {
-        config = null
+    internal var doShake by mutableStateOf(false)
+
+    private fun reset() {
+        doShake = false
     }
 }
 
@@ -43,22 +50,15 @@ data class ShakeConfig(
     val stiffness: Float = Spring.StiffnessMedium,
 )
 
+@SuppressLint("ComposeModifierComposed")
 fun Modifier.shake(controller: ShakeController) = composed {
-    controller.config?.let { config ->
-        val shake = remember(config) { Animatable(0f) }
-        LaunchedEffect(config) {
-            for (i in 0..config.iterations) {
-                shake.animateTo(
-                    targetValue = if (i % 2 == 0) 1f else -1f,
-                    animationSpec = spring(
-                        stiffness = config.stiffness,
-                    )
-                )
-            }
-            shake.animateTo(0f)
-            controller.resetConfig()
-        }
+    val shake = remember { Animatable(0f) }
 
-        offset(x = (shake.value * config.translateX).roundToInt().dp)
-    } ?: this
+    LaunchedEffect(controller.doShake) {
+        if (controller.doShake) {
+            controller.animate(shake)
+        }
+    }
+
+    offset(x = shake.value.dp)
 }
