@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.utils
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.offset
@@ -23,7 +22,7 @@ class ShakeController(private val config: ShakeConfig) {
         trigger = System.currentTimeMillis()
     }
 
-    internal suspend fun animate(animatable: Animatable<Float, AnimationVector1D>) {
+    internal suspend fun animate(animatable: Animatable<Float, *>) {
         for (i in 0..config.iterations) {
             animatable.animateTo(
                 targetValue = if (i % 2 == 0) config.translateX else -config.translateX,
@@ -33,6 +32,8 @@ class ShakeController(private val config: ShakeConfig) {
             )
         }
         animatable.animateTo(0f)
+        // Reset trigger, in case of the target getting readded to the composition, while controller persists
+        trigger = null
     }
 
     internal var trigger by mutableStateOf<Long?>(null)
@@ -47,13 +48,13 @@ data class ShakeConfig(
 
 @SuppressLint("ComposeModifierComposed")
 fun Modifier.shake(controller: ShakeController) = composed {
-    val shake = remember { Animatable(0f) }
+    val animatable = remember(controller.trigger) { Animatable(0f) }
 
     LaunchedEffect(controller.trigger) {
         if (controller.trigger != null) {
-            controller.animate(shake)
+            controller.animate(animatable)
         }
     }
 
-    offset(x = shake.value.dp)
+    offset(x = animatable.value.dp)
 }

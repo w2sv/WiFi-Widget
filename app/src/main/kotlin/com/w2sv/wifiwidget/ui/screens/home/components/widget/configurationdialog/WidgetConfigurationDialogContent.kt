@@ -147,9 +147,6 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     locationAccessState: LocationAccessState,
 ): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
 
-    fun moreThanOneWifiPropertyChecked(): Boolean =
-        widgetConfiguration.wifiProperties.values.count { it } > 1
-
     val widgetWifiPropertyShakeControllerMap: Map<WidgetWifiProperty, ShakeController> = remember {
         WidgetWifiProperty.entries.associateWith { ShakeController(shakeConfig) }
     }
@@ -185,7 +182,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                     }
                                 }
                             } else {
-                                moreThanOneWifiPropertyChecked()
+                                widgetConfiguration.moreThanOnePropertyChecked()
                             })
                                 .also {
                                     if (!it) {
@@ -195,7 +192,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                         }
 
                         else -> { isCheckedNew ->
-                            (isCheckedNew || moreThanOneWifiPropertyChecked()).also {
+                            (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
                                 if (!it) {
                                     shakeController
                                         .shake()
@@ -245,6 +242,9 @@ private fun rememberWidgetWifiPropertyCheckRowData(
             .toPersistentList()
     }
 }
+
+private fun UnconfirmedWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
+    wifiProperties.values.count { it } > 1
 
 private val shakeConfig = ShakeConfig(
     iterations = 2,
