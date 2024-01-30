@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 @Stable
 class ShakeController(private val config: ShakeConfig) {
     fun shake() {
-        doShake = true
+        trigger = System.currentTimeMillis()
     }
 
     internal suspend fun animate(animatable: Animatable<Float, AnimationVector1D>) {
@@ -33,14 +33,9 @@ class ShakeController(private val config: ShakeConfig) {
             )
         }
         animatable.animateTo(0f)
-        reset()
     }
 
-    internal var doShake by mutableStateOf(false)
-
-    private fun reset() {
-        doShake = false
-    }
+    internal var trigger by mutableStateOf<Long?>(null)
 }
 
 @Immutable
@@ -54,8 +49,8 @@ data class ShakeConfig(
 fun Modifier.shake(controller: ShakeController) = composed {
     val shake = remember { Animatable(0f) }
 
-    LaunchedEffect(controller.doShake) {
-        if (controller.doShake) {
+    LaunchedEffect(controller.trigger) {
+        if (controller.trigger != null) {
             controller.animate(shake)
         }
     }
