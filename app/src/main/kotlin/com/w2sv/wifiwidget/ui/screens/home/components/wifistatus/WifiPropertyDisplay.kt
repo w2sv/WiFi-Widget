@@ -82,9 +82,12 @@ fun WifiPropertyDisplay(
     }
 }
 
+@Immutable
 private sealed interface PropertyListElement {
     @Immutable
-    class Property(val property: WidgetWifiProperty.ViewData) : PropertyListElement
+    data class Property(val property: WidgetWifiProperty.ViewData) : PropertyListElement
+
+    @Immutable
     data object LoadingAnimation : PropertyListElement
 }
 
@@ -169,7 +172,7 @@ private fun PropertyList(
                             .padding(bottom = 2.dp)
                     )
                 }
-                items(viewData) { viewData ->
+                items(viewData, key = { it.hashCode() }) { viewData ->
                     when (viewData) {
                         is PropertyListElement.Property -> {
                             PropertyDisplayRow(

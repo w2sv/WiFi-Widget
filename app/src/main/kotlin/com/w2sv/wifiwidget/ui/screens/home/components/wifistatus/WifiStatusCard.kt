@@ -31,6 +31,7 @@ fun WifiStatusCard(
 
             WifiStatusDisplay(wifiState.status)
 
+            // Display WifiProperties if wifiState is WifiState.Connected
             AnimatedVisibility(visible = wifiState is WifiState.Connected) {
                 (wifiState as? WifiState.Connected)?.let {
                     Column {
