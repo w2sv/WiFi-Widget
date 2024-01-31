@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
 import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
 import com.w2sv.wifiwidget.ui.components.DialogHeader
+import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable

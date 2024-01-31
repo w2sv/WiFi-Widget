@@ -55,7 +55,8 @@ fun AppearanceSelection(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        val useDynamicColorsTransition = updateTransition(targetState = useDynamicColors, label = "")
+        val useDynamicColorsTransition =
+            updateTransition(targetState = useDynamicColors, label = "")
 
         val customThemeIndicatorWeight by useDynamicColorsTransition.animateFloat(label = "") {
             if (it) EPSILON else 1f

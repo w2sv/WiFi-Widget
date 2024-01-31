@@ -123,6 +123,7 @@ sealed interface ButtonColor {
 
     @Immutable
     data class Uniform(override val containerColor: Color) : ButtonColor
+
     @Immutable
     data class Gradient(val brush: Brush) : ButtonColor {
         override val containerColor: Color = Color.Transparent
