@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -67,6 +68,7 @@ sealed interface SnackbarKind {
     }
 }
 
+@SuppressLint("ComposeCompositionLocalUsage")
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 
 suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbarVisuals: SnackbarVisuals) {

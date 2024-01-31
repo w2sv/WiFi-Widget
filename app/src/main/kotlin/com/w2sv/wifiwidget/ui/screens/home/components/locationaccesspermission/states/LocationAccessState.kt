@@ -1,11 +1,14 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states
 
 import android.Manifest
+import android.content.Context
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -16,12 +19,13 @@ import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
+import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
+import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import com.w2sv.wifiwidget.ui.utils.isLaunchingSuppressed
 import kotlinx.coroutines.CoroutineScope
@@ -37,8 +41,9 @@ fun rememberLocationAccessPermissionState(
     permissionRepository: PermissionRepository,
     saveLocationAccessPermissionRequestLaunched: () -> Unit,
     saveLocationAccessRationalShown: () -> Unit,
-    mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
     scope: CoroutineScope = rememberCoroutineScope(),
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    context: Context = LocalContext.current
 ): LocationAccessState {
 
     // Necessary evil
@@ -63,7 +68,7 @@ fun rememberLocationAccessPermissionState(
     else
         null
 
-    val state = remember(scope, permissionRepository, mutableSharedSnackbarVisuals) {
+    val state = remember(scope, permissionRepository, snackbarHostState, context) {
         LocationAccessState(
             permissionsState = permissionState,
             backgroundAccessState = backgroundAccessPermissionState?.let {
@@ -76,8 +81,9 @@ fun rememberLocationAccessPermissionState(
             saveRequestLaunched = saveLocationAccessPermissionRequestLaunched,
             rationalShown = permissionRepository.locationAccessPermissionRationalShown,
             saveRationalShown = saveLocationAccessRationalShown,
-            mutableSharedSnackbarVisuals = mutableSharedSnackbarVisuals,
-            scope = scope
+            snackbarHostState = snackbarHostState,
+            scope = scope,
+            context = context
         )
     }
 
@@ -88,7 +94,7 @@ fun rememberLocationAccessPermissionState(
     }
 
     // Forward requestResult to state
-    FlowCollectionEffect(requestResult) {
+    CollectFromFlow(requestResult) {
         state.onRequestResult(it)
     }
 
@@ -104,8 +110,9 @@ class LocationAccessState(
     private val saveRequestLaunched: () -> Unit,
     rationalShown: PersistedValue.UniTyped<Boolean>,
     private val saveRationalShown: () -> Unit,
-    private val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
-    private val scope: CoroutineScope
+    private val snackbarHostState: SnackbarHostState,
+    private val scope: CoroutineScope,
+    private val context: Context
 ) {
     val isGranted: Boolean by permissionsState::allPermissionsGranted
 
@@ -113,7 +120,7 @@ class LocationAccessState(
     private val _newStatus =
         MutableSharedFlow<LocationAccessPermissionStatus>()
 
-    fun emitNewStatus(granted: Boolean) {
+    internal fun emitNewStatus(granted: Boolean) {
         scope.launch {
             _newStatus.emit(
                 when (granted) {
@@ -141,18 +148,18 @@ class LocationAccessState(
     fun launchRequest(trigger: LocationAccessPermissionRequestTrigger) {
         if (permissionsState.isLaunchingSuppressed(requestLaunchedBefore.value)) {
             scope.launch {
-                mutableSharedSnackbarVisuals.emit {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
-                        msg = it.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                        msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
                         kind = SnackbarKind.Error,
                         action = SnackbarAction(
-                            label = it.getString(R.string.go_to_settings),
+                            label = context.getString(R.string.go_to_settings),
                             callback = {
-                                goToAppSettings(it)
+                                goToAppSettings(context)
                             },
                         ),
                     )
-                }
+                )
             }
         } else {
             requestTrigger = trigger

@@ -37,7 +37,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
-import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
+import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
 
@@ -86,7 +86,7 @@ fun WidgetCard(
     )
 
     // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
-    FlowCollectionEffect(locationAccessState.newStatus) {
+    CollectFromFlow(locationAccessState.newStatus) {
         widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
     }
 
@@ -116,7 +116,7 @@ private fun SnackbarOnWidgetPin(
     val snackbarHostState = LocalSnackbarHostState.current
     val locationManager = LocalLocationManager.current
 
-    FlowCollectionEffect(newWidgetPinned) {
+    CollectFromFlow(newWidgetPinned) {
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled

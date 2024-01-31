@@ -43,7 +43,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
-import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
+import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -63,7 +63,6 @@ fun HomeScreen(
         permissionRepository = homeScreenVM.permissionRepository,
         saveLocationAccessPermissionRequestLaunched = homeScreenVM::saveLocationAccessPermissionRequestLaunched,
         saveLocationAccessRationalShown = homeScreenVM::saveLocationAccessRationalShown,
-        mutableSharedSnackbarVisuals = appViewModel.mutableSharedSnackbarVisuals,
         scope = scope
     )
 ) {
@@ -83,7 +82,7 @@ fun HomeScreen(
                 val snackbarHostState = LocalSnackbarHostState.current
 
                 // Show Snackbars collected from sharedSnackbarVisuals
-                FlowCollectionEffect(appViewModel.sharedSnackbarVisuals) {
+                CollectLatestFromFlow(appViewModel.sharedSnackbarVisuals) {
                     snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
                 }
 

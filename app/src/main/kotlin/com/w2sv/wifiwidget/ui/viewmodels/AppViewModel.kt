@@ -16,12 +16,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
+    mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
     private val preferencesRepository: PreferencesRepository
 ) :
     ViewModel() {
 
-    val sharedSnackbarVisuals get() = mutableSharedSnackbarVisuals.asSharedFlow()
+    val sharedSnackbarVisuals = mutableSharedSnackbarVisuals.asSharedFlow()
 
     val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,

@@ -8,8 +8,8 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 
 @SuppressLint("ComposeComposableModifier")
-@ReadOnlyComposable
 @Composable
+@ReadOnlyComposable
 fun Modifier.nestedListBackground(): Modifier =
     this then Modifier
         .background(
