@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.play)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.wifiwidget.hilt)
+    alias(libs.plugins.baselineprofile)
 }
 
 kotlin {
@@ -105,8 +106,9 @@ dependencies {
     implementation(projects.domain)
     implementation(projects.data)
     implementation(projects.networking)
+    baselineProfile(projects.benchmarking)
 
-    // Custom libraries
+    // Owned libraries
     implementation(libs.androidutils)
     implementation(libs.colorpicker)
 
@@ -123,11 +125,12 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
-    implementation(libs.accompanist.permissions)
+    implementation(libs.google.accompanist.permissions)
 
     // Other libraries
     implementation(libs.slimber)
