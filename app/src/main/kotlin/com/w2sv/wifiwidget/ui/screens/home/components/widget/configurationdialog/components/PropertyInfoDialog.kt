@@ -24,11 +24,11 @@ import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.DialogButton
 import com.w2sv.wifiwidget.ui.components.InfoIcon
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 
 @Composable
 fun PropertyInfoDialog(
-    data: PropertyInfoDialogData,
+    data: InfoDialogData,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

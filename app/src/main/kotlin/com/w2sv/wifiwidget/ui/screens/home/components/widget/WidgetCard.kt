@@ -79,7 +79,7 @@ fun WidgetCard(
         },
     )
 
-    NewWidgetPinnedSnackbar(
+    SnackbarOnWidgetPin(
         newWidgetPinned = widgetVM.newWidgetPinned,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
         backgroundAccessState = locationAccessState.backgroundAccessState,
@@ -93,6 +93,9 @@ fun WidgetCard(
     if (widgetVM.showConfigurationDialog.collectAsStateWithLifecycle().value) {
         WidgetConfigurationDialog(
             locationAccessState = locationAccessState,
+            widgetConfiguration = widgetVM.configuration,
+            infoDialogData = widgetVM.infoDialogData.collectAsStateWithLifecycle().value,
+            setPropertyInfoDialogData = widgetVM::setPropertyInfoDialogData,
             closeDialog = {
                 widgetVM.setShowConfigurationDialog(false)
             },
@@ -104,7 +107,7 @@ fun WidgetCard(
  * Shows Snackbar on collection from [newWidgetPinned].
  */
 @Composable
-private fun NewWidgetPinnedSnackbar(
+private fun SnackbarOnWidgetPin(
     newWidgetPinned: Flow<Unit>,
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
     backgroundAccessState: BackgroundLocationAccessState?

@@ -106,7 +106,7 @@ class UnconfirmedWidgetConfiguration(
     }
 
     /**
-     * @return LocationAccessRequiring WidgetWifiProperties that have been changed.
+     * @return LocationAccessRequiring WidgetWifiProperties whose enablement status has changed.
      */
     private fun setLocationAccessRequiringPropertyEnablementAndSync(value: Boolean): List<WidgetWifiProperty.NonIP.LocationAccessRequiring> {
         val changedProperties = mutableListOf<WidgetWifiProperty.NonIP.LocationAccessRequiring>()

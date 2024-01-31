@@ -5,14 +5,14 @@ import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.WidgetWifiProperty
 
 @Immutable
-data class PropertyInfoDialogData(
+data class InfoDialogData(
     val title: String,
     val description: String,
     val learnMoreUrl: String? = null,
 )
 
-fun WidgetWifiProperty.getInfoDialogData(context: Context): PropertyInfoDialogData =
-    PropertyInfoDialogData(
+fun WidgetWifiProperty.getInfoDialogData(context: Context): InfoDialogData =
+    InfoDialogData(
         title = buildString {
             append(context.getString(labelRes))
             if (this@getInfoDialogData is WidgetWifiProperty.IP) {

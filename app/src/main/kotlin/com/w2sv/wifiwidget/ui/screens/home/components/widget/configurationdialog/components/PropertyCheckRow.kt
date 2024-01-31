@@ -31,7 +31,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.components.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.utils.conditional
 import kotlinx.collections.immutable.ImmutableList
 
@@ -39,7 +39,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun PropertyCheckRows(
     dataList: ImmutableList<PropertyCheckRowData<*>>,
     modifier: Modifier = Modifier,
-    showInfoDialog: ((PropertyInfoDialogData) -> Unit)? = null
+    showInfoDialog: ((InfoDialogData) -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         dataList
@@ -128,7 +128,7 @@ private fun PropertyCheckRow(
     fontWeight: FontWeight = FontWeight.Normal,
     textColor: Color = Color.Unspecified,
     leadingIcon: (@Composable () -> Unit)? = null,
-    showInfoDialog: ((PropertyInfoDialogData) -> Unit)? = null,
+    showInfoDialog: ((InfoDialogData) -> Unit)? = null,
 ) {
     val label = stringResource(id = data.property.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset, label)

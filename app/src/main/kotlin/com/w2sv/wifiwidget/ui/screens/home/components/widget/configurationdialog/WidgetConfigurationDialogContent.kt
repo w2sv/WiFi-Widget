@@ -24,7 +24,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ThemeSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.toColor
 import kotlinx.collections.immutable.persistentListOf
@@ -36,7 +36,7 @@ private val verticalSectionHeaderPadding = 22.dp
 fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     locationAccessState: LocationAccessState,
-    showPropertyInfoDialog: (PropertyInfoDialogData) -> Unit,
+    showPropertyInfoDialog: (InfoDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -119,7 +119,7 @@ fun WidgetConfigurationDialogContent(
                     PropertyCheckRowData.fromMutableMap(
                         property = WidgetRefreshingParameter.RefreshPeriodically,
                         isCheckedMap = widgetConfiguration.refreshingParametersMap,
-                        infoDialogData = PropertyInfoDialogData(
+                        infoDialogData = InfoDialogData(
                             title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
                             description = context.getString(R.string.refresh_periodically_info)
                         ),

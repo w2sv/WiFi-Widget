@@ -12,7 +12,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
     val onCheckedChange: (Boolean) -> Unit,
     val allowCheckChange: (Boolean) -> Boolean = { true },
     val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>>? = null,
-    val infoDialogData: PropertyInfoDialogData? = null,
+    val infoDialogData: InfoDialogData? = null,
     val modifier: Modifier = Modifier
 ) {
     companion object {
@@ -21,7 +21,7 @@ data class PropertyCheckRowData<T : WidgetProperty>(
             isCheckedMap: MutableMap<T, Boolean>,
             allowCheckChange: (Boolean) -> Boolean = { true },
             subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>>? = null,
-            infoDialogData: PropertyInfoDialogData? = null,
+            infoDialogData: InfoDialogData? = null,
             modifier: Modifier = Modifier
         ): PropertyCheckRowData<T> =
             PropertyCheckRowData(
