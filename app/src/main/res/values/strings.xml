@@ -21,7 +21,6 @@
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
-    <string name="opacity">Opacity</string>
     <string name="refreshing">Refreshing</string>
     <string name="tap_again_to_exit">Tap again to exit</string>
     <string name="opacity_slider_cd">Set the widget background opacity.</string>

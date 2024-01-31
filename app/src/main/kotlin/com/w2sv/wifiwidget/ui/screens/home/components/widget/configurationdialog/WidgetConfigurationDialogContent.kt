@@ -20,11 +20,10 @@ import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.OpacitySliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceSelection
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ThemeSelection
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.toColor
 import kotlinx.collections.immutable.persistentListOf
@@ -48,11 +47,11 @@ fun WidgetConfigurationDialogContent(
         val defaultSectionHeaderModifier = Modifier.padding(vertical = verticalSectionHeaderPadding)
 
         SectionHeader(
-            iconRes = R.drawable.ic_nightlight_24,
-            headerRes = R.string.theme,
+            iconRes = R.drawable.ic_palette_24,
+            headerRes = R.string.appearance,
             modifier = Modifier.padding(bottom = verticalSectionHeaderPadding),
         )
-        ThemeSelection(
+        AppearanceSelection(
             theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
             customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle().value,
             setTheme = { widgetConfiguration.theme.value = it },
@@ -61,20 +60,11 @@ fun WidgetConfigurationDialogContent(
             getCustomColor = { widgetConfiguration.customColorsMap.getValue(it).toColor() },
             setCustomColor = { colorSection, color ->
                 widgetConfiguration.customColorsMap[colorSection] = color.toArgb()
-            }
-        )
-
-        SectionHeader(
-            iconRes = R.drawable.ic_opacity_24,
-            headerRes = R.string.opacity,
-            modifier = defaultSectionHeaderModifier
-        )
-        OpacitySliderWithLabel(
+            },
             opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
             onOpacityChanged = {
                 widgetConfiguration.opacity.value = it
-            },
-            modifier = Modifier.padding(horizontal = 6.dp),
+            }
         )
 
         SectionHeader(

@@ -3,13 +3,23 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
@@ -23,9 +33,12 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.EPSILON
 import com.w2sv.wifiwidget.ui.utils.circularTrifoldStripeBrush
 import kotlinx.collections.immutable.persistentMapOf
+import kotlin.math.roundToInt
+
+private val verticalPadding = 12.dp
 
 @Composable
-fun ThemeSelection(
+fun AppearanceSelection(
     theme: Theme,
     customThemeSelected: Boolean,
     setTheme: (Theme) -> Unit,
@@ -33,6 +46,8 @@ fun ThemeSelection(
     setUseDynamicColors: (Boolean) -> Unit,
     getCustomColor: (WidgetColorSection) -> Color,
     setCustomColor: (WidgetColorSection, Color) -> Unit,
+    opacity: Float,
+    onOpacityChanged: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -69,7 +84,7 @@ fun ThemeSelection(
                 getCustomColor = getCustomColor,
                 setCustomColor = setCustomColor,
                 modifier = Modifier
-                    .padding(top = 18.dp),
+                    .padding(top = verticalPadding),
             )
         }
 
@@ -83,9 +98,50 @@ fun ThemeSelection(
                     }
                 },
                 modifier = Modifier
-                    .padding(horizontal = 14.dp)
-                    .padding(top = 22.dp),
+                    .padding(top = verticalPadding),
             )
         }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = verticalPadding)
+        ) {
+            Text(text = "Background\nopacity")
+            Spacer(modifier = Modifier.width(12.dp))
+            OpacitySliderWithLabel(
+                opacity = opacity,
+                onOpacityChanged = onOpacityChanged,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun OpacitySliderWithLabel(
+    opacity: Float,
+    onOpacityChanged: (Float) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "${(opacity * 100).roundToInt()}%",
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        val context = LocalContext.current
+        Slider(
+            value = opacity,
+            onValueChange = onOpacityChanged,
+            modifier = Modifier
+                .semantics {
+                    contentDescription = context.getString(
+                        R.string.opacity_slider_cd,
+                    )
+                },
+            steps = 9,
+        )
     }
 }
