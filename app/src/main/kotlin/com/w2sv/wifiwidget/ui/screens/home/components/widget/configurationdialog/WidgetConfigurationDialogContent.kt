@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
-import android.annotation.SuppressLint
 import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -18,10 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetButton
 import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.OpacitySliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
@@ -29,14 +26,11 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.getInfoDialogData
-import com.w2sv.wifiwidget.ui.utils.ShakeConfig
-import com.w2sv.wifiwidget.ui.utils.ShakeController
-import com.w2sv.wifiwidget.ui.utils.shake
 import com.w2sv.wifiwidget.ui.utils.toColor
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+
+private val verticalSectionHeaderPadding = 22.dp
 
 @Composable
 fun WidgetConfigurationDialogContent(
@@ -48,12 +42,15 @@ fun WidgetConfigurationDialogContent(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .padding(top = 8.dp, bottom = 16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
+        val defaultSectionHeaderModifier = Modifier.padding(vertical = verticalSectionHeaderPadding)
+
         SectionHeader(
             iconRes = R.drawable.ic_nightlight_24,
             headerRes = R.string.theme,
-            modifier = Modifier.padding(bottom = 22.dp),
+            modifier = Modifier.padding(bottom = verticalSectionHeaderPadding),
         )
         ThemeSelection(
             theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
@@ -70,6 +67,7 @@ fun WidgetConfigurationDialogContent(
         SectionHeader(
             iconRes = R.drawable.ic_opacity_24,
             headerRes = R.string.opacity,
+            modifier = defaultSectionHeaderModifier
         )
         OpacitySliderWithLabel(
             opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
@@ -82,6 +80,7 @@ fun WidgetConfigurationDialogContent(
         SectionHeader(
             iconRes = R.drawable.ic_checklist_24,
             headerRes = R.string.properties,
+            modifier = defaultSectionHeaderModifier
         )
         PropertyCheckRows(
             dataList = rememberWidgetWifiPropertyCheckRowData(
@@ -94,6 +93,7 @@ fun WidgetConfigurationDialogContent(
         SectionHeader(
             iconRes = R.drawable.ic_gamepad_24,
             headerRes = R.string.buttons,
+            modifier = defaultSectionHeaderModifier
         )
         PropertyCheckRows(
             dataList = remember {
@@ -110,6 +110,7 @@ fun WidgetConfigurationDialogContent(
         SectionHeader(
             iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
             headerRes = R.string.refreshing,
+            modifier = defaultSectionHeaderModifier
         )
         val context: Context = LocalContext.current
         PropertyCheckRows(
@@ -141,128 +142,10 @@ fun WidgetConfigurationDialogContent(
 }
 
 @Composable
-private fun rememberWidgetWifiPropertyCheckRowData(
-    widgetConfiguration: UnconfirmedWidgetConfiguration,
-    locationAccessState: LocationAccessState,
-): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
-    val context = LocalContext.current
-    return remember {
-        WidgetWifiProperty.entries
-            .map { property ->
-                val shakeController = ShakeController(shakeConfig)
-
-                PropertyCheckRowData.fromMutableMap(
-                    property = property,
-                    isCheckedMap = widgetConfiguration.wifiProperties,
-                    allowCheckChange = when (property) {
-                        is WidgetWifiProperty.NonIP.LocationAccessRequiring -> { isCheckedNew ->
-                            (if (isCheckedNew) {
-                                locationAccessState.run {
-                                    isGranted.also {
-                                        if (!it) {
-                                            launchRequest(
-                                                LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                                    property,
-                                                )
-                                            )
-                                        }
-                                    }
-                                }
-                            } else {
-                                widgetConfiguration.moreThanOnePropertyChecked()
-                            })
-                                .also {
-                                    if (!it) {
-                                        shakeController.shake()
-                                    }
-                                }
-                        }
-
-                        else -> { isCheckedNew ->
-                            (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
-                                if (!it) {
-                                    shakeController
-                                        .shake()
-                                }
-                            }
-                        }
-                    },
-                    subPropertyCheckRowData = when (property) {
-                        is WidgetWifiProperty.IP -> {
-                            property.subProperties
-                                .map { subProperty ->
-                                    val subPropertyShakeController =
-                                        if (subProperty.isAddressTypeEnablementProperty)
-                                            ShakeController(shakeConfig)
-                                        else
-                                            null
-
-                                    PropertyCheckRowData.fromMutableMap(
-                                        property = subProperty,
-                                        isCheckedMap = widgetConfiguration.ipSubProperties,
-                                        allowCheckChange = { newValue ->
-                                            subProperty.allowCheckChange(
-                                                newValue,
-                                                widgetConfiguration.ipSubProperties
-                                            )
-                                                .also {
-                                                    if (!it) {
-                                                        subPropertyShakeController?.shake()
-                                                    }
-                                                }
-                                        },
-                                        modifier = subPropertyShakeController?.let {
-                                            Modifier.shake(
-                                                it
-                                            )
-                                        }
-                                            ?: Modifier
-                                    )
-                                }
-                                .toPersistentList()
-                        }
-
-                        else -> null
-                    },
-                    infoDialogData = property.getInfoDialogData(context),
-                    modifier = Modifier.shake(shakeController)
-                )
-            }
-            .toPersistentList()
-    }
-}
-
-private fun UnconfirmedWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
-    wifiProperties.values.count { it } > 1
-
-private val shakeConfig = ShakeConfig(
-    iterations = 2,
-    translateX = 12.5f,
-    stiffness = 20_000f
-)
-
-private fun WidgetWifiProperty.IP.SubProperty.allowCheckChange(
-    newValue: Boolean,
-    subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
-): Boolean =
-    when (val capturedKind = kind) {
-        is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
-            newValue || subPropertyEnablementMap.getValue(
-                WidgetWifiProperty.IP.SubProperty(
-                    property = property,
-                    kind = capturedKind.opposingAddressTypeEnablement
-                )
-            )
-        }
-
-        else -> true
-    }
-
-@Composable
 private fun SectionHeader(
     @DrawableRes iconRes: Int,
     @StringRes headerRes: Int,
-    @SuppressLint("ModifierParameter") modifier: Modifier = Modifier.padding(vertical = 22.dp),
+    modifier: Modifier = Modifier,
 ) {
     IconHeader(
         iconRes = iconRes,

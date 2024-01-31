@@ -25,7 +25,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.conditional
 
 @Composable
-fun AppDialog(
+fun ElevatedCardDialog(
     onDismissRequest: () -> Unit,
     header: DialogHeader,
     modifier: Modifier = Modifier,
@@ -42,7 +42,10 @@ fun AppDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(vertical = 24.dp, horizontal = 28.dp)
-                    .conditional(scrollState != null, { verticalScroll(scrollState!!) }),
+                    .conditional(
+                        condition = scrollState != null,
+                        onTrue = { verticalScroll(scrollState!!) }
+                    ),
             ) {
                 DialogHeader(properties = header)
                 content()
@@ -76,7 +79,7 @@ private fun DialogHeader(properties: DialogHeader, modifier: Modifier = Modifier
 }
 
 @Composable
-fun DialogBottomButtonRow(
+fun CancelApplyButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     modifier: Modifier = Modifier,
