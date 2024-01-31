@@ -3,8 +3,10 @@ package com.w2sv.wifiwidget.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 
+@ReadOnlyComposable
 @Composable
 fun Modifier.nestedListBackground(): Modifier =
     this then Modifier

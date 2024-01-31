@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -108,7 +109,7 @@ fun AppearanceSelection(
                 .fillMaxWidth()
                 .padding(top = verticalPadding)
         ) {
-            Text(text = "Background\nopacity")
+            Text(text = stringResource(R.string.background_opacity))
             Spacer(modifier = Modifier.width(12.dp))
             OpacitySliderWithLabel(
                 opacity = opacity,
