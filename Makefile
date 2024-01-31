@@ -19,6 +19,10 @@ check:
 # Building
 # ==============
 
+baseline-profile:
+	@echo "Build AAB"
+	@./gradlew :app:generateReleaseBaselineProfile --console verbose
+
 build-aab:
 	@echo "Build AAB"
 	@./gradlew :app:bundleRelease --console verbose
@@ -50,6 +54,7 @@ build-and-publish:
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
+	@$(MAKE) baseline-profile
 	@$(MAKE) build-aab
 	@$(MAKE) build-apk
 
