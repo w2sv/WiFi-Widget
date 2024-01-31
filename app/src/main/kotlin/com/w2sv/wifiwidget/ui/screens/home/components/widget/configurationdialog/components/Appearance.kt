@@ -1,7 +1,9 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +16,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,29 +55,37 @@ fun AppearanceSelection(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        val customThemeIndicatorWeight by animateFloatAsState(
-            targetValue = if (useDynamicColors) EPSILON else 1f,
-            label = "",
-        )
+        val useDynamicColorsTransition = updateTransition(targetState = useDynamicColors, label = "")
+
+        val customThemeIndicatorWeight by useDynamicColorsTransition.animateFloat(label = "") {
+            if (it) EPSILON else 1f
+        }
+        val horizontalThemeSelectionRowPadding by useDynamicColorsTransition.animateDp(label = "") {
+            if (it) 32.dp else 0.dp
+        }
 
         ThemeSelectionRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = ((1 - customThemeIndicatorWeight) * 32).dp),
-            customThemeIndicatorProperties = ThemeIndicatorProperties(
-                theme = Theme.Custom,
-                labelRes = R.string.custom,
-                buttonColoring = ButtonColor.Gradient(
-                    circularTrifoldStripeBrush(
-                        getCustomColor(WidgetColorSection.Background),
-                        getCustomColor(WidgetColorSection.Primary),
-                        getCustomColor(WidgetColorSection.Secondary),
+                .padding(horizontal = horizontalThemeSelectionRowPadding),
+            customThemeIndicatorProperties = remember {
+                ThemeIndicatorProperties(
+                    theme = Theme.Custom,
+                    labelRes = R.string.custom,
+                    buttonColoring = ButtonColor.Gradient(
+                        circularTrifoldStripeBrush(
+                            getCustomColor(WidgetColorSection.Background),
+                            getCustomColor(WidgetColorSection.Primary),
+                            getCustomColor(WidgetColorSection.Secondary),
+                        ),
                     ),
-                ),
-            ),
+                )
+            },
             selected = theme,
             onSelected = setTheme,
-            themeWeights = persistentMapOf(Theme.Custom to customThemeIndicatorWeight),
+            themeWeights = remember(customThemeIndicatorWeight) {
+                persistentMapOf(Theme.Custom to customThemeIndicatorWeight)
+            },
             themeIndicatorModifier = Modifier
                 .padding(horizontal = 12.dp)
                 .sizeIn(maxHeight = 92.dp),

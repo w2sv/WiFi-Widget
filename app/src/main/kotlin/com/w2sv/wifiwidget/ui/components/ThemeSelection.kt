@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -97,29 +98,32 @@ fun ThemeSelectionRow(
                         onTrue = {
                             weight(
                                 themeWeights.getOrDefault(
-                                    properties.theme,
-                                    1f,
+                                    key = properties.theme,
+                                    defaultValue = 1f,
                                 ),
                             )
                         },
                     ),
-                ) {
-                    onSelected(properties.theme)
-                }
+                    onClick = { onSelected(properties.theme) }
+                )
             }
     }
 }
 
+@Immutable
 data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val labelRes: Int,
     val buttonColoring: ButtonColor,
 )
 
+@Immutable
 sealed interface ButtonColor {
     val containerColor: Color
 
+    @Immutable
     data class Uniform(override val containerColor: Color) : ButtonColor
+    @Immutable
     data class Gradient(val brush: Brush) : ButtonColor {
         override val containerColor: Color = Color.Transparent
     }
