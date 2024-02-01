@@ -40,47 +40,36 @@
 </p>
 
 <h2 align="center">Features</h2>
-<h3>In-App</h3>
-<ul>
-  <li>Clean Material 3 Design, featuring animations wherever they're appropriate</li>
-  <li>Supports light & dark theme, as well as dynamic colors</li>
-  <li>Different layouts for landscape & portrait mode</li>
-  <li>Live WiFi Status display with property copy-to-clipboard functionality</li>
-</ul>
 
-<h3>Widget</h3>
-<li>Resizable</li>
-<li>
-  Configurable appearance:
-  <ul>
-    <li>Light/dark theme with static/dynamic colors, or custom colors</li>
-    <li>Configurable background opacity</li>
-  </ul>
-</li>
-<li>Configurable WiFi property inclusion:
-<ul>
-    <li>SSID, BSSID</li>
-    <li>IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched from https://api.ipify.org)
-    <ul>
-      <li>For address types that support IPv4 & IPv6, you may choose which versions to include</li>
-    </ul>
-    </li>
-    <li>Frequency, Channel, Link Speed, Gateway, DNS, DHCP</li>
-  </ul>
-</li>
-<li>Configurable button inclusion</li>
-<li>Configurable automatic refreshing</li>
+### In-App
+- Clean Material 3 Design, featuring animations wherever they're appropriate
+- Supports light & dark theme, as well as dynamic colors
+- Different layouts for landscape & portrait mode
+- Live WiFi Status display with property copy-to-clipboard functionality
+
+### Widget
+- Resizable
+- Configurable appearance:
+  - Light/dark theme with static/dynamic colors, or custom colors
+  - Configurable background opacity
+- Configurable WiFi property inclusion:
+  - SSID, BSSID
+  - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched from https://api.ipify.org)
+    - For address types that support IPv4 & IPv6, you may choose which versions to include
+  - Frequency, Channel, Link Speed, Gateway, DNS, DHCP
+- Configurable button inclusion
+- Configurable automatic refreshing
 
 <h2 align="center">Tech Stack</h2>
-<ul>
-  <li>Kotlin</li>
-  <li>Jetpack Compose</li>
-  <li>All sorts of Androidx stuff</li>
-  <li>Coroutines</li>
-  <li>Dagger-Hilt</li>
-  <li>KSP</li>
-  <li>OkHttp 3</li>
-</ul>
+
+- Kotlin
+- Jetpack Compose
+- All sorts of Androidx stuff
+- Coroutines
+- Dagger-Hilt
+- KSP
+- OkHttp 3
+
 <h2 align="center">Screenshots</h2>
 
 | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
