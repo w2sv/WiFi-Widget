@@ -10,7 +10,9 @@
 
   <br>
 
-  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total">
+  <a href="https://github.com/w2sv/WiFi-Widget/releases">
+    <img src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total?label=Downloads&logo=github"/>
+  </a>
   <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls"/>
 
   <br>
@@ -24,7 +26,7 @@
 ------
 
 <p align="center">
-<b> Android FOSS app providing a configurable widget for the monitoring of your WiFi connection details. Built with Jetpack Compose.</b>
+<b>A fully configurable widget for the monitoring of your WiFi connection details.</b>
 </p>
 
 ------
@@ -37,6 +39,48 @@
 <a href="https://github.com/w2sv/WiFi-Widget/releases/latest"><img alt="Get it on GitHub" src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="80"/></a>
 </p>
 
+<h2 align="center">Features</h2>
+<h3>In-App</h3>
+<ul>
+  <li>Clean Material 3 Design, featuring animations wherever they're appropriate</li>
+  <li>Supports light & dark theme, as well as dynamic colors</li>
+  <li>Different layouts for landscape & portrait mode</li>
+  <li>Live WiFi Status display with property copy-to-clipboard functionality</li>
+</ul>
+
+<h3>Widget</h3>
+<li>Resizable</li>
+<li>
+  Configurable appearance:
+  <ul>
+    <li>Light/dark theme with static/dynamic colors, or custom colors</li>
+    <li>Configurable background opacity</li>
+  </ul>
+</li>
+<li>Configurable WiFi property inclusion:
+<ul>
+    <li>SSID, BSSID</li>
+    <li>IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched from https://api.ipify.org)
+    <ul>
+      <li>For address types that support IPv4 & IPv6, you may choose which versions to include</li>
+    </ul>
+    </li>
+    <li>Frequency, Channel, Link Speed, Gateway, DNS, DHCP</li>
+  </ul>
+</li>
+<li>Configurable button inclusion</li>
+<li>Configurable automatic refreshing</li>
+
+<h2 align="center">Tech Stack</h2>
+<ul>
+  <li>Kotlin</li>
+  <li>Jetpack Compose</li>
+  <li>All sorts of Androidx stuff</li>
+  <li>Coroutines</li>
+  <li>Dagger-Hilt</li>
+  <li>KSP</li>
+  <li>OkHttp 3</li>
+</ul>
 <h2 align="center">Screenshots</h2>
 
 | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
