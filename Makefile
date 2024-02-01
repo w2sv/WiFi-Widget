@@ -49,18 +49,25 @@ build-and-publish-to-test-track:
 	@./gradlew publishBundle --track internal --console verbose
 
 build-and-publish:
-	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n 3. Pushed the latest changes\n\n Otherwise cancel target now."
-	@read																			
+	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n\n Otherwise cancel target now."
+	@read
+
+	@echo "Lint"
+	@$(MAKE) lint
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
-	@$(MAKE) baseline-profile
+	@#$(MAKE) baseline-profile
+
+	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
+
 	@$(MAKE) build-aab
 	@$(MAKE) build-apk
 
-	@$(MAKE) create-gh-release
 	@echo "Publish Bundle"
 	@./gradlew publishBundle --track production --console verbose --no-configuration-cache  # usage of configuration cache throws error for task
+
+	@$(MAKE) create-gh-release
 
 create-gh-release:
 	@echo "Create GitHub Release"

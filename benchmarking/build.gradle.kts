@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.ManagedVirtualDevice
+
 plugins {
     alias(libs.plugins.androidTest)
     alias(libs.plugins.kotlin)
@@ -8,24 +10,37 @@ kotlin {
     jvmToolchain(libs.versions.java.get().toInt())
 }
 
+val mvdName = "Pixel 6 API 33"
+
 android {
     namespace = "com.w2sv.benchmarking"
-    compileSdk = 34
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 28
-        targetSdk = 34
+        targetSdk = libs.versions.compileSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    testOptions.managedDevices.devices {
+        @Suppress("UnstableApiUsage")
+        create<ManagedVirtualDevice>(mvdName) {
+            device = "Pixel 6"
+            apiLevel = 33
+            systemImageSource = "aosp"
+        }
     }
 
     targetProjectPath = ":app"
 }
 
-// This is the configuration block for the Baseline Profile plugin.
-// You can specify to run the generators on a managed devices or connected devices.
+// Baseline profile configuration: https://developer.android.com/topic/performance/baselineprofiles/configure-baselineprofiles
 baselineProfile {
-    useConnectedDevices = true
+    @Suppress("UnstableApiUsage")
+    enableEmulatorDisplay = false
+    useConnectedDevices = false
+    managedDevices += mvdName
 }
 
 dependencies {
