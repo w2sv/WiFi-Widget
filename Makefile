@@ -21,15 +21,15 @@ check:
 
 baseline-profile:
 	@echo "Build AAB"
-	@./gradlew :app:generateReleaseBaselineProfile --console verbose
+	@./gradlew :app:generateReleaseBaselineProfile
 
 build-aab:
 	@echo "Build AAB"
-	@./gradlew :app:bundleRelease --console verbose
+	@./gradlew :app:bundleRelease
 
 build-apk:
 	@echo "Build APK"
-	@./gradlew assembleRelease --console verbose
+	@./gradlew assembleRelease
 
 # ==============
 # Publishing
@@ -46,7 +46,7 @@ build-and-publish-to-test-track:
 	@$(MAKE) build-aab
 
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track internal --console verbose
+	@./gradlew publishBundle --track internal
 
 build-and-publish:
 	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n\n Otherwise cancel target now."

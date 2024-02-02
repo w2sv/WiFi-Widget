@@ -4,7 +4,7 @@ plugins {
 
 kotlin {
     jvmToolchain {
-        (this as JavaToolchainSpec).languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.java.get()))
     }
 }
 
