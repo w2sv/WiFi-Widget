@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.conditional
+import com.w2sv.wifiwidget.ui.utils.thenIf
 import com.w2sv.wifiwidget.ui.utils.toEasing
 import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentMapOf
@@ -93,7 +93,7 @@ fun ThemeSelectionRow(
                 ThemeIndicator(
                     properties = properties,
                     isSelected = { properties.theme == selected },
-                    modifier = themeIndicatorModifier.conditional(
+                    modifier = themeIndicatorModifier.thenIf(
                         condition = themeWeights.isNotEmpty(),
                         onTrue = {
                             weight(

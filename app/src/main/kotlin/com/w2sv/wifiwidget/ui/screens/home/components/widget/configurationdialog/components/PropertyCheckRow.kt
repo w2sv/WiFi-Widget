@@ -32,7 +32,7 @@ import com.w2sv.wifiwidget.ui.components.InfoIcon
 import com.w2sv.wifiwidget.ui.components.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.utils.conditional
+import com.w2sv.wifiwidget.ui.utils.thenIf
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -104,7 +104,7 @@ private fun SubPropertyCheckRowColumn(
             }
             PropertyCheckRow(
                 data = checkRowData,
-                modifier = Modifier.conditional(
+                modifier = Modifier.thenIf(
                     condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
                     onTrue = { padding(start = addressVersionEnablementStartPadding) }
                 ),

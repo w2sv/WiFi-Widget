@@ -19,16 +19,12 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
@@ -64,16 +60,19 @@ class WidgetViewModel @Inject constructor(
     // =========
 
     fun attemptWidgetPin() {
-        if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
-            viewModelScope.launch {
-                mutableSharedSnackbarVisuals.emit {
-                    AppSnackbarVisuals(
-                        msg = it.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
-                        kind = SnackbarKind.Error
-                    )
+        appWidgetManager.attemptWifiWidgetPin(
+            packageName = packageName,
+            onFailure = {
+                viewModelScope.launch {
+                    mutableSharedSnackbarVisuals.emit {
+                        AppSnackbarVisuals(
+                            msg = it.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
+                            kind = SnackbarKind.Error
+                        )
+                    }
                 }
             }
-        }
+        )
     }
 
     val newWidgetPinned get() = _newWidgetPinned.asSharedFlow()
@@ -92,20 +91,8 @@ class WidgetViewModel @Inject constructor(
     // Configuration
     // =========
 
-    val showConfigurationDialog get() = _showConfigurationDialog.asStateFlow()
-    private val _showConfigurationDialog =
-        MutableStateFlow(savedStateHandle.get<Boolean>(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG) == true)
-
-    fun setShowConfigurationDialog(value: Boolean) {
-        _showConfigurationDialog.value = value
-    }
-
-    val infoDialogData: StateFlow<InfoDialogData?> get() = _InfoDialogData.asStateFlow()
-    private val _InfoDialogData = MutableStateFlow<InfoDialogData?>(null)
-
-    fun setPropertyInfoDialogData(value: InfoDialogData?) {
-        _InfoDialogData.value = value
-    }
+    val showConfigurationDialogInitially =
+        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     val configuration = UnconfirmedWidgetConfiguration(
         wifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(

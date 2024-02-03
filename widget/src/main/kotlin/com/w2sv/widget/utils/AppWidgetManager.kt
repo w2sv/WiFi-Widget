@@ -12,23 +12,14 @@ fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
 fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
     getAppWidgetIds(packageName, WidgetProvider::class.java)
 
-/**
- * @return Boolean = pin successfully requested.
- */
-fun AppWidgetManager.attemptWifiWidgetPin(context: Context): Boolean =
-    attemptWifiWidgetPin(context.packageName)
-
-/**
- * @return Boolean = pin successfully requested.
- */
-fun AppWidgetManager.attemptWifiWidgetPin(packageName: String): Boolean {
+fun AppWidgetManager.attemptWifiWidgetPin(packageName: String, onFailure: () -> Unit) {
     if (isRequestPinAppWidgetSupported) {
         requestPinAppWidget(
             ComponentName(packageName, WidgetProvider::class.java.name),
             null,
-            null,
+            null
         )
-        return true
+    } else {
+        onFailure()
     }
-    return false
 }

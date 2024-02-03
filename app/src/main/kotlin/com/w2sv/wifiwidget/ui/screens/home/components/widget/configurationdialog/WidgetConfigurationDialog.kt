@@ -5,7 +5,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -18,15 +22,15 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.conditional
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
+import com.w2sv.wifiwidget.ui.utils.thenIf
+
+private const val infoDialogDataRememberKey = "WIDGET_CONFIGURATION_DIALOG_INFO_DIALOG_DATA"
 
 @Composable
 fun WidgetConfigurationDialog(
     locationAccessState: LocationAccessState,
     widgetConfiguration: UnconfirmedWidgetConfiguration,
-    infoDialogData: InfoDialogData?,
-    setPropertyInfoDialogData: (InfoDialogData?) -> Unit,
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -37,11 +41,11 @@ fun WidgetConfigurationDialog(
         }
     }
 
-    // Show PropertyInfoDialog if applicable
-    infoDialogData?.let {
-        PropertyInfoDialog(
-            data = it,
-            onDismissRequest = { setPropertyInfoDialogData(null) })
+    var infoDialogData by rememberSaveable(
+        stateSaver = InfoDialogData.nullableStateSaver,
+        key = infoDialogDataRememberKey
+    ) {
+        mutableStateOf(null)
     }
 
     ElevatedCardDialog(
@@ -56,7 +60,7 @@ fun WidgetConfigurationDialog(
             },
         ),
         onDismissRequest = resetConfigAndCloseDialog,
-        modifier = modifier.conditional(
+        modifier = modifier.thenIf(
             condition = isLandscapeModeActivated,
             onTrue = { fillMaxHeight() }
         ),
@@ -64,7 +68,7 @@ fun WidgetConfigurationDialog(
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetConfiguration,
             locationAccessState = locationAccessState,
-            showPropertyInfoDialog = setPropertyInfoDialogData,
+            showPropertyInfoDialog = { infoDialogData = it },
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.75f),
@@ -80,5 +84,13 @@ fun WidgetConfigurationDialog(
             applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
             modifier = Modifier.fillMaxWidth(),
         )
+
+        // Show PropertyInfoDialog if applicable
+        infoDialogData?.let {
+            PropertyInfoDialog(
+                data = it,
+                onDismissRequest = { infoDialogData = null }
+            )
+        }
     }
 }

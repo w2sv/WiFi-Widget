@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.conditional
+import com.w2sv.wifiwidget.ui.utils.thenIf
 
 @Composable
 fun ElevatedCardDialog(
@@ -42,7 +42,7 @@ fun ElevatedCardDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .padding(vertical = 24.dp, horizontal = 28.dp)
-                    .conditional(
+                    .thenIf(
                         condition = scrollState != null,
                         onTrue = { verticalScroll(scrollState!!) }
                     ),
