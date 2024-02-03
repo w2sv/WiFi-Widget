@@ -10,7 +10,9 @@
 
   <br>
 
-  <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total">
+  <a href="https://github.com/w2sv/WiFi-Widget/releases">
+    <img src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total?label=Downloads&logo=github"/>
+  </a>
   <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls"/>
 
   <br>
@@ -24,7 +26,7 @@
 ------
 
 <p align="center">
-<b> Android FOSS app providing a configurable widget for the monitoring of your WiFi connection details. Built with Jetpack Compose.</b>
+<b>Android app, providing a fully configurable widget for the monitoring of your WiFi connection details.</b>
 </p>
 
 ------
@@ -36,6 +38,37 @@
 <a href="https://f-droid.org/packages/com.w2sv.wifiwidget/"><img alt="Download from F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="80"/></a>
 <a href="https://github.com/w2sv/WiFi-Widget/releases/latest"><img alt="Get it on GitHub" src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="80"/></a>
 </p>
+
+<h2 align="center">Features</h2>
+
+### In-App
+- Clean Material 3 Design, featuring animations wherever they're appropriate
+- Supports light & dark theme, as well as dynamic colors
+- Different layouts for landscape & portrait mode
+- Live WiFi Status display with property copy-to-clipboard functionality
+
+### Widget
+- Resizable
+- Configurable appearance:
+  - Light/dark theme with static/dynamic colors, or custom colors
+  - Configurable background opacity
+- Configurable WiFi property inclusion:
+  - SSID, BSSID
+  - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched from https://api.ipify.org)
+    - For address types that support IPv4 & IPv6, you may choose which versions to include
+  - Frequency, Channel, Link Speed, Gateway, DNS, DHCP
+- Configurable button inclusion
+- Configurable automatic refreshing
+
+<h2 align="center">Tech Stack</h2>
+
+- Kotlin
+- Jetpack Compose
+- All sorts of Androidx stuff
+- Coroutines
+- Dagger-Hilt
+- KSP
+- OkHttp 3
 
 <h2 align="center">Screenshots</h2>
 
