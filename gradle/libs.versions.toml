@@ -15,7 +15,7 @@ baselineprofile = "1.2.3"
 # Libraries
 androidx-activity-compose = "1.8.2"
 compose-compiler = "1.5.8"
-compose-tooling = "1.6.0"
+compose-tooling = "1.6.1"
 compose-material3 = "1.2.0-rc01"
 lifecycle = "2.7.0"
 okhttp = "4.12.0"
