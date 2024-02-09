@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--https://developer.android.com/develop/ui/views/appwidgets#AppWidgetProviderInfo-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_description"
     android:initialLayout="@layout/widget"
@@ -7,4 +7,4 @@
     android:minResizeHeight="@dimen/min_resize_height"
     android:resizeMode="vertical|horizontal"
     android:updatePeriodMillis="0"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen" /><!--Default size: 2x2; Resizing down to 2x1 and up to full-screen possible-->
