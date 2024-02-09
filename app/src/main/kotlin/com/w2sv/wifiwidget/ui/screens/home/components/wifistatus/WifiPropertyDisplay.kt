@@ -172,7 +172,7 @@ private fun PropertyList(
                             .padding(bottom = 2.dp)
                     )
                 }
-                items(viewData, key = { it.hashCode() }) { viewData ->
+                items(viewData) { viewData ->
                     when (viewData) {
                         is PropertyListElement.Property -> {
                             PropertyDisplayRow(

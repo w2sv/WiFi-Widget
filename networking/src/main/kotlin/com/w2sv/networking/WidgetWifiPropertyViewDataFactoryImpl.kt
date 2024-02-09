@@ -73,10 +73,10 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.DNS -> {
                     add(
                         textualIPv4Representation(wifiManager.dhcpInfo.dns1)
-                            ?: IPAddress.Type.V4.fallbackAddress
+                            ?: IPAddress.Version.V4.fallbackAddress
                     )
                     textualIPv4Representation(wifiManager.dhcpInfo.dns2)?.let { address ->
-                        if (address != IPAddress.Type.V4.fallbackAddress) {
+                        if (address != IPAddress.Version.V4.fallbackAddress) {
                             add(address)
                         }
                     }
@@ -100,12 +100,12 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
                 WidgetWifiProperty.NonIP.Other.Gateway -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.gateway)
-                        ?: IPAddress.Type.V4.fallbackAddress
+                        ?: IPAddress.Version.V4.fallbackAddress
                 )
 
                 WidgetWifiProperty.NonIP.Other.DHCP -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
-                        ?: IPAddress.Type.V4.fallbackAddress
+                        ?: IPAddress.Version.V4.fallbackAddress
                 )
             }
         }
@@ -115,20 +115,20 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
     ): List<WidgetWifiProperty.ViewData.IPProperty> =
         getViewData(
-            values = getAddresses(systemIPAddresses)
-                .run {
-                    if (this is WidgetWifiProperty.IP.V4AndV6)
-                        filter {
-                            ipSubProperties.contains(
-                                when (it.type) {
-                                    IPAddress.Type.V4 -> v4EnabledSubProperty
-                                    IPAddress.Type.V6 -> v6EnabledSubProperty
-                                }
-                            )
+            values = when (this) {
+                is WidgetWifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
+                is WidgetWifiProperty.IP.V4AndV6 -> getAddresses(
+                    systemIPAddresses = systemIPAddresses,
+                    versionsToBeIncluded = buildSet {
+                        if (ipSubProperties.contains(v4EnabledSubProperty)) {
+                            add(IPAddress.Version.V4)
                         }
-                    else
-                        this
-                },
+                        if (ipSubProperties.contains(v6EnabledSubProperty)) {
+                            add(IPAddress.Version.V6)
+                        }
+                    }
+                )
+            },
             makeViewData = { label, ipAddress ->
                 WidgetWifiProperty.ViewData.IPProperty(
                     label = label,
@@ -138,20 +138,39 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         )
 
-    private suspend fun WidgetWifiProperty.IP.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
+    private fun WidgetWifiProperty.IP.V6Only.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
-            WidgetWifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filter { it.isLoopback }
-            WidgetWifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filter { it.isSiteLocal }
-            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filter { it.isLinkLocal }
             WidgetWifiProperty.IP.V6Only.ULA -> systemIPAddresses.filter { it.isUniqueLocal }
-            WidgetWifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filter { it.isMulticast }
             WidgetWifiProperty.IP.V6Only.GUA -> systemIPAddresses.filter { it.isGlobalUnicast }
+        }
+
+    private suspend fun WidgetWifiProperty.IP.V4AndV6.getAddresses(
+        systemIPAddresses: List<IPAddress>,
+        versionsToBeIncluded: Set<IPAddress.Version>
+    ): List<IPAddress> =
+        when (this) {
+            WidgetWifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filterByVersionAnd(
+                versionsToBeIncluded
+            ) { it.isLoopback }
+
+            WidgetWifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filterByVersionAnd(
+                versionsToBeIncluded
+            ) { it.isSiteLocal }
+
+            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filterByVersionAnd(
+                versionsToBeIncluded
+            ) { it.isLinkLocal }
+
+            WidgetWifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filterByVersionAnd(
+                versionsToBeIncluded
+            ) { it.isMulticast }
+
             WidgetWifiProperty.IP.V4AndV6.Public -> buildList {
-                IPAddress.Type.entries.forEach { type ->
-                    getPublicIPAddress(httpClient, type)?.let { addressRepresentation ->
+                versionsToBeIncluded.forEach { version ->
+                    getPublicIPAddress(httpClient, version)?.let { addressRepresentation ->
                         add(
                             IPAddress(
-                                prefixLength = type.minPrefixLength,
+                                prefixLength = version.minPrefixLength,
                                 hostAddress = addressRepresentation,
                                 isLinkLocal = false,
                                 isSiteLocal = false,
@@ -189,6 +208,12 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         }
 }
 
+private inline fun List<IPAddress>.filterByVersionAnd(
+    versionsToBeIncluded: Set<IPAddress.Version>,
+    predicate: (IPAddress) -> Boolean
+): List<IPAddress> =
+    filter { predicate(it) && versionsToBeIncluded.contains(it.version) }
+
 /**
  * Reference: https://stackoverflow.com/a/52663352/12083276
  */
@@ -202,36 +227,41 @@ private fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-private suspend fun getPublicIPAddress(httpClient: OkHttpClient, type: IPAddress.Type): String? {
-    i { "Getting public $type address" }
+private const val PUBLIC_IP_ADDRESS_RETRIEVAL_TIMEOUT = 5_000L
+
+private suspend fun getPublicIPAddress(
+    httpClient: OkHttpClient,
+    version: IPAddress.Version
+): String? {
+    i { "Getting public $version address" }
 
     val request = Request.Builder()
         .url(
-            when (type) {
-                IPAddress.Type.V4 -> "https://api.ipify.org"
-                IPAddress.Type.V6 -> "https://api64.ipify.org"
+            when (version) {
+                IPAddress.Version.V4 -> "https://api.ipify.org"
+                IPAddress.Version.V6 -> "https://api6.ipify.org"
             }
         )
         .build()
 
     return try {
-        withTimeout(5_000) {
+        withTimeout(PUBLIC_IP_ADDRESS_RETRIEVAL_TIMEOUT) {
             httpClient
                 .newCall(request)
                 .execute()
                 .body
                 ?.string()
                 ?.let { address ->
-                    if (type.ofCorrectFormat(address))
-                        address.also { i { "Got public $type address" } }
+                    if (version.ofCorrectFormat(address))
+                        address.also { i { "Got public $version address" } }
                     else
-                        null.also { i { "Discarded obtained $type address $address due to incorrect format" } }
+                        null.also { i { "Discarded obtained $version address $address due to incorrect format" } }
                 }
         }
     } catch (e: Exception) {
         i {
             if (e is SocketTimeoutException) {
-                "Timed out trying to get public $type address"
+                "Timed out trying to get public $version address"
             } else {
                 "Caught $e"
             }

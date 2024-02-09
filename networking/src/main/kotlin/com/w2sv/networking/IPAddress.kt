@@ -34,8 +34,8 @@ data class IPAddress(
 //                ".${(shift and 0x000000ff) and 0xff}"
 //    }
 
-    val type: Type = if (prefixLength < Type.V6.minPrefixLength) Type.V4 else Type.V6
-    val hostAddressRepresentation: String = hostAddress ?: type.fallbackAddress
+    val version: Version = if (prefixLength < Version.V6.minPrefixLength) Version.V4 else Version.V6
+    val hostAddressRepresentation: String = hostAddress ?: version.fallbackAddress
 
     private val isLocal: Boolean
         get() = isSiteLocal || isLinkLocal || isAnyLocal
@@ -49,7 +49,7 @@ data class IPAddress(
     val isGlobalUnicast: Boolean
         get() = !isLocal && !isMulticast
 
-    enum class Type(
+    enum class Version(
         val minPrefixLength: Int,
         val fallbackAddress: String,
         val ofCorrectFormat: (String) -> Boolean
