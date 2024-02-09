@@ -1,2 +1,2 @@
 - Performance improvements
-- UI adjustments
+- Fixed a bug that would lead to all IP address versions of an address kind being displayed, regardless of the respectively selected ones

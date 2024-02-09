@@ -20,7 +20,7 @@ check:
 # ==============
 
 baseline-profile:
-	@echo "Build AAB"
+	@echo "Generate baseline profile"
 	@./gradlew :app:generateReleaseBaselineProfile
 
 build-aab:
@@ -55,11 +55,11 @@ build-and-publish:
 	@echo "Lint"
 	@$(MAKE) lint
 
-	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
-
-	@#$(MAKE) baseline-profile
+	@$(MAKE) baseline-profile
 
 	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
+
+	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
 	@$(MAKE) build-aab
 	@$(MAKE) build-apk
