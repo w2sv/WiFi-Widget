@@ -1,2 +1,3 @@
 - Performance improvements
-- Fixed a bug that would lead to all IP address versions of an address kind being displayed, regardless of the respectively selected ones
+- Hide bottom bar upon deselection of all comprised elements
+- Remove 'Buttons' category and display all buttons alongside with 'Last refresh time display' under the category 'Bottom Row' in the widget configuration dialog
