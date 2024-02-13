@@ -34,13 +34,13 @@
 
     <string name="ipv4">IPv4</string>
     <string name="ipv6">IPv6</string>
-    <string name="refresh">Refresh</string>
-    <string name="go_to_wifi_settings">Go to WiFi Settings</string>
-    <string name="go_to_widget_settings">Go to Widget Settings</string>
+    <string name="refresh_button">Refresh button</string>
+    <string name="open_wifi_settings_button">Open WiFi settings button</string>
+    <string name="open_widget_settings_button">Open widget settings button</string>
 
     <string name="refresh_periodically">Refresh periodically</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
-    <string name="display_last_refresh_time">Display last refresh time</string>
+    <string name="display_last_refresh_time">Last refresh time display</string>
 
     <string name="loopback_description">A loopback IP address, commonly represented as 127.0.0.1 in IPv4, is a reserved address that allows a device to communicate with itself. When data is sent to the loopback address, it is internally routed back to the same device, enabling local testing of networking functionality. This address, often referred to as "localhost", is widely used for diagnostic and development purposes to ensure the proper functioning of network-related components on a device without the need for external connections. In IPv6, the loopback address is typically represented as ::1.</string>
     <string name="unique_local_description">Unique Local Addresses (ULAs) in IPv6 are a reserved set of addresses designed for local communication within an organization or site. Introduced as the successor to site-local addresses, as per RFC 4193, ULAs enable devices within a specific network to communicate locally without the need for global uniqueness. They serve as a practical solution for private, internal use in IPv6 networks, ensuring local connectivity while addressing the limitations of the deprecated site-local addressing concept.</string>

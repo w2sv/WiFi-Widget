@@ -8,6 +8,7 @@ import android.content.Intent
 import android.net.Uri
 import android.view.View
 import android.widget.RemoteViews
+import androidx.annotation.IdRes
 import com.w2sv.androidutils.appwidgets.crossVisualize
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.appwidgets.setColorFilter
@@ -120,52 +121,36 @@ class WidgetLayoutPopulator @Inject constructor(
                 setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
             }
 
-            setViewVisibility(
-                R.id.refresh_button,
-                if (bottomBar.refreshButton) View.VISIBLE else View.GONE,
-            )
-            setViewVisibility(
-                R.id.go_to_wifi_settings_button,
-                if (bottomBar.goToWifiSettingsButton) View.VISIBLE else View.GONE,
-            )
-            setViewVisibility(
-                R.id.go_to_widget_settings_button,
-                if (bottomBar.goToWidgetSettingsButton) View.VISIBLE else View.GONE,
-            )
-
-            setColorFilter(R.id.refresh_button, colors.primary)
-            setColorFilter(R.id.go_to_widget_settings_button, colors.primary)
-            setColorFilter(R.id.go_to_wifi_settings_button, colors.primary)
-
-            setOnClickPendingIntent(
-                R.id.refresh_button,
-                PendingIntent.getBroadcast(
+            setButton(
+                id = R.id.refresh_button,
+                show = bottomBar.refreshButton,
+                pendingIntent = PendingIntent.getBroadcast(
                     context,
                     PendingIntentCode.RefreshWidgetData.ordinal,
                     WidgetProvider.getRefreshDataIntent(context),
                     PendingIntent.FLAG_IMMUTABLE,
                 ),
             )
-
-            setOnClickPendingIntent(
-                R.id.go_to_wifi_settings_button,
-                PendingIntent.getActivity(
+            setButton(
+                id = R.id.go_to_wifi_settings_button,
+                show = bottomBar.goToWifiSettingsButton,
+                pendingIntent = PendingIntent.getActivity(
                     context,
                     PendingIntentCode.GoToWifiSettings.ordinal,
                     goToWifiSettingsIntent,
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
                 ),
             )
-
-            setOnClickPendingIntent(
-                R.id.go_to_widget_settings_button,
-                PendingIntent.getActivity(
+            setButton(
+                id = R.id.go_to_widget_settings_button,
+                show = bottomBar.goToWidgetSettingsButton,
+                pendingIntent = PendingIntent.getActivity(
                     context,
                     PendingIntentCode.LaunchHomeActivity.ordinal,
                     Intent.makeRestartActivityTask(
                         ComponentName(
                             context,
-                            "com.w2sv.wifiwidget.ui.MainActivity",
+                            "com.w2sv.wifiwidget.MainActivity",
                         ),
                     )
                         .putExtra(
@@ -176,5 +161,18 @@ class WidgetLayoutPopulator @Inject constructor(
                 ),
             )
         }
+    }
+
+    private fun RemoteViews.setButton(@IdRes id: Int, show: Boolean, pendingIntent: PendingIntent) {
+        setViewVisibility(
+            id,
+            if (show) View.VISIBLE else View.GONE,
+        )
+
+        if (show) {
+            setColorFilter(id, colors.primary)
+        }
+
+        setOnClickPendingIntent(id, pendingIntent)
     }
 }
