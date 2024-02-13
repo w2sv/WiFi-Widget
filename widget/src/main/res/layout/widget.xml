@@ -1,20 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/widget_layout"
     style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.WiFiWidget.AppWidgetContainer">
+    android:theme="@style/Theme.WiFiWidget.AppWidgetContainer"
+    android:weightSum="1"
+    android:orientation="vertical">
 
     <FrameLayout
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ListView
             android:id="@+id/wifi_property_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="32dp"
             android:divider="@null"
             android:gravity="center"
             android:listSelector="@android:color/transparent"
@@ -42,12 +45,11 @@
     </FrameLayout>
 
     <LinearLayout
+        android:id="@+id/bottom_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-
-        android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:layout_marginTop="2dp"
         android:weightSum="1">
 
         <TextView
@@ -100,4 +102,4 @@
 
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

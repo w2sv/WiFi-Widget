@@ -24,6 +24,7 @@ import com.w2sv.widget.model.WidgetButtons
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import slimber.log.i
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -50,8 +51,7 @@ class WidgetLayoutPopulator @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
                 )
-                setLastUpdatedTV()
-                setButtons(buttons = appearance.buttons)
+                setBottomRow(buttons = appearance.buttons)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -100,78 +100,82 @@ class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setLastUpdatedTV() {
-        if (appearance.displayLastRefreshDateTime) {
-            setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
-            setTextColor(R.id.last_updated_tv, colors.secondary)
-
-            val now = Date()
-            setTextViewText(
-                R.id.last_updated_tv,
-                "${
-                    DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
-                } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
-            )
+    private fun RemoteViews.setBottomRow(buttons: WidgetButtons) {
+        if (!appearance.displayLastRefreshDateTime && buttons.none { it }) {
+            setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
-            setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
-        }
-    }
+            setViewVisibility(R.id.bottom_row, View.VISIBLE)
 
-    private fun RemoteViews.setButtons(buttons: WidgetButtons) {
-        setViewVisibility(
-            R.id.refresh_button,
-            if (buttons.refresh) View.VISIBLE else View.GONE,
-        )
-        setViewVisibility(
-            R.id.go_to_wifi_settings_button,
-            if (buttons.goToWifiSettings) View.VISIBLE else View.GONE,
-        )
-        setViewVisibility(
-            R.id.go_to_widget_settings_button,
-            if (buttons.goToWidgetSettings) View.VISIBLE else View.GONE,
-        )
+            if (appearance.displayLastRefreshDateTime) {
+                setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
+                setTextColor(R.id.last_updated_tv, colors.secondary)
 
-        setColorFilter(R.id.refresh_button, colors.primary)
-        setColorFilter(R.id.go_to_widget_settings_button, colors.primary)
-        setColorFilter(R.id.go_to_wifi_settings_button, colors.primary)
-
-        setOnClickPendingIntent(
-            R.id.refresh_button,
-            PendingIntent.getBroadcast(
-                context,
-                PendingIntentCode.RefreshWidgetData.ordinal,
-                WidgetProvider.getRefreshDataIntent(context),
-                PendingIntent.FLAG_IMMUTABLE,
-            ),
-        )
-
-        setOnClickPendingIntent(
-            R.id.go_to_wifi_settings_button,
-            PendingIntent.getActivity(
-                context,
-                PendingIntentCode.GoToWifiSettings.ordinal,
-                goToWifiSettingsIntent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-            ),
-        )
-
-        setOnClickPendingIntent(
-            R.id.go_to_widget_settings_button,
-            PendingIntent.getActivity(
-                context,
-                PendingIntentCode.LaunchHomeActivity.ordinal,
-                Intent.makeRestartActivityTask(
-                    ComponentName(
-                        context,
-                        "com.w2sv.wifiwidget.ui.MainActivity",
-                    ),
+                val now = Date()
+                setTextViewText(
+                    R.id.last_updated_tv,
+                    "${
+                        DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
+                    } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
                 )
-                    .putExtra(
-                        Extra.SHOW_WIDGET_CONFIGURATION_DIALOG,
-                        true,
-                    ),
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-            ),
-        )
+            } else {
+                setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
+            }
+
+            setViewVisibility(
+                R.id.refresh_button,
+                if (buttons.refresh) View.VISIBLE else View.GONE,
+            )
+            setViewVisibility(
+                R.id.go_to_wifi_settings_button,
+                if (buttons.goToWifiSettings) View.VISIBLE else View.GONE,
+            )
+            setViewVisibility(
+                R.id.go_to_widget_settings_button,
+                if (buttons.goToWidgetSettings) View.VISIBLE else View.GONE,
+            )
+
+            setColorFilter(R.id.refresh_button, colors.primary)
+            setColorFilter(R.id.go_to_widget_settings_button, colors.primary)
+            setColorFilter(R.id.go_to_wifi_settings_button, colors.primary)
+
+            setOnClickPendingIntent(
+                R.id.refresh_button,
+                PendingIntent.getBroadcast(
+                    context,
+                    PendingIntentCode.RefreshWidgetData.ordinal,
+                    WidgetProvider.getRefreshDataIntent(context),
+                    PendingIntent.FLAG_IMMUTABLE,
+                ),
+            )
+
+            setOnClickPendingIntent(
+                R.id.go_to_wifi_settings_button,
+                PendingIntent.getActivity(
+                    context,
+                    PendingIntentCode.GoToWifiSettings.ordinal,
+                    goToWifiSettingsIntent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            )
+
+            setOnClickPendingIntent(
+                R.id.go_to_widget_settings_button,
+                PendingIntent.getActivity(
+                    context,
+                    PendingIntentCode.LaunchHomeActivity.ordinal,
+                    Intent.makeRestartActivityTask(
+                        ComponentName(
+                            context,
+                            "com.w2sv.wifiwidget.ui.MainActivity",
+                        ),
+                    )
+                        .putExtra(
+                            Extra.SHOW_WIDGET_CONFIGURATION_DIALOG,
+                            true,
+                        ),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
+                ),
+            )
+        }
     }
 }
