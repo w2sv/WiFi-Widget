@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.FloatRange
 
 data class WidgetAppearance(
-    val useDynamicColors: Boolean,
+    private val useDynamicColors: Boolean,
     val theme: WidgetTheme,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val bottomBar: WidgetBottomBar,

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.di
+package com.w2sv.wifiwidget.di
 
 import android.content.Context
 import android.location.LocationManager
@@ -9,17 +9,31 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableSharedFlow
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
-typealias MutableSharedSnackbarVisualsFlow = MutableSharedFlow<(Context) -> SnackbarVisuals>
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class SnackbarVisualsFlow
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class WidgetPinSuccessFlow
 
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
 
+    @SnackbarVisualsFlow
     @Provides
     @Singleton
-    fun mutableSharedSnackbarVisuals(): MutableSharedSnackbarVisualsFlow =
+    fun mutableSnackbarVisualsFlow(): MutableSharedFlow<(Context) -> SnackbarVisuals> =
+        MutableSharedFlow()
+
+    @WidgetPinSuccessFlow
+    @Provides
+    @Singleton
+    fun mutableWidgetPinSuccessFlow(): MutableSharedFlow<Unit> =
         MutableSharedFlow()
 
     @Provides

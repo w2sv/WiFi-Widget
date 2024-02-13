@@ -82,7 +82,7 @@ fun HomeScreen(
                 val snackbarHostState = LocalSnackbarHostState.current
 
                 // Show Snackbars collected from sharedSnackbarVisuals
-                CollectLatestFromFlow(appViewModel.sharedSnackbarVisuals) {
+                CollectLatestFromFlow(appViewModel.snackbarVisualsFlow) {
                     snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
                 }
 

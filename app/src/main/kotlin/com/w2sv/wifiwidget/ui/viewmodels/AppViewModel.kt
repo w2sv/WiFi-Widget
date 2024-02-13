@@ -1,12 +1,14 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
+import android.content.Context
+import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
+import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,12 +18,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
+    @SnackbarVisualsFlow snackbarVisualsFlow: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     private val preferencesRepository: PreferencesRepository
 ) :
     ViewModel() {
 
-    val sharedSnackbarVisuals = mutableSharedSnackbarVisuals.asSharedFlow()
+    val snackbarVisualsFlow = snackbarVisualsFlow.asSharedFlow()
 
     val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,

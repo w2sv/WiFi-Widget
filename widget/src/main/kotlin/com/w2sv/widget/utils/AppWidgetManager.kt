@@ -1,5 +1,6 @@
 package com.w2sv.widget.utils
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -12,12 +13,16 @@ fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
 fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
     getAppWidgetIds(packageName, WidgetProvider::class.java)
 
-fun AppWidgetManager.attemptWifiWidgetPin(packageName: String, onFailure: () -> Unit) {
+fun AppWidgetManager.attemptWifiWidgetPin(
+    packageName: String,
+    successCallback: PendingIntent?,
+    onFailure: () -> Unit
+) {
     if (isRequestPinAppWidgetSupported) {
         requestPinAppWidget(
             ComponentName(packageName, WidgetProvider::class.java.name),
             null,
-            null
+            successCallback
         )
     } else {
         onFailure()

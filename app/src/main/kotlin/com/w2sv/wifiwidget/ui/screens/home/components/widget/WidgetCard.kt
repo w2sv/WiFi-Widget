@@ -41,6 +41,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
+import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
 
@@ -66,10 +67,11 @@ fun WidgetCard(
             )
             Spacer(modifier = Modifier.height(32.dp))
 
+            val context = LocalContext.current
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(
                     onClick = {
-                        widgetVM.attemptWidgetPin()
+                        widgetVM.attemptWidgetPin(context)
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -89,7 +91,7 @@ fun WidgetCard(
     )
 
     ShowSnackbarOnWidgetPin(
-        newWidgetPinned = widgetVM.newWidgetPinned,
+        newWidgetPinned = widgetVM.widgetPinSuccessFlow,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
         backgroundAccessState = locationAccessState.backgroundAccessState,
     )
@@ -123,7 +125,7 @@ private fun ShowSnackbarOnWidgetPin(
     val snackbarHostState = LocalSnackbarHostState.current
     val locationManager = LocalLocationManager.current
 
-    CollectFromFlow(newWidgetPinned) {
+    CollectLatestFromFlow(newWidgetPinned) {
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled

@@ -17,7 +17,7 @@
         android:theme="@style/Theme.App.SplashScreen">
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
 
             <intent-filter>
@@ -54,6 +54,8 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
+
+        <receiver android:name="com.w2sv.wifiwidget.ui.viewmodels.WidgetPinSuccessBroadcastReceiver" />
 
         <!--Services-->
 

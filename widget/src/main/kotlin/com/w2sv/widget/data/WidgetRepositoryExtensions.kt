@@ -19,7 +19,7 @@ val WidgetRepository.appearance: WidgetAppearance
             Theme.SystemDefault -> WidgetTheme.DeviceDefault
             Theme.Dark -> WidgetTheme.Dark
             Theme.Custom -> WidgetTheme.Custom(
-                customColors,
+                customColors
             )
         },
         backgroundOpacity = opacity.value,

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui
+package com.w2sv.wifiwidget
 
 import android.location.LocationManager
 import android.os.Bundle
@@ -17,7 +17,6 @@ import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,7 +24,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     private val homeScreenVM by viewModels<HomeScreenViewModel>()
-    private val widgetVM by viewModels<WidgetViewModel>()
     private val appVM by viewModels<AppViewModel>()
 
     @Inject
@@ -61,6 +59,5 @@ class MainActivity : ComponentActivity() {
         super.onStart()
 
         homeScreenVM.onStart()
-        widgetVM.refreshWidgetIds()
     }
 }

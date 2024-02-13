@@ -1,5 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
 
+import android.content.Context
+import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Stable
 import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
@@ -12,11 +14,11 @@ import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -33,7 +35,7 @@ class UnconfirmedWidgetConfiguration(
     val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
     val opacity: UnconfirmedStateFlow<Float>,
     private val scope: CoroutineScope,
-    private val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
+    private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
