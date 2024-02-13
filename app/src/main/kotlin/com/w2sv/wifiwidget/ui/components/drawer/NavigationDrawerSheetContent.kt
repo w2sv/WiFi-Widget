@@ -120,7 +120,7 @@ internal fun NavigationDrawerSheetContent(
                 })
                 add(
                     Element.LabelledItem.Clickable(
-                        R.drawable.ic_bug_report_24px,
+                        R.drawable.ic_bug_report_24,
                         R.string.report_a_bug
                     ) {
                         context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)

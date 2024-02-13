@@ -6,7 +6,7 @@ import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 class UnconfirmedWidgetConfiguration(
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
     val ipSubProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    val buttonMap: UnconfirmedStateMap<WidgetButton, Boolean>,
+    val buttonMap: UnconfirmedStateMap<WidgetBottomBarElement, Boolean>,
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     val useDynamicColors: UnconfirmedStateFlow<Boolean>,
     val theme: UnconfirmedStateFlow<Theme>,

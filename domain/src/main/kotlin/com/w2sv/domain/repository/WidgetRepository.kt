@@ -2,7 +2,7 @@ package com.w2sv.domain.repository
 
 import com.w2sv.androidutils.datastorage.datastore.preferences.PersistedValue
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -25,6 +25,6 @@ interface WidgetRepository {
     fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>>
     suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>)
 
-    fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>>
-    suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>)
+    fun getButtonEnablementMap(): Map<WidgetBottomBarElement, Flow<Boolean>>
+    suspend fun saveButtonEnablementMap(map: Map<WidgetBottomBarElement, Boolean>)
 }

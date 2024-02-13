@@ -12,7 +12,7 @@ import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
 import com.w2sv.data.model.valueDSE
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -79,10 +79,10 @@ class WidgetRepositoryImpl @Inject constructor(
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override fun getButtonEnablementMap(): Map<WidgetButton, Flow<Boolean>> =
-        getTypeToValueMap(WidgetButton.entries.associateBy { it.isEnabledDSE })
+    override fun getButtonEnablementMap(): Map<WidgetBottomBarElement, Flow<Boolean>> =
+        getTypeToValueMap(WidgetBottomBarElement.entries.associateBy { it.isEnabledDSE })
 
-    override suspend fun saveButtonEnablementMap(map: Map<WidgetButton, Boolean>) {
+    override suspend fun saveButtonEnablementMap(map: Map<WidgetBottomBarElement, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 

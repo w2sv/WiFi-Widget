@@ -1,12 +1,12 @@
 package com.w2sv.widget.data
 
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
-import com.w2sv.widget.model.WidgetButtons
+import com.w2sv.widget.model.WidgetBottomBar
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetRefreshing
 import com.w2sv.widget.model.WidgetTheme
@@ -15,16 +15,12 @@ import kotlinx.coroutines.flow.combine
 
 val WidgetRepository.appearance: Flow<WidgetAppearance>
     get() = combine(
-        combine(
-            useDynamicColors,
-            theme,
-            customColors,
-            transform = { a, b, c -> Triple(a, b, c) },
-        ),
+        useDynamicColors,
+        theme,
+        customColors,
         opacity,
-        getRefreshingParametersEnablementMap().getValue(WidgetRefreshingParameter.DisplayLastRefreshDateTime),
-        buttons,
-        transform = { (useDynamicColors, theme, customColors), opacity, displayLastRefreshDateTime, buttons ->
+        bottomBar,
+        transform = { useDynamicColors, theme, customColors, opacity, bottomBar ->
             WidgetAppearance(
                 useDynamicColors = useDynamicColors,
                 theme = when (theme) {
@@ -36,29 +32,34 @@ val WidgetRepository.appearance: Flow<WidgetAppearance>
                     )
                 },
                 backgroundOpacity = opacity,
-                displayLastRefreshDateTime = displayLastRefreshDateTime,
-                buttons = buttons,
+                bottomBar = bottomBar,
             )
         },
     )
 
-val WidgetRepository.buttons: Flow<WidgetButtons>
-    get() = combine(
-        getButtonEnablementMap().getValue(WidgetButton.Refresh),
-        getButtonEnablementMap().getValue(WidgetButton.GoToWifiSettings),
-        getButtonEnablementMap().getValue(WidgetButton.GoToWidgetSettings),
-        transform = { a, b, c ->
-            WidgetButtons(refresh = a, goToWifiSettings = b, goToWidgetSettings = c)
-        },
-    )
-
-val WidgetRepository.customColors: Flow<WidgetColors>
+private val WidgetRepository.customColors: Flow<WidgetColors>
     get() = combine(
         getCustomColorsMap().getValue(WidgetColorSection.Background),
         getCustomColorsMap().getValue(WidgetColorSection.Primary),
         getCustomColorsMap().getValue(WidgetColorSection.Secondary),
         transform = { background, labels, other ->
             WidgetColors(background, labels, other)
+        },
+    )
+
+private val WidgetRepository.bottomBar: Flow<WidgetBottomBar>
+    get() = combine(
+        getButtonEnablementMap().getValue(WidgetBottomBarElement.LastRefreshTimeDisplay),
+        getButtonEnablementMap().getValue(WidgetBottomBarElement.RefreshButton),
+        getButtonEnablementMap().getValue(WidgetBottomBarElement.GoToWifiSettingsButton),
+        getButtonEnablementMap().getValue(WidgetBottomBarElement.GoToWidgetSettingsButton),
+        transform = { lastRefreshTimeDisplay, refreshButton, goToWifiSettingsButton, goToWidgetSettingsButton ->
+            WidgetBottomBar(
+                lastRefreshTimeDisplay = lastRefreshTimeDisplay,
+                refreshButton = refreshButton,
+                goToWifiSettingsButton = goToWifiSettingsButton,
+                goToWidgetSettingsButton = goToWidgetSettingsButton
+            )
         },
     )
 

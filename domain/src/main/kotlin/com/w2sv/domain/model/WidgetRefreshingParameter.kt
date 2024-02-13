@@ -10,5 +10,4 @@ enum class WidgetRefreshingParameter(
     WidgetProperty {
     RefreshPeriodically(R.string.refresh_periodically, true),
     RefreshOnLowBattery(R.string.refresh_on_low_battery, true),
-    DisplayLastRefreshDateTime(R.string.display_last_refresh_time, true)
 }

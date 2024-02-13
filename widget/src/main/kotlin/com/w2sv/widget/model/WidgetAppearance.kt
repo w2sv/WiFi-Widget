@@ -7,8 +7,7 @@ data class WidgetAppearance(
     val useDynamicColors: Boolean,
     val theme: WidgetTheme,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
-    val displayLastRefreshDateTime: Boolean,
-    val buttons: WidgetButtons,
+    val bottomBar: WidgetBottomBar,
 ) {
     fun getColors(context: Context): WidgetColors =
         theme.getColors(context, useDynamicColors)

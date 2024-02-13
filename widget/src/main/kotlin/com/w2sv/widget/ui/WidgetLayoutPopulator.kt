@@ -20,11 +20,10 @@ import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
-import com.w2sv.widget.model.WidgetButtons
+import com.w2sv.widget.model.WidgetBottomBar
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
-import slimber.log.i
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -51,7 +50,7 @@ class WidgetLayoutPopulator @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
                 )
-                setBottomRow(buttons = appearance.buttons)
+                setBottomRow(bottomBar = appearance.bottomBar)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -100,13 +99,13 @@ class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomRow(buttons: WidgetButtons) {
-        if (!appearance.displayLastRefreshDateTime && buttons.none { it }) {
+    private fun RemoteViews.setBottomRow(bottomBar: WidgetBottomBar) {
+        if (bottomBar.none { it }) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
             setViewVisibility(R.id.bottom_row, View.VISIBLE)
 
-            if (appearance.displayLastRefreshDateTime) {
+            if (bottomBar.lastRefreshTimeDisplay) {
                 setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
@@ -123,15 +122,15 @@ class WidgetLayoutPopulator @Inject constructor(
 
             setViewVisibility(
                 R.id.refresh_button,
-                if (buttons.refresh) View.VISIBLE else View.GONE,
+                if (bottomBar.refreshButton) View.VISIBLE else View.GONE,
             )
             setViewVisibility(
                 R.id.go_to_wifi_settings_button,
-                if (buttons.goToWifiSettings) View.VISIBLE else View.GONE,
+                if (bottomBar.goToWifiSettingsButton) View.VISIBLE else View.GONE,
             )
             setViewVisibility(
                 R.id.go_to_widget_settings_button,
-                if (buttons.goToWidgetSettings) View.VISIBLE else View.GONE,
+                if (bottomBar.goToWidgetSettingsButton) View.VISIBLE else View.GONE,
             )
 
             setColorFilter(R.id.refresh_button, colors.primary)

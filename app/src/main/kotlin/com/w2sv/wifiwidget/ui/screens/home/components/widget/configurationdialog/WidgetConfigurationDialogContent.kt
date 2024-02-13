@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.domain.model.WidgetButton
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
@@ -81,13 +81,13 @@ fun WidgetConfigurationDialogContent(
         )
 
         SectionHeader(
-            iconRes = R.drawable.ic_gamepad_24,
-            headerRes = R.string.buttons,
+            iconRes = R.drawable.ic_bottom_row_24,
+            headerRes = R.string.bottom_row,
             modifier = defaultSectionHeaderModifier
         )
         PropertyCheckRows(
             dataList = remember {
-                WidgetButton.entries.map {
+                WidgetBottomBarElement.entries.map {
                     PropertyCheckRowData.fromMutableMap(
                         property = it,
                         isCheckedMap = widgetConfiguration.buttonMap
@@ -119,10 +119,6 @@ fun WidgetConfigurationDialogContent(
                                 isCheckedMap = widgetConfiguration.refreshingParametersMap
                             )
                         )
-                    ),
-                    PropertyCheckRowData.fromMutableMap(
-                        property = WidgetRefreshingParameter.DisplayLastRefreshDateTime,
-                        isCheckedMap = widgetConfiguration.refreshingParametersMap
                     )
                 )
             },
