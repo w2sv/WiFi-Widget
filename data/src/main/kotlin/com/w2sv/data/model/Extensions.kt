@@ -3,7 +3,7 @@ package com.w2sv.data.model
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -24,14 +24,14 @@ internal val WidgetWifiProperty.IP.SubProperty.isEnabledDse
             defaultValue = true,
         )
 
-internal val WidgetBottomBarElement.isEnabledDSE
+internal val WidgetBottomRowElement.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = booleanPreferencesKey(
             when (this) {
-                WidgetBottomBarElement.LastRefreshTimeDisplay -> "ShowDateTime"
-                WidgetBottomBarElement.RefreshButton -> "WidgetButton.Refresh"
-                WidgetBottomBarElement.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
-                WidgetBottomBarElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
+                WidgetBottomRowElement.LastRefreshTimeDisplay -> "ShowDateTime"
+                WidgetBottomRowElement.RefreshButton -> "WidgetButton.Refresh"
+                WidgetBottomRowElement.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
+                WidgetBottomRowElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
             }
         ),
         defaultValue = true,

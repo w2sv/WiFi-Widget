@@ -92,10 +92,10 @@ class WidgetViewModel @Inject constructor(
             stateFlowMap = repository.ipSubPropertyEnablementMap,
             syncState = { repository.saveIPSubPropertyEnablementMap(it) },
         ),
-        bottomBar = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.bottomBarElementEnablementMap,
+        bottomRowMap = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.bottomRowElementEnablementMap,
             syncState = {
-                repository.saveBottomBarElementEnablementMap(it)
+                repository.saveBottomRowElementEnablementMap(it)
             },
         ),
         refreshingParametersMap = UnconfirmedStateMap.fromStateFlowMap(

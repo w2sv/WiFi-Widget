@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
@@ -87,10 +87,10 @@ fun WidgetConfigurationDialogContent(
         )
         PropertyCheckRows(
             dataList = remember {
-                WidgetBottomBarElement.entries.map {
+                WidgetBottomRowElement.entries.map {
                     PropertyCheckRowData.fromMutableMap(
                         property = it,
-                        isCheckedMap = widgetConfiguration.bottomBar
+                        isCheckedMap = widgetConfiguration.bottomRowMap
                     )
                 }
                     .toPersistentList()

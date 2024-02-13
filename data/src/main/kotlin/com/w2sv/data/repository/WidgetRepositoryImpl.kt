@@ -12,7 +12,7 @@ import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
 import com.w2sv.data.model.valueDSE
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -95,10 +95,10 @@ class WidgetRepositoryImpl @Inject constructor(
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override val bottomBarElementEnablementMap: Map<WidgetBottomBarElement, StateFlow<Boolean>> =
-        getStateFlowMap(WidgetBottomBarElement.entries.associateBy { it.isEnabledDSE })
+    override val bottomRowElementEnablementMap: Map<WidgetBottomRowElement, StateFlow<Boolean>> =
+        getStateFlowMap(WidgetBottomRowElement.entries.associateBy { it.isEnabledDSE })
 
-    override suspend fun saveBottomBarElementEnablementMap(map: Map<WidgetBottomBarElement, Boolean>) {
+    override suspend fun saveBottomRowElementEnablementMap(map: Map<WidgetBottomRowElement, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 

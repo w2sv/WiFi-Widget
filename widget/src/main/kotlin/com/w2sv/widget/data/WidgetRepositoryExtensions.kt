@@ -1,12 +1,12 @@
 package com.w2sv.widget.data
 
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.model.WidgetAppearance
-import com.w2sv.widget.model.WidgetBottomBar
+import com.w2sv.widget.model.WidgetBottomRow
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.WidgetRefreshing
 import com.w2sv.widget.model.WidgetTheme
@@ -23,7 +23,7 @@ val WidgetRepository.appearance: WidgetAppearance
             )
         },
         backgroundOpacity = opacity.value,
-        bottomBar = bottomBar,
+        bottomRow = bottomRow,
     )
 
 private val WidgetRepository.customColors: WidgetColors
@@ -33,12 +33,12 @@ private val WidgetRepository.customColors: WidgetColors
         secondary = customColorsMap.getValue(WidgetColorSection.Secondary).value
     )
 
-private val WidgetRepository.bottomBar: WidgetBottomBar
-    get() = WidgetBottomBar(
-        lastRefreshTimeDisplay = bottomBarElementEnablementMap.getValue(WidgetBottomBarElement.LastRefreshTimeDisplay).value,
-        refreshButton = bottomBarElementEnablementMap.getValue(WidgetBottomBarElement.RefreshButton).value,
-        goToWifiSettingsButton = bottomBarElementEnablementMap.getValue(WidgetBottomBarElement.GoToWifiSettingsButton).value,
-        goToWidgetSettingsButton = bottomBarElementEnablementMap.getValue(WidgetBottomBarElement.GoToWidgetSettingsButton).value
+private val WidgetRepository.bottomRow: WidgetBottomRow
+    get() = WidgetBottomRow(
+        lastRefreshTimeDisplay = bottomRowElementEnablementMap.getValue(WidgetBottomRowElement.LastRefreshTimeDisplay).value,
+        refreshButton = bottomRowElementEnablementMap.getValue(WidgetBottomRowElement.RefreshButton).value,
+        goToWifiSettingsButton = bottomRowElementEnablementMap.getValue(WidgetBottomRowElement.GoToWifiSettingsButton).value,
+        goToWidgetSettingsButton = bottomRowElementEnablementMap.getValue(WidgetBottomRowElement.GoToWidgetSettingsButton).value
     )
 
 val WidgetRepository.refreshing: WidgetRefreshing

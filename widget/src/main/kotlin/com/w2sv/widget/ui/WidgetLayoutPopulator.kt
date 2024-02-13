@@ -21,7 +21,7 @@ import com.w2sv.widget.R
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.model.WidgetAppearance
-import com.w2sv.widget.model.WidgetBottomBar
+import com.w2sv.widget.model.WidgetBottomRow
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,7 +51,7 @@ class WidgetLayoutPopulator @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
                 )
-                setBottomRow(bottomBar = appearance.bottomBar)
+                setBottomRow(bottomRow = appearance.bottomRow)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -100,13 +100,13 @@ class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomRow(bottomBar: WidgetBottomBar) {
-        if (bottomBar.none { it }) {
+    private fun RemoteViews.setBottomRow(bottomRow: WidgetBottomRow) {
+        if (bottomRow.none { it }) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
             setViewVisibility(R.id.bottom_row, View.VISIBLE)
 
-            if (bottomBar.lastRefreshTimeDisplay) {
+            if (bottomRow.lastRefreshTimeDisplay) {
                 setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
@@ -123,7 +123,7 @@ class WidgetLayoutPopulator @Inject constructor(
 
             setButton(
                 id = R.id.refresh_button,
-                show = bottomBar.refreshButton,
+                show = bottomRow.refreshButton,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     PendingIntentCode.RefreshWidgetData.ordinal,
@@ -133,7 +133,7 @@ class WidgetLayoutPopulator @Inject constructor(
             )
             setButton(
                 id = R.id.go_to_wifi_settings_button,
-                show = bottomBar.goToWifiSettingsButton,
+                show = bottomRow.goToWifiSettingsButton,
                 pendingIntent = PendingIntent.getActivity(
                     context,
                     PendingIntentCode.GoToWifiSettings.ordinal,
@@ -143,7 +143,7 @@ class WidgetLayoutPopulator @Inject constructor(
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
-                show = bottomBar.goToWidgetSettingsButton,
+                show = bottomRow.goToWidgetSettingsButton,
                 pendingIntent = PendingIntent.getActivity(
                     context,
                     PendingIntentCode.LaunchHomeActivity.ordinal,

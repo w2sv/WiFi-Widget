@@ -2,7 +2,7 @@ package com.w2sv.domain.repository
 
 import com.w2sv.androidutils.datastorage.datastore.DataStoreStateFlow
 import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -25,6 +25,6 @@ interface WidgetRepository {
     val refreshingParametersEnablementMap: Map<WidgetRefreshingParameter, StateFlow<Boolean>>
     suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>)
 
-    val bottomBarElementEnablementMap: Map<WidgetBottomBarElement, StateFlow<Boolean>>
-    suspend fun saveBottomBarElementEnablementMap(map: Map<WidgetBottomBarElement, Boolean>)
+    val bottomRowElementEnablementMap: Map<WidgetBottomRowElement, StateFlow<Boolean>>
+    suspend fun saveBottomRowElementEnablementMap(map: Map<WidgetBottomRowElement, Boolean>)
 }

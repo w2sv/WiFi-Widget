@@ -42,21 +42,24 @@
 <h2 align="center">Features</h2>
 
 ### In-App
+
 - Clean Material 3 Design, featuring animations wherever they're appropriate
 - Supports light & dark theme, as well as dynamic colors
 - Different layouts for landscape & portrait mode
 - Live WiFi Status display with property copy-to-clipboard functionality
 
 ### Widget
+
 - Resizable
 - Configurable appearance:
-  - Light/dark theme with static/dynamic colors, or custom colors
-  - Configurable background opacity
+    - Light/dark theme with static/dynamic colors, or custom colors
+    - Configurable background opacity
 - Configurable WiFi property inclusion:
-  - SSID, BSSID
-  - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched from https://api.ipify.org)
-    - For address types that support IPv4 & IPv6, you may choose which versions to include
-  - Frequency, Channel, Link Speed, Gateway, DNS, DHCP
+    - SSID, BSSID
+    - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched
+      from https://api.ipify.org)
+        - For address types that support IPv4 & IPv6, you may choose which versions to include
+    - Frequency, Channel, Link Speed, Gateway, DNS, DHCP
 - Configurable button inclusion
 - Configurable automatic refreshing
 

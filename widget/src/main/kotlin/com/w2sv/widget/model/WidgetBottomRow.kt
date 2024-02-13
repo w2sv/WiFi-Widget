@@ -1,8 +1,13 @@
 package com.w2sv.widget.model
 
-data class WidgetBottomBar(
+data class WidgetBottomRow(
     val lastRefreshTimeDisplay: Boolean,
     val refreshButton: Boolean,
     val goToWifiSettingsButton: Boolean,
     val goToWidgetSettingsButton: Boolean,
-) : List<Boolean> by listOf(lastRefreshTimeDisplay, refreshButton, goToWifiSettingsButton, goToWidgetSettingsButton)
+) : List<Boolean> by listOf(
+    lastRefreshTimeDisplay,
+    refreshButton,
+    goToWifiSettingsButton,
+    goToWidgetSettingsButton
+)

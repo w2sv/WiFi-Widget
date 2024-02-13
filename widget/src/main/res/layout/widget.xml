@@ -98,7 +98,7 @@
             android:layout_height="@dimen/size_widget_image_button_icon"
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/configure_widget"
+            android:contentDescription="@string/open_widget_settings_button"
             android:src="@drawable/ic_settings_24" />
 
     </LinearLayout>
