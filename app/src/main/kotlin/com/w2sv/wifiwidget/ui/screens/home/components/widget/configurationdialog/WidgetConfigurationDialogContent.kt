@@ -90,7 +90,7 @@ fun WidgetConfigurationDialogContent(
                 WidgetBottomBarElement.entries.map {
                     PropertyCheckRowData.fromMutableMap(
                         property = it,
-                        isCheckedMap = widgetConfiguration.buttonMap
+                        isCheckedMap = widgetConfiguration.bottomBar
                     )
                 }
                     .toPersistentList()

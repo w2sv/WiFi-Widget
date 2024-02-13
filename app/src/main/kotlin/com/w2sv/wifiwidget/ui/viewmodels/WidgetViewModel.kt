@@ -20,7 +20,7 @@ import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
+import com.w2sv.wifiwidget.ui.utils.fromStateFlowMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -95,26 +95,22 @@ class WidgetViewModel @Inject constructor(
         savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     val configuration = UnconfirmedWidgetConfiguration(
-        wifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getWifiPropertyEnablementMap(),
-            scope = viewModelScope,
+        wifiProperties = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.wifiPropertyEnablementMap,
             syncState = { repository.saveWifiPropertyEnablementMap(it) },
         ),
-        ipSubProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getIPSubPropertyEnablementMap(),
-            scope = viewModelScope,
+        ipSubProperties = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.ipSubPropertyEnablementMap,
             syncState = { repository.saveIPSubPropertyEnablementMap(it) },
         ),
-        buttonMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getButtonEnablementMap(),
-            scope = viewModelScope,
+        bottomBar = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.bottomBarElementEnablementMap,
             syncState = {
-                repository.saveButtonEnablementMap(it)
+                repository.saveBottomBarElementEnablementMap(it)
             },
         ),
-        refreshingParametersMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getRefreshingParametersEnablementMap(),
-            scope = viewModelScope,
+        refreshingParametersMap = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.refreshingParametersEnablementMap,
             syncState = {
                 repository.saveRefreshingParametersEnablementMap(it)
                 widgetDataRefreshWorkerManager.applyChangedParameters()
@@ -122,20 +118,19 @@ class WidgetViewModel @Inject constructor(
         ),
         useDynamicColors = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
-            persistedValue = repository.useDynamicColors
+            dataStoreStateFlow = repository.useDynamicColors
         ),
         theme = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
-            persistedValue = repository.theme
+            dataStoreStateFlow = repository.theme
         ),
-        customColorsMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getCustomColorsMap(),
-            scope = viewModelScope,
+        customColorsMap = UnconfirmedStateMap.fromStateFlowMap(
+            stateFlowMap = repository.customColorsMap,
             syncState = { repository.saveCustomColorsMap(it) },
         ),
         opacity = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
-            persistedValue = repository.opacity
+            dataStoreStateFlow = repository.opacity
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = mutableSharedSnackbarVisuals,

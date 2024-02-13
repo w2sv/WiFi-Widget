@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
-import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
+import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
+import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
@@ -17,52 +17,68 @@ import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
-) : PreferencesDataStoreRepository(dataStore),
+) : DataStoreRepository(dataStore),
     WidgetRepository {
+
+    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
     // ================
     // PersistedValue
     // ================
 
-    override val theme = getPersistedValue(intPreferencesKey("widgetTheme"), Theme.SystemDefault)
+    override val theme = dataStoreStateFlow(
+        key = intPreferencesKey("widgetTheme"),
+        default = Theme.SystemDefault,
+        scope = scope,
+        sharingStarted = SharingStarted.Eagerly
+    )
 
     override val useDynamicColors =
-        getPersistedValue(
-            booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
-            dynamicColorsSupported
+        dataStoreStateFlow(
+            key = booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
+            default = dynamicColorsSupported,
+            scope = scope,
+            sharingStarted = SharingStarted.Eagerly
         )
 
-    override val opacity = getPersistedValue(floatPreferencesKey("opacity"), 1.0f)
+    override val opacity = dataStoreStateFlow(
+        key = floatPreferencesKey("opacity"),
+        default = 1.0f,
+        scope = scope,
+        sharingStarted = SharingStarted.Eagerly
+    )
 
     // ================
     // Map
     // ================
 
-    // TODO: look for singular save function
-
-    override fun getCustomColorsMap(): Map<WidgetColorSection, Flow<Int>> =
-        getTypeToValueMap(WidgetColorSection.entries.associateBy { it.valueDSE })
+    override val customColorsMap: Map<WidgetColorSection, StateFlow<Int>> =
+        getStateFlowMap(WidgetColorSection.entries.associateBy { it.valueDSE })
 
     override suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>) {
         saveMap(map.mapKeys { (k, _) -> k.valueDSE })
     }
 
-    override fun getWifiPropertyEnablementMap(): Map<WidgetWifiProperty, Flow<Boolean>> =
-        getTypeToValueMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
+    override val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>> =
+        getStateFlowMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
 
     override suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override fun getIPSubPropertyEnablementMap(): Map<WidgetWifiProperty.IP.SubProperty, Flow<Boolean>> =
-        getTypeToValueMap(
+    override val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>> =
+        getStateFlowMap(
             WidgetWifiProperty.IP.entries
                 .flatMap { it.subProperties }
                 .associateBy { it.isEnabledDse }
@@ -72,20 +88,25 @@ class WidgetRepositoryImpl @Inject constructor(
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDse })
     }
 
-    override fun getRefreshingParametersEnablementMap(): Map<WidgetRefreshingParameter, Flow<Boolean>> =
-        getTypeToValueMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
+    override val refreshingParametersEnablementMap: Map<WidgetRefreshingParameter, StateFlow<Boolean>> =
+        getStateFlowMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
 
     override suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override fun getButtonEnablementMap(): Map<WidgetBottomBarElement, Flow<Boolean>> =
-        getTypeToValueMap(WidgetBottomBarElement.entries.associateBy { it.isEnabledDSE })
+    override val bottomBarElementEnablementMap: Map<WidgetBottomBarElement, StateFlow<Boolean>> =
+        getStateFlowMap(WidgetBottomBarElement.entries.associateBy { it.isEnabledDSE })
 
-    override suspend fun saveButtonEnablementMap(map: Map<WidgetBottomBarElement, Boolean>) {
+    override suspend fun saveBottomBarElementEnablementMap(map: Map<WidgetBottomBarElement, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    private fun <E, V> getTypeToValueMap(dseToType: Map<DataStoreEntry.UniType<V>, E>): Map<E, Flow<V>> =
-        getFlowMap(dseToType.keys).mapKeys { (k, _) -> dseToType.getValue(k) }
+    private fun <E, V> getStateFlowMap(dseToType: Map<DataStoreEntry.UniType<V>, E>): Map<E, StateFlow<V>> =
+        getStateFlowMap(
+            properties = dseToType.keys,
+            scope = scope,
+            sharingStarted = SharingStarted.Eagerly
+        )
+            .mapKeys { (k, _) -> dseToType.getValue(k) }
 }

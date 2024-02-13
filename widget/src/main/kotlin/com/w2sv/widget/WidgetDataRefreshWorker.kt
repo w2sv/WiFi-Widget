@@ -13,7 +13,6 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.lastOrNull
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
@@ -44,8 +43,8 @@ class WidgetDataRefreshWorker @AssistedInject constructor(
         private val workManager: WorkManager,
         private val widgetRepository: WidgetRepository,
     ) {
-        suspend fun applyChangedParameters() {
-            widgetRepository.refreshing.lastOrNull()?.apply {
+        fun applyChangedParameters() {
+            with(widgetRepository.refreshing) {
                 when (refreshPeriodically) {
                     true -> enableWorker(refreshOnLowBattery)
                     false -> cancelWorker()

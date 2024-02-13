@@ -14,7 +14,7 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.coroutines.mapState
-import com.w2sv.androidutils.datastorage.datastore.preferences.PersistedValue
+import com.w2sv.androidutils.datastorage.datastore.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R
@@ -106,9 +106,9 @@ fun rememberLocationAccessPermissionState(
 class LocationAccessState(
     private val permissionsState: MultiplePermissionsState,
     val backgroundAccessState: BackgroundLocationAccessState?,
-    requestLaunchedBefore: PersistedValue.UniTyped<Boolean>,
+    requestLaunchedBefore: DataStoreFlow<Boolean>,
     private val saveRequestLaunched: () -> Unit,
-    rationalShown: PersistedValue.UniTyped<Boolean>,
+    rationalShown: DataStoreFlow<Boolean>,
     private val saveRationalShown: () -> Unit,
     private val snackbarHostState: SnackbarHostState,
     private val scope: CoroutineScope,

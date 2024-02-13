@@ -4,9 +4,9 @@
     style="@style/Widget.WiFiWidget.AppWidget.Container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:theme="@style/Theme.WiFiWidget.AppWidgetContainer"
-    android:weightSum="1"
-    android:orientation="vertical">
+    android:weightSum="1">
 
     <FrameLayout
         android:id="@+id/frame_layout"
@@ -48,8 +48,9 @@
         android:id="@+id/bottom_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:weightSum="1">
 
         <TextView

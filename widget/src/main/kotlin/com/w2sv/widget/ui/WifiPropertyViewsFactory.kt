@@ -3,9 +3,7 @@ package com.w2sv.widget.ui
 import android.content.Context
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import com.w2sv.androidutils.coroutines.getSynchronousMap
-import com.w2sv.androidutils.coroutines.getValueSynchronously
-import com.w2sv.common.utils.enabledKeys
+import com.w2sv.common.utils.valueEnabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.appearance
@@ -36,37 +34,34 @@ class WifiPropertyViewsFactory @Inject constructor(
 
         propertyViewData = runBlocking {
             viewDataFactory(
-                properties = widgetRepository.getWifiPropertyEnablementMap()
-                    .getSynchronousMap()
-                    .enabledKeys,
-                ipSubProperties = widgetRepository.getIPSubPropertyEnablementMap()
-                    .getSynchronousMap()
-                    .enabledKeys
+                properties = widgetRepository.wifiPropertyEnablementMap.valueEnabledKeys,
+                ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
+                    .valueEnabledKeys
                     .toSet(),
             )
                 .toList()
-                .flatMap { valueViewData ->
-                    buildList {
-                        when (valueViewData) {
-                            is WidgetWifiProperty.ViewData.NonIP -> add(
-                                WidgetPropertyView.Property(
-                                    valueViewData
-                                )
+        }
+            .flatMap { valueViewData ->
+                buildList {
+                    when (valueViewData) {
+                        is WidgetWifiProperty.ViewData.NonIP -> add(
+                            WidgetPropertyView.Property(
+                                valueViewData
                             )
+                        )
 
-                            is WidgetWifiProperty.ViewData.IPProperty -> {
-                                add(WidgetPropertyView.Property(valueViewData))
-                                valueViewData.prefixLengthText?.let {
-                                    add(WidgetPropertyView.PrefixLength(it))
-                                }
+                        is WidgetWifiProperty.ViewData.IPProperty -> {
+                            add(WidgetPropertyView.Property(valueViewData))
+                            valueViewData.prefixLengthText?.let {
+                                add(WidgetPropertyView.PrefixLength(it))
                             }
                         }
                     }
                 }
-                .also { i { "Set propertyViewData=$it" } }
-        }
+            }
+            .also { i { "Set propertyViewData=$it" } }
         nViewTypes = propertyViewData.map { it.javaClass }.toSet().size
-        widgetColors = widgetRepository.appearance.getValueSynchronously().getColors(context)
+        widgetColors = widgetRepository.appearance.getColors(context)
     }
 
     override fun getCount(): Int = propertyViewData.size

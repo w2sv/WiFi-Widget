@@ -4,7 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.androidutils.datastorage.datastore.preferences.PreferencesDataStoreRepository
+import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
@@ -14,12 +14,12 @@ import javax.inject.Singleton
 @Singleton
 class PreferencesRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
-) : PreferencesDataStoreRepository(dataStore),
+) : DataStoreRepository(dataStore),
     PreferencesRepository {
 
     override val inAppTheme =
-        getPersistedValue(intPreferencesKey("inAppTheme"), Theme.SystemDefault)
+        dataStoreFlow(intPreferencesKey("inAppTheme"), Theme.SystemDefault)
 
     override val useDynamicTheme =
-        getPersistedValue(booleanPreferencesKey("useDynamicTheme"), dynamicColorsSupported)
+        dataStoreFlow(booleanPreferencesKey("useDynamicTheme"), dynamicColorsSupported)
 }

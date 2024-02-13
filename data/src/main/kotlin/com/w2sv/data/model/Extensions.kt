@@ -2,7 +2,7 @@ package com.w2sv.data.model
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.androidutils.datastorage.datastore.preferences.DataStoreEntry
+import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter

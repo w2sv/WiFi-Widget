@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.os.PowerManager
 import androidx.work.WorkManager
-import com.w2sv.androidutils.coroutines.getValueSynchronously
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetAppearance
@@ -36,5 +35,5 @@ object WidgetModule {
 
     @Provides
     fun widgetAppearance(widgetRepository: WidgetRepository): WidgetAppearance =
-        widgetRepository.appearance.getValueSynchronously()
+        widgetRepository.appearance
 }
