@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.utils.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.LocalLocationManager
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
@@ -58,15 +56,11 @@ fun WidgetCard(
     }
 
     HomeScreenCard(
+        headerIconRes = R.drawable.ic_widgets_24,
+        headerStringRes = R.string.widget,
+        headerRowBottomSpacing = 32.dp,
         modifier = modifier,
         content = {
-            IconHeader(
-                iconRes = R.drawable.ic_widgets_24,
-                headerRes = R.string.widget,
-                modifier = Modifier.padding(horizontal = 16.dp),
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-
             val context = LocalContext.current
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(

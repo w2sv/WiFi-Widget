@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,7 +44,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -54,6 +53,7 @@ import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.components.nestedListBackground
 import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -78,7 +78,7 @@ fun WifiPropertyDisplay(
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically()
     ) {
-        PropertyList(viewData = viewDataList.toImmutableList())
+        PropertyList(viewDataList = viewDataList.toImmutableList())
     }
 }
 
@@ -152,27 +152,29 @@ private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
     }
 }
 
+private val padding = 12.dp
+
 @Composable
 private fun PropertyList(
-    viewData: ImmutableList<PropertyListElement>,
+    viewDataList: ImmutableList<PropertyListElement>,
     modifier: Modifier = Modifier
 ) {
-    when (viewData.firstOrNull()) {
+    when (viewDataList.firstOrNull()) {
         is PropertyListElement.Property -> {
             LazyColumn(
                 modifier = modifier
                     .nestedListBackground()
-                    .padding(12.dp),
+                    .padding(vertical = padding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
                     HeaderRow(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 2.dp)
+                            .padding(bottom = 2.dp, start = padding, end = padding)
                     )
                 }
-                items(viewData) { viewData ->
+                itemsIndexed(viewDataList) { i, viewData ->
                     when (viewData) {
                         is PropertyListElement.Property -> {
                             PropertyDisplayRow(
@@ -180,11 +182,25 @@ private fun PropertyList(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .heightIn(min = 26.dp)
+                                    .padding(horizontal = padding),
                             )
                             (viewData.property as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
-                                PrefixLengthDisplay(
+                                PrefixLengthDisplayRow(
                                     prefixLengthText = it,
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier
+                                        .padding(horizontal = padding)
+                                        .fillMaxWidth()
+                                )
+                            }
+                            if (i != viewDataList.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 1.dp),
+                                    thickness = 1.dp,
+                                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                        homeScreenCardElevation
+                                    )
                                 )
                             }
                         }
@@ -229,25 +245,27 @@ private fun PropertyDisplayRow(
     viewData: WidgetWifiProperty.ViewData,
     modifier: Modifier = Modifier
 ) {
-    val label = buildAnnotatedString {
-        if (viewData is WidgetWifiProperty.ViewData.IPProperty) {
-            append(stringResource(R.string.ip))
-            withStyle(
-                SpanStyle(
-                    baselineShift = BaselineShift.Subscript,
-                    fontSize = 12.sp,
-                )
-            ) {
+    val context: Context = LocalContext.current
+
+    val label = remember(viewData) {
+        buildAnnotatedString {
+            if (viewData is WidgetWifiProperty.ViewData.IPProperty) {
+                append(context.getString(R.string.ip))
+                withStyle(
+                    SpanStyle(
+                        baselineShift = BaselineShift.Subscript,
+                        fontSize = 12.sp,
+                    )
+                ) {
+                    append(viewData.label)
+                }
+            } else {
                 append(viewData.label)
             }
-        } else {
-            append(viewData.label)
         }
     }
 
-    val snackbarActionColor = SnackbarDefaults.actionColor
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val context: Context = LocalContext.current
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
     val scope: CoroutineScope = rememberCoroutineScope()
 
@@ -260,7 +278,7 @@ private fun PropertyDisplayRow(
                         AppSnackbarVisuals(
                             msg = buildAnnotatedString {
                                 append("${context.getString(R.string.copied)} ")
-                                withStyle(SpanStyle(color = snackbarActionColor)) {
+                                withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
                                     append(label)
                                 }
                                 append(" ${context.getString(R.string.to_clipboard)}.")
@@ -285,27 +303,16 @@ private fun PropertyDisplayRow(
 }
 
 @Composable
-private fun PrefixLengthDisplay(prefixLengthText: String, modifier: Modifier = Modifier) {
+private fun PrefixLengthDisplayRow(prefixLengthText: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.End,
     ) {
-        IPSubPropertyText(text = prefixLengthText)
+        Text(
+            text = prefixLengthText,
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 14.sp,
+        )
     }
-}
-
-@Composable
-private fun IPSubPropertyText(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier
-            .border(
-                width = Dp.Hairline,
-                color = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.medium,
-            )
-            .padding(horizontal = 8.dp),
-        fontSize = 11.sp,
-    )
 }
