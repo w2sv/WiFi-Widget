@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,6 @@ data class IconHeaderProperties(
 fun IconHeader(
     properties: IconHeaderProperties,
     modifier: Modifier = Modifier,
-    trailingBoxContent: @Composable () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -48,8 +48,6 @@ fun IconHeader(
                 color = MaterialTheme.colorScheme.tertiary,
             )
         }
-        Box(modifier = Modifier.weight(0.3f)) {
-            trailingBoxContent()
-        }
+        Spacer(modifier = Modifier.weight(0.3f))
     }
 }

@@ -1,22 +1,13 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -40,20 +31,14 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 
-private val verticalSectionHeaderPadding = 22.dp
+private val verticalSectionHeaderPadding = 18.dp
 
-@Stable
+@Immutable
 private data class Section(
     val iconHeaderProperties: IconHeaderProperties,
+    val headerModifier: Modifier = Modifier.padding(vertical = verticalSectionHeaderPadding),
     val content: @Composable () -> Unit
-) {
-    var isExpanded by mutableStateOf(false)
-        private set
-
-    fun toggleIsExpanded() {
-        isExpanded = !isExpanded
-    }
-}
+)
 
 @Composable
 fun WidgetConfigurationDialogContent(
@@ -73,7 +58,11 @@ fun WidgetConfigurationDialogContent(
         remember {
             persistentListOf(
                 Section(
-                    IconHeaderProperties(R.drawable.ic_palette_24, R.string.appearance)
+                    iconHeaderProperties = IconHeaderProperties(
+                        iconRes = R.drawable.ic_palette_24,
+                        stringRes = R.string.appearance
+                    ),
+                    headerModifier = Modifier.padding(bottom = verticalSectionHeaderPadding)
                 ) {
                     AppearanceSelection(
                         theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
@@ -159,12 +148,9 @@ fun WidgetConfigurationDialogContent(
             .forEach {
                 SectionHeader(
                     iconHeaderProperties = it.iconHeaderProperties,
-                    isExpanded = it.isExpanded,
-                    toggleIsExpanded = it::toggleIsExpanded
+                    modifier = it.headerModifier
                 )
-                AnimatedVisibility(visible = it.isExpanded) {
-                    it.content()
-                }
+                it.content()
             }
     }
 }
@@ -178,20 +164,10 @@ private val widgetWifiPropertyToSubTitleResId = persistentMapOf(
 @Composable
 private fun SectionHeader(
     iconHeaderProperties: IconHeaderProperties,
-    isExpanded: Boolean,
-    toggleIsExpanded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     IconHeader(
         properties = iconHeaderProperties,
         modifier = modifier.padding(horizontal = 16.dp),
-        trailingBoxContent = {
-            IconButton(onClick = toggleIsExpanded) {
-                Icon(
-                    imageVector = if (isExpanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-        }
     )
 }
