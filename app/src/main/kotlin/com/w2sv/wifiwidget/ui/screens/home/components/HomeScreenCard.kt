@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -16,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.ui.components.IconHeader
+import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
 
 val homeScreenCardElevation = 8.dp
 
 @Composable
 fun HomeScreenCard(
-    @DrawableRes headerIconRes: Int,
-    @StringRes headerStringRes: Int,
+    iconHeaderProperties: IconHeaderProperties,
     modifier: Modifier = Modifier,
     headerRowBottomSpacing: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit
@@ -38,8 +36,7 @@ fun HomeScreenCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconHeader(
-                iconRes = headerIconRes,
-                headerRes = headerStringRes,
+                properties = iconHeaderProperties,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
             Spacer(modifier = Modifier.height(headerRowBottomSpacing))

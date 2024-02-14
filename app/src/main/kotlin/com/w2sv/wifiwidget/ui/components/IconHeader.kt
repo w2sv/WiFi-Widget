@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,11 +17,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+data class IconHeaderProperties(
+    @DrawableRes val iconRes: Int,
+    @StringRes val stringRes: Int
+)
+
 @Composable
 fun IconHeader(
-    @DrawableRes iconRes: Int,
-    @StringRes headerRes: Int,
+    properties: IconHeaderProperties,
     modifier: Modifier = Modifier,
+    trailingBoxContent: @Composable () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -30,7 +34,7 @@ fun IconHeader(
     ) {
         Box(modifier = Modifier.weight(0.3f)) {
             Icon(
-                painter = painterResource(id = iconRes),
+                painter = painterResource(id = properties.iconRes),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
                 modifier = Modifier.size(24.dp),
@@ -38,12 +42,14 @@ fun IconHeader(
         }
         Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
             Text(
-                text = stringResource(id = headerRes),
+                text = stringResource(id = properties.stringRes),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.tertiary,
             )
         }
-        Spacer(modifier = Modifier.weight(0.3f))
+        Box(modifier = Modifier.weight(0.3f)) {
+            trailingBoxContent()
+        }
     }
 }

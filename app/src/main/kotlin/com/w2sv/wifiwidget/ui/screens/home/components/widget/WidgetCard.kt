@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.common.utils.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.components.LocalLocationManager
 import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.components.SnackbarAction
@@ -56,8 +57,10 @@ fun WidgetCard(
     }
 
     HomeScreenCard(
-        headerIconRes = R.drawable.ic_widgets_24,
-        headerStringRes = R.string.widget,
+        iconHeaderProperties = IconHeaderProperties(
+            iconRes = R.drawable.ic_widgets_24,
+            stringRes = R.string.widget,
+        ),
         headerRowBottomSpacing = 32.dp,
         modifier = modifier,
         content = {

@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
@@ -71,7 +73,7 @@ fun WidgetConfigurationDialog(
             showPropertyInfoDialog = { infoDialogData = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.75f),
+                .sizeIn(maxHeight = 520.dp),  // TODO
         )
         CancelApplyButtonRow(
             onCancel = {

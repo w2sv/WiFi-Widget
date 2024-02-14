@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 
@@ -18,9 +19,11 @@ fun WifiStatusCard(
     propertyDisplayModifier: Modifier = Modifier,
 ) {
     HomeScreenCard(
+        iconHeaderProperties = IconHeaderProperties(
+            iconRes = R.drawable.ic_network_check_24,
+            stringRes = R.string.wifi_status,
+        ),
         modifier = modifier,
-        headerIconRes = R.drawable.ic_network_check_24,
-        headerStringRes = R.string.wifi_status,
         content = {
             WifiStatusDisplay(wifiState.status)
 
