@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.R
 import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeader
+import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
@@ -51,7 +51,7 @@ fun WidgetConfigurationDialog(
     }
 
     ElevatedCardDialog(
-        header = DialogHeader(
+        header = DialogHeaderProperties(
             title = stringResource(id = R.string.configure_widget),
             icon = {
                 Icon(
@@ -66,6 +66,7 @@ fun WidgetConfigurationDialog(
             condition = isLandscapeModeActivated,
             onTrue = { fillMaxHeight() }
         ),
+        columnModifier = Modifier.padding(14.dp)
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetConfiguration,
@@ -73,7 +74,7 @@ fun WidgetConfigurationDialog(
             showPropertyInfoDialog = { infoDialogData = it },
             modifier = Modifier
                 .fillMaxWidth()
-                .sizeIn(maxHeight = 520.dp),  // TODO
+                .fillMaxHeight(0.8f)
         )
         CancelApplyButtonRow(
             onCancel = {

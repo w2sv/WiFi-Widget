@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,7 +18,7 @@ import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeader
+import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
 import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
@@ -36,10 +37,12 @@ fun ColorPickerDialog(
     }
 
     ElevatedCardDialog(
-        header = DialogHeader(title = label),
+        header = DialogHeaderProperties(title = label),
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        scrollState = rememberScrollState(),
+        columnModifier = Modifier
+            .padding(24.dp)
+            .verticalScroll(rememberScrollState())
     ) {
         HSVColorPickerCircularWithSliders(
             initialColor = color,
@@ -59,6 +62,7 @@ fun ColorPickerDialog(
             },
             modifier = Modifier
                 .padding(vertical = 16.dp),
+            applyButtonEnabled = color != appliedColor
         )
     }
 }

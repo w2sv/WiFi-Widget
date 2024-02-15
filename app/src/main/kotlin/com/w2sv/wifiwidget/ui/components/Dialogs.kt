@@ -1,15 +1,12 @@
 package com.w2sv.wifiwidget.ui.components
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
@@ -22,32 +19,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.thenIf
 
 @Composable
 fun ElevatedCardDialog(
     onDismissRequest: () -> Unit,
-    header: DialogHeader,
     modifier: Modifier = Modifier,
-    scrollState: ScrollState? = null,
+    columnModifier: Modifier = Modifier,
+    header: DialogHeaderProperties? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
             modifier = modifier,
-            shape = MaterialTheme.shapes.medium,
-            elevation = CardDefaults.elevatedCardElevation(16.dp),
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 16.dp)
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .padding(vertical = 24.dp, horizontal = 28.dp)
-                    .thenIf(
-                        condition = scrollState != null,
-                        onTrue = { verticalScroll(scrollState!!) }
-                    ),
+                modifier = columnModifier
             ) {
-                DialogHeader(properties = header)
+                header?.let { DialogHeader(properties = it) }
                 content()
             }
         }
@@ -55,13 +45,13 @@ fun ElevatedCardDialog(
 }
 
 @Immutable
-data class DialogHeader(
+data class DialogHeaderProperties(
     val title: String,
     val icon: (@Composable () -> Unit)? = null,
 )
 
 @Composable
-private fun DialogHeader(properties: DialogHeader, modifier: Modifier = Modifier) {
+private fun DialogHeader(properties: DialogHeaderProperties, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally

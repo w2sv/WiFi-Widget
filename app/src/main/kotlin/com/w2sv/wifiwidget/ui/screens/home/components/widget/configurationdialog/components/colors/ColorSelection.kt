@@ -27,13 +27,15 @@ import com.w2sv.common.utils.bulletPointText
 import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.wifiwidget.R
 
+private const val showColorSelectionDialogRememberKey = "SHOW_COLOR_SELECTION_DIALOG"
+
 @Composable
 fun ColorSelection(
     getCustomColor: (WidgetColorSection) -> Color,
     setCustomColor: (WidgetColorSection, Color) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showDialogFor by rememberSaveable {
+    var showDialogFor by rememberSaveable(key = showColorSelectionDialogRememberKey) {
         mutableStateOf<WidgetColorSection?>(null)
     }
         .apply {

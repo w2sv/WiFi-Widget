@@ -1,10 +1,13 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 
 import android.content.Context
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
@@ -49,6 +52,7 @@ fun WidgetConfigurationDialogContent(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
             .padding(top = 8.dp, bottom = 16.dp)
             .verticalScroll(rememberScrollState()),
@@ -62,7 +66,6 @@ fun WidgetConfigurationDialogContent(
                         iconRes = R.drawable.ic_palette_24,
                         stringRes = R.string.appearance
                     ),
-                    headerModifier = Modifier.padding(bottom = verticalSectionHeaderPadding)
                 ) {
                     AppearanceSelection(
                         theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
@@ -140,17 +143,28 @@ fun WidgetConfigurationDialogContent(
                                 )
                             )
                         },
-                        showInfoDialog = showPropertyInfoDialog
+                        showInfoDialog = showPropertyInfoDialog,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
             )
         }
             .forEach {
-                SectionHeader(
-                    iconHeaderProperties = it.iconHeaderProperties,
-                    modifier = it.headerModifier
-                )
-                it.content()
+                Column(
+                    modifier = Modifier
+                        .border(
+                            1.dp,
+                            MaterialTheme.colorScheme.outlineVariant,
+                            MaterialTheme.shapes.medium
+                        )
+                        .padding(horizontal = 16.dp)
+                ) {
+                    SectionHeader(
+                        iconHeaderProperties = it.iconHeaderProperties,
+                        modifier = it.headerModifier
+                    )
+                    it.content()
+                }
             }
     }
 }
