@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.colors
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -17,9 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
-import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
+import com.w2sv.wifiwidget.ui.components.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable
@@ -36,13 +33,19 @@ fun ColorPickerDialog(
         )
     }
 
-    ElevatedCardDialog(
-        header = DialogHeaderProperties(title = label),
+    ConfigurationDialog(
         onDismissRequest = onDismissRequest,
+        onApplyButtonPress = remember {
+            {
+                applyColor(color)
+                onDismissRequest()
+            }
+        },
         modifier = modifier,
         columnModifier = Modifier
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(rememberScrollState()),
+        title = label,
+        applyButtonEnabled = color != appliedColor
     ) {
         HSVColorPickerCircularWithSliders(
             initialColor = color,
@@ -53,16 +56,6 @@ fun ColorPickerDialog(
             colorModel = ColorModel.RGB,
             textColor = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.width(220.dp),
-        )
-        CancelApplyButtonRow(
-            onCancel = onDismissRequest,
-            onApply = {
-                applyColor(color)
-                onDismissRequest()
-            },
-            modifier = Modifier
-                .padding(vertical = 16.dp),
-            applyButtonEnabled = color != appliedColor
         )
     }
 }

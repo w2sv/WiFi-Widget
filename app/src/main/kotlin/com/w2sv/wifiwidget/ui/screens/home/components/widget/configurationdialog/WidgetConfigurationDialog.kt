@@ -2,9 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,14 +9,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.common.R
-import com.w2sv.wifiwidget.ui.components.CancelApplyButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
-import com.w2sv.wifiwidget.ui.components.ElevatedCardDialog
+import com.w2sv.wifiwidget.ui.components.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
@@ -36,13 +28,6 @@ fun WidgetConfigurationDialog(
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val resetConfigAndCloseDialog: () -> Unit = remember {
-        {
-            widgetConfiguration.reset()
-            closeDialog()
-        }
-    }
-
     var infoDialogData by rememberSaveable(
         stateSaver = InfoDialogData.nullableStateSaver,
         key = infoDialogDataRememberKey
@@ -50,23 +35,26 @@ fun WidgetConfigurationDialog(
         mutableStateOf(null)
     }
 
-    ElevatedCardDialog(
-        header = DialogHeaderProperties(
-            title = stringResource(id = R.string.configure_widget),
-            icon = {
-                Icon(
-                    painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            },
-        ),
-        onDismissRequest = resetConfigAndCloseDialog,
+    ConfigurationDialog(
+        onDismissRequest = remember {
+            {
+                widgetConfiguration.reset()
+                closeDialog()
+            }
+        },
+        onApplyButtonPress = remember {
+            {
+                widgetConfiguration.launchSync()
+                closeDialog()
+            }
+        },
         modifier = modifier.thenIf(
             condition = isLandscapeModeActivated,
             onTrue = { fillMaxHeight() }
         ),
-        columnModifier = Modifier.padding(14.dp)
+        iconRes = com.w2sv.widget.R.drawable.ic_settings_24,
+        title = stringResource(id = com.w2sv.common.R.string.configure_widget),
+        applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
     ) {
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetConfiguration,
@@ -75,17 +63,6 @@ fun WidgetConfigurationDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.8f)
-        )
-        CancelApplyButtonRow(
-            onCancel = {
-                resetConfigAndCloseDialog()
-            },
-            onApply = {
-                widgetConfiguration.launchSync()
-                closeDialog()
-            },
-            applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
-            modifier = Modifier.fillMaxWidth(),
         )
 
         // Show PropertyInfoDialog if applicable

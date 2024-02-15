@@ -54,7 +54,6 @@ fun WidgetConfigurationDialogContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier
-            .padding(top = 8.dp, bottom = 16.dp)
             .verticalScroll(rememberScrollState()),
     ) {
         val context: Context = LocalContext.current
