@@ -39,12 +39,7 @@ data class InfoDialogData(
 
 fun WidgetWifiProperty.getInfoDialogData(context: Context): InfoDialogData =
     InfoDialogData(
-        title = buildString {
-            append(context.getString(labelRes))
-            if (this@getInfoDialogData is WidgetWifiProperty.IP) {
-                append(" Address")
-            }
-        },
+        title = context.getString(labelRes),
         description = context.getString(descriptionRes),
         learnMoreUrl = learnMoreUrl,
     )

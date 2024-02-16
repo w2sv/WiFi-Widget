@@ -2,7 +2,7 @@
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="link_local_short">LinkLocal</string>
-    <string name="link_local">Link Local</string>
+    <string name="link_local_ip">Link Local IP</string>
     <string name="frequency">Frequency</string>
     <string name="channel">Channel</string>
     <string name="link_speed">Link Speed</string>
@@ -25,12 +25,13 @@
     <string name="connected">Connected</string>
 
     <string name="loopback">Loopback</string>
-    <string name="site_local">Site Local</string>
+    <string name="site_local_ip">Site Local IP</string>
     <string name="site_local_short">SiteLocal</string>
     <string name="ula">ULA</string>
     <string name="gua">GUA</string>
+    <string name="public_ip">Public IP</string>
     <string name="public_">Public</string>
-    <string name="multicast">Multicast</string>
+    <string name="multicast_ip">Multicast IP</string>
 
     <string name="ipv4">IPv4</string>
     <string name="ipv6">IPv6</string>
@@ -49,12 +50,13 @@
     <string name="public_description">Public IP addresses are unique addresses assigned to devices on the internet, allowing them to be identified and communicate with other devices across the global network. These addresses are globally routable and are registered with regional internet registries (RIRs) to ensure uniqueness. In both IPv4 and IPv6, public IP addresses are distinct from private addresses and are used for direct communication between devices on the internet.\n\nWiFi Widget retrieves the public addresses via www.ipify.org. Considering their uniqueness, you should be extra mindful about sharing them.</string>
     <string name="global_unicast_description">Global unicast addresses are a specific category of IP addresses used for communication across the entire internet. In IPv6, global unicast addresses are part of the global unicast address space and are routable on the global internet. These addresses typically start with the prefix 2000::/3.\n\nGlobal unicast addresses play a crucial role in providing unique and globally reachable identifiers for devices connected to the internet. Unlike link-local or site-local addresses that have limited scope, global unicast addresses allow devices to communicate globally, enabling the seamless exchange of information across different networks and regions.</string>
     <string name="site_local_description">Site-local addresses were part of both IPv4 and IPv6 address spaces, designated for communication within specific sites or organizations. In IPv4, these addresses fell within the private address ranges defined by RFC 1918 (10.0.0.0 to 10.255.255.255, 172.16.0.0 to 172.31.255.255, and 192.168.0.0 to 192.168.255.255), while in IPv6, site-local addresses were initially designated with the fec0::/10 prefix. However, due to issues with site-local addresses, IPv6 transitioned to using Unique Local Addresses (ULAs) as their successor. In both IPv4 and IPv6, site-local (or equivalent) addresses were reserved for local communication within designated networks and were not intended for global Internet routing.</string>
-    <string name="unique_local">Unique Local</string>
-    <string name="global_unicast">Global Unicast</string>
+    <string name="unique_local_ip">Unique Local IP</string>
+    <string name="global_unicast_ip">Global Unicast IP</string>
     <string name="mc">MC</string>
     <string name="background">Background</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
     <string name="preset">Preset</string>
     <string name="custom">Custom</string>
+    <string name="loopback_ip">Loopback IP</string>
 </resources>

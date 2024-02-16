@@ -151,7 +151,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
             data object ULA :
                 V6Only(
-                    R.string.unique_local,
+                    R.string.unique_local_ip,
                     R.string.ula,
                     R.string.unique_local_description,
                     LEARN_MORE_URL,
@@ -160,7 +160,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
             data object GUA :
                 V6Only(
-                    R.string.global_unicast,
+                    R.string.global_unicast_ip,
                     R.string.gua,
                     R.string.global_unicast_description,
                     LEARN_MORE_URL,
@@ -205,7 +205,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
             }
 
             data object Loopback : V4AndV6(
-                R.string.loopback,
+                R.string.loopback_ip,
                 R.string.loopback,
                 R.string.loopback_description,
                 LEARN_MORE_URL,
@@ -215,7 +215,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
             data object SiteLocal :
                 V4AndV6(
-                    R.string.site_local,
+                    R.string.site_local_ip,
                     R.string.site_local_short,
                     R.string.site_local_description,
                     LEARN_MORE_URL,
@@ -224,7 +224,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 )
 
             data object LinkLocal : V4AndV6(
-                R.string.link_local,
+                R.string.link_local_ip,
                 R.string.link_local_short,
                 R.string.link_local_description,
                 LEARN_MORE_URL,
@@ -233,7 +233,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
             )
 
             data object Multicast : V4AndV6(
-                R.string.multicast,
+                R.string.multicast_ip,
                 R.string.mc,
                 R.string.multicast_description,
                 LEARN_MORE_URL,
@@ -243,7 +243,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
             data object Public :
                 V4AndV6(
-                    R.string.public_,
+                    R.string.public_ip,
                     R.string.public_,
                     R.string.public_description,
                     LEARN_MORE_URL,

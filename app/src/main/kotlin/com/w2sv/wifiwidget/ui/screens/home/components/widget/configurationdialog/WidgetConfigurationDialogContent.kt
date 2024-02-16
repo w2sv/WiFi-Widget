@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
@@ -29,7 +28,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
 
 private val verticalSectionHeaderPadding = 18.dp
@@ -93,7 +91,6 @@ fun WidgetConfigurationDialogContent(
                             locationAccessState = locationAccessState
                         ),
                         showInfoDialog = showPropertyInfoDialog,
-                        propertyToSubTitleResId = widgetWifiPropertyToSubTitleResId
                     )
                 },
                 Section(
@@ -164,12 +161,6 @@ fun WidgetConfigurationDialogContent(
             }
     }
 }
-
-private val widgetWifiPropertyToSubTitleResId = persistentMapOf(
-    WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.first() to R.string.location_access_requiring,
-    WidgetWifiProperty.IP.entries.first() to R.string.ip_addresses,
-    WidgetWifiProperty.NonIP.Other.entries.first() to R.string.other
-)
 
 @Composable
 private fun SectionHeader(
