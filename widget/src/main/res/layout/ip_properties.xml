@@ -7,7 +7,7 @@
     android:paddingVertical="2dp">
 
     <TextView
-        android:id="@+id/ip_property_tv_1"
+        android:id="@+id/prefix_length_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
