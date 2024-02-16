@@ -73,7 +73,8 @@ class WifiPropertyViewsFactory @Inject constructor(
 
     override fun getViewTypeCount(): Int = nViewTypes
 
-    override fun getItemId(position: Int): Long = propertyViewData[position].hashCode().toLong()
+    override fun getItemId(position: Int): Long =
+        propertyViewData[position].hashCode().toLong()
 
     override fun hasStableIds(): Boolean = true
 

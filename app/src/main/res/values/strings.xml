@@ -59,7 +59,6 @@
     <string name="to_clipboard">to clipboard</string>
     <string name="location_access_requiring">Location access requiring</string>
     <string name="ip_addresses">IP Addresses</string>
-    <string name="other">Other</string>
     <string name="versions">Versions</string>
     <string name="background_opacity">Background\nopacity</string>
 </resources>
