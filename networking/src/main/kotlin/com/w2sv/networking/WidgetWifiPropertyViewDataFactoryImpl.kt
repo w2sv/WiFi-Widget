@@ -101,14 +101,6 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
                 WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
                 WidgetWifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
-                WidgetWifiProperty.NonIP.Other.SignalLevel -> add(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                        wifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi)
-                    } else {
-                        WifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi, 101)
-                    }
-                        .toString()
-                )
 
                 WidgetWifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
