@@ -2,7 +2,9 @@ package com.w2sv.networking
 
 import android.content.res.Resources
 import android.net.ConnectivityManager
+import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
+import android.os.Build
 import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -98,6 +100,30 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
                 WidgetWifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
                 WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
+                WidgetWifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
+                WidgetWifiProperty.NonIP.Other.SignalLevel -> add(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                        wifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi)
+                    } else {
+                        WifiManager.calculateSignalLevel(wifiManager.connectionInfo.rssi, 101)
+                    }
+                        .toString()
+                )
+
+                WidgetWifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    add(
+                        when (wifiManager.connectionInfo.wifiStandard) {
+                            ScanResult.WIFI_STANDARD_11AC -> "802.11ac"
+                            ScanResult.WIFI_STANDARD_11AD -> "802.11ad"
+                            ScanResult.WIFI_STANDARD_11AX -> "802.11ax"
+                            ScanResult.WIFI_STANDARD_11BE -> "802.11be"
+                            ScanResult.WIFI_STANDARD_11N -> "802.11n"
+                            ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g"
+                            else -> "Unknown"
+                        }
+                    )
+                }
+
                 WidgetWifiProperty.NonIP.Other.Gateway -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.gateway)
                         ?: IPAddress.Version.V4.fallbackAddress

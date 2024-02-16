@@ -1,5 +1,6 @@
 package com.w2sv.domain.model
 
+import android.os.Build
 import androidx.annotation.StringRes
 import com.w2sv.domain.R
 import kotlinx.coroutines.flow.Flow
@@ -91,6 +92,27 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 true
             )
 
+            data object RSSI : Other(
+                R.string.rssi,
+                R.string.rssi_description,
+                "https://en.wikipedia.org/wiki/Received_signal_strength_indicator",
+                true
+            )
+
+            data object SignalLevel : Other(
+                R.string.signal_level,
+                R.string.signal_level_description,
+                null,
+                true
+            )
+
+            data object Standard : Other(
+                R.string.standard,
+                R.string.standard_description,
+                "https://en.wikipedia.org/wiki/IEEE_802.11",
+                true
+            )
+
             data object Gateway : Other(
                 R.string.gateway,
                 R.string.gateway_description,
@@ -114,7 +136,19 @@ sealed interface WidgetWifiProperty : WidgetProperty {
 
             companion object {
                 val entries: List<Other>
-                    get() = listOf(Frequency, Channel, LinkSpeed, Gateway, DNS, DHCP)
+                    get() = buildList {
+                        add(Frequency)
+                        add(Channel)
+                        add(LinkSpeed)
+                        add(RSSI)
+                        add(SignalLevel)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            add(Standard)
+                        }
+                        add(Gateway)
+                        add(DNS)
+                        add(DHCP)
+                    }
             }
         }
     }
