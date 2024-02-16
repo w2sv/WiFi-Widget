@@ -59,24 +59,21 @@ fun AppearanceConfiguration(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        Row(
+        SingleChoiceSegmentedButtonRow(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            horizontalArrangement = Arrangement.Center
+                .padding(bottom = 8.dp)
+                .align(Alignment.CenterHorizontally)
         ) {
-            SingleChoiceSegmentedButtonRow {
-                WidgetColoring.entries.forEach {
-                    SegmentedButton(
-                        selected = it == coloring,
-                        onClick = { setColoring(it) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = it.ordinal,
-                            count = WidgetColoring.entries.size
-                        )
-                    ) {
-                        Text(text = stringResource(id = it.labelRes))
-                    }
+            WidgetColoring.entries.forEach {
+                SegmentedButton(
+                    selected = it == coloring,
+                    onClick = { setColoring(it) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = it.ordinal,
+                        count = WidgetColoring.entries.size
+                    )
+                ) {
+                    Text(text = stringResource(id = it.labelRes))
                 }
             }
         }
@@ -172,10 +169,7 @@ private fun CustomColorConfiguration(
             }
         }
 
-    Column(
-        verticalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         remember(data) {
             listOf(
                 CustomColor(
@@ -229,7 +223,7 @@ private fun SectionCustomizationRow(
             )
         Button(
             modifier = modifier
-                .size(36.dp)
+                .size(40.dp)
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
                 containerColor = color,
