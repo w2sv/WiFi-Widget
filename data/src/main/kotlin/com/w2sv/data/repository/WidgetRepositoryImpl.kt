@@ -10,10 +10,9 @@ import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
-import com.w2sv.data.model.valueDSE
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetBottomRowElement
-import com.w2sv.domain.model.WidgetColorSection
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
@@ -22,6 +21,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -37,20 +38,68 @@ class WidgetRepositoryImpl @Inject constructor(
     // PersistedValue
     // ================
 
-    override val theme = dataStoreStateFlow(
-        key = intPreferencesKey("widgetTheme"),
-        default = Theme.SystemDefault,
+    override val coloring = dataStoreStateFlow(
+        key = intPreferencesKey("widgetColoring"),
+        default = WidgetColoring.Preset,
         scope = scope,
         sharingStarted = SharingStarted.Eagerly
     )
 
-    override val useDynamicColors =
-        dataStoreStateFlow(
-            key = booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
-            default = dynamicColorsSupported,
-            scope = scope,
-            sharingStarted = SharingStarted.Eagerly
-        )
+    private val theme = dataStoreFlow(
+        key = intPreferencesKey("widgetTheme"),
+        default = Theme.SystemDefault,
+    )
+
+    private val useDynamicColors = dataStoreFlow(
+        key = booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
+        default = dynamicColorsSupported,
+    )
+
+    override val presetColoringData =
+        combine(theme, useDynamicColors) { a, b ->
+            WidgetColoring.Data.Preset(theme = a, useDynamicColors = b)
+        }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = WidgetColoring.Data.Preset()
+            )
+
+    override suspend fun savePresetColoringData(data: WidgetColoring.Data.Preset) {
+        theme.save(data.theme)
+        useDynamicColors.save(data.useDynamicColors)
+    }
+
+    private val backgroundColor = dataStoreFlow(
+        key = intPreferencesKey("Background"),
+        default = WidgetColoring.Data.Custom().background
+    )
+
+    private val primaryColor = dataStoreFlow(
+        key = intPreferencesKey("Labels"),
+        default = WidgetColoring.Data.Custom().primary
+    )
+
+    private val secondaryColor = dataStoreFlow(
+        key = intPreferencesKey("Other"),
+        default = WidgetColoring.Data.Custom().secondary
+    )
+
+    override val customColoringData: StateFlow<WidgetColoring.Data.Custom> =
+        combine(backgroundColor, primaryColor, secondaryColor) { (a, b, c) ->
+            WidgetColoring.Data.Custom(background = a, primary = b, secondary = c)
+        }
+            .stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = WidgetColoring.Data.Custom()
+            )
+
+    override suspend fun saveCustomColoringData(data: WidgetColoring.Data.Custom) {
+        backgroundColor.save(data.background)
+        primaryColor.save(data.primary)
+        secondaryColor.save(data.secondary)
+    }
 
     override val opacity = dataStoreStateFlow(
         key = floatPreferencesKey("opacity"),
@@ -62,13 +111,6 @@ class WidgetRepositoryImpl @Inject constructor(
     // ================
     // Map
     // ================
-
-    override val customColorsMap: Map<WidgetColorSection, StateFlow<Int>> =
-        getStateFlowMap(WidgetColorSection.entries.associateBy { it.valueDSE })
-
-    override suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>) {
-        saveMap(map.mapKeys { (k, _) -> k.valueDSE })
-    }
 
     override val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>> =
         getStateFlowMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })

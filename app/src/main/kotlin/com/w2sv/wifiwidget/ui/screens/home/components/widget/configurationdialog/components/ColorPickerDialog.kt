@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.colors
+package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState

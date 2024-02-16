@@ -105,17 +105,19 @@ class WidgetViewModel @Inject constructor(
                 widgetDataRefreshWorkerManager.applyChangedParameters()
             },
         ),
-        useDynamicColors = UnconfirmedStateFlow(
+        coloring = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.useDynamicColors
+            dataStoreStateFlow = repository.coloring
         ),
-        theme = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.theme
+        presetColoringData = UnconfirmedStateFlow(
+            scope = viewModelScope,
+            appliedStateFlow = repository.presetColoringData,
+            syncState = { repository.savePresetColoringData(it) }
         ),
-        customColorsMap = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.customColorsMap,
-            syncState = { repository.saveCustomColorsMap(it) },
+        customColoringData = UnconfirmedStateFlow(
+            scope = viewModelScope,
+            appliedStateFlow = repository.customColoringData,
+            syncState = { repository.saveCustomColoringData(it) }
         ),
         opacity = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,

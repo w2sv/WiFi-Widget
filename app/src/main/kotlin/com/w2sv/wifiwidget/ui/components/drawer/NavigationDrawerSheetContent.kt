@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -70,8 +69,6 @@ internal fun NavigationDrawerSheetContent(
                             .fillMaxWidth()
                             .padding(start = 22.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        themeIndicatorModifier = Modifier
-                            .sizeIn(maxHeight = 92.dp, maxWidth = 42.dp),
                     )
                 })
                 if (dynamicColorsSupported) {

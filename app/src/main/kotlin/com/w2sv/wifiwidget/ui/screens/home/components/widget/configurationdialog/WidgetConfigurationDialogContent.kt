@@ -13,7 +13,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,12 +23,11 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.IconHeader
 import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceSelection
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.toColor
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentList
@@ -66,18 +64,17 @@ fun WidgetConfigurationDialogContent(
                         stringRes = R.string.appearance
                     ),
                 ) {
-                    AppearanceSelection(
-                        theme = widgetConfiguration.theme.collectAsStateWithLifecycle().value,
-                        customThemeSelected = widgetConfiguration.customThemeSelected.collectAsStateWithLifecycle().value,
-                        setTheme = { widgetConfiguration.theme.value = it },
-                        useDynamicColors = widgetConfiguration.useDynamicColors.collectAsStateWithLifecycle().value,
-                        setUseDynamicColors = { widgetConfiguration.useDynamicColors.value = it },
-                        getCustomColor = {
-                            widgetConfiguration.customColorsMap.getValue(it).toColor()
+                    AppearanceConfiguration(
+                        presetColoringData = widgetConfiguration.presetColoringData.collectAsStateWithLifecycle().value,
+                        setPresetColoringData = {
+                            widgetConfiguration.presetColoringData.value = it
                         },
-                        setCustomColor = { colorSection, color ->
-                            widgetConfiguration.customColorsMap[colorSection] = color.toArgb()
+                        customColoringData = widgetConfiguration.customColoringData.collectAsStateWithLifecycle().value,
+                        setCustomColoringData = {
+                            widgetConfiguration.customColoringData.value = it
                         },
+                        coloring = widgetConfiguration.coloring.collectAsStateWithLifecycle().value,
+                        setColoring = { widgetConfiguration.coloring.value = it },
                         opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
                         onOpacityChanged = {
                             widgetConfiguration.opacity.value = it

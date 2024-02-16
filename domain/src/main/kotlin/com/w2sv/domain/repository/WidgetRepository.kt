@@ -1,20 +1,22 @@
 package com.w2sv.domain.repository
 
 import com.w2sv.androidutils.datastorage.datastore.DataStoreStateFlow
-import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetBottomRowElement
-import com.w2sv.domain.model.WidgetColorSection
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.flow.StateFlow
 
 interface WidgetRepository {
-    val theme: DataStoreStateFlow<Theme>
-    val useDynamicColors: DataStoreStateFlow<Boolean>
-    val opacity: DataStoreStateFlow<Float>
+    val coloring: DataStoreStateFlow<WidgetColoring>
 
-    val customColorsMap: Map<WidgetColorSection, StateFlow<Int>>
-    suspend fun saveCustomColorsMap(map: Map<WidgetColorSection, Int>)
+    val presetColoringData: StateFlow<WidgetColoring.Data.Preset>
+    suspend fun savePresetColoringData(data: WidgetColoring.Data.Preset)
+
+    val customColoringData: StateFlow<WidgetColoring.Data.Custom>
+    suspend fun saveCustomColoringData(data: WidgetColoring.Data.Custom)
+
+    val opacity: DataStoreStateFlow<Float>
 
     val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>>
     suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>)

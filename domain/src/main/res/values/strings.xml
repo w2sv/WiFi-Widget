@@ -55,4 +55,6 @@
     <string name="background">Background</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
+    <string name="preset">Preset</string>
+    <string name="custom">Custom</string>
 </resources>

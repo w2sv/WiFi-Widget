@@ -43,7 +43,7 @@ sealed interface WidgetTheme {
         ),
     )
 
-    data object DeviceDefault : WidgetTheme {
+    data object SystemDefault : WidgetTheme {
         override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(
@@ -57,10 +57,6 @@ sealed interface WidgetTheme {
                         false,
                     )
             }
-    }
-
-    data class Custom(val colors: WidgetColors) : WidgetTheme {
-        override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors = colors
     }
 }
 

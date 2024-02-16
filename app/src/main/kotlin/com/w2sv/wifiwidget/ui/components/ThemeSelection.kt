@@ -12,17 +12,19 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -32,93 +34,82 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.thenIf
 import com.w2sv.wifiwidget.ui.utils.toEasing
-import kotlinx.collections.immutable.ImmutableMap
-import kotlinx.collections.immutable.persistentMapOf
+
+@Preview
+@Composable
+private fun ThemeSelectionRowPrev() {
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ThemeSelectionRow(Theme.SystemDefault, {}, modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
 
 @Composable
 fun ThemeSelectionRow(
     selected: Theme,
     onSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier,
-    themeIndicatorModifier: Modifier = Modifier,
-    customThemeIndicatorProperties: ThemeIndicatorProperties? = null,
+    buttonSize: Dp = 44.dp,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
-    themeWeights: ImmutableMap<Theme, Float> = persistentMapOf(),
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        remember(customThemeIndicatorProperties) {
-            buildList {
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.Light,
-                        labelRes = R.string.light,
-                        buttonColoring = ButtonColor.Uniform(Color.White),
-                    ),
-                )
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.SystemDefault,
-                        labelRes = R.string.system_default,
-                        buttonColoring = ButtonColor.Gradient(
-                            Brush.linearGradient(
-                                0.5f to Color.White,
-                                0.5f to Color.Black,
-                            ),
-                        ),
-                    ),
-                )
-                add(
-                    ThemeIndicatorProperties(
-                        theme = Theme.Dark,
-                        labelRes = R.string.dark,
-                        buttonColoring = ButtonColor.Uniform(Color.Black),
-                    ),
-                )
-                customThemeIndicatorProperties?.let {
-                    add(it)
-                }
-            }
-        }
+        themeIndicatorProperties
             .forEach { properties ->
                 ThemeIndicator(
                     properties = properties,
                     isSelected = { properties.theme == selected },
-                    modifier = themeIndicatorModifier.thenIf(
-                        condition = themeWeights.isNotEmpty(),
-                        onTrue = {
-                            weight(
-                                themeWeights.getOrDefault(
-                                    key = properties.theme,
-                                    defaultValue = 1f,
-                                ),
-                            )
-                        },
-                    ),
-                    onClick = { onSelected(properties.theme) }
+                    onClick = { onSelected(properties.theme) },
+                    buttonModifier = Modifier.size(buttonSize)
                 )
             }
     }
 }
 
+private val themeIndicatorProperties =
+    listOf(
+        ThemeIndicatorProperties(
+            theme = Theme.Light,
+            labelRes = R.string.light,
+            buttonColoring = ButtonColor.Uniform(Color.White),
+        ),
+        ThemeIndicatorProperties(
+            theme = Theme.SystemDefault,
+            labelRes = R.string.system_default,
+            buttonColoring = ButtonColor.Gradient(
+                Brush.linearGradient(
+                    0.5f to Color.White,
+                    0.5f to Color.Black,
+                ),
+            ),
+        ),
+        ThemeIndicatorProperties(
+            theme = Theme.Dark,
+            labelRes = R.string.dark,
+            buttonColoring = ButtonColor.Uniform(Color.Black),
+        ),
+    )
+
 @Immutable
-data class ThemeIndicatorProperties(
+private data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val labelRes: Int,
     val buttonColoring: ButtonColor,
 )
 
 @Immutable
-sealed interface ButtonColor {
+private sealed interface ButtonColor {
     val containerColor: Color
 
     @Immutable
@@ -135,6 +126,7 @@ private fun ThemeIndicator(
     properties: ThemeIndicatorProperties,
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
+    buttonModifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Column(
@@ -145,7 +137,6 @@ private fun ThemeIndicator(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.weight(0.5f),
         )
         Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
@@ -155,7 +146,7 @@ private fun ThemeIndicator(
             ),
             onClick = onClick,
             isSelected = isSelected,
-            modifier = Modifier.weight(0.5f),
+            modifier = buttonModifier,
         )
     }
 }
@@ -202,10 +193,10 @@ private fun ThemeButton(
         if (state) MaterialTheme.colorScheme.primary else Color.Transparent
     }
 
-    BoxWithConstraints(contentAlignment = Alignment.Center) {
+    BoxWithConstraints(contentAlignment = Alignment.Center, modifier = modifier) {
         val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
         Button(
-            modifier = modifier
+            modifier = Modifier
                 .semantics {
                     this.contentDescription = contentDescription
                 }

@@ -1,10 +1,8 @@
 package com.w2sv.data.model
 
 import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.domain.model.WidgetBottomRowElement
-import com.w2sv.domain.model.WidgetColorSection
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 
@@ -35,18 +33,6 @@ internal val WidgetBottomRowElement.isEnabledDSE
             }
         ),
         defaultValue = true,
-    )
-
-internal val WidgetColorSection.valueDSE
-    get() = DataStoreEntry.UniType.Impl(
-        preferencesKey = intPreferencesKey(
-            when (this) {
-                WidgetColorSection.Background -> "Background"
-                WidgetColorSection.Primary -> "Labels"
-                WidgetColorSection.Secondary -> "Other"
-            }
-        ),
-        defaultValue = defaultValue,
     )
 
 internal val WidgetRefreshingParameter.isEnabledDSE

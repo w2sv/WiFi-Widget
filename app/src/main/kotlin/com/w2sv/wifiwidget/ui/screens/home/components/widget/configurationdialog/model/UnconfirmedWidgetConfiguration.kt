@@ -7,21 +7,16 @@ import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
-import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetBottomRowElement
-import com.w2sv.domain.model.WidgetColorSection
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.components.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @Stable
@@ -30,9 +25,9 @@ class UnconfirmedWidgetConfiguration(
     val ipSubProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: UnconfirmedStateMap<WidgetBottomRowElement, Boolean>,
     val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
-    val useDynamicColors: UnconfirmedStateFlow<Boolean>,
-    val theme: UnconfirmedStateFlow<Theme>,
-    val customColorsMap: UnconfirmedStateMap<WidgetColorSection, Int>,
+    val coloring: UnconfirmedStateFlow<WidgetColoring>,
+    val presetColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Preset>,
+    val customColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Custom>,
     val opacity: UnconfirmedStateFlow<Float>,
     private val scope: CoroutineScope,
     private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
@@ -43,24 +38,14 @@ class UnconfirmedWidgetConfiguration(
         ipSubProperties,
         bottomRowMap,
         refreshingParametersMap,
-        useDynamicColors,
-        theme,
-        customColorsMap,
+        coloring,
+        presetColoringData,
+        customColoringData,
         opacity,
     ),
     coroutineScope = scope,
     onStateSynced = onStateSynced
 ) {
-    val customThemeSelected = theme
-        .map {
-            it == Theme.Custom
-        }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.WhileSubscribed(SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT),
-            initialValue = false
-        )
-
     val anyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
             .any {
