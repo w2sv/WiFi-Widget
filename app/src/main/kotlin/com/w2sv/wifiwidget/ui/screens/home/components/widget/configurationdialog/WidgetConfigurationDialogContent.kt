@@ -74,9 +74,11 @@ fun WidgetConfigurationDialogContent(
                         coloring = widgetConfiguration.coloring.collectAsStateWithLifecycle().value,
                         setColoring = { widgetConfiguration.coloring.value = it },
                         opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
-                        onOpacityChanged = {
+                        setOpacity = {
                             widgetConfiguration.opacity.value = it
-                        }
+                        },
+                        fontSize = widgetConfiguration.fontSize.collectAsStateWithLifecycle().value,
+                        setFontSize = { widgetConfiguration.fontSize.value = it }
                     )
                 },
                 Section(

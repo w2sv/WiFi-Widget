@@ -1,6 +1,7 @@
 package com.w2sv.domain.repository
 
 import com.w2sv.androidutils.datastorage.datastore.DataStoreStateFlow
+import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -17,6 +18,7 @@ interface WidgetRepository {
     suspend fun saveCustomColoringData(data: WidgetColoring.Data.Custom)
 
     val opacity: DataStoreStateFlow<Float>
+    val fontSize: DataStoreStateFlow<FontSize>
 
     val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>>
     suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>)

@@ -15,6 +15,7 @@ val WidgetRepository.appearance: WidgetAppearance
             WidgetColoring.Custom -> customColoringData.value
         },
         backgroundOpacity = opacity.value,
+        fontSize = fontSize.value,
         bottomRow = bottomRow,
     )
 

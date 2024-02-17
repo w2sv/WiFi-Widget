@@ -32,10 +32,8 @@
 
             <TextView
                 android:id="@+id/wifi_status_tv"
-
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:textSize="16sp" />
 
         </LinearLayout>
@@ -53,12 +51,9 @@
 
         <TextView
             android:id="@+id/last_updated_tv"
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
-
-            android:textSize="14sp"
             tools:ignore="RelativeOverlap" />
 
         <LinearLayout

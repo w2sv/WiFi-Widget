@@ -10,6 +10,7 @@ import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
+import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
@@ -104,6 +105,13 @@ class WidgetRepositoryImpl @Inject constructor(
     override val opacity = dataStoreStateFlow(
         key = floatPreferencesKey("opacity"),
         default = 1.0f,
+        scope = scope,
+        sharingStarted = SharingStarted.Eagerly
+    )
+
+    override val fontSize = dataStoreStateFlow(
+        key = intPreferencesKey("fontSize"),
+        default = FontSize.Small,
         scope = scope,
         sharingStarted = SharingStarted.Eagerly
     )

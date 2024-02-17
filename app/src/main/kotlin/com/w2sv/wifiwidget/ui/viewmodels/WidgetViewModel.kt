@@ -84,6 +84,28 @@ class WidgetViewModel @Inject constructor(
         savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     val configuration = UnconfirmedWidgetConfiguration(
+        coloring = UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            dataStoreStateFlow = repository.coloring
+        ),
+        presetColoringData = UnconfirmedStateFlow(
+            scope = viewModelScope,
+            appliedStateFlow = repository.presetColoringData,
+            syncState = { repository.savePresetColoringData(it) }
+        ),
+        customColoringData = UnconfirmedStateFlow(
+            scope = viewModelScope,
+            appliedStateFlow = repository.customColoringData,
+            syncState = { repository.saveCustomColoringData(it) }
+        ),
+        opacity = UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            dataStoreStateFlow = repository.opacity
+        ),
+        fontSize = UnconfirmedStateFlow(
+            coroutineScope = viewModelScope,
+            dataStoreStateFlow = repository.fontSize
+        ),
         wifiProperties = UnconfirmedStateMap.fromStateFlowMap(
             stateFlowMap = repository.wifiPropertyEnablementMap,
             syncState = { repository.saveWifiPropertyEnablementMap(it) },
@@ -104,24 +126,6 @@ class WidgetViewModel @Inject constructor(
                 repository.saveRefreshingParametersEnablementMap(it)
                 widgetDataRefreshWorkerManager.applyChangedParameters()
             },
-        ),
-        coloring = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.coloring
-        ),
-        presetColoringData = UnconfirmedStateFlow(
-            scope = viewModelScope,
-            appliedStateFlow = repository.presetColoringData,
-            syncState = { repository.savePresetColoringData(it) }
-        ),
-        customColoringData = UnconfirmedStateFlow(
-            scope = viewModelScope,
-            appliedStateFlow = repository.customColoringData,
-            syncState = { repository.saveCustomColoringData(it) }
-        ),
-        opacity = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.opacity
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,

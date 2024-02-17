@@ -12,17 +12,16 @@
         <TextView
             android:id="@+id/property_label_tv"
             android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:paddingEnd="6dp"
-            android:textSize="@dimen/text_size_widget_wifi_property" />
+            android:layout_height="wrap_content"
+            android:bufferType="spannable"
+            android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/property_value_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
-            android:paddingEnd="6dp"
-            android:textSize="@dimen/text_size_widget_wifi_property" />
+            android:paddingEnd="6dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,10 +35,9 @@
             android:id="@+id/prefix_length_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/ip_sub_property_margin_end"
+            android:layout_marginEnd="6dp"
             android:background="@drawable/rounded_corner_shape"
-            android:paddingHorizontal="@dimen/ip_sub_property_padding_horizontal"
-            android:textSize="@dimen/ip_sub_property_font_size" />
+            android:paddingHorizontal="6dp" />
     </LinearLayout>
 
 </LinearLayout>

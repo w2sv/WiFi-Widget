@@ -109,6 +109,7 @@ dependencies {
     baselineProfile(projects.benchmarking)
 
     // Owned libraries
+    implementation(libs.kotlinutils)
     implementation(libs.androidutils)
     implementation(libs.colorpicker)
 

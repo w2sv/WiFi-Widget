@@ -7,6 +7,7 @@ import com.w2sv.androidutils.coroutines.launchDelayed
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
 import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
+import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -21,27 +22,29 @@ import kotlinx.coroutines.launch
 
 @Stable
 class UnconfirmedWidgetConfiguration(
-    val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
-    val ipSubProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    val bottomRowMap: UnconfirmedStateMap<WidgetBottomRowElement, Boolean>,
-    val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     val coloring: UnconfirmedStateFlow<WidgetColoring>,
     val presetColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Preset>,
     val customColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Custom>,
     val opacity: UnconfirmedStateFlow<Float>,
+    val fontSize: UnconfirmedStateFlow<FontSize>,
+    val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
+    val ipSubProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
+    val bottomRowMap: UnconfirmedStateMap<WidgetBottomRowElement, Boolean>,
+    val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
     private val scope: CoroutineScope,
     private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
-        wifiProperties,
-        ipSubProperties,
-        bottomRowMap,
-        refreshingParametersMap,
         coloring,
         presetColoringData,
         customColoringData,
         opacity,
+        fontSize,
+        wifiProperties,
+        ipSubProperties,
+        bottomRowMap,
+        refreshingParametersMap
     ),
     coroutineScope = scope,
     onStateSynced = onStateSynced

@@ -31,6 +31,7 @@ runner = "1.5.2"
 # Owned
 androidutils = "com.github.w2sv:AndroidUtils:0.3.27-rc4"
 colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
+kotlinutils = "com.github.w2sv:KotlinUtils:0.0.7-rc2"
 
 # Androidx
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"

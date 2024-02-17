@@ -1,15 +1,17 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
+import android.content.Context
+import androidx.annotation.IntRange
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,7 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.common.utils.bulletPointText
 import com.w2sv.common.utils.dynamicColorsSupported
+import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
@@ -55,13 +59,15 @@ fun AppearanceConfiguration(
     coloring: WidgetColoring,
     setColoring: (WidgetColoring) -> Unit,
     opacity: Float,
-    onOpacityChanged: (Float) -> Unit,
+    setOpacity: (Float) -> Unit,
+    fontSize: FontSize,
+    setFontSize: (FontSize) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         SingleChoiceSegmentedButtonRow(
             modifier = Modifier
-                .padding(bottom = 8.dp)
+                .padding(bottom = verticalPadding)
                 .align(Alignment.CenterHorizontally)
         ) {
             WidgetColoring.entries.forEach {
@@ -96,20 +102,38 @@ fun AppearanceConfiguration(
             }
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        SliderRow(
+            label = stringResource(R.string.background_opacity),
+            slider = {
+                SliderWithLabel(
+                    value = opacity,
+                    steps = 9,
+                    makeLabel = remember { { "${(it * 100).roundToInt()}%" } },
+                    onValueChanged = setOpacity,
+                    contentDescription = stringResource(id = R.string.opacity_slider_cd)
+                )
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = verticalPadding)
-        ) {
-            Text(text = stringResource(R.string.background_opacity))
-            Spacer(modifier = Modifier.width(12.dp))
-            OpacitySliderWithLabel(
-                opacity = opacity,
-                onOpacityChanged = onOpacityChanged,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        )
+
+        val context: Context = LocalContext.current
+        SliderRow(
+            label = stringResource(id = R.string.font_size),
+            slider = {
+                SliderWithLabel(
+                    value = fontSize.ordinal.toFloat(),
+                    steps = remember { FontSize.entries.size - 2 },
+                    makeLabel = remember { { context.getString(getByOrdinal<FontSize>(it.roundToInt()).labelRes) } },
+                    onValueChanged = remember { { setFontSize(getByOrdinal(it.roundToInt())) } },
+                    contentDescription = stringResource(id = R.string.font_size_slider_cd),
+                    valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -237,28 +261,49 @@ private fun SectionCustomizationRow(
 }
 
 @Composable
-private fun OpacitySliderWithLabel(
-    opacity: Float,
-    onOpacityChanged: (Float) -> Unit,
+private fun SliderRow(
+    label: String,
+    slider: @Composable () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
+        Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
+            slider()
+        }
+    }
+}
+
+@Composable
+private fun SliderWithLabel(
+    value: Float,
+    @IntRange(from = 0) steps: Int,
+    makeLabel: (Float) -> String,
+    onValueChanged: (Float) -> Unit,
+    contentDescription: String,
     modifier: Modifier = Modifier,
+    valueRange: ClosedFloatingPointRange<Float> = 0f..1f
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "${(opacity * 100).roundToInt()}%",
+            text = remember(value, makeLabel) {
+                makeLabel(value)
+            },
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
-        val context = LocalContext.current
         Slider(
-            value = opacity,
-            onValueChange = onOpacityChanged,
+            value = value,
+            onValueChange = onValueChanged,
             modifier = Modifier
                 .semantics {
-                    contentDescription = context.getString(
-                        R.string.opacity_slider_cd,
-                    )
+                    this.contentDescription = contentDescription
                 },
-            steps = 9,
+            steps = steps,
+            valueRange = valueRange
         )
     }
 }

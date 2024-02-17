@@ -23,7 +23,8 @@
     <string name="properties">Properties</string>
     <string name="refreshing">Refreshing</string>
     <string name="tap_again_to_exit">Tap again to exit</string>
-    <string name="opacity_slider_cd">Set the widget background opacity.</string>
+    <string name="opacity_slider_cd">Change the background opacity.</string>
+    <string name="font_size_slider_cd">Change the font size.</string>
     <string name="theme_button_cd">Set the %s theme.</string>
     <string name="learn_more">Learn more</string>
     <string name="set_unset">Set/unset %s.</string>
@@ -61,4 +62,5 @@
     <string name="ip_addresses">IP Addresses</string>
     <string name="versions">Versions</string>
     <string name="background_opacity">Background\nopacity</string>
+    <string name="font_size">Font size</string>
 </resources>

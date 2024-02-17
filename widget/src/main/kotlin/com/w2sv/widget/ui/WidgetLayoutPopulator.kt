@@ -111,11 +111,12 @@ class WidgetLayoutPopulator @Inject constructor(
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
                 val now = Date()
-                setTextViewText(
-                    R.id.last_updated_tv,
-                    "${
+                setTextView(
+                    viewId = R.id.last_updated_tv,
+                    text = "${
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
                     } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
+                    size = appearance.fontSize.value
                 )
             } else {
                 setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)

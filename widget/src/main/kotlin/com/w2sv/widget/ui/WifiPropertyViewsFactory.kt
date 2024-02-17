@@ -11,6 +11,7 @@ import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.common.utils.valueEnabledKeys
+import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.R
@@ -33,6 +34,7 @@ class WifiPropertyViewsFactory @Inject constructor(
 
     private lateinit var viewData: List<WidgetWifiProperty.ViewData>
     private lateinit var widgetColors: WidgetColors
+    private lateinit var fontSize: FontSize
 
     override fun onDataSetChanged() {
         i { "${this::class.simpleName}.onDataSetChanged" }
@@ -47,7 +49,11 @@ class WifiPropertyViewsFactory @Inject constructor(
                 .toList()
         }
             .also { i { "Set propertyViewData=$it" } }
-        widgetColors = widgetRepository.appearance.getColors(context)
+
+        widgetRepository.appearance.let {
+            widgetColors = it.getColors(context)
+            fontSize = it.fontSize
+        }
     }
 
     override fun getCount(): Int = viewData.size
@@ -56,7 +62,8 @@ class WifiPropertyViewsFactory @Inject constructor(
         inflatePropertyLayout(
             viewData = viewData[position],
             packageName = context.packageName,
-            widgetColors = widgetColors
+            widgetColors = widgetColors,
+            fontSize = fontSize
         )
 
     override fun getLoadingView(): RemoteViews? = null
@@ -74,7 +81,8 @@ class WifiPropertyViewsFactory @Inject constructor(
 private fun inflatePropertyLayout(
     viewData: WidgetWifiProperty.ViewData,
     packageName: String,
-    widgetColors: WidgetColors
+    widgetColors: WidgetColors,
+    fontSize: FontSize
 ): RemoteViews =
     RemoteViews(packageName, R.layout.wifi_property)
         .apply {
@@ -91,11 +99,13 @@ private fun inflatePropertyLayout(
                             }
                         }
                     },
+                size = fontSize.value,
                 color = widgetColors.primary,
             )
             setTextView(
                 viewId = R.id.property_value_tv,
                 text = viewData.value,
+                size = fontSize.value,
                 color = widgetColors.secondary,
             )
 
@@ -105,6 +115,7 @@ private fun inflatePropertyLayout(
                 setTextView(
                     viewId = R.id.prefix_length_tv,
                     text = prefixLengthText,
+                    size = fontSize.smallValue,
                     color = widgetColors.secondary,
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
