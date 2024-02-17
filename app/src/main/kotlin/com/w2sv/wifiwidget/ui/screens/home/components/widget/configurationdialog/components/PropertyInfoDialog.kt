@@ -22,8 +22,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.DialogButton
-import com.w2sv.wifiwidget.ui.components.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.DialogButton
+import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 
 @Composable

@@ -18,11 +18,11 @@ import com.w2sv.androidutils.datastorage.datastore.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.components.SnackbarAction
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow

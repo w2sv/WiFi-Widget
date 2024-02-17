@@ -13,8 +13,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.w2sv.wifiwidget.ui.components.IconHeader
-import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.IconHeader
+import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 
 val homeScreenCardElevation = 8.dp
 

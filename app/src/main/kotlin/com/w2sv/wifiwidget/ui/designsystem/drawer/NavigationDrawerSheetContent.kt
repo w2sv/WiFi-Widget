@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.components.drawer
+package com.w2sv.wifiwidget.ui.designsystem.drawer
 
 import android.content.ActivityNotFoundException
 import android.content.Context
@@ -36,7 +36,7 @@ import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.utils.RightAligned
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 

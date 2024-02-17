@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.DialogButton
-import com.w2sv.wifiwidget.ui.components.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.DialogButton
+import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.utils.styledTextResource

@@ -1,11 +1,9 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import android.content.Context
-import androidx.annotation.IntRange
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,11 +14,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,8 +39,10 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.components.UseDynamicColorsRow
+import com.w2sv.wifiwidget.ui.designsystem.SliderRow
+import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
+import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import kotlin.math.roundToInt
 
 private val verticalPadding = 12.dp
@@ -257,53 +255,5 @@ private fun SectionCustomizationRow(
             content = {},
         )
         Spacer(modifier = Modifier.weight(0.2f))
-    }
-}
-
-@Composable
-private fun SliderRow(
-    label: String,
-    slider: @Composable () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
-        Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
-            slider()
-        }
-    }
-}
-
-@Composable
-private fun SliderWithLabel(
-    value: Float,
-    @IntRange(from = 0) steps: Int,
-    makeLabel: (Float) -> String,
-    onValueChanged: (Float) -> Unit,
-    contentDescription: String,
-    modifier: Modifier = Modifier,
-    valueRange: ClosedFloatingPointRange<Float> = 0f..1f
-) {
-    Column(modifier = modifier) {
-        Text(
-            text = remember(value, makeLabel) {
-                makeLabel(value)
-            },
-            color = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
-        )
-        Slider(
-            value = value,
-            onValueChange = onValueChanged,
-            modifier = Modifier
-                .semantics {
-                    this.contentDescription = contentDescription
-                },
-            steps = steps,
-            valueRange = valueRange
-        )
     }
 }

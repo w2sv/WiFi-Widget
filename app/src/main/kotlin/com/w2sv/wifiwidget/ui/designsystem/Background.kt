@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.components
+package com.w2sv.wifiwidget.ui.designsystem
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background

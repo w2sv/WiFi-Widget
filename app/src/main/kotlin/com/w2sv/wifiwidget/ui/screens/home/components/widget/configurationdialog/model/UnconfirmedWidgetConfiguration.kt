@@ -12,8 +12,8 @@ import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import kotlinx.coroutines.CoroutineScope

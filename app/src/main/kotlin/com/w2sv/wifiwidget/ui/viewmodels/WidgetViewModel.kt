@@ -20,8 +20,8 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromStateFlowMap
 import dagger.hilt.android.AndroidEntryPoint

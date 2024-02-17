@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 

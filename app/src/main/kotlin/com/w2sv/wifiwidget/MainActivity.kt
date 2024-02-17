@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.domain.model.Theme
-import com.w2sv.wifiwidget.ui.components.LocalLocationManager
+import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel

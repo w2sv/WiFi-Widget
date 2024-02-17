@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.components
+package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.RowScope

@@ -19,8 +19,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.IconHeader
-import com.w2sv.wifiwidget.ui.components.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.IconHeader
+import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows

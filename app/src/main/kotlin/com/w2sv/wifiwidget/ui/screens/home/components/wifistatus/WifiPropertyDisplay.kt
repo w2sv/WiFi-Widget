@@ -48,11 +48,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.components.nestedListBackground
-import com.w2sv.wifiwidget.ui.components.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
+import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
