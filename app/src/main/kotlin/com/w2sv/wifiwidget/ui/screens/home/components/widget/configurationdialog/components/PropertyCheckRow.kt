@@ -8,12 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -44,20 +51,52 @@ fun PropertyCheckRows(
     Column(modifier = modifier) {
         dataList
             .forEach { data ->
+                val expandSubProperties = if (data.subPropertyCheckRowDataList != null) {
+                    remember {
+                        mutableStateOf(false)
+                    }
+                } else {
+                    null
+                }
+                var expandModificationBlocked by remember {
+                    mutableStateOf(true)
+                }
+                LaunchedEffect(data.isChecked()) {
+                    if (expandModificationBlocked) {
+                        expandModificationBlocked = false
+                    } else {
+                        expandSubProperties?.value = data.isChecked()
+                    }
+                }
                 PropertyCheckRow(
                     data = data,
                     showInfoDialog = showInfoDialog,
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                            contentDescription = null,
-                        )
+                        when (expandSubProperties) {
+                            null -> Icon(
+                                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                                contentDescription = null,
+                            )
+
+                            else -> {
+                                IconButton(
+                                    onClick = {
+                                        expandSubProperties.value = !expandSubProperties.value
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = if (expandSubProperties.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
+                        }
                     }
                 )
 
                 // Display subPropertyCheckRowData if present and property checked
                 data.subPropertyCheckRowDataList?.let {
-                    AnimatedVisibility(visible = data.isChecked()) {
+                    AnimatedVisibility(visible = expandSubProperties?.value == true) {
                         SubPropertyCheckRowColumn(
                             dataList = it,
                             modifier = Modifier
