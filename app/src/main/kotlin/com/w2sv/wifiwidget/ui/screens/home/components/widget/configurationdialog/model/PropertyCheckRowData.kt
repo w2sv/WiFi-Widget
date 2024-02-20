@@ -29,8 +29,8 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                 allowCheckChange: (Boolean) -> Boolean = { true },
                 infoDialogData: InfoDialogData? = null,
                 modifier: Modifier = Modifier
-            ): PropertyCheckRowData<T> =
-                WithoutSubProperties(
+            ): PropertyCheckRowData<T> {
+                return WithoutSubProperties(
                     property = property,
                     isChecked = { isCheckedMap.getValue(property) },
                     onCheckedChange = {
@@ -41,6 +41,7 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                     infoDialogData = infoDialogData,
                     modifier = modifier
                 )
+            }
         }
     }
 

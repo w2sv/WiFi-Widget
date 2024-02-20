@@ -59,10 +59,10 @@ fun WidgetConfigurationDialog(
         WidgetConfigurationDialogContent(
             widgetConfiguration = widgetConfiguration,
             locationAccessState = locationAccessState,
-            showPropertyInfoDialog = { infoDialogData = it },
+            showPropertyInfoDialog = remember { { infoDialogData = it } },
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.8f)
+                .fillMaxHeight(0.75f)
         )
 
         // Show PropertyInfoDialog if applicable
