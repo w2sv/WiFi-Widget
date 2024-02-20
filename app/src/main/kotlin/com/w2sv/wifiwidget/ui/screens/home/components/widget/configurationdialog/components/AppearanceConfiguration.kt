@@ -234,7 +234,7 @@ private fun SectionCustomizationRow(
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
         Text(
-            text = bulletPointText(label),
+            text = remember(label) { bulletPointText(label) },
             fontSize = 14.sp,
             modifier = Modifier.weight(0.4f),
         )

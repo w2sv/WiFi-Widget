@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +45,11 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.thenIf
 import kotlinx.collections.immutable.ImmutableList
 
+// For alignment of primary check row click elements and sub property click elements
+private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
+
 @Composable
-fun PropertyCheckRows(
+fun PropertyCheckRowColumn(
     dataList: ImmutableList<PropertyCheckRowData<*>>,
     modifier: Modifier = Modifier,
     showInfoDialog: ((InfoDialogData) -> Unit)? = null
@@ -51,58 +57,67 @@ fun PropertyCheckRows(
     Column(modifier = modifier) {
         dataList
             .forEach { data ->
-                val expandSubProperties = if (data.subPropertyCheckRowDataList != null) {
-                    remember {
-                        mutableStateOf(false)
-                    }
-                } else {
-                    null
-                }
-                var expandModificationBlocked by remember {
-                    mutableStateOf(true)
-                }
-                LaunchedEffect(data.isChecked()) {
-                    if (expandModificationBlocked) {
-                        expandModificationBlocked = false
-                    } else {
-                        expandSubProperties?.value = data.isChecked()
-                    }
-                }
-                PropertyCheckRow(
-                    data = data,
-                    showInfoDialog = showInfoDialog,
-                    leadingIcon = {
-                        when (expandSubProperties) {
-                            null -> Icon(
-                                imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                                contentDescription = null,
-                            )
-
-                            else -> {
-                                IconButton(
-                                    onClick = {
-                                        expandSubProperties.value = !expandSubProperties.value
-                                    }
+                when (data) {
+                    is PropertyCheckRowData.WithoutSubProperties -> {
+                        PropertyCheckRow(
+                            data = data,
+                            showInfoDialog = showInfoDialog,
+                            leadingIcon = {
+                                Box(
+                                    modifier = Modifier.size(48.dp),
+                                    contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
-                                        imageVector = if (expandSubProperties.value) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
+                                        tint = MaterialTheme.colorScheme.onBackground,
                                         contentDescription = null
                                     )
                                 }
+                            },
+                            modifier = primaryCheckRowModifier
+                        )
+                    }
+
+                    is PropertyCheckRowData.WithSubProperties -> {
+                        var expandSubProperties by rememberSaveable {
+                            mutableStateOf(false)
+                        }
+                        // Collapse subProperties on unchecking
+                        LaunchedEffect(data, data.isChecked()) {
+                            if (!data.isChecked()) {
+                                expandSubProperties = false
                             }
                         }
-                    }
-                )
-
-                // Display subPropertyCheckRowData if present and property checked
-                data.subPropertyCheckRowDataList?.let {
-                    AnimatedVisibility(visible = expandSubProperties?.value == true) {
-                        SubPropertyCheckRowColumn(
-                            dataList = it,
-                            modifier = Modifier
-                                .nestedListBackground()
-                                .padding(start = subPropertyListPadding)
+                        PropertyCheckRow(
+                            data = data,
+                            showInfoDialog = showInfoDialog,
+                            leadingIcon = {
+                                IconButton(
+                                    onClick = remember {
+                                        {
+                                            expandSubProperties = !expandSubProperties
+                                        }
+                                    },
+                                    colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                                    enabled = data.isChecked()
+                                ) {
+                                    Icon(
+                                        imageVector = if (expandSubProperties) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                                        contentDescription = null
+                                    )
+                                }
+                            },
+                            modifier = primaryCheckRowModifier
                         )
+
+                        AnimatedVisibility(visible = expandSubProperties) {
+                            SubPropertyCheckRowColumn(
+                                dataList = data.subPropertyCheckRowDataList,
+                                modifier = data.subPropertyColumnModifier
+                                    .nestedListBackground()
+                                    .padding(start = subPropertyColumnPadding)
+                            )
+                        }
                     }
                 }
             }
@@ -119,7 +134,7 @@ private fun SubPropertyCheckRowColumn(
             if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
                 Text(
                     text = stringResource(R.string.versions),
-                    modifier = Modifier.padding(top = subPropertyListPadding),
+                    modifier = Modifier.padding(top = subPropertyColumnPadding),
                     fontSize = subPropertyCheckRowColumnFontSize,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -138,7 +153,7 @@ private fun SubPropertyCheckRowColumn(
 }
 
 private val subPropertyCheckRowColumnFontSize = 14.sp
-private val subPropertyListPadding = 12.dp
+private val subPropertyColumnPadding = 12.dp
 private val addressVersionEnablementStartPadding = 16.dp
 
 @Composable
@@ -163,7 +178,7 @@ private fun PropertyCheckRow(
     ) {
         leadingIcon?.invoke()
         Text(
-            text = makeText(label),
+            text = remember { makeText(label) },
             fontSize = fontSize,
             fontWeight = fontWeight,
             modifier = Modifier.weight(1.0f, true),
@@ -172,9 +187,7 @@ private fun PropertyCheckRow(
         Checkbox(
             checked = data.isChecked(),
             onCheckedChange = {
-                if (data.allowCheckChange(it)) {
-                    data.onCheckedChange(it)
-                }
+                data.onCheckedChange(it)
             },
             modifier = Modifier.semantics {
                 contentDescription = checkBoxCD
@@ -182,7 +195,7 @@ private fun PropertyCheckRow(
         )
         if (showInfoDialog != null && data.infoDialogData != null) {
             InfoIconButton(
-                onClick = { showInfoDialog(data.infoDialogData) },
+                onClick = { showInfoDialog(data.infoDialogData!!) },
                 contentDescription = stringResource(id = R.string.info_icon_cd, label),
             )
         }

@@ -27,45 +27,62 @@ fun rememberWidgetWifiPropertyCheckRowData(
             .map { property ->
                 val shakeController = ShakeController(shakeConfig)
 
-                PropertyCheckRowData.fromMutableMap(
-                    property = property,
-                    isCheckedMap = widgetConfiguration.wifiProperties,
-                    allowCheckChange = when (property) {
-                        is WidgetWifiProperty.NonIP.LocationAccessRequiring -> { isCheckedNew ->
-                            (if (isCheckedNew) {
-                                locationAccessState.run {
-                                    isGranted.also {
+                when (property) {
+                    is WidgetWifiProperty.NonIP -> {
+                        PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
+                            property = property,
+                            isCheckedMap = widgetConfiguration.wifiProperties,
+                            allowCheckChange = when (property) {
+                                is WidgetWifiProperty.NonIP.LocationAccessRequiring -> { isCheckedNew ->
+                                    (if (isCheckedNew) {
+                                        locationAccessState.run {
+                                            isGranted.also {
+                                                if (!it) {
+                                                    launchRequest(
+                                                        LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                                            property,
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        widgetConfiguration.moreThanOnePropertyChecked()
+                                    })
+                                        .also {
+                                            if (!it) {
+                                                shakeController.shake()
+                                            }
+                                        }
+                                }
+
+                                else -> { isCheckedNew ->
+                                    (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
                                         if (!it) {
-                                            launchRequest(
-                                                LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                                    property,
-                                                )
-                                            )
+                                            shakeController
+                                                .shake()
                                         }
                                     }
                                 }
-                            } else {
-                                widgetConfiguration.moreThanOnePropertyChecked()
-                            })
-                                .also {
-                                    if (!it) {
-                                        shakeController.shake()
-                                    }
-                                }
-                        }
+                            },
+                            infoDialogData = property.getInfoDialogData(context),
+                            modifier = Modifier.shake(shakeController)
+                        )
+                    }
 
-                        else -> { isCheckedNew ->
-                            (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
-                                if (!it) {
-                                    shakeController
-                                        .shake()
-                                }
-                            }
-                        }
-                    },
-                    subPropertyCheckRowData = when (property) {
-                        is WidgetWifiProperty.IP -> {
-                            property.subProperties
+                    is WidgetWifiProperty.IP -> {
+                        PropertyCheckRowData.WithSubProperties.fromIsCheckedMap(
+                            property = property,
+                            isCheckedMap = widgetConfiguration.wifiProperties,
+                            allowCheckChange = {
+                                widgetConfiguration.moreThanOnePropertyChecked()
+                                    .also {
+                                        if (!it) {
+                                            shakeController.shake()
+                                        }
+                                    }
+                            },
+                            subPropertyCheckRowDataList = property.subProperties
                                 .map { subProperty ->
                                     val subPropertyShakeController =
                                         if (subProperty.isAddressTypeEnablementProperty)
@@ -73,7 +90,7 @@ fun rememberWidgetWifiPropertyCheckRowData(
                                         else
                                             null
 
-                                    PropertyCheckRowData.fromMutableMap(
+                                    PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
                                         property = subProperty,
                                         isCheckedMap = widgetConfiguration.ipSubProperties,
                                         allowCheckChange = { newValue ->
@@ -95,14 +112,13 @@ fun rememberWidgetWifiPropertyCheckRowData(
                                             ?: Modifier
                                     )
                                 }
-                                .toPersistentList()
-                        }
-
-                        else -> null
-                    },
-                    infoDialogData = property.getInfoDialogData(context),
-                    modifier = Modifier.shake(shakeController)
-                )
+                                .toPersistentList(),
+                            subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier,
+                            infoDialogData = property.getInfoDialogData(context),
+                            modifier = Modifier.shake(shakeController)
+                        )
+                    }
+                }
             }
             .toPersistentList()
     }

@@ -23,7 +23,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceConfiguration
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRows
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRowColumn
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
@@ -38,6 +38,8 @@ private data class Section(
     val headerModifier: Modifier = Modifier.padding(vertical = verticalSectionHeaderPadding),
     val content: @Composable () -> Unit
 )
+
+val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
 
 @Composable
 fun WidgetConfigurationDialogContent(
@@ -78,7 +80,8 @@ fun WidgetConfigurationDialogContent(
                             widgetConfiguration.opacity.value = it
                         },
                         fontSize = widgetConfiguration.fontSize.collectAsStateWithLifecycle().value,
-                        setFontSize = { widgetConfiguration.fontSize.value = it }
+                        setFontSize = { widgetConfiguration.fontSize.value = it },
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 },
                 Section(
@@ -87,7 +90,7 @@ fun WidgetConfigurationDialogContent(
                         stringRes = R.string.properties
                     )
                 ) {
-                    PropertyCheckRows(
+                    PropertyCheckRowColumn(
                         dataList = rememberWidgetWifiPropertyCheckRowData(
                             widgetConfiguration = widgetConfiguration,
                             locationAccessState = locationAccessState
@@ -101,10 +104,10 @@ fun WidgetConfigurationDialogContent(
                         stringRes = R.string.bottom_row,
                     )
                 ) {
-                    PropertyCheckRows(
+                    PropertyCheckRowColumn(
                         dataList = remember {
                             WidgetBottomRowElement.entries.map {
-                                PropertyCheckRowData.fromMutableMap(
+                                PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
                                     property = it,
                                     isCheckedMap = widgetConfiguration.bottomRowMap
                                 )
@@ -119,22 +122,23 @@ fun WidgetConfigurationDialogContent(
                         stringRes = R.string.refreshing,
                     )
                 ) {
-                    PropertyCheckRows(
+                    PropertyCheckRowColumn(
                         dataList = remember {
                             persistentListOf(
-                                PropertyCheckRowData.fromMutableMap(
+                                PropertyCheckRowData.WithSubProperties.fromIsCheckedMap(
                                     property = WidgetRefreshingParameter.RefreshPeriodically,
                                     isCheckedMap = widgetConfiguration.refreshingParametersMap,
                                     infoDialogData = InfoDialogData(
                                         title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
                                         description = context.getString(R.string.refresh_periodically_info)
                                     ),
-                                    subPropertyCheckRowData = persistentListOf(
-                                        PropertyCheckRowData.fromMutableMap(
+                                    subPropertyCheckRowDataList = persistentListOf(
+                                        PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
                                             property = WidgetRefreshingParameter.RefreshOnLowBattery,
                                             isCheckedMap = widgetConfiguration.refreshingParametersMap
                                         )
-                                    )
+                                    ),
+                                    subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier
                                 )
                             )
                         },
@@ -144,7 +148,7 @@ fun WidgetConfigurationDialogContent(
                 }
             )
         }
-            .forEach {
+            .forEach { section ->
                 Column(
                     modifier = Modifier
                         .border(
@@ -152,25 +156,13 @@ fun WidgetConfigurationDialogContent(
                             MaterialTheme.colorScheme.outlineVariant,
                             MaterialTheme.shapes.medium
                         )
-                        .padding(horizontal = 16.dp)
                 ) {
-                    SectionHeader(
-                        iconHeaderProperties = it.iconHeaderProperties,
-                        modifier = it.headerModifier
+                    IconHeader(
+                        properties = section.iconHeaderProperties,
+                        modifier = section.headerModifier.padding(horizontal = 32.dp),
                     )
-                    it.content()
+                    section.content()
                 }
             }
     }
-}
-
-@Composable
-private fun SectionHeader(
-    iconHeaderProperties: IconHeaderProperties,
-    modifier: Modifier = Modifier,
-) {
-    IconHeader(
-        properties = iconHeaderProperties,
-        modifier = modifier.padding(horizontal = 16.dp),
-    )
 }
