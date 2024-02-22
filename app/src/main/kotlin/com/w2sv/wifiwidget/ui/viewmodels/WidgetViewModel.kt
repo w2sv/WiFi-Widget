@@ -124,7 +124,7 @@ class WidgetViewModel @Inject constructor(
             stateFlowMap = repository.refreshingParametersEnablementMap,
             syncState = {
                 repository.saveRefreshingParametersEnablementMap(it)
-                widgetDataRefreshWorkerManager.applyChangedParameters()
+                widgetDataRefreshWorkerManager.enableWorkerIfRefreshingEnabled()
             },
         ),
         scope = viewModelScope,

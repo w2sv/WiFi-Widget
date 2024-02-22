@@ -2,7 +2,6 @@ package com.w2sv.widget
 
 import android.content.Context
 import android.os.PowerManager
-import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -11,21 +10,20 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshing
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Minimum interval for periodic work.
+ */
 private val REFRESH_PERIOD = Duration.ofMinutes(15L)
 
-@HiltWorker
-class WidgetDataRefreshWorker @AssistedInject constructor(
-    @Assisted appContext: Context,
-    @Assisted workerParams: WorkerParameters,
-    private val powerManager: PowerManager
-) : Worker(appContext, workerParams) {
+class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
+    Worker(appContext, workerParams) {
+
+    private val powerManager = appContext.getSystemService(PowerManager::class.java)
 
     override fun doWork(): Result {
         when (powerManager.isInteractive) {
@@ -43,7 +41,7 @@ class WidgetDataRefreshWorker @AssistedInject constructor(
         private val workManager: WorkManager,
         private val widgetRepository: WidgetRepository,
     ) {
-        fun applyChangedParameters() {
+        fun enableWorkerIfRefreshingEnabled() {
             with(widgetRepository.refreshing) {
                 when (refreshPeriodically) {
                     true -> enableWorker(refreshOnLowBattery)

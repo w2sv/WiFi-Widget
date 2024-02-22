@@ -5,24 +5,14 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.w2sv.androidutils.generic.getIntExtraOrNull
 import com.w2sv.widget.ui.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @AndroidEntryPoint
 class WidgetProvider : AppWidgetProvider() {
-
-    @Inject
-    lateinit var optionsChanged: OptionsChanged
 
     @Inject
     lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
@@ -41,7 +31,9 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
 
-        widgetDataRefreshWorkerManager.applyChangedParameters()
+        i { "onEnabled" }
+
+        widgetDataRefreshWorkerManager.enableWorkerIfRefreshingEnabled()
     }
 
     /**
@@ -52,6 +44,8 @@ class WidgetProvider : AppWidgetProvider() {
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
 
+        i { "onDisabled" }
+
         widgetDataRefreshWorkerManager.cancelWorker()
     }
 
@@ -61,7 +55,7 @@ class WidgetProvider : AppWidgetProvider() {
         i {
             "${this::class.java.simpleName}.onReceive | ${intent?.action} | ${
                 intent?.extras?.keySet()?.toList()
-            }"
+            } | ${appWidgetManager.getWifiWidgetIds(context!!).toList()}"
         }
 
         when (intent?.action) {
@@ -74,14 +68,6 @@ class WidgetProvider : AppWidgetProvider() {
                         appWidgetManager.getWifiWidgetIds(it),
                     )
                 }
-            }
-
-            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> intent.getIntExtraOrNull(
-                AppWidgetManager.EXTRA_APPWIDGET_ID,
-                -1,
-            )?.let { widgetId ->
-                i { "AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED | id = $widgetId" }
-                optionsChanged.onOptionsChanged(widgetId)
             }
         }
     }
@@ -109,20 +95,6 @@ class WidgetProvider : AppWidgetProvider() {
                         appWidgetId = id,
                     ),
             )
-        }
-    }
-
-    @Singleton
-    class OptionsChanged @Inject constructor() {
-        private val scope = CoroutineScope(Dispatchers.Default)
-
-        val widgetId get() = _widgetId.asSharedFlow()
-        private val _widgetId = MutableSharedFlow<Int>()
-
-        fun onOptionsChanged(widgetId: Int) {
-            scope.launch {
-                _widgetId.emit(widgetId)
-            }
         }
     }
 
