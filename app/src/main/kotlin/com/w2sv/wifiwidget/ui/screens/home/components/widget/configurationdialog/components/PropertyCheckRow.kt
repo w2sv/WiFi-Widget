@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -39,6 +38,7 @@ import com.w2sv.common.utils.bulletPointText
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
@@ -114,6 +114,7 @@ fun PropertyCheckRowColumn(
                             SubPropertyCheckRowColumn(
                                 dataList = data.subPropertyCheckRowDataList,
                                 modifier = data.subPropertyColumnModifier
+                                    .padding(start = 24.dp)
                                     .nestedListBackground()
                                     .padding(start = subPropertyColumnPadding)
                             )
@@ -184,6 +185,12 @@ private fun PropertyCheckRow(
             modifier = Modifier.weight(1.0f, true),
             color = textColor
         )
+        if (showInfoDialog != null && data.infoDialogData != null) {
+            InfoIconButton(
+                onClick = { showInfoDialog(data.infoDialogData!!) },
+                contentDescription = stringResource(id = R.string.info_icon_cd, label),
+            )
+        }
         Checkbox(
             checked = data.isChecked(),
             onCheckedChange = {
@@ -193,12 +200,6 @@ private fun PropertyCheckRow(
                 contentDescription = checkBoxCD
             },
         )
-        if (showInfoDialog != null && data.infoDialogData != null) {
-            InfoIconButton(
-                onClick = { showInfoDialog(data.infoDialogData!!) },
-                contentDescription = stringResource(id = R.string.info_icon_cd, label),
-            )
-        }
     }
 }
 
@@ -211,9 +212,7 @@ private fun InfoIconButton(
     IconButton(onClick = onClick, modifier = modifier) {
         InfoIcon(
             contentDescription = contentDescription,
-            modifier = Modifier.size(
-                dimensionResource(id = R.dimen.size_icon),
-            ),
+            modifier = Modifier.size(biggerIconSize),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
