@@ -114,7 +114,7 @@ fun PropertyCheckRowColumn(
                             SubPropertyCheckRowColumn(
                                 dataList = data.subPropertyCheckRowDataList,
                                 modifier = data.subPropertyColumnModifier
-                                    .padding(start = 24.dp)
+                                    .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
                                     .nestedListBackground()
                                     .padding(start = subPropertyColumnPadding)
                             )
