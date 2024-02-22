@@ -7,11 +7,9 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
-import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.data.model.isEnabledDSE
 import com.w2sv.data.model.isEnabledDse
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -48,15 +46,15 @@ class WidgetRepositoryImpl @Inject constructor(
 
     private val theme = dataStoreFlow(
         key = intPreferencesKey("widgetTheme"),
-        default = Theme.SystemDefault,
+        default = WidgetColoring.Data.Preset.Defaults.THEME,
     )
 
     private val useDynamicColors = dataStoreFlow(
         key = booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
-        default = dynamicColorsSupported,
+        default = WidgetColoring.Data.Preset.Defaults.USE_DYNAMIC_COLORS
     )
 
-    override val presetColoringData =
+    override val presetColoringData by lazy {
         combine(theme, useDynamicColors) { a, b ->
             WidgetColoring.Data.Preset(theme = a, useDynamicColors = b)
         }
@@ -65,6 +63,7 @@ class WidgetRepositoryImpl @Inject constructor(
                 started = SharingStarted.Eagerly,
                 initialValue = WidgetColoring.Data.Preset()
             )
+    }
 
     override suspend fun savePresetColoringData(data: WidgetColoring.Data.Preset) {
         theme.save(data.theme)
@@ -73,20 +72,20 @@ class WidgetRepositoryImpl @Inject constructor(
 
     private val backgroundColor = dataStoreFlow(
         key = intPreferencesKey("Background"),
-        default = WidgetColoring.Data.Custom().background
+        default = WidgetColoring.Data.Custom.Defaults.BACKGROUND,
     )
 
     private val primaryColor = dataStoreFlow(
         key = intPreferencesKey("Labels"),
-        default = WidgetColoring.Data.Custom().primary
+        default = WidgetColoring.Data.Custom.Defaults.PRIMARY,
     )
 
     private val secondaryColor = dataStoreFlow(
         key = intPreferencesKey("Other"),
-        default = WidgetColoring.Data.Custom().secondary
+        default = WidgetColoring.Data.Custom.Defaults.SECONDARY,
     )
 
-    override val customColoringData: StateFlow<WidgetColoring.Data.Custom> =
+    override val customColoringData: StateFlow<WidgetColoring.Data.Custom> by lazy {
         combine(backgroundColor, primaryColor, secondaryColor) { (a, b, c) ->
             WidgetColoring.Data.Custom(background = a, primary = b, secondary = c)
         }
@@ -95,6 +94,7 @@ class WidgetRepositoryImpl @Inject constructor(
                 started = SharingStarted.Eagerly,
                 initialValue = WidgetColoring.Data.Custom()
             )
+    }
 
     override suspend fun saveCustomColoringData(data: WidgetColoring.Data.Custom) {
         backgroundColor.save(data.background)
@@ -120,33 +120,37 @@ class WidgetRepositoryImpl @Inject constructor(
     // Map
     // ================
 
-    override val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>> =
+    override val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>> by lazy {
         getStateFlowMap(WidgetWifiProperty.entries.associateBy { it.isEnabledDSE })
+    }
 
     override suspend fun saveWifiPropertyEnablementMap(map: Map<WidgetWifiProperty, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>> =
+    override val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>> by lazy {
         getStateFlowMap(
             WidgetWifiProperty.IP.entries
                 .flatMap { it.subProperties }
                 .associateBy { it.isEnabledDse }
         )
+    }
 
     override suspend fun saveIPSubPropertyEnablementMap(map: Map<WidgetWifiProperty.IP.SubProperty, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDse })
     }
 
-    override val refreshingParametersEnablementMap: Map<WidgetRefreshingParameter, StateFlow<Boolean>> =
+    override val refreshingParametersEnablementMap: Map<WidgetRefreshingParameter, StateFlow<Boolean>> by lazy {
         getStateFlowMap(WidgetRefreshingParameter.entries.associateBy { it.isEnabledDSE })
+    }
 
     override suspend fun saveRefreshingParametersEnablementMap(map: Map<WidgetRefreshingParameter, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })
     }
 
-    override val bottomRowElementEnablementMap: Map<WidgetBottomRowElement, StateFlow<Boolean>> =
+    override val bottomRowElementEnablementMap: Map<WidgetBottomRowElement, StateFlow<Boolean>> by lazy {
         getStateFlowMap(WidgetBottomRowElement.entries.associateBy { it.isEnabledDSE })
+    }
 
     override suspend fun saveBottomRowElementEnablementMap(map: Map<WidgetBottomRowElement, Boolean>) {
         saveMap(map.mapKeys { (k, _) -> k.isEnabledDSE })

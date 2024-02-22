@@ -11,15 +11,28 @@ enum class WidgetColoring(@StringRes val labelRes: Int) {
 
     sealed interface Data {
         data class Preset(
-            val theme: Theme = Theme.SystemDefault,
-            val useDynamicColors: Boolean = dynamicColorsSupported
-        ) : Data
+            val theme: Theme = Defaults.THEME,
+            val useDynamicColors: Boolean = Defaults.USE_DYNAMIC_COLORS
+        ) : Data {
+
+            object Defaults {
+                val THEME = Theme.SystemDefault
+                val USE_DYNAMIC_COLORS = dynamicColorsSupported
+            }
+        }
 
         data class Custom(
-            @ColorInt val background: Int = -7859146,
-            @ColorInt val primary: Int = -5898336,
-            @ColorInt val secondary: Int = -1
+            @ColorInt val background: Int = Defaults.BACKGROUND,
+            @ColorInt val primary: Int = Defaults.PRIMARY,
+            @ColorInt val secondary: Int = Defaults.SECONDARY
         ) : List<Int> by listOf(background, primary, secondary),
-            Data
+            Data {
+
+            object Defaults {
+                const val BACKGROUND = -7859146
+                const val PRIMARY = -5898336
+                const val SECONDARY = -1
+            }
+        }
     }
 }
