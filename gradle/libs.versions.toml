@@ -29,7 +29,7 @@ runner = "1.5.2"
 [libraries]
 
 # Owned
-androidutils = "com.github.w2sv:AndroidUtils:0.3.27-rc4"
+androidutils = "com.github.w2sv:AndroidUtils:0.3.27-rc5"
 colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
 
 # Androidx
