@@ -40,7 +40,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
 androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
 androidx-workmanager = "androidx.work:work-runtime-ktx:2.9.0"
 androidx-datastore-preferences = "androidx.datastore:datastore-preferences:1.0.0"
-androidx-hilt-work = "androidx.hilt:hilt-work:1.1.0"
+androidx-hilt-work = "androidx.hilt:hilt-work:1.2.0"
 
 # .Compose
 androidx-compose-bom = "androidx.compose:compose-bom:2024.02.00"
