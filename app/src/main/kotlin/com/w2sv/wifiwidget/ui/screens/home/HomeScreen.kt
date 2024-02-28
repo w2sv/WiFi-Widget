@@ -93,8 +93,6 @@ fun HomeScreen(
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
-            val content = mova
-
             if (isLandscapeModeActivated) {
                 LandscapeMode(
                     paddingValues = paddingValues,

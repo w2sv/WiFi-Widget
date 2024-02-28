@@ -7,8 +7,6 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
-import com.w2sv.data.model.isEnabledDSE
-import com.w2sv.data.model.isEnabledDse
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
@@ -164,3 +162,43 @@ class WidgetRepositoryImpl @Inject constructor(
         )
             .mapKeys { (k, _) -> dseToType.getValue(k) }
 }
+
+private val WidgetWifiProperty.isEnabledDSE
+    get() = DataStoreEntry.UniType.Impl(
+        preferencesKey = booleanPreferencesKey(preferencesKeyName),
+        defaultValue = defaultIsEnabled,
+    )
+
+private val WidgetWifiProperty.IP.SubProperty.isEnabledDse
+    get() =
+        DataStoreEntry.UniType.Impl(
+            preferencesKey = booleanPreferencesKey("${property.preferencesKeyName}.${kind.preferencesKeyName}"),
+            defaultValue = true,
+        )
+
+private val WidgetBottomRowElement.isEnabledDSE
+    get() = DataStoreEntry.UniType.Impl(
+        preferencesKey = booleanPreferencesKey(
+            when (this) {
+                WidgetBottomRowElement.LastRefreshTimeDisplay -> "ShowDateTime"
+                WidgetBottomRowElement.RefreshButton -> "WidgetButton.Refresh"
+                WidgetBottomRowElement.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
+                WidgetBottomRowElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
+            }
+        ),
+        defaultValue = true,
+    )
+
+private val WidgetRefreshingParameter.isEnabledDSE
+    get() = DataStoreEntry.UniType.Impl(
+        preferencesKey = booleanPreferencesKey(
+            when (this) {
+                WidgetRefreshingParameter.RefreshOnLowBattery -> "RefreshOnBatteryLow"
+                WidgetRefreshingParameter.RefreshPeriodically -> "RefreshPeriodically"
+            }
+        ),
+        defaultValue = defaultIsEnabled,
+    )
+
+private val Any.preferencesKeyName: String
+    get() = this::class.simpleName!!

@@ -104,7 +104,7 @@ dependencies {
     implementation(projects.widget)
     implementation(projects.common)
     implementation(projects.domain)
-    implementation(projects.data)
+    implementation(projects.datastore)
     implementation(projects.networking)
     baselineProfile(projects.benchmarking)
 

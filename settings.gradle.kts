@@ -21,7 +21,7 @@ dependencyResolutionManagement {
 rootProject.name = "WiFi_Widget"
 
 include(":app")
-include(":data")
+include(":datastore")
 include(":domain")
 include(":common")
 include(":networking")
