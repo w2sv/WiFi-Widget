@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -162,14 +163,16 @@ private fun ThemeButton(
     val transition = updateTransition(targetState = isSelected(), label = "")
 
     val borderWidth by transition.animateDp(
-        transitionSpec = {
-            if (targetState) {
-                tween(
-                    durationMillis = BORDER_ANIMATION_DURATION,
-                    easing = OvershootInterpolator().toEasing(),
-                )
-            } else {
-                tween(durationMillis = BORDER_ANIMATION_DURATION)
+        transitionSpec = remember {
+            {
+                if (targetState) {
+                    tween(
+                        durationMillis = BORDER_ANIMATION_DURATION,
+                        easing = OvershootInterpolator().toEasing(),
+                    )
+                } else {
+                    tween(durationMillis = BORDER_ANIMATION_DURATION)
+                }
             }
         },
         label = "",
@@ -179,13 +182,15 @@ private fun ThemeButton(
 
     val borderColor by transition.animateColor(
         transitionSpec = {
-            if (targetState) {
-                tween(
-                    durationMillis = BORDER_ANIMATION_DURATION,
-                    easing = OvershootInterpolator().toEasing(),
-                )
-            } else {
-                tween(durationMillis = BORDER_ANIMATION_DURATION)
+            remember {
+                if (targetState) {
+                    tween(
+                        durationMillis = BORDER_ANIMATION_DURATION,
+                        easing = OvershootInterpolator().toEasing(),
+                    )
+                } else {
+                    tween(durationMillis = BORDER_ANIMATION_DURATION)
+                }
             }
         },
         label = "",
