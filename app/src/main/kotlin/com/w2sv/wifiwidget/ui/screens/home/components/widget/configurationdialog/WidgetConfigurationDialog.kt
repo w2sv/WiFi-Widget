@@ -13,6 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.CustomColor
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
@@ -20,6 +22,7 @@ import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.utils.thenIf
 
 private const val infoDialogDataRememberKey = "WIDGET_CONFIGURATION_DIALOG_INFO_DIALOG_DATA"
+private const val configurationColorRememberKey = "CONFIGURATION_COLOR"
 
 @Composable
 fun WidgetConfigurationDialog(
@@ -31,6 +34,12 @@ fun WidgetConfigurationDialog(
     var infoDialogData by rememberSaveable(
         stateSaver = InfoDialogData.nullableStateSaver,
         key = infoDialogDataRememberKey
+    ) {
+        mutableStateOf(null)
+    }
+    var configurationColor by rememberSaveable(
+        stateSaver = CustomColor.nullableSaver,
+        key = configurationColorRememberKey
     ) {
         mutableStateOf(null)
     }
@@ -60,6 +69,7 @@ fun WidgetConfigurationDialog(
             widgetConfiguration = widgetConfiguration,
             locationAccessState = locationAccessState,
             showPropertyInfoDialog = remember { { infoDialogData = it } },
+            showCustomColorConfigurationDialog = remember { { configurationColor = it } },
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.75f)
@@ -70,6 +80,16 @@ fun WidgetConfigurationDialog(
             PropertyInfoDialog(
                 data = it,
                 onDismissRequest = { infoDialogData = null }
+            )
+        }
+        configurationColor?.let {
+            ColorPickerDialog(
+                label = stringResource(id = it.labelRes),
+                appliedColor = it.color,
+                applyColor = { },
+                onDismissRequest = {
+                    configurationColor = null
+                },
             )
         }
     }

@@ -25,6 +25,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.CustomColor
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRowColumn
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
@@ -53,6 +54,7 @@ fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
+    showCustomColorConfigurationDialog: (CustomColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -88,6 +90,7 @@ fun WidgetConfigurationDialogContent(
                         },
                         fontSize = widgetConfiguration.fontSize.collectAsStateWithLifecycle().value,
                         setFontSize = { widgetConfiguration.fontSize.value = it },
+                        showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
                 },

@@ -8,9 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
@@ -18,6 +21,10 @@ import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+
+private const val colorKey = "COLOR_KEY"
+
+val colorSaver = Saver<Color, Int>(save = { it.toArgb() }, restore = { Color(it) })
 
 @Composable
 fun ColorPickerDialog(
@@ -27,7 +34,11 @@ fun ColorPickerDialog(
     applyColor: (Color) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var color by remember(appliedColor) {
+    var color by rememberSaveable(
+        appliedColor,
+        key = colorKey,
+        stateSaver = colorSaver
+    ) {
         mutableStateOf(
             appliedColor,
         )
