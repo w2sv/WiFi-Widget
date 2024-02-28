@@ -21,9 +21,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.utils.thenIf
 
-private const val infoDialogDataRememberKey = "WIDGET_CONFIGURATION_DIALOG_INFO_DIALOG_DATA"
-private const val colorPickerPropertiesRememberKey = "COLOR_PICKER_PROPERTIES"
-
 @Composable
 fun WidgetConfigurationDialog(
     locationAccessState: LocationAccessState,
@@ -33,13 +30,11 @@ fun WidgetConfigurationDialog(
 ) {
     var infoDialogData by rememberSaveable(
         stateSaver = InfoDialogData.nullableStateSaver,
-        key = infoDialogDataRememberKey
     ) {
         mutableStateOf(null)
     }
     var colorPickerProperties by rememberSaveable(
         stateSaver = ColorPickerProperties.nullableStateSaver,
-        key = colorPickerPropertiesRememberKey
     ) {
         mutableStateOf(null)
     }

@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 inline fun Modifier.thenIf(
     condition: Boolean,
     onFalse: Modifier.() -> Modifier = { this },
-    onTrue: Modifier.() -> Modifier,
+    onTrue: Modifier.() -> Modifier = { this },
 ): Modifier =
     if (condition) {
         onTrue()

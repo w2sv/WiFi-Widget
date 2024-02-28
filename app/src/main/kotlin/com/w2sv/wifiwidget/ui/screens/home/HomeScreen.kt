@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.movableContentOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
-import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
@@ -50,6 +50,8 @@ import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
+
+typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
 @Composable
 fun HomeScreen(
@@ -93,17 +95,28 @@ fun HomeScreen(
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
+            val wifiStatusCard: ModifierReceivingComposable = remember {
+                movableContentOf { mod ->
+                    WifiStatusCard(wifiState = wifiState, modifier = mod)
+                }
+            }
+            val widgetCard: ModifierReceivingComposable = remember {
+                movableContentOf { mod ->
+                    WidgetCard(locationAccessState = locationAccessState, modifier = mod)
+                }
+            }
+
             if (isLandscapeModeActivated) {
                 LandscapeMode(
                     paddingValues = paddingValues,
-                    wifiState = wifiState,
-                    locationAccessState = locationAccessState
+                    wifiStatusCard = wifiStatusCard,
+                    widgetCard = widgetCard
                 )
             } else {
                 PortraitMode(
                     paddingValues = paddingValues,
-                    wifiState = wifiState,
-                    locationAccessState = locationAccessState
+                    wifiStatusCard = wifiStatusCard,
+                    widgetCard = widgetCard
                 )
             }
         }
@@ -127,8 +140,8 @@ fun HomeScreen(
 @Composable
 private fun LandscapeMode(
     paddingValues: PaddingValues,
-    wifiState: WifiState,
-    locationAccessState: LocationAccessState,
+    wifiStatusCard: ModifierReceivingComposable,
+    widgetCard: ModifierReceivingComposable
 ) {
     Row(
         modifier = Modifier
@@ -138,26 +151,16 @@ private fun LandscapeMode(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceEvenly,
     ) {
-        WifiStatusCard(
-            wifiState = wifiState,
-            modifier = Modifier
-                .fillMaxWidth(0.4f),
-            propertyDisplayModifier = Modifier
-                .fillMaxHeight()
-        )
-
-        WidgetCard(
-            locationAccessState = locationAccessState,
-            modifier = Modifier.fillMaxWidth(0.7f),
-        )
+        wifiStatusCard(Modifier.fillMaxWidth(0.4f))
+        widgetCard(Modifier.fillMaxWidth(0.7f))
     }
 }
 
 @Composable
 private fun PortraitMode(
     paddingValues: PaddingValues,
-    wifiState: WifiState,
-    locationAccessState: LocationAccessState,
+    wifiStatusCard: ModifierReceivingComposable,
+    widgetCard: ModifierReceivingComposable
 ) {
     Column(
         modifier = Modifier
@@ -167,21 +170,9 @@ private fun PortraitMode(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.15f))
-        WifiStatusCard(
-            wifiState = wifiState,
-            modifier = Modifier
-                .fillMaxWidth(0.77f),
-            propertyDisplayModifier = Modifier
-                .fillMaxHeight(0.28f)
-        )
-
+        wifiStatusCard(Modifier.fillMaxWidth(0.77f))
         Spacer(Modifier.weight(0.2f))
-
-        WidgetCard(
-            locationAccessState = locationAccessState,
-            modifier = Modifier
-                .fillMaxWidth(0.8f),
-        )
+        widgetCard(Modifier.fillMaxWidth(0.8f))
         Spacer(Modifier.weight(0.3f))
         CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
     }

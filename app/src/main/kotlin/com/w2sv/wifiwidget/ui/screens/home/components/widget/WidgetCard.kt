@@ -44,15 +44,13 @@ import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
 
-private const val showConfigurationDialogRememberKey = "SHOW_WIDGET_CONFIGURATION_DIALOG"
-
 @Composable
 fun WidgetCard(
     locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
     widgetVM: WidgetViewModel = viewModel(),
 ) {
-    var showConfigurationDialog by rememberSaveable(key = showConfigurationDialogRememberKey) {
+    var showConfigurationDialog by rememberSaveable {
         mutableStateOf(widgetVM.showConfigurationDialogInitially)
     }
 

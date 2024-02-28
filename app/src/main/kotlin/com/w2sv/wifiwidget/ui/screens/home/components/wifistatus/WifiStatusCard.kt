@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,12 +12,13 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
+import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
+import com.w2sv.wifiwidget.ui.utils.thenIf
 
 @Composable
 fun WifiStatusCard(
     wifiState: WifiState,
-    modifier: Modifier = Modifier,
-    propertyDisplayModifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     HomeScreenCard(
         iconHeaderProperties = IconHeaderProperties(
@@ -34,7 +36,10 @@ fun WifiStatusCard(
                         Spacer(modifier = Modifier.height(12.dp))
                         WifiPropertyDisplay(
                             propertiesViewData = it.propertyViewData,
-                            modifier = propertyDisplayModifier
+                            modifier = Modifier.thenIf(
+                                condition = isLandscapeModeActivated,
+                                onFalse = { fillMaxHeight(0.3f) }
+                            )
                         )
                     }
                 }
