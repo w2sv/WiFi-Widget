@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -56,7 +55,7 @@ fun AppearanceConfiguration(
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
     setFontSize: (FontSize) -> Unit,
-    showCustomColorConfigurationDialog: (WidgetColorType) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -173,30 +172,31 @@ enum class WidgetColorType(@StringRes val labelRes: Int) {
                 Secondary -> data.secondary
             }
         )
-
-    fun setColor(data: WidgetColoring.Data.Custom, color: Color): WidgetColoring.Data.Custom =
-        when (this) {
-            Background -> data.copy(background = color.toArgb())
-            Primary -> data.copy(primary = color.toArgb())
-            Secondary -> data.copy(secondary = color.toArgb())
-        }
 }
 
 @Composable
 private fun CustomColorConfiguration(
     data: WidgetColoring.Data.Custom,
-    showCustomColorConfigurationDialog: (WidgetColorType) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         WidgetColorType.entries
-            .forEach {
+            .forEach { widgetColorType ->
+                val color = remember(widgetColorType, data) {
+                    widgetColorType.getColor(data)
+                }
                 SectionCustomizationRow(
-                    label = stringResource(id = it.labelRes),
-                    color = remember(it, data) {
-                        it.getColor(data)
+                    label = stringResource(id = widgetColorType.labelRes),
+                    color = color,
+                    onClick = {
+                        showCustomColorConfigurationDialog(
+                            ColorPickerProperties(
+                                widgetColorType = widgetColorType,
+                                appliedColor = color
+                            )
+                        )
                     },
-                    onClick = { showCustomColorConfigurationDialog(it) },
                     modifier = Modifier.padding(vertical = 4.dp),
                 )
             }
