@@ -17,7 +17,6 @@
     <string name="background_location_access_rational"><![CDATA[In order for your (B)SSID to be updated from the widget, that is, while the app is running in the background, you\'ll need to grant <b>Location Access all the time</b>.]]></string>
     <string name="light">Light</string>
     <string name="system_default">System Default</string>
-    <string name="custom">Custom</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
@@ -58,8 +57,6 @@
     <string name="getting_data">Getting data…</string>
     <string name="copied">"Copied"</string>
     <string name="to_clipboard">to clipboard</string>
-    <string name="location_access_requiring">Location access requiring</string>
-    <string name="ip_addresses">IP Addresses</string>
     <string name="versions">Versions</string>
     <string name="background_opacity">Background\nopacity</string>
     <string name="font_size">Font size</string>
