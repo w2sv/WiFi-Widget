@@ -1,12 +1,2 @@
-- New features:
-    - Configuration of the widget text font size
-    - Added WiFi properties 'RSSI' & 'WiFi standard'
-- In-App UI changes:
-    - Property display list divider
-    - Revised 'Appearance' configuration section
-    - Widget configuration section borders
-    - Expandable sub-property lists
-- Fixed:
-    - Label subscript clipping on widget
-    - Automatic data refreshing
-- Performance improvements
+- Retain scroll states and custom color picker dialog state across configuration changes
+- Small UI adjustments
