@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import android.content.Context
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.saveable.listSaver
 import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.wifiwidget.ui.utils.nullableListSaver
 
 @Immutable
 data class InfoDialogData(
@@ -12,26 +12,16 @@ data class InfoDialogData(
     val learnMoreUrl: String? = null,
 ) {
     companion object {
-        val nullableStateSaver = listSaver<InfoDialogData?, String?>(
-            save = {
-                buildList {
-                    it?.run {
-                        add(title)
-                        add(description)
-                        add(learnMoreUrl)
-                    }
-                }
+        val nullableStateSaver = nullableListSaver(
+            saveNonNull = {
+                listOf(it.title, it.description, it.learnMoreUrl)
             },
-            restore = {
-                if (it.isEmpty()) {
-                    null
-                } else {
-                    InfoDialogData(
-                        title = it[0] as String,
-                        description = it[1] as String,
-                        learnMoreUrl = it[2]
-                    )
-                }
+            restoreNonNull = {
+                InfoDialogData(
+                    title = it[0] as String,
+                    description = it[1] as String,
+                    learnMoreUrl = it[2]
+                )
             }
         )
     }

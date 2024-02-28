@@ -10,7 +10,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,6 +21,7 @@ import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
+import com.w2sv.wifiwidget.ui.utils.nullableListSaver
 
 @Stable
 class ColorPickerProperties(
@@ -29,7 +29,6 @@ class ColorPickerProperties(
     private val appliedColor: Color,
     initialColor: Color
 ) {
-
     constructor(widgetColorType: WidgetColorType, appliedColor: Color) : this(
         widgetColorType = widgetColorType,
         appliedColor = appliedColor,
@@ -50,26 +49,16 @@ class ColorPickerProperties(
         }
 
     companion object {
-        val nullableStateSaver = listSaver<ColorPickerProperties?, Any>(
-            save = { properties ->
-                buildList {
-                    properties?.let {
-                        add(it.widgetColorType)
-                        add(it.appliedColor.toArgb())
-                        add(it.color.toArgb())
-                    }
-                }
+        val nullableStateSaver = nullableListSaver<ColorPickerProperties, Any>(
+            saveNonNull = {
+                listOf(it.widgetColorType, it.appliedColor.toArgb(), it.color.toArgb())
             },
-            restore = {
-                if (it.isEmpty()) {
-                    null
-                } else {
-                    ColorPickerProperties(
-                        widgetColorType = it[0] as WidgetColorType,
-                        appliedColor = Color(it[1] as Int),
-                        initialColor = Color(it[2] as Int)
-                    )
-                }
+            restoreNonNull = {
+                ColorPickerProperties(
+                    widgetColorType = it[0] as WidgetColorType,
+                    appliedColor = Color(it[1] as Int),
+                    initialColor = Color(it[2] as Int)
+                )
             }
         )
     }
