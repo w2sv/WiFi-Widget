@@ -23,7 +23,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/benchmarking" />
             <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/datastore" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/networking" />
             <option value="$PROJECT_DIR$/plugins" />

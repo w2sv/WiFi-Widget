@@ -20,7 +20,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,14 +50,13 @@ fun AppearanceConfiguration(
     presetColoringData: WidgetColoring.Data.Preset,
     setPresetColoringData: (WidgetColoring.Data.Preset) -> Unit,
     customColoringData: WidgetColoring.Data.Custom,
-    setCustomColoringData: (WidgetColoring.Data.Custom) -> Unit,
     coloring: WidgetColoring,
     setColoring: (WidgetColoring) -> Unit,
     opacity: Float,
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
     setFontSize: (FontSize) -> Unit,
-    showCustomColorConfigurationDialog: (CustomColor) -> Unit,
+    showCustomColorConfigurationDialog: (WidgetColorType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -93,8 +91,7 @@ fun AppearanceConfiguration(
                 WidgetColoring.Custom -> {
                     CustomColorConfiguration(
                         data = customColoringData,
-                        showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                        setData = setCustomColoringData
+                        showCustomColorConfigurationDialog = showCustomColorConfigurationDialog
                     )
                 }
             }
@@ -163,65 +160,42 @@ private fun PresetColoringConfiguration(
     }
 }
 
-data class CustomColor(
-    @StringRes val labelRes: Int,
-    val color: Color
-) {
-    companion object {
-        val nullableSaver = listSaver<CustomColor?, Any>(
-            save = {
-                buildList {
-                    it?.let {
-                        add(it.labelRes)
-                        add(it.color.toArgb())
-                    }
-                }
-            },
-            restore = {
-                if (it.isEmpty()) {
-                    null
-                } else {
-                    CustomColor(
-                        labelRes = it[0] as Int,
-                        color = Color(it[1] as Int)
-                    )
-                }
+enum class WidgetColorType(@StringRes val labelRes: Int) {
+    Background(com.w2sv.domain.R.string.background),
+    Primary(com.w2sv.domain.R.string.primary),
+    Secondary(com.w2sv.domain.R.string.secondary);
+
+    fun getColor(data: WidgetColoring.Data.Custom): Color =
+        Color(
+            when (this) {
+                Background -> data.background
+                Primary -> data.primary
+                Secondary -> data.secondary
             }
         )
-    }
+
+    fun setColor(data: WidgetColoring.Data.Custom, color: Color): WidgetColoring.Data.Custom =
+        when (this) {
+            Background -> data.copy(background = color.toArgb())
+            Primary -> data.copy(primary = color.toArgb())
+            Secondary -> data.copy(secondary = color.toArgb())
+        }
 }
 
 @Composable
 private fun CustomColorConfiguration(
     data: WidgetColoring.Data.Custom,
-    showCustomColorConfigurationDialog: (CustomColor) -> Unit,
-    setData: (WidgetColoring.Data.Custom) -> Unit,
+    showCustomColorConfigurationDialog: (WidgetColorType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        remember(data) {
-            listOf(
-                CustomColor(
-                    labelRes = com.w2sv.domain.R.string.background,
-                    color = Color(data.background),
-//                    setColor = { setData(data.copy(background = it.toArgb())) }
-                ),
-                CustomColor(
-                    labelRes = com.w2sv.domain.R.string.primary,
-                    color = Color(data.primary),
-//                    setColor = { setData(data.copy(primary = it.toArgb())) }
-                ),
-                CustomColor(
-                    labelRes = com.w2sv.domain.R.string.secondary,
-                    color = Color(data.secondary),
-//                    setColor = { setData(data.copy(secondary = it.toArgb())) }
-                )
-            )
-        }
+        WidgetColorType.entries
             .forEach {
                 SectionCustomizationRow(
                     label = stringResource(id = it.labelRes),
-                    color = it.color,
+                    color = remember(it, data) {
+                        it.getColor(data)
+                    },
                     onClick = { showCustomColorConfigurationDialog(it) },
                     modifier = Modifier.padding(vertical = 4.dp),
                 )

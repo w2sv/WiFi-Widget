@@ -25,8 +25,8 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.AppearanceConfiguration
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.CustomColor
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRowColumn
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.WidgetColorType
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
@@ -54,7 +54,7 @@ fun WidgetConfigurationDialogContent(
     widgetConfiguration: UnconfirmedWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
-    showCustomColorConfigurationDialog: (CustomColor) -> Unit,
+    showCustomColorConfigurationDialog: (WidgetColorType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -79,9 +79,6 @@ fun WidgetConfigurationDialogContent(
                             widgetConfiguration.presetColoringData.value = it
                         },
                         customColoringData = widgetConfiguration.customColoringData.collectAsStateWithLifecycle().value,
-                        setCustomColoringData = {
-                            widgetConfiguration.customColoringData.value = it
-                        },
                         coloring = widgetConfiguration.coloring.collectAsStateWithLifecycle().value,
                         setColoring = { widgetConfiguration.coloring.value = it },
                         opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
