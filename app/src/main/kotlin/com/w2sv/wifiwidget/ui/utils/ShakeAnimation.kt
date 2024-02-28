@@ -47,14 +47,15 @@ data class ShakeConfig(
 )
 
 @SuppressLint("ComposeModifierComposed")
-fun Modifier.shake(controller: ShakeController) = composed {
-    val animatable = remember(controller.trigger) { Animatable(0f) }
+fun Modifier.shake(controller: ShakeController) =
+    this then composed {
+        val animatable = remember(controller.trigger) { Animatable(0f) }
 
-    LaunchedEffect(controller.trigger) {
-        if (controller.trigger != null) {
-            controller.animate(animatable)
+        LaunchedEffect(controller.trigger) {
+            if (controller.trigger != null) {
+                controller.animate(animatable)
+            }
         }
-    }
 
-    offset(x = animatable.value.dp)
-}
+        offset(x = animatable.value.dp)
+    }
