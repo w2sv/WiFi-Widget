@@ -26,7 +26,7 @@
 ------
 
 <p align="center">
-<b>Android app, providing a fully configurable widget for the monitoring of your WiFi connection details.</b>
+<b>Android app providing a fully configurable widget for the monitoring of your WiFi connection details.</b>
 </p>
 
 ------
