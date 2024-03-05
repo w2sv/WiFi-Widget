@@ -43,7 +43,7 @@
 
 ### In-App
 
-- Clean Material 3 Design, featuring animations wherever they're appropriate
+- Clean Material 3 Design, featuring plenty of animations
 - Supports light & dark theme, as well as dynamic colors
 - Different layouts for landscape & portrait mode
 - Live WiFi Status display with property copy-to-clipboard functionality
@@ -54,13 +54,14 @@
 - Configurable appearance:
     - Light/dark theme with static/dynamic colors, or custom colors
     - Configurable background opacity
+    - Configurable font size
 - Configurable WiFi property inclusion:
     - SSID, BSSID
     - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched
       from https://api.ipify.org)
         - For address types that support IPv4 & IPv6, you may choose which versions to include
-    - Frequency, Channel, Link Speed, Gateway, DNS, DHCP
-- Configurable button inclusion
+    - Frequency, Channel, Link Speed, RSSI, Standard, Gateway, DNS, DHCP
+- Configurable button row elements
 - Configurable automatic refreshing
 
 <h2 align="center">Tech Stack</h2>
