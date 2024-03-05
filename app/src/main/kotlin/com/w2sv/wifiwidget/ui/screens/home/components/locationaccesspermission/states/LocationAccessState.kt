@@ -104,7 +104,7 @@ fun rememberLocationAccessPermissionState(
 @OptIn(ExperimentalPermissionsApi::class)
 @Stable
 class LocationAccessState(
-    private val permissionsState: MultiplePermissionsState,
+    permissionsState: MultiplePermissionsState,
     val backgroundAccessState: BackgroundLocationAccessState?,
     requestLaunchedBefore: DataStoreFlow<Boolean>,
     private val saveRequestLaunched: () -> Unit,
@@ -113,8 +113,8 @@ class LocationAccessState(
     private val snackbarHostState: SnackbarHostState,
     private val scope: CoroutineScope,
     private val context: Context
-) {
-    val isGranted: Boolean by permissionsState::allPermissionsGranted
+): MultiplePermissionsState by permissionsState {
+    val isGranted: Boolean by ::allPermissionsGranted
 
     val newStatus get() = _newStatus.asSharedFlow()
     private val _newStatus =
@@ -146,7 +146,7 @@ class LocationAccessState(
     private val requestLaunchedBefore = requestLaunchedBefore.stateIn(scope, SharingStarted.Eagerly)
 
     fun launchRequest(trigger: LocationAccessPermissionRequestTrigger) {
-        if (permissionsState.isLaunchingSuppressed(requestLaunchedBefore.value)) {
+        if (isLaunchingSuppressed(requestLaunchedBefore.value)) {
             scope.launch {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
@@ -163,7 +163,7 @@ class LocationAccessState(
             }
         } else {
             requestTrigger = trigger
-            permissionsState.launchMultiplePermissionRequest()
+            launchMultiplePermissionRequest()
         }
     }
 

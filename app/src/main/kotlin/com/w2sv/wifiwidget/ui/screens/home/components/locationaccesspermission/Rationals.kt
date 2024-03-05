@@ -66,7 +66,7 @@ fun LocationAccessRationals(state: LocationAccessState) {
 
         if (showRational) {
             BackgroundLocationAccessRational(
-                launchPermissionRequest = { backgroundAccessState.launchRequest() },
+                launchPermissionRequest = { backgroundAccessState.launchPermissionRequest() },
                 onDismissRequest = {
                     showRational = false
                 }

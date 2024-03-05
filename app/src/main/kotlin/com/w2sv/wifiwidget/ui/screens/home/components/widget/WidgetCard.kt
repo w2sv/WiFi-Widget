@@ -139,7 +139,7 @@ private fun ShowSnackbarOnWidgetPin(
                         action = SnackbarAction(
                             label = context.getString(R.string.grant),
                             callback = {
-                                backgroundAccessState.launchRequest()
+                                backgroundAccessState.launchPermissionRequest()
                             }
                         )
                     )
