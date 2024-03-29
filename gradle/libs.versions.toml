@@ -9,7 +9,7 @@ kotlin = "1.9.22"
 java = "17"
 ksp = "1.9.22-1.0.18"
 triplet-play = "3.9.0"
-hilt = "2.51"
+hilt = "2.51.1"
 baselineprofile = "1.2.3"
 
 # Libraries
