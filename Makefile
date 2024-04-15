@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 
-VERSION := $(shell ./get-version.sh)
+VERSION := $(shell grep '^version=' gradle.properties | cut -d'=' -f2)
 
 optimize-drawables:
 	@avocado app/src/main/res/drawable/*.xml
