@@ -65,7 +65,7 @@ build-and-publish:
 	@$(MAKE) build-apk
 
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track production --console verbose --no-configuration-cache  # usage of configuration cache throws error for task
+	@./gradlew publishBundle --track production --console verbose
 
 	@$(MAKE) create-gh-release
 

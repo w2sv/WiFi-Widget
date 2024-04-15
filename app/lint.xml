@@ -4,4 +4,5 @@
     <issue id="ComposeCompositionLocalUsage" severity="ignore" />
     <issue id="NotificationPermission" severity="warning" />
     <issue id="LintError" severity="warning" />
+    <issue id="MonochromeLauncherIcon" severity="ignore" />
 </lint>

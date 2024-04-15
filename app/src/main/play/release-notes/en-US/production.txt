@@ -1,2 +1,1 @@
-- Retain scroll states and custom color picker dialog state across configuration changes
-- Small UI adjustments
+- Performance improvements
