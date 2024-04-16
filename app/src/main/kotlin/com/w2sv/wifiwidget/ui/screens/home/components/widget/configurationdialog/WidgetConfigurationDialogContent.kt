@@ -126,7 +126,7 @@ fun WidgetConfigurationDialogContent(
                 },
                 Section(
                     iconHeaderProperties = IconHeaderProperties(
-                        iconRes = com.w2sv.widget.R.drawable.ic_refresh_24,
+                        iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
                         stringRes = R.string.refreshing,
                     )
                 ) {

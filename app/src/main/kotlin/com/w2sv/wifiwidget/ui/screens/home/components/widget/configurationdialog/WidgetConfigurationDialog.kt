@@ -56,8 +56,8 @@ fun WidgetConfigurationDialog(
             condition = isLandscapeModeActivated,
             onTrue = { fillMaxHeight() }
         ),
-        iconRes = com.w2sv.widget.R.drawable.ic_settings_24,
-        title = stringResource(id = com.w2sv.common.R.string.configure_widget),
+        iconRes = com.w2sv.core.common.R.drawable.ic_settings_24,
+        title = stringResource(id = com.w2sv.core.common.R.string.configure_widget),
         applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
     ) {
         WidgetConfigurationDialogContent(

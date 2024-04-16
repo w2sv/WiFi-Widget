@@ -1,9 +1,0 @@
-<resources>
-    <string name="widget_description">Monitor your WiFi connection details</string>
-
-    <string name="configure_widget">Configure Widget</string>
-    <string name="refresh_data">Refresh data</string>
-    <string name="no_wifi_connection">No WiFi Connection</string>
-    <string name="wifi_disabled">WiFi Disabled</string>
-    <string name="widget_pinning_not_supported_by_your_device_launcher">Widget pinning is not supported by your device launcher.</string>
-</resources>

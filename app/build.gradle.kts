@@ -101,11 +101,11 @@ play {
 
 dependencies {
     // Project modules
-    implementation(projects.widget)
-    implementation(projects.common)
-    implementation(projects.domain)
-    implementation(projects.datastore)
-    implementation(projects.networking)
+    implementation(projects.core.widget)
+    implementation(projects.core.common)
+    implementation(projects.core.domain)
+    implementation(projects.core.datastore)
+    implementation(projects.core.networking)
     baselineProfile(projects.benchmarking)
 
     // Owned libraries

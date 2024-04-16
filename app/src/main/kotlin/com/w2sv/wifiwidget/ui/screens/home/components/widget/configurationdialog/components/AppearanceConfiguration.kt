@@ -160,9 +160,9 @@ private fun PresetColoringConfiguration(
 }
 
 enum class WidgetColorType(@StringRes val labelRes: Int) {
-    Background(com.w2sv.domain.R.string.background),
-    Primary(com.w2sv.domain.R.string.primary),
-    Secondary(com.w2sv.domain.R.string.secondary);
+    Background(com.w2sv.core.domain.R.string.background),
+    Primary(com.w2sv.core.domain.R.string.primary),
+    Secondary(com.w2sv.core.domain.R.string.secondary);
 
     fun getColor(data: WidgetColoring.Data.Custom): Color =
         Color(
