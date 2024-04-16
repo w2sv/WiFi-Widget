@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -9,11 +10,13 @@
         android:name=".Application"
         android:allowBackup="true"
         android:appCategory="productivity"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/logo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.App.SplashScreen">
+        android:theme="@style/Theme.App.SplashScreen"
+        tools:targetApi="tiramisu">
 
         <activity
             android:name=".MainActivity"
@@ -24,7 +27,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
 
         <!--Receivers-->
 
