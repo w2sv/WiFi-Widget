@@ -90,6 +90,17 @@ android {
                     "${versionName}.apk"
             }
     }
+
+    kotlinOptions {
+        freeCompilerArgs += listOf(
+            // Apply compose_compiler_config.conf
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${project.rootDir.absolutePath}/compose_compiler_config.conf",
+            // Enable strong skipping
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true"
+        )
+    }
 }
 
 // https://github.com/Triple-T/gradle-play-publisher

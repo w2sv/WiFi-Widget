@@ -10,7 +10,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import com.w2sv.datastore.WidgetColoringProto
-import com.w2sv.datastore.WidgetColoringProtoSerializer
+import com.w2sv.datastore.proto.widget_coloring.WidgetColoringProtoSerializer
+import com.w2sv.datastore.proto.widget_coloring.defaultWidgetColoringProto
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,12 +33,12 @@ object PreferencesModule {
 
     @Provides
     @Singleton
-    internal fun providesUserProtoDataStore(
+    internal fun providesWidgetColoringProtoDataStore(
         @ApplicationContext context: Context,
     ): DataStore<WidgetColoringProto> =
         DataStoreFactory.create(
             serializer = WidgetColoringProtoSerializer,
-            corruptionHandler = ReplaceFileCorruptionHandler { WidgetColoringProto.getDefaultInstance() },
+            corruptionHandler = ReplaceFileCorruptionHandler { defaultWidgetColoringProto },
             produceFile = {
                 context.dataStoreFile("widget_coloring.pb")
             }

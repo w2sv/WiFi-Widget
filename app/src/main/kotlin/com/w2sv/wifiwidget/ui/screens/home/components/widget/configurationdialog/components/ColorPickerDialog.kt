@@ -25,12 +25,12 @@ import com.w2sv.wifiwidget.ui.utils.nullableListSaver
 
 @Stable
 class ColorPickerProperties(
-    val widgetColorType: WidgetColorType,
+    val customWidgetColor: CustomWidgetColor,
     private val appliedColor: Color,
     initialColor: Color
 ) {
-    constructor(widgetColorType: WidgetColorType, appliedColor: Color) : this(
-        widgetColorType = widgetColorType,
+    constructor(customWidgetColor: CustomWidgetColor, appliedColor: Color) : this(
+        customWidgetColor = customWidgetColor,
         appliedColor = appliedColor,
         initialColor = appliedColor
     )
@@ -41,21 +41,21 @@ class ColorPickerProperties(
         color != appliedColor
     }
 
-    fun createCustomColoringData(data: WidgetColoring.Data.Custom): WidgetColoring.Data.Custom =
-        when (widgetColorType) {
-            WidgetColorType.Background -> data.copy(background = color.toArgb())
-            WidgetColorType.Primary -> data.copy(primary = color.toArgb())
-            WidgetColorType.Secondary -> data.copy(secondary = color.toArgb())
+    fun createCustomColoringData(data: WidgetColoring.Style.Custom): WidgetColoring.Style.Custom =
+        when (customWidgetColor) {
+            CustomWidgetColor.Background -> data.copy(background = color.toArgb())
+            CustomWidgetColor.Primary -> data.copy(primary = color.toArgb())
+            CustomWidgetColor.Secondary -> data.copy(secondary = color.toArgb())
         }
 
     companion object {
         val nullableStateSaver = nullableListSaver<ColorPickerProperties, Any>(
             saveNonNull = {
-                listOf(it.widgetColorType, it.appliedColor.toArgb(), it.color.toArgb())
+                listOf(it.customWidgetColor, it.appliedColor.toArgb(), it.color.toArgb())
             },
             restoreNonNull = {
                 ColorPickerProperties(
-                    widgetColorType = it[0] as WidgetColorType,
+                    customWidgetColor = it[0] as CustomWidgetColor,
                     appliedColor = Color(it[1] as Int),
                     initialColor = Color(it[2] as Int)
                 )
@@ -82,7 +82,7 @@ fun ColorPickerDialog(
         modifier = modifier,
         columnModifier = Modifier
             .verticalScroll(rememberScrollState()),
-        title = stringResource(id = properties.widgetColorType.labelRes),
+        title = stringResource(id = properties.customWidgetColor.labelRes),
         applyButtonEnabled = properties.colorsDissimilar
     ) {
         HSVColorPickerCircularWithSliders(

@@ -21,10 +21,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 
 @Stable
-class UnconfirmedWidgetConfiguration(
-    val coloring: UnconfirmedStateFlow<WidgetColoring>,
-    val presetColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Preset>,
-    val customColoringData: UnconfirmedStateFlow<WidgetColoring.Data.Custom>,
+class ReversibleWidgetConfiguration(
+    val coloringConfig: UnconfirmedStateFlow<WidgetColoring.Config>,
     val opacity: UnconfirmedStateFlow<Float>,
     val fontSize: UnconfirmedStateFlow<FontSize>,
     val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
@@ -36,9 +34,7 @@ class UnconfirmedWidgetConfiguration(
     onStateSynced: suspend () -> Unit
 ) : UnconfirmedStatesComposition(
     unconfirmedStates = listOf(
-        coloring,
-        presetColoringData,
-        customColoringData,
+        coloringConfig,
         opacity,
         fontSize,
         wifiProperties,

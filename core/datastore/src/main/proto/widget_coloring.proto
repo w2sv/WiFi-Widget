@@ -4,6 +4,7 @@ option java_package = "com.w2sv.datastore";
 option java_multiple_files = true;
 
 message WidgetColoringProto {
+
   message Preset {
     enum Theme {
       Light = 0;
@@ -17,11 +18,6 @@ message WidgetColoringProto {
     sint32 background = 1;
     sint32 primary = 2;
     sint32 secondary = 3;
-  }
-
-  enum Kind {
-    PresetKind = 0;
-    CustomKind = 1;
   }
 
   Preset preset = 1;

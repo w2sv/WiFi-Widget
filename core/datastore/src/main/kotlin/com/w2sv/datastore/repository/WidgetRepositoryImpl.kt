@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
-import com.w2sv.datastore.WidgetColoringDataSource
+import com.w2sv.datastore.proto.widget_coloring.WidgetColoringDataSource
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
@@ -32,14 +32,14 @@ class WidgetRepositoryImpl @Inject constructor(
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    override val coloring: StateFlow<WidgetColoring.Config> =
+    override val coloringConfig: StateFlow<WidgetColoring.Config> =
         widgetColoringDataSource.config.stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
             initialValue = WidgetColoring.Config()
         )
 
-    override suspend fun saveColoring(config: WidgetColoring.Config) {
+    override suspend fun saveColoringConfig(config: WidgetColoring.Config) {
         widgetColoringDataSource.saveConfig(config)
     }
 

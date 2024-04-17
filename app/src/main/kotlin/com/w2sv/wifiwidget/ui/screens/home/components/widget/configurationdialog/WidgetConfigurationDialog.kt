@@ -17,14 +17,15 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.utils.thenIf
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun WidgetConfigurationDialog(
     locationAccessState: LocationAccessState,
-    widgetConfiguration: UnconfirmedWidgetConfiguration,
+    widgetConfiguration: ReversibleWidgetConfiguration,
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -82,8 +83,14 @@ fun WidgetConfigurationDialog(
                 properties = properties,
                 applyColor = remember {
                     {
-                        widgetConfiguration.customColoringData.value =
-                            properties.createCustomColoringData(widgetConfiguration.customColoringData.value)
+                        widgetConfiguration.coloringConfig.update {
+                            it.copy(
+                                custom = properties.createCustomColoringData(
+                                    it.custom
+                                )
+                            )
+                        }
+
                     }
                 },
                 onDismissRequest = {

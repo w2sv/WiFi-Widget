@@ -9,8 +9,8 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import kotlinx.coroutines.flow.StateFlow
 
 interface WidgetRepository {
-    val coloring: StateFlow<WidgetColoring.Config>
-    suspend fun saveColoring(config: WidgetColoring.Config)
+    val coloringConfig: StateFlow<WidgetColoring.Config>
+    suspend fun saveColoringConfig(config: WidgetColoring.Config)
 
     val opacity: DataStoreStateFlow<Float>
     val fontSize: DataStoreStateFlow<FontSize>

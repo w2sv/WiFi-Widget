@@ -13,27 +13,27 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 
 data class WidgetAppearance(
-    val coloring: WidgetColoring,
+    val coloringConfig: WidgetColoring.Config,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
     val bottomRow: WidgetBottomRow,
 ) {
     fun getColors(context: Context): WidgetColors =
-        when (coloring) {
-            is WidgetColoring.Preset -> {
-                when (coloring.theme) {
+        when (val style = coloringConfig.appliedStyle) {
+            is WidgetColoring.Style.Preset -> {
+                when (style.theme) {
                     Theme.Dark -> WidgetTheme.Dark
                     Theme.SystemDefault -> WidgetTheme.SystemDefault
                     Theme.Light -> WidgetTheme.Light
                 }
-                    .getColors(context, coloring.useDynamicColors)
+                    .getColors(context, style.useDynamicColors)
             }
 
-            is WidgetColoring.Custom -> {
+            is WidgetColoring.Style.Custom -> {
                 WidgetColors(
-                    background = coloring.background,
-                    primary = coloring.primary,
-                    secondary = coloring.secondary,
+                    background = style.background,
+                    primary = style.primary,
+                    secondary = style.secondary,
                 )
             }
         }

@@ -46,11 +46,8 @@ private val verticalPadding = 12.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppearanceConfiguration(
-    presetColoringData: WidgetColoring.Data.Preset,
-    setPresetColoringData: (WidgetColoring.Data.Preset) -> Unit,
-    customColoringData: WidgetColoring.Data.Custom,
-    coloring: WidgetColoring,
-    setColoring: (WidgetColoring) -> Unit,
+    coloringConfig: WidgetColoring.Config,
+    setColoringConfig: (WidgetColoring.Config) -> Unit,
     opacity: Float,
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
@@ -64,32 +61,37 @@ fun AppearanceConfiguration(
                 .padding(bottom = verticalPadding)
                 .align(Alignment.CenterHorizontally)
         ) {
-            WidgetColoring.entries.forEach {
+            coloringConfig.styles.forEachIndexed { i, style ->
                 SegmentedButton(
-                    selected = it == coloring,
-                    onClick = { setColoring(it) },
+                    selected = style.javaClass == coloringConfig.appliedStyle.javaClass,
+                    onClick = remember(i) {
+                        { setColoringConfig(coloringConfig.copy(isCustomSelected = style is WidgetColoring.Style.Custom)) }
+                    },
                     shape = SegmentedButtonDefaults.itemShape(
-                        index = it.ordinal,
-                        count = WidgetColoring.entries.size
+                        index = i,
+                        count = 2
                     )
                 ) {
-                    Text(text = stringResource(id = it.labelRes))
+                    Text(text = stringResource(id = style.labelRes))
                 }
             }
         }
 
-        AnimatedContent(targetState = coloring, label = "") {
-            when (it) {
-                WidgetColoring.Preset -> {
+        AnimatedContent(
+            targetState = coloringConfig.isCustomSelected,
+            label = ""
+        ) { isCustomStyleSelected ->
+            when (isCustomStyleSelected) {
+                false -> {
                     PresetColoringConfiguration(
-                        data = presetColoringData,
-                        setData = setPresetColoringData
+                        data = coloringConfig.preset,
+                        setData = remember { { setColoringConfig(coloringConfig.copy(preset = it)) } }
                     )
                 }
 
-                WidgetColoring.Custom -> {
+                true -> {
                     CustomColorConfiguration(
-                        data = customColoringData,
+                        data = coloringConfig.custom,
                         showCustomColorConfigurationDialog = showCustomColorConfigurationDialog
                     )
                 }
@@ -133,8 +135,8 @@ fun AppearanceConfiguration(
 
 @Composable
 private fun PresetColoringConfiguration(
-    data: WidgetColoring.Data.Preset,
-    setData: (WidgetColoring.Data.Preset) -> Unit,
+    data: WidgetColoring.Style.Preset,
+    setData: (WidgetColoring.Style.Preset) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -159,12 +161,12 @@ private fun PresetColoringConfiguration(
     }
 }
 
-enum class WidgetColorType(@StringRes val labelRes: Int) {
+enum class CustomWidgetColor(@StringRes val labelRes: Int) {
     Background(com.w2sv.core.domain.R.string.background),
     Primary(com.w2sv.core.domain.R.string.primary),
     Secondary(com.w2sv.core.domain.R.string.secondary);
 
-    fun getColor(data: WidgetColoring.Data.Custom): Color =
+    fun getColor(data: WidgetColoring.Style.Custom): Color =
         Color(
             when (this) {
                 Background -> data.background
@@ -176,12 +178,12 @@ enum class WidgetColorType(@StringRes val labelRes: Int) {
 
 @Composable
 private fun CustomColorConfiguration(
-    data: WidgetColoring.Data.Custom,
+    data: WidgetColoring.Style.Custom,
     showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        WidgetColorType.entries
+        CustomWidgetColor.entries
             .forEach { widgetColorType ->
                 val color = remember(widgetColorType, data) {
                     widgetColorType.getColor(data)
@@ -192,7 +194,7 @@ private fun CustomColorConfiguration(
                     onClick = {
                         showCustomColorConfigurationDialog(
                             ColorPickerProperties(
-                                widgetColorType = widgetColorType,
+                                customWidgetColor = widgetColorType,
                                 appliedColor = color
                             )
                         )

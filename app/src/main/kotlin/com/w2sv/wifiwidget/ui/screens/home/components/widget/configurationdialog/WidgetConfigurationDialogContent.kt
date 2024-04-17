@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRowColumn
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.getInfoDialogData
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
@@ -51,7 +51,7 @@ private data class Section(
 
 @Composable
 fun WidgetConfigurationDialogContent(
-    widgetConfiguration: UnconfirmedWidgetConfiguration,
+    widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
@@ -74,19 +74,22 @@ fun WidgetConfigurationDialogContent(
                     ),
                 ) {
                     AppearanceConfiguration(
-                        presetColoringData = widgetConfiguration.presetColoringData.collectAsStateWithLifecycle().value,
-                        setPresetColoringData = {
-                            widgetConfiguration.presetColoringData.value = it
+                        coloringConfig = widgetConfiguration.coloringConfig.collectAsStateWithLifecycle().value,
+                        setColoringConfig = remember {
+                            {
+                                widgetConfiguration.coloringConfig.value = it
+                            }
                         },
-                        customColoringData = widgetConfiguration.customColoringData.collectAsStateWithLifecycle().value,
-                        coloring = widgetConfiguration.coloring.collectAsStateWithLifecycle().value,
-                        setColoring = { widgetConfiguration.coloring.value = it },
                         opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
-                        setOpacity = {
-                            widgetConfiguration.opacity.value = it
+                        setOpacity = remember {
+                            {
+                                widgetConfiguration.opacity.value = it
+                            }
                         },
                         fontSize = widgetConfiguration.fontSize.collectAsStateWithLifecycle().value,
-                        setFontSize = { widgetConfiguration.fontSize.value = it },
+                        setFontSize = remember {
+                            { widgetConfiguration.fontSize.value = it }
+                        },
                         showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
                         modifier = Modifier.padding(horizontal = 16.dp)
                     )
@@ -177,7 +180,7 @@ fun WidgetConfigurationDialogContent(
 
 @Composable
 private fun rememberWidgetWifiPropertyCheckRowData(
-    widgetConfiguration: UnconfirmedWidgetConfiguration,
+    widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
 ): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
     val context = LocalContext.current
@@ -283,7 +286,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     }
 }
 
-private fun UnconfirmedWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
+private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
     wifiProperties.values.count { it } > 1
 
 private val shakeConfig = ShakeConfig(

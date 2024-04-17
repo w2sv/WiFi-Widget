@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromStateFlowMap
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,20 +83,11 @@ class WidgetViewModel @Inject constructor(
     val showConfigurationDialogInitially =
         savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
-    val configuration = UnconfirmedWidgetConfiguration(
-        coloring = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.coloring
-        ),
-        presetColoringData = UnconfirmedStateFlow(
+    val configuration = ReversibleWidgetConfiguration(
+        coloringConfig = UnconfirmedStateFlow(
             scope = viewModelScope,
-            appliedStateFlow = repository.presetColoringData,
-            syncState = { repository.savePresetColoringData(it) }
-        ),
-        customColoringData = UnconfirmedStateFlow(
-            scope = viewModelScope,
-            appliedStateFlow = repository.customColoringData,
-            syncState = { repository.saveCustomColoringData(it) }
+            appliedStateFlow = repository.coloringConfig,
+            syncState = { repository.saveColoringConfig(it) }
         ),
         opacity = UnconfirmedStateFlow(
             coroutineScope = viewModelScope,
