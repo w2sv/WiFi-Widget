@@ -5,34 +5,32 @@ import androidx.annotation.StringRes
 import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.core.domain.R
 
-enum class WidgetColoring(@StringRes val labelRes: Int) {
-    Preset(R.string.preset),
-    Custom(R.string.custom);
+sealed interface WidgetColoring {
 
-    sealed interface Data {
-        data class Preset(
-            val theme: Theme = Defaults.THEME,
-            val useDynamicColors: Boolean = Defaults.USE_DYNAMIC_COLORS
-        ) : Data {
+    data class Preset(
+        val theme: Theme = Theme.SystemDefault,
+        val useDynamicColors: Boolean = dynamicColorsSupported
+    ) : WidgetColoring
 
-            object Defaults {
-                val THEME = Theme.SystemDefault
-                val USE_DYNAMIC_COLORS = dynamicColorsSupported
-            }
+    data class Custom(
+        @ColorInt val background: Int = -7859146,
+        @ColorInt val primary: Int = -5898336,
+        @ColorInt val secondary: Int = -1
+    ) : WidgetColoring
+
+    @get:StringRes
+    val label: Int
+        get() = when (this) {
+            is Preset -> R.string.preset
+            is Custom -> R.string.custom
         }
 
-        data class Custom(
-            @ColorInt val background: Int = Defaults.BACKGROUND,
-            @ColorInt val primary: Int = Defaults.PRIMARY,
-            @ColorInt val secondary: Int = Defaults.SECONDARY
-        ) : List<Int> by listOf(background, primary, secondary),
-            Data {
-
-            object Defaults {
-                const val BACKGROUND = -7859146
-                const val PRIMARY = -5898336
-                const val SECONDARY = -1
-            }
-        }
+    data class Config(
+        val preset: Preset = Preset(),
+        val custom: Custom = Custom(),
+        val isCustomSelected: Boolean = false
+    ) {
+        val selected: WidgetColoring
+            get() = if (isCustomSelected) custom else preset
     }
 }

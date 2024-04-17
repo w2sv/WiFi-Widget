@@ -1,4 +1,4 @@
-package com.w2sv.data.repository
+package com.w2sv.datastore.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

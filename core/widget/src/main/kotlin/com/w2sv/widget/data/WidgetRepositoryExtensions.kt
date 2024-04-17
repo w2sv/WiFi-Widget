@@ -8,16 +8,16 @@ import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetBottomRow
 import com.w2sv.widget.model.WidgetRefreshing
 
-val WidgetRepository.appearance: WidgetAppearance
-    get() = WidgetAppearance(
-        coloring = when (coloring.value) {
-            WidgetColoring.Preset -> presetColoringData.value
-            WidgetColoring.Custom -> customColoringData.value
-        },
-        backgroundOpacity = opacity.value,
-        fontSize = fontSize.value,
-        bottomRow = bottomRow,
-    )
+//val WidgetRepository.appearance: WidgetAppearance
+//    get() = WidgetAppearance(
+//        coloring = when (coloring.value) {
+//            WidgetColoring.Preset -> presetColoringData.value
+//            WidgetColoring.Custom -> customColoringData.value
+//        },
+//        backgroundOpacity = opacity.value,
+//        fontSize = fontSize.value,
+//        bottomRow = bottomRow,
+//    )
 
 private val WidgetRepository.bottomRow: WidgetBottomRow
     get() = WidgetBottomRow(

@@ -13,14 +13,14 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 
 data class WidgetAppearance(
-    val coloring: WidgetColoring.Data,
+    val coloring: WidgetColoring,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
     val bottomRow: WidgetBottomRow,
 ) {
     fun getColors(context: Context): WidgetColors =
         when (coloring) {
-            is WidgetColoring.Data.Preset -> {
+            is WidgetColoring.Preset -> {
                 when (coloring.theme) {
                     Theme.Dark -> WidgetTheme.Dark
                     Theme.SystemDefault -> WidgetTheme.SystemDefault
@@ -29,7 +29,7 @@ data class WidgetAppearance(
                     .getColors(context, coloring.useDynamicColors)
             }
 
-            is WidgetColoring.Data.Custom -> {
+            is WidgetColoring.Custom -> {
                 WidgetColors(
                     background = coloring.background,
                     primary = coloring.primary,

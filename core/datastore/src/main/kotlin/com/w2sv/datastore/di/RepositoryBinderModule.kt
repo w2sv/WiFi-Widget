@@ -1,8 +1,8 @@
-package com.w2sv.data.di
+package com.w2sv.datastore.di
 
-import com.w2sv.data.repository.PermissionRepositoryImpl
-import com.w2sv.data.repository.PreferencesRepositoryImpl
-import com.w2sv.data.repository.WidgetRepositoryImpl
+import com.w2sv.datastore.repository.PermissionRepositoryImpl
+import com.w2sv.datastore.repository.PreferencesRepositoryImpl
+import com.w2sv.datastore.repository.WidgetRepositoryImpl
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.domain.repository.WidgetRepository

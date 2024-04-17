@@ -1,4 +1,4 @@
-package com.w2sv.data.repository
+package com.w2sv.datastore.repository
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.datastore.DataStoreEntry
 import com.w2sv.androidutils.datastorage.datastore.DataStoreRepository
+import com.w2sv.datastore.WidgetColoringDataSource
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
@@ -18,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,78 +26,21 @@ import javax.inject.Singleton
 @Singleton
 class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
+    private val widgetColoringDataSource: WidgetColoringDataSource
 ) : DataStoreRepository(dataStore),
     WidgetRepository {
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    // ================
-    // PersistedValue
-    // ================
+    override val coloring: StateFlow<WidgetColoring.Config> =
+        widgetColoringDataSource.config.stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = WidgetColoring.Config()
+        )
 
-    override val coloring = dataStoreStateFlow(
-        key = intPreferencesKey("widgetColoring"),
-        default = WidgetColoring.Preset,
-        scope = scope,
-        sharingStarted = SharingStarted.Eagerly
-    )
-
-    private val theme = dataStoreFlow(
-        key = intPreferencesKey("widgetTheme"),
-        default = WidgetColoring.Data.Preset.Defaults.THEME,
-    )
-
-    private val useDynamicColors = dataStoreFlow(
-        key = booleanPreferencesKey("widgetConfiguration.useDynamicColor"),
-        default = WidgetColoring.Data.Preset.Defaults.USE_DYNAMIC_COLORS
-    )
-
-    override val presetColoringData by lazy {
-        combine(theme, useDynamicColors) { a, b ->
-            WidgetColoring.Data.Preset(theme = a, useDynamicColors = b)
-        }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.Eagerly,
-                initialValue = WidgetColoring.Data.Preset()
-            )
-    }
-
-    override suspend fun savePresetColoringData(data: WidgetColoring.Data.Preset) {
-        theme.save(data.theme)
-        useDynamicColors.save(data.useDynamicColors)
-    }
-
-    private val backgroundColor = dataStoreFlow(
-        key = intPreferencesKey("Background"),
-        default = WidgetColoring.Data.Custom.Defaults.BACKGROUND,
-    )
-
-    private val primaryColor = dataStoreFlow(
-        key = intPreferencesKey("Labels"),
-        default = WidgetColoring.Data.Custom.Defaults.PRIMARY,
-    )
-
-    private val secondaryColor = dataStoreFlow(
-        key = intPreferencesKey("Other"),
-        default = WidgetColoring.Data.Custom.Defaults.SECONDARY,
-    )
-
-    override val customColoringData: StateFlow<WidgetColoring.Data.Custom> by lazy {
-        combine(backgroundColor, primaryColor, secondaryColor) { (a, b, c) ->
-            WidgetColoring.Data.Custom(background = a, primary = b, secondary = c)
-        }
-            .stateIn(
-                scope = scope,
-                started = SharingStarted.Eagerly,
-                initialValue = WidgetColoring.Data.Custom()
-            )
-    }
-
-    override suspend fun saveCustomColoringData(data: WidgetColoring.Data.Custom) {
-        backgroundColor.save(data.background)
-        primaryColor.save(data.primary)
-        secondaryColor.save(data.secondary)
+    override suspend fun saveColoring(config: WidgetColoring.Config) {
+        widgetColoringDataSource.saveConfig(config)
     }
 
     override val opacity = dataStoreStateFlow(
