@@ -10,7 +10,7 @@ java = "17"
 ksp = "1.9.23-1.0.20"
 triplet-play = "3.9.1"
 hilt = "2.51.1"
-baselineprofile = "1.2.3"
+baselineprofile = "1.2.4"
 protobuf-plugin = "0.9.4"
 
 # Libraries
