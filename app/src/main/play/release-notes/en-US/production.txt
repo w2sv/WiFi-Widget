@@ -1,1 +1,1 @@
-- Performance improvements
+- Fix: persisting of the widget appearance configuration
