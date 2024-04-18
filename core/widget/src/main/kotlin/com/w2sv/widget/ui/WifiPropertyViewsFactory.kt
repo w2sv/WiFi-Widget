@@ -59,19 +59,27 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun getCount(): Int = viewData.size
 
     override fun getViewAt(position: Int): RemoteViews =
-        inflatePropertyLayout(
-            viewData = viewData[position],
-            packageName = context.packageName,
-            widgetColors = widgetColors,
-            fontSize = fontSize
-        )
+        try {
+            inflatePropertyLayout(
+                viewData = viewData[position],
+                packageName = context.packageName,
+                widgetColors = widgetColors,
+                fontSize = fontSize
+            )
+        } catch (e: IndexOutOfBoundsException) {  // Fix irreproducible IndexOutOfBoundsException observed in play console
+            RemoteViews(context.packageName, R.layout.wifi_property)
+        }
 
     override fun getLoadingView(): RemoteViews? = null
 
     override fun getViewTypeCount(): Int = 1
 
     override fun getItemId(position: Int): Long =
-        viewData[position].hashCode().toLong()
+        try {
+            viewData[position].hashCode().toLong()
+        } catch (e: IndexOutOfBoundsException) {
+            -1L
+        }
 
     override fun hasStableIds(): Boolean = true
 
