@@ -28,7 +28,7 @@ fun NavigationDrawerSheet(modifier: Modifier = Modifier, content: @Composable ()
     ModalDrawerSheet(modifier = modifier) {
         Column(
             modifier = Modifier
-                .padding(vertical = 32.dp, horizontal = 24.dp)
+                .padding(vertical = 12.dp, horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
