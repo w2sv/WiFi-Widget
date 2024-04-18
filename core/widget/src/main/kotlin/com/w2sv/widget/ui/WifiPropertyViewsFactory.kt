@@ -37,7 +37,7 @@ class WifiPropertyViewsFactory @Inject constructor(
     private lateinit var fontSize: FontSize
 
     override fun onDataSetChanged() {
-        i { "${this::class.simpleName}.onDataSetChanged" }
+        i { "WifiPropertyViewsFactory.onDataSetChanged" }
 
         viewData = runBlocking {
             viewDataFactory(
@@ -67,6 +67,7 @@ class WifiPropertyViewsFactory @Inject constructor(
                 fontSize = fontSize
             )
         } catch (e: IndexOutOfBoundsException) {  // Fix irreproducible IndexOutOfBoundsException observed in play console
+            i { e.toString() }
             RemoteViews(context.packageName, R.layout.wifi_property)
         }
 
@@ -77,7 +78,8 @@ class WifiPropertyViewsFactory @Inject constructor(
     override fun getItemId(position: Int): Long =
         try {
             viewData[position].hashCode().toLong()
-        } catch (e: IndexOutOfBoundsException) {
+        } catch (e: IndexOutOfBoundsException) {  // Same as above
+            i { e.toString() }
             -1L
         }
 
