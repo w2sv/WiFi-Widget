@@ -164,8 +164,8 @@ private fun PortraitMode(
 ) {
     Column(
         modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .padding(paddingValues),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

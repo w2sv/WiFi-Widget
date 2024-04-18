@@ -1,12 +1,16 @@
 package com.w2sv.wifiwidget
 
+import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -34,16 +38,32 @@ class MainActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
+        enableEdgeToEdge()
+
         setContent {
+            val useDarkTheme = when (appVM.theme.collectAsStateWithLifecycle().value) {
+                Theme.Light -> false
+                Theme.Dark -> true
+                Theme.SystemDefault -> isSystemInDarkTheme()
+            }
+
             AppTheme(
                 useDynamicTheme = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
-                darkTheme = when (appVM.theme.collectAsStateWithLifecycle().value) {
-                    Theme.Light -> false
-                    Theme.Dark -> true
-                    Theme.SystemDefault -> isSystemInDarkTheme()
-                    else -> throw Error()
-                },
+                useDarkTheme = useDarkTheme,
             ) {
+                LaunchedEffect(useDarkTheme) {
+                    val systemBarStyle = if (useDarkTheme) {
+                        SystemBarStyle.dark(Color.TRANSPARENT)
+                    } else {
+                        SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT)
+                    }
+
+                    enableEdgeToEdge(
+                        statusBarStyle = systemBarStyle,
+                        navigationBarStyle = systemBarStyle,
+                    )
+                }
+
                 CompositionLocalProvider(LocalLocationManager provides locationManager) {
                     HomeScreen()
                 }
