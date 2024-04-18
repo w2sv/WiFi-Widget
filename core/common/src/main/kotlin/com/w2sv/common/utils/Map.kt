@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 
 val <T> Map<T, Boolean>.enabledKeys: List<T>
@@ -11,6 +12,9 @@ val <T> Map<T, Boolean>.enabledKeys: List<T>
 
 val <T> Map<T, StateFlow<Boolean>>.valueEnabledKeys: List<T>
     get() = keys.filter { getValue(it).value }
+
+suspend fun <K> Map<K, Flow<Boolean>>.enabledKeys(): List<K> =
+    keys.filter { getValue(it).first() }
 
 fun <K, V> Map<K, Flow<V>>.stateIn(
     scope: CoroutineScope,

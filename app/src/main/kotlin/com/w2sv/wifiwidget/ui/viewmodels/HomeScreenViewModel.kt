@@ -14,6 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
@@ -42,8 +43,14 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private val wifiStateEmitter = WifiStateEmitter(
-        wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap,
-        ipSubPropertyEnablementMap = widgetRepository.ipSubPropertyEnablementMap,
+        wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap.stateIn(  // TODO
+            viewModelScope,
+            SharingStarted.Eagerly
+        ),
+        ipSubPropertyEnablementMap = widgetRepository.ipSubPropertyEnablementMap.stateIn(
+            viewModelScope,
+            SharingStarted.Eagerly
+        ),
         wifiStatusFlow = wifiStatusMonitor.wifiStatus,
         widgetWifiPropertyViewDataFactory = widgetWifiPropertyViewDataFactory,
         scope = viewModelScope

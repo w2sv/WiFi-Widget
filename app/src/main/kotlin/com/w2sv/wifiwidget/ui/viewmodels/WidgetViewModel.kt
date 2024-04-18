@@ -9,10 +9,11 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.di.PackageName
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
@@ -23,7 +24,7 @@ import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.fromStateFlowMap
+import com.w2sv.wifiwidget.ui.utils.fromDataStoreFlowMap
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -31,7 +32,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -84,39 +87,40 @@ class WidgetViewModel @Inject constructor(
         savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     val configuration = ReversibleWidgetConfiguration(
-        coloringConfig = UnconfirmedStateFlow(
+        coloringConfig = ReversibleStateFlow(
             scope = viewModelScope,
-            appliedStateFlow = repository.coloringConfig,
+            appliedStateFlow = repository.coloringConfig.stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                WidgetColoring.Config()
+            ),
             syncState = { repository.saveColoringConfig(it) }
         ),
-        opacity = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.opacity
+        opacity = ReversibleStateFlow(
+            scope = viewModelScope,
+            dataStoreFlow = repository.opacity,
+            started = SharingStarted.Eagerly
         ),
-        fontSize = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            dataStoreStateFlow = repository.fontSize
+        fontSize = ReversibleStateFlow(
+            scope = viewModelScope,
+            dataStoreFlow = repository.fontSize,
+            started = SharingStarted.Eagerly
         ),
-        wifiProperties = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.wifiPropertyEnablementMap,
-            syncState = { repository.saveWifiPropertyEnablementMap(it) },
+        wifiProperties = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.wifiPropertyEnablementMap,
         ),
-        ipSubProperties = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.ipSubPropertyEnablementMap,
-            syncState = { repository.saveIPSubPropertyEnablementMap(it) },
+        ipSubProperties = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.ipSubPropertyEnablementMap,
         ),
-        bottomRowMap = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.bottomRowElementEnablementMap,
-            syncState = {
-                repository.saveBottomRowElementEnablementMap(it)
-            },
+        bottomRowMap = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.bottomRowElementEnablementMap,
         ),
-        refreshingParametersMap = UnconfirmedStateMap.fromStateFlowMap(
-            stateFlowMap = repository.refreshingParametersEnablementMap,
-            syncState = {
-                repository.saveRefreshingParametersEnablementMap(it)
-                widgetDataRefreshWorkerManager.enableWorkerIfRefreshingEnabled()
-            },
+        refreshingParametersMap = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.refreshingParametersEnablementMap,
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,

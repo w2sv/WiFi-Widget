@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.runtime.Stable
 import com.w2sv.androidutils.coroutines.launchDelayed
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStatesComposition
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStatesComposition
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
@@ -22,18 +22,18 @@ import kotlinx.coroutines.launch
 
 @Stable
 class ReversibleWidgetConfiguration(
-    val coloringConfig: UnconfirmedStateFlow<WidgetColoring.Config>,
-    val opacity: UnconfirmedStateFlow<Float>,
-    val fontSize: UnconfirmedStateFlow<FontSize>,
-    val wifiProperties: UnconfirmedStateMap<WidgetWifiProperty, Boolean>,
-    val ipSubProperties: UnconfirmedStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    val bottomRowMap: UnconfirmedStateMap<WidgetBottomRowElement, Boolean>,
-    val refreshingParametersMap: UnconfirmedStateMap<WidgetRefreshingParameter, Boolean>,
+    val coloringConfig: ReversibleStateFlow<WidgetColoring.Config>,
+    val opacity: ReversibleStateFlow<Float>,
+    val fontSize: ReversibleStateFlow<FontSize>,
+    val wifiProperties: ReversibleStateMap<WidgetWifiProperty, Boolean>,
+    val ipSubProperties: ReversibleStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
+    val bottomRowMap: ReversibleStateMap<WidgetBottomRowElement, Boolean>,
+    val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
     private val scope: CoroutineScope,
     private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     onStateSynced: suspend () -> Unit
-) : UnconfirmedStatesComposition(
-    unconfirmedStates = listOf(
+) : ReversibleStatesComposition(
+    reversibleStates = listOf(
         coloringConfig,
         opacity,
         fontSize,
@@ -42,8 +42,8 @@ class ReversibleWidgetConfiguration(
         bottomRowMap,
         refreshingParametersMap
     ),
-    coroutineScope = scope,
-    onStateSynced = onStateSynced
+    scope = scope,
+    onStateSynced = { onStateSynced() }
 ) {
     val anyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WidgetWifiProperty.NonIP.LocationAccessRequiring.entries

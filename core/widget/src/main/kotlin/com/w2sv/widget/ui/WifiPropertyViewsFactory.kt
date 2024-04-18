@@ -10,7 +10,7 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidgets.setBackgroundColor
-import com.w2sv.common.utils.valueEnabledKeys
+import com.w2sv.common.utils.enabledKeys
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -41,9 +41,9 @@ class WifiPropertyViewsFactory @Inject constructor(
 
         viewData = runBlocking {
             viewDataFactory(
-                properties = widgetRepository.wifiPropertyEnablementMap.valueEnabledKeys,
+                properties = widgetRepository.wifiPropertyEnablementMap.enabledKeys(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
-                    .valueEnabledKeys
+                    .enabledKeys()
                     .toSet(),
             )
                 .toList()

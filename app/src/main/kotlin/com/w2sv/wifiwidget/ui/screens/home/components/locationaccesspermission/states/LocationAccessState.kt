@@ -14,7 +14,7 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.coroutines.mapState
-import com.w2sv.androidutils.datastorage.datastore.DataStoreFlow
+import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R

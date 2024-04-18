@@ -3,9 +3,6 @@ package com.w2sv.widget.di
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.work.WorkManager
-import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.data.appearance
-import com.w2sv.widget.model.WidgetAppearance
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +23,4 @@ object WidgetModule {
     @Singleton
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
         AppWidgetManager.getInstance(context)
-
-    @Provides
-    fun widgetAppearance(widgetRepository: WidgetRepository): WidgetAppearance =
-        widgetRepository.appearance
 }
