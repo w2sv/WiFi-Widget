@@ -40,7 +40,7 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
     class Manager @Inject constructor(
         private val workManager: WorkManager
     ) {
-        fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
+        internal fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
             with(widgetRefreshing) {
                 when (refreshPeriodically) {
                     true -> enableWorker(refreshOnLowBattery)
@@ -69,7 +69,7 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
             i { "Enqueued $UNIQUE_WORK_NAME" }
         }
 
-        fun cancelWorker() {
+        internal fun cancelWorker() {
             workManager
                 .cancelUniqueWork(UNIQUE_WORK_NAME)
             i { "Cancelled $UNIQUE_WORK_NAME" }

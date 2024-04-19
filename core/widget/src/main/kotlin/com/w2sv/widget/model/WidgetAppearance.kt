@@ -12,11 +12,11 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 
-data class WidgetAppearance(
+internal data class WidgetAppearance(
     val coloringConfig: WidgetColoring.Config,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
-    val bottomRow: WidgetBottomRow,
+    val bottomRow: WidgetBottomBarElement,
 ) {
     fun getColors(context: Context): WidgetColors =
         when (val style = coloringConfig.appliedStyle) {

@@ -5,7 +5,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import com.w2sv.androidutils.ui.getAlphaSetColor
 
-data class WidgetColors(
+internal data class WidgetColors(
     @ColorInt val background: Int,
     @ColorInt val primary: Int,
     @ColorInt val secondary: Int,

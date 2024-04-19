@@ -2,7 +2,7 @@ package com.w2sv.widget.model
 
 import com.w2sv.domain.model.WidgetRefreshingParameter
 
-data class WidgetRefreshing(
+internal data class WidgetRefreshing(
     val refreshPeriodically: Boolean,
     val refreshOnLowBattery: Boolean,
 ) {

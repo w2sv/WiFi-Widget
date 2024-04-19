@@ -22,8 +22,8 @@ import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
 import com.w2sv.widget.data.appearanceBlocking
-import com.w2sv.widget.model.WidgetBottomRow
-import com.w2sv.widget.utils.goToWifiSettingsIntent
+import com.w2sv.widget.model.WidgetBottomBarElement
+import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
@@ -92,6 +92,11 @@ class WidgetLayoutPopulator @Inject constructor(
                     ),
                     color = colors.secondary,
                 )
+
+                setOnClickPendingIntent(
+                    R.id.no_connection_available_layout,
+                    goToWifiSettingsPendingIntent(context)
+                )
             }
         }
     }
@@ -100,8 +105,8 @@ class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomRow(bottomRow: WidgetBottomRow) {
-        if (bottomRow.none { it }) {
+    private fun RemoteViews.setBottomRow(bottomRow: WidgetBottomBarElement) {
+        if (!bottomRow.anyEnabled) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
             setViewVisibility(R.id.bottom_row, View.VISIBLE)
@@ -135,12 +140,7 @@ class WidgetLayoutPopulator @Inject constructor(
             setButton(
                 id = R.id.go_to_wifi_settings_button,
                 show = bottomRow.goToWifiSettingsButton,
-                pendingIntent = PendingIntent.getActivity(
-                    context,
-                    PendingIntentCode.GoToWifiSettings.ordinal,
-                    goToWifiSettingsIntent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                ),
+                pendingIntent = goToWifiSettingsPendingIntent(context),
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
