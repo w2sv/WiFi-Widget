@@ -195,39 +195,21 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                         PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
                             property = property,
                             isCheckedMap = widgetConfiguration.wifiProperties,
-                            allowCheckChange = when (property) {
-                                is WidgetWifiProperty.NonIP.LocationAccessRequiring -> { isCheckedNew ->
-                                    (if (isCheckedNew) {
-                                        locationAccessState.run {
-                                            isGranted.also {
-                                                if (!it) {
-                                                    launchRequest(
-                                                        LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                                            property,
-                                                        )
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        widgetConfiguration.moreThanOnePropertyChecked()
-                                    })
-                                        .also {
-                                            if (!it) {
-                                                shakeController.shake()
-                                            }
-                                        }
-                                }
-
-                                else -> { isCheckedNew ->
-                                    (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
+                            allowCheckChange = { isCheckedNew ->
+                                if (property is WidgetWifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
+                                    return@fromIsCheckedMap locationAccessState.isGranted.also {
                                         if (!it) {
-                                            shakeController
-                                                .shake()
+                                            locationAccessState.launchRequest(
+                                                LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                                    property,
+                                                )
+                                            )
                                         }
                                     }
                                 }
+                                isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()
                             },
+                            onCheckedChangedDisallowed = { shakeController.shake() },
                             infoDialogData = property.getInfoDialogData(context),
                             modifier = Modifier.shake(shakeController)
                         )
@@ -239,11 +221,9 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                             isCheckedMap = widgetConfiguration.wifiProperties,
                             allowCheckChange = { isCheckedNew ->
                                 isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()
-                                    .also {
-                                        if (!it) {
-                                            shakeController.shake()
-                                        }
-                                    }
+                            },
+                            onCheckedChangedDisallowed = {
+                                shakeController.shake()
                             },
                             subPropertyCheckRowDataList = property.subProperties
                                 .map { subProperty ->
@@ -261,11 +241,9 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                                 newValue,
                                                 widgetConfiguration.ipSubProperties
                                             )
-                                                .also {
-                                                    if (!it) {
-                                                        subPropertyShakeController?.shake()
-                                                    }
-                                                }
+                                        },
+                                        onCheckedChangedDisallowed = {
+                                            subPropertyShakeController?.shake()
                                         },
                                         modifier = subPropertyShakeController?.let {
                                             Modifier.shake(
@@ -288,7 +266,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
 }
 
 private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
-    wifiProperties.values.count { it }.also { i { "nCheckedProperties=$it" } } > 1
+    wifiProperties.values.count { it } > 1
 
 private val shakeConfig = ShakeConfig(
     iterations = 2,

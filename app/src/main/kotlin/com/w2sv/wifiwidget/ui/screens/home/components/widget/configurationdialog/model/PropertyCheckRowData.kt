@@ -19,7 +19,7 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
         override val isChecked: () -> Boolean,
         override val onCheckedChange: (Boolean) -> Unit,
         override val infoDialogData: InfoDialogData? = null,
-        override val modifier: Modifier = Modifier
+        override val modifier: Modifier = Modifier,
     ) : PropertyCheckRowData<T> {
 
         companion object {
@@ -27,6 +27,7 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                 property: T,
                 isCheckedMap: MutableMap<T, Boolean>,
                 allowCheckChange: (Boolean) -> Boolean = { true },
+                onCheckedChangedDisallowed: () -> Unit = {},
                 infoDialogData: InfoDialogData? = null,
                 modifier: Modifier = Modifier
             ): PropertyCheckRowData<T> {
@@ -36,6 +37,8 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                     onCheckedChange = {
                         if (allowCheckChange(it)) {
                             isCheckedMap[property] = it
+                        } else {
+                            onCheckedChangedDisallowed()
                         }
                     },
                     infoDialogData = infoDialogData,
@@ -63,6 +66,7 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                 subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>>,
                 subPropertyCheckRowColumnModifier: Modifier = Modifier,
                 allowCheckChange: (Boolean) -> Boolean = { true },
+                onCheckedChangedDisallowed: () -> Unit = {},
                 infoDialogData: InfoDialogData? = null,
                 modifier: Modifier = Modifier
             ): PropertyCheckRowData<T> {
@@ -72,12 +76,14 @@ sealed interface PropertyCheckRowData<T : WidgetProperty> {
                     onCheckedChange = {
                         if (allowCheckChange(it)) {
                             isCheckedMap[property] = it
+                        } else {
+                            onCheckedChangedDisallowed()
                         }
                     },
                     subPropertyCheckRowDataList = subPropertyCheckRowDataList,
                     subPropertyColumnModifier = subPropertyCheckRowColumnModifier,
                     infoDialogData = infoDialogData,
-                    modifier = modifier
+                    modifier = modifier,
                 )
             }
         }
