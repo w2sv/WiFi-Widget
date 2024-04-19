@@ -37,6 +37,7 @@ import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import slimber.log.i
 
 private val verticalSectionHeaderPadding = 18.dp
 private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
@@ -236,8 +237,8 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                         PropertyCheckRowData.WithSubProperties.fromIsCheckedMap(
                             property = property,
                             isCheckedMap = widgetConfiguration.wifiProperties,
-                            allowCheckChange = {
-                                widgetConfiguration.moreThanOnePropertyChecked()
+                            allowCheckChange = { isCheckedNew ->
+                                isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()
                                     .also {
                                         if (!it) {
                                             shakeController.shake()
@@ -287,7 +288,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
 }
 
 private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
-    wifiProperties.values.count { it } > 1
+    wifiProperties.values.count { it }.also { i { "nCheckedProperties=$it" } } > 1
 
 private val shakeConfig = ShakeConfig(
     iterations = 2,

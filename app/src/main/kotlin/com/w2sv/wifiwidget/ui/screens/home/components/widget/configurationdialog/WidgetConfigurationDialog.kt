@@ -75,9 +75,12 @@ fun WidgetConfigurationDialog(
         infoDialogData?.let {
             PropertyInfoDialog(
                 data = it,
-                onDismissRequest = { infoDialogData = null }
+                onDismissRequest = remember {
+                    { infoDialogData = null }
+                }
             )
         }
+        // Show ColorPickerDialog if applicable
         colorPickerProperties?.let { properties ->
             ColorPickerDialog(
                 properties = properties,
@@ -93,8 +96,10 @@ fun WidgetConfigurationDialog(
 
                     }
                 },
-                onDismissRequest = {
-                    colorPickerProperties = null
+                onDismissRequest = remember {
+                    {
+                        colorPickerProperties = null
+                    }
                 },
             )
         }

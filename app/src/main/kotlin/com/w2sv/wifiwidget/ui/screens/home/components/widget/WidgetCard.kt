@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,8 +66,10 @@ fun WidgetCard(
             val context = LocalContext.current
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(
-                    onClick = {
-                        widgetVM.attemptWidgetPin(context)
+                    onClick = remember {
+                        {
+                            widgetVM.attemptWidgetPin(context)
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
@@ -76,8 +79,10 @@ fun WidgetCard(
                 Spacer(modifier = Modifier.width(32.dp))
 
                 WidgetConfigurationDialogButton(
-                    onClick = {
-                        showConfigurationDialog = true
+                    onClick = remember {
+                        {
+                            showConfigurationDialog = true
+                        }
                     },
                     modifier = Modifier.size(32.dp),
                 )
@@ -100,8 +105,10 @@ fun WidgetCard(
         WidgetConfigurationDialog(
             locationAccessState = locationAccessState,
             widgetConfiguration = widgetVM.configuration,
-            closeDialog = {
-                showConfigurationDialog = false
+            closeDialog = remember {
+                {
+                    showConfigurationDialog = false
+                }
             },
         )
     }
