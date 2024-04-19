@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
 import com.w2sv.core.widget.R
+import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.widget.data.refreshingBlocking
 import com.w2sv.widget.ui.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,6 +26,9 @@ class WidgetProvider : AppWidgetProvider() {
     @Inject
     lateinit var appWidgetManager: AppWidgetManager
 
+    @Inject
+    lateinit var widgetRepository: WidgetRepository
+
     /**
      * Called upon the first AppWidget instance being created.
      *
@@ -34,7 +39,7 @@ class WidgetProvider : AppWidgetProvider() {
 
         i { "onEnabled" }
 
-        widgetDataRefreshWorkerManager.enableWorkerIfRefreshingEnabled()
+        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshingBlocking)
     }
 
     /**

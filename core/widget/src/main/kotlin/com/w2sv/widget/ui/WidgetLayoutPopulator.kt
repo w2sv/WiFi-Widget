@@ -21,7 +21,7 @@ import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
-import com.w2sv.widget.data.appearance
+import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetBottomRow
 import com.w2sv.widget.utils.goToWifiSettingsIntent
 import com.w2sv.widget.utils.setTextView
@@ -38,7 +38,7 @@ class WidgetLayoutPopulator @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     private val wifiStatusGetter: WifiStatusGetter
 ) {
-    private val appearance = widgetRepository.appearance
+    private val appearance = widgetRepository.appearanceBlocking
     private val colors = appearance.getColors(context)
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =

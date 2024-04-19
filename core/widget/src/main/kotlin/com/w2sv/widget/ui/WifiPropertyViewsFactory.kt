@@ -15,7 +15,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.data.appearance
+import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -50,7 +50,7 @@ class WifiPropertyViewsFactory @Inject constructor(
         }
             .also { i { "Set propertyViewData=$it" } }
 
-        widgetRepository.appearance.let {
+        widgetRepository.appearanceBlocking.let {
             widgetColors = it.getColors(context)
             fontSize = it.fontSize
         }

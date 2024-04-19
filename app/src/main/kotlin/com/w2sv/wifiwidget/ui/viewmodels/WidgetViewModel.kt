@@ -121,6 +121,9 @@ class WidgetViewModel @Inject constructor(
         refreshingParametersMap = ReversibleStateMap.fromDataStoreFlowMap(
             scope = viewModelScope,
             dataStoreFlowMap = repository.refreshingParametersEnablementMap,
+            onStateSynced = {
+                widgetDataRefreshWorkerManager.applyRefreshingSettings(it)
+            }
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,

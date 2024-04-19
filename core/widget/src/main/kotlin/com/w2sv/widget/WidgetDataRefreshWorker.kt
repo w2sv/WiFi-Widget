@@ -8,8 +8,8 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.data.refreshing
+import com.w2sv.domain.model.WidgetRefreshingParameter
+import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
@@ -38,16 +38,19 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
 
     @Singleton
     class Manager @Inject constructor(
-        private val workManager: WorkManager,
-        private val widgetRepository: WidgetRepository,
+        private val workManager: WorkManager
     ) {
-        fun enableWorkerIfRefreshingEnabled() {
-            with(widgetRepository.refreshing) {
+        fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
+            with(widgetRefreshing) {
                 when (refreshPeriodically) {
                     true -> enableWorker(refreshOnLowBattery)
                     false -> cancelWorker()
                 }
             }
+        }
+
+        fun applyRefreshingSettings(parameters: Map<WidgetRefreshingParameter, Boolean>) {
+            applyRefreshingSettings(WidgetRefreshing(parameters))
         }
 
         private fun enableWorker(refreshOnLowBattery: Boolean) {

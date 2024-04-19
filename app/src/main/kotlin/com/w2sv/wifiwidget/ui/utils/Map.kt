@@ -1,11 +1,13 @@
 package com.w2sv.wifiwidget.ui.utils
 
 import androidx.compose.runtime.mutableStateMapOf
+import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlowMap
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 
 fun <K, V> ReversibleStateMap.Companion.fromDataStoreFlowMap(
     dataStoreFlowMap: DataStoreFlowMap<K, V>,
@@ -17,10 +19,8 @@ fun <K, V> ReversibleStateMap.Companion.fromDataStoreFlowMap(
         putAll(persistedStateFlowMap.mapValues { (_, v) -> v.value })
     }
     persistedStateFlowMap.forEach { (k, v) ->
-        scope.launch {
-            v.collect { value ->
-                map[k] = value
-            }
+        scope.collectFromFlow(v.take(2)) {
+            map[k] = v.first()
         }
     }
     return ReversibleStateMap(
