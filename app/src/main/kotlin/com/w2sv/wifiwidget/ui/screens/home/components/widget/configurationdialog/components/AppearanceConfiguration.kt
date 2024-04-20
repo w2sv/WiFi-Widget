@@ -29,8 +29,8 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.androidutils.generic.dynamicColorsSupported
 import com.w2sv.common.utils.bulletPointText
-import com.w2sv.common.utils.dynamicColorsSupported
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.extensions.getByOrdinal

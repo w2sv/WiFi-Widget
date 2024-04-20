@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui.utils
 
-import android.animation.TimeInterpolator
-import androidx.compose.animation.core.Easing
+import android.view.animation.OvershootInterpolator
+import com.w2sv.composed.extensions.toEasing
 
-fun TimeInterpolator.toEasing() = Easing {
-    getInterpolation(it)
+object Easing {
+    val overshoot = OvershootInterpolator().toEasing()
 }

@@ -39,9 +39,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.composed.extensions.toEasing
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.toEasing
+import com.w2sv.wifiwidget.ui.utils.Easing
 
 @Preview
 @Composable
@@ -186,7 +187,7 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = OvershootInterpolator().toEasing(),
+                        easing = Easing.overshoot,
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)

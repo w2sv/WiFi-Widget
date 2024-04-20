@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.common.utils.collectLatestFromFlow
-import com.w2sv.common.utils.valueEnabledKeys
+import com.w2sv.androidutils.coroutines.collectLatestFromFlow
+import com.w2sv.androidutils.coroutines.valueEnabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.PermissionRepository
@@ -43,13 +43,15 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private val wifiStateEmitter = WifiStateEmitter(
-        wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap.stateIn(  // TODO
-            viewModelScope,
-            SharingStarted.Eagerly
+        wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            getDefault = { false }
         ),
         ipSubPropertyEnablementMap = widgetRepository.ipSubPropertyEnablementMap.stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            getDefault = { false }
         ),
         wifiStatusFlow = wifiStatusMonitor.wifiStatus,
         widgetWifiPropertyViewDataFactory = widgetWifiPropertyViewDataFactory,
@@ -71,8 +73,8 @@ private class WifiStateEmitter(
 
     private fun getPropertyViewData(): Flow<WidgetWifiProperty.ViewData> =
         widgetWifiPropertyViewDataFactory(
-            properties = wifiPropertyEnablementMap.valueEnabledKeys,
-            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys.toSet(),
+            properties = wifiPropertyEnablementMap.valueEnabledKeys(),
+            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys().toSet(),
         )
 
     private fun setState(wifiStatus: WifiStatus) {

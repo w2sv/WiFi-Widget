@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.compose.material3.SnackbarVisuals
@@ -19,18 +18,15 @@ import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
 import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromDataStoreFlowMap
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
@@ -89,7 +85,7 @@ class WidgetViewModel @Inject constructor(
     val configuration = ReversibleWidgetConfiguration(
         coloringConfig = ReversibleStateFlow(
             scope = viewModelScope,
-            appliedStateFlow = repository.coloringConfig.stateIn(
+            appliedState = repository.coloringConfig.stateIn(
                 viewModelScope,
                 SharingStarted.Eagerly,
                 WidgetColoring.Config()
@@ -137,22 +133,4 @@ class WidgetViewModel @Inject constructor(
             }
         },
     )
-}
-
-@AndroidEntryPoint
-class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
-
-    @Inject
-    @WidgetPinSuccessFlow
-    lateinit var widgetPinSuccessFlow: MutableSharedFlow<Unit>
-
-    private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-
-    override fun onReceive(p0: Context?, p1: Intent?) {
-        scope.launch { widgetPinSuccessFlow.emit(Unit) }
-    }
-
-    companion object {
-        const val REQUEST_CODE = 1447
-    }
 }

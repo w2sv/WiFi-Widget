@@ -48,7 +48,7 @@ class ReversibleWidgetConfiguration(
     val anyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
             .any {
-                wifiProperties.persistedStateFlowMap.getValue(it).value
+                wifiProperties.appliedStateMap.getValue(it).value
             }
 
     fun onLocationAccessPermissionStatusChanged(
@@ -97,7 +97,7 @@ class ReversibleWidgetConfiguration(
     private fun setLocationAccessRequiringPropertyEnablementAndSync(value: Boolean): List<WidgetWifiProperty.NonIP.LocationAccessRequiring> {
         val changedProperties = mutableListOf<WidgetWifiProperty.NonIP.LocationAccessRequiring>()
         WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
-            if (wifiProperties.persistedStateFlowMap.getValue(it).value != value) {
+            if (wifiProperties.appliedStateMap.getValue(it).value != value) {
                 wifiProperties[it] = value
                 changedProperties.add(it)
             }

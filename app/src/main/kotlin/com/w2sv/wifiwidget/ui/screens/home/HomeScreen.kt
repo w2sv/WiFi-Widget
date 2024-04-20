@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbar
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -44,7 +45,6 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -106,7 +106,7 @@ fun HomeScreen(
                 }
             }
 
-            if (isLandscapeModeActivated) {
+            if (isLandscapeModeActive) {
                 LandscapeMode(
                     paddingValues = paddingValues,
                     wifiStatusCard = wifiStatusCard,

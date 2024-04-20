@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import android.content.Context
 import androidx.compose.runtime.Immutable
+import com.w2sv.composed.nullableListSaver
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.wifiwidget.ui.utils.nullableListSaver
 
 @Immutable
 data class InfoDialogData(

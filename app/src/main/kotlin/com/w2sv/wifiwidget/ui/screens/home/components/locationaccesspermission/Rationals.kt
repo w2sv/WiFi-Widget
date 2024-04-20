@@ -13,13 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.composed.rememberStyledTextResource
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
-import com.w2sv.wifiwidget.ui.utils.styledTextResource
 
 @Immutable
 sealed interface LocationAccessPermissionRequestTrigger {
@@ -87,7 +87,7 @@ private fun LocationAccessPermissionRational(
         },
         text = {
             Text(
-                text = styledTextResource(id = R.string.location_access_permission_rational),
+                text = rememberStyledTextResource(id = R.string.location_access_permission_rational),
                 textAlign = TextAlign.Center,
             )
         },
@@ -127,7 +127,7 @@ private fun BackgroundLocationAccessRational(
             InfoIcon()
         },
         text = {
-            Text(text = styledTextResource(id = R.string.background_location_access_rational))
+            Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational))
         },
     )
 }

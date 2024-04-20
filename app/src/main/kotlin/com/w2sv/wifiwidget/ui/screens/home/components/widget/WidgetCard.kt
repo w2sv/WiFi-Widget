@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.common.utils.isLocationEnabledCompat
+import com.w2sv.androidutils.services.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
@@ -131,7 +131,7 @@ private fun ShowSnackbarOnWidgetPin(
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                locationManager.isLocationEnabledCompat == false -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                !locationManager.isLocationEnabledCompat() -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                         kind = SnackbarKind.Error,

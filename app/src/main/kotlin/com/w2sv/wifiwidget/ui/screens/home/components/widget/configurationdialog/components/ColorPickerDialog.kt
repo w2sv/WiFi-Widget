@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
+import com.w2sv.composed.nullableListSaver
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
-import com.w2sv.wifiwidget.ui.utils.nullableListSaver
 
 @Stable
 class ColorPickerProperties(

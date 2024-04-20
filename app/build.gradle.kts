@@ -123,6 +123,8 @@ dependencies {
     implementation(libs.kotlinutils)
     implementation(libs.androidutils)
     implementation(libs.colorpicker)
+    implementation(libs.composed)
+    implementation(libs.composed.permissions)
 
     // AndroidX libraries
     implementation(libs.androidx.core)

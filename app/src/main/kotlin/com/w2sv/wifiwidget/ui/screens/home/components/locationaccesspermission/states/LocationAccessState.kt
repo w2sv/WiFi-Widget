@@ -16,6 +16,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
+import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -26,8 +27,6 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
-import com.w2sv.wifiwidget.ui.utils.SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
-import com.w2sv.wifiwidget.ui.utils.isLaunchingSuppressed
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -113,7 +112,7 @@ class LocationAccessState(
     private val snackbarHostState: SnackbarHostState,
     private val scope: CoroutineScope,
     private val context: Context
-): MultiplePermissionsState by permissionsState {
+) : MultiplePermissionsState by permissionsState {
     val isGranted: Boolean by ::allPermissionsGranted
 
     val newStatus get() = _newStatus.asSharedFlow()
@@ -184,9 +183,7 @@ class LocationAccessState(
 
     val showRational = rationalShown.stateIn(
         scope,
-        SharingStarted.WhileSubscribed(
-            SHARING_STARTED_WHILE_SUBSCRIBED_TIMEOUT
-        )
+        SharingStarted.Eagerly
     )
         .mapState { !it }
 

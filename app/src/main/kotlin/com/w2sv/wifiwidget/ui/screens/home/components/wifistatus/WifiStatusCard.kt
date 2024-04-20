@@ -7,12 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.w2sv.composed.extensions.thenIf
+import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
-import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
-import com.w2sv.wifiwidget.ui.utils.thenIf
 
 @Composable
 fun WifiStatusCard(
@@ -37,7 +37,7 @@ fun WifiStatusCard(
                             modifier = Modifier
                                 .padding(top = 12.dp)
                                 .thenIf(
-                                    condition = isLandscapeModeActivated,
+                                    condition = isLandscapeModeActive,
                                     onFalse = { fillMaxHeight(0.3f) }
                                 )
                         )
