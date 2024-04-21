@@ -14,7 +14,7 @@ baselineprofile = "1.2.3"
 protobuf-plugin = "0.9.4"
 
 # Libraries
-androidx-activity-compose = "1.8.2"
+androidx-activity-compose = "1.9.0"
 compose-compiler = "1.5.11"
 compose-tooling = "1.6.5"
 compose-material3 = "1.2.1"
