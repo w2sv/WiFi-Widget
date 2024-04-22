@@ -152,7 +152,7 @@ class LocationAccessState(
                         msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
                         kind = SnackbarKind.Error,
                         action = SnackbarAction(
-                            label = context.getString(R.string.go_to_settings),
+                            label = context.getString(R.string.go_to_app_settings),
                             callback = {
                                 goToAppSettings(context)
                             },

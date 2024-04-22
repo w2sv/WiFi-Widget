@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.isLandscapeModeActive
+import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerDialog
@@ -58,7 +59,7 @@ fun WidgetConfigurationDialog(
             onTrue = { fillMaxHeight() }
         ),
         iconRes = com.w2sv.core.common.R.drawable.ic_settings_24,
-        title = stringResource(id = com.w2sv.core.common.R.string.configure_widget),
+        title = stringResource(id = R.string.widget_configuration),
         applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
     ) {
         WidgetConfigurationDialogContent(

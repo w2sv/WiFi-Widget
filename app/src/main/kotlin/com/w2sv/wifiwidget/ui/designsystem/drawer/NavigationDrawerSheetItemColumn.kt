@@ -50,7 +50,7 @@ private object AppUrl {
 }
 
 @Composable
-internal fun NavigationDrawerSheetContent(
+internal fun NavigationDrawerSheetItemColumn(
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
     appVM: AppViewModel = viewModel()

@@ -24,17 +24,19 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 
 @Composable
-fun NavigationDrawerSheet(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+fun NavigationDrawerSheet(closeDrawer: () -> Unit, modifier: Modifier = Modifier) {
     ModalDrawerSheet(modifier = modifier) {
         Column(
             modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 24.dp)
+                .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Header()
             HorizontalDivider(modifier = Modifier.padding(top = 18.dp, bottom = 16.dp))
-            content()
+            NavigationDrawerSheetItemColumn(
+                closeDrawer = closeDrawer,
+            )
         }
     }
 }
@@ -50,14 +52,8 @@ private fun Header(modifier: Modifier = Modifier) {
                 .background(MaterialTheme.colorScheme.primary),
         )
         Spacer(modifier = Modifier.height(22.dp))
-        VersionText()
+        Text(
+            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
+        )
     }
-}
-
-@Composable
-private fun VersionText(modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
-        modifier = modifier,
-    )
 }

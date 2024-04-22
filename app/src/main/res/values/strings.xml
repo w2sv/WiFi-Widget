@@ -45,7 +45,7 @@
     <string name="maybe_later">Maybe later</string>
     <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system every 15 min. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>
-    <string name="go_to_settings">Go to settings</string>
+    <string name="go_to_app_settings">Go to the app settings</string>
     <string name="go_to_wifi_settings_cd">Go to your device\'s WiFi settings.</string>
     <string name="click_to_copy_to_clipboard">Click to copy to clipboard</string>
     <string name="wifi_status">WiFi Status</string>
@@ -61,4 +61,5 @@
     <string name="background_opacity">Background\nopacity</string>
     <string name="font_size">Font size</string>
     <string name="widget_pinning_not_supported_by_your_device_launcher">Widget pinning is not supported by your device launcher.</string>
+    <string name="widget_configuration">Widget Configuration</string>
 </resources>
