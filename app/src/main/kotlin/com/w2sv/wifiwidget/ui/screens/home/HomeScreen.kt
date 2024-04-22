@@ -165,16 +165,17 @@ private fun PortraitMode(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues),
+            .padding(paddingValues)
+            .padding(bottom = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(Modifier.weight(0.15f))
-        wifiStatusCard(Modifier.fillMaxWidth(0.77f))
-        Spacer(Modifier.weight(0.2f))
-        widgetCard(Modifier.fillMaxWidth(0.8f))
-        Spacer(Modifier.weight(0.3f))
-        CopyrightText(modifier = Modifier.padding(bottom = 10.dp))
+        wifiStatusCard(Modifier.fillMaxWidth(0.8f))
+        Spacer(Modifier.weight(0.15f))
+        widgetCard(Modifier.fillMaxWidth(0.84f))
+        Spacer(Modifier.weight(0.15f))
+        CopyrightText()
     }
 }
 

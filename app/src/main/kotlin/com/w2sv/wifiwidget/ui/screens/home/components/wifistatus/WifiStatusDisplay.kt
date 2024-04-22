@@ -55,10 +55,11 @@ fun WifiStatusDisplay(
         Icon(
             painter = painterResource(id = wifiStatus.iconRes),
             contentDescription = null,
-            modifier = Modifier.size(42.dp),
+            modifier = Modifier
+                .size(42.dp),
             tint = MaterialTheme.colorScheme.primary,
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Text(text = stringResource(id = wifiStatus.labelRes))
     }
 }

@@ -2,8 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -32,14 +30,15 @@ fun HomeScreenCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 22.dp, horizontal = 18.dp),
+                .padding(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconHeader(
                 properties = iconHeaderProperties,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = headerRowBottomSpacing)
             )
-            Spacer(modifier = Modifier.height(headerRowBottomSpacing))
             content()
         }
     }

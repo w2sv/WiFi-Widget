@@ -48,7 +48,6 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -86,6 +85,7 @@ fun WifiPropertyDisplay(
                 is PropertyListElement.Property -> {
                     PropertyList(viewDataList = viewDataList.toImmutableList())
                 }
+
                 else -> {
                     PropertyLoadingView(modifier = Modifier.fillMaxSize())
                 }
@@ -176,6 +176,18 @@ private fun PropertyList(
             .nestedListBackground(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        item {
+            Header(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        top = 8.dp,
+                        bottom = 2.dp,
+                        start = horizontalPadding,
+                        end = horizontalPadding
+                    )
+            )
+        }
         itemsIndexed(viewDataList) { i, viewData ->
             when (viewData) {
                 is PropertyListElement.Property -> {
@@ -186,9 +198,6 @@ private fun PropertyList(
                             .fillMaxWidth()
                             .heightIn(min = 26.dp)
                             .padding(horizontal = horizontalPadding)
-                            .thenIf(i == 0) {
-                                padding(top = 8.dp)
-                            },
                     )
                     (viewData.property as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
                         PrefixLengthDisplayRow(
@@ -203,7 +212,6 @@ private fun PropertyList(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 2.dp),
-                            thickness = 1.dp,
                             color = MaterialTheme.colorScheme.surfaceColorAtElevation(
                                 homeScreenCardElevation
                             )
@@ -216,6 +224,28 @@ private fun PropertyList(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun Header(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier,
+    ) {
+        Text(
+            text = stringResource(id = R.string.properties),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 17.sp,
+            modifier = Modifier.padding(end = 8.dp)
+        )
+        Text(
+            text = stringResource(R.string.click_to_copy_to_clipboard),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp,
+            maxLines = 1,
+        )
     }
 }
 
