@@ -1,1 +1,6 @@
-- Fix: persisting of the widget appearance configuration
+- Enable edge-to-edge
+- Add go to WiFi settings on click functionality to widget view when no connection available
+- Fix faulty application of widget appearance on first widget refresh/pin after app state was cleared from memory
+- Fix rare widget property view factory crashes
+- UI improvements
+- Performance improvements

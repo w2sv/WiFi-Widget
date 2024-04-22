@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class BackgroundLocationAccessState(
     private val permissionState: PermissionState,
     private val scope: CoroutineScope
-): PermissionState by permissionState {
+) : PermissionState by permissionState {
 
     val isGranted by status::isGranted
 
