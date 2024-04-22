@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
 import android.content.Context
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -78,7 +81,36 @@ fun WifiPropertyDisplay(
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically()
     ) {
-        PropertyList(viewDataList = viewDataList.toImmutableList())
+        AnimatedContent(viewDataList.firstOrNull(), label = "") {
+            when (it) {
+                is PropertyListElement.Property -> {
+                    PropertyList(viewDataList = viewDataList.toImmutableList())
+                }
+                else -> {
+                    PropertyLoadingView(modifier = Modifier.fillMaxSize())
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PropertyLoadingView(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(36.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
+            text = stringResource(R.string.retrieving_properties),
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -133,116 +165,96 @@ private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WidgetWifiProperty
 }
 
 @Composable
-private fun LoadingPlaceholder(modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(36.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        Spacer(modifier = Modifier.height(10.dp))
-        Text(
-            text = stringResource(R.string.getting_data),
-            fontSize = 14.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-    }
-}
-
-private val padding = 12.dp
-
-@Composable
 private fun PropertyList(
     viewDataList: ImmutableList<PropertyListElement>,
     modifier: Modifier = Modifier
 ) {
-    when (viewDataList.firstOrNull()) {
-        is PropertyListElement.Property -> {
-            LazyColumn(
-                modifier = modifier
-                    .nestedListBackground()
-                    .padding(vertical = padding),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                item {
-                    HeaderRow(
+    val onPropertyRowClick = rememberOnPropertyRowClick()
+
+    LazyColumn(
+        modifier = modifier
+            .nestedListBackground(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        itemsIndexed(viewDataList) { i, viewData ->
+            when (viewData) {
+                is PropertyListElement.Property -> {
+                    PropertyDisplayRow(
+                        viewData = viewData.property,
+                        onClick = onPropertyRowClick,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 2.dp, start = padding, end = padding)
+                            .heightIn(min = 26.dp)
+                            .padding(horizontal = horizontalPadding)
+                            .thenIf(i == 0) {
+                                padding(top = 8.dp)
+                            },
                     )
-                }
-                itemsIndexed(viewDataList) { i, viewData ->
-                    when (viewData) {
-                        is PropertyListElement.Property -> {
-                            PropertyDisplayRow(
-                                viewData = viewData.property,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .heightIn(min = 26.dp)
-                                    .padding(horizontal = padding),
-                            )
-                            (viewData.property as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
-                                PrefixLengthDisplayRow(
-                                    prefixLengthText = it,
-                                    modifier = Modifier
-                                        .padding(horizontal = padding)
-                                        .fillMaxWidth()
-                                )
-                            }
-                            if (i != viewDataList.lastIndex) {
-                                HorizontalDivider(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 1.dp),
-                                    thickness = 1.dp,
-                                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                        homeScreenCardElevation
-                                    )
-                                )
-                            }
-                        }
-
-                        is PropertyListElement.LoadingAnimation -> {
-                            CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                        }
+                    (viewData.property as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
+                        PrefixLengthDisplayRow(
+                            prefixLengthText = it,
+                            modifier = Modifier
+                                .padding(horizontal = horizontalPadding)
+                                .fillMaxWidth()
+                        )
                     }
+                    if (i != viewDataList.lastIndex) {
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                homeScreenCardElevation
+                            )
+                        )
+                    }
+                }
+
+                is PropertyListElement.LoadingAnimation -> {
+                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
                 }
             }
         }
+    }
+}
 
-        else -> {
-            LoadingPlaceholder()
+private typealias OnPropertyRowClick = (WidgetWifiProperty.ViewData, CharSequence) -> Unit
+
+@Composable
+private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+    val scope: CoroutineScope = rememberCoroutineScope()
+    val context: Context = LocalContext.current
+
+    return remember {
+        { viewData, label ->
+            clipboardManager.setText(AnnotatedString(viewData.value))
+            scope.launch {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        msg = buildAnnotatedString {
+                            append("${context.getString(R.string.copied)} ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                                append(label)
+                            }
+                            append(" ${context.getString(R.string.to_clipboard)}.")
+                        },
+                        kind = SnackbarKind.Success,
+                    )
+                )
+            }
         }
     }
 }
 
-@Composable
-private fun HeaderRow(modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier,
-    ) {
-        Text(
-            text = stringResource(id = R.string.properties),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 17.sp,
-        )
-        Text(
-            text = stringResource(R.string.click_to_copy_to_clipboard),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp,
-            maxLines = 1,
-        )
-    }
-}
+private val horizontalPadding = 12.dp
 
 @Composable
 private fun PropertyDisplayRow(
     viewData: WidgetWifiProperty.ViewData,
+    onClick: OnPropertyRowClick,
     modifier: Modifier = Modifier
 ) {
     val context: Context = LocalContext.current
@@ -265,28 +277,10 @@ private fun PropertyDisplayRow(
         }
     }
 
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
-    val scope: CoroutineScope = rememberCoroutineScope()
-
     Row(
         modifier = modifier
             .clickable {
-                clipboardManager.setText(AnnotatedString(viewData.value))
-                scope.launch {
-                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                        AppSnackbarVisuals(
-                            msg = buildAnnotatedString {
-                                append("${context.getString(R.string.copied)} ")
-                                withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                                    append(label)
-                                }
-                                append(" ${context.getString(R.string.to_clipboard)}.")
-                            },
-                            kind = SnackbarKind.Success,
-                        )
-                    )
-                }
+                onClick(viewData, label)
             },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
