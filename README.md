@@ -43,7 +43,7 @@
 
 ### In-App
 
-- Clean Material 3 Design, featuring plenty of animations
+- Clean Material 3 Design, featuring animations wherever they're appropriate
 - Supports light & dark theme, as well as dynamic colors
 - Different layouts for landscape & portrait mode
 - Live WiFi Status display with property copy-to-clipboard functionality
