@@ -18,6 +18,7 @@ interface WidgetRepository {
 
     val wifiPropertyEnablementMap: DataStoreFlowMap<WidgetWifiProperty, Boolean>
     val ipSubPropertyEnablementMap: DataStoreFlowMap<WidgetWifiProperty.IP.SubProperty, Boolean>
-    val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean>
     val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomRowElement, Boolean>
+    val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean>
+    val refreshIntervalMinutes: DataStoreFlow<Int>
 }

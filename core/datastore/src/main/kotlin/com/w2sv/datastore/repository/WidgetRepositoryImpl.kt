@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.datastorage.preferences_datastore.DataStoreEntry
 import com.w2sv.androidutils.datastorage.preferences_datastore.PreferencesDataStoreRepository
+import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlowMap
 import com.w2sv.datastore.proto.widget_coloring.WidgetColoringDataSource
 import com.w2sv.domain.model.FontSize
@@ -56,11 +57,14 @@ class WidgetRepositoryImpl @Inject constructor(
                 .associateWith { it.isEnabledDse }
         )
 
+    override val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomRowElement, Boolean> =
+        dataStoreFlowMap(WidgetBottomRowElement.entries.associateWith { it.isEnabledDSE })
+
     override val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean> =
         dataStoreFlowMap(WidgetRefreshingParameter.entries.associateWith { it.isEnabledDSE })
 
-    override val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomRowElement, Boolean> =
-        dataStoreFlowMap(WidgetBottomRowElement.entries.associateWith { it.isEnabledDSE })
+    override val refreshIntervalMinutes: DataStoreFlow<Int> =
+        dataStoreFlow(intPreferencesKey("refreshIntervalMinutes"), 15)
 }
 
 private val WidgetWifiProperty.isEnabledDSE

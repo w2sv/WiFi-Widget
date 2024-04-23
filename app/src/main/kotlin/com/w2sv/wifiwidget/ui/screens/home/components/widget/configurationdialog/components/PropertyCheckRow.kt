@@ -42,7 +42,7 @@ import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyConfigurationElement
 import kotlinx.collections.immutable.ImmutableList
 
 // For alignment of primary check row click elements and sub property click elements
@@ -50,7 +50,7 @@ private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
 fun PropertyCheckRowColumn(
-    dataList: ImmutableList<PropertyCheckRowData<*>>,
+    dataList: ImmutableList<PropertyConfigurationElement.CheckRow<*>>,
     modifier: Modifier = Modifier,
     showInfoDialog: ((InfoDialogData) -> Unit)? = null
 ) {
@@ -58,7 +58,7 @@ fun PropertyCheckRowColumn(
         dataList
             .forEach { data ->
                 when (data) {
-                    is PropertyCheckRowData.WithoutSubProperties -> {
+                    is PropertyConfigurationElement.CheckRow.WithoutSubProperties -> {
                         PropertyCheckRow(
                             data = data,
                             showInfoDialog = showInfoDialog,
@@ -78,7 +78,7 @@ fun PropertyCheckRowColumn(
                         )
                     }
 
-                    is PropertyCheckRowData.WithSubProperties -> {
+                    is PropertyConfigurationElement.CheckRow.WithSubProperties -> {
                         var expandSubProperties by rememberSaveable {
                             mutableStateOf(false)
                         }
@@ -112,7 +112,7 @@ fun PropertyCheckRowColumn(
 
                         AnimatedVisibility(visible = expandSubProperties) {
                             SubPropertyCheckRowColumn(
-                                dataList = data.subPropertyCheckRowDataList,
+                                configurationElements = data.subPropertyCheckRowDataList,
                                 modifier = data.subPropertyColumnModifier
                                     .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
                                     .nestedListBackground()
@@ -127,28 +127,36 @@ fun PropertyCheckRowColumn(
 
 @Composable
 private fun SubPropertyCheckRowColumn(
-    dataList: ImmutableList<PropertyCheckRowData<*>>,
+    configurationElements: ImmutableList<PropertyConfigurationElement>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        dataList.forEach { checkRowData ->
-            if ((checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
-                Text(
-                    text = stringResource(R.string.versions),
-                    modifier = Modifier.padding(top = subPropertyColumnPadding),
-                    fontSize = subPropertyCheckRowColumnFontSize,
-                    fontWeight = FontWeight.SemiBold
-                )
+        configurationElements.forEach { element ->
+            when (element) {
+                is PropertyConfigurationElement.CheckRow<*> -> {
+                    if ((element.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
+                        Text(
+                            text = stringResource(R.string.versions),
+                            modifier = Modifier.padding(top = subPropertyColumnPadding),
+                            fontSize = subPropertyCheckRowColumnFontSize,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                    PropertyCheckRow(
+                        data = element,
+                        modifier = Modifier.thenIf(
+                            condition = (element.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
+                            onTrue = { padding(start = addressVersionEnablementStartPadding) }
+                        ),
+                        fontSize = subPropertyCheckRowColumnFontSize,
+                        makeText = ::bulletPointText,
+                    )
+                }
+
+                is PropertyConfigurationElement.Custom -> {
+                    element.content()
+                }
             }
-            PropertyCheckRow(
-                data = checkRowData,
-                modifier = Modifier.thenIf(
-                    condition = (checkRowData.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
-                    onTrue = { padding(start = addressVersionEnablementStartPadding) }
-                ),
-                fontSize = subPropertyCheckRowColumnFontSize,
-                makeText = ::bulletPointText,
-            )
         }
     }
 }
@@ -159,7 +167,7 @@ private val addressVersionEnablementStartPadding = 16.dp
 
 @Composable
 private fun PropertyCheckRow(
-    data: PropertyCheckRowData<*>,
+    data: PropertyConfigurationElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,

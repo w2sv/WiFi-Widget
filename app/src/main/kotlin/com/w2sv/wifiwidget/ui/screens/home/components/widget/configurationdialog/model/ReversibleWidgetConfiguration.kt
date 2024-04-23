@@ -29,6 +29,7 @@ class ReversibleWidgetConfiguration(
     val ipSubProperties: ReversibleStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: ReversibleStateMap<WidgetBottomRowElement, Boolean>,
     val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
+    val refreshIntervalMinutes: ReversibleStateFlow<Int>,
     private val scope: CoroutineScope,
     private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     onStateSynced: suspend () -> Unit

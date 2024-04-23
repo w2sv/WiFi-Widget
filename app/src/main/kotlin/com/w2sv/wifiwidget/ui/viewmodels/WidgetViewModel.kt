@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
-import com.w2sv.common.constants.Extra
 import com.w2sv.common.di.PackageName
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
@@ -79,8 +78,8 @@ class WidgetViewModel @Inject constructor(
     // Configuration
     // =========
 
-    val showConfigurationDialogInitially =
-        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
+    val showConfigurationDialogInitially = true
+//        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     val configuration = ReversibleWidgetConfiguration(
         coloringConfig = ReversibleStateFlow(
@@ -120,6 +119,11 @@ class WidgetViewModel @Inject constructor(
             onStateSynced = {
                 widgetDataRefreshWorkerManager.applyRefreshingSettings(it)
             }
+        ),
+        refreshIntervalMinutes = ReversibleStateFlow(
+            scope = viewModelScope,
+            dataStoreFlow = repository.refreshIntervalMinutes,
+            started = SharingStarted.Eagerly
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,
