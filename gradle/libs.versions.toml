@@ -39,6 +39,7 @@ colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
 kotlinutils = "com.github.w2sv:KotlinUtils:0.0.8-rc1"
 composed = { module = "com.github.w2sv.Composed:composed", version.ref = "composed" }
 composed-permissions = { module = "com.github.w2sv.Composed:permissions", version.ref = "composed" }
+composeWheelPicker = "com.github.w2sv:compose-wheel-picker:0.0.1-rc3"
 
 # Androidx
 androidx-appcompat = "androidx.appcompat:appcompat:1.6.1"

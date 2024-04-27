@@ -43,7 +43,7 @@ fun WidgetConfigurationDialog(
         mutableStateOf(null)
     }
     var showRefreshIntervalConfigurationDialog by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(true)
     }
 
     ConfigurationDialog(
