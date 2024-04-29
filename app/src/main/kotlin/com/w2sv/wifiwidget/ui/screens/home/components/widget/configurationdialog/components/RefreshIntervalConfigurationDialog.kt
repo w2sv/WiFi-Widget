@@ -24,24 +24,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.w2sv.common.utils.minutes
 import com.w2sv.wheelpicker.WheelPicker
 import com.w2sv.wheelpicker.WheelPickerState
 import com.w2sv.wheelpicker.rememberWheelPickerState
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import slimber.log.i
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun RefreshIntervalConfigurationDialog(
-    intervalMinutes: Int,
-    setInterval: (Int) -> Unit,
+    interval: Duration,
+    setInterval: (Duration) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var duration by remember(intervalMinutes) {
-        mutableStateOf(intervalMinutes.minutes)
+    var configuredInterval by remember(interval) {
+        mutableStateOf(interval)
     }
     var isInvalidSelection by rememberSaveable {
         mutableStateOf(false)
@@ -49,20 +51,25 @@ fun RefreshIntervalConfigurationDialog(
 
     ConfigurationDialog(
         onDismissRequest = onDismissRequest,
-        onApplyButtonPress = { setInterval(duration.inWholeMinutes.toInt()) },
-        applyButtonEnabled = !isInvalidSelection && duration.inWholeMinutes.toInt() != intervalMinutes,
+        onApplyButtonPress = remember {
+            {
+                setInterval(configuredInterval)
+                onDismissRequest()
+            }
+        },
+        applyButtonEnabled = !isInvalidSelection && configuredInterval != interval,
         title = stringResource(R.string.refresh_interval),
         modifier = modifier
     ) {
         val hourPickerState = rememberWheelPickerState(
             itemCount = 24,
-            startIndex = duration.inWholeHours.toInt(),
+            startIndex = configuredInterval.inWholeHours.toInt(),
             unfocusedItemCountToEitherSide = 2
         )
         val minutePickerState =
             rememberWheelPickerState(
                 itemCount = 60,
-                startIndex = duration.inWholeMinutes.toInt() % 60,
+                startIndex = configuredInterval.minutes,
                 unfocusedItemCountToEitherSide = 2
             )
 
@@ -72,8 +79,8 @@ fun RefreshIntervalConfigurationDialog(
             isInvalidSelection =
                 hourPickerState.snappedIndex == 0 && minutePickerState.snappedIndex < 15
             if (!isInvalidSelection) {
-                duration =
-                    hourPickerState.snappedIndex.hours + hourPickerState.snappedIndex.minutes
+                configuredInterval =
+                    hourPickerState.snappedIndex.hours + minutePickerState.snappedIndex.minutes
             }
         }
 
@@ -99,7 +106,7 @@ fun RefreshIntervalConfigurationDialog(
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     Text(
-                        text = "Interval shorter than 15 minutes not possible!",
+                        text = stringResource(R.string.interval_shorter_than_15_minutes_not_possible),
                         color = MaterialTheme.colorScheme.error
                     )
                 }

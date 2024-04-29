@@ -64,4 +64,6 @@
     <string name="widget_configuration">Widget Configuration</string>
     <string name="open_the_refresh_interval_configuration_dialog">Open the refresh interval configuration dialog.</string>
     <string name="refresh_interval">Refresh Interval</string>
+    <string name="interval">Interval</string>
+    <string name="interval_shorter_than_15_minutes_not_possible">Interval shorter than 15 minutes not possible!</string>
 </resources>

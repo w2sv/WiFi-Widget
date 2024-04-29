@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.utils.bulletPointText
+import com.w2sv.common.utils.minutes
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -48,7 +49,6 @@ import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlin.time.Duration.Companion.minutes
 
 private val verticalSectionHeaderPadding = 18.dp
 private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
@@ -163,13 +163,17 @@ fun WidgetConfigurationDialogContent(
                                                     .fillMaxWidth(),
                                                 verticalAlignment = Alignment.CenterVertically
                                             ) {
-                                                Text(text = bulletPointText("Interval"))
+                                                Text(text = bulletPointText(stringResource(R.string.interval)))
                                                 Spacer(modifier = Modifier.weight(1f))
 
-                                                val intervalMinutes by widgetConfiguration.refreshIntervalMinutes.collectAsState()
-                                                Text(text = remember(intervalMinutes) {
-                                                    intervalMinutes.minutes.run {
-                                                        "${inWholeHours}h ${inWholeMinutes}m"
+                                                val interval by widgetConfiguration.refreshInterval.collectAsState()
+                                                Text(text = remember(interval) {
+                                                    interval.run {
+                                                        when {
+                                                            inWholeHours == 0L -> "${minutes}m"
+                                                            minutes == 0 -> "${inWholeHours}h"
+                                                            else -> "${inWholeHours}h ${minutes}m"
+                                                        }
                                                     }
                                                 })
                                                 Icon(

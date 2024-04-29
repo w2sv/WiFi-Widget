@@ -43,7 +43,7 @@ fun WidgetConfigurationDialog(
         mutableStateOf(null)
     }
     var showRefreshIntervalConfigurationDialog by rememberSaveable {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     ConfigurationDialog(
@@ -114,9 +114,9 @@ fun WidgetConfigurationDialog(
         }
         if (showRefreshIntervalConfigurationDialog) {
             RefreshIntervalConfigurationDialog(
-                intervalMinutes = widgetConfiguration.refreshIntervalMinutes.collectAsState().value,
+                interval = widgetConfiguration.refreshInterval.collectAsState().value,
                 setInterval = remember {
-                    { widgetConfiguration.refreshIntervalMinutes.value = it }
+                    { widgetConfiguration.refreshInterval.value = it }
                 },
                 onDismissRequest = remember {
                     { showRefreshIntervalConfigurationDialog = false }

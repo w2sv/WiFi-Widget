@@ -81,6 +81,12 @@ class WidgetViewModel @Inject constructor(
     val showConfigurationDialogInitially = true
 //        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
+    private val refreshInterval = ReversibleStateFlow(
+        scope = viewModelScope,
+        dataStoreFlow = repository.refreshInterval,
+        started = SharingStarted.Eagerly
+    )
+
     val configuration = ReversibleWidgetConfiguration(
         coloringConfig = ReversibleStateFlow(
             scope = viewModelScope,
@@ -113,17 +119,16 @@ class WidgetViewModel @Inject constructor(
             scope = viewModelScope,
             dataStoreFlowMap = repository.bottomRowElementEnablementMap,
         ),
+        refreshInterval = refreshInterval,
         refreshingParametersMap = ReversibleStateMap.fromDataStoreFlowMap(
             scope = viewModelScope,
             dataStoreFlowMap = repository.refreshingParametersEnablementMap,
             onStateSynced = {
-                widgetDataRefreshWorkerManager.applyRefreshingSettings(it)
+                widgetDataRefreshWorkerManager.applyRefreshingSettings(
+                    parameters = it,
+                    interval = refreshInterval.value
+                )
             }
-        ),
-        refreshIntervalMinutes = ReversibleStateFlow(
-            scope = viewModelScope,
-            dataStoreFlow = repository.refreshIntervalMinutes,
-            started = SharingStarted.Eagerly
         ),
         scope = viewModelScope,
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,
