@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -13,24 +13,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.composed.rememberStyledTextResource
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.DialogButton
-import com.w2sv.wifiwidget.ui.components.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.DialogButton
+import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.FlowCollectionEffect
-import com.w2sv.wifiwidget.ui.utils.styledTextResource
+import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 
-@Stable
+@Immutable
 sealed interface LocationAccessPermissionRequestTrigger {
+    @Immutable
     data object InitialAppLaunch : LocationAccessPermissionRequestTrigger
+
+    @Immutable
     data class PropertyCheckChange(val property: WidgetWifiProperty.NonIP.LocationAccessRequiring) :
         LocationAccessPermissionRequestTrigger
 }
 
-@Stable
+@Immutable
 sealed interface LocationAccessPermissionStatus {
+    @Immutable
     data object NotGranted : LocationAccessPermissionStatus
+
+    @Immutable
     data class Granted(val trigger: LocationAccessPermissionRequestTrigger?) :
         LocationAccessPermissionStatus
 
@@ -54,13 +60,13 @@ fun LocationAccessRationals(state: LocationAccessState) {
             mutableStateOf(false)
         }
 
-        FlowCollectionEffect(backgroundAccessState.showRational) {
+        CollectFromFlow(backgroundAccessState.showRational) {
             showRational = true
         }
 
         if (showRational) {
             BackgroundLocationAccessRational(
-                launchPermissionRequest = { backgroundAccessState.launchRequest() },
+                launchPermissionRequest = { backgroundAccessState.launchPermissionRequest() },
                 onDismissRequest = {
                     showRational = false
                 }
@@ -81,7 +87,7 @@ private fun LocationAccessPermissionRational(
         },
         text = {
             Text(
-                text = styledTextResource(id = R.string.location_access_permission_rational),
+                text = rememberStyledTextResource(id = R.string.location_access_permission_rational),
                 textAlign = TextAlign.Center,
             )
         },
@@ -121,7 +127,7 @@ private fun BackgroundLocationAccessRational(
             InfoIcon()
         },
         text = {
-            Text(text = styledTextResource(id = R.string.background_location_access_rational))
+            Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational))
         },
     )
 }

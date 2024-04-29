@@ -1,5 +1,6 @@
-- Simplified location access permission management
-- Enabled automatic disablement of location requiring properties upon revoking location access permission
-- Aligned properties being displayed in-app with the selected widget properties
-- Fixed in-app property display bug, that would randomly make certain properties disappear
-- UI & performance improvements
+- Enable edge-to-edge
+- Add go to WiFi settings on click functionality to widget view when no connection available
+- Fix faulty application of widget appearance on first widget refresh/pin after app state was cleared from memory
+- Fix rare widget property view factory crashes
+- UI improvements
+- Performance improvements

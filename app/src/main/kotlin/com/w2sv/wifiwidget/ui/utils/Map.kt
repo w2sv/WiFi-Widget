@@ -1,24 +1,23 @@
 package com.w2sv.wifiwidget.ui.utils
 
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.snapshots.SnapshotStateMap
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
+import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlowMap
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
+import com.w2sv.composed.extensions.toMutableStateMap
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 
-fun <K, V> Map<K, V>.getMutableStateMap(): SnapshotStateMap<K, V> =
-    mutableStateMapOf<K, V>()
-        .apply { putAll(this@getMutableStateMap) }
-
-fun <K, V> UnconfirmedStateMap.Companion.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-    persistedFlowMap: Map<K, Flow<V>>,
+fun <K, V> ReversibleStateMap.Companion.fromDataStoreFlowMap(
+    dataStoreFlowMap: DataStoreFlowMap<K, V>,
     scope: CoroutineScope,
-    syncState: suspend (Map<K, V>) -> Unit,
     onStateSynced: suspend (Map<K, V>) -> Unit = {}
-): UnconfirmedStateMap<K, V> = fromPersistedFlowMapWithSynchronousInitial(
-    persistedFlowMap = persistedFlowMap,
-    scope = scope,
-    makeMap = { it.getMutableStateMap() },
-    syncState = syncState,
-    onStateSynced = onStateSynced
-)
+): ReversibleStateMap<K, V> {
+    return ReversibleStateMap(
+        appliedStateMap = dataStoreFlowMap.stateIn(scope, SharingStarted.WhileSubscribed()),
+        makeMap = {
+            it.toMutableStateMap()
+        },
+        syncState = dataStoreFlowMap::save,
+        onStateSynced = onStateSynced,
+        appliedStateMapBasedStateAlignmentAssuranceScope = scope
+    )
+}

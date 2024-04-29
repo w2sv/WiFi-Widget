@@ -2,85 +2,107 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.common.R
-import com.w2sv.wifiwidget.ui.components.CustomDialog
-import com.w2sv.wifiwidget.ui.components.DialogButtonRow
-import com.w2sv.wifiwidget.ui.components.DialogHeaderProperties
+import com.w2sv.composed.extensions.thenIf
+import com.w2sv.composed.isLandscapeModeActive
+import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
-import com.w2sv.wifiwidget.ui.utils.conditional
-import com.w2sv.wifiwidget.ui.utils.isLandscapeModeActivated
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
+import kotlinx.coroutines.flow.update
 
 @Composable
 fun WidgetConfigurationDialog(
     locationAccessState: LocationAccessState,
+    widgetConfiguration: ReversibleWidgetConfiguration,
     closeDialog: () -> Unit,
     modifier: Modifier = Modifier,
-    widgetVM: WidgetViewModel = viewModel(),
-    scope: CoroutineScope = rememberCoroutineScope(),
 ) {
-    val onDismissRequest: () -> Unit = {
-        scope.launch {
-            widgetVM.configuration.reset()
-        }
-        closeDialog()
+    var infoDialogData by rememberSaveable(
+        stateSaver = InfoDialogData.nullableStateSaver,
+    ) {
+        mutableStateOf(null)
+    }
+    var colorPickerProperties by rememberSaveable(
+        stateSaver = ColorPickerProperties.nullableStateSaver,
+    ) {
+        mutableStateOf(null)
     }
 
-    CustomDialog(
-        headerProperties = DialogHeaderProperties(
-            title = stringResource(id = R.string.configure_widget),
-            icon = {
-                Icon(
-                    painterResource(id = com.w2sv.widget.R.drawable.ic_settings_24),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            },
-        ),
-        onDismissRequest = onDismissRequest,
-        modifier = modifier.conditional(
-            condition = isLandscapeModeActivated,
+    ConfigurationDialog(
+        onDismissRequest = remember {
+            {
+                widgetConfiguration.reset()
+                closeDialog()
+            }
+        },
+        onApplyButtonPress = remember {
+            {
+                widgetConfiguration.launchSync()
+                closeDialog()
+            }
+        },
+        modifier = modifier.thenIf(
+            condition = isLandscapeModeActive,
             onTrue = { fillMaxHeight() }
         ),
+        iconRes = com.w2sv.core.common.R.drawable.ic_settings_24,
+        title = stringResource(id = R.string.widget_configuration),
+        applyButtonEnabled = widgetConfiguration.statesDissimilar.collectAsStateWithLifecycle().value,
     ) {
         WidgetConfigurationDialogContent(
-            widgetConfiguration = widgetVM.configuration,
+            widgetConfiguration = widgetConfiguration,
             locationAccessState = locationAccessState,
-            showPropertyInfoDialog = widgetVM::setPropertyInfoDialogData,
+            showPropertyInfoDialog = remember { { infoDialogData = it } },
+            showCustomColorConfigurationDialog = remember { { colorPickerProperties = it } },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 16.dp)
-                .fillMaxHeight(0.75f),
+                .fillMaxHeight(0.75f)
         )
-        widgetVM.propertyInfoDialogData.collectAsStateWithLifecycle().value?.let {
+
+        // Show PropertyInfoDialog if applicable
+        infoDialogData?.let {
             PropertyInfoDialog(
                 data = it,
-                onDismissRequest = { widgetVM.setPropertyInfoDialogData(null) })
+                onDismissRequest = remember {
+                    { infoDialogData = null }
+                }
+            )
         }
-        DialogButtonRow(
-            onCancel = {
-                onDismissRequest()
-            },
-            onApply = {
-                widgetVM.configuration.launchSync()
-                closeDialog()
-            },
-            applyButtonEnabled = widgetVM.configuration.statesDissimilar.collectAsStateWithLifecycle().value,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        // Show ColorPickerDialog if applicable
+        colorPickerProperties?.let { properties ->
+            ColorPickerDialog(
+                properties = properties,
+                applyColor = remember {
+                    {
+                        widgetConfiguration.coloringConfig.update {
+                            it.copy(
+                                custom = properties.createCustomColoringData(
+                                    it.custom
+                                )
+                            )
+                        }
+
+                    }
+                },
+                onDismissRequest = remember {
+                    {
+                        colorPickerProperties = null
+                    }
+                },
+            )
+        }
     }
 }

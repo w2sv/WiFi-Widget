@@ -1,0 +1,98 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/widget_layout"
+    style="@style/Widget.WiFiWidget.AppWidget.Container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:theme="@style/Theme.WiFiWidget.AppWidgetContainer"
+    android:weightSum="1">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/wifi_property_list_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:gravity="center"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/no_connection_available_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/wifi_status_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/last_updated_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            tools:ignore="RelativeOverlap" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            tools:ignore="UselessLeaf" />
+
+        <ImageButton
+            android:id="@+id/refresh_button"
+
+            android:layout_width="@dimen/size_widget_image_button_icon"
+            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_marginEnd="8dp"
+
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/refresh_data"
+            android:src="@drawable/ic_refresh_24" />
+
+        <ImageButton
+            android:id="@+id/go_to_wifi_settings_button"
+
+            android:layout_width="@dimen/size_widget_image_button_icon"
+            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_marginEnd="8dp"
+
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/open_wifi_settings_button"
+            android:src="@drawable/ic_wifi_settings_24" />
+
+        <ImageButton
+            android:id="@+id/go_to_widget_settings_button"
+
+            android:layout_width="@dimen/size_widget_image_button_icon"
+            android:layout_height="@dimen/size_widget_image_button_icon"
+
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/open_widget_settings_button"
+            android:src="@drawable/ic_settings_24" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+option java_package = "com.w2sv.datastore";
+option java_multiple_files = true;
+
+message WidgetColoringProto {
+
+  message Preset {
+    enum Theme {
+      Light = 0;
+      SystemDefault = 1;
+      Dark = 2;
+    }
+    Theme theme = 1;
+    bool useDynamicColors = 2;
+  }
+  message Custom {
+    sint32 background = 1;
+    sint32 primary = 2;
+    sint32 secondary = 3;
+  }
+
+  Preset preset = 1;
+  Custom custom = 2;
+  bool is_custom_selected = 3;
+}

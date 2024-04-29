@@ -1,6 +1,6 @@
 SHELL=/bin/bash
 
-VERSION := $(shell ./get-version.sh)
+VERSION := $(shell grep '^version=' gradle.properties | cut -d'=' -f2)
 
 optimize-drawables:
 	@avocado app/src/main/res/drawable/*.xml
@@ -9,13 +9,27 @@ clean:
 	@echo "Clean"
 	@./gradlew clean
 
+lint:
+	@./gradlew lint
+
+check:
+	@./gradlew check
+
+# ==============
+# Building
+# ==============
+
+baseline-profile:
+	@echo "Generate baseline profile"
+	@./gradlew :app:generateReleaseBaselineProfile
+
 build-aab:
 	@echo "Build AAB"
-	@./gradlew :app:bundleRelease --console verbose
+	@./gradlew :app:bundleRelease
 
 build-apk:
 	@echo "Build APK"
-	@./gradlew assembleRelease --console verbose
+	@./gradlew assembleRelease
 
 # ==============
 # Publishing
@@ -32,20 +46,28 @@ build-and-publish-to-test-track:
 	@$(MAKE) build-aab
 
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track internal --console verbose
+	@./gradlew publishBundle --track internal
 
 build-and-publish:
-	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n 3. Pushed the latest changes\n\n Otherwise cancel target now."
-	@read																			
+	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n\n Otherwise cancel target now."
+	@read
+
+	@echo "Lint"
+	@$(MAKE) lint
+
+	@$(MAKE) baseline-profile
+
+	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
 	@$(MAKE) build-aab
 	@$(MAKE) build-apk
 
-	@$(MAKE) create-gh-release
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track production --console verbose --no-configuration-cache  # usage of configuration cache throws error for task
+	@./gradlew publishBundle --track production --console verbose
+
+	@$(MAKE) create-gh-release
 
 create-gh-release:
 	@echo "Create GitHub Release"

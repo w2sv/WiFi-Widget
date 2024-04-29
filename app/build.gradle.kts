@@ -6,6 +6,11 @@ plugins {
     alias(libs.plugins.play)
     alias(libs.plugins.kotlin)
     alias(libs.plugins.wifiwidget.hilt)
+    alias(libs.plugins.baselineprofile)
+}
+
+kotlin {
+    jvmToolchain(libs.versions.java.get().toInt())
 }
 
 android {
@@ -73,15 +78,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = libs.versions.java.get()
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
     hilt {
         enableAggregatingTask = true  // Fixes warning
     }
@@ -95,6 +91,16 @@ android {
             }
     }
 
+    kotlinOptions {
+        freeCompilerArgs += listOf(
+            // Apply compose_compiler_config.conf
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${project.rootDir.absolutePath}/compose_compiler_config.conf",
+            // Enable strong skipping
+            "-P",
+            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true"
+        )
+    }
 }
 
 // https://github.com/Triple-T/gradle-play-publisher
@@ -106,15 +112,19 @@ play {
 
 dependencies {
     // Project modules
-    implementation(projects.widget)
-    implementation(projects.common)
-    implementation(projects.domain)
-    implementation(projects.data)
-    implementation(projects.networking)
+    implementation(projects.core.widget)
+    implementation(projects.core.common)
+    implementation(projects.core.domain)
+    implementation(projects.core.datastore)
+    implementation(projects.core.networking)
+    baselineProfile(projects.benchmarking)
 
-    // Custom libraries
+    // Owned libraries
+    implementation(libs.kotlinutils)
     implementation(libs.androidutils)
     implementation(libs.colorpicker)
+    implementation(libs.composed)
+    implementation(libs.composed.permissions)
 
     // AndroidX libraries
     implementation(libs.androidx.core)
@@ -125,15 +135,15 @@ dependencies {
     implementation(libs.androidx.workmanager)
 
     // Compose libraries
-    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
-    implementation(libs.accompanist.permissions)
+    implementation(libs.google.accompanist.permissions)
 
     // Other libraries
     implementation(libs.slimber)

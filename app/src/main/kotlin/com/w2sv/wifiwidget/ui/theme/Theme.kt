@@ -11,16 +11,16 @@ import androidx.compose.ui.platform.LocalContext
 @Composable
 fun AppTheme(
     useDynamicTheme: Boolean = false,
-    darkTheme: Boolean = false,
+    useDarkTheme: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
 
     MaterialTheme(
         colorScheme = when {
-            useDynamicTheme && darkTheme -> dynamicDarkColorScheme(context)
-            useDynamicTheme && !darkTheme -> dynamicLightColorScheme(context)
-            !useDynamicTheme && darkTheme -> darkColors
+            useDynamicTheme && useDarkTheme -> dynamicDarkColorScheme(context)
+            useDynamicTheme && !useDarkTheme -> dynamicLightColorScheme(context)
+            !useDynamicTheme && useDarkTheme -> darkColors
             else -> lightColors
         },
         typography = typography

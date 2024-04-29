@@ -21,12 +21,14 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/common" />
-            <option value="$PROJECT_DIR$/data" />
-            <option value="$PROJECT_DIR$/domain" />
-            <option value="$PROJECT_DIR$/networking" />
+            <option value="$PROJECT_DIR$/benchmarking" />
+            <option value="$PROJECT_DIR$/core" />
+            <option value="$PROJECT_DIR$/core/common" />
+            <option value="$PROJECT_DIR$/core/datastore" />
+            <option value="$PROJECT_DIR$/core/domain" />
+            <option value="$PROJECT_DIR$/core/networking" />
+            <option value="$PROJECT_DIR$/core/widget" />
             <option value="$PROJECT_DIR$/plugins" />
-            <option value="$PROJECT_DIR$/widget" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

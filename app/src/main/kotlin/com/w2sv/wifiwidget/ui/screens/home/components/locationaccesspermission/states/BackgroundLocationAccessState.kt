@@ -16,8 +16,9 @@ import kotlinx.coroutines.launch
 class BackgroundLocationAccessState(
     private val permissionState: PermissionState,
     private val scope: CoroutineScope
-) {
-    val isGranted get() = permissionState.status.isGranted
+) : PermissionState by permissionState {
+
+    val isGranted by status::isGranted
 
     val showRational get() = _showRational.asSharedFlow()
     private val _showRational = MutableSharedFlow<Unit>()
@@ -28,14 +29,6 @@ class BackgroundLocationAccessState(
                 _showRational.emit(Unit)
             }
         }
-    }
-
-    // ===================
-    // Requesting
-    // ===================
-
-    fun launchRequest() {
-        permissionState.launchPermissionRequest()
     }
 }
 

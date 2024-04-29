@@ -1,36 +1,37 @@
 package com.w2sv.wifiwidget.ui.viewmodels
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
+import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.coroutines.collectFromFlow
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateFlow
-import com.w2sv.androidutils.ui.unconfirmed_state.UnconfirmedStateMap
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
+import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
 import com.w2sv.common.constants.Extra
 import com.w2sv.common.di.PackageName
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.WidgetDataRefreshWorker
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.utils.attemptWifiWidgetPin
-import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.components.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.components.SnackbarKind
-import com.w2sv.wifiwidget.ui.di.MutableSharedSnackbarVisualsFlow
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyInfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.UnconfirmedWidgetConfiguration
-import com.w2sv.wifiwidget.ui.utils.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap
+import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
+import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
+import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
+import com.w2sv.wifiwidget.ui.utils.fromDataStoreFlowMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,122 +40,92 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
-    private val mutableSharedSnackbarVisuals: MutableSharedSnackbarVisualsFlow,
-    optionsChanged: WidgetProvider.OptionsChanged,
+    @SnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     @ApplicationContext context: Context,
-    savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle,
+    @WidgetPinSuccessFlow widgetPinSuccessFlow: MutableSharedFlow<Unit>
 ) :
     ViewModel() {
-
-    // =========
-    // IDs
-    // =========
-
-    private var widgetIds: MutableSet<Int> = getWidgetIds()
-
-    fun refreshWidgetIds() {
-        widgetIds = getWidgetIds()
-    }
-
-    private fun getWidgetIds(): MutableSet<Int> =
-        appWidgetManager.getWifiWidgetIds(packageName).toMutableSet()
 
     // =========
     // Pinning
     // =========
 
-    fun attemptWidgetPin() {
-        if (!appWidgetManager.attemptWifiWidgetPin(packageName)) {
-            viewModelScope.launch {
-                mutableSharedSnackbarVisuals.emit {
-                    AppSnackbarVisuals(
-                        msg = it.getString(com.w2sv.common.R.string.widget_pinning_not_supported_by_your_device_launcher),
-                        kind = SnackbarKind.Error
-                    )
+    val widgetPinSuccessFlow = widgetPinSuccessFlow.asSharedFlow()
+
+    fun attemptWidgetPin(context: Context) {
+        appWidgetManager.attemptWifiWidgetPin(
+            packageName = packageName,
+            successCallback = PendingIntent.getBroadcast(
+                context,
+                WidgetPinSuccessBroadcastReceiver.REQUEST_CODE,
+                Intent(context, WidgetPinSuccessBroadcastReceiver::class.java),
+                PendingIntent.FLAG_IMMUTABLE
+            ),
+            onFailure = {
+                viewModelScope.launch {
+                    sharedSnackbarVisuals.emit {
+                        AppSnackbarVisuals(
+                            msg = it.getString(R.string.widget_pinning_not_supported_by_your_device_launcher),
+                            kind = SnackbarKind.Error
+                        )
+                    }
                 }
             }
-        }
-    }
-
-    val newWidgetPinned get() = _newWidgetPinned.asSharedFlow()
-    private val _newWidgetPinned = MutableSharedFlow<Unit>()
-
-    init {
-        viewModelScope.collectFromFlow(optionsChanged.widgetId) {
-            if (widgetIds.add(it)) {
-                _newWidgetPinned.emit(Unit)
-                i { "Pinned new widget w ID=$it" }
-            }
-        }
+        )
     }
 
     // =========
     // Configuration
     // =========
 
-    val showConfigurationDialog get() = _showConfigurationDialog.asStateFlow()
-    private val _showConfigurationDialog =
-        MutableStateFlow(savedStateHandle.get<Boolean>(Extra.OPEN_WIDGET_CONFIGURATION_DIALOG) == true)
+    val showConfigurationDialogInitially =
+        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
-    fun setShowConfigurationDialog(value: Boolean) {
-        _showConfigurationDialog.value = value
-    }
-
-    val propertyInfoDialogData: StateFlow<PropertyInfoDialogData?> get() = _propertyInfoDialogData.asStateFlow()
-    private val _propertyInfoDialogData = MutableStateFlow<PropertyInfoDialogData?>(null)
-
-    fun setPropertyInfoDialogData(value: PropertyInfoDialogData?) {
-        _propertyInfoDialogData.value = value
-    }
-
-    val configuration = UnconfirmedWidgetConfiguration(
-        wifiProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getWifiPropertyEnablementMap(),
+    val configuration = ReversibleWidgetConfiguration(
+        coloringConfig = ReversibleStateFlow(
             scope = viewModelScope,
-            syncState = { repository.saveWifiPropertyEnablementMap(it) },
+            appliedState = repository.coloringConfig.stateIn(
+                viewModelScope,
+                SharingStarted.Eagerly,
+                WidgetColoring.Config()
+            ),
+            syncState = { repository.saveColoringConfig(it) }
         ),
-        ipSubProperties = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getIPSubPropertyEnablementMap(),
+        opacity = ReversibleStateFlow(
             scope = viewModelScope,
-            syncState = { repository.saveIPSubPropertyEnablementMap(it) },
+            dataStoreFlow = repository.opacity,
+            started = SharingStarted.Eagerly
         ),
-        buttonMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getButtonEnablementMap(),
+        fontSize = ReversibleStateFlow(
             scope = viewModelScope,
-            syncState = {
-                repository.saveButtonEnablementMap(it)
-            },
+            dataStoreFlow = repository.fontSize,
+            started = SharingStarted.Eagerly
         ),
-        refreshingParametersMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getRefreshingParametersEnablementMap(),
+        wifiProperties = ReversibleStateMap.fromDataStoreFlowMap(
             scope = viewModelScope,
-            syncState = {
-                repository.saveRefreshingParametersEnablementMap(it)
-                widgetDataRefreshWorkerManager.applyChangedParameters()
-            },
+            dataStoreFlowMap = repository.wifiPropertyEnablementMap,
         ),
-        useDynamicColors = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            persistedValue = repository.useDynamicColors
-        ),
-        theme = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            persistedValue = repository.theme
-        ),
-        customColorsMap = UnconfirmedStateMap.fromPersistedFlowMapWithSynchronousInitialAsMutableStateMap(
-            persistedFlowMap = repository.getCustomColorsMap(),
+        ipSubProperties = ReversibleStateMap.fromDataStoreFlowMap(
             scope = viewModelScope,
-            syncState = { repository.saveCustomColorsMap(it) },
+            dataStoreFlowMap = repository.ipSubPropertyEnablementMap,
         ),
-        opacity = UnconfirmedStateFlow(
-            coroutineScope = viewModelScope,
-            persistedValue = repository.opacity
+        bottomRowMap = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.bottomRowElementEnablementMap,
+        ),
+        refreshingParametersMap = ReversibleStateMap.fromDataStoreFlowMap(
+            scope = viewModelScope,
+            dataStoreFlowMap = repository.refreshingParametersEnablementMap,
+            onStateSynced = {
+                widgetDataRefreshWorkerManager.applyRefreshingSettings(it)
+            }
         ),
         scope = viewModelScope,
-        mutableSharedSnackbarVisuals = mutableSharedSnackbarVisuals,
+        mutableSharedSnackbarVisuals = sharedSnackbarVisuals,
         onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
-            mutableSharedSnackbarVisuals.emit {
+            sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
                     msg = it.getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success,

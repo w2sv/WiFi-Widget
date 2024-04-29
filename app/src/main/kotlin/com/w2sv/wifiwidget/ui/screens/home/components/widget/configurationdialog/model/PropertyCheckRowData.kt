@@ -4,35 +4,88 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
-data class PropertyCheckRowData<T : WidgetProperty>(
-    val property: T,
-    val isChecked: () -> Boolean,
-    val onCheckedChange: (Boolean) -> Unit,
-    val allowCheckChange: (Boolean) -> Boolean = { true },
-    val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
-    val infoDialogData: PropertyInfoDialogData? = null,
-    val modifier: Modifier = Modifier
-) {
-    companion object {
-        fun <T : WidgetProperty> fromMutableMap(
-            property: T,
-            isCheckedMap: MutableMap<T, Boolean>,
-            allowCheckChange: (Boolean) -> Boolean = { true },
-            subPropertyCheckRowData: ImmutableList<PropertyCheckRowData<*>> = persistentListOf(),
-            infoDialogData: PropertyInfoDialogData? = null,
-            modifier: Modifier = Modifier
-        ): PropertyCheckRowData<T> =
-            PropertyCheckRowData(
-                property = property,
-                isChecked = { isCheckedMap.getValue(property) },
-                onCheckedChange = { isCheckedMap[property] = it },
-                allowCheckChange = allowCheckChange,
-                subPropertyCheckRowDataList = subPropertyCheckRowData,
-                infoDialogData = infoDialogData,
-                modifier = modifier
-            )
+sealed interface PropertyCheckRowData<T : WidgetProperty> {
+    val property: T
+    val isChecked: () -> Boolean
+    val onCheckedChange: (Boolean) -> Unit
+    val infoDialogData: InfoDialogData?
+    val modifier: Modifier
+
+    @Immutable
+    data class WithoutSubProperties<T : WidgetProperty>(
+        override val property: T,
+        override val isChecked: () -> Boolean,
+        override val onCheckedChange: (Boolean) -> Unit,
+        override val infoDialogData: InfoDialogData? = null,
+        override val modifier: Modifier = Modifier,
+    ) : PropertyCheckRowData<T> {
+
+        companion object {
+            fun <T : WidgetProperty> fromIsCheckedMap(
+                property: T,
+                isCheckedMap: MutableMap<T, Boolean>,
+                allowCheckChange: (Boolean) -> Boolean = { true },
+                onCheckedChangedDisallowed: () -> Unit = {},
+                infoDialogData: InfoDialogData? = null,
+                modifier: Modifier = Modifier
+            ): PropertyCheckRowData<T> {
+                return WithoutSubProperties(
+                    property = property,
+                    isChecked = { isCheckedMap.getValue(property) },
+                    onCheckedChange = {
+                        if (allowCheckChange(it)) {
+                            isCheckedMap[property] = it
+                        } else {
+                            onCheckedChangedDisallowed()
+                        }
+                    },
+                    infoDialogData = infoDialogData,
+                    modifier = modifier
+                )
+            }
+        }
+    }
+
+    @Immutable
+    data class WithSubProperties<T : WidgetProperty>(
+        override val property: T,
+        override val isChecked: () -> Boolean,
+        override val onCheckedChange: (Boolean) -> Unit,
+        val subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>>,
+        val subPropertyColumnModifier: Modifier = Modifier,
+        override val infoDialogData: InfoDialogData? = null,
+        override val modifier: Modifier = Modifier
+    ) : PropertyCheckRowData<T> {
+
+        companion object {
+            fun <T : WidgetProperty> fromIsCheckedMap(
+                property: T,
+                isCheckedMap: MutableMap<T, Boolean>,
+                subPropertyCheckRowDataList: ImmutableList<PropertyCheckRowData<*>>,
+                subPropertyCheckRowColumnModifier: Modifier = Modifier,
+                allowCheckChange: (Boolean) -> Boolean = { true },
+                onCheckedChangedDisallowed: () -> Unit = {},
+                infoDialogData: InfoDialogData? = null,
+                modifier: Modifier = Modifier
+            ): PropertyCheckRowData<T> {
+                return WithSubProperties(
+                    property = property,
+                    isChecked = { isCheckedMap.getValue(property) },
+                    onCheckedChange = {
+                        if (allowCheckChange(it)) {
+                            isCheckedMap[property] = it
+                        } else {
+                            onCheckedChangedDisallowed()
+                        }
+                    },
+                    subPropertyCheckRowDataList = subPropertyCheckRowDataList,
+                    subPropertyColumnModifier = subPropertyCheckRowColumnModifier,
+                    infoDialogData = infoDialogData,
+                    modifier = modifier,
+                )
+            }
+        }
     }
 }
