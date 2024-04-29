@@ -13,8 +13,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import com.w2sv.androidutils.coroutines.collectFromFlow
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
 import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
@@ -68,10 +66,6 @@ class MainActivity : ComponentActivity() {
                     HomeScreen()
                 }
             }
-        }
-
-        lifecycleScope.collectFromFlow(appVM.exitApplication) {
-            finishAffinity()
         }
     }
 

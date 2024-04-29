@@ -4,10 +4,8 @@ import android.content.Context
 import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.eventhandling.BackPressHandler
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PreferencesRepository
-import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,36 +44,4 @@ class AppViewModel @Inject constructor(
             preferencesRepository.useDynamicTheme.save(value)
         }
     }
-
-    // ==============
-    // BackPress Handling
-    // ==============
-
-    val exitApplication get() = _exitApplication.asSharedFlow()
-    private val _exitApplication = MutableSharedFlow<Unit>()
-
-    /**
-     * @return Optional toast message string resource id.
-     */
-    fun onBackPress(): Int? {
-        var messageResId: Int? = null
-
-        backPressHandler.invoke(
-            onFirstPress = {
-                messageResId = R.string.tap_again_to_exit
-            },
-            onSecondPress = {
-                viewModelScope.launch {
-                    _exitApplication.emit(Unit)
-                }
-            },
-        )
-
-        return messageResId
-    }
-
-    private val backPressHandler = BackPressHandler(
-        coroutineScope = viewModelScope,
-        confirmationWindowDuration = 2500L
-    )
 }

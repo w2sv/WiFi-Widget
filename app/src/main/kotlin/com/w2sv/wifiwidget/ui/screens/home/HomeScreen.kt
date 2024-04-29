@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbar
@@ -51,7 +50,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
+private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
 @Composable
 fun HomeScreen(
@@ -123,15 +122,9 @@ fun HomeScreen(
 
         LocationAccessRationals(state = locationAccessState)
 
-        BackHandler {
-            when (drawerState.isOpen) {
-                true -> scope.launch {
-                    drawerState.close()
-                }
-
-                false -> appViewModel.onBackPress()?.let {
-                    context.showToast(it)
-                }
+        BackHandler(enabled = drawerState.isOpen) {
+            scope.launch {
+                drawerState.close()
             }
         }
     }
