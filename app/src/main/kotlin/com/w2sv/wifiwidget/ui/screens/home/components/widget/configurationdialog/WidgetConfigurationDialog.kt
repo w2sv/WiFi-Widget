@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +20,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.s
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import kotlinx.coroutines.flow.update
@@ -39,6 +41,9 @@ fun WidgetConfigurationDialog(
         stateSaver = ColorPickerProperties.nullableStateSaver,
     ) {
         mutableStateOf(null)
+    }
+    var showRefreshIntervalConfigurationDialog by rememberSaveable {
+        mutableStateOf(false)
     }
 
     ConfigurationDialog(
@@ -67,6 +72,9 @@ fun WidgetConfigurationDialog(
             locationAccessState = locationAccessState,
             showPropertyInfoDialog = remember { { infoDialogData = it } },
             showCustomColorConfigurationDialog = remember { { colorPickerProperties = it } },
+            showRefreshIntervalConfigurationDialog = remember {
+                { showRefreshIntervalConfigurationDialog = true }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.75f)
@@ -102,6 +110,17 @@ fun WidgetConfigurationDialog(
                         colorPickerProperties = null
                     }
                 },
+            )
+        }
+        if (showRefreshIntervalConfigurationDialog) {
+            RefreshIntervalConfigurationDialog(
+                interval = widgetConfiguration.refreshInterval.collectAsState().value,
+                setInterval = remember {
+                    { widgetConfiguration.refreshInterval.value = it }
+                },
+                onDismissRequest = remember {
+                    { showRefreshIntervalConfigurationDialog = false }
+                }
             )
         }
     }

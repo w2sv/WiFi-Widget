@@ -26,5 +26,5 @@ internal val WidgetRepository.refreshingBlocking: WidgetRefreshing
     get() = refreshingParametersEnablementMap
         .mapValuesToFirstBlocking()
         .run {
-            WidgetRefreshing(this)
+            WidgetRefreshing(parameters = this, interval = refreshInterval.firstBlocking())
         }

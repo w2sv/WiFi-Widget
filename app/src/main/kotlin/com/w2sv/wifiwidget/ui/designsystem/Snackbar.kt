@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,12 +51,14 @@ sealed interface SnackbarKind {
     val icon: ImageVector
 
     @get:Composable
+    @get:ReadOnlyComposable
     val iconTint: Color
 
     @Immutable
     data object Error : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Warning
         override val iconTint: Color
+            @ReadOnlyComposable
             @Composable get() = MaterialTheme.colorScheme.error
     }
 
@@ -63,6 +66,7 @@ sealed interface SnackbarKind {
     data object Success : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color
+            @ReadOnlyComposable
             @Composable get() = AppColor.success
     }
 }

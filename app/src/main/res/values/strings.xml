@@ -62,4 +62,8 @@
     <string name="font_size">Font size</string>
     <string name="widget_pinning_not_supported_by_your_device_launcher">Widget pinning is not supported by your device launcher.</string>
     <string name="widget_configuration">Widget Configuration</string>
+    <string name="open_the_refresh_interval_configuration_dialog">Open the refresh interval configuration dialog.</string>
+    <string name="refresh_interval">Refresh Interval</string>
+    <string name="interval">Interval</string>
+    <string name="interval_shorter_than_15_minutes_not_possible">Interval shorter than 15 minutes not possible!</string>
 </resources>

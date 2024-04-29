@@ -14,11 +14,7 @@ import slimber.log.i
 import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
-
-/**
- * Minimum interval for periodic work.
- */
-private val REFRESH_PERIOD = Duration.ofMinutes(15L)
+import kotlin.time.toJavaDuration
 
 class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -43,27 +39,33 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
         internal fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
             with(widgetRefreshing) {
                 when (refreshPeriodically) {
-                    true -> enableWorker(refreshOnLowBattery)
+                    true -> enableWorker(
+                        refreshOnLowBattery = refreshOnLowBattery,
+                        interval = refreshInterval.toJavaDuration()
+                    )
                     false -> cancelWorker()
                 }
             }
         }
 
-        fun applyRefreshingSettings(parameters: Map<WidgetRefreshingParameter, Boolean>) {
-            applyRefreshingSettings(WidgetRefreshing(parameters))
+        fun applyRefreshingSettings(
+            parameters: Map<WidgetRefreshingParameter, Boolean>,
+            interval: kotlin.time.Duration
+        ) {
+            applyRefreshingSettings(WidgetRefreshing(parameters = parameters, interval = interval))
         }
 
-        private fun enableWorker(refreshOnLowBattery: Boolean) {
+        private fun enableWorker(refreshOnLowBattery: Boolean, interval: Duration) {
             workManager.enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
-                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(REFRESH_PERIOD)
+                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(interval)
                     .setConstraints(
                         Constraints.Builder()
                             .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshOnLowBattery)
                             .build(),
                     )
-                    .setInitialDelay(REFRESH_PERIOD)
+                    .setInitialDelay(interval)
                     .build(),
             )
             i { "Enqueued $UNIQUE_WORK_NAME" }

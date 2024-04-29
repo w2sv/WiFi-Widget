@@ -19,6 +19,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.L
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 @Stable
 class ReversibleWidgetConfiguration(
@@ -28,6 +29,7 @@ class ReversibleWidgetConfiguration(
     val wifiProperties: ReversibleStateMap<WidgetWifiProperty, Boolean>,
     val ipSubProperties: ReversibleStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: ReversibleStateMap<WidgetBottomRowElement, Boolean>,
+    val refreshInterval: ReversibleStateFlow<Duration>,
     val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
     private val scope: CoroutineScope,
     private val mutableSharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
@@ -40,6 +42,7 @@ class ReversibleWidgetConfiguration(
         wifiProperties,
         ipSubProperties,
         bottomRowMap,
+        refreshInterval,
         refreshingParametersMap
     ),
     scope = scope,

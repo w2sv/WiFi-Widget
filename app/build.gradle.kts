@@ -144,6 +144,7 @@ dependencies {
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.google.accompanist.permissions)
+    implementation(libs.composeWheelPicker)
 
     // Other libraries
     implementation(libs.slimber)

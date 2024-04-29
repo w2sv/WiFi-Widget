@@ -2,20 +2,32 @@ package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialo
 
 import android.content.Context
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.common.utils.bulletPointText
+import com.w2sv.common.utils.minutes
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -28,7 +40,7 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components.PropertyCheckRowColumn
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyCheckRowData
+import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyConfigurationElement
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.getInfoDialogData
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
@@ -55,6 +67,7 @@ fun WidgetConfigurationDialogContent(
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
+    showRefreshIntervalConfigurationDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -117,7 +130,7 @@ fun WidgetConfigurationDialogContent(
                     PropertyCheckRowColumn(
                         dataList = remember {
                             WidgetBottomRowElement.entries.map {
-                                PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
+                                PropertyConfigurationElement.CheckRow.WithoutSubProperties.fromIsCheckedMap(
                                     property = it,
                                     isCheckedMap = widgetConfiguration.bottomRowMap
                                 )
@@ -136,7 +149,7 @@ fun WidgetConfigurationDialogContent(
                     PropertyCheckRowColumn(
                         dataList = remember {
                             persistentListOf(
-                                PropertyCheckRowData.WithSubProperties.fromIsCheckedMap(
+                                PropertyConfigurationElement.CheckRow.WithSubProperties.fromIsCheckedMap(
                                     property = WidgetRefreshingParameter.RefreshPeriodically,
                                     isCheckedMap = widgetConfiguration.refreshingParametersMap,
                                     infoDialogData = InfoDialogData(
@@ -144,7 +157,36 @@ fun WidgetConfigurationDialogContent(
                                         description = context.getString(R.string.refresh_periodically_info)
                                     ),
                                     subPropertyCheckRowDataList = persistentListOf(
-                                        PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
+                                        PropertyConfigurationElement.Custom {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth(),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(text = bulletPointText(stringResource(R.string.interval)))
+                                                Spacer(modifier = Modifier.weight(1f))
+
+                                                val interval by widgetConfiguration.refreshInterval.collectAsState()
+                                                Text(text = remember(interval) {
+                                                    interval.run {
+                                                        when {
+                                                            inWholeHours == 0L -> "${minutes}m"
+                                                            minutes == 0 -> "${inWholeHours}h"
+                                                            else -> "${inWholeHours}h ${minutes}m"
+                                                        }
+                                                    }
+                                                })
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_edit_24),
+                                                    contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = Modifier
+                                                        .padding(10.dp)
+                                                        .clickable { showRefreshIntervalConfigurationDialog() }
+                                                )
+                                            }
+                                        },
+                                        PropertyConfigurationElement.CheckRow.WithoutSubProperties.fromIsCheckedMap(
                                             property = WidgetRefreshingParameter.RefreshOnLowBattery,
                                             isCheckedMap = widgetConfiguration.refreshingParametersMap
                                         )
@@ -182,7 +224,7 @@ fun WidgetConfigurationDialogContent(
 private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
-): ImmutableList<PropertyCheckRowData<WidgetWifiProperty>> {
+): ImmutableList<PropertyConfigurationElement.CheckRow<WidgetWifiProperty>> {
     val context = LocalContext.current
     return remember {
         WidgetWifiProperty.entries
@@ -191,7 +233,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
 
                 when (property) {
                     is WidgetWifiProperty.NonIP -> {
-                        PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
+                        PropertyConfigurationElement.CheckRow.WithoutSubProperties.fromIsCheckedMap(
                             property = property,
                             isCheckedMap = widgetConfiguration.wifiProperties,
                             allowCheckChange = { isCheckedNew ->
@@ -215,7 +257,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                     }
 
                     is WidgetWifiProperty.IP -> {
-                        PropertyCheckRowData.WithSubProperties.fromIsCheckedMap(
+                        PropertyConfigurationElement.CheckRow.WithSubProperties.fromIsCheckedMap(
                             property = property,
                             isCheckedMap = widgetConfiguration.wifiProperties,
                             allowCheckChange = { isCheckedNew ->
@@ -232,7 +274,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                         else
                                             null
 
-                                    PropertyCheckRowData.WithoutSubProperties.fromIsCheckedMap(
+                                    PropertyConfigurationElement.CheckRow.WithoutSubProperties.fromIsCheckedMap(
                                         property = subProperty,
                                         isCheckedMap = widgetConfiguration.ipSubProperties,
                                         allowCheckChange = { newValue ->

@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
-import com.w2sv.common.constants.Extra
 import com.w2sv.common.di.PackageName
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
@@ -79,8 +78,14 @@ class WidgetViewModel @Inject constructor(
     // Configuration
     // =========
 
-    val showConfigurationDialogInitially =
-        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
+    val showConfigurationDialogInitially = true
+//        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
+
+    private val refreshInterval = ReversibleStateFlow(
+        scope = viewModelScope,
+        dataStoreFlow = repository.refreshInterval,
+        started = SharingStarted.Eagerly
+    )
 
     val configuration = ReversibleWidgetConfiguration(
         coloringConfig = ReversibleStateFlow(
@@ -114,11 +119,15 @@ class WidgetViewModel @Inject constructor(
             scope = viewModelScope,
             dataStoreFlowMap = repository.bottomRowElementEnablementMap,
         ),
+        refreshInterval = refreshInterval,
         refreshingParametersMap = ReversibleStateMap.fromDataStoreFlowMap(
             scope = viewModelScope,
             dataStoreFlowMap = repository.refreshingParametersEnablementMap,
             onStateSynced = {
-                widgetDataRefreshWorkerManager.applyRefreshingSettings(it)
+                widgetDataRefreshWorkerManager.applyRefreshingSettings(
+                    parameters = it,
+                    interval = refreshInterval.value
+                )
             }
         ),
         scope = viewModelScope,
