@@ -15,20 +15,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
+import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.services.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
@@ -39,7 +39,6 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.WidgetConfigurationDialog
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
@@ -49,12 +48,9 @@ import kotlinx.coroutines.flow.Flow
 fun WidgetCard(
     locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
-    widgetVM: WidgetViewModel = viewModel(),
+    widgetVM: WidgetViewModel = hiltViewModel(),
+    navController: NavHostController = LocalNavHostController.current
 ) {
-    var showConfigurationDialog by rememberSaveable {
-        mutableStateOf(widgetVM.showConfigurationDialogInitially)
-    }
-
     HomeScreenCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_widgets_24,
@@ -81,7 +77,7 @@ fun WidgetCard(
                 WidgetConfigurationDialogButton(
                     onClick = remember {
                         {
-                            showConfigurationDialog = true
+                            navController.navigate(WidgetConfigurationScreenDestination())
                         }
                     },
                     modifier = Modifier.size(32.dp),
@@ -97,20 +93,8 @@ fun WidgetCard(
     )
 
     // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
-    CollectFromFlow(locationAccessState.newStatus) {
+    CollectFromFlow(locationAccessState.newStatus) {  // TODO
         widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
-    }
-
-    if (showConfigurationDialog) {
-        WidgetConfigurationDialog(
-            locationAccessState = locationAccessState,
-            widgetConfiguration = widgetVM.configuration,
-            closeDialog = remember {
-                {
-                    showConfigurationDialog = false
-                }
-            },
-        )
     }
 }
 

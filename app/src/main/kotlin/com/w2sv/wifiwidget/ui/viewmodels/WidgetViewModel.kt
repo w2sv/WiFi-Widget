@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.ReversibleWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.fromDataStoreFlowMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

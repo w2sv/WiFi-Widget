@@ -30,6 +30,8 @@ runner = "1.5.2"
 protobuf = "4.26.1"
 datastore = "1.1.0"
 composed = "0.0.3-rc2"
+compose-destinations = "2.0.0-beta01"
+hiltNavigationCompose = "1.2.0"
 
 [libraries]
 
@@ -59,6 +61,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # .Benchmarking
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
@@ -79,6 +82,8 @@ kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collec
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
+compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
+compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
 
 # Plugins
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }

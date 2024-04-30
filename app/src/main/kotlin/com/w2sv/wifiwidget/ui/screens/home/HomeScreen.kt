@@ -28,8 +28,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbar
@@ -52,11 +54,11 @@ import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
+@Destination<RootGraph>//(start = true)
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    appViewModel: AppViewModel = viewModel(),
-    homeScreenVM: HomeScreenViewModel = viewModel(),
+    appVM: AppViewModel = hiltViewModel(),
+    homeScreenVM: HomeScreenViewModel = hiltViewModel(),
     context: Context = LocalContext.current,
     scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
@@ -68,8 +70,7 @@ fun HomeScreen(
     )
 ) {
     NavigationDrawer(
-        state = drawerState,
-        modifier = modifier
+        state = drawerState
     ) {
         Scaffold(
             topBar = {
@@ -83,7 +84,7 @@ fun HomeScreen(
                 val snackbarHostState = LocalSnackbarHostState.current
 
                 // Show Snackbars collected from sharedSnackbarVisuals
-                CollectLatestFromFlow(appViewModel.snackbarVisualsFlow) {
+                CollectLatestFromFlow(appVM.snackbarVisualsFlow) {
                     snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
                 }
 

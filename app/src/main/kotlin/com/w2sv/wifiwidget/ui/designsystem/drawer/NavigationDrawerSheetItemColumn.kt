@@ -29,8 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.dynamicColorsSupported
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
@@ -53,7 +53,7 @@ private object AppUrl {
 internal fun NavigationDrawerSheetItemColumn(
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
-    appVM: AppViewModel = viewModel()
+    appVM: AppViewModel = hiltViewModel()
 ) {
     Column(modifier = modifier) {
         val context: Context = LocalContext.current

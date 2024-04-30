@@ -13,9 +13,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.generated.NavGraphs
 import com.w2sv.domain.model.Theme
+import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
-import com.w2sv.wifiwidget.ui.screens.home.HomeScreen
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
@@ -62,8 +65,13 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                CompositionLocalProvider(LocalLocationManager provides locationManager) {
-                    HomeScreen()
+                val navController = rememberNavController()
+
+                CompositionLocalProvider(
+                    LocalLocationManager provides locationManager,
+                    LocalNavHostController provides navController
+                ) {
+                    DestinationsNavHost(navGraph = NavGraphs.root, navController = navController)
                 }
             }
         }

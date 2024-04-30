@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 
 import android.content.Context
 import androidx.compose.material3.SnackbarVisuals

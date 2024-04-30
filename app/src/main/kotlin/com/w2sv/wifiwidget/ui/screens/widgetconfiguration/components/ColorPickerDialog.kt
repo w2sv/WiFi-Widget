@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState

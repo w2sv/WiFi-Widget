@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 
 @Composable
 fun PropertyInfoDialog(
@@ -91,7 +91,7 @@ private fun InfoDialog(
                 Arrangement.Center,
                 Alignment.CenterHorizontally,
             ) {
-                Text(text = text, textAlign = TextAlign.Center)
+                Text(text = text)
                 learnMoreButton?.invoke()
             }
         },

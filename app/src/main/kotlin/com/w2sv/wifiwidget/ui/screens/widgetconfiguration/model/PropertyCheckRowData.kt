@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -61,6 +61,7 @@ sealed interface PropertyConfigurationElement {
             override val onCheckedChange: (Boolean) -> Unit,
             val subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationElement>,
             val subPropertyColumnModifier: Modifier = Modifier,
+            val onSubPropertyColumnExpanded: () -> Unit = {},
             override val infoDialogData: InfoDialogData? = null,
             override val modifier: Modifier = Modifier
         ) : CheckRow<T> {
@@ -71,6 +72,7 @@ sealed interface PropertyConfigurationElement {
                     isCheckedMap: MutableMap<T, Boolean>,
                     subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationElement>,
                     subPropertyCheckRowColumnModifier: Modifier = Modifier,
+                    onSubPropertyColumnExpanded: () -> Unit = {},
                     allowCheckChange: (Boolean) -> Boolean = { true },
                     onCheckedChangedDisallowed: () -> Unit = {},
                     infoDialogData: InfoDialogData? = null,
@@ -88,6 +90,7 @@ sealed interface PropertyConfigurationElement {
                         },
                         subPropertyCheckRowDataList = subPropertyCheckRowDataList,
                         subPropertyColumnModifier = subPropertyCheckRowColumnModifier,
+                        onSubPropertyColumnExpanded = onSubPropertyColumnExpanded,
                         infoDialogData = infoDialogData,
                         modifier = modifier,
                     )

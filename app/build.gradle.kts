@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.colorpicker)
     implementation(libs.composed)
     implementation(libs.composed.permissions)
+    implementation(libs.composeWheelPicker)
 
     // AndroidX libraries
     implementation(libs.androidx.core)
@@ -144,7 +145,9 @@ dependencies {
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.google.accompanist.permissions)
-    implementation(libs.composeWheelPicker)
+    implementation(libs.compose.destinations)
+    ksp(libs.compose.destinations.ksp)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Other libraries
     implementation(libs.slimber)

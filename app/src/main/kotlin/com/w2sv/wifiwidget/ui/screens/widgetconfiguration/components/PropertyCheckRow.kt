@@ -1,6 +1,7 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,13 +42,14 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.home.components.widget.configurationdialog.model.PropertyConfigurationElement
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationElement
 import kotlinx.collections.immutable.ImmutableList
 
 // For alignment of primary check row click elements and sub property click elements
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PropertyCheckRowColumn(
     dataList: ImmutableList<PropertyConfigurationElement.CheckRow<*>>,
@@ -111,6 +113,9 @@ fun PropertyCheckRowColumn(
                         )
 
                         AnimatedVisibility(visible = expandSubProperties) {
+                            if (!transition.isRunning && expandSubProperties) {
+                                data.onSubPropertyColumnExpanded()
+                            }
                             SubPropertyCheckRowColumn(
                                 configurationElements = data.subPropertyCheckRowDataList,
                                 modifier = data.subPropertyColumnModifier

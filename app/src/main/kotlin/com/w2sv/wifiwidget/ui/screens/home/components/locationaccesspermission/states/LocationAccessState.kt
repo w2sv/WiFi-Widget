@@ -9,6 +9,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -27,12 +28,21 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
+import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import slimber.log.i
+
+@Composable
+fun rememberLocationAccessPermissionState(homeScreenVM: HomeScreenViewModel = hiltViewModel()): LocationAccessState =
+    rememberLocationAccessPermissionState(
+        permissionRepository = homeScreenVM.permissionRepository,
+        saveLocationAccessPermissionRequestLaunched = homeScreenVM::saveLocationAccessPermissionRequestLaunched,
+        saveLocationAccessRationalShown = homeScreenVM::saveLocationAccessRationalShown
+    )
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
