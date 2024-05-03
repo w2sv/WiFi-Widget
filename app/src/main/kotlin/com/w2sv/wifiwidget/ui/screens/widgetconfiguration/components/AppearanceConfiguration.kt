@@ -14,12 +14,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,7 +30,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.generic.dynamicColorsSupported
-import com.w2sv.common.utils.bulletPointText
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.extensions.getByOrdinal
@@ -41,7 +38,8 @@ import com.w2sv.wifiwidget.ui.designsystem.SliderRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
-import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SectionCardBackground
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SubPropertyKeyboardArrowRightIcon
 import kotlin.math.roundToInt
 
 private val verticalPadding = 12.dp
@@ -73,9 +71,7 @@ fun AppearanceConfiguration(
                         }
                     },
                     colors = SegmentedButtonDefaults.colors(
-                        inactiveContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                            homeScreenCardElevation
-                        )
+                        inactiveContainerColor = SectionCardBackground
                     ),
                     shape = SegmentedButtonDefaults.itemShape(
                         index = i,
@@ -226,8 +222,9 @@ private fun SectionCustomizationRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Spacer(modifier = Modifier.weight(0.2f))
+        SubPropertyKeyboardArrowRightIcon()
         Text(
-            text = remember(label) { bulletPointText(label) },
+            text = label,
             fontSize = 14.sp,
             modifier = Modifier.weight(0.4f),
         )

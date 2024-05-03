@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
@@ -35,13 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.utils.bulletPointText
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationElement
 import kotlinx.collections.immutable.ImmutableList
@@ -69,11 +69,7 @@ fun PropertyCheckRowColumn(
                                     modifier = Modifier.size(48.dp),
                                     contentAlignment = Alignment.Center
                                 ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Default.KeyboardArrowRight,
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        contentDescription = null
-                                    )
+                                    KeyboardArrowRightIcon(tint = MaterialTheme.colorScheme.onBackground)
                                 }
                             },
                             modifier = primaryCheckRowModifier
@@ -154,7 +150,9 @@ private fun SubPropertyCheckRowColumn(
                             onTrue = { padding(start = addressVersionEnablementStartPadding) }
                         ),
                         fontSize = subPropertyCheckRowColumnFontSize,
-                        makeText = ::bulletPointText,
+                        leadingIcon = {
+                            SubPropertyKeyboardArrowRightIcon()
+                        }
                     )
                 }
 
@@ -174,9 +172,7 @@ private val addressVersionEnablementStartPadding = 16.dp
 private fun PropertyCheckRow(
     data: PropertyConfigurationElement.CheckRow<*>,
     modifier: Modifier = Modifier,
-    makeText: (String) -> String = { it },
     fontSize: TextUnit = TextUnit.Unspecified,
-    fontWeight: FontWeight = FontWeight.Normal,
     textColor: Color = Color.Unspecified,
     leadingIcon: (@Composable () -> Unit)? = null,
     showInfoDialog: ((InfoDialogData) -> Unit)? = null,
@@ -192,9 +188,8 @@ private fun PropertyCheckRow(
     ) {
         leadingIcon?.invoke()
         Text(
-            text = remember { makeText(label) },
+            text = label,
             fontSize = fontSize,
-            fontWeight = fontWeight,
             modifier = Modifier.weight(1.0f, true),
             color = textColor
         )

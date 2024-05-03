@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
@@ -24,12 +25,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.common.utils.bulletPointText
 import com.w2sv.common.utils.minutes
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -37,6 +38,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
@@ -109,9 +111,7 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    homeScreenCardElevation
-                ),
+                color = SectionCardBackground,
                 shape = MaterialTheme.shapes.medium
             )
             .border(
@@ -127,6 +127,12 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
         section.content()
     }
 }
+
+val SectionCardBackground: Color
+    @Composable
+    get() = MaterialTheme.colorScheme.surfaceColorAtElevation(
+        homeScreenCardElevation
+    )
 
 @Composable
 private fun rememberSections(
@@ -224,7 +230,8 @@ private fun rememberSections(
                                                 .fillMaxWidth(),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            Text(text = bulletPointText(stringResource(R.string.interval)))
+                                            SubPropertyKeyboardArrowRightIcon()
+                                            Text(text = stringResource(R.string.interval))
                                             Spacer(modifier = Modifier.weight(1f))
 
                                             val interval by widgetConfiguration.refreshInterval.collectAsState()
@@ -262,6 +269,14 @@ private fun rememberSections(
             }
         )
     }
+}
+
+@Composable
+fun SubPropertyKeyboardArrowRightIcon(modifier: Modifier = Modifier) {
+    KeyboardArrowRightIcon(
+        tint = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier.size(20.dp)
+    )
 }
 
 @Composable
