@@ -132,7 +132,6 @@ class WidgetViewModel @Inject constructor(
             }
         ),
         scope = viewModelScope,
-        mutableSharedSnackbarVisuals = sharedSnackbarVisuals,
         onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
             delay(500)  // To allow fab buttons to disappear before emission of snackbar
