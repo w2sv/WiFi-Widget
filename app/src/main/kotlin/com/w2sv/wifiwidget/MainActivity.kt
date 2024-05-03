@@ -16,19 +16,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
+import com.ramcosta.composedestinations.navigation.dependency
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.LocalNavHostController
+import com.w2sv.wifiwidget.ui.activityViewModel
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessState
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val homeScreenVM by viewModels<HomeScreenViewModel>()
     private val appVM by viewModels<AppViewModel>()
 
     @Inject
@@ -52,6 +55,7 @@ class MainActivity : ComponentActivity() {
                 useDynamicTheme = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
                 useDarkTheme = useDarkTheme,
             ) {
+                // Reset system bar styles on theme change
                 LaunchedEffect(useDarkTheme) {
                     val systemBarStyle = if (useDarkTheme) {
                         SystemBarStyle.dark(Color.TRANSPARENT)
@@ -66,20 +70,30 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navController = rememberNavController()
+                val locationAccessState = rememberLocationAccessState()
 
                 CompositionLocalProvider(
                     LocalLocationManager provides locationManager,
                     LocalNavHostController provides navController
                 ) {
-                    DestinationsNavHost(navGraph = NavGraphs.root, navController = navController)
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        navController = navController,
+                        dependenciesContainerBuilder = {
+                            val widgetVM = activityViewModel<WidgetViewModel>()
+
+                            // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
+                            CollectFromFlow(locationAccessState.newStatus) {
+                                widgetVM.configuration.onLocationAccessPermissionStatusChanged(
+                                    it
+                                )
+                            }
+
+                            dependency(locationAccessState)
+                        }
+                    )
                 }
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        homeScreenVM.onStart()
     }
 }

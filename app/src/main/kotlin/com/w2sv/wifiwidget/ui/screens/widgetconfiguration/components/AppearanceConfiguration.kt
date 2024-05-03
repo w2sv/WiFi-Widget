@@ -79,7 +79,7 @@ fun AppearanceConfiguration(
 
         AnimatedContent(
             targetState = coloringConfig.isCustomSelected,
-            label = ""
+            label = "",
         ) { isCustomStyleSelected ->
             when (isCustomStyleSelected) {
                 false -> {

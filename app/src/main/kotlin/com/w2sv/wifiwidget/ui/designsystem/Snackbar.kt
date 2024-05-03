@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
+import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -11,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
@@ -23,9 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
+import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
+import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -76,6 +82,22 @@ val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbarVisuals: SnackbarVisuals) {
     currentSnackbarData?.dismiss()
     showSnackbar(snackbarVisuals)
+}
+
+@Composable
+fun AppSnackbarHost(
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    context: Context = LocalContext.current,
+    appVM: AppViewModel = hiltViewModel()
+) {
+    // Show Snackbars collected from sharedSnackbarVisuals
+    CollectLatestFromFlow(appVM.makeSnackbarVisualsFlow) {
+        snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
+    }
+
+    SnackbarHost(snackbarHostState) { snackbarData ->
+        AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
+    }
 }
 
 @Composable

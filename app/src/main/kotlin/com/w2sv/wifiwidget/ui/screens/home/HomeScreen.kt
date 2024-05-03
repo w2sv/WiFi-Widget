@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -24,29 +22,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.w2sv.composed.OnLifecycleEvent
 import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbar
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppTopBar
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.drawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessPermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
-import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,21 +47,21 @@ import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
-@Destination<RootGraph>//(start = true)
+@Destination<RootGraph>(start = true)
 @Composable
 fun HomeScreen(
-    appVM: AppViewModel = hiltViewModel(),
+    locationAccessState: LocationAccessState,
     homeScreenVM: HomeScreenViewModel = hiltViewModel(),
-    context: Context = LocalContext.current,
     scope: CoroutineScope = rememberCoroutineScope(),
-    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-    locationAccessState: LocationAccessState = rememberLocationAccessPermissionState(
-        permissionRepository = homeScreenVM.permissionRepository,
-        saveLocationAccessPermissionRequestLaunched = homeScreenVM::saveLocationAccessPermissionRequestLaunched,
-        saveLocationAccessRationalShown = homeScreenVM::saveLocationAccessRationalShown,
-        scope = scope
-    )
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
+    OnLifecycleEvent(
+        callback = remember {
+            { homeScreenVM.refreshPropertyViewDataIfConnected() }
+        },
+        lifecycleEvent = Lifecycle.Event.ON_START
+    )
+
     NavigationDrawer(
         state = drawerState
     ) {
@@ -81,16 +74,7 @@ fun HomeScreen(
                 }
             },
             snackbarHost = {
-                val snackbarHostState = LocalSnackbarHostState.current
-
-                // Show Snackbars collected from sharedSnackbarVisuals
-                CollectLatestFromFlow(appVM.snackbarVisualsFlow) {
-                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
-                }
-
-                SnackbarHost(snackbarHostState) { snackbarData ->
-                    AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
-                }
+                AppSnackbarHost()
             },
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()

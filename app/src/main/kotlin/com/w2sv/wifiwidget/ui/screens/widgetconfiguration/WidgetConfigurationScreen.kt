@@ -1,6 +1,13 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
-import android.content.Context
+import android.view.animation.AnticipateInterpolator
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,69 +19,87 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.w2sv.composed.extensions.toEasing
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbar
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.activityViewModel
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
+import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.Padding
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessPermissionState
+import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-@Destination<RootGraph>(start = true)
+@Destination<RootGraph>(style = HorizontalSlideTransitions::class)
 @Composable
 fun WidgetConfigurationScreen(
-//    locationAccessState: LocationAccessState,
+    locationAccessState: LocationAccessState,
     navigator: DestinationsNavigator,
-    appVM: AppViewModel = hiltViewModel(),
-    widgetVM: WidgetViewModel = hiltViewModel(),
-    context: Context = LocalContext.current
+    widgetVM: WidgetViewModel = activityViewModel(),
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
     Scaffold(
         snackbarHost = {
-            val snackbarHostState = LocalSnackbarHostState.current
-
-            // Show Snackbars collected from sharedSnackbarVisuals
-            CollectLatestFromFlow(appVM.snackbarVisualsFlow) {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
-            }
-
-            SnackbarHost(snackbarHostState) { snackbarData ->
-                AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
-            }
+            AppSnackbarHost()
         },
+        floatingActionButton = {
+            AnimatedVisibility(
+                visible = widgetVM.configuration.statesDissimilar.collectAsState().value,
+                enter = remember {
+                    slideInHorizontally(
+                        animationSpec = tween(easing = anticipateEasing),
+                        initialOffsetX = { it / 2 }
+                    ) + fadeIn()
+                },
+                exit = remember {
+                    slideOutHorizontally(
+                        animationSpec = tween(easing = anticipateEasing),
+                        targetOffsetX = { it / 2 }
+                    ) + fadeOut()
+                }
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FloatingActionButton(onClick = { widgetVM.configuration.reset() }) {
+                        Text(text = "Reset")
+                    }
+                    FloatingActionButton(onClick = { scope.launch { widgetVM.configuration.sync() } }) {
+                        Text(text = "Apply")
+                    }
+                }
+            }
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -146,7 +171,7 @@ fun WidgetConfigurationScreen(
 
             WidgetPropertyConfigurationColumn(
                 widgetConfiguration = widgetVM.configuration,
-                locationAccessState = rememberLocationAccessPermissionState(),
+                locationAccessState = locationAccessState,
                 showPropertyInfoDialog = remember { { infoDialogData = it } },
                 showCustomColorConfigurationDialog = remember { { colorPickerProperties = it } },
                 showRefreshIntervalConfigurationDialog = remember {
@@ -158,6 +183,8 @@ fun WidgetConfigurationScreen(
         }
     }
 }
+
+private val anticipateEasing = AnticipateInterpolator().toEasing()
 
 @Composable
 fun BackButtonHeaderWithDivider(

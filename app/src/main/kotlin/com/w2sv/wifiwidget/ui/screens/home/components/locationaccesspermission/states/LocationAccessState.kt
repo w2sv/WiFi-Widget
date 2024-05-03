@@ -18,7 +18,6 @@ import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
-import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
@@ -28,7 +27,7 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
+import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -37,22 +36,32 @@ import kotlinx.coroutines.launch
 import slimber.log.i
 
 @Composable
-fun rememberLocationAccessPermissionState(homeScreenVM: HomeScreenViewModel = hiltViewModel()): LocationAccessState =
-    rememberLocationAccessPermissionState(
-        permissionRepository = homeScreenVM.permissionRepository,
-        saveLocationAccessPermissionRequestLaunched = homeScreenVM::saveLocationAccessPermissionRequestLaunched,
-        saveLocationAccessRationalShown = homeScreenVM::saveLocationAccessRationalShown
+fun rememberLocationAccessState(
+    appVM: AppViewModel = hiltViewModel(),
+    scope: CoroutineScope = rememberCoroutineScope(),
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    context: Context = LocalContext.current,
+): LocationAccessState =
+    rememberLocationAccessState(
+        requestLaunchedBefore = appVM.locationAccessPermissionRequested,
+        saveRequestLaunchedBefore = appVM::saveLocationAccessPermissionRequested,
+        rationalShown = appVM.locationAccessRationalShown,
+        saveRationalShown = appVM::saveLocationAccessRationalShown,
+        scope = scope,
+        snackbarHostState = snackbarHostState,
+        context = context
     )
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun rememberLocationAccessPermissionState(
-    permissionRepository: PermissionRepository,
-    saveLocationAccessPermissionRequestLaunched: () -> Unit,
-    saveLocationAccessRationalShown: () -> Unit,
+fun rememberLocationAccessState(
+    requestLaunchedBefore: DataStoreFlow<Boolean>,
+    saveRequestLaunchedBefore: () -> Unit,
+    rationalShown: DataStoreFlow<Boolean>,
+    saveRationalShown: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    context: Context = LocalContext.current
+    context: Context = LocalContext.current,
 ): LocationAccessState {
 
     // Necessary evil
@@ -77,7 +86,7 @@ fun rememberLocationAccessPermissionState(
     else
         null
 
-    val state = remember(scope, permissionRepository, snackbarHostState, context) {
+    val state = remember(scope, snackbarHostState, context) {
         LocationAccessState(
             permissionsState = permissionState,
             backgroundAccessState = backgroundAccessPermissionState?.let {
@@ -86,10 +95,10 @@ fun rememberLocationAccessPermissionState(
                     scope = scope
                 )
             },
-            requestLaunchedBefore = permissionRepository.locationAccessPermissionRequested,
-            saveRequestLaunched = saveLocationAccessPermissionRequestLaunched,
-            rationalShown = permissionRepository.locationAccessPermissionRationalShown,
-            saveRationalShown = saveLocationAccessRationalShown,
+            requestLaunchedBefore = requestLaunchedBefore,
+            saveRequestLaunched = saveRequestLaunchedBefore,
+            rationalShown = rationalShown,
+            saveRationalShown = saveRationalShown,
             snackbarHostState = snackbarHostState,
             scope = scope,
             context = context
@@ -123,6 +132,11 @@ class LocationAccessState(
     private val scope: CoroutineScope,
     private val context: Context
 ) : MultiplePermissionsState by permissionsState {
+
+    init {
+        i { "LocationAccessState init" }
+    }
+
     val isGranted: Boolean by ::allPermissionsGranted
 
     val newStatus get() = _newStatus.asSharedFlow()

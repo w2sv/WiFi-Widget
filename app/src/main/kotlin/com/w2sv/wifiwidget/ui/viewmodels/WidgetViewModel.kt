@@ -18,7 +18,7 @@ import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
-import com.w2sv.wifiwidget.di.SnackbarVisualsFlow
+import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,12 +40,16 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
-    @SnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
+    @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     @ApplicationContext context: Context,
     savedStateHandle: SavedStateHandle,
     @WidgetPinSuccessFlow widgetPinSuccessFlow: MutableSharedFlow<Unit>
 ) :
     ViewModel() {
+
+    init {
+        i { "WidgetVM init" }
+    }
 
     // =========
     // Pinning

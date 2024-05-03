@@ -97,7 +97,7 @@ fun WidgetPropertyConfigurationColumn(
                 scrollState = scrollState
             )
         )
-        Spacer(modifier = Modifier.height(52.dp))
+        Spacer(modifier = Modifier.height(142.dp))
     }
 }
 
@@ -126,6 +126,7 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.outlineVariant,
                 shape = MaterialTheme.shapes.medium
             )
+            .padding(horizontal = 10.dp)
     ) {
         IconHeader(
             properties = section.iconHeaderProperties,
@@ -173,7 +174,8 @@ private fun rememberSections(
                         { widgetConfiguration.fontSize.value = it }
                     },
                     showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
                 )
             },
             Section(

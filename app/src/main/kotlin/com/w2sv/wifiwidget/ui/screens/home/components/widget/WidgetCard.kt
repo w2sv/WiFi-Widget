@@ -22,13 +22,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.services.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalNavHostController
+import com.w2sv.wifiwidget.ui.activityViewModel
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
@@ -39,7 +39,6 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +47,7 @@ import kotlinx.coroutines.flow.Flow
 fun WidgetCard(
     locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
-    widgetVM: WidgetViewModel = hiltViewModel(),
+    widgetVM: WidgetViewModel = activityViewModel(),
     navController: NavHostController = LocalNavHostController.current
 ) {
     HomeScreenCard(
@@ -91,11 +90,6 @@ fun WidgetCard(
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
         backgroundAccessState = locationAccessState.backgroundAccessState,
     )
-
-    // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
-    CollectFromFlow(locationAccessState.newStatus) {  // TODO
-        widgetVM.configuration.onLocationAccessPermissionStatusChanged(it)
-    }
 }
 
 /**

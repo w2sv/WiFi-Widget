@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class SnackbarVisualsFlow
+annotation class MakeSnackbarVisualsFlow
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -24,7 +24,7 @@ annotation class WidgetPinSuccessFlow
 @Module
 object AppModule {
 
-    @SnackbarVisualsFlow
+    @MakeSnackbarVisualsFlow
     @Provides
     @Singleton
     fun mutableSnackbarVisualsFlow(): MutableSharedFlow<(Context) -> SnackbarVisuals> =

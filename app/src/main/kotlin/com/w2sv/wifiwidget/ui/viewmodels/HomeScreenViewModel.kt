@@ -6,7 +6,6 @@ import com.w2sv.androidutils.coroutines.collectLatestFromFlow
 import com.w2sv.androidutils.coroutines.valueEnabledKeys
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.domain.model.WifiStatus
-import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
@@ -18,28 +17,18 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.launch
 import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    val permissionRepository: PermissionRepository,
     widgetRepository: WidgetRepository,
     wifiStatusMonitor: WifiStatusMonitor,
     widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
 ) : ViewModel() {
 
-    fun onStart() {
-        wifiStateEmitter.refreshPropertyViewDataIfConnected()
-    }
-
-    fun saveLocationAccessPermissionRequestLaunched() {
-        viewModelScope.launch { permissionRepository.locationAccessPermissionRequested.save(true) }
-    }
-
-    fun saveLocationAccessRationalShown() {
-        viewModelScope.launch { permissionRepository.locationAccessPermissionRationalShown.save(true) }
+    init {
+        i { "HomeScreenVM init" }
     }
 
     private val wifiStateEmitter = WifiStateEmitter(
@@ -59,6 +48,10 @@ class HomeScreenViewModel @Inject constructor(
     )
 
     val wifiState by wifiStateEmitter::state
+
+    fun refreshPropertyViewDataIfConnected() {
+        wifiStateEmitter.refreshPropertyViewDataIfConnected()
+    }
 }
 
 private class WifiStateEmitter(
