@@ -37,17 +37,18 @@ data class IPAddress(
     val version: Version = if (prefixLength < Version.V6.minPrefixLength) Version.V4 else Version.V6
     val hostAddressRepresentation: String = hostAddress ?: version.fallbackAddress
 
-    private val isLocal: Boolean
-        get() = isSiteLocal || isLinkLocal || isAnyLocal
-
     /**
      * @see <a href="https://networklessons.com/ipv6/ipv6-address-types">reference</a>
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc4193">reference</a>
      */
     val isUniqueLocal: Boolean
-        get() = hostAddressRepresentation.run { startsWith("fc") || startsWith("fd") }
+        get() = ulaIdentificationRegex.matches(hostAddressRepresentation.substring(0, 2))
 
     val isGlobalUnicast: Boolean
         get() = !isLocal && !isMulticast
+
+    private val isLocal: Boolean
+        get() = isSiteLocal || isLinkLocal || isAnyLocal || isUniqueLocal
 
     enum class Version(
         val minPrefixLength: Int,
@@ -58,3 +59,5 @@ data class IPAddress(
         V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" }),
     }
 }
+
+private val ulaIdentificationRegex = Regex("^(fc|fd)")
