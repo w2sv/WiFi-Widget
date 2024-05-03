@@ -1,11 +1,14 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
@@ -121,27 +124,39 @@ private fun WheelPickerRow(
     minuteWheelPickerState: WheelPickerState,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        WheelPicker(
-            state = hourWheelPickerState,
-            itemSize = itemSize
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = it.toString())
+            WheelPicker(
+                state = hourWheelPickerState,
+                itemSize = itemSize
+            ) {
+                Text(text = it.toString())
+            }
+            Text(text = "h")
+            Spacer(modifier = Modifier.width(14.dp))
+            WheelPicker(
+                state = minuteWheelPickerState,
+                itemSize = itemSize
+            ) {
+                Text(text = it.toString())
+            }
+            Text(text = "m")
         }
-        Text(text = "h")
-        Spacer(modifier = Modifier.width(8.dp))
-        WheelPicker(
-            state = minuteWheelPickerState,
-            itemSize = itemSize
-        ) {
-            Text(text = it.toString())
-        }
-        Text(text = "m")
+        Box(
+            modifier = Modifier
+                .width(102.dp)
+                .height(42.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = MaterialTheme.shapes.medium
+                )
+        )
     }
 }
 
-private val itemSize = DpSize(32.dp, 42.dp)
+private val itemSize = DpSize(24.dp, 42.dp)
