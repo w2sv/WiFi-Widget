@@ -2,8 +2,13 @@ package com.w2sv.wifiwidget.ui.viewmodels
 
 import android.content.Context
 import androidx.compose.material3.SnackbarVisuals
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
+import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
+import com.ramcosta.composedestinations.spec.Route
+import com.w2sv.common.constants.Extra
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
@@ -19,9 +24,13 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     @MakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     private val permissionRepository: PermissionRepository,
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    savedStateHandle: SavedStateHandle
 ) :
     ViewModel() {
+
+    val startRoute: Route =
+        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) WidgetConfigurationScreenDestination else HomeScreenDestination
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()
 

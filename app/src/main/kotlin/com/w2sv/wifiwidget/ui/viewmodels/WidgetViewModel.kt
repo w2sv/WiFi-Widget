@@ -5,7 +5,6 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import androidx.compose.material3.SnackbarVisuals
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
@@ -43,7 +42,6 @@ class WidgetViewModel @Inject constructor(
     @PackageName private val packageName: String,
     @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     @ApplicationContext context: Context,
-    savedStateHandle: SavedStateHandle,
     @WidgetPinSuccessFlow widgetPinSuccessFlow: MutableSharedFlow<Unit>
 ) :
     ViewModel() {
@@ -83,9 +81,6 @@ class WidgetViewModel @Inject constructor(
     // =========
     // Configuration
     // =========
-
-    val showConfigurationDialogInitially = true
-//        savedStateHandle.get<Boolean>(Extra.SHOW_WIDGET_CONFIGURATION_DIALOG) == true
 
     private val refreshInterval = ReversibleStateFlow(
         scope = viewModelScope,

@@ -87,12 +87,12 @@ fun WidgetConfigurationScreen(
                         animationSpec = tween(easing = anticipateEasing),
                         targetOffsetX = { it / 2 }
                     ) + fadeOut()
-                }
+                },
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 4.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                 ) {
                     ConfigurationProcedureFAB(
                         text = stringResource(R.string.reset),
@@ -205,9 +205,10 @@ fun WidgetConfigurationScreen(
 private fun ConfigurationProcedureFAB(
     text: String,
     onClick: () -> Unit,
-    icon: @Composable () -> Unit
+    icon: @Composable () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    FloatingActionButton(onClick = onClick) {
+    FloatingActionButton(onClick = onClick, modifier = modifier.padding(bottom = 12.dp)) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             icon()
             Text(text = text)

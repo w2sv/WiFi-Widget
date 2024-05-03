@@ -155,7 +155,7 @@ class WidgetLayoutPopulator @Inject constructor(
                         ),
                     )
                         .putExtra(
-                            Extra.SHOW_WIDGET_CONFIGURATION_DIALOG,
+                            Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN,
                             true,
                         ),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
