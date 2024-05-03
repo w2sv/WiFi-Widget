@@ -51,7 +51,7 @@ class WidgetLayoutPopulator @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
                 )
-                setBottomRow(bottomRow = appearance.bottomRow)
+                setBottomBar(bottomBar = appearance.bottomRow)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -105,13 +105,13 @@ class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomRow(bottomRow: WidgetBottomBarElement) {
-        if (!bottomRow.anyEnabled) {
+    private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement) {
+        if (!bottomBar.anyEnabled) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
             setViewVisibility(R.id.bottom_row, View.VISIBLE)
 
-            if (bottomRow.lastRefreshTimeDisplay) {
+            if (bottomBar.lastRefreshTimeDisplay) {
                 setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
@@ -129,7 +129,7 @@ class WidgetLayoutPopulator @Inject constructor(
 
             setButton(
                 id = R.id.refresh_button,
-                show = bottomRow.refreshButton,
+                show = bottomBar.refreshButton,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     PendingIntentCode.RefreshWidgetData.ordinal,
@@ -139,12 +139,12 @@ class WidgetLayoutPopulator @Inject constructor(
             )
             setButton(
                 id = R.id.go_to_wifi_settings_button,
-                show = bottomRow.goToWifiSettingsButton,
+                show = bottomBar.goToWifiSettingsButton,
                 pendingIntent = goToWifiSettingsPendingIntent(context),
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
-                show = bottomRow.goToWidgetSettingsButton,
+                show = bottomBar.goToWidgetSettingsButton,
                 pendingIntent = PendingIntent.getActivity(
                     context,
                     PendingIntentCode.LaunchHomeActivity.ordinal,

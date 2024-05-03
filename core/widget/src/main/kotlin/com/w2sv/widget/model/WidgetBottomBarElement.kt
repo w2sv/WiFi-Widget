@@ -22,5 +22,5 @@ internal data class WidgetBottomBarElement(
             goToWifiSettingsButton,
             goToWidgetSettingsButton
         )
-            .any()
+            .any { it }
 }
