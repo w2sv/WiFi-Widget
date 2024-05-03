@@ -3,10 +3,11 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -34,12 +36,13 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SliderRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
+import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SectionCardBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SubPropertyKeyboardArrowRightIcon
 import kotlin.math.roundToInt
 
 private val verticalPadding = 12.dp
@@ -83,23 +86,34 @@ fun AppearanceConfiguration(
             }
         }
 
+        val styleConfigurationModifier =
+            Modifier
+                .nestedListBackground()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+
         AnimatedContent(
             targetState = coloringConfig.isCustomSelected,
             label = "",
         ) { isCustomStyleSelected ->
             when (isCustomStyleSelected) {
                 false -> {
-                    PresetColoringConfiguration(
-                        data = coloringConfig.preset,
-                        setData = remember { { setColoringConfig(coloringConfig.copy(preset = it)) } }
-                    )
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        PresetColoringConfiguration(
+                            data = coloringConfig.preset,
+                            setData = remember { { setColoringConfig(coloringConfig.copy(preset = it)) } },
+                            modifier = styleConfigurationModifier.fillMaxWidth(0.9f)
+                        )
+                    }
                 }
 
                 true -> {
-                    CustomColorConfiguration(
-                        data = coloringConfig.custom,
-                        showCustomColorConfigurationDialog = showCustomColorConfigurationDialog
-                    )
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        CustomColorConfiguration(
+                            data = coloringConfig.custom,
+                            showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
+                            modifier = styleConfigurationModifier.fillMaxWidth(0.7f)
+                        )
+                    }
                 }
             }
         }
@@ -148,8 +162,7 @@ private fun PresetColoringConfiguration(
     Column(modifier = modifier) {
         ThemeSelectionRow(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .fillMaxWidth(),
             selected = data.theme,
             onSelected = { setData(data.copy(theme = it)) },
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -162,6 +175,9 @@ private fun PresetColoringConfiguration(
                 },
                 modifier = Modifier
                     .padding(top = verticalPadding),
+                leadingIcon = {
+                    KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp))
+                }
             )
         }
     }
@@ -188,7 +204,7 @@ private fun CustomColorConfiguration(
     showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         CustomWidgetColor.entries
             .forEach { widgetColorType ->
                 val color = remember(widgetColorType, data) {
@@ -204,8 +220,7 @@ private fun CustomColorConfiguration(
                                 appliedColor = color
                             )
                         )
-                    },
-                    modifier = Modifier.padding(vertical = 4.dp),
+                    }
                 )
             }
     }
@@ -220,13 +235,14 @@ private fun SectionCustomizationRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = modifier
     ) {
-        Spacer(modifier = Modifier.weight(0.2f))
-        SubPropertyKeyboardArrowRightIcon()
+        KeyboardArrowRightIcon()
         Text(
             text = label,
             fontSize = 14.sp,
-            modifier = Modifier.weight(0.4f),
+            modifier = Modifier.weight(1f)
         )
         val colorPickerButtonCD =
             stringResource(
@@ -234,8 +250,9 @@ private fun SectionCustomizationRow(
                 label
             )
         Button(
-            modifier = modifier
-                .size(40.dp)
+            modifier = Modifier
+                .border(0.5.dp, MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
+                .size(42.dp)
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
                 containerColor = color,
@@ -244,6 +261,5 @@ private fun SectionCustomizationRow(
             shape = CircleShape,
             content = {},
         )
-        Spacer(modifier = Modifier.weight(0.2f))
     }
 }

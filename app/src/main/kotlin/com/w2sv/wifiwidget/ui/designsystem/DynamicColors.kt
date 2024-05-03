@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -17,19 +17,20 @@ fun UseDynamicColorsRow(
     useDynamicColors: Boolean,
     onToggleDynamicColors: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.SpaceBetween,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = horizontalArrangement,
         modifier = Modifier
             .fillMaxWidth()
             .then(modifier),
     ) {
+        leadingIcon?.invoke()
         Text(
             text = stringResource(R.string.use_dynamic_colors),
             color = MaterialTheme.colorScheme.onSurface,
         )
+        Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = useDynamicColors,
             onCheckedChange = {

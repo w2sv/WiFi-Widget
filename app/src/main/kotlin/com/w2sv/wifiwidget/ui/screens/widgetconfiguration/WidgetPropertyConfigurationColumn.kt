@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -235,7 +235,8 @@ private fun rememberSections(
                                     PropertyConfigurationElement.Custom {
                                         Row(
                                             modifier = Modifier
-                                                .fillMaxWidth(),
+                                                .fillMaxWidth()
+                                                .padding(vertical = 4.dp),
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             SubPropertyKeyboardArrowRightIcon()
@@ -252,14 +253,18 @@ private fun rememberSections(
                                                     }
                                                 }
                                             })
-                                            Icon(
-                                                painter = painterResource(id = R.drawable.ic_edit_24),
-                                                contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
-                                                tint = MaterialTheme.colorScheme.primary,
+                                            IconButton(
+                                                onClick = { showRefreshIntervalConfigurationDialog() },
                                                 modifier = Modifier
-                                                    .padding(10.dp)
-                                                    .clickable { showRefreshIntervalConfigurationDialog() }
-                                            )
+                                                    .padding(horizontal = 4.dp)
+                                                    .size(38.dp)
+                                            ) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.ic_edit_24),
+                                                    contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
+                                            }
                                         }
                                     },
                                     PropertyConfigurationElement.CheckRow.WithoutSubProperties.fromIsCheckedMap(
@@ -282,7 +287,6 @@ private fun rememberSections(
 @Composable
 fun SubPropertyKeyboardArrowRightIcon(modifier: Modifier = Modifier) {
     KeyboardArrowRightIcon(
-        tint = MaterialTheme.colorScheme.onBackground,
         modifier = modifier.size(20.dp)
     )
 }

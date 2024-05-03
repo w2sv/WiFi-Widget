@@ -130,32 +130,33 @@ private fun WheelPickerRow(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            WheelPicker(
-                state = hourWheelPickerState,
-                itemSize = itemSize
-            ) {
-                Text(text = it.toString())
-            }
-            Text(text = "h")
+            TimeWheelPicker(state = hourWheelPickerState, unitText = "h")
             Spacer(modifier = Modifier.width(14.dp))
-            WheelPicker(
-                state = minuteWheelPickerState,
-                itemSize = itemSize
-            ) {
-                Text(text = it.toString())
-            }
-            Text(text = "m")
+            TimeWheelPicker(state = minuteWheelPickerState, unitText = "m")
         }
         Box(
             modifier = Modifier
                 .width(102.dp)
-                .height(42.dp)
+                .height(itemSize.height)
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium
                 )
         )
+    }
+}
+
+@Composable
+private fun TimeWheelPicker(state: WheelPickerState, unitText: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        WheelPicker(
+            state = state,
+            itemSize = itemSize
+        ) {
+            Text(text = it.toString())
+        }
+        Text(text = unitText)
     }
 }
 

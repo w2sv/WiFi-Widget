@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,7 +28,7 @@ fun InfoIcon(
 }
 
 @Composable
-fun KeyboardArrowRightIcon(modifier: Modifier = Modifier, tint: Color = Color.Unspecified) {
+fun KeyboardArrowRightIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
         contentDescription = null,
