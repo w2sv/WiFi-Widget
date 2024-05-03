@@ -38,7 +38,7 @@ fun WifiStatusCard(
                                 .padding(top = 12.dp)
                                 .thenIf(
                                     condition = isPortraitModeActive,
-                                    onTrue = { fillMaxHeight(0.3f) }
+                                    onTrue = { fillMaxHeight(0.32f) }
                                 )
                         )
                     }

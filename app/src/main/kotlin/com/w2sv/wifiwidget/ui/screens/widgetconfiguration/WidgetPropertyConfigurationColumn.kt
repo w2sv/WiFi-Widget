@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.utils.minutes
+import com.w2sv.composed.isPortraitModeActive
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -88,7 +89,7 @@ fun WidgetPropertyConfigurationColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 26.dp),
+            .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         SectionColumn(
@@ -100,7 +101,7 @@ fun WidgetPropertyConfigurationColumn(
                 showRefreshIntervalConfigurationDialog = showRefreshIntervalConfigurationDialog
             )
         )
-        Spacer(modifier = Modifier.height(142.dp))
+        Spacer(modifier = Modifier.height(if (isPortraitModeActive) 142.dp else 92.dp))
     }
 }
 

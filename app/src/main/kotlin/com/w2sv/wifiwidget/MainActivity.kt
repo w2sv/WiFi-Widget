@@ -9,8 +9,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
@@ -77,25 +80,27 @@ class MainActivity : ComponentActivity() {
                     LocalLocationManager provides locationManager,
                     LocalNavHostController provides navController
                 ) {
-                    DestinationsNavHost(
-                        navGraph = NavGraphs.root,
-                        navController = navController,
-                        startRoute = appVM.startRoute,
-                        dependenciesContainerBuilder = {
-                            val widgetVM = activityViewModel<WidgetViewModel>()
+                    Surface(modifier = Modifier.fillMaxSize()) {
+                        DestinationsNavHost(
+                            navGraph = NavGraphs.root,
+                            navController = navController,
+                            startRoute = appVM.startRoute,
+                            dependenciesContainerBuilder = {
+                                val widgetVM = activityViewModel<WidgetViewModel>()
 
-                            // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
-                            CollectFromFlow(locationAccessState.newStatus) {
-                                if (it is LocationAccessPermissionStatus.Granted) {
-                                    widgetVM.configuration.onLocationAccessPermissionGranted(
-                                        it.trigger
-                                    )
+                                // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
+                                CollectFromFlow(locationAccessState.newStatus) {
+                                    if (it is LocationAccessPermissionStatus.Granted) {
+                                        widgetVM.configuration.onLocationAccessPermissionGranted(
+                                            it.trigger
+                                        )
+                                    }
                                 }
-                            }
 
-                            dependency(locationAccessState)
-                        }
-                    )
+                                dependency(locationAccessState)
+                            }
+                        )
+                    }
                 }
             }
         }

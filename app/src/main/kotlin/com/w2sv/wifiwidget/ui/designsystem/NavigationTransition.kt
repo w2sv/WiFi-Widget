@@ -26,22 +26,22 @@ abstract class PopNonPopIdenticalAnimatedDestinationStyle : DestinationStyle.Ani
 
 object HorizontalSlideTransitions : PopNonPopIdenticalAnimatedDestinationStyle() {
     override val enterTransition: NavigationEnterTransition = {
-        slideInHorizontally(animationSpec = animationSpec) + fadeIn(
+        slideInHorizontally(animationSpec = animationSpec, initialOffsetX = { -it }) + fadeIn(
             tween(
-                durationMillis
+                DURATION_MILLIS
             )
         )
     }
     override val exitTransition: NavigationExitTransition = {
-        slideOutHorizontally(animationSpec = animationSpec) + fadeOut(
+        slideOutHorizontally(animationSpec = animationSpec, targetOffsetX = { -it }) + fadeOut(
             tween(
-                durationMillis
+                DURATION_MILLIS
             )
         )
     }
 
-    private const val durationMillis: Int = 500
+    private const val DURATION_MILLIS: Int = 500
 
     private val animationSpec =
-        tween<IntOffset>(durationMillis = durationMillis, easing = Easing.overshoot)
+        tween<IntOffset>(durationMillis = DURATION_MILLIS, easing = Easing.overshoot)
 }
