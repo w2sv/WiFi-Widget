@@ -26,6 +26,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidget
 import com.w2sv.wifiwidget.ui.utils.fromDataStoreFlowMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
@@ -139,6 +140,7 @@ class WidgetViewModel @Inject constructor(
         mutableSharedSnackbarVisuals = sharedSnackbarVisuals,
         onStateSynced = {
             WidgetProvider.triggerDataRefresh(context)
+            delay(500)  // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
                     msg = it.getString(R.string.updated_widget_configuration),

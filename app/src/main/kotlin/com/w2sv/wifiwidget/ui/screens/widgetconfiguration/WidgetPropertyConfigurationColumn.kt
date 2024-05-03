@@ -37,7 +37,6 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
-import com.w2sv.wifiwidget.ui.designsystem.Padding
 import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
@@ -79,7 +78,7 @@ fun WidgetPropertyConfigurationColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = Padding.horizontalDefault),
+            .padding(horizontal = 26.dp),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
         SectionColumn(
@@ -120,11 +119,10 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
                 color = MaterialTheme.colorScheme.outlineVariant,
                 shape = MaterialTheme.shapes.medium
             )
-            .padding(horizontal = 10.dp)
     ) {
         IconHeader(
             properties = section.iconHeaderProperties,
-            modifier = section.headerModifier.padding(horizontal = 32.dp),
+            modifier = section.headerModifier.fillMaxWidth(),
         )
         section.content()
     }

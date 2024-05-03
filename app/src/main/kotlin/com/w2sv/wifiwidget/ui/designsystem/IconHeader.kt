@@ -32,7 +32,7 @@ fun IconHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        Box(modifier = Modifier.weight(0.3f)) {
+        Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = properties.iconRes),
                 contentDescription = null,
