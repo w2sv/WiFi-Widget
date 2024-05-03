@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,9 +38,13 @@ import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
@@ -55,6 +61,8 @@ import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private val verticalSectionHeaderPadding = 18.dp
 private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
@@ -285,6 +293,22 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     locationAccessState: LocationAccessState,
 ): ImmutableList<PropertyConfigurationElement.CheckRow<WidgetWifiProperty>> {
     val context = LocalContext.current
+    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+    val scope: CoroutineScope = rememberCoroutineScope()
+
+    val showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit = remember {
+        {
+            scope.launch {
+                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    AppSnackbarVisuals(
+                        msg = context.getString(R.string.leave_at_least_one_property_enabled),
+                        kind = SnackbarKind.Error
+                    )
+                )
+            }
+        }
+    }
+
     return remember {
         WidgetWifiProperty.entries
             .map { property ->
@@ -307,7 +331,11 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                         }
                                     }
                                 }
-                                isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()
+                                (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
+                                    if (!it) {
+                                        showLeaveAtLeastOnePropertyEnabledSnackbar()
+                                    }
+                                }
                             },
                             onCheckedChangedDisallowed = { shakeController.shake() },
                             infoDialogData = property.getInfoDialogData(context),
@@ -324,6 +352,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                             },
                             onCheckedChangedDisallowed = {
                                 shakeController.shake()
+                                showLeaveAtLeastOnePropertyEnabledSnackbar()
                             },
                             subPropertyCheckRowDataList = property.subProperties
                                 .map { subProperty ->
@@ -344,6 +373,14 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                                         },
                                         onCheckedChangedDisallowed = {
                                             subPropertyShakeController?.shake()
+                                            scope.launch {
+                                                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                                                    AppSnackbarVisuals(
+                                                        msg = context.getString(R.string.leave_at_least_one_address_version_enabled),
+                                                        kind = SnackbarKind.Error
+                                                    )
+                                                )
+                                            }
                                         },
                                         modifier = subPropertyShakeController?.let {
                                             Modifier.shake(

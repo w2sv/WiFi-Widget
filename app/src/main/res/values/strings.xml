@@ -43,7 +43,7 @@
     <string name="bottom_row">Bottom Row</string>
     <string name="grant">Grant</string>
     <string name="maybe_later">Maybe later</string>
-    <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system every 15 min. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
+    <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>
     <string name="go_to_app_settings">Go to app settings</string>
     <string name="go_to_wifi_settings_cd">Go to your device\'s WiFi settings.</string>
@@ -65,6 +65,8 @@
     <string name="open_the_refresh_interval_configuration_dialog">Open the refresh interval configuration dialog.</string>
     <string name="refresh_interval">Refresh Interval</string>
     <string name="interval">Interval</string>
-    <string name="interval_shorter_than_15_minutes_not_possible">Interval shorter than 15 minutes not possible!</string>
+    <string name="interval_shorter_than_15_minutes_not_possible">The interval needs to be larger than 15 minutes.</string>
     <string name="reset">Reset</string>
+    <string name="leave_at_least_one_address_version_enabled">Leave at least one address version enabled.</string>
+    <string name="leave_at_least_one_property_enabled">Leave at least one property enabled.</string>
 </resources>
