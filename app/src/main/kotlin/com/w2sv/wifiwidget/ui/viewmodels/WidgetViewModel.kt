@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import slimber.log.i
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,10 +44,6 @@ class WidgetViewModel @Inject constructor(
     @WidgetPinSuccessFlow widgetPinSuccessFlow: MutableSharedFlow<Unit>
 ) :
     ViewModel() {
-
-    init {
-        i { "WidgetVM init" }
-    }
 
     // =========
     // Pinning

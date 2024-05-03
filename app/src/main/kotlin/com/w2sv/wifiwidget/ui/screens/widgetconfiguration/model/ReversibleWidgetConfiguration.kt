@@ -12,7 +12,6 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import slimber.log.i
 import kotlin.time.Duration
 
 @Stable

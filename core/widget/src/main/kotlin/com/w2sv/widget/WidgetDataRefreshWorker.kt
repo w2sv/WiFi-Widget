@@ -43,6 +43,7 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
                         refreshOnLowBattery = refreshOnLowBattery,
                         interval = refreshInterval.toJavaDuration()
                     )
+
                     false -> cancelWorker()
                 }
             }

@@ -27,10 +27,6 @@ class HomeScreenViewModel @Inject constructor(
     widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
 ) : ViewModel() {
 
-    init {
-        i { "HomeScreenVM init" }
-    }
-
     private val wifiStateEmitter = WifiStateEmitter(
         wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap.stateIn(
             scope = viewModelScope,

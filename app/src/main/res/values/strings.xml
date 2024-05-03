@@ -21,7 +21,6 @@
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
     <string name="refreshing">Refreshing</string>
-    <string name="tap_again_to_exit">Tap again to exit</string>
     <string name="opacity_slider_cd">Change the background opacity.</string>
     <string name="font_size_slider_cd">Change the font size.</string>
     <string name="theme_button_cd">Set the %s theme.</string>

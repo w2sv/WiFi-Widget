@@ -133,10 +133,6 @@ class LocationAccessState(
     private val context: Context
 ) : MultiplePermissionsState by permissionsState {
 
-    init {
-        i { "LocationAccessState init" }
-    }
-
     val isGranted: Boolean by ::allPermissionsGranted
 
     val newStatus get() = _newStatus.asSharedFlow()
