@@ -1,6 +1,9 @@
-- Enable edge-to-edge
-- Add go to WiFi settings on click functionality to widget view when no connection available
-- Fix faulty application of widget appearance on first widget refresh/pin after app state was cleared from memory
-- Fix rare widget property view factory crashes
-- UI improvements
-- Performance improvements
+- New Features:
+    - Replaced the widget configuration dialog with a dedicated screen!
+    - Enabled configuration of the automatic widget data refresh interval
+- Bug fixes:
+    - Duplicate display of ULA IPs as GUA IPs
+    - Discarding of the unsaved appearance configuration upon reselection of the 'Preset' or 'Custom'
+    - Hiding of widget bottom bar when all elements are disabled
+- Also:
+    - Various UI & performance improvements

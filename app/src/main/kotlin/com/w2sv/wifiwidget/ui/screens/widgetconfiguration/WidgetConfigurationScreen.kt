@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
 import android.view.animation.AnticipateInterpolator
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -69,6 +70,15 @@ fun WidgetConfigurationScreen(
     widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
+    val onBack: () -> Unit = remember {
+        {
+            widgetVM.configuration.reset()
+            navigator.popBackStack()
+        }
+    }
+
+    BackHandler(onBack = onBack)
+
     Scaffold(
         snackbarHost = {
             AppSnackbarHost()
@@ -125,7 +135,7 @@ fun WidgetConfigurationScreen(
         ) {
             BackButtonHeaderWithDivider(
                 title = stringResource(id = R.string.widget_configuration),
-                onBackButtonClick = remember { { navigator.popBackStack() } }
+                onBackButtonClick = onBack
             )
 
             var infoDialogData by rememberSaveable(
