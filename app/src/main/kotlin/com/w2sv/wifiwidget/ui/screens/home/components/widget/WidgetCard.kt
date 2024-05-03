@@ -28,7 +28,7 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.services.isLocationEnabledCompat
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalNavHostController
-import com.w2sv.wifiwidget.ui.activityViewModel
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager

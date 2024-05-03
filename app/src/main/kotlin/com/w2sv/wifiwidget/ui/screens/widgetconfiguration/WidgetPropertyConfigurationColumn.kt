@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
 import android.content.Context
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,7 +22,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -56,7 +54,6 @@ import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.launch
 
 private val verticalSectionHeaderPadding = 18.dp
 private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
@@ -78,12 +75,10 @@ fun WidgetPropertyConfigurationColumn(
     showRefreshIntervalConfigurationDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = Padding.horizontalDefault),
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -93,8 +88,7 @@ fun WidgetPropertyConfigurationColumn(
                 locationAccessState = locationAccessState,
                 showPropertyInfoDialog = showPropertyInfoDialog,
                 showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                showRefreshIntervalConfigurationDialog = showRefreshIntervalConfigurationDialog,
-                scrollState = scrollState
+                showRefreshIntervalConfigurationDialog = showRefreshIntervalConfigurationDialog
             )
         )
         Spacer(modifier = Modifier.height(142.dp))
@@ -142,11 +136,9 @@ private fun rememberSections(
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
-    showRefreshIntervalConfigurationDialog: () -> Unit,
-    scrollState: ScrollState
+    showRefreshIntervalConfigurationDialog: () -> Unit
 ): ImmutableList<Section> {
     val context: Context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     return remember {
         persistentListOf(
@@ -262,12 +254,7 @@ private fun rememberSections(
                                         isCheckedMap = widgetConfiguration.refreshingParametersMap
                                     )
                                 ),
-                                subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier,
-                                onSubPropertyColumnExpanded = {
-                                    scope.launch {
-                                        scrollState.animateScrollTo(scrollState.maxValue)
-                                    }
-                                }
+                                subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier
                             )
                         )
                     },

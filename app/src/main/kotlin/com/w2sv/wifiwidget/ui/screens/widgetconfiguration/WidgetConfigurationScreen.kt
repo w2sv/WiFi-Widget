@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -35,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,7 +46,6 @@ import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.w2sv.composed.extensions.toEasing
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.activityViewModel
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.Padding
@@ -54,6 +55,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPicker
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
@@ -89,14 +91,29 @@ fun WidgetConfigurationScreen(
             ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.padding(top = 4.dp)
                 ) {
-                    FloatingActionButton(onClick = { widgetVM.configuration.reset() }) {
-                        Text(text = "Reset")
-                    }
-                    FloatingActionButton(onClick = { scope.launch { widgetVM.configuration.sync() } }) {
-                        Text(text = "Apply")
-                    }
+                    ConfigurationProcedureFAB(
+                        text = stringResource(R.string.reset),
+                        onClick = remember { { widgetVM.configuration.reset() } },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = com.w2sv.core.common.R.drawable.ic_refresh_24),
+                                contentDescription = null
+                            )
+                        }
+                    )
+                    ConfigurationProcedureFAB(
+                        text = stringResource(id = R.string.apply),
+                        onClick = remember { { scope.launch { widgetVM.configuration.sync() } } },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null
+                            )
+                        }
+                    )
                 }
             }
         }
@@ -180,6 +197,20 @@ fun WidgetConfigurationScreen(
                     }
                 }
             )
+        }
+    }
+}
+
+@Composable
+private fun ConfigurationProcedureFAB(
+    text: String,
+    onClick: () -> Unit,
+    icon: @Composable () -> Unit
+) {
+    FloatingActionButton(onClick = onClick) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            icon()
+            Text(text = text)
         }
     }
 }
