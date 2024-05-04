@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border

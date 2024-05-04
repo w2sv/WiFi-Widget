@@ -39,11 +39,11 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerDialog
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerProperties
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.PropertyInfoDialog
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.RefreshIntervalConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.WidgetPropertyConfigurationColumn
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.WidgetPropertyConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.utils.Easing
 import com.w2sv.wifiwidget.ui.utils.activityViewModel

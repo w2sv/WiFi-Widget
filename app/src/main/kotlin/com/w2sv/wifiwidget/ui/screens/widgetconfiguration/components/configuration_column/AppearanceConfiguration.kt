@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
 
 import android.content.Context
 import androidx.compose.animation.AnimatedContent
@@ -32,6 +32,7 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.extensions.getByOrdinal
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SliderRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
@@ -39,6 +40,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import kotlin.math.roundToInt
 
@@ -71,7 +73,7 @@ fun AppearanceConfiguration(
                         }
                     },
                     colors = SegmentedButtonDefaults.colors(
-                        inactiveContainerColor = SectionCardBackground
+                        inactiveContainerColor = HomeScreenCardBackground
                     ),
                     shape = SegmentedButtonDefaults.itemShape(
                         index = i,

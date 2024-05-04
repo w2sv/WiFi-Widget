@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -18,16 +18,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,15 +36,16 @@ import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
-import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationView
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
@@ -61,6 +58,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 private val verticalSectionHeaderPadding = 18.dp
 private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
@@ -117,7 +115,7 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(
-                color = SectionCardBackground,
+                color = HomeScreenCardBackground,
                 shape = MaterialTheme.shapes.medium
             )
             .border(
@@ -133,12 +131,6 @@ private fun SectionCard(section: Section, modifier: Modifier = Modifier) {
         section.content()
     }
 }
-
-val SectionCardBackground: Color
-    @Composable
-    get() = MaterialTheme.colorScheme.surfaceColorAtElevation(
-        homeScreenCardElevation
-    )
 
 @Composable
 private fun rememberSections(
@@ -231,39 +223,13 @@ private fun rememberSections(
                                 ),
                                 subPropertyCheckRowDataList = persistentListOf(
                                     PropertyConfigurationView.Custom {
-                                        Row(
+                                        RefreshIntervalConfigurationRow(
+                                            interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
+                                            showConfigurationDialog = showRefreshIntervalConfigurationDialog,
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .padding(vertical = 4.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            SubPropertyKeyboardArrowRightIcon()
-                                            Text(text = stringResource(R.string.interval))
-                                            Spacer(modifier = Modifier.weight(1f))
-
-                                            val interval by widgetConfiguration.refreshInterval.collectAsState()
-                                            Text(text = remember(interval) {
-                                                interval.run {
-                                                    when {
-                                                        inWholeHours == 0L -> "${minutes}m"
-                                                        minutes == 0 -> "${inWholeHours}h"
-                                                        else -> "${inWholeHours}h ${minutes}m"
-                                                    }
-                                                }
-                                            })
-                                            IconButton(
-                                                onClick = { showRefreshIntervalConfigurationDialog() },
-                                                modifier = Modifier
-                                                    .padding(horizontal = 4.dp)
-                                                    .size(38.dp)
-                                            ) {
-                                                Icon(
-                                                    painter = painterResource(id = R.drawable.ic_edit_24),
-                                                    contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
-                                                    tint = MaterialTheme.colorScheme.primary
-                                                )
-                                            }
-                                        }
+                                                .padding(vertical = 4.dp)
+                                        )
                                     },
                                     PropertyConfigurationView.CheckRow.WithoutSubProperties.fromIsCheckedMap(
                                         property = WidgetRefreshingParameter.RefreshOnLowBattery,
@@ -283,10 +249,41 @@ private fun rememberSections(
 }
 
 @Composable
-fun SubPropertyKeyboardArrowRightIcon(modifier: Modifier = Modifier) {
-    KeyboardArrowRightIcon(
-        modifier = modifier.size(20.dp)
-    )
+private fun RefreshIntervalConfigurationRow(
+    interval: Duration,
+    showConfigurationDialog: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SubPropertyKeyboardArrowRightIcon()
+        Text(text = stringResource(R.string.interval))
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(text = remember(interval) {
+            interval.run {
+                when {
+                    inWholeHours == 0L -> "${minutes}m"
+                    minutes == 0 -> "${inWholeHours}h"
+                    else -> "${inWholeHours}h ${minutes}m"
+                }
+            }
+        })
+        IconButton(
+            onClick = showConfigurationDialog,
+            modifier = Modifier
+                .padding(horizontal = 4.dp)
+                .size(38.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_edit_24),
+                contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
 }
 
 @Composable
