@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states
+package com.w2sv.wifiwidget.ui.states
 
 import android.Manifest
 import android.content.Context
@@ -25,9 +25,9 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
+import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted

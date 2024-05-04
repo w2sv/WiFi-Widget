@@ -9,7 +9,7 @@ import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.time.Duration

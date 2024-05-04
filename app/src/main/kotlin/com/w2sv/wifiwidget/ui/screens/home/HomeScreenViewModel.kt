@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.viewmodels
+package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

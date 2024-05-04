@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui
+package com.w2sv.wifiwidget.ui.utils
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController

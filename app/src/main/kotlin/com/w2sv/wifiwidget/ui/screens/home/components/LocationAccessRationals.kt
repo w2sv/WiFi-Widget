@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission
+package com.w2sv.wifiwidget.ui.screens.home.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
@@ -20,7 +20,7 @@ import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.states.LocationAccessState
 
 @Immutable
 sealed interface LocationAccessPermissionRequestTrigger {

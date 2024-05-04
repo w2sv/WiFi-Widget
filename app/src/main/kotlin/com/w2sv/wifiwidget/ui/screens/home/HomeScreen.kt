@@ -36,11 +36,10 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppTopBar
 import com.w2sv.wifiwidget.ui.designsystem.drawer.NavigationDrawer
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessRationals
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
+import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
-import com.w2sv.wifiwidget.ui.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Calendar

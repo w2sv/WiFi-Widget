@@ -38,7 +38,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
@@ -47,7 +47,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configurati
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.utils.Easing
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
+import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components
+package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,20 +11,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 
-val homeScreenCardElevation = 8.dp
+val elevatedCardElevation = 8.dp
 
 @Composable
-fun HomeScreenCard(
+fun ElevatedIconHeaderCard(
     iconHeaderProperties: IconHeaderProperties,
     modifier: Modifier = Modifier,
     headerRowBottomSpacing: Dp = 16.dp,
     content: @Composable ColumnScope.() -> Unit
 ) {
     ElevatedCard(
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = homeScreenCardElevation),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevatedCardElevation),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
         modifier = modifier,
     ) {

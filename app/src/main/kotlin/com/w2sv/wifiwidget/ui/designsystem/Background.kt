@@ -9,7 +9,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import com.w2sv.wifiwidget.ui.screens.home.components.homeScreenCardElevation
 
 @SuppressLint("ComposeComposableModifier", "ComposeModifierWithoutDefault")
 @Composable
@@ -28,5 +27,5 @@ val HomeScreenCardBackground: Color
     @Composable
     @ReadOnlyComposable
     get() = MaterialTheme.colorScheme.surfaceColorAtElevation(
-        homeScreenCardElevation
+        elevatedCardElevation
     )

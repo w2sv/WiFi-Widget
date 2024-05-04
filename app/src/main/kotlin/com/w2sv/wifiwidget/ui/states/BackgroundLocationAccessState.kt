@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states
+package com.w2sv.wifiwidget.ui.states
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast

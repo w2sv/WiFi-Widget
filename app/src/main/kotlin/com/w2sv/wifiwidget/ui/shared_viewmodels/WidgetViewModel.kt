@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.viewmodels
+package com.w2sv.wifiwidget.ui.shared_viewmodels
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

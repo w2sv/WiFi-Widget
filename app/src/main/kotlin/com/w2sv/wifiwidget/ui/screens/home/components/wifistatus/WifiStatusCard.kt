@@ -11,7 +11,7 @@ import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.isPortraitModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
-import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
+import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 
 @Composable
@@ -19,7 +19,7 @@ fun WifiStatusCard(
     wifiState: WifiState,
     modifier: Modifier = Modifier
 ) {
-    HomeScreenCard(
+    ElevatedIconHeaderCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_network_check_24,
             stringRes = R.string.wifi_status,

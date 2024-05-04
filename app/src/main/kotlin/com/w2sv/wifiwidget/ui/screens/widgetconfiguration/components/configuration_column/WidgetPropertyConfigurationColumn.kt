@@ -42,8 +42,8 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
-import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
