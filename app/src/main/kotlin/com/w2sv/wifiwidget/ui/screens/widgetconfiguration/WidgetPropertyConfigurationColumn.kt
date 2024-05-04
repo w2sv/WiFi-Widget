@@ -200,7 +200,7 @@ private fun rememberSections(
             Section(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_bottom_row_24,
-                    stringRes = R.string.bottom_row,
+                    stringRes = R.string.bottom_bar,
                 )
             ) {
                 PropertyCheckRowColumn(

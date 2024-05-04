@@ -39,7 +39,7 @@
     <string name="developer">Developer</string>
     <string name="use_dynamic_colors">Use dynamic colors</string>
     <string name="appearance">Appearance</string>
-    <string name="bottom_row">Bottom Row</string>
+    <string name="bottom_bar">Bottom Bar</string>
     <string name="grant">Grant</string>
     <string name="maybe_later">Maybe later</string>
     <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
