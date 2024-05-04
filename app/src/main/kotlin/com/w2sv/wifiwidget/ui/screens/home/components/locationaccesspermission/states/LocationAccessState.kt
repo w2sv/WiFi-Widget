@@ -17,6 +17,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
+import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -26,7 +27,6 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow

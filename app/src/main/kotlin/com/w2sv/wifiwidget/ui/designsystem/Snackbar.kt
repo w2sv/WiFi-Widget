@@ -29,8 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.theme.AppColor
-import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 
 @Immutable

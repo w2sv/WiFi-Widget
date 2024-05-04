@@ -20,13 +20,13 @@ import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.navigation.dependency
+import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.rememberLocationAccessState
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.utils.CollectFromFlow
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel

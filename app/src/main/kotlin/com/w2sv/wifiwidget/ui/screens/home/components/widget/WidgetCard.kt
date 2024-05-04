@@ -26,6 +26,7 @@ import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.services.isLocationEnabledCompat
+import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -38,7 +39,6 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.HomeScreenCard
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
