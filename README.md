@@ -48,31 +48,38 @@
 - Different layouts for landscape & portrait mode
 - Live WiFi Status display with property copy-to-clipboard functionality
 
-### Widget
+### Widget Configuration Options
 
-- Resizable
-- Configurable appearance:
+- Appearance:
+    - Size
     - Light/dark theme with static/dynamic colors, or custom colors
-    - Configurable background opacity
-    - Configurable font size
-- Configurable WiFi property inclusion:
+    - Background opacity
+    - Font size
+- Displayed WiFi properties:
     - SSID, BSSID
     - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched
       from https://api.ipify.org)
         - For address types that support IPv4 & IPv6, you may choose which versions to include
+        - Whether to display prefix lengths
     - Frequency, Channel, Link Speed, RSSI, Standard, Gateway, DNS, DHCP
-- Configurable button row elements
-- Configurable automatic refreshing
+- Bottom bar elements:
+    - Last refresh date time display
+    - Refresh data button
+    - Go to WiFi settings button
+    - Go to widget configuration button 
+- Periodic data refreshing:
+    - Interval
+    - Refresh on low battery
 
 <h2 align="center">Tech Stack</h2>
 
 - Kotlin
 - Jetpack Compose
-- All sorts of Androidx stuff
-- Coroutines
-- Dagger-Hilt
-- KSP
+- Coroutines & flows
+- Dagger-Hilt for dependency injection
 - OkHttp 3
+- [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
+- Proto & Preferences data store
 
 <h2 align="center">Screenshots</h2>
 
