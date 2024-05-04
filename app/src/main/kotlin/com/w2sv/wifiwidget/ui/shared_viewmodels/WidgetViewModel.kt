@@ -87,9 +87,9 @@ class WidgetViewModel @Inject constructor(
         coloringConfig = ReversibleStateFlow(
             scope = viewModelScope,
             appliedState = repository.coloringConfig.stateIn(
-                viewModelScope,
-                SharingStarted.Eagerly,
-                WidgetColoring.Config()
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = WidgetColoring.Config()
             ),
             syncState = { repository.saveColoringConfig(it) }
         ),
