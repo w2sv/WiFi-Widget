@@ -6,13 +6,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 
-@SuppressLint("ComposeComposableModifier")
+@SuppressLint("ComposeComposableModifier", "ComposeModifierWithoutDefault")
 @Composable
 @ReadOnlyComposable
-fun Modifier.nestedListBackground(): Modifier =
+fun Modifier.nestedContentBackground(
+    color: Color = MaterialTheme.colorScheme.surface,
+    shape: Shape = MaterialTheme.shapes.medium
+): Modifier =
     this then Modifier
         .background(
-            color = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.medium
+            color = color,
+            shape = shape
         )

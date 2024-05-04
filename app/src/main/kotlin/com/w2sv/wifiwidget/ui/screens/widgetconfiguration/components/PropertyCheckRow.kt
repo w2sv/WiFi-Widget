@@ -40,10 +40,9 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
-import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SubPropertyKeyboardArrowRightIcon
+import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationElement
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationView
 import kotlinx.collections.immutable.ImmutableList
 
 // For alignment of primary check row click elements and sub property click elements
@@ -52,7 +51,7 @@ private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun PropertyCheckRowColumn(
-    dataList: ImmutableList<PropertyConfigurationElement.CheckRow<*>>,
+    dataList: ImmutableList<PropertyConfigurationView.CheckRow<*>>,
     modifier: Modifier = Modifier,
     showInfoDialog: ((InfoDialogData) -> Unit)? = null
 ) {
@@ -60,7 +59,7 @@ fun PropertyCheckRowColumn(
         dataList
             .forEach { data ->
                 when (data) {
-                    is PropertyConfigurationElement.CheckRow.WithoutSubProperties -> {
+                    is PropertyConfigurationView.CheckRow.WithoutSubProperties -> {
                         PropertyCheckRow(
                             data = data,
                             showInfoDialog = showInfoDialog,
@@ -76,7 +75,7 @@ fun PropertyCheckRowColumn(
                         )
                     }
 
-                    is PropertyConfigurationElement.CheckRow.WithSubProperties -> {
+                    is PropertyConfigurationView.CheckRow.WithSubProperties -> {
                         var expandSubProperties by rememberSaveable {
                             mutableStateOf(false)
                         }
@@ -116,7 +115,7 @@ fun PropertyCheckRowColumn(
                                 configurationElements = data.subPropertyCheckRowDataList,
                                 modifier = data.subPropertyColumnModifier
                                     .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
-                                    .nestedListBackground()
+                                    .nestedContentBackground()
                                     .padding(start = subPropertyColumnPadding)
                             )
                         }
@@ -128,13 +127,13 @@ fun PropertyCheckRowColumn(
 
 @Composable
 private fun SubPropertyCheckRowColumn(
-    configurationElements: ImmutableList<PropertyConfigurationElement>,
+    configurationElements: ImmutableList<PropertyConfigurationView>,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         configurationElements.forEach { element ->
             when (element) {
-                is PropertyConfigurationElement.CheckRow<*> -> {
+                is PropertyConfigurationView.CheckRow<*> -> {
                     if ((element.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
                         Text(
                             text = stringResource(R.string.versions),
@@ -156,7 +155,7 @@ private fun SubPropertyCheckRowColumn(
                     )
                 }
 
-                is PropertyConfigurationElement.Custom -> {
+                is PropertyConfigurationView.Custom -> {
                     element.content()
                 }
             }
@@ -170,7 +169,7 @@ private val addressVersionEnablementStartPadding = 16.dp
 
 @Composable
 private fun PropertyCheckRow(
-    data: PropertyConfigurationElement.CheckRow<*>,
+    data: PropertyConfigurationView.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     textColor: Color = Color.Unspecified,

@@ -27,7 +27,7 @@ data class InfoDialogData(
     }
 }
 
-fun WidgetWifiProperty.getInfoDialogData(context: Context): InfoDialogData =
+fun WidgetWifiProperty.toInfoDialogData(context: Context): InfoDialogData =
     InfoDialogData(
         title = context.getString(labelRes),
         description = context.getString(descriptionRes),

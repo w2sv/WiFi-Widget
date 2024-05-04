@@ -6,13 +6,13 @@ import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
 import kotlinx.collections.immutable.ImmutableList
 
-sealed interface PropertyConfigurationElement {
+sealed interface PropertyConfigurationView {
 
     @Immutable
-    data class Custom(val content: @Composable () -> Unit) : PropertyConfigurationElement
+    data class Custom(val content: @Composable () -> Unit) : PropertyConfigurationView
 
     @Immutable
-    sealed interface CheckRow<T : WidgetProperty> : PropertyConfigurationElement {
+    sealed interface CheckRow<T : WidgetProperty> : PropertyConfigurationView {
         val property: T
         val isChecked: () -> Boolean
         val onCheckedChange: (Boolean) -> Unit
@@ -59,7 +59,7 @@ sealed interface PropertyConfigurationElement {
             override val property: T,
             override val isChecked: () -> Boolean,
             override val onCheckedChange: (Boolean) -> Unit,
-            val subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationElement>,
+            val subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationView>,
             val subPropertyColumnModifier: Modifier = Modifier,
             val onSubPropertyColumnExpanded: () -> Unit = {},
             override val infoDialogData: InfoDialogData? = null,
@@ -70,7 +70,7 @@ sealed interface PropertyConfigurationElement {
                 fun <T : WidgetProperty> fromIsCheckedMap(
                     property: T,
                     isCheckedMap: MutableMap<T, Boolean>,
-                    subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationElement>,
+                    subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationView>,
                     subPropertyCheckRowColumnModifier: Modifier = Modifier,
                     onSubPropertyColumnExpanded: () -> Unit = {},
                     allowCheckChange: (Boolean) -> Boolean = { true },

@@ -22,6 +22,7 @@ import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.composed.nullableListSaver
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
 @Stable
 class ColorPickerProperties(

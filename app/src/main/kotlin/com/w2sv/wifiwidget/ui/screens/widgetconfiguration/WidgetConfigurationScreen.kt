@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
-import android.view.animation.AnticipateInterpolator
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -11,20 +10,12 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,23 +30,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.w2sv.composed.extensions.toEasing
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
+import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
-import com.w2sv.wifiwidget.ui.designsystem.Padding
 import com.w2sv.wifiwidget.ui.screens.home.components.locationaccesspermission.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.ColorPickerProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.RefreshIntervalConfigurationDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.WidgetPropertyConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
+import com.w2sv.wifiwidget.ui.utils.Easing
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.viewmodels.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -88,43 +78,22 @@ fun WidgetConfigurationScreen(
                 visible = widgetVM.configuration.statesDissimilar.collectAsState().value,
                 enter = remember {
                     slideInHorizontally(
-                        animationSpec = tween(easing = anticipateEasing),
+                        animationSpec = tween(easing = Easing.anticipate),
                         initialOffsetX = { it / 2 }
                     ) + fadeIn()
                 },
                 exit = remember {
                     slideOutHorizontally(
-                        animationSpec = tween(easing = anticipateEasing),
+                        animationSpec = tween(easing = Easing.anticipate),
                         targetOffsetX = { it / 2 }
                     ) + fadeOut()
                 },
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                ConfigurationProcedureFABRow(
+                    onResetButtonClick = remember { { widgetVM.configuration.reset() } },
+                    onApplyButtonClick = remember { { scope.launch { widgetVM.configuration.sync() } } },
                     modifier = Modifier.padding(top = 8.dp)
-                ) {
-                    ConfigurationProcedureFAB(
-                        text = stringResource(R.string.reset),
-                        onClick = remember { { widgetVM.configuration.reset() } },
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = com.w2sv.core.common.R.drawable.ic_refresh_24),
-                                contentDescription = null
-                            )
-                        }
-                    )
-                    ConfigurationProcedureFAB(
-                        text = stringResource(id = R.string.apply),
-                        onClick = remember { { scope.launch { widgetVM.configuration.sync() } } },
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null
-                            )
-                        }
-                    )
-                }
+                )
             }
         }
     ) { paddingValues ->
@@ -138,6 +107,7 @@ fun WidgetConfigurationScreen(
                 onBackButtonClick = onBack
             )
 
+            // TODO: compress to one state
             var infoDialogData by rememberSaveable(
                 stateSaver = InfoDialogData.nullableStateSaver,
             ) {
@@ -174,7 +144,6 @@ fun WidgetConfigurationScreen(
                                     )
                                 )
                             }
-
                         }
                     },
                     onDismissRequest = remember {
@@ -212,6 +181,40 @@ fun WidgetConfigurationScreen(
 }
 
 @Composable
+private fun ConfigurationProcedureFABRow(
+    onResetButtonClick: () -> Unit,
+    onApplyButtonClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+    ) {
+        ConfigurationProcedureFAB(
+            text = stringResource(R.string.reset),
+            onClick = onResetButtonClick,
+            icon = {
+                Icon(
+                    painter = painterResource(id = com.w2sv.core.common.R.drawable.ic_refresh_24),
+                    contentDescription = null
+                )
+            }
+        )
+        ConfigurationProcedureFAB(
+            text = stringResource(id = R.string.apply),
+            onClick = onApplyButtonClick,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null
+                )
+            }
+        )
+    }
+}
+
+@Composable
 private fun ConfigurationProcedureFAB(
     text: String,
     onClick: () -> Unit,
@@ -223,38 +226,5 @@ private fun ConfigurationProcedureFAB(
             icon()
             Text(text = text)
         }
-    }
-}
-
-private val anticipateEasing = AnticipateInterpolator().toEasing()
-
-@Composable
-fun BackButtonHeaderWithDivider(
-    title: String,
-    onBackButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Padding.horizontalDefault),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            FilledTonalIconButton(onClick = onBackButtonClick, modifier = Modifier.size(38.dp)) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                )
-            }
-            Spacer(modifier = Modifier.width(20.dp))
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.secondary
-            )
-        }
-        HorizontalDivider(modifier = Modifier.padding(top = 14.dp))
     }
 }

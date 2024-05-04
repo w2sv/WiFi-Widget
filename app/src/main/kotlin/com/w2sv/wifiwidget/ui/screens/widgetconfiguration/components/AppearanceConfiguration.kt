@@ -1,21 +1,17 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components
 
 import android.content.Context
-import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -41,8 +37,9 @@ import com.w2sv.wifiwidget.ui.designsystem.SliderRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
-import com.w2sv.wifiwidget.ui.designsystem.nestedListBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.SectionCardBackground
+import com.w2sv.wifiwidget.ui.designsystem.colorButton
+import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import kotlin.math.roundToInt
 
 private val verticalPadding = 12.dp
@@ -88,7 +85,7 @@ fun AppearanceConfiguration(
 
         val styleConfigurationModifier =
             Modifier
-                .nestedListBackground()
+                .nestedContentBackground()
                 .padding(horizontal = 16.dp, vertical = 12.dp)
 
         AnimatedContent(
@@ -183,21 +180,6 @@ private fun PresetColoringConfiguration(
     }
 }
 
-enum class CustomWidgetColor(@StringRes val labelRes: Int) {
-    Background(com.w2sv.core.domain.R.string.background),
-    Primary(com.w2sv.core.domain.R.string.primary),
-    Secondary(com.w2sv.core.domain.R.string.secondary);
-
-    fun getColor(data: WidgetColoring.Style.Custom): Color =
-        Color(
-            when (this) {
-                Background -> data.background
-                Primary -> data.primary
-                Secondary -> data.secondary
-            }
-        )
-}
-
 @Composable
 private fun CustomColorConfiguration(
     data: WidgetColoring.Style.Custom,
@@ -251,8 +233,7 @@ private fun SectionCustomizationRow(
             )
         Button(
             modifier = Modifier
-                .border(0.5.dp, MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
-                .size(42.dp)
+                .colorButton()
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
                 containerColor = color,
