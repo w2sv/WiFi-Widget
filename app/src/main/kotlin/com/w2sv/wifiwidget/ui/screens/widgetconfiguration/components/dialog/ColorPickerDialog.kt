@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
-import com.w2sv.composed.nullableListSaver
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
@@ -27,7 +26,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColo
 @Stable
 class ColorPickerProperties(
     val customWidgetColor: CustomWidgetColor,
-    private val appliedColor: Color,
+    val appliedColor: Color,
     initialColor: Color
 ) {
     constructor(customWidgetColor: CustomWidgetColor, appliedColor: Color) : this(
@@ -48,21 +47,6 @@ class ColorPickerProperties(
             CustomWidgetColor.Primary -> data.copy(primary = color.toArgb())
             CustomWidgetColor.Secondary -> data.copy(secondary = color.toArgb())
         }
-
-    companion object {
-        val nullableStateSaver = nullableListSaver<ColorPickerProperties, Any>(
-            saveNonNull = {
-                listOf(it.customWidgetColor, it.appliedColor.toArgb(), it.color.toArgb())
-            },
-            restoreNonNull = {
-                ColorPickerProperties(
-                    customWidgetColor = it[0] as CustomWidgetColor,
-                    appliedColor = Color(it[1] as Int),
-                    initialColor = Color(it[2] as Int)
-                )
-            }
-        )
-    }
 }
 
 @Composable
