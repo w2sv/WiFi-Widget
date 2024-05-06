@@ -22,14 +22,14 @@ import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.navigation.dependency
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
-import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
-import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
+import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
+import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -76,6 +76,17 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val locationAccessState = rememberLocationAccessState()
 
+                val widgetVM = activityViewModel<WidgetViewModel>()
+
+                // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
+                CollectFromFlow(locationAccessState.newStatus) {
+                    if (it is LocationAccessPermissionStatus.Granted) {
+                        widgetVM.configuration.onLocationAccessPermissionGranted(
+                            it.trigger
+                        )
+                    }
+                }
+
                 CompositionLocalProvider(
                     LocalLocationManager provides locationManager,
                     LocalNavHostController provides navController
@@ -86,19 +97,8 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             startRoute = appVM.startRoute,
                             dependenciesContainerBuilder = {
-                                val widgetVM = activityViewModel<WidgetViewModel>()
-
-                                // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
-                                CollectFromFlow(locationAccessState.newStatus) {
-                                    if (it is LocationAccessPermissionStatus.Granted) {
-                                        widgetVM.configuration.onLocationAccessPermissionGranted(
-                                            it.trigger
-                                        )
-                                    }
-                                }
-
                                 dependency(locationAccessState)
-                            }
+                            },
                         )
                     }
                 }

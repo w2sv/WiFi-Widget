@@ -28,19 +28,20 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.services.isLocationEnabledCompat
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalLocationManager
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvocationSource
+import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -76,7 +77,11 @@ fun WidgetCard(
                 WidgetConfigurationDialogButton(
                     onClick = remember {
                         {
-                            navController.navigate(WidgetConfigurationScreenDestination())
+                            navController.navigate(
+                                WidgetConfigurationScreenDestination(
+                                    invocationSource = WidgetConfigurationScreenInvocationSource.App
+                                )
+                            )
                         }
                     },
                     modifier = Modifier.size(32.dp),

@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -28,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,22 +50,36 @@ import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.Easing
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.utils.findActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+enum class WidgetConfigurationScreenInvocationSource { App, Widget }
 
 @Destination<RootGraph>(style = HorizontalSlideTransitions::class)
 @Composable
 fun WidgetConfigurationScreen(
     locationAccessState: LocationAccessState,
     navigator: DestinationsNavigator,
+    invocationSource: WidgetConfigurationScreenInvocationSource = WidgetConfigurationScreenInvocationSource.Widget,
     widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
+    val context: Context = LocalContext.current
+
     val onBack: () -> Unit = remember {
         {
-            widgetVM.configuration.reset()
-            navigator.popBackStack()
+            when (invocationSource) {
+                WidgetConfigurationScreenInvocationSource.App -> {
+                    widgetVM.configuration.reset()
+                    navigator.popBackStack()
+                }
+
+                WidgetConfigurationScreenInvocationSource.Widget -> {
+                    context.findActivity().finishAndRemoveTask()
+                }
+            }
         }
     }
 

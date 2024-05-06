@@ -30,7 +30,10 @@ class AppViewModel @Inject constructor(
     ViewModel() {
 
     val startRoute: Route =
-        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) WidgetConfigurationScreenDestination else HomeScreenDestination
+        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true)
+            WidgetConfigurationScreenDestination
+        else
+            HomeScreenDestination
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()
 
