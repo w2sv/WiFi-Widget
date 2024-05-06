@@ -40,7 +40,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import kotlin.math.roundToInt
 
@@ -55,7 +55,7 @@ fun AppearanceConfiguration(
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
     setFontSize: (FontSize) -> Unit,
-    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -185,7 +185,7 @@ private fun PresetColoringConfiguration(
 @Composable
 private fun CustomColorConfiguration(
     data: WidgetColoring.Style.Custom,
-    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -199,7 +199,7 @@ private fun CustomColorConfiguration(
                     color = color,
                     onClick = {
                         showCustomColorConfigurationDialog(
-                            ColorPickerProperties(
+                            ColorPickerDialogData(
                                 customWidgetColor = widgetColorType,
                                 appliedColor = color
                             )

@@ -45,7 +45,7 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerProperties
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.PropertyConfigurationView
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
@@ -76,7 +76,7 @@ fun WidgetPropertyConfigurationColumn(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
-    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -137,7 +137,7 @@ private fun rememberSections(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showPropertyInfoDialog: (InfoDialogData) -> Unit,
-    showCustomColorConfigurationDialog: (ColorPickerProperties) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
 ): ImmutableList<Section> {
     val context: Context = LocalContext.current
