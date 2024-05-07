@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.minutes
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
 import kotlin.time.Duration
 
 @Composable

@@ -17,7 +17,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,61 +32,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.WidgetProperty
+import com.w2sv.composed.extensions.thenIf
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
+import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
-
-sealed interface CheckRowColumnElement {
-
-    @Immutable
-    data class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
-
-    @Immutable
-    data class CheckRow<T : WidgetProperty>(
-        val property: T,
-        val isChecked: () -> Boolean,
-        val onCheckedChange: (Boolean) -> Unit,
-        val showInfoDialog: (() -> Unit)? = null,
-        val subPropertyContent: (@Composable () -> Unit)? = null,
-        val modifier: Modifier = Modifier
-    ) : CheckRowColumnElement {
-
-        val hasSubProperties: Boolean
-            get() = subPropertyContent != null
-
-        companion object {
-            fun <T : WidgetProperty> fromIsCheckedMap(
-                property: T,
-                isCheckedMap: MutableMap<T, Boolean>,
-                allowCheckChange: (Boolean) -> Boolean = { true },
-                onCheckedChangedDisallowed: () -> Unit = {},
-                showInfoDialog: (() -> Unit)? = null,
-                subPropertyContent: (@Composable () -> Unit)? = null,
-                modifier: Modifier = Modifier
-            ): CheckRow<T> {
-                return CheckRow(
-                    property = property,
-                    isChecked = { isCheckedMap.getValue(property) },
-                    onCheckedChange = {
-                        if (allowCheckChange(it)) {
-                            isCheckedMap[property] = it
-                        } else {
-                            onCheckedChangedDisallowed()
-                        }
-                    },
-                    subPropertyContent = subPropertyContent,
-                    showInfoDialog = showInfoDialog,
-                    modifier = modifier,
-                )
-            }
-        }
-    }
-}
 
 // For alignment of primary check row click elements with sub property click elements
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
@@ -235,7 +187,10 @@ private fun CheckRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .then(data.modifier),
+            .then(data.modifier)
+            .thenIf(data.shakeController != null) {
+                shake(data.shakeController!!)
+            },
     ) {
         leadingIcon?.invoke()
         Text(

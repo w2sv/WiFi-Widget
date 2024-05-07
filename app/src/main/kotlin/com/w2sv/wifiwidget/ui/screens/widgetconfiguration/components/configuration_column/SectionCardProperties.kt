@@ -30,7 +30,6 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidget
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
-import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -212,7 +211,8 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                     showInfoDialog = showInfoDialog,
                     showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
-                    context = context
+                    context = context,
+                    scope = scope
                 )
             }
             .toPersistentList()
@@ -225,7 +225,8 @@ private fun WidgetWifiProperty.checkRow(
     showInfoDialog: (InfoDialogData) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
-    context: Context
+    context: Context,
+    scope: CoroutineScope
 ): CheckRowColumnElement.CheckRow<WidgetWifiProperty> {
     val shakeController = ShakeController(shakeConfig)
 
@@ -250,14 +251,16 @@ private fun WidgetWifiProperty.checkRow(
                 }
             }
         },
-        onCheckedChangedDisallowed = { shakeController.shake() },
+        onCheckedChangedDisallowed = { scope.launch { shakeController.shake() } },
+        shakeController = shakeController,
         subPropertyContent = when (this) {
             is WidgetWifiProperty.IP -> {
                 {
                     SubPropertyCheckRowColumn(
                         elements = subPropertyElements(
                             ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
-                            showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar
+                            showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
+                            scope = scope
                         )
                     )
                 }
@@ -265,8 +268,7 @@ private fun WidgetWifiProperty.checkRow(
 
             else -> null
         },
-        showInfoDialog = { showInfoDialog(toInfoDialogData(context)) },
-        modifier = Modifier.shake(shakeController)
+        showInfoDialog = { showInfoDialog(toInfoDialogData(context)) }
     )
 }
 
@@ -275,7 +277,8 @@ private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean 
 
 private fun WidgetWifiProperty.IP.subPropertyElements(
     ipSubPropertyEnablementMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit
+    showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
+    scope: CoroutineScope
 ): ImmutableList<CheckRowColumnElement> {
     return buildList {
         if (this@subPropertyElements is WidgetWifiProperty.IP.V4AndV6) {
@@ -288,7 +291,7 @@ private fun WidgetWifiProperty.IP.subPropertyElements(
         addAll(
             subProperties
                 .map { subProperty ->
-                    val subPropertyShakeController =
+                    val shakeController =
                         if (subProperty.isAddressTypeEnablementProperty)
                             ShakeController(shakeConfig)
                         else
@@ -304,17 +307,15 @@ private fun WidgetWifiProperty.IP.subPropertyElements(
                             )
                         },
                         onCheckedChangedDisallowed = {
-                            subPropertyShakeController?.shake()
+                            scope.launch { shakeController?.shake() }
                             showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                         },
+                        shakeController = shakeController,
                         modifier = Modifier
                             .thenIf(
                                 condition = subProperty.isAddressTypeEnablementProperty,
                                 onTrue = { padding(start = 4.dp) }
                             )
-                            .thenIf(subPropertyShakeController != null) {
-                                shake(subPropertyShakeController!!)
-                            }
                     )
                 }
         )
