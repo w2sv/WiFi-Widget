@@ -122,13 +122,13 @@ private fun CheckRowWithSubProperties(
         )
 
         AnimatedVisibility(visible = expandSubProperties) {
-            data.subPropertyContent?.invoke()
+            SubPropertyCheckRowColumn(elements = data.subPropertyColumnElements!!)
         }
     }
 }
 
 @Composable
-fun SubPropertyCheckRowColumn(
+private fun SubPropertyCheckRowColumn(
     elements: ImmutableList<CheckRowColumnElement>,
     modifier: Modifier = Modifier
 ) {

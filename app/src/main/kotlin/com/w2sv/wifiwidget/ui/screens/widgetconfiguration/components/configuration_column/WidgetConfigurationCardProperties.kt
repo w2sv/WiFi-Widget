@@ -39,24 +39,24 @@ import kotlinx.coroutines.launch
 private val checkRowColumnBottomPadding = 8.dp
 
 @Immutable
-data class SectionCardProperties(
+data class WidgetConfigurationCardProperties(
     val iconHeaderProperties: IconHeaderProperties,
     val content: @Composable () -> Unit
 )
 
 @Composable
-fun rememberSectionCardProperties(
+fun rememberWidgetConfigurationCardProperties(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
-): ImmutableList<SectionCardProperties> {
+): ImmutableList<WidgetConfigurationCardProperties> {
     val context: Context = LocalContext.current
 
     return remember {
         persistentListOf(
-            SectionCardProperties(
+            WidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_palette_24,
                     stringRes = R.string.appearance
@@ -84,7 +84,7 @@ fun rememberSectionCardProperties(
                         .padding(horizontal = 16.dp)
                 )
             },
-            SectionCardProperties(
+            WidgetConfigurationCardProperties(
                 IconHeaderProperties(
                     iconRes = R.drawable.ic_checklist_24,
                     stringRes = R.string.properties
@@ -98,7 +98,7 @@ fun rememberSectionCardProperties(
                     )
                 )
             },
-            SectionCardProperties(
+            WidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_bottom_row_24,
                     stringRes = R.string.bottom_bar,
@@ -117,7 +117,7 @@ fun rememberSectionCardProperties(
                     modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
                 )
             },
-            SectionCardProperties(
+            WidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
                     stringRes = R.string.refreshing,
@@ -137,25 +137,21 @@ fun rememberSectionCardProperties(
                                         )
                                     )
                                 },
-                                subPropertyContent = {
-                                    SubPropertyCheckRowColumn(
-                                        elements = persistentListOf(
-                                            CheckRowColumnElement.Custom {
-                                                RefreshIntervalConfigurationRow(
-                                                    interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
-                                                    showConfigurationDialog = showRefreshIntervalConfigurationDialog,
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .padding(vertical = 8.dp)
-                                                )
-                                            },
-                                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
-                                                property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                                                isCheckedMap = widgetConfiguration.refreshingParametersMap
-                                            )
+                                subPropertyColumnElements = persistentListOf(
+                                    CheckRowColumnElement.Custom {
+                                        RefreshIntervalConfigurationRow(
+                                            interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
+                                            showConfigurationDialog = showRefreshIntervalConfigurationDialog,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 8.dp)
                                         )
+                                    },
+                                    CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+                                        property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                                        isCheckedMap = widgetConfiguration.refreshingParametersMap
                                     )
-                                },
+                                )
                             )
                         )
                     },
@@ -253,18 +249,13 @@ private fun WidgetWifiProperty.checkRow(
         },
         onCheckedChangedDisallowed = { scope.launch { shakeController.shake() } },
         shakeController = shakeController,
-        subPropertyContent = when (this) {
-            is WidgetWifiProperty.IP -> {
-                {
-                    SubPropertyCheckRowColumn(
-                        elements = subPropertyElements(
-                            ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
-                            showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
-                            scope = scope
-                        )
-                    )
-                }
-            }
+        subPropertyColumnElements = when (this) {
+            is WidgetWifiProperty.IP ->
+                subPropertyElements(
+                    ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
+                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
+                    scope = scope
+                )
 
             else -> null
         },
@@ -314,7 +305,7 @@ private fun WidgetWifiProperty.IP.subPropertyElements(
                         modifier = Modifier
                             .thenIf(
                                 condition = subProperty.isAddressTypeEnablementProperty,
-                                onTrue = { padding(start = 4.dp) }
+                                onTrue = { padding(start = 8.dp) }
                             )
                     )
                 }

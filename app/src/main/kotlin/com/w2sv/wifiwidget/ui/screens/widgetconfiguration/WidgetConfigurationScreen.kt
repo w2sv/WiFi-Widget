@@ -40,12 +40,13 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.WidgetPropertyConfigurationColumn
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.WidgetConfigurationColumn
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.Easing
@@ -135,24 +136,27 @@ fun WidgetConfigurationScreen(
                 )
             }
 
-            WidgetPropertyConfigurationColumn(
-                widgetConfiguration = widgetVM.configuration,
-                locationAccessState = locationAccessState,
-                showPropertyInfoDialog = remember {
-                    {
-                        dialogData = WidgetConfigurationScreenDialog.Info(it)
+            WidgetConfigurationColumn(
+                cardProperties = rememberWidgetConfigurationCardProperties(
+                    widgetConfiguration = widgetVM.configuration,
+                    locationAccessState = locationAccessState,
+                    showInfoDialog = remember {
+                        {
+                            dialogData = WidgetConfigurationScreenDialog.Info(it)
+                        }
+                    },
+                    showCustomColorConfigurationDialog = remember {
+                        {
+                            dialogData = WidgetConfigurationScreenDialog.ColorPicker(it)
+                        }
+                    },
+                    showRefreshIntervalConfigurationDialog = remember {
+                        {
+                            dialogData =
+                                WidgetConfigurationScreenDialog.RefreshIntervalConfiguration
+                        }
                     }
-                },
-                showCustomColorConfigurationDialog = remember {
-                    {
-                        dialogData = WidgetConfigurationScreenDialog.ColorPicker(it)
-                    }
-                },
-                showRefreshIntervalConfigurationDialog = remember {
-                    {
-                        dialogData = WidgetConfigurationScreenDialog.RefreshIntervalConfiguration
-                    }
-                }
+                )
             )
         }
     }

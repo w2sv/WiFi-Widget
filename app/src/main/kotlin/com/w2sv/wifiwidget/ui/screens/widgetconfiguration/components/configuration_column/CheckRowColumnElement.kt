@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
 import com.w2sv.wifiwidget.ui.utils.ShakeController
+import kotlinx.collections.immutable.ImmutableList
 
 sealed interface CheckRowColumnElement {
 
@@ -18,12 +19,12 @@ sealed interface CheckRowColumnElement {
         val onCheckedChange: (Boolean) -> Unit,
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
-        val subPropertyContent: (@Composable () -> Unit)? = null,
+        val subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
         val modifier: Modifier = Modifier
     ) : CheckRowColumnElement {
 
         val hasSubProperties: Boolean
-            get() = subPropertyContent != null
+            get() = subPropertyColumnElements != null
 
         companion object {
             fun <T : WidgetProperty> fromIsCheckedMap(
@@ -33,7 +34,7 @@ sealed interface CheckRowColumnElement {
                 onCheckedChangedDisallowed: () -> Unit = {},
                 showInfoDialog: (() -> Unit)? = null,
                 shakeController: ShakeController? = null,
-                subPropertyContent: (@Composable () -> Unit)? = null,
+                subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
                 modifier: Modifier = Modifier
             ): CheckRow<T> {
                 return CheckRow(
@@ -48,7 +49,7 @@ sealed interface CheckRowColumnElement {
                     },
                     showInfoDialog = showInfoDialog,
                     shakeController = shakeController,
-                    subPropertyContent = subPropertyContent,
+                    subPropertyColumnElements = subPropertyColumnElements,
                     modifier = modifier,
                 )
             }

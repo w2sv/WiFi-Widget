@@ -18,19 +18,13 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.isPortraitModeActive
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
-import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import kotlinx.collections.immutable.ImmutableList
 
+private val verticalColumnCardSpacing = 16.dp
+
 @Composable
-fun WidgetPropertyConfigurationColumn(
-    widgetConfiguration: ReversibleWidgetConfiguration,
-    locationAccessState: LocationAccessState,
-    showPropertyInfoDialog: (InfoDialogData) -> Unit,
-    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
-    showRefreshIntervalConfigurationDialog: () -> Unit,
+fun WidgetConfigurationColumn(
+    cardProperties: ImmutableList<WidgetConfigurationCardProperties>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -39,35 +33,22 @@ fun WidgetPropertyConfigurationColumn(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        SectionCardColumn(
-            sectionCardProperties = rememberSectionCardProperties(
-                widgetConfiguration = widgetConfiguration,
-                locationAccessState = locationAccessState,
-                showInfoDialog = showPropertyInfoDialog,
-                showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                showRefreshIntervalConfigurationDialog = showRefreshIntervalConfigurationDialog
-            )
-        )
+        Spacer(modifier = Modifier.height(verticalColumnCardSpacing))
+        Column(verticalArrangement = Arrangement.spacedBy(verticalColumnCardSpacing)) {
+            cardProperties
+                .forEach { section ->
+                    WidgetConfigurationCard(properties = section)
+                }
+        }
         Spacer(modifier = Modifier.height(if (isPortraitModeActive) 142.dp else 92.dp))
     }
 }
 
 @Composable
-private fun SectionCardColumn(
-    sectionCardProperties: ImmutableList<SectionCardProperties>,
+private fun WidgetConfigurationCard(
+    properties: WidgetConfigurationCardProperties,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        sectionCardProperties
-            .forEach { section ->
-                SectionCard(properties = section)
-            }
-    }
-}
-
-@Composable
-private fun SectionCard(properties: SectionCardProperties, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(

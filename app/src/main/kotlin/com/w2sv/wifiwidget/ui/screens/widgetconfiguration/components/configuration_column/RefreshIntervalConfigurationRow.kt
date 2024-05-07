@@ -33,15 +33,17 @@ fun RefreshIntervalConfigurationRow(
         Text(text = stringResource(R.string.interval))
         Spacer(modifier = Modifier.weight(1f))
 
-        Text(text = remember(interval) {
-            interval.run {
-                when {
-                    inWholeHours == 0L -> "${minutes}m"
-                    minutes == 0 -> "${inWholeHours}h"
-                    else -> "${inWholeHours}h ${minutes}m"
+        Text(
+            text = remember(interval) {
+                interval.run {
+                    when {
+                        inWholeHours == 0L -> "${minutes}m"
+                        minutes == 0 -> "${inWholeHours}h"
+                        else -> "${inWholeHours}h ${minutes}m"
+                    }
                 }
             }
-        })
+        )
         IconButton(
             onClick = showConfigurationDialog,
             modifier = Modifier
