@@ -40,7 +40,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ColorPickerDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import kotlin.math.roundToInt
 

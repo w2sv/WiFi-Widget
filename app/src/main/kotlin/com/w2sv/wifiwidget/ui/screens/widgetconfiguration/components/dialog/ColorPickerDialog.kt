@@ -14,7 +14,7 @@ import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
 import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ColorPickerDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 
 @Composable
 fun ColorPickerDialog(

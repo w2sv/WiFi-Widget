@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model
 
 import android.content.Context
 import androidx.compose.runtime.Immutable

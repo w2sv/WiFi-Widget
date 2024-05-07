@@ -1,10 +1,11 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.w2sv.composed.nullableListSaver
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
 @Immutable
 sealed interface WidgetConfigurationScreenDialog {

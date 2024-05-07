@@ -1,9 +1,10 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import com.w2sv.domain.model.WidgetProperty
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface PropertyConfigurationView {
@@ -61,7 +62,6 @@ sealed interface PropertyConfigurationView {
             override val onCheckedChange: (Boolean) -> Unit,
             val subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationView>,
             val subPropertyColumnModifier: Modifier = Modifier,
-            val onSubPropertyColumnExpanded: () -> Unit = {},
             override val infoDialogData: InfoDialogData? = null,
             override val modifier: Modifier = Modifier
         ) : CheckRow<T> {
@@ -72,7 +72,6 @@ sealed interface PropertyConfigurationView {
                     isCheckedMap: MutableMap<T, Boolean>,
                     subPropertyCheckRowDataList: ImmutableList<PropertyConfigurationView>,
                     subPropertyCheckRowColumnModifier: Modifier = Modifier,
-                    onSubPropertyColumnExpanded: () -> Unit = {},
                     allowCheckChange: (Boolean) -> Boolean = { true },
                     onCheckedChangedDisallowed: () -> Unit = {},
                     infoDialogData: InfoDialogData? = null,
@@ -90,7 +89,6 @@ sealed interface PropertyConfigurationView {
                         },
                         subPropertyCheckRowDataList = subPropertyCheckRowDataList,
                         subPropertyColumnModifier = subPropertyCheckRowColumnModifier,
-                        onSubPropertyColumnExpanded = onSubPropertyColumnExpanded,
                         infoDialogData = infoDialogData,
                         modifier = modifier,
                     )

@@ -45,7 +45,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.Colo
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.WidgetConfigurationScreenDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
 import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.Easing
