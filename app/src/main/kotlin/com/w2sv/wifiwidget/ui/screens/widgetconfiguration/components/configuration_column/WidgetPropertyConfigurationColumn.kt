@@ -44,7 +44,7 @@ fun WidgetPropertyConfigurationColumn(
             sectionCardProperties = rememberSectionCardProperties(
                 widgetConfiguration = widgetConfiguration,
                 locationAccessState = locationAccessState,
-                showPropertyInfoDialog = showPropertyInfoDialog,
+                showInfoDialog = showPropertyInfoDialog,
                 showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
                 showRefreshIntervalConfigurationDialog = showRefreshIntervalConfigurationDialog
             )

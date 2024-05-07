@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetBottomRowElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -36,7 +37,6 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-private val subPropertyCheckRowColumnModifier: Modifier = Modifier.padding(horizontal = 16.dp)
 private val checkRowColumnBottomPadding = 8.dp
 
 @Immutable
@@ -49,7 +49,7 @@ data class SectionCardProperties(
 fun rememberSectionCardProperties(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
-    showPropertyInfoDialog: (InfoDialogData) -> Unit,
+    showInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
 ): ImmutableList<SectionCardProperties> {
@@ -91,12 +91,12 @@ fun rememberSectionCardProperties(
                     stringRes = R.string.properties
                 )
             ) {
-                PropertyCheckRowColumn(
-                    dataList = rememberWidgetWifiPropertyCheckRowData(
+                CheckRowColumn(
+                    elements = rememberWidgetWifiPropertyCheckRowData(
                         widgetConfiguration = widgetConfiguration,
-                        locationAccessState = locationAccessState
-                    ),
-                    showInfoDialog = showPropertyInfoDialog,
+                        locationAccessState = locationAccessState,
+                        showInfoDialog = showInfoDialog
+                    )
                 )
             },
             SectionCardProperties(
@@ -105,10 +105,10 @@ fun rememberSectionCardProperties(
                     stringRes = R.string.bottom_bar,
                 )
             ) {
-                PropertyCheckRowColumn(
-                    dataList = remember {
+                CheckRowColumn(
+                    elements = remember {
                         WidgetBottomRowElement.entries.map {
-                            PropertyConfigurationView.CheckRow.fromIsCheckedMap(
+                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                                 property = it,
                                 isCheckedMap = widgetConfiguration.bottomRowMap
                             )
@@ -124,36 +124,42 @@ fun rememberSectionCardProperties(
                     stringRes = R.string.refreshing,
                 )
             ) {
-                PropertyCheckRowColumn(
-                    dataList = remember {
+                CheckRowColumn(
+                    elements = remember {
                         persistentListOf(
-                            PropertyConfigurationView.CheckRow.fromIsCheckedMap(
+                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                                 property = WidgetRefreshingParameter.RefreshPeriodically,
                                 isCheckedMap = widgetConfiguration.refreshingParametersMap,
-                                infoDialogData = InfoDialogData(
-                                    title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
-                                    description = context.getString(R.string.refresh_periodically_info)
-                                ),
-                                subPropertyCheckRowDataList = persistentListOf(
-                                    PropertyConfigurationView.Custom {
-                                        RefreshIntervalConfigurationRow(
-                                            interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
-                                            showConfigurationDialog = showRefreshIntervalConfigurationDialog,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 4.dp)
+                                showInfoDialog = {
+                                    showInfoDialog(
+                                        InfoDialogData(
+                                            title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
+                                            description = context.getString(R.string.refresh_periodically_info)
                                         )
-                                    },
-                                    PropertyConfigurationView.CheckRow.fromIsCheckedMap(
-                                        property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                                        isCheckedMap = widgetConfiguration.refreshingParametersMap
                                     )
-                                ),
-                                subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier
+                                },
+                                subPropertyContent = {
+                                    SubPropertyCheckRowColumn(
+                                        elements = persistentListOf(
+                                            CheckRowColumnElement.Custom {
+                                                RefreshIntervalConfigurationRow(
+                                                    interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
+                                                    showConfigurationDialog = showRefreshIntervalConfigurationDialog,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(vertical = 4.dp)
+                                                )
+                                            },
+                                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+                                                property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                                                isCheckedMap = widgetConfiguration.refreshingParametersMap
+                                            )
+                                        )
+                                    )
+                                },
                             )
                         )
                     },
-                    showInfoDialog = showPropertyInfoDialog,
                     modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
                 )
             }
@@ -165,7 +171,8 @@ fun rememberSectionCardProperties(
 private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
-): ImmutableList<PropertyConfigurationView.CheckRow<WidgetWifiProperty>> {
+    showInfoDialog: (InfoDialogData) -> Unit,
+): ImmutableList<CheckRowColumnElement.CheckRow<WidgetWifiProperty>> {
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
     val scope: CoroutineScope = rememberCoroutineScope()
@@ -202,6 +209,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                 property.checkRow(
                     widgetConfiguration = widgetConfiguration,
                     locationAccessState = locationAccessState,
+                    showInfoDialog = showInfoDialog,
                     showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
                     context = context
@@ -214,13 +222,14 @@ private fun rememberWidgetWifiPropertyCheckRowData(
 private fun WidgetWifiProperty.checkRow(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
+    showInfoDialog: (InfoDialogData) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     context: Context
-): PropertyConfigurationView.CheckRow<WidgetWifiProperty> {
+): CheckRowColumnElement.CheckRow<WidgetWifiProperty> {
     val shakeController = ShakeController(shakeConfig)
 
-    return PropertyConfigurationView.CheckRow.fromIsCheckedMap(
+    return CheckRowColumnElement.CheckRow.fromIsCheckedMap(
         property = this,
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
@@ -242,49 +251,76 @@ private fun WidgetWifiProperty.checkRow(
             }
         },
         onCheckedChangedDisallowed = { shakeController.shake() },
-        subPropertyCheckRowDataList = when (this) {
+        subPropertyContent = when (this) {
             is WidgetWifiProperty.IP -> {
-                subProperties
-                    .map { subProperty ->
-                        val subPropertyShakeController =
-                            if (subProperty.isAddressTypeEnablementProperty)
-                                ShakeController(shakeConfig)
-                            else
-                                null
-
-                        PropertyConfigurationView.CheckRow.fromIsCheckedMap(
-                            property = subProperty,
-                            isCheckedMap = widgetConfiguration.ipSubProperties,
-                            allowCheckChange = { newValue ->
-                                subProperty.allowCheckedChange(
-                                    newValue,
-                                    widgetConfiguration.ipSubProperties
-                                )
-                            },
-                            onCheckedChangedDisallowed = {
-                                subPropertyShakeController?.shake()
-                                showLeaveAtLeastOneAddressVersionEnabledSnackbar()
-                            },
-                            modifier = subPropertyShakeController?.let {
-                                Modifier.shake(
-                                    it
-                                )
-                            }
-                                ?: Modifier
+                {
+                    SubPropertyCheckRowColumn(
+                        elements = subPropertyElements(
+                            ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
+                            showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar
                         )
-                    }
-                    .toPersistentList()
+                    )
+                }
             }
-            else -> persistentListOf()
-        } ,
-        subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier,
-        infoDialogData = toInfoDialogData(context),
+
+            else -> null
+        },
+        showInfoDialog = { showInfoDialog(toInfoDialogData(context)) },
         modifier = Modifier.shake(shakeController)
     )
 }
 
 private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
     wifiProperties.values.count { it } > 1
+
+private fun WidgetWifiProperty.IP.subPropertyElements(
+    ipSubPropertyEnablementMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
+    showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit
+): ImmutableList<CheckRowColumnElement> {
+    return buildList {
+        if (this@subPropertyElements is WidgetWifiProperty.IP.V4AndV6) {
+            add(
+                CheckRowColumnElement.Custom {
+                    VersionsHeader()
+                }
+            )
+        }
+        addAll(
+            subProperties
+                .map { subProperty ->
+                    val subPropertyShakeController =
+                        if (subProperty.isAddressTypeEnablementProperty)
+                            ShakeController(shakeConfig)
+                        else
+                            null
+
+                    CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+                        property = subProperty,
+                        isCheckedMap = ipSubPropertyEnablementMap,
+                        allowCheckChange = { newValue ->
+                            subProperty.allowCheckedChange(
+                                newValue,
+                                ipSubPropertyEnablementMap
+                            )
+                        },
+                        onCheckedChangedDisallowed = {
+                            subPropertyShakeController?.shake()
+                            showLeaveAtLeastOneAddressVersionEnabledSnackbar()
+                        },
+                        modifier = Modifier
+                            .thenIf(
+                                condition = subProperty.isAddressTypeEnablementProperty,
+                                onTrue = { padding(start = 4.dp) }
+                            )
+                            .thenIf(subPropertyShakeController != null) {
+                                shake(subPropertyShakeController!!)
+                            }
+                    )
+                }
+        )
+    }
+        .toPersistentList()
+}
 
 private val shakeConfig = ShakeConfig(
     iterations = 2,

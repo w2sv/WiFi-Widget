@@ -17,6 +17,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +26,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -33,38 +33,81 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.composed.extensions.thenIf
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WidgetProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.SubPropertyKeyboardArrowRightIcon
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import kotlinx.collections.immutable.ImmutableList
 
-// For alignment of primary check row click elements and sub property click elements
+sealed interface CheckRowColumnElement {
+
+    @Immutable
+    data class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
+
+    @Immutable
+    data class CheckRow<T : WidgetProperty>(
+        val property: T,
+        val isChecked: () -> Boolean,
+        val onCheckedChange: (Boolean) -> Unit,
+        val showInfoDialog: (() -> Unit)? = null,
+        val subPropertyContent: (@Composable () -> Unit)? = null,
+        val modifier: Modifier = Modifier
+    ) : CheckRowColumnElement {
+
+        val hasSubProperties: Boolean
+            get() = subPropertyContent != null
+
+        companion object {
+            fun <T : WidgetProperty> fromIsCheckedMap(
+                property: T,
+                isCheckedMap: MutableMap<T, Boolean>,
+                allowCheckChange: (Boolean) -> Boolean = { true },
+                onCheckedChangedDisallowed: () -> Unit = {},
+                showInfoDialog: (() -> Unit)? = null,
+                subPropertyContent: (@Composable () -> Unit)? = null,
+                modifier: Modifier = Modifier
+            ): CheckRow<T> {
+                return CheckRow(
+                    property = property,
+                    isChecked = { isCheckedMap.getValue(property) },
+                    onCheckedChange = {
+                        if (allowCheckChange(it)) {
+                            isCheckedMap[property] = it
+                        } else {
+                            onCheckedChangedDisallowed()
+                        }
+                    },
+                    subPropertyContent = subPropertyContent,
+                    showInfoDialog = showInfoDialog,
+                    modifier = modifier,
+                )
+            }
+        }
+    }
+}
+
+// For alignment of primary check row click elements with sub property click elements
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun PropertyCheckRowColumn(
-    dataList: ImmutableList<PropertyConfigurationView.CheckRow<*>>,
-    modifier: Modifier = Modifier,
-    showInfoDialog: ((InfoDialogData) -> Unit)? = null
+fun CheckRowColumn(
+    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        dataList
+        elements
             .forEach { data ->
                 when (data.hasSubProperties) {
                     false -> {
-                        PropertyCheckRow(data = data, showInfoDialog = showInfoDialog)
+                        CheckRow(data = data)
                     }
 
                     true -> {
-                        PropertyCheckRowWithSubProperties(
-                            data = data,
-                            showInfoDialog = showInfoDialog
+                        CheckRowWithSubProperties(
+                            data = data
                         )
                     }
                 }
@@ -73,13 +116,11 @@ fun PropertyCheckRowColumn(
 }
 
 @Composable
-private fun PropertyCheckRow(
-    data: PropertyConfigurationView.CheckRow<*>,
-    showInfoDialog: ((InfoDialogData) -> Unit)?
+private fun CheckRow(
+    data: CheckRowColumnElement.CheckRow<*>
 ) {
-    PropertyCheckRow(
+    CheckRow(
         data = data,
-        showInfoDialog = showInfoDialog,
         leadingIcon = {
             Box(
                 modifier = Modifier.size(48.dp),
@@ -93,9 +134,8 @@ private fun PropertyCheckRow(
 }
 
 @Composable
-private fun PropertyCheckRowWithSubProperties(
-    data: PropertyConfigurationView.CheckRow<*>,
-    showInfoDialog: ((InfoDialogData) -> Unit)?
+private fun CheckRowWithSubProperties(
+    data: CheckRowColumnElement.CheckRow<*>
 ) {
     var expandSubProperties by rememberSaveable {
         mutableStateOf(false)
@@ -108,9 +148,8 @@ private fun PropertyCheckRowWithSubProperties(
     }
 
     Column {
-        PropertyCheckRow(
+        CheckRow(
             data = data,
-            showInfoDialog = showInfoDialog,
             leadingIcon = {
                 IconButton(
                     onClick = remember {
@@ -131,40 +170,29 @@ private fun PropertyCheckRowWithSubProperties(
         )
 
         AnimatedVisibility(visible = expandSubProperties) {
-            SubPropertyCheckRowColumn(
-                configurationElements = data.subPropertyCheckRowDataList,
-                modifier = data.subPropertyColumnModifier
-                    .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
-                    .nestedContentBackground()
-                    .padding(start = subPropertyColumnPadding)
-            )
+            data.subPropertyContent?.invoke()
         }
     }
 }
 
 @Composable
-private fun SubPropertyCheckRowColumn(
-    configurationElements: ImmutableList<PropertyConfigurationView>,
+fun SubPropertyCheckRowColumn(
+    elements: ImmutableList<CheckRowColumnElement>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        configurationElements.forEach { element ->
-            when (element) {
-                is PropertyConfigurationView.CheckRow<*> -> {
-                    if ((element.property as? WidgetWifiProperty.IP.SubProperty)?.kind is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled) {
-                        Text(
-                            text = stringResource(R.string.versions),
-                            modifier = Modifier.padding(top = subPropertyColumnPadding),
-                            fontSize = subPropertyCheckRowColumnFontSize,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                    PropertyCheckRow(
-                        data = element,
-                        modifier = Modifier.thenIf(
-                            condition = (element.property as? WidgetWifiProperty.IP.SubProperty)?.isAddressTypeEnablementProperty == true,
-                            onTrue = { padding(start = addressVersionEnablementStartPadding) }
-                        ),
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .padding(start = 24.dp)  // Make background start at the indentation of CheckRow label
+            .nestedContentBackground()
+            .padding(start = subPropertyColumnPadding)
+    ) {
+        elements.forEach { view ->
+            when (view) {
+                is CheckRowColumnElement.CheckRow<*> -> {
+                    CheckRow(
+                        data = view,
+                        modifier = view.modifier,
                         fontSize = subPropertyCheckRowColumnFontSize,
                         leadingIcon = {
                             SubPropertyKeyboardArrowRightIcon()
@@ -172,26 +200,33 @@ private fun SubPropertyCheckRowColumn(
                     )
                 }
 
-                is PropertyConfigurationView.Custom -> {
-                    element.content()
+                is CheckRowColumnElement.Custom -> {
+                    view.content()
                 }
             }
         }
     }
 }
 
+@Composable
+fun VersionsHeader(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(R.string.versions),
+        modifier = modifier.padding(top = subPropertyColumnPadding),
+        fontSize = subPropertyCheckRowColumnFontSize,
+        fontWeight = FontWeight.SemiBold
+    )
+}
+
 private val subPropertyCheckRowColumnFontSize = 14.sp
 private val subPropertyColumnPadding = 12.dp
-private val addressVersionEnablementStartPadding = 16.dp
 
 @Composable
-private fun PropertyCheckRow(
-    data: PropertyConfigurationView.CheckRow<*>,
+private fun CheckRow(
+    data: CheckRowColumnElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    textColor: Color = Color.Unspecified,
     leadingIcon: (@Composable () -> Unit)? = null,
-    showInfoDialog: ((InfoDialogData) -> Unit)? = null,
 ) {
     val label = stringResource(id = data.property.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset, label)
@@ -206,12 +241,11 @@ private fun PropertyCheckRow(
         Text(
             text = label,
             fontSize = fontSize,
-            modifier = Modifier.weight(1.0f, true),
-            color = textColor
+            modifier = Modifier.weight(1.0f),
         )
-        if (showInfoDialog != null && data.infoDialogData != null) {
+        data.showInfoDialog?.let {
             InfoIconButton(
-                onClick = { showInfoDialog(data.infoDialogData) },
+                onClick = { it() },
                 contentDescription = stringResource(id = R.string.info_icon_cd, label),
             )
         }
