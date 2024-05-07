@@ -24,8 +24,8 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.toInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
@@ -108,7 +108,7 @@ fun rememberSectionCardProperties(
                 PropertyCheckRowColumn(
                     dataList = remember {
                         WidgetBottomRowElement.entries.map {
-                            PropertyConfigurationView.CheckRow.WithoutSubProperties.fromIsCheckedMap(
+                            PropertyConfigurationView.CheckRow.fromIsCheckedMap(
                                 property = it,
                                 isCheckedMap = widgetConfiguration.bottomRowMap
                             )
@@ -127,7 +127,7 @@ fun rememberSectionCardProperties(
                 PropertyCheckRowColumn(
                     dataList = remember {
                         persistentListOf(
-                            PropertyConfigurationView.CheckRow.WithSubProperties.fromIsCheckedMap(
+                            PropertyConfigurationView.CheckRow.fromIsCheckedMap(
                                 property = WidgetRefreshingParameter.RefreshPeriodically,
                                 isCheckedMap = widgetConfiguration.refreshingParametersMap,
                                 infoDialogData = InfoDialogData(
@@ -144,7 +144,7 @@ fun rememberSectionCardProperties(
                                                 .padding(vertical = 4.dp)
                                         )
                                     },
-                                    PropertyConfigurationView.CheckRow.WithoutSubProperties.fromIsCheckedMap(
+                                    PropertyConfigurationView.CheckRow.fromIsCheckedMap(
                                         property = WidgetRefreshingParameter.RefreshOnLowBattery,
                                         isCheckedMap = widgetConfiguration.refreshingParametersMap
                                     )
@@ -220,47 +220,31 @@ private fun WidgetWifiProperty.checkRow(
 ): PropertyConfigurationView.CheckRow<WidgetWifiProperty> {
     val shakeController = ShakeController(shakeConfig)
 
-    return when (this) {
-        is WidgetWifiProperty.NonIP -> {
-            PropertyConfigurationView.CheckRow.WithoutSubProperties.fromIsCheckedMap(
-                property = this,
-                isCheckedMap = widgetConfiguration.wifiProperties,
-                allowCheckChange = { isCheckedNew ->
-                    if (this is WidgetWifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
-                        return@fromIsCheckedMap locationAccessState.isGranted.also {
-                            if (!it) {
-                                locationAccessState.launchRequest(
-                                    LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                        this,
-                                    )
-                                )
-                            }
-                        }
+    return PropertyConfigurationView.CheckRow.fromIsCheckedMap(
+        property = this,
+        isCheckedMap = widgetConfiguration.wifiProperties,
+        allowCheckChange = { isCheckedNew ->
+            if (this is WidgetWifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
+                return@fromIsCheckedMap locationAccessState.isGranted.also {
+                    if (!it) {
+                        locationAccessState.launchRequest(
+                            LocationAccessPermissionRequestTrigger.PropertyCheckChange(
+                                this,
+                            )
+                        )
                     }
-                    (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
-                        if (!it) {
-                            showLeaveAtLeastOnePropertyEnabledSnackbar()
-                        }
-                    }
-                },
-                onCheckedChangedDisallowed = { shakeController.shake() },
-                infoDialogData = toInfoDialogData(context),
-                modifier = Modifier.shake(shakeController)
-            )
-        }
-
-        is WidgetWifiProperty.IP -> {
-            PropertyConfigurationView.CheckRow.WithSubProperties.fromIsCheckedMap(
-                property = this,
-                isCheckedMap = widgetConfiguration.wifiProperties,
-                allowCheckChange = { isCheckedNew ->
-                    isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()
-                },
-                onCheckedChangedDisallowed = {
-                    shakeController.shake()
+                }
+            }
+            (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
+                if (!it) {
                     showLeaveAtLeastOnePropertyEnabledSnackbar()
-                },
-                subPropertyCheckRowDataList = subProperties
+                }
+            }
+        },
+        onCheckedChangedDisallowed = { shakeController.shake() },
+        subPropertyCheckRowDataList = when (this) {
+            is WidgetWifiProperty.IP -> {
+                subProperties
                     .map { subProperty ->
                         val subPropertyShakeController =
                             if (subProperty.isAddressTypeEnablementProperty)
@@ -268,7 +252,7 @@ private fun WidgetWifiProperty.checkRow(
                             else
                                 null
 
-                        PropertyConfigurationView.CheckRow.WithoutSubProperties.fromIsCheckedMap(
+                        PropertyConfigurationView.CheckRow.fromIsCheckedMap(
                             property = subProperty,
                             isCheckedMap = widgetConfiguration.ipSubProperties,
                             allowCheckChange = { newValue ->
@@ -289,13 +273,14 @@ private fun WidgetWifiProperty.checkRow(
                                 ?: Modifier
                         )
                     }
-                    .toPersistentList(),
-                subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier,
-                infoDialogData = toInfoDialogData(context),
-                modifier = Modifier.shake(shakeController)
-            )
-        }
-    }
+                    .toPersistentList()
+            }
+            else -> persistentListOf()
+        } ,
+        subPropertyCheckRowColumnModifier = subPropertyCheckRowColumnModifier,
+        infoDialogData = toInfoDialogData(context),
+        modifier = Modifier.shake(shakeController)
+    )
 }
 
 private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =

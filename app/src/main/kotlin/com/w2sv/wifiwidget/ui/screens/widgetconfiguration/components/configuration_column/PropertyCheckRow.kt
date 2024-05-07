@@ -56,67 +56,89 @@ fun PropertyCheckRowColumn(
     Column(modifier = modifier) {
         dataList
             .forEach { data ->
-                when (data) {
-                    is PropertyConfigurationView.CheckRow.WithoutSubProperties -> {
-                        PropertyCheckRow(
-                            data = data,
-                            showInfoDialog = showInfoDialog,
-                            leadingIcon = {
-                                Box(
-                                    modifier = Modifier.size(48.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    KeyboardArrowRightIcon(tint = MaterialTheme.colorScheme.onBackground)
-                                }
-                            },
-                            modifier = primaryCheckRowModifier
-                        )
+                when (data.hasSubProperties) {
+                    false -> {
+                        PropertyCheckRow(data = data, showInfoDialog = showInfoDialog)
                     }
 
-                    is PropertyConfigurationView.CheckRow.WithSubProperties -> {
-                        var expandSubProperties by rememberSaveable {
-                            mutableStateOf(false)
-                        }
-                        // Collapse subProperties on unchecking
-                        LaunchedEffect(data, data.isChecked()) {
-                            if (!data.isChecked()) {
-                                expandSubProperties = false
-                            }
-                        }
-                        PropertyCheckRow(
+                    true -> {
+                        PropertyCheckRowWithSubProperties(
                             data = data,
-                            showInfoDialog = showInfoDialog,
-                            leadingIcon = {
-                                IconButton(
-                                    onClick = remember {
-                                        {
-                                            expandSubProperties = !expandSubProperties
-                                        }
-                                    },
-                                    colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                                    enabled = data.isChecked()
-                                ) {
-                                    Icon(
-                                        imageVector = if (expandSubProperties) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                                        contentDescription = null
-                                    )
-                                }
-                            },
-                            modifier = primaryCheckRowModifier
+                            showInfoDialog = showInfoDialog
                         )
-
-                        AnimatedVisibility(visible = expandSubProperties) {
-                            SubPropertyCheckRowColumn(
-                                configurationElements = data.subPropertyCheckRowDataList,
-                                modifier = data.subPropertyColumnModifier
-                                    .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
-                                    .nestedContentBackground()
-                                    .padding(start = subPropertyColumnPadding)
-                            )
-                        }
                     }
                 }
             }
+    }
+}
+
+@Composable
+private fun PropertyCheckRow(
+    data: PropertyConfigurationView.CheckRow<*>,
+    showInfoDialog: ((InfoDialogData) -> Unit)?
+) {
+    PropertyCheckRow(
+        data = data,
+        showInfoDialog = showInfoDialog,
+        leadingIcon = {
+            Box(
+                modifier = Modifier.size(48.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                KeyboardArrowRightIcon(tint = MaterialTheme.colorScheme.onBackground)
+            }
+        },
+        modifier = primaryCheckRowModifier
+    )
+}
+
+@Composable
+private fun PropertyCheckRowWithSubProperties(
+    data: PropertyConfigurationView.CheckRow<*>,
+    showInfoDialog: ((InfoDialogData) -> Unit)?
+) {
+    var expandSubProperties by rememberSaveable {
+        mutableStateOf(false)
+    }
+    // Collapse subProperties on unchecking
+    LaunchedEffect(data, data.isChecked()) {
+        if (!data.isChecked()) {
+            expandSubProperties = false
+        }
+    }
+
+    Column {
+        PropertyCheckRow(
+            data = data,
+            showInfoDialog = showInfoDialog,
+            leadingIcon = {
+                IconButton(
+                    onClick = remember {
+                        {
+                            expandSubProperties = !expandSubProperties
+                        }
+                    },
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
+                    enabled = data.isChecked()
+                ) {
+                    Icon(
+                        imageVector = if (expandSubProperties) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
+            },
+            modifier = primaryCheckRowModifier
+        )
+
+        AnimatedVisibility(visible = expandSubProperties) {
+            SubPropertyCheckRowColumn(
+                configurationElements = data.subPropertyCheckRowDataList,
+                modifier = data.subPropertyColumnModifier
+                    .padding(start = 24.dp)  // Make background start at the indentation of PropertyCheckRow label
+                    .nestedContentBackground()
+                    .padding(start = subPropertyColumnPadding)
+            )
+        }
     }
 }
 
@@ -189,7 +211,7 @@ private fun PropertyCheckRow(
         )
         if (showInfoDialog != null && data.infoDialogData != null) {
             InfoIconButton(
-                onClick = { showInfoDialog(data.infoDialogData!!) },
+                onClick = { showInfoDialog(data.infoDialogData) },
                 contentDescription = stringResource(id = R.string.info_icon_cd, label),
             )
         }
