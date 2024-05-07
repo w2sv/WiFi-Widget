@@ -32,13 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.composed.extensions.thenIf
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.shake
+import com.w2sv.wifiwidget.ui.utils.thenIfNotNull
 import kotlinx.collections.immutable.ImmutableList
 
 // For alignment of primary check row click elements with sub property click elements
@@ -188,8 +188,8 @@ private fun CheckRow(
         modifier = modifier
             .fillMaxWidth()
             .then(data.modifier)
-            .thenIf(data.shakeController != null) {
-                shake(data.shakeController!!)
+            .thenIfNotNull(data.shakeController) {
+                shake(it)
             },
     ) {
         leadingIcon?.invoke()

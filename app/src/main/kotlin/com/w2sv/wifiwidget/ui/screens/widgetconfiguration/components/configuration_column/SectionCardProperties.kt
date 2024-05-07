@@ -146,7 +146,7 @@ fun rememberSectionCardProperties(
                                                     showConfigurationDialog = showRefreshIntervalConfigurationDialog,
                                                     modifier = Modifier
                                                         .fillMaxWidth()
-                                                        .padding(vertical = 4.dp)
+                                                        .padding(vertical = 8.dp)
                                                 )
                                             },
                                             CheckRowColumnElement.CheckRow.fromIsCheckedMap(
