@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.shared_viewmodels
 
 import android.content.Context
+import android.location.LocationManager
 import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,7 @@ class AppViewModel @Inject constructor(
     @MakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository,
+    val locationManager: LocationManager,
     savedStateHandle: SavedStateHandle
 ) :
     ViewModel() {
