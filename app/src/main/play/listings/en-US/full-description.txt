@@ -9,7 +9,7 @@
 <b>WiFi Properties at a Glance:</b>
 📡 <b>SSID, BSSID:</b> Easily identify your network.
 🌐 <b>IP Addresses:</b> Explore detailed categories like loopback, site local, link local, ULA, multicast, global unicast, and public. Individually enable or disable them based on your preference.
-📶 <b>Frequency, Channel, Link Speed:</b> Dive deep into your WiFi connection details.
+📶 <b>Frequency, Channel, Link Speed, RSSI, Signal Strength, Security Protocol, WiFi Standard & Generation:</b> Dive deep into your WiFi connection details.
 🌐 <b>Gateway, DNS, DHCP:</b> Understand the core elements of your network setup.
 
 <b>Widget Customization Galore:</b>

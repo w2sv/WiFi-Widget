@@ -1,9 +1,7 @@
-- New Features:
-    - Replaced the widget configuration dialog with a dedicated screen!
-    - Enabled configuration of the automatic widget data refresh interval
-- Bug fixes:
-    - Duplicate display of ULA IPs as GUA IPs
-    - Discarding of the unsaved appearance configuration upon reselection of the 'Preset' or 'Custom'
-    - Hiding of widget bottom bar when all elements are disabled
-- Also:
-    - Various UI & performance improvements
+- Removed the widget scroll bar
+- Added copy-to-clipboard functionality upon widget property click
+- Added WiFi properties:
+    - Signal strength
+    - WiFi generation
+    - Security protocol
+- Performance improvements
