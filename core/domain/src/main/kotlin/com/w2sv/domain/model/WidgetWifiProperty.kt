@@ -113,6 +113,13 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 true
             )
 
+            data object Security : Other(
+                R.string.security,
+                R.string.security_description,
+                "https://en.wikipedia.org/wiki/Wi-Fi_Protected_Access",
+                true
+            )
+
             data object Gateway : Other(
                 R.string.gateway,
                 R.string.gateway_description,
@@ -144,6 +151,9 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(Standard)
                             add(Generation)
+                        }
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            add(Security)
                         }
                         add(Gateway)
                         add(DNS)

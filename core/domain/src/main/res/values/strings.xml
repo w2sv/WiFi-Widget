@@ -70,4 +70,6 @@
     <string name="very_large">Very Large</string>
     <string name="generation">Generation</string>
     <string name="generation_description">Another nomenclature for the WiFi standards.</string>
+    <string name="security">Security</string>
+    <string name="security_description">The used security protocol.</string>
 </resources>

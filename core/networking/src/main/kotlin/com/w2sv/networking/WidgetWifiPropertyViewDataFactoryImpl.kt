@@ -3,6 +3,7 @@ package com.w2sv.networking
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.ScanResult
+import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import com.w2sv.core.networking.R
@@ -127,6 +128,27 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                             ScanResult.WIFI_STANDARD_11N -> "Wi-Fi 4"
                             ScanResult.WIFI_STANDARD_LEGACY -> "Legacy"
                             else -> resources.getString(R.string.unknown)
+                        }
+                    )
+                }
+
+                WidgetWifiProperty.NonIP.Other.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    add(
+                        when (wifiManager.connectionInfo.currentSecurityType) {
+                            WifiInfo.SECURITY_TYPE_OPEN -> "Open"
+                            WifiInfo.SECURITY_TYPE_WEP -> "WEP"
+                            WifiInfo.SECURITY_TYPE_PSK -> "PSK (WPA/WPA2)"
+                            WifiInfo.SECURITY_TYPE_EAP -> "EAP (WPA/WPA2)"
+                            WifiInfo.SECURITY_TYPE_SAE -> "SAE (WPA3)"
+                            WifiInfo.SECURITY_TYPE_OWE -> "OWE (WPA3)"
+                            WifiInfo.SECURITY_TYPE_WAPI_PSK -> "WAPI PSK"
+                            WifiInfo.SECURITY_TYPE_WAPI_CERT -> "WAPI CERT"
+                            WifiInfo.SECURITY_TYPE_EAP_WPA3_ENTERPRISE -> "EAP WPA3 Enterprise"
+                            WifiInfo.SECURITY_TYPE_EAP_WPA3_ENTERPRISE_192_BIT -> "EAP WPA3 Enterprise 192 Bit"
+                            WifiInfo.SECURITY_TYPE_PASSPOINT_R1_R2 -> "Passpoint R1 R2"
+                            WifiInfo.SECURITY_TYPE_PASSPOINT_R3 -> "Passpoint R3"
+                            WifiInfo.SECURITY_TYPE_DPP -> "DPP"
+                            else -> "Unknown"
                         }
                     )
                 }
