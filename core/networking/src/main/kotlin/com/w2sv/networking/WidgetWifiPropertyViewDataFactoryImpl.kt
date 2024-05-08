@@ -112,7 +112,21 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                             ScanResult.WIFI_STANDARD_11BE -> "802.11be"
                             ScanResult.WIFI_STANDARD_11N -> "802.11n"
                             ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g"
-                            else -> "Unknown"
+                            else -> resources.getString(R.string.unknown)
+                        }
+                    )
+                }
+
+                WidgetWifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    add(
+                        when (wifiManager.connectionInfo.wifiStandard) {
+                            ScanResult.WIFI_STANDARD_11AC -> "WiFi 5"
+                            ScanResult.WIFI_STANDARD_11AD -> "WiGig"
+                            ScanResult.WIFI_STANDARD_11AX -> "WiFi 6"
+                            ScanResult.WIFI_STANDARD_11BE -> "WiFi 7"
+                            ScanResult.WIFI_STANDARD_11N -> "WiFi 4"
+                            ScanResult.WIFI_STANDARD_LEGACY -> "Legacy"
+                            else -> resources.getString(R.string.unknown)
                         }
                     )
                 }

@@ -106,6 +106,13 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 true
             )
 
+            data object Generation : Other(
+                R.string.generation,
+                R.string.generation_description,
+                "https://en.wikipedia.org/wiki/Wi-Fi_6",
+                true
+            )
+
             data object Gateway : Other(
                 R.string.gateway,
                 R.string.gateway_description,
@@ -136,6 +143,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                         add(RSSI)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(Standard)
+                            add(Generation)
                         }
                         add(Gateway)
                         add(DNS)

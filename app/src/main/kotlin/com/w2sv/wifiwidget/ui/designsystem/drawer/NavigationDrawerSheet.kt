@@ -53,7 +53,7 @@ private fun Header(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(22.dp))
         Text(
-            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
+            text = stringResource(id = R.string.generation).format(BuildConfig.VERSION_NAME),
         )
     }
 }
