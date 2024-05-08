@@ -5,8 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:theme="@style/Theme.WiFiWidget.AppWidgetContainer"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight"
     android:weightSum="1">
+
+    <!-- Theme.Material3.DynamicColors.DayNight adds ripple effect on property list item click -->
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -65,8 +67,8 @@
         <ImageButton
             android:id="@+id/refresh_button"
 
-            android:layout_width="@dimen/size_widget_image_button_icon"
-            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_width="@dimen/image_button_icon_size"
+            android:layout_height="@dimen/image_button_icon_size"
             android:layout_marginEnd="8dp"
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -76,8 +78,8 @@
         <ImageButton
             android:id="@+id/go_to_wifi_settings_button"
 
-            android:layout_width="@dimen/size_widget_image_button_icon"
-            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_width="@dimen/image_button_icon_size"
+            android:layout_height="@dimen/image_button_icon_size"
             android:layout_marginEnd="8dp"
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -87,8 +89,8 @@
         <ImageButton
             android:id="@+id/go_to_widget_settings_button"
 
-            android:layout_width="@dimen/size_widget_image_button_icon"
-            android:layout_height="@dimen/size_widget_image_button_icon"
+            android:layout_width="@dimen/image_button_icon_size"
+            android:layout_height="@dimen/image_button_icon_size"
 
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/open_widget_settings_button"

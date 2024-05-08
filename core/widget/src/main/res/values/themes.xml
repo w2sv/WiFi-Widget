@@ -1,7 +1,0 @@
-<resources>
-
-    <style name="Theme.WiFiWidget.AppWidgetContainer" parent="Theme.Material3.DynamicColors.DayNight">
-        <item name="appWidgetRadius">16dp</item>
-        <item name="appWidgetPadding">10dp</item>
-    </style>
-</resources>
