@@ -6,7 +6,7 @@ import android.widget.RemoteViews
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 
-fun RemoteViews.setTextView(
+internal fun RemoteViews.setTextView(
     @IdRes viewId: Int,
     text: CharSequence,
     size: Float? = null,

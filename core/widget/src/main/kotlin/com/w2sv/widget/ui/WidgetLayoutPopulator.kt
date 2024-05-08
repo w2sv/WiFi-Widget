@@ -18,6 +18,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusGetter
+import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.WidgetProvider
 import com.w2sv.widget.WifiPropertyViewsService
@@ -69,6 +70,16 @@ class WidgetLayoutPopulator @Inject constructor(
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
                         },
+                )
+
+                setPendingIntentTemplate(
+                    R.id.wifi_property_list_view,
+                    PendingIntent.getBroadcast(
+                        context,
+                        PendingIntentCode.CopyPropertyToClipboard.ordinal,
+                        Intent(context, CopyPropertyToClipboardBroadcastReceiver::class.java),
+                        PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    )
                 )
 
                 appWidgetManager
@@ -147,7 +158,7 @@ class WidgetLayoutPopulator @Inject constructor(
                 show = bottomBar.goToWidgetSettingsButton,
                 pendingIntent = PendingIntent.getActivity(
                     context,
-                    PendingIntentCode.LaunchHomeActivity.ordinal,
+                    PendingIntentCode.GoToWidgetConfiguration.ordinal,
                     Intent.makeRestartActivityTask(
                         ComponentName(
                             context,
