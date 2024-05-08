@@ -2,4 +2,9 @@
 <resources>
     <string name="no_location_access">&lt;No location access&gt;</string>
     <string name="unknown">Unknown</string>
+    <string name="excellent">Excellent</string>
+    <string name="good">Good</string>
+    <string name="fair">Fair</string>
+    <string name="weak">Weak</string>
+    <string name="poor">Poor</string>
 </resources>

@@ -103,6 +103,20 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
                 WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
                 WidgetWifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
+                WidgetWifiProperty.NonIP.Other.SignalStrength -> {
+                    val rssi = wifiManager.connectionInfo.rssi
+                    add(
+                        resources.getString(
+                            when {
+                                rssi >= -60 -> R.string.excellent
+                                rssi >= -70 -> R.string.good
+                                rssi >= -80 -> R.string.fair
+                                rssi >= -90 -> R.string.weak
+                                else -> R.string.poor
+                            }
+                        )
+                    )
+                }
 
                 WidgetWifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(

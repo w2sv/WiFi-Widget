@@ -72,4 +72,11 @@
     <string name="generation_description">Another nomenclature for the WiFi standards.</string>
     <string name="security">Security</string>
     <string name="security_description">The used security protocol.</string>
+    <string name="signal_strength">Signal Strength</string>
+    <string name="signal_strength_description">The signal strength level based on the RSSI. The used mapping function is:
+    \n\t\tExcellent: Up to -60 dBm
+    \n\t\tGood: -61 to -70 dBm
+    \n\t\tFair: -71 to -80 dBm
+    \n\t\tWeak: -81 to -90 dBm
+    \n\t\tPoor: -91 dBm and below</string>
 </resources>

@@ -99,6 +99,13 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 true
             )
 
+            data object SignalStrength : Other(
+                R.string.signal_strength,
+                R.string.signal_strength_description,
+                null,
+                true
+            )
+
             data object Standard : Other(
                 R.string.standard,
                 R.string.standard_description,
@@ -148,6 +155,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                         add(Channel)
                         add(LinkSpeed)
                         add(RSSI)
+                        add(SignalStrength)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(Standard)
                             add(Generation)
