@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
 
 import android.content.Context
+import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -317,7 +318,7 @@ private fun WidgetWifiProperty.IP.subPropertyElements(
 private val shakeConfig = ShakeConfig(
     iterations = 2,
     translateX = 12.5f,
-    stiffness = 20_000f
+    stiffness = Spring.StiffnessHigh
 )
 
 private fun WidgetWifiProperty.IP.SubProperty.allowCheckedChange(

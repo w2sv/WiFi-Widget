@@ -32,13 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.shake
-import com.w2sv.wifiwidget.ui.utils.thenIfNotNull
 import kotlinx.collections.immutable.ImmutableList
 
 // For alignment of primary check row click elements with sub property click elements

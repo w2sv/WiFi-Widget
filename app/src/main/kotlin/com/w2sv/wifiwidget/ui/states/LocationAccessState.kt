@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -18,6 +17,7 @@ import com.w2sv.androidutils.coroutines.mapState
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
 import com.w2sv.androidutils.generic.goToAppSettings
 import com.w2sv.composed.CollectFromFlow
+import com.w2sv.composed.OnChange
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -106,9 +106,9 @@ fun rememberLocationAccessState(
     }
 
     // Emit new status on state.isGranted change
-    LaunchedEffect(state.isGranted) {
-        i { "New location access permission grant status=${state.isGranted}" }
-        state.emitNewStatus(state.isGranted)
+    OnChange(state.isGranted) {
+        i { "New location access permission grant status=${it}" }
+        state.emitNewStatus(it)
     }
 
     // Forward requestResult to state
