@@ -37,8 +37,8 @@ import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.utils.RightAligned
 import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
+import com.w2sv.wifiwidget.ui.utils.RightAligned
 
 private object AppUrl {
     const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"

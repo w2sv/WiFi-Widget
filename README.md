@@ -66,7 +66,7 @@
     - Last refresh date time display
     - Refresh data button
     - Go to WiFi settings button
-    - Go to widget configuration button 
+    - Go to widget configuration button
 - Periodic data refreshing:
     - Interval
     - Refresh on low battery
