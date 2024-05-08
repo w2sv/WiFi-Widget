@@ -120,11 +120,11 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WidgetWifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         when (wifiManager.connectionInfo.wifiStandard) {
-                            ScanResult.WIFI_STANDARD_11AC -> "WiFi 5"
+                            ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5"
                             ScanResult.WIFI_STANDARD_11AD -> "WiGig"
-                            ScanResult.WIFI_STANDARD_11AX -> "WiFi 6"
-                            ScanResult.WIFI_STANDARD_11BE -> "WiFi 7"
-                            ScanResult.WIFI_STANDARD_11N -> "WiFi 4"
+                            ScanResult.WIFI_STANDARD_11AX -> "Wi-Fi 6"
+                            ScanResult.WIFI_STANDARD_11BE -> "Wi-Fi 7"
+                            ScanResult.WIFI_STANDARD_11N -> "Wi-Fi 4"
                             ScanResult.WIFI_STANDARD_LEGACY -> "Legacy"
                             else -> resources.getString(R.string.unknown)
                         }
