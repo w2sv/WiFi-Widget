@@ -1,6 +1,6 @@
 package com.w2sv.widget.model
 
-import com.w2sv.domain.model.WidgetBottomRowElement
+import com.w2sv.domain.model.WidgetBottomBarElement
 
 internal data class WidgetBottomBarElement(
     val lastRefreshTimeDisplay: Boolean,
@@ -8,11 +8,11 @@ internal data class WidgetBottomBarElement(
     val goToWifiSettingsButton: Boolean,
     val goToWidgetSettingsButton: Boolean,
 ) {
-    constructor(parameters: Map<WidgetBottomRowElement, Boolean>) : this(
-        lastRefreshTimeDisplay = parameters.getValue(WidgetBottomRowElement.LastRefreshTimeDisplay),
-        refreshButton = parameters.getValue(WidgetBottomRowElement.RefreshButton),
-        goToWifiSettingsButton = parameters.getValue(WidgetBottomRowElement.GoToWifiSettingsButton),
-        goToWidgetSettingsButton = parameters.getValue(WidgetBottomRowElement.GoToWidgetSettingsButton)
+    constructor(parameters: Map<WidgetBottomBarElement, Boolean>) : this(
+        lastRefreshTimeDisplay = parameters.getValue(WidgetBottomBarElement.LastRefreshTimeDisplay),
+        refreshButton = parameters.getValue(WidgetBottomBarElement.RefreshButton),
+        goToWifiSettingsButton = parameters.getValue(WidgetBottomBarElement.GoToWifiSettingsButton),
+        goToWidgetSettingsButton = parameters.getValue(WidgetBottomBarElement.GoToWidgetSettingsButton)
     )
 
     val anyEnabled: Boolean

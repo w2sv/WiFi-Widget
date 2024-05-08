@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
-import com.w2sv.domain.model.WidgetBottomRowElement
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
 import com.w2sv.wifiwidget.R
@@ -107,7 +107,7 @@ fun rememberWidgetConfigurationCardProperties(
             ) {
                 CheckRowColumn(
                     elements = remember {
-                        WidgetBottomRowElement.entries.map {
+                        WidgetBottomBarElement.entries.map {
                             CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                                 property = it,
                                 isCheckedMap = widgetConfiguration.bottomRowMap

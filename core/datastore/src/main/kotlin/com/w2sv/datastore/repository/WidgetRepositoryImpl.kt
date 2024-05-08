@@ -11,7 +11,7 @@ import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlo
 import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlowMap
 import com.w2sv.datastore.proto.widget_coloring.WidgetColoringDataSource
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.WidgetBottomRowElement
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -60,8 +60,8 @@ class WidgetRepositoryImpl @Inject constructor(
                 .associateWith { it.isEnabledDse }
         )
 
-    override val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomRowElement, Boolean> =
-        dataStoreFlowMap(WidgetBottomRowElement.entries.associateWith { it.isEnabledDSE })
+    override val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomBarElement, Boolean> =
+        dataStoreFlowMap(WidgetBottomBarElement.entries.associateWith { it.isEnabledDSE })
 
     override val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean> =
         dataStoreFlowMap(WidgetRefreshingParameter.entries.associateWith { it.isEnabledDSE })
@@ -91,14 +91,14 @@ private val WidgetWifiProperty.IP.SubProperty.isEnabledDse
             defaultValue = true,
         )
 
-private val WidgetBottomRowElement.isEnabledDSE
+private val WidgetBottomBarElement.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = booleanPreferencesKey(
             when (this) {
-                WidgetBottomRowElement.LastRefreshTimeDisplay -> "ShowDateTime"
-                WidgetBottomRowElement.RefreshButton -> "WidgetButton.Refresh"
-                WidgetBottomRowElement.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
-                WidgetBottomRowElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
+                WidgetBottomBarElement.LastRefreshTimeDisplay -> "ShowDateTime"
+                WidgetBottomBarElement.RefreshButton -> "WidgetButton.Refresh"
+                WidgetBottomBarElement.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
+                WidgetBottomBarElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
             }
         ),
         defaultValue = true,

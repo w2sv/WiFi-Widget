@@ -5,7 +5,7 @@ import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
 import com.w2sv.androidutils.ui.reversible_state.ReversibleStatesComposition
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.WidgetBottomRowElement
+import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WidgetWifiProperty
@@ -21,7 +21,7 @@ class ReversibleWidgetConfiguration(
     val fontSize: ReversibleStateFlow<FontSize>,
     val wifiProperties: ReversibleStateMap<WidgetWifiProperty, Boolean>,
     val ipSubProperties: ReversibleStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
-    val bottomRowMap: ReversibleStateMap<WidgetBottomRowElement, Boolean>,
+    val bottomRowMap: ReversibleStateMap<WidgetBottomBarElement, Boolean>,
     val refreshInterval: ReversibleStateFlow<Duration>,
     val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
     private val scope: CoroutineScope,

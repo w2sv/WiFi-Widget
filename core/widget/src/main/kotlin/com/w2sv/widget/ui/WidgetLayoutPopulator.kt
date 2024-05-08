@@ -172,8 +172,7 @@ class WidgetLayoutPopulator @Inject constructor(
 
         if (show) {
             setColorFilter(id, colors.primary)
+            setOnClickPendingIntent(id, pendingIntent)
         }
-
-        setOnClickPendingIntent(id, pendingIntent)
     }
 }
