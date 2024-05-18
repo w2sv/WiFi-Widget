@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -104,116 +103,129 @@ internal fun NavigationDrawerSheetItemColumn(
                     )
                 )
                 add(
-                    NavigationDrawerSheetElement.Item.Custom(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_nightlight_24,
-                        R.string.theme
-                    ) {
-                        ThemeSelectionRow(
-                            selected = theme,
-                            onSelected = appVM::saveTheme,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 22.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        )
-                    })
+                        R.string.theme,
+                        type = NavigationDrawerSheetElement.Item.Type.Custom {
+                            ThemeSelectionRow(
+                                selected = theme,
+                                onSelected = appVM::saveTheme,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 22.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            )
+                        }
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Switch(
+                    NavigationDrawerSheetElement.Item(
                         iconRes = R.drawable.ic_contrast_24,
                         labelRes = R.string.amoled_black,
                         visible = {
                             useDarkTheme
                         },
-                        checked = { useAmoledBlackTheme },
-                        onCheckedChange = appVM::saveUseAmoledBlackTheme
+                        type = NavigationDrawerSheetElement.Item.Type.Switch(
+                            checked = { useAmoledBlackTheme },
+                            onCheckedChange = appVM::saveUseAmoledBlackTheme
+                        )
                     )
                 )
                 if (dynamicColorsSupported) {
                     add(
-                        NavigationDrawerSheetElement.Item.Switch(
+                        NavigationDrawerSheetElement.Item(
                             iconRes = R.drawable.ic_palette_24,
                             labelRes = R.string.dynamic_colors,
                             explanationRes = R.string.use_colors_derived_from_your_wallpaper,
-                            checked = { useDynamicColors },
-                            onCheckedChange = appVM::saveUseDynamicColors
+                            type = NavigationDrawerSheetElement.Item.Type.Switch(
+                                checked = { useDynamicColors },
+                                onCheckedChange = appVM::saveUseDynamicColors
+                            )
                         )
                     )
                 }
                 add(NavigationDrawerSheetElement.Header(R.string.legal))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_policy_24,
-                        R.string.privacy_policy
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.PRIVACY_POLICY)
-                    })
+                        R.string.privacy_policy,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.PRIVACY_POLICY)
+                        }
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_copyright_24,
-                        R.string.license
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
-                    })
+                        R.string.license,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
+                        }
+                    ))
                 add(NavigationDrawerSheetElement.Header(R.string.support_the_app))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_star_rate_24,
-                        R.string.rate
-                    ) {
-                        try {
-                            context.startActivity(
-                                Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(appPlayStoreUrl(context))
+                        R.string.rate,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            try {
+                                context.startActivity(
+                                    Intent(
+                                        Intent.ACTION_VIEW,
+                                        Uri.parse(appPlayStoreUrl(context))
+                                    )
+                                        .setPackage("com.android.vending")
                                 )
-                                    .setPackage("com.android.vending")
-                            )
-                        } catch (e: ActivityNotFoundException) {
-                            context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
+                            } catch (e: ActivityNotFoundException) {
+                                context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
+                            }
                         }
-                    })
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_share_24,
-                        R.string.share
-                    ) {
-                        ShareCompat.IntentBuilder(context)
-                            .setType("text/plain")
-                            .setText(context.getString(R.string.share_action_text))
-                            .startChooser()
-                    })
+                        R.string.share,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            ShareCompat.IntentBuilder(context)
+                                .setType("text/plain")
+                                .setText(context.getString(R.string.share_action_text))
+                                .startChooser()
+                        }
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         R.drawable.ic_bug_report_24,
-                        R.string.report_a_bug_request_a_feature
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)
-                    })
+                        R.string.report_a_bug_request_a_feature,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)
+                        }
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         iconRes = R.drawable.ic_donate_24,
                         labelRes = R.string.support_development,
-                        explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.DONATE)
-                    })
+                        explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.DONATE)
+                        }
+                    ))
                 add(NavigationDrawerSheetElement.Header(R.string.more))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         iconRes = R.drawable.ic_developer_24,
                         labelRes = R.string.developer,
-                        explanationRes = R.string.check_out_my_other_apps
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
-                    })
+                        explanationRes = R.string.check_out_my_other_apps,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
+                        }
+                    ))
                 add(
-                    NavigationDrawerSheetElement.Item.Clickable(
+                    NavigationDrawerSheetElement.Item(
                         iconRes = R.drawable.ic_github_24,
                         labelRes = R.string.source,
-                        explanationRes = R.string.examine_the_app_s_source_code_on_github
-                    ) {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
-                    })
+                        explanationRes = R.string.examine_the_app_s_source_code_on_github,
+                        type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                            context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
+                        }
+                    ))
             }
         }
             .forEach { element ->
@@ -222,7 +234,7 @@ internal fun NavigationDrawerSheetItemColumn(
                         OptionalAnimatedVisibility(visible = element.visible) {
                             Item(
                                 item = element,
-                                modifier = itemModifier,
+                                modifier = element.modifier,
                             )
                         }
                     }
@@ -238,54 +250,43 @@ internal fun NavigationDrawerSheetItemColumn(
     }
 }
 
-private val itemModifier = Modifier
-    .fillMaxWidth()
-    .padding(vertical = 12.dp)
-
 @Immutable
 private sealed interface NavigationDrawerSheetElement {
+    val modifier: Modifier
 
     @Immutable
     data class Header(
         @StringRes val titleRes: Int,
-        val modifier: Modifier = Modifier
+        override val modifier: Modifier = Modifier
             .padding(top = 20.dp, bottom = 4.dp)
     ) : NavigationDrawerSheetElement
 
     @Immutable
-    sealed interface Item : NavigationDrawerSheetElement {
-        val iconRes: Int
-        val labelRes: Int
-        val explanationRes: Int?
-        val visible: (() -> Boolean)?
+    data class Item(
+        val iconRes: Int,
+        val labelRes: Int,
+        val explanationRes: Int? = null,
+        val visible: (() -> Boolean)? = null,
+        override val modifier: Modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp),
+        val type: Type
+    ) : NavigationDrawerSheetElement {
 
         @Immutable
-        data class Clickable(
-            @DrawableRes override val iconRes: Int,
-            @StringRes override val labelRes: Int,
-            @StringRes override val explanationRes: Int? = null,
-            override val visible: (() -> Boolean)? = null,
-            val onClick: () -> Unit
-        ) : Item
+        sealed interface Type {
+            @Immutable
+            data class Clickable(val onClick: () -> Unit) : Type
 
-        @Immutable
-        data class Switch(
-            @DrawableRes override val iconRes: Int,
-            @StringRes override val labelRes: Int,
-            @StringRes override val explanationRes: Int? = null,
-            override val visible: (() -> Boolean)? = null,
-            val checked: () -> Boolean,
-            val onCheckedChange: (Boolean) -> Unit
-        ) : Item
+            @Immutable
+            data class Switch(
+                val checked: () -> Boolean,
+                val onCheckedChange: (Boolean) -> Unit
+            ) : Type
 
-        @Immutable
-        data class Custom(
-            @DrawableRes override val iconRes: Int,
-            @StringRes override val labelRes: Int,
-            @StringRes override val explanationRes: Int? = null,
-            override val visible: (() -> Boolean)? = null,
-            val content: @Composable RowScope.() -> Unit
-        ) : Item
+            @Immutable
+            data class Custom(val content: @Composable RowScope.() -> Unit) : Type
+        }
     }
 }
 
@@ -309,7 +310,7 @@ private fun Item(
 ) {
     Column(
         modifier = modifier
-            .thenIfNotNull(item as? NavigationDrawerSheetElement.Item.Clickable) {
+            .thenIfNotNull(item.type as? NavigationDrawerSheetElement.Item.Type.Clickable) {
                 clickable {
                     it.onClick()
                 }
@@ -354,14 +355,14 @@ private fun MainItemRow(
             fontWeight = FontWeight.Medium,
         )
 
-        when (item) {
-            is NavigationDrawerSheetElement.Item.Custom -> {
-                item.content(this)
+        when (val type = item.type) {
+            is NavigationDrawerSheetElement.Item.Type.Custom -> {
+                type.content(this)
             }
 
-            is NavigationDrawerSheetElement.Item.Switch -> {
+            is NavigationDrawerSheetElement.Item.Type.Switch -> {
                 RightAligned {
-                    Switch(checked = item.checked(), onCheckedChange = item.onCheckedChange)
+                    Switch(checked = type.checked(), onCheckedChange = type.onCheckedChange)
                 }
             }
 
