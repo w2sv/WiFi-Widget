@@ -54,7 +54,7 @@ private fun NavigationDrawerSheet(
 ) {
     ModalDrawerSheet(
         modifier = modifier,
-        windowInsets = insets
+        windowInsets = zeroInsets
     ) {
         Column(
             modifier = Modifier
@@ -74,7 +74,7 @@ private fun NavigationDrawerSheet(
     }
 }
 
-private val insets = WindowInsets(0, 0, 0, 0)
+private val zeroInsets = WindowInsets(0, 0, 0, 0)
 private val horizontalPadding = 24.dp
 
 @Composable

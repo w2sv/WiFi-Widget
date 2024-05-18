@@ -241,8 +241,6 @@ internal fun NavigationDrawerSheetItemColumn(
 private val itemModifier = Modifier
     .fillMaxWidth()
     .padding(vertical = 12.dp)
-private val headerModifier = Modifier
-    .padding(top = 20.dp, bottom = 4.dp)
 
 @Immutable
 private sealed interface NavigationDrawerSheetElement {
@@ -250,7 +248,8 @@ private sealed interface NavigationDrawerSheetElement {
     @Immutable
     data class Header(
         @StringRes val titleRes: Int,
-        val modifier: Modifier = headerModifier
+        val modifier: Modifier = Modifier
+            .padding(top = 20.dp, bottom = 4.dp)
     ) : NavigationDrawerSheetElement
 
     @Immutable

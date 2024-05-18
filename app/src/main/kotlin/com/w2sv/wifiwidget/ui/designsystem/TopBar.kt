@@ -26,7 +26,7 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
         title = {
             Text(
                 text = stringResource(id = R.string.app_name),
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(start = 8.dp),
                 maxLines = 1
             )
         },
