@@ -49,7 +49,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.Easing
+import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.utils.findActivity
 import kotlinx.coroutines.CoroutineScope

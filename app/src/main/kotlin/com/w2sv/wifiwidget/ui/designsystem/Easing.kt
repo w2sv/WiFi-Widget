@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.utils
+package com.w2sv.wifiwidget.ui.designsystem
 
 import android.view.animation.AnticipateInterpolator
 import android.view.animation.OvershootInterpolator

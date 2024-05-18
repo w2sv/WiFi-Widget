@@ -36,7 +36,7 @@ import com.w2sv.wifiwidget.ui.utils.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 
 @Stable
-data class NavigationDrawerItemConfiguration(
+data class NavigationDrawerItemState(
     val theme: () -> Theme,
     val setTheme: (Theme) -> Unit,
     val useAmoledBlackTheme: () -> Boolean,
@@ -46,13 +46,13 @@ data class NavigationDrawerItemConfiguration(
 )
 
 @Composable
-private fun rememberNavigationDrawerItemConfiguration(appVM: AppViewModel = activityViewModel()): NavigationDrawerItemConfiguration {
+private fun rememberNavigationDrawerItemState(appVM: AppViewModel = activityViewModel()): NavigationDrawerItemState {
     val theme by appVM.theme.collectAsStateWithLifecycle()
     val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
     val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
 
     return remember {
-        NavigationDrawerItemConfiguration(
+        NavigationDrawerItemState(
             theme = { theme },
             setTheme = appVM::saveTheme,
             useAmoledBlackTheme = { useAmoledBlackTheme },
@@ -67,7 +67,7 @@ private fun rememberNavigationDrawerItemConfiguration(appVM: AppViewModel = acti
 fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
-    itemConfiguration: NavigationDrawerItemConfiguration = rememberNavigationDrawerItemConfiguration(),
+    itemConfiguration: NavigationDrawerItemState = rememberNavigationDrawerItemState(),
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
@@ -84,12 +84,12 @@ fun NavigationDrawer(
 
 @Composable
 private fun NavigationDrawerSheet(
-    itemConfiguration: NavigationDrawerItemConfiguration,
+    itemConfiguration: NavigationDrawerItemState,
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
         modifier = modifier,
-        windowInsets = zeroInsets
+        windowInsets = emptyInsets
     ) {
         SystemBarsIgnoringVisibilityPaddedColumn(
             modifier = Modifier
@@ -101,7 +101,7 @@ private fun NavigationDrawerSheet(
                     .fillMaxWidth()
                     .padding(horizontal = horizontalPadding)
             )
-            HorizontalDivider(modifier = Modifier.padding(top = 16.dp))
+            HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             NavigationDrawerSheetItemColumn(
                 itemConfiguration = itemConfiguration,
                 modifier = Modifier.padding(horizontal = horizontalPadding)
@@ -110,7 +110,7 @@ private fun NavigationDrawerSheet(
     }
 }
 
-private val zeroInsets = WindowInsets(0, 0, 0, 0)
+private val emptyInsets = WindowInsets(0, 0, 0, 0)
 private val horizontalPadding = 24.dp
 
 @Composable

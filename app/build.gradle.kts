@@ -132,7 +132,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.splashscreen)
-    implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.androidx.workmanager)
 
     // Compose libraries

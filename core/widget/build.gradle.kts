@@ -9,7 +9,6 @@ dependencies {
     implementation(projects.core.networking)
 
     implementation(libs.androidx.workmanager)
-    implementation(libs.androidx.localbroadcastmanager)
     implementation(libs.google.material)
     implementation(libs.slimber)
     implementation(libs.androidutils)
