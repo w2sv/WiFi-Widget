@@ -317,7 +317,7 @@ private fun WidgetWifiProperty.IP.subPropertyElements(
 
 private val shakeConfig = ShakeConfig(
     iterations = 2,
-    translateX = 12.5f,
+    translateX = 20f,
     stiffness = Spring.StiffnessHigh
 )
 

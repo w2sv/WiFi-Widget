@@ -44,7 +44,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
 import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
-import com.w2sv.wifiwidget.ui.utils.RightAligned
+import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(

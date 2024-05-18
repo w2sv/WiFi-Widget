@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.utils
+package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,3 +38,5 @@ fun RowScope.RightAligned(modifier: Modifier = Modifier, content: @Composable ()
     Spacer(modifier = modifier.weight(1f))
     content()
 }
+
+val emptyInsets = WindowInsets(0, 0, 0, 0)

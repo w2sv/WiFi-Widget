@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,8 +31,9 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
-import com.w2sv.wifiwidget.ui.utils.SystemBarsIgnoringVisibilityPaddedColumn
+import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
 
 @Stable
 data class NavigationDrawerItemState(
@@ -110,7 +110,6 @@ private fun NavigationDrawerSheet(
     }
 }
 
-private val emptyInsets = WindowInsets(0, 0, 0, 0)
 private val horizontalPadding = 24.dp
 
 @Composable

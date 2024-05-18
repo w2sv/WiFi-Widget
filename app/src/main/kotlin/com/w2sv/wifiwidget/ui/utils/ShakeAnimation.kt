@@ -3,12 +3,10 @@ package com.w2sv.wifiwidget.ui.utils
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.graphicsLayer
 
 @Stable
 class ShakeController(private val config: ShakeConfig) {
@@ -27,8 +25,8 @@ class ShakeController(private val config: ShakeConfig) {
 
     private val animatable = Animatable(0f)
 
-    internal val offset: Dp
-        get() = animatable.value.dp
+    internal val offset: Float
+        get() = animatable.value
 }
 
 @Immutable
@@ -39,4 +37,4 @@ data class ShakeConfig(
 )
 
 fun Modifier.shake(controller: ShakeController): Modifier =
-    this then Modifier.offset(x = controller.offset)
+    graphicsLayer { translationX = controller.offset }
