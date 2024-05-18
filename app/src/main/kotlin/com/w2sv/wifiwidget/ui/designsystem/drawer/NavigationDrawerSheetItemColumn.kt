@@ -7,6 +7,7 @@ import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,7 +20,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,16 +35,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.dynamicColorsSupported
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.composed.OnChange
+import com.w2sv.composed.extensions.thenIfNotNull
+import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
+import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
+import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
 import com.w2sv.wifiwidget.ui.utils.RightAligned
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
 
 private object AppUrl {
     const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"
@@ -47,145 +58,236 @@ private object AppUrl {
     const val CREATE_ISSUE = "https://github.com/w2sv/WiFi-Widget/issues/new"
     const val GOOGLE_PLAY_DEVELOPER_PAGE =
         "https://play.google.com/store/apps/dev?id=6884111703871536890"
+    const val DONATE = "https://buymeacoffee.com/w2sv"
+}
+
+@Composable
+fun rememberUseDarkTheme(theme: Theme): State<Boolean> {
+    val systemInDarkTheme = isSystemInDarkTheme()
+    return remember(theme, systemInDarkTheme) {
+        mutableStateOf(
+            when (theme) {
+                Theme.Light -> false
+                Theme.Dark -> true
+                Theme.Default -> systemInDarkTheme
+            }
+        )
+    }
 }
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(
-    closeDrawer: () -> Unit,
     modifier: Modifier = Modifier,
-    appVM: AppViewModel = hiltViewModel()
+    appVM: AppViewModel = activityViewModel()
 ) {
     Column(modifier = modifier) {
         val context: Context = LocalContext.current
 
+        val theme by appVM.theme.collectAsStateWithLifecycle()
+        // I don't know why, but it doesn't work otherwise
+        val useDarkThemeExternal by rememberUseDarkTheme(theme = theme)
+        var useDarkTheme by remember {
+            mutableStateOf(useDarkThemeExternal)
+        }
+        OnChange(useDarkThemeExternal) {
+            useDarkTheme = it
+        }
+        val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
+        val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
+
         remember {
             buildList {
-                add(Element.Header(R.string.appearance))
-                add(Element.LabelledItem.Custom(R.drawable.ic_nightlight_24, R.string.theme) {
-                    ThemeSelectionRow(
-                        selected = appVM.theme.collectAsStateWithLifecycle().value,
-                        onSelected = appVM::saveTheme,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 22.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                    )
-                })
-                if (dynamicColorsSupported) {
-                    add(Element.LabelledItem.Custom(
-                        iconRes = R.drawable.ic_palette_24,
-                        labelRes = R.string.use_dynamic_colors,
-                    ) {
-                        RightAligned {
-                            Switch(
-                                checked = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
-                                onCheckedChange = appVM::saveUseDynamicColors
-                            )
-                        }
-                    })
-                }
-                add(Element.Header(R.string.legal))
                 add(
-                    Element.LabelledItem.Clickable(
+                    NavigationDrawerSheetElement.Header(
+                        titleRes = R.string.appearance,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                )
+                add(
+                    NavigationDrawerSheetElement.Item.Custom(
+                        R.drawable.ic_nightlight_24,
+                        R.string.theme
+                    ) {
+                        ThemeSelectionRow(
+                            selected = theme,
+                            onSelected = appVM::saveTheme,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 22.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        )
+                    })
+                add(
+                    NavigationDrawerSheetElement.Item.Switch(
+                        iconRes = R.drawable.ic_contrast_24,
+                        labelRes = R.string.amoled_black,
+                        visible = {
+                            useDarkTheme
+                        },
+                        checked = { useAmoledBlackTheme },
+                        onCheckedChange = appVM::saveUseAmoledBlackTheme
+                    )
+                )
+                if (dynamicColorsSupported) {
+                    add(
+                        NavigationDrawerSheetElement.Item.Switch(
+                            iconRes = R.drawable.ic_palette_24,
+                            labelRes = R.string.dynamic_colors,
+                            explanationRes = R.string.use_colors_derived_from_your_wallpaper,
+                            checked = { useDynamicColors },
+                            onCheckedChange = appVM::saveUseDynamicColors
+                        )
+                    )
+                }
+                add(NavigationDrawerSheetElement.Header(R.string.legal))
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
                         R.drawable.ic_policy_24,
                         R.string.privacy_policy
                     ) {
                         context.openUrlWithActivityNotFoundHandling(AppUrl.PRIVACY_POLICY)
                     })
-                add(Element.LabelledItem.Clickable(R.drawable.ic_copyright_24, R.string.license) {
-                    context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
-                })
-                add(Element.Header(R.string.support_the_app))
-                add(Element.LabelledItem.Clickable(R.drawable.ic_star_rate_24, R.string.rate) {
-                    try {
-                        context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(appPlayStoreUrl(context))
-                            )
-                                .setPackage("com.android.vending")
-                        )
-                    } catch (e: ActivityNotFoundException) {
-                        context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
-                    }
-                })
-                add(Element.LabelledItem.Clickable(R.drawable.ic_share_24, R.string.share) {
-                    ShareCompat.IntentBuilder(context)
-                        .setType("text/plain")
-                        .setText(context.getString(R.string.share_action_text))
-                        .startChooser()
-                })
                 add(
-                    Element.LabelledItem.Clickable(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        R.drawable.ic_copyright_24,
+                        R.string.license
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
+                    })
+                add(NavigationDrawerSheetElement.Header(R.string.support_the_app))
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        R.drawable.ic_star_rate_24,
+                        R.string.rate
+                    ) {
+                        try {
+                            context.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(appPlayStoreUrl(context))
+                                )
+                                    .setPackage("com.android.vending")
+                            )
+                        } catch (e: ActivityNotFoundException) {
+                            context.showToast(context.getString(R.string.you_re_not_signed_into_the_play_store))
+                        }
+                    })
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        R.drawable.ic_share_24,
+                        R.string.share
+                    ) {
+                        ShareCompat.IntentBuilder(context)
+                            .setType("text/plain")
+                            .setText(context.getString(R.string.share_action_text))
+                            .startChooser()
+                    })
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
                         R.drawable.ic_bug_report_24,
                         R.string.report_a_bug_request_a_feature
                     ) {
                         context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)
                     })
-                add(Element.Header(R.string.more))
-                add(Element.LabelledItem.Clickable(R.drawable.ic_developer_24, R.string.developer) {
-                    context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
-                })
-                add(Element.LabelledItem.Clickable(R.drawable.ic_github_24, R.string.source) {
-                    context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
-                })
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        iconRes = R.drawable.ic_donate_24,
+                        labelRes = R.string.support_development,
+                        explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.DONATE)
+                    })
+                add(NavigationDrawerSheetElement.Header(R.string.more))
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        iconRes = R.drawable.ic_developer_24,
+                        labelRes = R.string.developer,
+                        explanationRes = R.string.check_out_my_other_apps
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
+                    })
+                add(
+                    NavigationDrawerSheetElement.Item.Clickable(
+                        iconRes = R.drawable.ic_github_24,
+                        labelRes = R.string.source,
+                        explanationRes = R.string.examine_the_app_s_source_code_on_github
+                    ) {
+                        context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
+                    })
             }
         }
-            .forEach {
-                when (it) {
-                    is Element.LabelledItem -> {
-                        LabelledItem(
-                            item = it,
-                            closeDrawer = closeDrawer,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 12.dp),
-                        )
+            .forEach { element ->
+                when (element) {
+                    is NavigationDrawerSheetElement.Item -> {
+                        OptionalAnimatedVisibility(visible = element.visible) {
+                            Item(
+                                item = element,
+                                modifier = itemModifier,
+                            )
+                        }
                     }
 
-                    is Element.Header -> {
+                    is NavigationDrawerSheetElement.Header -> {
                         SubHeader(
-                            titleRes = it.titleRes,
-                            modifier = Modifier
-                                .padding(vertical = 4.dp)
-                                .align(Alignment.CenterHorizontally)
+                            titleRes = element.titleRes,
+                            modifier = element.modifier
                         )
-                    }
-
-                    is Element.Custom -> {
-                        it.content()
                     }
                 }
             }
     }
 }
 
-private sealed interface Element {
+private val itemModifier = Modifier
+    .fillMaxWidth()
+    .padding(vertical = 12.dp)
+private val headerModifier = Modifier
+    .padding(top = 20.dp, bottom = 4.dp)
 
-    interface LabelledItem : Element {
+@Immutable
+private sealed interface NavigationDrawerSheetElement {
+
+    @Immutable
+    data class Header(
+        @StringRes val titleRes: Int,
+        val modifier: Modifier = headerModifier
+    ) : NavigationDrawerSheetElement
+
+    @Immutable
+    sealed interface Item : NavigationDrawerSheetElement {
         val iconRes: Int
         val labelRes: Int
+        val explanationRes: Int?
+        val visible: (() -> Boolean)?
 
+        @Immutable
         data class Clickable(
             @DrawableRes override val iconRes: Int,
             @StringRes override val labelRes: Int,
+            @StringRes override val explanationRes: Int? = null,
+            override val visible: (() -> Boolean)? = null,
             val onClick: () -> Unit
-        ) : LabelledItem
+        ) : Item
 
+        @Immutable
+        data class Switch(
+            @DrawableRes override val iconRes: Int,
+            @StringRes override val labelRes: Int,
+            @StringRes override val explanationRes: Int? = null,
+            override val visible: (() -> Boolean)? = null,
+            val checked: () -> Boolean,
+            val onCheckedChange: (Boolean) -> Unit
+        ) : Item
+
+        @Immutable
         data class Custom(
             @DrawableRes override val iconRes: Int,
             @StringRes override val labelRes: Int,
+            @StringRes override val explanationRes: Int? = null,
+            override val visible: (() -> Boolean)? = null,
             val content: @Composable RowScope.() -> Unit
-        ) : LabelledItem
+        ) : Item
     }
-
-    data class Custom(
-        val content: @Composable () -> Unit
-    ) : Element
-
-    data class Header(
-        @StringRes val titleRes: Int,
-    ) : Element
 }
 
 @Composable
@@ -196,34 +298,51 @@ private fun SubHeader(
     Text(
         text = stringResource(id = titleRes),
         modifier = modifier,
-        fontSize = 16.sp,
+        fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.tertiary,
     )
 }
 
 @Composable
-private fun LabelledItem(
-    item: Element.LabelledItem,
-    closeDrawer: () -> Unit,
+private fun Item(
+    item: NavigationDrawerSheetElement.Item,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Column(
         modifier = modifier
-            .then(
-                if (item is Element.LabelledItem.Clickable)
-                    Modifier.clickable {
-                        item.onClick()
-                        closeDrawer()
-                    }
-                else
-                    Modifier
-            ),
+            .thenIfNotNull(item as? NavigationDrawerSheetElement.Item.Clickable) {
+                clickable {
+                    it.onClick()
+                }
+            }
+    ) {
+        MainItemRow(item = item, modifier = Modifier.fillMaxWidth())
+        item.explanationRes?.let {
+            Text(
+                text = stringResource(id = it),
+                color = MaterialTheme.colorScheme.onSurfaceVariantDecreasedAlpha,
+                modifier = Modifier.padding(start = iconSize + labelStartPadding),
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+private val iconSize = 28.dp
+private val labelStartPadding = 16.dp
+
+@Composable
+private fun MainItemRow(
+    item: NavigationDrawerSheetElement.Item,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
-                .size(size = 28.dp),
+                .size(size = iconSize),
             painter = painterResource(id = item.iconRes),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
@@ -231,13 +350,23 @@ private fun LabelledItem(
 
         Text(
             text = stringResource(id = item.labelRes),
-            modifier = Modifier.padding(start = 16.dp),
+            modifier = Modifier.padding(start = labelStartPadding),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
         )
 
-        if (item is Element.LabelledItem.Custom) {
-            item.content(this)
+        when (item) {
+            is NavigationDrawerSheetElement.Item.Custom -> {
+                item.content(this)
+            }
+
+            is NavigationDrawerSheetElement.Item.Switch -> {
+                RightAligned {
+                    Switch(checked = item.checked(), onCheckedChange = item.onCheckedChange)
+                }
+            }
+
+            else -> Unit
         }
     }
 }

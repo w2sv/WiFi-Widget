@@ -23,7 +23,7 @@ internal data class WidgetAppearance(
             is WidgetColoring.Style.Preset -> {
                 when (style.theme) {
                     Theme.Dark -> WidgetTheme.Dark
-                    Theme.SystemDefault -> WidgetTheme.SystemDefault
+                    Theme.Default -> WidgetTheme.SystemDefault
                     Theme.Light -> WidgetTheme.Light
                 }
                     .getColors(context, style.useDynamicColors)

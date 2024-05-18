@@ -16,7 +16,7 @@
     <string name="on_pin_widget_wo_background_location_access_permission">Persistent (B)SSID display requires location access all the time.</string>
     <string name="background_location_access_rational">In order for your (B)SSID to be updated from the widget, that is, while the app is running in the background, you\'ll need to grant <b>Location Access all the time</b>.</string>
     <string name="light">Light</string>
-    <string name="system_default">System Default</string>
+    <string name="default_">Default</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
     <string name="properties">Properties</string>
@@ -37,7 +37,7 @@
     <string name="support_the_app">Support the app</string>
     <string name="license">License</string>
     <string name="developer">Developer</string>
-    <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="dynamic_colors">Dynamic colors</string>
     <string name="appearance">Appearance</string>
     <string name="bottom_bar">Bottom Bar</string>
     <string name="grant">Grant</string>
@@ -68,4 +68,10 @@
     <string name="reset">Reset</string>
     <string name="leave_at_least_one_address_version_enabled">Leave at least one address version enabled.</string>
     <string name="leave_at_least_one_property_enabled">Leave at least one property enabled.</string>
+    <string name="amoled_black">AMOLED Black</string>
+    <string name="use_colors_derived_from_your_wallpaper">Use colors derived from your wallpaper</string>
+    <string name="support_development">Support development</string>
+    <string name="buy_me_a_coffee_as_a_sign_of_gratitude">Buy me a coffee as a sign of gratitude if you feel like I\'ve deserved one</string>
+    <string name="check_out_my_other_apps">Check out my other apps</string>
+    <string name="examine_the_app_s_source_code_on_github">Examine the app\'s source code on GitHub</string>
 </resources>

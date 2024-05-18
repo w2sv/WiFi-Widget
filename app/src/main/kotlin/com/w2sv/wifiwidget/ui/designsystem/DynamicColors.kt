@@ -27,7 +27,7 @@ fun UseDynamicColorsRow(
     ) {
         leadingIcon?.invoke()
         Text(
-            text = stringResource(R.string.use_dynamic_colors),
+            text = stringResource(R.string.dynamic_colors),
             color = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(modifier = Modifier.weight(1f))

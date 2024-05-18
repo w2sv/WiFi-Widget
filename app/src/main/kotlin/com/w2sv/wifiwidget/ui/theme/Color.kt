@@ -1,12 +1,20 @@
 package com.w2sv.wifiwidget.ui.theme
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 
 object AppColor {
     val success = Color(12, 173, 34, 200)
 }
+
+val ColorScheme.onSurfaceVariantDecreasedAlpha: Color
+    @Composable
+    @ReadOnlyComposable
+    get() = onSurfaceVariant.copy(0.6f)
 
 val lightColors = lightColorScheme(
     primary = Color(0xFF00696F),

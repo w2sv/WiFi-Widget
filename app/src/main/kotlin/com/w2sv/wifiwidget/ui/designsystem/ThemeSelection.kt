@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import android.view.animation.OvershootInterpolator
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.animateDp
@@ -39,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.composed.extensions.toEasing
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.utils.Easing
@@ -49,7 +47,7 @@ import com.w2sv.wifiwidget.ui.utils.Easing
 private fun ThemeSelectionRowPrev() {
     MaterialTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
-            ThemeSelectionRow(Theme.SystemDefault, {}, modifier = Modifier.fillMaxWidth())
+            ThemeSelectionRow(Theme.Default, {}, modifier = Modifier.fillMaxWidth())
         }
     }
 }
@@ -87,8 +85,8 @@ private val themeIndicatorProperties =
             buttonColoring = ButtonColor.Uniform(Color.White),
         ),
         ThemeIndicatorProperties(
-            theme = Theme.SystemDefault,
-            labelRes = R.string.system_default,
+            theme = Theme.Default,
+            labelRes = R.string.default_,
             buttonColoring = ButtonColor.Gradient(
                 Brush.linearGradient(
                     0.5f to Color.White,
@@ -169,7 +167,7 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = OvershootInterpolator().toEasing(),
+                        easing = Easing.overshoot,
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)

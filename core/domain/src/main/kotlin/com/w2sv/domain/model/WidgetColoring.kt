@@ -22,7 +22,7 @@ interface WidgetColoring {
     sealed interface Style {
 
         data class Preset(
-            val theme: Theme = Theme.SystemDefault,
+            val theme: Theme = Theme.Default,
             val useDynamicColors: Boolean = dynamicColorsSupported
         ) : Style
 

@@ -32,7 +32,7 @@ private object PresetColoringMapper :
                 theme = when (external.theme) {
                     Theme.Dark -> WidgetColoringProto.Preset.Theme.Dark
                     Theme.Light -> WidgetColoringProto.Preset.Theme.Light
-                    Theme.SystemDefault -> WidgetColoringProto.Preset.Theme.SystemDefault
+                    Theme.Default -> WidgetColoringProto.Preset.Theme.SystemDefault
                 }
                 useDynamicColors = external.useDynamicColors
             }
@@ -43,7 +43,7 @@ private object PresetColoringMapper :
             theme = when (proto.theme) {
                 WidgetColoringProto.Preset.Theme.Dark -> Theme.Dark
                 WidgetColoringProto.Preset.Theme.Light -> Theme.Light
-                else -> Theme.SystemDefault
+                else -> Theme.Default
             },
             useDynamicColors = proto.useDynamicColors
         )

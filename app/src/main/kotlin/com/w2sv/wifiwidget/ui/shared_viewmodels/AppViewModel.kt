@@ -44,20 +44,31 @@ class AppViewModel @Inject constructor(
         SharingStarted.Eagerly
     )
 
-    val useDynamicColors = preferencesRepository.useDynamicTheme.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly
-    )
-
     fun saveTheme(theme: Theme) {
         viewModelScope.launch {
             preferencesRepository.inAppTheme.save(theme)
         }
     }
 
+    val useDynamicColors = preferencesRepository.useDynamicTheme.stateIn(
+        viewModelScope,
+        SharingStarted.Eagerly
+    )
+
     fun saveUseDynamicColors(value: Boolean) {
         viewModelScope.launch {
             preferencesRepository.useDynamicTheme.save(value)
+        }
+    }
+
+    val useAmoledBlackTheme = preferencesRepository.useAmoledBlackTheme.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+    )
+
+    fun saveUseAmoledBlackTheme(value: Boolean) {
+        viewModelScope.launch {
+            preferencesRepository.useAmoledBlackTheme.save(value)
         }
     }
 

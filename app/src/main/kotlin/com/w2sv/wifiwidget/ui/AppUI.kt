@@ -34,12 +34,13 @@ fun AppUI(
     val useDarkTheme = when (appVM.theme.collectAsStateWithLifecycle().value) {
         Theme.Light -> false
         Theme.Dark -> true
-        Theme.SystemDefault -> isSystemInDarkTheme()
+        Theme.Default -> isSystemInDarkTheme()
     }
 
     AppTheme(
         useDynamicTheme = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
         useDarkTheme = useDarkTheme,
+        useAmoledBlackTheme = appVM.useAmoledBlackTheme.collectAsStateWithLifecycle().value
     ) {
         // Reset system bar styles on theme change
         LaunchedEffect(useDarkTheme) {

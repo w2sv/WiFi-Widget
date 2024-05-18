@@ -6,4 +6,5 @@ import com.w2sv.domain.model.Theme
 interface PreferencesRepository {
     val inAppTheme: DataStoreFlow<Theme>
     val useDynamicTheme: DataStoreFlow<Boolean>
+    val useAmoledBlackTheme: DataStoreFlow<Boolean>
 }

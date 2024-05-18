@@ -38,6 +38,13 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             connectivityManager.getIPAddresses()
         }
 
+        i { "Dns servers: ${connectivityManager.linkProperties?.dnsServers}" }
+        i { "DHCP: ${connectivityManager.linkProperties?.dhcpServerAddress}" }
+        i { "nat64Prefix: ${connectivityManager.linkProperties?.nat64Prefix}" }
+        connectivityManager.linkProperties?.routes?.forEach {
+            i { "interface: ${it.`interface`} | gateway: ${it.gateway} | destination: ${it.destination} | isDefaultRoute: ${it.isDefaultRoute}" }
+        }
+
         return flow {
             properties
                 .forEach { property ->
