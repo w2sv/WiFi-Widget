@@ -34,7 +34,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.dynamicColorsSupported
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
@@ -44,11 +43,9 @@ import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
 import com.w2sv.wifiwidget.ui.utils.RightAligned
-import com.w2sv.wifiwidget.ui.utils.activityViewModel
 
 private object AppUrl {
     const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"
@@ -76,23 +73,20 @@ fun rememberUseDarkTheme(theme: Theme): State<Boolean> {
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(
+    itemConfiguration: NavigationDrawerItemConfiguration,
     modifier: Modifier = Modifier,
-    appVM: AppViewModel = activityViewModel()
 ) {
     Column(modifier = modifier) {
         val context: Context = LocalContext.current
 
-        val theme by appVM.theme.collectAsStateWithLifecycle()
         // I don't know why, but it doesn't work otherwise
-        val useDarkThemeExternal by rememberUseDarkTheme(theme = theme)
+        val useDarkThemeExternal by rememberUseDarkTheme(theme = itemConfiguration.theme())
         var useDarkTheme by remember {
             mutableStateOf(useDarkThemeExternal)
         }
         OnChange(useDarkThemeExternal) {
             useDarkTheme = it
         }
-        val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
-        val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
 
         remember {
             buildList {
@@ -108,8 +102,8 @@ internal fun NavigationDrawerSheetItemColumn(
                         R.string.theme,
                         type = NavigationDrawerSheetElement.Item.Type.Custom {
                             ThemeSelectionRow(
-                                selected = theme,
-                                onSelected = appVM::saveTheme,
+                                selected = itemConfiguration.theme(),
+                                onSelected = itemConfiguration.setTheme,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(start = 22.dp),
@@ -125,8 +119,8 @@ internal fun NavigationDrawerSheetItemColumn(
                             useDarkTheme
                         },
                         type = NavigationDrawerSheetElement.Item.Type.Switch(
-                            checked = { useAmoledBlackTheme },
-                            onCheckedChange = appVM::saveUseAmoledBlackTheme
+                            checked = itemConfiguration.useAmoledBlackTheme,
+                            onCheckedChange = itemConfiguration.setUseAmoledBlackTheme
                         )
                     )
                 )
@@ -137,8 +131,8 @@ internal fun NavigationDrawerSheetItemColumn(
                             labelRes = R.string.dynamic_colors,
                             explanationRes = R.string.use_colors_derived_from_your_wallpaper,
                             type = NavigationDrawerSheetElement.Item.Type.Switch(
-                                checked = { useDynamicColors },
-                                onCheckedChange = appVM::saveUseDynamicColors
+                                checked = itemConfiguration.useDynamicColors,
+                                onCheckedChange = itemConfiguration.setUseDynamicColors
                             )
                         )
                     )
