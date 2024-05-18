@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.theme
 
 import android.annotation.SuppressLint
+import androidx.activity.SystemBarStyle
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
@@ -10,18 +11,38 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 
 @SuppressLint("NewApi")
 @Composable
 fun AppTheme(
-    useDynamicTheme: Boolean = false,
-    useDarkTheme: Boolean = false,
+    useDarkTheme: Boolean = LocalUseDarkTheme.current,
     useAmoledBlackTheme: Boolean = false,
+    useDynamicTheme: Boolean = false,
+    setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit = { _, _ -> },
     content: @Composable () -> Unit,
 ) {
+    // Reset system bar style on useDarkTheme change
+    LaunchedEffect(useDarkTheme) {
+        val systemBarStyle = if (useDarkTheme) {
+            SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
+        } else {
+            SystemBarStyle.light(
+                android.graphics.Color.TRANSPARENT,
+                android.graphics.Color.TRANSPARENT
+            )
+        }
+
+        setSystemBarStyles(
+            systemBarStyle,
+            systemBarStyle,
+        )
+    }
+
     val context = LocalContext.current
 
     MaterialTheme(

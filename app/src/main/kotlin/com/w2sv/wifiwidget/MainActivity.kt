@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppUI(
-                enableEdgeToEdge = remember {
+                setSystemBarStyles = remember {
                     { statusBarStyle, navigationBarStyle ->
                         enableEdgeToEdge(statusBarStyle, navigationBarStyle)
                     }

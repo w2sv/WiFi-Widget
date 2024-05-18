@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,56 +36,31 @@ import com.w2sv.androidutils.generic.appPlayStoreUrl
 import com.w2sv.androidutils.generic.dynamicColorsSupported
 import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
 import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.common.constants.AppUrl
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.extensions.thenIfNotNull
-import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
+import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
 import com.w2sv.wifiwidget.ui.utils.RightAligned
-
-private object AppUrl {
-    const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"
-    const val PRIVACY_POLICY = "https://github.com/w2sv/WiFi-Widget/blob/main/PRIVACY-POLICY.md"
-    const val GITHUB_REPOSITORY = "https://github.com/w2sv/WiFi-Widget"
-    const val CREATE_ISSUE = "https://github.com/w2sv/WiFi-Widget/issues/new"
-    const val GOOGLE_PLAY_DEVELOPER_PAGE =
-        "https://play.google.com/store/apps/dev?id=6884111703871536890"
-    const val DONATE = "https://buymeacoffee.com/w2sv"
-}
-
-@Composable
-fun rememberUseDarkTheme(theme: Theme): State<Boolean> {
-    val systemInDarkTheme = isSystemInDarkTheme()
-    return remember(theme, systemInDarkTheme) {
-        mutableStateOf(
-            when (theme) {
-                Theme.Light -> false
-                Theme.Dark -> true
-                Theme.Default -> systemInDarkTheme
-            }
-        )
-    }
-}
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(
     itemConfiguration: NavigationDrawerItemConfiguration,
     modifier: Modifier = Modifier,
+    useDarkTheme: Boolean = LocalUseDarkTheme.current,
+    context: Context = LocalContext.current
 ) {
+    var useDarkThemeLocal by remember {
+        mutableStateOf(useDarkTheme)
+    }
+    OnChange(value = useDarkTheme) {
+        useDarkThemeLocal = useDarkTheme
+    }
+
     Column(modifier = modifier) {
-        val context: Context = LocalContext.current
-
-        // I don't know why, but it doesn't work otherwise
-        val useDarkThemeExternal by rememberUseDarkTheme(theme = itemConfiguration.theme())
-        var useDarkTheme by remember {
-            mutableStateOf(useDarkThemeExternal)
-        }
-        OnChange(useDarkThemeExternal) {
-            useDarkTheme = it
-        }
-
         remember {
             buildList {
                 add(
@@ -116,7 +89,7 @@ internal fun NavigationDrawerSheetItemColumn(
                         iconRes = R.drawable.ic_contrast_24,
                         labelRes = R.string.amoled_black,
                         visible = {
-                            useDarkTheme
+                            useDarkThemeLocal
                         },
                         type = NavigationDrawerSheetElement.Item.Type.Switch(
                             checked = itemConfiguration.useAmoledBlackTheme,
