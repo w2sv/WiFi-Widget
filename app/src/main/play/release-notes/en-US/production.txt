@@ -1,7 +1,6 @@
-- Removed the widget scroll bar
-- Added copy-to-clipboard functionality upon widget property click
-- Added WiFi properties:
-    - Signal strength
-    - WiFi generation
-    - Security protocol
-- Performance improvements
+- Changed screen transition animation
+- Changed back press behaviour on widget configuration screen after invocation through widget
+- Added NAT64 Prefix WiFi property
+- Added color adjusted widget loading view
+- Improved & enriched the navigation drawer
+- Enabled AMOLED black theme

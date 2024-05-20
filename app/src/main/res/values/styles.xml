@@ -1,7 +1,5 @@
 <resources>
 
-    <!-- SplashScreen -->
-
     <style name="Theme.App.SplashScreen" parent="Theme.SplashScreen">
         <item name="windowSplashScreenAnimatedIcon">@drawable/logo_foreground</item>
         <item name="windowSplashScreenBackground">@color/logo_background</item>
