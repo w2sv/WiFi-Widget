@@ -5,7 +5,7 @@ import androidx.annotation.StringRes
 import com.w2sv.core.domain.R
 import kotlinx.coroutines.flow.Flow
 
-sealed interface WidgetWifiProperty : WidgetProperty {
+sealed interface WifiProperty : WidgetProperty {
     val descriptionRes: Int
     val learnMoreUrl: String?
     val defaultIsEnabled: Boolean
@@ -26,16 +26,16 @@ sealed interface WidgetWifiProperty : WidgetProperty {
         interface Factory {
             /**
              * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
-             * One [WidgetWifiProperty] may result in the the creation of multiple [ViewData] elements.
+             * One [WifiProperty] may result in the the creation of multiple [ViewData] elements.
              */
             operator fun invoke(
-                properties: Iterable<WidgetWifiProperty>,
+                properties: Iterable<WifiProperty>,
                 ipSubProperties: Set<IP.SubProperty>
             ): Flow<ViewData>
         }
     }
 
-    sealed interface NonIP : WidgetWifiProperty {
+    sealed interface NonIP : WifiProperty {
 
         sealed class LocationAccessRequiring(
             @StringRes override val labelRes: Int,
@@ -148,6 +148,13 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                 true
             )
 
+            data object NAT64Prefix : Other(
+                R.string.nat64prefix,
+                R.string.nat64prefix_description,
+                "https://en.wikipedia.org/wiki/NAT64",
+                true
+            )
+
             companion object {
                 val entries: List<Other>
                     get() = buildList {
@@ -166,12 +173,15 @@ sealed interface WidgetWifiProperty : WidgetProperty {
                         add(Gateway)
                         add(DNS)
                         add(DHCP)
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                            add(NAT64Prefix)
+                        }
                     }
             }
         }
     }
 
-    sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WidgetWifiProperty {
+    sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WifiProperty {
 
         abstract val subscriptResId: Int
 
@@ -321,7 +331,7 @@ sealed interface WidgetWifiProperty : WidgetProperty {
     }
 
     companion object {
-        val entries: List<WidgetWifiProperty>
+        val entries: List<WifiProperty>
             get() = NonIP.LocationAccessRequiring.entries + IP.entries + NonIP.Other.entries
     }
 }

@@ -8,7 +8,7 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -19,8 +19,8 @@ class ReversibleWidgetConfiguration(
     val coloringConfig: ReversibleStateFlow<WidgetColoring.Config>,
     val opacity: ReversibleStateFlow<Float>,
     val fontSize: ReversibleStateFlow<FontSize>,
-    val wifiProperties: ReversibleStateMap<WidgetWifiProperty, Boolean>,
-    val ipSubProperties: ReversibleStateMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
+    val wifiProperties: ReversibleStateMap<WifiProperty, Boolean>,
+    val ipSubProperties: ReversibleStateMap<WifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: ReversibleStateMap<WidgetBottomBarElement, Boolean>,
     val refreshInterval: ReversibleStateFlow<Duration>,
     val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
@@ -41,7 +41,7 @@ class ReversibleWidgetConfiguration(
     onStateSynced = { onStateSynced() }
 ) {
     val anyLocationAccessRequiringPropertyEnabled: Boolean
-        get() = WidgetWifiProperty.NonIP.LocationAccessRequiring.entries
+        get() = WifiProperty.NonIP.LocationAccessRequiring.entries
             .any {
                 wifiProperties.appliedStateMap.getValue(it).value
             }
@@ -51,7 +51,7 @@ class ReversibleWidgetConfiguration(
     ) {
         when (trigger) {
             is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
-                WidgetWifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
+                WifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
                     wifiProperties[it] = true
                 }
                 scope.launch { wifiProperties.sync() }

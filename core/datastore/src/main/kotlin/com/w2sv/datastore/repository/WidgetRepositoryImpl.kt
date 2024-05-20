@@ -14,7 +14,7 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -50,12 +50,12 @@ class WidgetRepositoryImpl @Inject constructor(
     // Maps
     // ================
 
-    override val wifiPropertyEnablementMap: DataStoreFlowMap<WidgetWifiProperty, Boolean> =
-        dataStoreFlowMap(WidgetWifiProperty.entries.associateWith { it.isEnabledDSE })
+    override val wifiPropertyEnablementMap: DataStoreFlowMap<WifiProperty, Boolean> =
+        dataStoreFlowMap(WifiProperty.entries.associateWith { it.isEnabledDSE })
 
-    override val ipSubPropertyEnablementMap: DataStoreFlowMap<WidgetWifiProperty.IP.SubProperty, Boolean> =
+    override val ipSubPropertyEnablementMap: DataStoreFlowMap<WifiProperty.IP.SubProperty, Boolean> =
         dataStoreFlowMap(
-            WidgetWifiProperty.IP.entries
+            WifiProperty.IP.entries
                 .flatMap { it.subProperties }
                 .associateWith { it.isEnabledDse }
         )
@@ -78,13 +78,13 @@ class WidgetRepositoryImpl @Inject constructor(
         )
 }
 
-private val WidgetWifiProperty.isEnabledDSE
+private val WifiProperty.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = booleanPreferencesKey(preferencesKeyName),
         defaultValue = defaultIsEnabled,
     )
 
-private val WidgetWifiProperty.IP.SubProperty.isEnabledDse
+private val WifiProperty.IP.SubProperty.isEnabledDse
     get() =
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("${property.preferencesKeyName}.${kind.preferencesKeyName}"),

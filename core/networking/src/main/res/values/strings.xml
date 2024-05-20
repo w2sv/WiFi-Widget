@@ -7,4 +7,5 @@
     <string name="fair">Fair</string>
     <string name="weak">Weak</string>
     <string name="poor">Poor</string>
+    <string name="none">None</string>
 </resources>

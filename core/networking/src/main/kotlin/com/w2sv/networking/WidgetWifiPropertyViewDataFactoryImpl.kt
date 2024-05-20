@@ -7,7 +7,7 @@ import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import com.w2sv.core.networking.R
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -27,23 +27,23 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
     private val resources: Resources
-) : WidgetWifiProperty.ViewData.Factory {
+) : WifiProperty.ViewData.Factory {
 
     override fun invoke(
-        properties: Iterable<WidgetWifiProperty>,
-        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
-    ): Flow<WidgetWifiProperty.ViewData> {
+        properties: Iterable<WifiProperty>,
+        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+    ): Flow<WifiProperty.ViewData> {
 
         val systemIPAddresses by lazy {
             connectivityManager.getIPAddresses()
         }
 
-        i { "Dns servers: ${connectivityManager.linkProperties?.dnsServers}" }
-        i { "DHCP: ${connectivityManager.linkProperties?.dhcpServerAddress}" }
-        i { "nat64Prefix: ${connectivityManager.linkProperties?.nat64Prefix}" }
-        connectivityManager.linkProperties?.routes?.forEach {
-            i { "interface: ${it.`interface`} | gateway: ${it.gateway} | destination: ${it.destination} | isDefaultRoute: ${it.isDefaultRoute}" }
-        }
+//        i { "Dns servers: ${connectivityManager.linkProperties?.dnsServers}" }
+//        i { "DHCP: ${connectivityManager.linkProperties?.dhcpServerAddress}" }
+//        i { "nat64Prefix: ${connectivityManager.linkProperties?.nat64Prefix}" }
+//        connectivityManager.linkProperties?.routes?.forEach {
+//            i { "interface: ${it.`interface`} | gateway: ${it.gateway} | destination: ${it.destination} | isDefaultRoute: ${it.isDefaultRoute}" }
+//        }
 
         return flow {
             properties
@@ -56,32 +56,32 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             .flowOn(Dispatchers.IO)
     }
 
-    private suspend fun WidgetWifiProperty.getViewData(
+    private suspend fun WifiProperty.getViewData(
         systemIPAddresses: List<IPAddress>,
-        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
-    ): List<WidgetWifiProperty.ViewData> =
+        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+    ): List<WifiProperty.ViewData> =
         when (this) {
-            is WidgetWifiProperty.NonIP -> getViewData()
+            is WifiProperty.NonIP -> getViewData()
 
-            is WidgetWifiProperty.IP -> getViewData(
+            is WifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
                 ipSubProperties = ipSubProperties
             )
         }
 
-    private fun WidgetWifiProperty.NonIP.getViewData(): List<WidgetWifiProperty.ViewData.NonIP> =
+    private fun WifiProperty.NonIP.getViewData(): List<WifiProperty.ViewData.NonIP> =
         getViewData(
             values = getValues(),
             makeViewData = { label, value ->
-                WidgetWifiProperty.ViewData.NonIP(value, label)
+                WifiProperty.ViewData.NonIP(value, label)
             }
         )
 
     @Suppress("DEPRECATION")
-    private fun WidgetWifiProperty.NonIP.getValues(): List<String> =
+    private fun WifiProperty.NonIP.getValues(): List<String> =
         buildList {
             when (this@getValues) {
-                WidgetWifiProperty.NonIP.Other.DNS -> {
+                WifiProperty.NonIP.Other.DNS -> {
                     add(
                         textualIPv4Representation(wifiManager.dhcpInfo.dns1)
                             ?: IPAddress.Version.V4.fallbackAddress
@@ -93,24 +93,24 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     }
                 }
 
-                WidgetWifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
+                WifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
                     wifiManager.connectionInfo.ssid
                         ?.replace("\"", "")
                         .takeIf { it != "<unknown ssid>" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
-                WidgetWifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
+                WifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
                     wifiManager.connectionInfo.bssid
                         ?.takeIf { it != "02:00:00:00:00:00" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
-                WidgetWifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
-                WidgetWifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
-                WidgetWifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
-                WidgetWifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
-                WidgetWifiProperty.NonIP.Other.SignalStrength -> {
+                WifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
+                WifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
+                WifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
+                WifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
+                WifiProperty.NonIP.Other.SignalStrength -> {
                     val rssi = wifiManager.connectionInfo.rssi
                     add(
                         resources.getString(
@@ -125,7 +125,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WidgetWifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         when (wifiManager.connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "802.11ac"
@@ -139,7 +139,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WidgetWifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         when (wifiManager.connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5"
@@ -153,7 +153,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WidgetWifiProperty.NonIP.Other.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                WifiProperty.NonIP.Other.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     add(
                         when (wifiManager.connectionInfo.currentSecurityType) {
                             WifiInfo.SECURITY_TYPE_OPEN -> "Open"
@@ -169,31 +169,38 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                             WifiInfo.SECURITY_TYPE_PASSPOINT_R1_R2 -> "Passpoint R1 R2"
                             WifiInfo.SECURITY_TYPE_PASSPOINT_R3 -> "Passpoint R3"
                             WifiInfo.SECURITY_TYPE_DPP -> "DPP"
-                            else -> "Unknown"
+                            else -> resources.getString(R.string.unknown)
                         }
                     )
                 }
 
-                WidgetWifiProperty.NonIP.Other.Gateway -> add(
+                WifiProperty.NonIP.Other.Gateway -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.gateway)
                         ?: IPAddress.Version.V4.fallbackAddress
                 )
 
-                WidgetWifiProperty.NonIP.Other.DHCP -> add(
+                WifiProperty.NonIP.Other.DHCP -> add(
                     textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
                         ?: IPAddress.Version.V4.fallbackAddress
                 )
+
+                WifiProperty.NonIP.Other.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    add(
+                        connectivityManager.linkProperties?.nat64Prefix?.address?.hostAddress
+                            ?: resources.getString(R.string.none)
+                    )
+                }
             }
         }
 
-    private suspend fun WidgetWifiProperty.IP.getViewData(
+    private suspend fun WifiProperty.IP.getViewData(
         systemIPAddresses: List<IPAddress>,
-        ipSubProperties: Set<WidgetWifiProperty.IP.SubProperty>
-    ): List<WidgetWifiProperty.ViewData.IPProperty> =
+        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+    ): List<WifiProperty.ViewData.IPProperty> =
         getViewData(
             values = when (this) {
-                is WidgetWifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
-                is WidgetWifiProperty.IP.V4AndV6 -> getAddresses(
+                is WifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
+                is WifiProperty.IP.V4AndV6 -> getAddresses(
                     systemIPAddresses = systemIPAddresses,
                     versionsToBeIncluded = buildSet {
                         if (ipSubProperties.contains(v4EnabledSubProperty)) {
@@ -206,7 +213,7 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 )
             },
             makeViewData = { label, ipAddress ->
-                WidgetWifiProperty.ViewData.IPProperty(
+                WifiProperty.ViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
                     prefixLengthText = if (ipSubProperties.contains(showPrefixLengthSubProperty)) "/${ipAddress.prefixLength}" else null
@@ -214,34 +221,34 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         )
 
-    private fun WidgetWifiProperty.IP.V6Only.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
+    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
         when (this) {
-            WidgetWifiProperty.IP.V6Only.ULA -> systemIPAddresses.filter { it.isUniqueLocal }
-            WidgetWifiProperty.IP.V6Only.GUA -> systemIPAddresses.filter { it.isGlobalUnicast }
+            WifiProperty.IP.V6Only.ULA -> systemIPAddresses.filter { it.isUniqueLocal }
+            WifiProperty.IP.V6Only.GUA -> systemIPAddresses.filter { it.isGlobalUnicast }
         }
 
-    private suspend fun WidgetWifiProperty.IP.V4AndV6.getAddresses(
+    private suspend fun WifiProperty.IP.V4AndV6.getAddresses(
         systemIPAddresses: List<IPAddress>,
         versionsToBeIncluded: Set<IPAddress.Version>
     ): List<IPAddress> =
         when (this) {
-            WidgetWifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filterByVersionAnd(
                 versionsToBeIncluded
             ) { it.isLoopback }
 
-            WidgetWifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filterByVersionAnd(
                 versionsToBeIncluded
             ) { it.isSiteLocal }
 
-            WidgetWifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filterByVersionAnd(
                 versionsToBeIncluded
             ) { it.isLinkLocal }
 
-            WidgetWifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filterByVersionAnd(
                 versionsToBeIncluded
             ) { it.isMulticast }
 
-            WidgetWifiProperty.IP.V4AndV6.Public -> buildList {
+            WifiProperty.IP.V4AndV6.Public -> buildList {
                 versionsToBeIncluded.forEach { version ->
                     getPublicIPAddress(httpClient, version)?.let { addressRepresentation ->
                         add(
@@ -260,14 +267,14 @@ class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private fun <T, R : WidgetWifiProperty.ViewData> WidgetWifiProperty.getViewData(
+    private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
         values: List<T>,
         makeViewData: (String, T) -> R
     ): List<R> =
         buildList {
             val propertyLabel = resources.getString(
                 run {
-                    if (this@getViewData is WidgetWifiProperty.IP)
+                    if (this@getViewData is WifiProperty.IP)
                         subscriptResId
                     else
                         labelRes

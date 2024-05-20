@@ -79,4 +79,6 @@
     \n\t\tFair: -71 to -80 dBm
     \n\t\tWeak: -81 to -90 dBm
     \n\t\tPoor: -91 dBm and below</string>
+    <string name="nat64prefix">NAT64 Prefix</string>
+    <string name="nat64prefix_description">A NAT64 prefix is an IPv6 prefix, typically 64:ff9b::/96, used by NAT64 gateways to translate IPv6 addresses to IPv4 addresses and vice versa. It enables IPv6-only clients to communicate with IPv4-only servers by mapping IPv6 addresses to their corresponding IPv4 addresses. This facilitates seamless interaction between IPv6 and IPv4 networks, aiding in the transition to IPv6.\nWiFi Widget will display the NAT64 Prefix that is used on the current link, if there is one.</string>
 </resources>

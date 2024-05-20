@@ -16,7 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
@@ -168,7 +168,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showInfoDialog: (InfoDialogData) -> Unit,
-): ImmutableList<CheckRowColumnElement.CheckRow<WidgetWifiProperty>> {
+): ImmutableList<CheckRowColumnElement.CheckRow<WifiProperty>> {
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
     val scope: CoroutineScope = rememberCoroutineScope()
@@ -200,7 +200,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     }
 
     return remember {
-        WidgetWifiProperty.entries
+        WifiProperty.entries
             .map { property ->
                 property.checkRow(
                     widgetConfiguration = widgetConfiguration,
@@ -216,7 +216,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     }
 }
 
-private fun WidgetWifiProperty.checkRow(
+private fun WifiProperty.checkRow(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showInfoDialog: (InfoDialogData) -> Unit,
@@ -224,14 +224,14 @@ private fun WidgetWifiProperty.checkRow(
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     context: Context,
     scope: CoroutineScope
-): CheckRowColumnElement.CheckRow<WidgetWifiProperty> {
+): CheckRowColumnElement.CheckRow<WifiProperty> {
     val shakeController = ShakeController(shakeConfig)
 
     return CheckRowColumnElement.CheckRow.fromIsCheckedMap(
         property = this,
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
-            if (this is WidgetWifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
+            if (this is WifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
                 return@fromIsCheckedMap locationAccessState.isGranted.also {
                     if (!it) {
                         locationAccessState.launchRequest(
@@ -251,7 +251,7 @@ private fun WidgetWifiProperty.checkRow(
         onCheckedChangedDisallowed = { scope.launch { shakeController.shake() } },
         shakeController = shakeController,
         subPropertyColumnElements = when (this) {
-            is WidgetWifiProperty.IP ->
+            is WifiProperty.IP ->
                 subPropertyElements(
                     ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
@@ -267,13 +267,13 @@ private fun WidgetWifiProperty.checkRow(
 private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
     wifiProperties.values.count { it } > 1
 
-private fun WidgetWifiProperty.IP.subPropertyElements(
-    ipSubPropertyEnablementMap: MutableMap<WidgetWifiProperty.IP.SubProperty, Boolean>,
+private fun WifiProperty.IP.subPropertyElements(
+    ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
 ): ImmutableList<CheckRowColumnElement> {
     return buildList {
-        if (this@subPropertyElements is WidgetWifiProperty.IP.V4AndV6) {
+        if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
             add(
                 CheckRowColumnElement.Custom {
                     VersionsHeader()
@@ -321,14 +321,14 @@ private val shakeConfig = ShakeConfig(
     stiffness = Spring.StiffnessHigh
 )
 
-private fun WidgetWifiProperty.IP.SubProperty.allowCheckedChange(
+private fun WifiProperty.IP.SubProperty.allowCheckedChange(
     newValue: Boolean,
-    subPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, Boolean>
+    subPropertyEnablementMap: Map<WifiProperty.IP.SubProperty, Boolean>
 ): Boolean =
     when (val capturedKind = kind) {
-        is WidgetWifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
+        is WifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
             newValue || subPropertyEnablementMap.getValue(
-                WidgetWifiProperty.IP.SubProperty(
+                WifiProperty.IP.SubProperty(
                     property = property,
                     kind = capturedKind.opposingAddressTypeEnablement
                 )

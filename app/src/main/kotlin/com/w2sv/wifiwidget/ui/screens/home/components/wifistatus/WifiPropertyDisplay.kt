@@ -48,7 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
@@ -68,7 +68,7 @@ import slimber.log.i
 
 @Composable
 fun WifiPropertyDisplay(
-    propertiesViewData: Flow<WidgetWifiProperty.ViewData>,
+    propertiesViewData: Flow<WifiProperty.ViewData>,
     modifier: Modifier = Modifier,
 ) {
     val viewDataList = rememberRefreshingViewDataList(viewDataFlow = propertiesViewData)
@@ -117,14 +117,14 @@ private fun PropertyLoadingView(modifier: Modifier = Modifier) {
 @Immutable
 private sealed interface PropertyListElement {
     @Immutable
-    data class Property(val property: WidgetWifiProperty.ViewData) : PropertyListElement
+    data class Property(val property: WifiProperty.ViewData) : PropertyListElement
 
     @Immutable
     data object LoadingAnimation : PropertyListElement
 }
 
 @Composable
-private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WidgetWifiProperty.ViewData>): SnapshotStateList<PropertyListElement> {
+private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewData>): SnapshotStateList<PropertyListElement> {
     val viewDataList = remember {
         mutableStateListOf<PropertyListElement>(PropertyListElement.LoadingAnimation)
     }
@@ -199,7 +199,7 @@ private fun PropertyList(
                             .heightIn(min = 26.dp)
                             .padding(horizontal = horizontalPadding)
                     )
-                    (viewData.property as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
+                    (viewData.property as? WifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
                         PrefixLengthDisplayRow(
                             prefixLengthText = it,
                             modifier = Modifier
@@ -248,7 +248,7 @@ private fun Header(modifier: Modifier = Modifier) {
     }
 }
 
-private typealias OnPropertyRowClick = (WidgetWifiProperty.ViewData, CharSequence) -> Unit
+private typealias OnPropertyRowClick = (WifiProperty.ViewData, CharSequence) -> Unit
 
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
@@ -282,7 +282,7 @@ private val horizontalPadding = 12.dp
 
 @Composable
 private fun PropertyDisplayRow(
-    viewData: WidgetWifiProperty.ViewData,
+    viewData: WifiProperty.ViewData,
     onClick: OnPropertyRowClick,
     modifier: Modifier = Modifier
 ) {
@@ -290,7 +290,7 @@ private fun PropertyDisplayRow(
 
     val label = remember(viewData) {
         buildAnnotatedString {
-            if (viewData is WidgetWifiProperty.ViewData.IPProperty) {
+            if (viewData is WifiProperty.ViewData.IPProperty) {
                 append(context.getString(R.string.ip))
                 withStyle(
                     SpanStyle(

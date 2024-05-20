@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.rememberStyledTextResource
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
@@ -28,7 +28,7 @@ sealed interface LocationAccessPermissionRequestTrigger {
     data object InitialAppLaunch : LocationAccessPermissionRequestTrigger
 
     @Immutable
-    data class PropertyCheckChange(val property: WidgetWifiProperty.NonIP.LocationAccessRequiring) :
+    data class PropertyCheckChange(val property: WifiProperty.NonIP.LocationAccessRequiring) :
         LocationAccessPermissionRequestTrigger
 }
 

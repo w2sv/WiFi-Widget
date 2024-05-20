@@ -14,7 +14,7 @@ import com.w2sv.androidutils.appwidgets.setBackgroundColor
 import com.w2sv.androidutils.coroutines.enabledKeys
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
 import com.w2sv.widget.data.appearanceBlocking
@@ -29,12 +29,12 @@ import javax.inject.Inject
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val viewDataFactory: WidgetWifiProperty.ViewData.Factory,
+    private val viewDataFactory: WifiProperty.ViewData.Factory,
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
 
-    private lateinit var viewData: List<WidgetWifiProperty.ViewData>
+    private lateinit var viewData: List<WifiProperty.ViewData>
     private lateinit var widgetColors: WidgetColors
     private lateinit var fontSize: FontSize
 
@@ -91,7 +91,7 @@ class WifiPropertyViewsFactory @Inject constructor(
 }
 
 private fun inflatePropertyLayout(
-    viewData: WidgetWifiProperty.ViewData,
+    viewData: WifiProperty.ViewData,
     packageName: String,
     widgetColors: WidgetColors,
     fontSize: FontSize
@@ -100,7 +100,7 @@ private fun inflatePropertyLayout(
         .apply {
             setTextView(
                 viewId = R.id.property_label_tv,
-                text = if (viewData is WidgetWifiProperty.ViewData.NonIP)
+                text = if (viewData is WifiProperty.ViewData.NonIP)
                     viewData.label
                 else
                     buildSpannedString {
@@ -134,7 +134,7 @@ private fun inflatePropertyLayout(
                     )
             )
 
-            (viewData as? WidgetWifiProperty.ViewData.IPProperty)?.prefixLengthText?.let { prefixLengthText ->
+            (viewData as? WifiProperty.ViewData.IPProperty)?.prefixLengthText?.let { prefixLengthText ->
                 setViewVisibility(R.id.prefix_length_row, View.VISIBLE)
 
                 setTextView(

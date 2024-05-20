@@ -10,7 +10,7 @@ import android.os.Looper
 import android.widget.Toast
 import com.w2sv.androidutils.notifying.showToast
 
-class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
+internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context == null || intent == null) return
 

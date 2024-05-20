@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.androidutils.coroutines.collectLatestFromFlow
 import com.w2sv.androidutils.coroutines.valueEnabledKeys
-import com.w2sv.domain.model.WidgetWifiProperty
+import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     widgetRepository: WidgetRepository,
     wifiStatusMonitor: WifiStatusMonitor,
-    widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
+    wifiPropertyViewDataFactory: WifiProperty.ViewData.Factory,
 ) : ViewModel() {
 
     private val wifiStateEmitter = WifiStateEmitter(
@@ -39,7 +39,7 @@ class HomeScreenViewModel @Inject constructor(
             getDefault = { false }
         ),
         wifiStatusFlow = wifiStatusMonitor.wifiStatus,
-        widgetWifiPropertyViewDataFactory = widgetWifiPropertyViewDataFactory,
+        wifiPropertyViewDataFactory = wifiPropertyViewDataFactory,
         scope = viewModelScope
     )
 
@@ -51,17 +51,17 @@ class HomeScreenViewModel @Inject constructor(
 }
 
 private class WifiStateEmitter(
-    private val wifiPropertyEnablementMap: Map<WidgetWifiProperty, StateFlow<Boolean>>,
-    private val ipSubPropertyEnablementMap: Map<WidgetWifiProperty.IP.SubProperty, StateFlow<Boolean>>,
+    private val wifiPropertyEnablementMap: Map<WifiProperty, StateFlow<Boolean>>,
+    private val ipSubPropertyEnablementMap: Map<WifiProperty.IP.SubProperty, StateFlow<Boolean>>,
     private val wifiStatusFlow: Flow<WifiStatus>,
-    private val widgetWifiPropertyViewDataFactory: WidgetWifiProperty.ViewData.Factory,
+    private val wifiPropertyViewDataFactory: WifiProperty.ViewData.Factory,
     scope: CoroutineScope
 ) {
     val state: StateFlow<WifiState> get() = _state.asStateFlow()
     private val _state = MutableStateFlow<WifiState>(WifiState.Disconnected)
 
-    private fun getPropertyViewData(): Flow<WidgetWifiProperty.ViewData> =
-        widgetWifiPropertyViewDataFactory(
+    private fun getPropertyViewData(): Flow<WifiProperty.ViewData> =
+        wifiPropertyViewDataFactory(
             properties = wifiPropertyEnablementMap.valueEnabledKeys(),
             ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys().toSet(),
         )
