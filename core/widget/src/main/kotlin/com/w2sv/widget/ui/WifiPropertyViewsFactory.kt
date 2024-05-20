@@ -73,7 +73,11 @@ class WifiPropertyViewsFactory @Inject constructor(
             RemoteViews(context.packageName, R.layout.wifi_property)
         }
 
-    override fun getLoadingView(): RemoteViews? = null
+    override fun getLoadingView(): RemoteViews =
+        RemoteViews(context.packageName, R.layout.loading)
+            .apply {
+                setTextColor(R.id.loading_tv, widgetColors.secondary)
+            }
 
     override fun getViewTypeCount(): Int = 1
 
