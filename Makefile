@@ -61,13 +61,15 @@ build-and-publish:
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
-	@$(MAKE) build-aab
 	@$(MAKE) build-apk
+	@$(MAKE) create-gh-release
 
+	@$(MAKE) build-aab
+	@$(MAKE) publish-bundle
+
+publish-bundle:
 	@echo "Publish Bundle"
 	@./gradlew publishBundle --track production --console verbose
-
-	@$(MAKE) create-gh-release
 
 create-gh-release:
 	@echo "Create GitHub Release"

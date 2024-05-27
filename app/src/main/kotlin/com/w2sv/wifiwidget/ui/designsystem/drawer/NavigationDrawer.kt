@@ -67,14 +67,14 @@ private fun rememberNavigationDrawerItemState(appVM: AppViewModel = activityView
 fun NavigationDrawer(
     state: DrawerState,
     modifier: Modifier = Modifier,
-    itemConfiguration: NavigationDrawerItemState = rememberNavigationDrawerItemState(),
+    itemState: NavigationDrawerItemState = rememberNavigationDrawerItemState(),
     content: @Composable () -> Unit
 ) {
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
             NavigationDrawerSheet(
-                itemConfiguration = itemConfiguration
+                itemState = itemState
             )
         },
         drawerState = state,
@@ -84,7 +84,7 @@ fun NavigationDrawer(
 
 @Composable
 private fun NavigationDrawerSheet(
-    itemConfiguration: NavigationDrawerItemState,
+    itemState: NavigationDrawerItemState,
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
@@ -103,7 +103,7 @@ private fun NavigationDrawerSheet(
             )
             HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
             NavigationDrawerSheetItemColumn(
-                itemConfiguration = itemConfiguration,
+                itemConfiguration = itemState,
                 modifier = Modifier.padding(horizontal = horizontalPadding)
             )
         }
