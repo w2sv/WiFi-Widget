@@ -2,11 +2,12 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.application)
+    alias(libs.plugins.android.application)
     alias(libs.plugins.play)
-    alias(libs.plugins.kotlin)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.wifiwidget.hilt)
     alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.kotlin.compose.compiler)
 }
 
 kotlin {
@@ -31,7 +32,6 @@ android {
         setProperty("archivesBaseName", versionName)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {
         create("release") {
             rootProject.file("keystore.properties").let { file ->
@@ -47,7 +47,6 @@ android {
             }
         }
     }
-
     buildTypes {
         getByName("debug") {
             applicationIdSuffix = ".debug"
@@ -62,26 +61,18 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-    }
-
     packaging {
         resources {
-            excludes.add("/META-INF/{AL2.0,LGPL2.1}")
+            excludes.add("/META-INF/*")
         }
     }
-
     hilt {
         enableAggregatingTask = true  // Fixes warning
     }
-
     // Name built apks "{versionName}.apk"
     applicationVariants.all {
         outputs
@@ -90,17 +81,14 @@ android {
                     "${versionName}.apk"
             }
     }
+}
 
-    kotlinOptions {
-        freeCompilerArgs += listOf(
-            // Apply compose_compiler_config.conf
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:stabilityConfigurationPath=${project.rootDir.absolutePath}/compose_compiler_config.conf",
-            // Enable strong skipping
-            "-P",
-            "plugin:androidx.compose.compiler.plugins.kotlin:experimentalStrongSkipping=true"
-        )
-    }
+// https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#compose-compiler-options-dsl
+composeCompiler {
+    includeSourceInformation = true
+    stabilityConfigurationFile.set(rootProject.file("compose_compiler_config.conf"))
+    metricsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
+    reportsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
 }
 
 // https://github.com/Triple-T/gradle-play-publisher
@@ -120,12 +108,13 @@ dependencies {
     baselineProfile(projects.benchmarking)
 
     // Owned libraries
-    implementation(libs.kotlinutils)
-    implementation(libs.androidutils)
-    implementation(libs.colorpicker)
-    implementation(libs.composed)
-    implementation(libs.composed.permissions)
-    implementation(libs.composeWheelPicker)
+    implementation(libs.w2sv.kotlinutils)
+    implementation(libs.w2sv.androidutils)
+    implementation(libs.w2sv.colorpicker)
+    implementation(libs.w2sv.composed)
+    implementation(libs.w2sv.composed.permissions)
+    implementation(libs.w2sv.composeWheelPicker)
+    implementation(libs.w2sv.reversiblestate)
 
     // AndroidX libraries
     implementation(libs.androidx.core)

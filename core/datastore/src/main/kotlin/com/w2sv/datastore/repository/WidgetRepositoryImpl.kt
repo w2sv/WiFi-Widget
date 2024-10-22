@@ -5,11 +5,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.androidutils.datastorage.preferences_datastore.DataStoreEntry
-import com.w2sv.androidutils.datastorage.preferences_datastore.PreferencesDataStoreRepository
-import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
-import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlowMap
 import com.w2sv.datastore.proto.widget_coloring.WidgetColoringDataSource
+import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
+import com.w2sv.datastoreutils.preferences.PreferencesDataStoreRepository
+import com.w2sv.datastoreutils.preferences.map.DataStoreEntry
+import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
@@ -24,7 +24,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Singleton
-class WidgetRepositoryImpl @Inject constructor(
+internal class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
     private val widgetColoringDataSource: WidgetColoringDataSource
 ) : PreferencesDataStoreRepository(dataStore),

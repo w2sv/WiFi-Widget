@@ -10,7 +10,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.appcompat)
 
-    implementation(libs.androidutils)
+    implementation(libs.w2sv.androidutils)
     implementation(libs.slimber)
     implementation(libs.okhttp)
 }

@@ -3,8 +3,8 @@ package com.w2sv.networking.di
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import com.w2sv.androidutils.services.getConnectivityManager
-import com.w2sv.androidutils.services.getWifiManager
+import com.w2sv.androidutils.getConnectivityManager
+import com.w2sv.androidutils.getWifiManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

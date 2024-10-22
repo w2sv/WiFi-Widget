@@ -1,8 +1,8 @@
 package com.w2sv.widget.data
 
-import com.w2sv.androidutils.coroutines.firstBlocking
-import com.w2sv.androidutils.coroutines.mapValuesToFirstBlocking
 import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.kotlinutils.coroutines.firstBlocking
+import com.w2sv.kotlinutils.coroutines.mapValuesToFirstBlocking
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetBottomBarElement
 import com.w2sv.widget.model.WidgetRefreshing

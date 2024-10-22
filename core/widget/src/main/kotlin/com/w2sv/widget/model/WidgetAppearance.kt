@@ -6,7 +6,7 @@ import androidx.annotation.FloatRange
 import androidx.annotation.StyleRes
 import androidx.core.content.res.use
 import com.google.android.material.color.DynamicColors
-import com.w2sv.androidutils.generic.isNightModeActiveCompat
+import com.w2sv.androidutils.res.isNightModeActiveCompat
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.Theme

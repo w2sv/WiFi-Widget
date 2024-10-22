@@ -2,7 +2,7 @@ package com.w2sv.domain.model
 
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
-import com.w2sv.androidutils.generic.dynamicColorsSupported
+import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.domain.R
 
 interface WidgetColoring {

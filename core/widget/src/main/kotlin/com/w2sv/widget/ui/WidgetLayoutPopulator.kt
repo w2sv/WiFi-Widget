@@ -9,10 +9,10 @@ import android.net.Uri
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
-import com.w2sv.androidutils.appwidgets.crossVisualize
-import com.w2sv.androidutils.appwidgets.setBackgroundColor
-import com.w2sv.androidutils.appwidgets.setColorFilter
-import com.w2sv.androidutils.ui.getAlphaSetColor
+import com.w2sv.androidutils.appwidget.crossVisualize
+import com.w2sv.androidutils.appwidget.setBackgroundColor
+import com.w2sv.androidutils.appwidget.setColorFilter
+import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.constants.Extra
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.WifiStatus

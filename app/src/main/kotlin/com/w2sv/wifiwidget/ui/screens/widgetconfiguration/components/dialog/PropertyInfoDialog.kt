@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
+import com.w2sv.androidutils.openUrl
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
@@ -41,7 +41,7 @@ fun PropertyInfoDialog(
             {
                 ElevatedButton(
                     onClick = {
-                        context.openUrlWithActivityNotFoundHandling(it)
+                        context.openUrl(it)
                     },
                     modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
                     colors = ButtonDefaults.elevatedButtonColors(containerColor = MaterialTheme.colorScheme.secondary),

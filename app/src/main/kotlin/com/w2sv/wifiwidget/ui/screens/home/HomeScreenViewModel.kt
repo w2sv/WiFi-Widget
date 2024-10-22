@@ -2,11 +2,11 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.androidutils.coroutines.collectLatestFromFlow
-import com.w2sv.androidutils.coroutines.valueEnabledKeys
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.kotlinutils.coroutines.collectLatestFromFlow
+import com.w2sv.kotlinutils.coroutines.valueEnabledKeys
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel

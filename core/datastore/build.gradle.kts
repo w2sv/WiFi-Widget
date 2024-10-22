@@ -51,11 +51,14 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.domain)
 
+    implementation(libs.w2sv.datastoreutils.preferences)
+    implementation(libs.w2sv.datastoreutils.datastoreflow)
+
     implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.kotlin.lite)
 
-    implementation(libs.androidutils)
+    implementation(libs.w2sv.androidutils)
     implementation(libs.slimber)
 }

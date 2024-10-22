@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,12 +22,11 @@ fun ElevatedIconHeaderCard(
 ) {
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevatedCardElevation),
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.background),
+        colors = CardDefaults.elevatedCardColors(containerColor = HomeScreenCardBackground),
         modifier = modifier,
     ) {
         Column(
-            modifier = Modifier
-                .padding(18.dp),
+            modifier = Modifier.padding(18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconHeader(

@@ -4,7 +4,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
-import com.w2sv.androidutils.appwidgets.getAppWidgetIds
+import com.w2sv.androidutils.appwidget.getAppWidgetIds
 import com.w2sv.widget.WidgetProvider
 
 fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =

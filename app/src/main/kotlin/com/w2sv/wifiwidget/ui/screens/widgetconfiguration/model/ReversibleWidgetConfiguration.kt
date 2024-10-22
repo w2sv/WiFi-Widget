@@ -1,14 +1,14 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 
 import androidx.compose.runtime.Stable
-import com.w2sv.androidutils.ui.reversible_state.ReversibleStateFlow
-import com.w2sv.androidutils.ui.reversible_state.ReversibleStateMap
-import com.w2sv.androidutils.ui.reversible_state.ReversibleStatesComposition
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
+import com.w2sv.reversiblestate.ReversibleStateFlow
+import com.w2sv.reversiblestate.ReversibleStateMap
+import com.w2sv.reversiblestate.ReversibleStatesComposition
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

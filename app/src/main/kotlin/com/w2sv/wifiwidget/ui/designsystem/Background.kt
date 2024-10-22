@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.designsystem
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -26,6 +25,4 @@ fun Modifier.nestedContentBackground(
 val HomeScreenCardBackground: Color
     @Composable
     @ReadOnlyComposable
-    get() = MaterialTheme.colorScheme.surfaceColorAtElevation(
-        elevatedCardElevation
-    )
+    get() = MaterialTheme.colorScheme.surfaceContainerHigh

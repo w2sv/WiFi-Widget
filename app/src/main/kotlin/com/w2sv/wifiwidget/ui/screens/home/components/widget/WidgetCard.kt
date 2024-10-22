@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.navigate
-import com.w2sv.androidutils.services.isLocationEnabledCompat
+import com.w2sv.androidutils.isLocationEnabledCompat
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals

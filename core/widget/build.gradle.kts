@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.wifiwidget.library)
     alias(libs.plugins.wifiwidget.hilt)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 dependencies {
@@ -11,5 +12,6 @@ dependencies {
     implementation(libs.androidx.workmanager)
     implementation(libs.google.material)
     implementation(libs.slimber)
-    implementation(libs.androidutils)
+    implementation(libs.w2sv.androidutils)
+    implementation(libs.w2sv.kotlinutils)
 }

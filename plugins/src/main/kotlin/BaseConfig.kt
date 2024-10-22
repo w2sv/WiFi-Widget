@@ -26,6 +26,11 @@ internal fun Project.baseConfig() {
                 animationsDisabled = true
                 unitTests.isIncludeAndroidResources = true
             }
+            packagingOptions {
+                resources {
+                    excludes.add("/META-INF/*")
+                }
+            }
         }
     }
 }

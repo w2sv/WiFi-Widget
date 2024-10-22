@@ -172,8 +172,7 @@ private fun PropertyList(
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
     LazyColumn(
-        modifier = modifier
-            .nestedContentBackground(),
+        modifier = modifier.nestedContentBackground(color = MaterialTheme.colorScheme.background),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {

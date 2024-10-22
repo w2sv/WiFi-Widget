@@ -21,7 +21,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object PreferencesModule {
+internal object PreferencesModule {
 
     @Singleton
     @Provides
@@ -33,7 +33,7 @@ object PreferencesModule {
 
     @Provides
     @Singleton
-    internal fun providesWidgetColoringProtoDataStore(
+    fun providesWidgetColoringProtoDataStore(
         @ApplicationContext context: Context,
     ): DataStore<WidgetColoringProto> =
         DataStoreFactory.create(

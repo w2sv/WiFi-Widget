@@ -13,12 +13,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.w2sv.androidutils.coroutines.mapState
-import com.w2sv.androidutils.datastorage.preferences_datastore.flow.DataStoreFlow
-import com.w2sv.androidutils.generic.goToAppSettings
+import com.w2sv.androidutils.openAppSettings
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
+import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
+import com.w2sv.kotlinutils.coroutines.mapState
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
@@ -174,7 +174,7 @@ class LocationAccessState(
                         action = SnackbarAction(
                             label = context.getString(R.string.go_to_app_settings),
                             callback = {
-                                goToAppSettings(context)
+                                context.openAppSettings()
                             },
                         ),
                     )
@@ -201,10 +201,11 @@ class LocationAccessState(
     // Rational
     // ===================
 
-    val showRational = rationalShown.stateIn(
-        scope,
-        SharingStarted.Eagerly
-    )
+    val showRational = rationalShown
+        .stateIn(
+            scope,
+            SharingStarted.Eagerly
+        )
         .mapState { !it }
 
     fun onRationalShown() {

@@ -31,20 +31,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
-import com.w2sv.androidutils.generic.appPlayStoreUrl
-import com.w2sv.androidutils.generic.dynamicColorsSupported
-import com.w2sv.androidutils.generic.openUrlWithActivityNotFoundHandling
-import com.w2sv.androidutils.notifying.showToast
+import com.w2sv.androidutils.openUrl
+import com.w2sv.androidutils.os.dynamicColorsSupported
+import com.w2sv.androidutils.packagePlayStoreUrl
+import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.constants.AppUrl
 import com.w2sv.common.utils.startActivityWithActivityNotFoundExceptionHandling
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
 import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
-import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(
@@ -109,14 +109,14 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_policy_24,
                     labelRes = R.string.privacy_policy,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.PRIVACY_POLICY)
+                        context.openUrl(AppUrl.PRIVACY_POLICY)
                     }
                 ),
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_copyright_24,
                     labelRes = R.string.license,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.LICENSE)
+                        context.openUrl(AppUrl.LICENSE)
                     }
                 ),
                 NavigationDrawerSheetElement.Header(
@@ -130,7 +130,7 @@ internal fun NavigationDrawerSheetItemColumn(
                         context.startActivityWithActivityNotFoundExceptionHandling(
                             intent = Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(appPlayStoreUrl(context))
+                                Uri.parse(context.packagePlayStoreUrl)
                             )
                                 .setPackage("com.android.vending"),
                             onActivityNotFoundException = {
@@ -153,7 +153,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_bug_report_24,
                     labelRes = R.string.report_a_bug_request_a_feature,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.CREATE_ISSUE)
+                        context.openUrl(AppUrl.CREATE_ISSUE)
                     }
                 ),
                 NavigationDrawerSheetElement.Item(
@@ -161,7 +161,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     labelRes = R.string.support_development,
                     explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.DONATE)
+                        context.openUrl(AppUrl.DONATE)
                     }
                 ),
                 NavigationDrawerSheetElement.Header(
@@ -172,7 +172,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     labelRes = R.string.developer,
                     explanationRes = R.string.check_out_my_other_apps,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
+                        context.openUrl(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
                     }
                 ),
                 NavigationDrawerSheetElement.Item(
@@ -180,7 +180,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     labelRes = R.string.source,
                     explanationRes = R.string.examine_the_app_s_source_code_on_github,
                     type = NavigationDrawerSheetElement.Item.Type.Clickable {
-                        context.openUrlWithActivityNotFoundHandling(AppUrl.GITHUB_REPOSITORY)
+                        context.openUrl(AppUrl.GITHUB_REPOSITORY)
                     }
                 )
             )

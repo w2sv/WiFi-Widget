@@ -1,7 +1,6 @@
 package com.w2sv.widget.ui
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
@@ -10,12 +9,12 @@ import android.widget.RemoteViewsService
 import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
 import androidx.core.text.subscript
-import com.w2sv.androidutils.appwidgets.setBackgroundColor
-import com.w2sv.androidutils.coroutines.enabledKeys
+import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.kotlinutils.coroutines.enabledKeys
 import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
 import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
@@ -127,15 +126,10 @@ private fun inflatePropertyLayout(
 
             setOnClickFillInIntent(
                 R.id.wifi_property_layout,
-                Intent()
-                    .putExtra(
-                        CopyPropertyToClipboardBroadcastReceiver.Extra.PROPERTY_LABEL,
-                        viewData.label
-                    )
-                    .putExtra(
-                        CopyPropertyToClipboardBroadcastReceiver.Extra.PROPERTY_VALUE,
-                        viewData.value
-                    )
+                CopyPropertyToClipboardBroadcastReceiver.Args.getIntent(
+                    propertyLabel = viewData.label,
+                    propertyValue = viewData.value
+                )
             )
 
             (viewData as? WifiProperty.ViewData.IPProperty)?.prefixLengthText?.let { prefixLengthText ->

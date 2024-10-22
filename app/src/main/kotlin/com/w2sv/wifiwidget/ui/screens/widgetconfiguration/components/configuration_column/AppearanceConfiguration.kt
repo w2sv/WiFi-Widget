@@ -27,10 +27,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.androidutils.generic.dynamicColorsSupported
+import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WidgetColoring
-import com.w2sv.kotlinutils.extensions.getByOrdinal
+import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
@@ -140,8 +140,8 @@ fun AppearanceConfiguration(
                 SliderWithLabel(
                     value = fontSize.ordinal.toFloat(),
                     steps = remember { FontSize.entries.size - 2 },
-                    makeLabel = remember { { context.getString(getByOrdinal<FontSize>(it.roundToInt()).labelRes) } },
-                    onValueChanged = remember { { setFontSize(getByOrdinal(it.roundToInt())) } },
+                    makeLabel = remember { { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) } },
+                    onValueChanged = remember { { setFontSize(enumEntryByOrdinal(it.roundToInt())) } },
                     contentDescription = stringResource(id = R.string.font_size_slider_cd),
                     valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
                 )
