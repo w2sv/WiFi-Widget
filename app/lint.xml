@@ -2,6 +2,7 @@
 <lint>
     <!--Allow CompositionLocal's-->
     <issue id="ComposeCompositionLocalUsage" severity="ignore" />
+    <issue id="SlotReused" severity="warning" />
     <issue id="NotificationPermission" severity="warning" />
     <issue id="LintError" severity="warning" />
     <issue id="MonochromeLauncherIcon" severity="ignore" />

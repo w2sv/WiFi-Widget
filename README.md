@@ -61,7 +61,8 @@
       from https://api.ipify.org)
         - For address types that support IPv4 & IPv6, you may choose which versions to include
         - Whether to display prefix lengths
-    - Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security Protocol, Gateway, DNS, DHCP
+    - Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security
+      Protocol, Gateway, DNS, DHCP
 - Bottom bar elements:
     - Last refresh date time display
     - Refresh data button
