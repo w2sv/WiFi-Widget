@@ -61,7 +61,7 @@ sealed interface SnackbarKind {
     val iconTint: Color
 
     @Immutable
-    data object Error : SnackbarKind {
+    data object Warning : SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Warning
         override val iconTint: Color
             @ReadOnlyComposable

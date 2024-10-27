@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.designsystem.drawer
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -70,7 +71,7 @@ internal fun NavigationDrawerSheetItemColumn(
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_nightlight_24,
                     labelRes = R.string.theme,
-                    type = NavigationDrawerSheetElement.Item.Type.Custom {
+                    type = NavigationDrawerSheetElement.Item.Custom {
                         ThemeSelectionRow(
                             selected = itemConfiguration.theme(),
                             onSelected = itemConfiguration.setTheme,
@@ -84,8 +85,9 @@ internal fun NavigationDrawerSheetItemColumn(
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_contrast_24,
                     labelRes = R.string.amoled_black,
+                    explanationRes = R.string.amoled_black_explanation,
                     visible = { useDarkThemeLocal },
-                    type = NavigationDrawerSheetElement.Item.Type.Switch(
+                    type = NavigationDrawerSheetElement.Item.Switch(
                         checked = itemConfiguration.useAmoledBlackTheme,
                         onCheckedChange = itemConfiguration.setUseAmoledBlackTheme
                     )
@@ -97,7 +99,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     visible = {
                         dynamicColorsSupported
                     },
-                    type = NavigationDrawerSheetElement.Item.Type.Switch(
+                    type = NavigationDrawerSheetElement.Item.Switch(
                         checked = itemConfiguration.useDynamicColors,
                         onCheckedChange = itemConfiguration.setUseDynamicColors
                     )
@@ -108,14 +110,14 @@ internal fun NavigationDrawerSheetItemColumn(
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_policy_24,
                     labelRes = R.string.privacy_policy,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.PRIVACY_POLICY)
                     }
                 ),
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_copyright_24,
                     labelRes = R.string.license,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.LICENSE)
                     }
                 ),
@@ -126,7 +128,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_star_rate_24,
                     labelRes = R.string.rate,
                     explanationRes = R.string.rate_the_app_in_the_playstore,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.startActivityWithActivityNotFoundExceptionHandling(
                             intent = Intent(
                                 Intent.ACTION_VIEW,
@@ -142,7 +144,8 @@ internal fun NavigationDrawerSheetItemColumn(
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_share_24,
                     labelRes = R.string.share,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    explanationRes = R.string.share_explanation,
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         ShareCompat.IntentBuilder(context)
                             .setType("text/plain")
                             .setText(context.getString(R.string.share_action_text))
@@ -152,7 +155,8 @@ internal fun NavigationDrawerSheetItemColumn(
                 NavigationDrawerSheetElement.Item(
                     iconRes = R.drawable.ic_bug_report_24,
                     labelRes = R.string.report_a_bug_request_a_feature,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    explanationRes = R.string.report_a_bug_explanation,
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.CREATE_ISSUE)
                     }
                 ),
@@ -160,7 +164,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_donate_24,
                     labelRes = R.string.support_development,
                     explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.DONATE)
                     }
                 ),
@@ -171,7 +175,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_developer_24,
                     labelRes = R.string.developer,
                     explanationRes = R.string.check_out_my_other_apps,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
                     }
                 ),
@@ -179,7 +183,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     iconRes = R.drawable.ic_github_24,
                     labelRes = R.string.source,
                     explanationRes = R.string.examine_the_app_s_source_code_on_github,
-                    type = NavigationDrawerSheetElement.Item.Type.Clickable {
+                    type = NavigationDrawerSheetElement.Item.Clickable {
                         context.openUrl(AppUrl.GITHUB_REPOSITORY)
                     }
                 )
@@ -220,9 +224,9 @@ private sealed interface NavigationDrawerSheetElement {
 
     @Immutable
     data class Item(
-        val iconRes: Int,
-        val labelRes: Int,
-        val explanationRes: Int? = null,
+        @DrawableRes val iconRes: Int,
+        @StringRes val labelRes: Int,
+        @StringRes val explanationRes: Int? = null,
         val visible: (() -> Boolean)? = null,
         override val modifier: Modifier = Modifier
             .fillMaxWidth()
@@ -232,18 +236,22 @@ private sealed interface NavigationDrawerSheetElement {
 
         @Immutable
         sealed interface Type {
-            @Immutable
-            data class Clickable(val onClick: () -> Unit) : Type
 
-            @Immutable
-            data class Switch(
-                val checked: () -> Boolean,
-                val onCheckedChange: (Boolean) -> Unit
-            ) : Type
-
-            @Immutable
-            data class Custom(val content: @Composable RowScope.() -> Unit) : Type
+            val clickableOrNull
+                get() = this as? Clickable
         }
+
+        @Immutable
+        data class Clickable(val onClick: () -> Unit) : Type
+
+        @Immutable
+        data class Switch(
+            val checked: () -> Boolean,
+            val onCheckedChange: (Boolean) -> Unit
+        ) : Type
+
+        @Immutable
+        data class Custom(val content: @Composable RowScope.() -> Unit) : Type
     }
 }
 
@@ -267,7 +275,7 @@ private fun Item(
 ) {
     Column(
         modifier = modifier
-            .thenIfNotNull(item.type as? NavigationDrawerSheetElement.Item.Type.Clickable) {
+            .thenIfNotNull(item.type.clickableOrNull) {
                 clickable {
                     it.onClick()
                 }
@@ -298,8 +306,7 @@ private fun MainItemRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier
-                .size(size = iconSize),
+            modifier = Modifier.size(size = iconSize),
             painter = painterResource(id = item.iconRes),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
@@ -310,14 +317,15 @@ private fun MainItemRow(
             modifier = Modifier.padding(start = labelStartPadding),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
+            maxLines = 1
         )
 
         when (val type = item.type) {
-            is NavigationDrawerSheetElement.Item.Type.Custom -> {
+            is NavigationDrawerSheetElement.Item.Custom -> {
                 type.content(this)
             }
 
-            is NavigationDrawerSheetElement.Item.Type.Switch -> {
+            is NavigationDrawerSheetElement.Item.Switch -> {
                 RightAligned {
                     Switch(checked = type.checked(), onCheckedChange = type.onCheckedChange)
                 }

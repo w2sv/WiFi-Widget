@@ -65,7 +65,7 @@ class WidgetViewModel @Inject constructor(
                     sharedSnackbarVisuals.emit {
                         AppSnackbarVisuals(
                             msg = it.getString(R.string.widget_pinning_not_supported_by_your_device_launcher),
-                            kind = SnackbarKind.Error
+                            kind = SnackbarKind.Warning
                         )
                     }
                 }

@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,13 +39,14 @@ fun BackButtonHeaderWithDivider(
                 .padding(horizontal = Padding.horizontalDefault),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            FilledTonalIconButton(onClick = onBackButtonClick, modifier = Modifier.size(38.dp)) {
+            IconButton(onClick = onBackButtonClick, modifier = Modifier.size(38.dp)) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = null,
+                    tint = MaterialTheme.colorScheme.secondary
                 )
             }
-            Spacer(modifier = Modifier.width(20.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = title,
                 fontWeight = FontWeight.Bold,

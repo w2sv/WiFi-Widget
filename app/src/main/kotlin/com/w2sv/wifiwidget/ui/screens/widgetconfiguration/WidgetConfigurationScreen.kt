@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,11 +40,16 @@ import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestina
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.popUpTo
+import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
+import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.WidgetConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
@@ -56,37 +64,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class WidgetConfigurationScreenInvocationSource { App, Widget }
+enum class WidgetConfigurationScreenInvoker { App, Widget }
 
 @Destination<RootGraph>(style = HorizontalSlideTransitions::class)
 @Composable
 fun WidgetConfigurationScreen(
     locationAccessState: LocationAccessState,
     navigator: DestinationsNavigator,
-    invocationSource: WidgetConfigurationScreenInvocationSource = WidgetConfigurationScreenInvocationSource.Widget,
+    invoker: WidgetConfigurationScreenInvoker = WidgetConfigurationScreenInvoker.Widget,
     widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val onBack: () -> Unit = remember {
-        {
-            when (invocationSource) {
-                WidgetConfigurationScreenInvocationSource.App -> {
-                    widgetVM.configuration.reset()
-                    navigator.popBackStack()
-                }
-
-                WidgetConfigurationScreenInvocationSource.Widget -> {
-                    widgetVM.configuration.reset()
-                    navigator.navigate(HomeScreenDestination) {
-                        launchSingleTop = true
-                        popUpTo(WidgetConfigurationScreenDestination) {
-                            inclusive = true
-                        }
-                    }
-                }
-            }
-        }
-    }
+    val onBack: () -> Unit = rememberOnBack(
+        invoker = invoker,
+        configuration = widgetVM.configuration,
+        navigator = navigator,
+        scope = scope
+    )
 
     BackHandler(onBack = onBack)
 
@@ -163,6 +157,88 @@ fun WidgetConfigurationScreen(
                 )
             )
         }
+    }
+}
+
+@Composable
+private fun rememberOnBack(
+    invoker: WidgetConfigurationScreenInvoker,
+    configuration: ReversibleWidgetConfiguration,
+    navigator: DestinationsNavigator,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+): () -> Unit {
+    val backPressHandler = remember {
+        BackPressHandler(
+            coroutineScope = scope,
+            confirmationWindowDuration = 2500L
+        )
+    }
+    val context = LocalContext.current
+
+    return remember(navigator, snackbarHostState) {
+        {
+            when (invoker) {
+                WidgetConfigurationScreenInvoker.App -> {
+                    onBack(
+                        configuration = configuration,
+                        backPressHandler = backPressHandler,
+                        scope = scope,
+                        context = context,
+                        snackbarHostState = snackbarHostState
+                    ) { navigator.popBackStack() }
+                }
+
+                WidgetConfigurationScreenInvoker.Widget -> {
+                    onBack(
+                        configuration = configuration,
+                        backPressHandler = backPressHandler,
+                        scope = scope,
+                        context = context,
+                        snackbarHostState = snackbarHostState
+                    ) {
+                        navigator.navigate(HomeScreenDestination) {
+                            launchSingleTop = true
+                            popUpTo(WidgetConfigurationScreenDestination) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+private fun onBack(
+    configuration: ReversibleWidgetConfiguration,
+    backPressHandler: BackPressHandler,
+    scope: CoroutineScope,
+    context: Context,
+    snackbarHostState: SnackbarHostState,
+    navigate: () -> Unit
+) {
+    if (configuration.statesDissimilar.value) {
+        backPressHandler.invoke(
+            onFirstPress = {
+                scope.launch {
+                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                        AppSnackbarVisuals(
+                            msg = context.getString(R.string.go_back_on_unsaved_changes_warning),
+                            kind = SnackbarKind.Warning
+                        )
+                    )
+                }
+            },
+            onSecondPress = {
+                configuration.reset()
+                snackbarHostState.currentSnackbarData?.dismiss()
+                navigate()
+            }
+        )
+    } else {
+        snackbarHostState.currentSnackbarData?.dismiss()
+        navigate()
     }
 }
 

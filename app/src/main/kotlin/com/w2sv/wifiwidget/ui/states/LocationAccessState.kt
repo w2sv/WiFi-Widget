@@ -170,7 +170,7 @@ class LocationAccessState(
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                        kind = SnackbarKind.Error,
+                        kind = SnackbarKind.Warning,
                         action = SnackbarAction(
                             label = context.getString(R.string.go_to_app_settings),
                             callback = {

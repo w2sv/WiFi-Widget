@@ -138,7 +138,7 @@ private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewD
             .onEmpty { viewDataList.clear() }
             .onCompletion { cause ->
                 if (viewDataList.lastOrNull() == PropertyListElement.LoadingAnimation) {
-                    viewDataList.removeLast()
+                    viewDataList.removeAt(viewDataList.lastIndex)
                 }
                 if (cause == null && lastCollectedIndex < viewDataList.lastIndex) {
                     i { "Removing range ${lastCollectedIndex + 1} - ${viewDataList.size}" }
@@ -198,7 +198,7 @@ private fun PropertyList(
                             .heightIn(min = 26.dp)
                             .padding(horizontal = horizontalPadding)
                     )
-                    (viewData.property as? WifiProperty.ViewData.IPProperty)?.prefixLengthText?.let {
+                    viewData.property.ipPropertyOrNull?.prefixLengthText?.let {
                         PrefixLengthDisplayRow(
                             prefixLengthText = it,
                             modifier = Modifier
@@ -247,17 +247,16 @@ private fun Header(modifier: Modifier = Modifier) {
     }
 }
 
-private typealias OnPropertyRowClick = (WifiProperty.ViewData, CharSequence) -> Unit
+private typealias OnPropertyRowClick = (WifiProperty.ViewData, CharSequence, CoroutineScope) -> Unit
 
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
-    val scope: CoroutineScope = rememberCoroutineScope()
     val context: Context = LocalContext.current
 
     return remember {
-        { viewData, label ->
+        { viewData, label, scope ->
             clipboardManager.setText(AnnotatedString(viewData.value))
             scope.launch {
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
@@ -283,7 +282,8 @@ private val horizontalPadding = 12.dp
 private fun PropertyDisplayRow(
     viewData: WifiProperty.ViewData,
     onClick: OnPropertyRowClick,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val context: Context = LocalContext.current
 
@@ -306,10 +306,7 @@ private fun PropertyDisplayRow(
     }
 
     Row(
-        modifier = modifier
-            .clickable {
-                onClick(viewData, label)
-            },
+        modifier = modifier.clickable { onClick(viewData, label, scope) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {

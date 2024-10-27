@@ -39,10 +39,10 @@
     <string name="developer">Developer</string>
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="appearance">Appearance</string>
-    <string name="bottom_bar">Bottom Bar</string>
+    <string name="bottom_bar">Bottom Bar Elements</string>
     <string name="grant">Grant</string>
     <string name="maybe_later">Maybe later</string>
-    <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if its emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
+    <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. However, as Android forbids the retrieval of any WiFi-related data while the system is dormant, this trigger will only go through if it is emitted while your phone is not dormant. \nMoreover, the refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>
     <string name="go_to_app_settings">Go to app settings</string>
     <string name="go_to_wifi_settings_cd">Go to your device\'s WiFi settings.</string>
@@ -69,10 +69,14 @@
     <string name="leave_at_least_one_address_version_enabled">Leave at least one address version enabled.</string>
     <string name="leave_at_least_one_property_enabled">Leave at least one property enabled.</string>
     <string name="amoled_black">AMOLED Black</string>
+    <string name="amoled_black_explanation">Use a higher contrast theme</string>
     <string name="use_colors_derived_from_your_wallpaper">Use colors derived from your wallpaper</string>
-    <string name="support_development">Support development</string>
-    <string name="buy_me_a_coffee_as_a_sign_of_gratitude">Buy me a coffee as a sign of gratitude if you feel like I\'ve deserved one</string>
+    <string name="support_development">Support the development</string>
+    <string name="buy_me_a_coffee_as_a_sign_of_gratitude">Buy me a coffee as a sign of gratitude ♥</string>
     <string name="check_out_my_other_apps">Check out my other apps</string>
     <string name="examine_the_app_s_source_code_on_github">Examine the app\'s source code on GitHub</string>
     <string name="rate_the_app_in_the_playstore">Rate the app in the PlayStore</string>
+    <string name="share_explanation">Share the app with someone who might appreciate it</string>
+    <string name="report_a_bug_explanation">Help make the app better!</string>
+    <string name="go_back_on_unsaved_changes_warning">Going back now will lead to all your unsaved changes being lost.</string>
 </resources>

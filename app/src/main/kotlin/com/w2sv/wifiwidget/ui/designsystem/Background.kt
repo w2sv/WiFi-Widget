@@ -25,4 +25,4 @@ fun Modifier.nestedContentBackground(
 val HomeScreenCardBackground: Color
     @Composable
     @ReadOnlyComposable
-    get() = MaterialTheme.colorScheme.surfaceContainerHigh
+    get() = MaterialTheme.colorScheme.surfaceContainer

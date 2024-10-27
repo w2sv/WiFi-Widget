@@ -148,6 +148,7 @@ fun AppearanceConfiguration(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(bottom = 6.dp)
         )
     }
 }

@@ -14,6 +14,9 @@ sealed interface WifiProperty : WidgetProperty {
         val label: String
         val value: String
 
+        val ipPropertyOrNull: IPProperty?
+            get() = this as? IPProperty
+
         data class NonIP(override val value: String, override val label: String) :
             ViewData
 

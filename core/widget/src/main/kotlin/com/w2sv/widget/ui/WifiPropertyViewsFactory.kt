@@ -132,7 +132,7 @@ private fun inflatePropertyLayout(
                 )
             )
 
-            (viewData as? WifiProperty.ViewData.IPProperty)?.prefixLengthText?.let { prefixLengthText ->
+            viewData.ipPropertyOrNull?.prefixLengthText?.let { prefixLengthText ->
                 setViewVisibility(R.id.prefix_length_row, View.VISIBLE)
 
                 setTextView(

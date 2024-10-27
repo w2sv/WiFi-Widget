@@ -18,7 +18,7 @@ Allow all the time" permission is required, if you want your SSID to be reliably
 widget and without opening the app itself, since that means, that the SSID will have to be
 retrieved from a background process.
 If granted, the location access permission is exclusively used for the retrieval of the SSID.
-Neither are records of your devices position created, nor stored, nor shared.
+Neither are records of your device's position created, nor stored, nor shared.
 Furthermore, the display of the SSID may simply be disabled if you don't need it to be displayed on
 the
 widget, or don't feel comfortable with granting location access permission. In that case, location

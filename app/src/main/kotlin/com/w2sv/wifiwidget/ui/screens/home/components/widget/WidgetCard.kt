@@ -35,7 +35,7 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvocationSource
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
 import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
@@ -79,7 +79,7 @@ fun WidgetCard(
                         {
                             navController.navigate(
                                 WidgetConfigurationScreenDestination(
-                                    invocationSource = WidgetConfigurationScreenInvocationSource.App
+                                    invoker = WidgetConfigurationScreenInvoker.App
                                 )
                             )
                         }
@@ -117,7 +117,7 @@ private fun ShowSnackbarOnWidgetPin(
                 !locationManager.isLocationEnabledCompat() -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
-                        kind = SnackbarKind.Error,
+                        kind = SnackbarKind.Warning,
                     )
                 )
 
@@ -125,7 +125,7 @@ private fun ShowSnackbarOnWidgetPin(
                 backgroundAccessState?.isGranted == false -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
-                        kind = SnackbarKind.Error,
+                        kind = SnackbarKind.Warning,
                         action = SnackbarAction(
                             label = context.getString(R.string.grant),
                             callback = {

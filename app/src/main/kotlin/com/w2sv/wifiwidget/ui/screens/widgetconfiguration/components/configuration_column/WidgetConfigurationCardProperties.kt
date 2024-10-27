@@ -179,7 +179,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.leave_at_least_one_property_enabled),
-                        kind = SnackbarKind.Error
+                        kind = SnackbarKind.Warning
                     )
                 )
             }
@@ -192,7 +192,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                 snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.leave_at_least_one_address_version_enabled),
-                        kind = SnackbarKind.Error
+                        kind = SnackbarKind.Warning
                     )
                 )
             }
