@@ -15,7 +15,7 @@ protobuf-plugin = "0.9.4"
 
 # Libraries
 androidx-activity-compose = "1.9.3"
-compose-tooling = "1.7.4"
+compose-tooling = "1.7.5"
 compose-material3 = "1.3.0"
 lifecycle = "2.8.6"
 okhttp = "4.12.0"
