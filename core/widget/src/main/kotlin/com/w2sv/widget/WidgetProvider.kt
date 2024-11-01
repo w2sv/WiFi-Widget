@@ -18,16 +18,16 @@ import javax.inject.Inject
 class WidgetProvider : AppWidgetProvider() {
 
     @Inject
-    lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
+    internal lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
 
     @Inject
-    lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
+    internal lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
 
     @Inject
-    lateinit var appWidgetManager: AppWidgetManager
+    internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    lateinit var widgetRepository: WidgetRepository
+    internal lateinit var widgetRepository: WidgetRepository
 
     /**
      * Called upon the first AppWidget instance being created.

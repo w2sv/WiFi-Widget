@@ -1,15 +1,16 @@
 package com.w2sv.widget.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
-import android.widget.RemoteViewsService
 import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidget.setBackgroundColor
+import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WifiProperty
@@ -22,25 +23,16 @@ import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import slimber.log.i
 import javax.inject.Inject
 
 class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
     private val viewDataFactory: WifiProperty.ViewData.Factory,
-) : RemoteViewsService.RemoteViewsFactory {
-
-    override fun onCreate() {}
-
-    private lateinit var viewData: List<WifiProperty.ViewData>
-    private lateinit var widgetColors: WidgetColors
-    private lateinit var fontSize: FontSize
-
-    override fun onDataSetChanged() {
-        i { "WifiPropertyViewsFactory.onDataSetChanged" }
-
-        viewData = runBlocking {
+) {
+    @SuppressLint("NewApi")
+    fun remoteCollectionItems(): RemoteViews.RemoteCollectionItems {
+        val viewData: List<WifiProperty.ViewData> = runBlocking {
             viewDataFactory(
                 properties = widgetRepository.wifiPropertyEnablementMap.enabledKeys(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
@@ -49,48 +41,30 @@ class WifiPropertyViewsFactory @Inject constructor(
             )
                 .toList()
         }
-            .also { i { "Set propertyViewData=$it" } }
+            .log{ "viewData=$it" }
 
-        widgetRepository.appearanceBlocking.let {
-            widgetColors = it.getColors(context)
-            fontSize = it.fontSize
-        }
-    }
-
-    override fun getCount(): Int = viewData.size
-
-    override fun getViewAt(position: Int): RemoteViews =
-        try {
-            inflatePropertyLayout(
-                viewData = viewData[position],
-                packageName = context.packageName,
-                widgetColors = widgetColors,
-                fontSize = fontSize
-            )
-        } catch (e: IndexOutOfBoundsException) {  // Fix irreproducible IndexOutOfBoundsException observed in play console
-            i { e.toString() }
-            RemoteViews(context.packageName, R.layout.wifi_property)
+        val (widgetColors, fontSize) = widgetRepository.appearanceBlocking.let {
+            it.getColors(context) to it.fontSize
         }
 
-    override fun getLoadingView(): RemoteViews =
-        RemoteViews(context.packageName, R.layout.loading)
+        return RemoteViews.RemoteCollectionItems.Builder()
             .apply {
-                setTextColor(R.id.loading_tv, widgetColors.secondary)
+                viewData.forEachIndexed { i, data ->
+                    addItem(
+                        data.hashCode().toLong(),
+                        inflatePropertyLayout(
+                            viewData = data,
+                            packageName = context.packageName,
+                            widgetColors = widgetColors,
+                            fontSize = fontSize
+                        )
+                    )
+                }
             }
-
-    override fun getViewTypeCount(): Int = 1
-
-    override fun getItemId(position: Int): Long =
-        try {
-            viewData[position].hashCode().toLong()
-        } catch (e: IndexOutOfBoundsException) {  // Same as above
-            i { e.toString() }
-            -1L
-        }
-
-    override fun hasStableIds(): Boolean = true
-
-    override fun onDestroy() {}
+            .setViewTypeCount(1)
+            .setHasStableIds(true)
+            .build()
+    }
 }
 
 private fun inflatePropertyLayout(

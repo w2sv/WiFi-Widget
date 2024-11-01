@@ -1,6 +1,7 @@
 package com.w2sv.widget.di
 
 import android.appwidget.AppWidgetManager
+import android.content.ClipboardManager
 import android.content.Context
 import androidx.work.WorkManager
 import dagger.Module
@@ -23,4 +24,9 @@ object WidgetModule {
     @Singleton
     fun appWidgetManager(@ApplicationContext context: Context): AppWidgetManager =
         AppWidgetManager.getInstance(context)
+
+    @Provides
+    @Singleton
+    fun clipboardManager(@ApplicationContext context: Context): ClipboardManager =
+        context.getSystemService(ClipboardManager::class.java)
 }

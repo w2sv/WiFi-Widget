@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
@@ -60,31 +61,6 @@ private class WifiStateEmitter(
     val state: StateFlow<WifiState> get() = _state.asStateFlow()
     private val _state = MutableStateFlow<WifiState>(WifiState.Disconnected)
 
-    private fun getPropertyViewData(): Flow<WifiProperty.ViewData> =
-        wifiPropertyViewDataFactory(
-            properties = wifiPropertyEnablementMap.valueEnabledKeys(),
-            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys().toSet(),
-        )
-
-    private fun setState(wifiStatus: WifiStatus) {
-        _state.value = when (wifiStatus) {
-            WifiStatus.Disabled -> WifiState.Disabled
-            WifiStatus.Disconnected -> WifiState.Disconnected
-            WifiStatus.Connected -> WifiState.Connected(
-                propertyViewData = getPropertyViewData()
-            )
-        }
-            .also {
-                i { "Set wifiState=$it" }
-            }
-    }
-
-    fun refreshPropertyViewDataIfConnected() {
-        if (state.value is WifiState.Connected) {
-            _state.value = WifiState.Connected(getPropertyViewData())
-        }
-    }
-
     init {
         with(scope) {
             collectLatestFromFlow(wifiStatusFlow) { status ->
@@ -98,6 +74,27 @@ private class WifiStateEmitter(
                 i { "Refreshing on property enablement change" }
                 refreshPropertyViewDataIfConnected()
             }
+        }
+    }
+
+    private fun getPropertyViewData(): Flow<WifiProperty.ViewData> =
+        wifiPropertyViewDataFactory(
+            properties = wifiPropertyEnablementMap.valueEnabledKeys(),
+            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys(),
+        )
+
+    private fun setState(wifiStatus: WifiStatus) {
+        _state.value = when (wifiStatus) {
+            WifiStatus.Disabled -> WifiState.Disabled
+            WifiStatus.Disconnected -> WifiState.Disconnected
+            WifiStatus.Connected -> WifiState.Connected(propertyViewData = getPropertyViewData())
+        }
+            .log { "Set wifiState=$it" }
+    }
+
+    fun refreshPropertyViewDataIfConnected() {
+        if (state.value is WifiState.Connected) {
+            _state.value = WifiState.Connected(getPropertyViewData())
         }
     }
 }

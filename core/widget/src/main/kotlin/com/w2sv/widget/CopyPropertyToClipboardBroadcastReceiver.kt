@@ -12,15 +12,21 @@ import android.widget.Toast
 import com.w2sv.androidutils.os.getParcelableCompat
 import com.w2sv.androidutils.widget.showToast
 import com.w2sv.core.widget.R
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
 
+@AndroidEntryPoint
 internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
+
+    @Inject
+    lateinit var clipboardManager: ClipboardManager
 
     override fun onReceive(context: Context, intent: Intent) {
         val args = Args.fromIntent(intent)
 
         // Copy to clipboard
-        context.getSystemService(ClipboardManager::class.java)  // TODO: maybe di ClipboardManager
+        clipboardManager
             .setPrimaryClip(
                 ClipData.newPlainText(
                     null,
@@ -29,7 +35,7 @@ internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
             )
 
         // Show toast
-        Handler(Looper.getMainLooper()).post {
+        Handler(Looper.getMainLooper()).postAtFrontOfQueue {
             context.applicationContext.showToast(
                 context.getString(R.string.copied_to_clipboard, args.propertyLabel),
                 Toast.LENGTH_SHORT

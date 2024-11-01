@@ -6,13 +6,13 @@ import com.w2sv.widget.ui.WifiPropertyViewsFactory
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class WifiPropertyViewsService :
-    RemoteViewsService() {
-
-    @Inject
-    lateinit var wifiPropertyViewsFactory: WifiPropertyViewsFactory
-
-    override fun onGetViewFactory(intent: Intent): RemoteViewsFactory =
-        wifiPropertyViewsFactory
-}
+//@AndroidEntryPoint
+//internal class WifiPropertyViewsService :
+//    RemoteViewsService() {
+//
+//    @Inject
+//    lateinit var wifiPropertyViewsFactory: WifiPropertyViewsFactory
+//
+//    override fun onGetViewFactory(intent: Intent): RemoteViewsFactory =
+//        wifiPropertyViewsFactory
+//}

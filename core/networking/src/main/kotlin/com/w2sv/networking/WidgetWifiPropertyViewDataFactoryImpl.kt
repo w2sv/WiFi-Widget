@@ -6,6 +6,7 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
+import com.w2sv.common.utils.log
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.WifiProperty
 import kotlinx.coroutines.Dispatchers
@@ -336,9 +337,9 @@ private suspend fun getPublicIPAddress(
                 ?.string()
                 ?.let { address ->
                     if (version.ofCorrectFormat(address))
-                        address.also { i { "Got public $version address" } }
+                        address.log { "Got public $version address" }
                     else
-                        null.also { i { "Discarded obtained $version address $address due to incorrect format" } }
+                        null.log { "Discarded obtained $version address $address due to incorrect format" }
                 }
         }
     } catch (e: Exception) {
