@@ -26,11 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.w2sv.composed.OnLifecycleEvent
 import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
@@ -54,13 +52,6 @@ fun HomeScreen(
     scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
-    OnLifecycleEvent(
-        callback = remember {
-            { homeScreenVM.refreshPropertyViewDataIfConnected() }
-        },
-        lifecycleEvent = Lifecycle.Event.ON_START
-    )
-
     NavigationDrawer(
         state = drawerState
     ) {

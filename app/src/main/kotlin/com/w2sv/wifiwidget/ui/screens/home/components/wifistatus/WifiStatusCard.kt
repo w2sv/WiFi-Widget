@@ -33,7 +33,7 @@ fun WifiStatusCard(
                 wifiState.connectedOrNull?.let {
                     Column {  // TODO: why?
                         WifiPropertyDisplay(
-                            propertiesViewData = it.propertyViewData,
+                            propertiesViewData = it.viewDataFlow,
                             modifier = Modifier
                                 .padding(top = 12.dp)
                                 .thenIf(

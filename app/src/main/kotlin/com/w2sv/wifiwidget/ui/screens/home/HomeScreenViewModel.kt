@@ -3,23 +3,22 @@ package com.w2sv.wifiwidget.ui.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
+import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.kotlinutils.coroutines.collectLatestFromFlow
-import com.w2sv.kotlinutils.coroutines.valueEnabledKeys
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.merge
-import slimber.log.i
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.collections.component1
+import kotlin.collections.component2
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -28,73 +27,37 @@ class HomeScreenViewModel @Inject constructor(
     wifiPropertyViewDataFactory: WifiProperty.ViewData.Factory,
 ) : ViewModel() {
 
-    private val wifiStateEmitter = WifiStateEmitter(
-        wifiPropertyEnablementMap = widgetRepository.wifiPropertyEnablementMap.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            getDefault = { false }
-        ),
-        ipSubPropertyEnablementMap = widgetRepository.ipSubPropertyEnablementMap.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            getDefault = { false }
-        ),
-        wifiStatusFlow = wifiStatusMonitor.wifiStatus,
-        wifiPropertyViewDataFactory = wifiPropertyViewDataFactory,
-        scope = viewModelScope
-    )
-
-    val wifiState by wifiStateEmitter::state
-
-    fun refreshPropertyViewDataIfConnected() {
-        wifiStateEmitter.refreshPropertyViewDataIfConnected()
-    }
-}
-
-private class WifiStateEmitter(
-    private val wifiPropertyEnablementMap: Map<WifiProperty, StateFlow<Boolean>>,
-    private val ipSubPropertyEnablementMap: Map<WifiProperty.IP.SubProperty, StateFlow<Boolean>>,
-    private val wifiStatusFlow: Flow<WifiStatus>,
-    private val wifiPropertyViewDataFactory: WifiProperty.ViewData.Factory,
-    scope: CoroutineScope
-) {
-    val state: StateFlow<WifiState> get() = _state.asStateFlow()
-    private val _state = MutableStateFlow<WifiState>(WifiState.Disconnected)
-
-    init {
-        with(scope) {
-            collectLatestFromFlow(wifiStatusFlow) { status ->
-                i { "Collected WifiStatus=$status" }
-                setState(status)
-            }
-            collectLatestFromFlow(
-                (wifiPropertyEnablementMap.values + ipSubPropertyEnablementMap.values)
-                    .merge()
-            ) {
-                i { "Refreshing on property enablement change" }
-                refreshPropertyViewDataIfConnected()
-            }
-        }
-    }
-
-    private fun getPropertyViewData(): Flow<WifiProperty.ViewData> =
-        wifiPropertyViewDataFactory(
-            properties = wifiPropertyEnablementMap.valueEnabledKeys(),
-            ipSubProperties = ipSubPropertyEnablementMap.valueEnabledKeys(),
-        )
-
-    private fun setState(wifiStatus: WifiStatus) {
-        _state.value = when (wifiStatus) {
+    val wifiState = combine(
+        wifiStatusMonitor.wifiStatus.distinctUntilChanged(),
+        widgetRepository.wifiPropertyEnablementMap.enabledKeysFlow().distinctUntilChanged(),
+        widgetRepository.ipSubPropertyEnablementMap.enabledKeysFlow().distinctUntilChanged(),
+    ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties ->
+        when (wifiStatus) {
             WifiStatus.Disabled -> WifiState.Disabled
             WifiStatus.Disconnected -> WifiState.Disconnected
-            WifiStatus.Connected -> WifiState.Connected(propertyViewData = getPropertyViewData())
+            WifiStatus.Connected -> WifiState.Connected(
+                viewDataFlow = wifiPropertyViewDataFactory(
+                    properties = enabledWifiProperties,
+                    ipSubProperties = enabledIpSubProperties.toSet(),
+                )
+            )
         }
             .log { "Set wifiState=$it" }
     }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
+}
 
-    fun refreshPropertyViewDataIfConnected() {
-        if (state.value is WifiState.Connected) {
-            _state.value = WifiState.Connected(getPropertyViewData())
+private fun <K> DataStoreFlowMap<K, Boolean>.enabledKeysFlow(): Flow<List<K>> =
+    combine(
+        entries.map { (k, v) ->
+            v.map { k to it }
+        }
+    ) {
+        buildList {
+            it.forEach { (k, isEnabled) ->
+                if (isEnabled) {
+                    add(k)
+                }
+            }
         }
     }
-}
