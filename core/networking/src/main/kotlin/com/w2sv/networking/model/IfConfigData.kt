@@ -52,7 +52,7 @@ internal data class IfConfigData(
     val gpsLocation: String by lazy { "$latitude, $longitude" }
 
     companion object {
-        suspend fun fetch(client: OkHttpClient): IfConfigData? =
+        suspend fun fetch(client: OkHttpClient): Result<IfConfigData> =
             client.fetchFromUrl("https://ifconfig.co/json") { jsonString ->
                 json.decodeFromString<IfConfigData>(jsonString)
             }

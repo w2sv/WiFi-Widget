@@ -8,13 +8,13 @@ class SuspendingLazy<out T>(initializer: suspend () -> T) {
     private var mutex: Mutex? = Mutex()
     private var _value: Any? = UninitializedValue
 
-    suspend fun value(): T? {
+    suspend fun value(): T {
         val _v1 = _value
         if (_v1 !== UninitializedValue) {
             @Suppress("UNCHECKED_CAST")
             return _v1 as T
         }
-        return mutex?.withLock {
+        return mutex!!.withLock {
             val _v2 = _value
             if (_v2 !== UninitializedValue) {
                 @Suppress("UNCHECKED_CAST") (_v2 as T)

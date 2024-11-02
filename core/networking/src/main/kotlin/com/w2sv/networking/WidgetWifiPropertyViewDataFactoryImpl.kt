@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
 import slimber.log.i
+import java.io.IOException
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -41,7 +42,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         val systemIPAddresses by lazy {
             connectivityManager.getIPAddresses().log { "Got IP Addresses" }
         }
-        val ifConfigData = SuspendingLazy {
+        val ifConfigData = SuspendingLazy<Result<IfConfigData>> {
             IfConfigData.fetch(httpClient).log { "Fetched $it" }
         }
 
@@ -63,7 +64,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private suspend fun WifiProperty.getViewData(
         systemIPAddresses: () -> List<IPAddress>,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>,
-        ifConfigData: suspend () -> IfConfigData?
+        ifConfigData: suspend () -> Result<IfConfigData>
     ): List<WifiProperty.ViewData> =
         when (this) {
             is WifiProperty.NonIP -> getViewData(ifConfigData)
@@ -74,7 +75,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: suspend () -> IfConfigData?): List<WifiProperty.ViewData.NonIP> =
+    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: suspend () -> Result<IfConfigData>): List<WifiProperty.ViewData.NonIP> =
         getViewData(
             values = getValues(ifConfigData),
             resources = resources,
@@ -84,7 +85,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         )
 
     @Suppress("DEPRECATION")
-    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: suspend () -> IfConfigData?): List<String> =
+    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: suspend () -> Result<IfConfigData>): List<String> =
         buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
@@ -197,10 +198,10 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Location -> ifConfigData()?.location?.let { add(it) } ?: "Couldn't retrieve"
-                WifiProperty.NonIP.Other.GpsLocation -> ifConfigData()?.gpsLocation?.let { add(it) }
-                WifiProperty.NonIP.Other.Asn -> ifConfigData()?.asn?.let { add(it) }
-                WifiProperty.NonIP.Other.AsnOrg -> ifConfigData()?.asnOrg?.let { add(it) }
+                WifiProperty.NonIP.Other.Location -> add(ifConfigData().viewDataValue { it.location })
+                WifiProperty.NonIP.Other.GpsLocation -> add(ifConfigData().viewDataValue { it.gpsLocation })
+                WifiProperty.NonIP.Other.Asn -> add(ifConfigData().viewDataValue { it.asn })
+                WifiProperty.NonIP.Other.AsnOrg -> add(ifConfigData().viewDataValue { it.asnOrg })
             }
         }
 
@@ -262,25 +263,20 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
             WifiProperty.IP.V4AndV6.Public -> buildList {
                 versionsToBeIncluded.forEach { version ->
-                    getPublicIPAddress(httpClient, version)?.let { addressRepresentation ->
-                        add(
-                            IPAddress(
-                                prefixLength = version.minPrefixLength,
-                                hostAddress = addressRepresentation,
-                                isLinkLocal = false,
-                                isSiteLocal = false,
-                                isAnyLocal = false,
-                                isLoopback = false,
-                                isMulticast = false
-                            )
-                        )
-                    }
+                    fetchPublicIPAddress(httpClient, version)
+                        .onSuccess { add(it) }
                 }
             }
         }
-
-
 }
+
+private fun Result<IfConfigData>.viewDataValue(onSuccess: (IfConfigData) -> String): String =
+    requireNotNull(
+        getOrNull()
+            ?.let(onSuccess)
+            ?: exceptionOrNull()
+                ?.let { it::class.simpleName }
+    )
 
 private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
     values: List<T>,
@@ -325,10 +321,10 @@ private fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-private suspend fun getPublicIPAddress(
+private suspend fun fetchPublicIPAddress(
     httpClient: OkHttpClient,
     version: IPAddress.Version
-): String? {
+): Result<IPAddress> {
     i { "Fetching public $version address" }
     return httpClient.fetchFromUrl(
         when (version) {
@@ -336,10 +332,19 @@ private suspend fun getPublicIPAddress(
             IPAddress.Version.V6 -> "https://api6.ipify.org"
         }
     ) { address ->
-        if (version.ofCorrectFormat(address))
-            address.log { "Got public $version address" }
-        else
-            null.log { "Discarded obtained $version address $address due to incorrect format" }
+        if (version.ofCorrectFormat(address)) {
+            IPAddress(
+                prefixLength = version.minPrefixLength,
+                hostAddress = address.log { "Got public $version address $it" },
+                isLinkLocal = false,
+                isSiteLocal = false,
+                isAnyLocal = false,
+                isLoopback = false,
+                isMulticast = false
+            )
+        } else {
+            throw IOException("Obtained $version address $address of incorrect format")
+        }
     }
 }
 

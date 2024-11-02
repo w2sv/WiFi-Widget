@@ -8,7 +8,11 @@ import slimber.log.e
 import java.io.IOException
 import java.net.SocketTimeoutException
 
-internal suspend fun <T> OkHttpClient.fetchFromUrl(url: String, timeout: Long = 5_000, onSuccess: (String) -> T?): T? {
+internal suspend fun <T> OkHttpClient.fetchFromUrl(
+    url: String,
+    timeout: Long = 5_000,
+    onSuccess: (String) -> T
+): Result<T> {
     val request = Request.Builder()
         .url(url)
         .build()
@@ -19,8 +23,11 @@ internal suspend fun <T> OkHttpClient.fetchFromUrl(url: String, timeout: Long = 
                 if (!response.isSuccessful) {
                     throw IOException("Unexpected code $response")
                 }
-
-                response.body?.string()?.let(onSuccess)
+                response
+                    .body
+                    ?.string()
+                    ?.let { Result.success(onSuccess(it)) }
+                    ?: throw IOException("Empty response body")
             }
         }
     } catch (e: Exception) {
@@ -31,6 +38,6 @@ internal suspend fun <T> OkHttpClient.fetchFromUrl(url: String, timeout: Long = 
                 e.printStackTrace()
             }
         }
-        null
+        Result.failure(e)
     }
 }
