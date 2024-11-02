@@ -9,21 +9,22 @@ import android.os.Build
 import com.w2sv.common.utils.log
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.WifiProperty
+import com.w2sv.networking.extensions.fetchFromUrl
+import com.w2sv.networking.extensions.getIPAddresses
+import com.w2sv.networking.extensions.linkProperties
+import com.w2sv.networking.model.IPAddress
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
-import okhttp3.Request
 import slimber.log.i
 import java.net.InetAddress
-import java.net.SocketTimeoutException
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
 
-class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
+internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
@@ -311,46 +312,21 @@ private fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-private const val PUBLIC_IP_ADDRESS_RETRIEVAL_TIMEOUT = 5_000L
-
 private suspend fun getPublicIPAddress(
     httpClient: OkHttpClient,
     version: IPAddress.Version
 ): String? {
-    i { "Getting public $version address" }
-
-    val request = Request.Builder()
-        .url(
-            when (version) {
-                IPAddress.Version.V4 -> "https://api.ipify.org"
-                IPAddress.Version.V6 -> "https://api6.ipify.org"
-            }
-        )
-        .build()
-
-    return try {
-        withTimeout(PUBLIC_IP_ADDRESS_RETRIEVAL_TIMEOUT) {
-            httpClient
-                .newCall(request)
-                .execute()
-                .body
-                ?.string()
-                ?.let { address ->
-                    if (version.ofCorrectFormat(address))
-                        address.log { "Got public $version address" }
-                    else
-                        null.log { "Discarded obtained $version address $address due to incorrect format" }
-                }
+    i { "Fetching public $version address" }
+    return httpClient.fetchFromUrl(
+        when (version) {
+            IPAddress.Version.V4 -> "https://api.ipify.org"
+            IPAddress.Version.V6 -> "https://api6.ipify.org"
         }
-    } catch (e: Exception) {
-        i {
-            if (e is SocketTimeoutException) {
-                "Timed out trying to get public $version address"
-            } else {
-                "Caught $e"
-            }
-        }
-        null
+    ) { address ->
+        if (version.ofCorrectFormat(address))
+            address.log { "Got public $version address" }
+        else
+            null.log { "Discarded obtained $version address $address due to incorrect format" }
     }
 }
 

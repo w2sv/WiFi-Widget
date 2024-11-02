@@ -1,10 +1,10 @@
-package com.w2sv.networking
+package com.w2sv.networking.model
 
 import android.net.LinkAddress
 import androidx.annotation.IntRange
 import com.w2sv.common.utils.removeAlphanumeric
 
-data class IPAddress(
+internal data class IPAddress(
     @IntRange(from = 0, to = 128) val prefixLength: Int,
     private val hostAddress: String?,
     val isLinkLocal: Boolean,

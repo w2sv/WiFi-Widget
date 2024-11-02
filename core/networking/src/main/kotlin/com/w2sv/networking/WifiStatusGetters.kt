@@ -3,6 +3,7 @@ package com.w2sv.networking
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.domain.model.WifiStatus
+import com.w2sv.networking.extensions.isWifiConnected
 import javax.inject.Inject
 
 fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =

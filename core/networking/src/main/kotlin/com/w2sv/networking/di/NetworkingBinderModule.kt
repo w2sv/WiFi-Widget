@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @InstallIn(SingletonComponent::class)
 @Module
-interface NetworkingBinderModule {
+internal interface NetworkingBinderModule {
 
     @Binds
     fun widgetWifiPropertyValueGetter(instance: WidgetWifiPropertyViewDataFactoryImpl): WifiProperty.ViewData.Factory
