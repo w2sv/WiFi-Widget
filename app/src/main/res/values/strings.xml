@@ -64,7 +64,7 @@
     <string name="open_the_refresh_interval_configuration_dialog">Open the refresh interval configuration dialog.</string>
     <string name="refresh_interval">Refresh Interval</string>
     <string name="interval">Interval</string>
-    <string name="interval_shorter_than_15_minutes_not_possible">The interval needs to be larger than 15 minutes.</string>
+    <string name="interval_shorter_than_15_minutes_not_possible">An interval shorter than 15 minutes is not possible.</string>
     <string name="reset">Reset</string>
     <string name="leave_at_least_one_address_version_enabled">Leave at least one address version enabled.</string>
     <string name="leave_at_least_one_property_enabled">Leave at least one property enabled.</string>
