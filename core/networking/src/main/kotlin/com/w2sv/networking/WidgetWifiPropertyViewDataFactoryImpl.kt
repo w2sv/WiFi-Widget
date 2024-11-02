@@ -6,6 +6,7 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
+import com.w2sv.common.utils.SuspendingLazy
 import com.w2sv.common.utils.log
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.WifiProperty
@@ -13,6 +14,7 @@ import com.w2sv.networking.extensions.fetchFromUrl
 import com.w2sv.networking.extensions.getIPAddresses
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IPAddress
+import com.w2sv.networking.model.IfConfigData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -37,21 +39,21 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     ): Flow<WifiProperty.ViewData> {
 
         val systemIPAddresses by lazy {
-            connectivityManager.getIPAddresses()
+            connectivityManager.getIPAddresses().log { "Got IP Addresses" }
         }
-
-//        i { "Dns servers: ${connectivityManager.linkProperties?.dnsServers}" }
-//        i { "DHCP: ${connectivityManager.linkProperties?.dhcpServerAddress}" }
-//        i { "nat64Prefix: ${connectivityManager.linkProperties?.nat64Prefix}" }
-//        connectivityManager.linkProperties?.routes?.forEach {
-//            i { "interface: ${it.`interface`} | gateway: ${it.gateway} | destination: ${it.destination} | isDefaultRoute: ${it.isDefaultRoute}" }
-//        }
+        val ifConfigData = SuspendingLazy {
+            IfConfigData.fetch(httpClient).log { "Fetched $it" }
+        }
 
         return flow {
             properties
                 .forEach { property ->
                     property
-                        .getViewData(systemIPAddresses, ipSubProperties)
+                        .getViewData(
+                            systemIPAddresses = { systemIPAddresses },
+                            ipSubProperties = ipSubProperties,
+                            ifConfigData = { ifConfigData.value() }
+                        )
                         .forEach { emit(it) }
                 }
         }
@@ -59,11 +61,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     }
 
     private suspend fun WifiProperty.getViewData(
-        systemIPAddresses: List<IPAddress>,
-        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+        systemIPAddresses: () -> List<IPAddress>,
+        ipSubProperties: Set<WifiProperty.IP.SubProperty>,
+        ifConfigData: suspend () -> IfConfigData?
     ): List<WifiProperty.ViewData> =
         when (this) {
-            is WifiProperty.NonIP -> getViewData()
+            is WifiProperty.NonIP -> getViewData(ifConfigData)
 
             is WifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
@@ -71,16 +74,17 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private fun WifiProperty.NonIP.getViewData(): List<WifiProperty.ViewData.NonIP> =
+    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: suspend () -> IfConfigData?): List<WifiProperty.ViewData.NonIP> =
         getViewData(
-            values = getValues(),
+            values = getValues(ifConfigData),
+            resources = resources,
             makeViewData = { label, value ->
                 WifiProperty.ViewData.NonIP(value, label)
             }
         )
 
     @Suppress("DEPRECATION")
-    private fun WifiProperty.NonIP.getValues(): List<String> =
+    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: suspend () -> IfConfigData?): List<String> =
         buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
@@ -192,11 +196,16 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                             ?: resources.getString(R.string.none)
                     )
                 }
+
+                WifiProperty.NonIP.Other.Location -> ifConfigData()?.location?.let { add(it) } ?: "Couldn't retrieve"
+                WifiProperty.NonIP.Other.GpsLocation -> ifConfigData()?.gpsLocation?.let { add(it) }
+                WifiProperty.NonIP.Other.Asn -> ifConfigData()?.asn?.let { add(it) }
+                WifiProperty.NonIP.Other.AsnOrg -> ifConfigData()?.asnOrg?.let { add(it) }
             }
         }
 
     private suspend fun WifiProperty.IP.getViewData(
-        systemIPAddresses: List<IPAddress>,
+        systemIPAddresses: () -> List<IPAddress>,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>
     ): List<WifiProperty.ViewData.IPProperty> =
         getViewData(
@@ -214,6 +223,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     }
                 )
             },
+            resources = resources,
             makeViewData = { label, ipAddress ->
                 WifiProperty.ViewData.IPProperty(
                     label = label,
@@ -223,30 +233,30 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         )
 
-    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: List<IPAddress>): List<IPAddress> =
+    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: () -> List<IPAddress>): List<IPAddress> =
         when (this) {
-            WifiProperty.IP.V6Only.ULA -> systemIPAddresses.filter { it.isUniqueLocal }
-            WifiProperty.IP.V6Only.GUA -> systemIPAddresses.filter { it.isGlobalUnicast }
+            WifiProperty.IP.V6Only.ULA -> systemIPAddresses().filter { it.isUniqueLocal }
+            WifiProperty.IP.V6Only.GUA -> systemIPAddresses().filter { it.isGlobalUnicast }
         }
 
     private suspend fun WifiProperty.IP.V4AndV6.getAddresses(
-        systemIPAddresses: List<IPAddress>,
+        systemIPAddresses: () -> List<IPAddress>,
         versionsToBeIncluded: Set<IPAddress.Version>
     ): List<IPAddress> =
         when (this) {
-            WifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses().filterByVersionAndPredicate(
                 versionsToBeIncluded
             ) { it.isLoopback }
 
-            WifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses().filterByVersionAndPredicate(
                 versionsToBeIncluded
             ) { it.isSiteLocal }
 
-            WifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses().filterByVersionAndPredicate(
                 versionsToBeIncluded
             ) { it.isLinkLocal }
 
-            WifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses.filterByVersionAnd(
+            WifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses().filterByVersionAndPredicate(
                 versionsToBeIncluded
             ) { it.isMulticast }
 
@@ -269,38 +279,41 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         }
 
-    private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
-        values: List<T>,
-        makeViewData: (String, T) -> R
-    ): List<R> =
-        buildList {
-            val propertyLabel = resources.getString(
-                run {
-                    if (this@getViewData is WifiProperty.IP)
-                        subscriptResId
-                    else
-                        labelRes
-                }
-            )
 
-            if (values.size == 1) {
-                add(makeViewData(propertyLabel, values.first()))
-            } else {
-                values.forEachIndexed { index, value ->
-                    add(makeViewData("$propertyLabel ${index + 1}", value))
-                }
-            }
-        }
 }
 
-private inline fun List<IPAddress>.filterByVersionAnd(
-    versionsToBeIncluded: Set<IPAddress.Version>,
+private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
+    values: List<T>,
+    resources: Resources,
+    makeViewData: (String, T) -> R
+): List<R> =
+    buildList {
+        val propertyLabel = resources.getString(
+            run {
+                if (this@getViewData is WifiProperty.IP)
+                    subscriptResId
+                else
+                    labelRes
+            }
+        )
+
+        if (values.size == 1) {
+            add(makeViewData(propertyLabel, values.first()))
+        } else {
+            values.forEachIndexed { index, value ->
+                add(makeViewData("$propertyLabel ${index + 1}", value))
+            }
+        }
+    }
+
+private inline fun List<IPAddress>.filterByVersionAndPredicate(
+    versionsToBeIncluded: Iterable<IPAddress.Version>,
     predicate: (IPAddress) -> Boolean
 ): List<IPAddress> =
     filter { predicate(it) && versionsToBeIncluded.contains(it.version) }
 
 /**
- * Reference: https://stackoverflow.com/a/52663352/12083276
+ * [Reference](https://stackoverflow.com/a/52663352/12083276)
  */
 private fun textualIPv4Representation(address: Int): String? =
     InetAddress.getByAddress(
@@ -331,9 +344,9 @@ private suspend fun getPublicIPAddress(
 }
 
 /**
- * Reference: https://stackoverflow.com/a/58646104/12083276
+ * [Reference](https://stackoverflow.com/a/58646104/12083276)
  *
- * @param frequency in MHz.
+ * @param frequency in MHz
  */
 private fun frequencyToChannel(frequency: Int): Int =
     when {

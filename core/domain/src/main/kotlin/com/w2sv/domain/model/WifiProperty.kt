@@ -157,6 +157,34 @@ sealed interface WifiProperty : WidgetProperty {
                 "https://en.wikipedia.org/wiki/NAT64",
                 true
             )
+            
+            data object Location: Other(
+                R.string.location,
+                0,
+                null,
+                false
+            )
+
+            data object GpsLocation: Other(
+                R.string.gps_location,
+                0,
+                null,
+                false
+            )
+
+            data object Asn: Other(
+                R.string.asn,
+                0,
+                null,
+                false
+            )
+
+            data object AsnOrg: Other(
+                R.string.asn_org,
+                0,
+                null,
+                false
+            )
 
             companion object {
                 val entries: List<Other>
@@ -179,6 +207,10 @@ sealed interface WifiProperty : WidgetProperty {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(NAT64Prefix)
                         }
+                        add(Location)
+                        add(GpsLocation)
+                        add(Asn)
+                        add(AsnOrg)
                     }
             }
         }

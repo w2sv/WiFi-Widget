@@ -48,6 +48,9 @@ internal data class IfConfigData(
     val asn: String,
     @SerialName("asn_org") val asnOrg: String
 ) {
+    val location: String by lazy { "$zipCode $city, $regionName, $country" }
+    val gpsLocation: String by lazy { "$latitude, $longitude" }
+
     companion object {
         suspend fun fetch(client: OkHttpClient): IfConfigData? =
             client.fetchFromUrl("https://ifconfig.co/json") { jsonString ->

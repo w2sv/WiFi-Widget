@@ -8,6 +8,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.di.PackageName
+import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
@@ -115,7 +116,7 @@ class WidgetViewModel @Inject constructor(
         ),
         scope = viewModelScope,
         onStateSynced = {
-            WidgetProvider.triggerDataRefresh(context)
+            WidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh " }
             delay(500)  // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
