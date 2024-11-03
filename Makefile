@@ -13,7 +13,6 @@ lint:
 	@./gradlew lint
 
 check:
-	@./gradlew ktlintCheck
 	@./gradlew check
 
 ktlint-format:

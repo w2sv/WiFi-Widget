@@ -4,6 +4,6 @@
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="copied_to_clipboard">Copied %1$s to clipboard.</string>
 </resources>

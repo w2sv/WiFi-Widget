@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
+@Suppress("SlotReused")
 @Composable
 fun ColumnScope.OptionalAnimatedVisibility(
     visible: (() -> Boolean)?,

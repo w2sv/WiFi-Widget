@@ -71,6 +71,13 @@ android {
             excludes.add("/META-INF/*")
         }
     }
+    lint {
+        checkDependencies = true
+        xmlReport = false
+        htmlReport = true
+        textReport = false
+        htmlOutput = project.layout.buildDirectory.file("reports/lint-results-debug.html").get().asFile
+    }
     hilt {
         enableAggregatingTask = true // Fixes warning
     }
