@@ -1,1 +1,7 @@
+- Added WiFi properties:
+    - IP Location
+    - GPS Coordinates
+    - ASN
+    - ISP
 - UI improvements
+- Performance improvements

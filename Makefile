@@ -41,7 +41,7 @@ build-apk:
 publish-listing:
 	@./gradlew publishListing  --console verbose
 
-build-and-publish-to-test-track:
+publish-to-test-track:
 	@echo -e "Retrieved Version: ${VERSION}\nHit enter to continue"
 	@read
 
@@ -51,7 +51,7 @@ build-and-publish-to-test-track:
 	@echo "Publish Bundle"
 	@./gradlew publishBundle --track internal
 
-build-and-publish:
+publish:
 	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n\n Otherwise cancel target now."
 	@read
 
