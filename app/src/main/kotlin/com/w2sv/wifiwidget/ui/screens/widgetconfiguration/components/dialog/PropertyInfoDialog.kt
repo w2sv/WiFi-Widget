@@ -35,8 +35,8 @@ fun PropertyInfoDialog(
 ) {
     InfoDialog(
         modifier = modifier,
-        title = stringResource(data.title),
-        text = rememberStyledTextResource(data.description),
+        title = stringResource(data.titleRes),
+        text = rememberStyledTextResource(data.descriptionRes),
         learnMoreButton = data.learnMoreUrl?.let { learnMoreUrl ->
             {
                 Text(

@@ -38,8 +38,8 @@ sealed interface WidgetConfigurationScreenDialog {
                     is Info -> {
                         listOf(
                             Info.SAVER_LABEL,
-                            it.data.title,
-                            it.data.description,
+                            it.data.titleRes,
+                            it.data.descriptionRes,
                             it.data.learnMoreUrl
                         )
                     }
@@ -60,8 +60,8 @@ sealed interface WidgetConfigurationScreenDialog {
                 when (it.first()) {
                     Info.SAVER_LABEL -> Info(
                         InfoDialogData(
-                            title = it[1] as Int,
-                            description = it[2] as Int,
+                            titleRes = it[1] as Int,
+                            descriptionRes = it[2] as Int,
                             learnMoreUrl = it[3] as String?
                         )
                     )

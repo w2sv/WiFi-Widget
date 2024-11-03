@@ -130,8 +130,8 @@ fun rememberWidgetConfigurationCardProperties(
                                 showInfoDialog = {
                                     showInfoDialog(
                                         InfoDialogData(
-                                            title = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
-                                            description = R.string.refresh_periodically_info
+                                            titleRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
+                                            descriptionRes = R.string.refresh_periodically_info
                                         )
                                     )
                                 },

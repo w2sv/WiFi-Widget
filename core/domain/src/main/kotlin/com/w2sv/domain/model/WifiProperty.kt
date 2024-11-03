@@ -165,12 +165,12 @@ sealed interface WifiProperty : WidgetProperty {
                 false
             )
 
-//            data object GpsCoordinates: Other(
-//                R.string.gps_coordinates,
-//                0,
-//                "https://en.wikipedia.org/wiki/Internet_geolocation",
-//                false
-//            )
+            data object GpsCoordinates: Other(
+                R.string.gps_coordinates,
+                R.string.gps_coordinates_description,
+                "https://en.wikipedia.org/wiki/Internet_geolocation",
+                false
+            )
 
             data object ASN: Other(
                 R.string.asn,
@@ -208,6 +208,7 @@ sealed interface WifiProperty : WidgetProperty {
                             add(NAT64Prefix)
                         }
                         add(Location)
+                        add(GpsCoordinates)
                         add(ASN)
                         add(ISP)
                     }

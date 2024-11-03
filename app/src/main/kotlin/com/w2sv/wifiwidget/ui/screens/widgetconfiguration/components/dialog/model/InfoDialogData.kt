@@ -6,14 +6,14 @@ import com.w2sv.domain.model.WifiProperty
 
 @Immutable
 data class InfoDialogData(
-    @StringRes val title: Int,
-    @StringRes val description: Int,
+    @StringRes val titleRes: Int,
+    @StringRes val descriptionRes: Int,
     val learnMoreUrl: String? = null,
 )
 
 fun WifiProperty.infoDialogData(): InfoDialogData =
     InfoDialogData(
-        title = labelRes,
-        description = descriptionRes,
+        titleRes = labelRes,
+        descriptionRes = descriptionRes,
         learnMoreUrl = learnMoreUrl,
     )
