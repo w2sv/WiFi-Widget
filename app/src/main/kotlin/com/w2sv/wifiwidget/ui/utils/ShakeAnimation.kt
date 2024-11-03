@@ -16,7 +16,7 @@ class ShakeController(private val config: ShakeConfig) {
             animatable.animateTo(
                 targetValue = if (i % 2 == 0) config.translateX else -config.translateX,
                 animationSpec = spring(
-                    stiffness = config.stiffness,
+                    stiffness = config.stiffness
                 )
             )
         }
@@ -33,7 +33,7 @@ class ShakeController(private val config: ShakeConfig) {
 data class ShakeConfig(
     val iterations: Int,
     val translateX: Float,
-    val stiffness: Float = Spring.StiffnessMedium,
+    val stiffness: Float = Spring.StiffnessMedium
 )
 
 fun Modifier.shake(controller: ShakeController): Modifier =

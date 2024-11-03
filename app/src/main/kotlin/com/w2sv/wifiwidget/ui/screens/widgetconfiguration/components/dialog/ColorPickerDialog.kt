@@ -21,7 +21,7 @@ fun ColorPickerDialog(
     properties: ColorPickerDialogData,
     onDismissRequest: () -> Unit,
     applyColor: (Color) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     ConfigurationDialog(
         onDismissRequest = onDismissRequest,
@@ -39,20 +39,20 @@ fun ColorPickerDialog(
     ) {
         HSVColorPickerCircularWithSliders(
             initialColor = properties.color,
-            onColorChange = remember { { newColor, _ -> properties.color = newColor } },
+            onColorChange = remember { { newColor, _ -> properties.color = newColor } }
         )
         ColorComponentsDisplay(
             color = properties.color,
             colorModel = ColorModel.RGB,
             textColor = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.width(220.dp),
+            modifier = Modifier.width(220.dp)
         )
     }
 }
 
-//@Preview
-//@Composable
-//private fun Prev() {
+// @Preview
+// @Composable
+// private fun Prev() {
 //    AppTheme {
 //        ColorPickerDialog(
 //            label = "Background",
@@ -61,4 +61,4 @@ fun ColorPickerDialog(
 //            onDismissRequest = {},
 //        )
 //    }
-//}
+// }

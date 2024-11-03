@@ -69,7 +69,7 @@ import slimber.log.i
 @Composable
 fun WifiPropertyDisplay(
     propertiesViewData: Flow<WifiProperty.ViewData>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val viewDataList = rememberRefreshingViewDataList(viewDataFlow = propertiesViewData)
 
@@ -229,7 +229,7 @@ private fun Header(modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Text(
             text = stringResource(id = R.string.properties),
@@ -268,7 +268,7 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
                             }
                             append(" ${context.getString(R.string.to_clipboard)}.")
                         },
-                        kind = SnackbarKind.Success,
+                        kind = SnackbarKind.Success
                     )
                 )
             }
@@ -294,7 +294,7 @@ private fun PropertyDisplayRow(
                 withStyle(
                     SpanStyle(
                         baselineShift = BaselineShift.Subscript,
-                        fontSize = 12.sp,
+                        fontSize = 12.sp
                     )
                 ) {
                     append(viewData.label)
@@ -308,30 +308,33 @@ private fun PropertyDisplayRow(
     Row(
         modifier = modifier.clickable { onClick(viewData, label, scope) },
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = viewData.value,
+            text = viewData.value
         )
     }
 }
 
 @Composable
-private fun PrefixLengthDisplayRow(prefixLengthText: String, modifier: Modifier = Modifier) {
+private fun PrefixLengthDisplayRow(
+    prefixLengthText: String,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End,
+        horizontalArrangement = Arrangement.End
     ) {
         Text(
             text = prefixLengthText,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 14.sp,
+            fontSize = 14.sp
         )
     }
 }

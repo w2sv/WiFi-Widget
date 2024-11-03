@@ -53,7 +53,7 @@ fun LocationAccessRationals(state: LocationAccessState) {
         LocationAccessPermissionRational(
             onProceed = {
                 state.onRationalShown()
-            },
+            }
         )
     }
     state.backgroundAccessState?.let { backgroundAccessState ->
@@ -83,7 +83,7 @@ fun LocationAccessRationals(state: LocationAccessState) {
 @Composable
 private fun LocationAccessPermissionRational(
     onProceed: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     AlertDialog(
         modifier = modifier,
@@ -93,16 +93,16 @@ private fun LocationAccessPermissionRational(
         text = {
             Text(
                 text = rememberStyledTextResource(id = R.string.location_access_permission_rational),
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         },
         confirmButton = {
             DialogButton(
                 onClick = onProceed,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) { Text(text = stringResource(R.string.understood)) }
         },
-        onDismissRequest = onProceed,
+        onDismissRequest = onProceed
     )
 }
 
@@ -118,7 +118,7 @@ private fun BackgroundLocationAccessRational(
                 onClick = {
                     launchPermissionRequest()
                     onDismissRequest()
-                },
+                }
             ) {
                 Text(text = stringResource(id = R.string.grant))
             }
@@ -133,6 +133,6 @@ private fun BackgroundLocationAccessRational(
         },
         text = {
             Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational))
-        },
+        }
     )
 }

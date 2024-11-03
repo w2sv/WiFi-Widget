@@ -40,7 +40,7 @@ fun rememberLocationAccessState(
     appVM: AppViewModel = hiltViewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    context: Context = LocalContext.current,
+    context: Context = LocalContext.current
 ): LocationAccessState =
     rememberLocationAccessState(
         requestLaunchedBefore = appVM.locationAccessPermissionRequested,
@@ -61,9 +61,8 @@ fun rememberLocationAccessState(
     saveRationalShown: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    context: Context = LocalContext.current,
+    context: Context = LocalContext.current
 ): LocationAccessState {
-
     // Necessary evil
     val requestResult = remember {
         MutableSharedFlow<Boolean>()
@@ -72,7 +71,7 @@ fun rememberLocationAccessState(
     val permissionState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
         ),
         onPermissionsResult = {
             scope.launch {
@@ -81,10 +80,11 @@ fun rememberLocationAccessState(
         }
     )
 
-    val backgroundAccessPermissionState = if (backgroundLocationAccessGrantRequired)
+    val backgroundAccessPermissionState = if (backgroundLocationAccessGrantRequired) {
         rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-    else
+    } else {
         null
+    }
 
     val state = remember(scope, snackbarHostState, context) {
         LocationAccessState(
@@ -107,7 +107,7 @@ fun rememberLocationAccessState(
 
     // Emit new status on state.isGranted change
     OnChange(state.isGranted) {
-        i { "New location access permission grant status=${it}" }
+        i { "New location access permission grant status=$it" }
         state.emitNewStatus(it)
     }
 
@@ -152,7 +152,7 @@ class LocationAccessState(
                     false -> LocationAccessPermissionStatus.NotGranted
                 }
                     .also {
-                        i { "Emitted newStatus=${it}" }
+                        i { "Emitted newStatus=$it" }
                     }
             )
         }
@@ -175,8 +175,8 @@ class LocationAccessState(
                             label = context.getString(R.string.go_to_app_settings),
                             callback = {
                                 context.openAppSettings()
-                            },
-                        ),
+                            }
+                        )
                     )
                 )
             }

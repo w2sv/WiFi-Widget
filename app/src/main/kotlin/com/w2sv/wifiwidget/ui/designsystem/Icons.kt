@@ -17,18 +17,21 @@ val biggerIconSize = 28.dp
 fun InfoIcon(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    tint: Color = MaterialTheme.colorScheme.primary,
+    tint: Color = MaterialTheme.colorScheme.primary
 ) {
     Icon(
         imageVector = Icons.Outlined.Info,
         contentDescription = contentDescription,
         tint = tint,
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
 @Composable
-fun KeyboardArrowRightIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
+fun KeyboardArrowRightIcon(
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current
+) {
     Icon(
         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
         contentDescription = null,

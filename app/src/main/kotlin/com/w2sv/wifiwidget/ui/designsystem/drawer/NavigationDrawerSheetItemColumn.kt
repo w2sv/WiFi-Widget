@@ -78,7 +78,7 @@ internal fun NavigationDrawerSheetItemColumn(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(start = 22.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                            horizontalArrangement = Arrangement.SpaceBetween
                         )
                     }
                 ),
@@ -195,7 +195,7 @@ internal fun NavigationDrawerSheetItemColumn(
                         OptionalAnimatedVisibility(visible = element.visible) {
                             Item(
                                 item = element,
-                                modifier = element.modifier,
+                                modifier = element.modifier
                             )
                         }
                     }
@@ -258,20 +258,20 @@ private sealed interface NavigationDrawerSheetElement {
 @Composable
 private fun SubHeader(
     @StringRes titleRes: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Text(
         text = stringResource(id = titleRes),
         modifier = modifier,
         fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Bold
     )
 }
 
 @Composable
 private fun Item(
     item: NavigationDrawerSheetElement.Item,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -303,13 +303,13 @@ private fun MainItemRow(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             modifier = Modifier.size(size = iconSize),
             painter = painterResource(id = item.iconRes),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = MaterialTheme.colorScheme.primary
         )
 
         Text(

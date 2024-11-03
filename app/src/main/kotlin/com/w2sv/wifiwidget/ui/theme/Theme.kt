@@ -24,7 +24,7 @@ fun AppTheme(
     useAmoledBlackTheme: Boolean = false,
     useDynamicTheme: Boolean = false,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit = { _, _ -> },
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     // Reset system bar style on useDarkTheme change
     LaunchedEffect(useDarkTheme) {
@@ -39,7 +39,7 @@ fun AppTheme(
 
         setSystemBarStyles(
             systemBarStyle,
-            systemBarStyle,
+            systemBarStyle
         )
     }
 
@@ -104,7 +104,7 @@ private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorSchem
         inverseOnSurface = inverseOnSurface.animate(animationSpec),
         outline = outline.animate(animationSpec),
         outlineVariant = outlineVariant.animate(animationSpec),
-        scrim = scrim.animate(animationSpec),
+        scrim = scrim.animate(animationSpec)
     )
 }
 

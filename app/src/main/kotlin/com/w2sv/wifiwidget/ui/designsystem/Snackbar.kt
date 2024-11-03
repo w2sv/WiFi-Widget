@@ -30,8 +30,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.w2sv.composed.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
+import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -42,7 +42,7 @@ data class AppSnackbarVisuals(
     override val duration: SnackbarDuration = SnackbarDuration.Short,
     val action: SnackbarAction? = null,
     val kind: SnackbarKind? = null,
-    override val withDismissAction: Boolean = false,
+    override val withDismissAction: Boolean = false
 ) : SnackbarVisuals {
 
     override val message: String
@@ -101,12 +101,15 @@ fun AppSnackbarHost(
 }
 
 @Composable
-fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
+fun AppSnackbar(
+    visuals: AppSnackbarVisuals,
+    modifier: Modifier = Modifier
+) {
     Snackbar(
         action = {
             visuals.action?.let { action ->
                 TextButton(
-                    onClick = action.callback,
+                    onClick = action.callback
                 ) {
                     Text(
                         text = action.label,

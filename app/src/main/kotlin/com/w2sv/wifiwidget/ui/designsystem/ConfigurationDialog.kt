@@ -35,7 +35,7 @@ fun ConfigurationDialog(
     @DrawableRes iconRes: Int? = null,
     title: String? = null,
     applyButtonEnabled: Boolean = true,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         ElevatedCard(
@@ -81,12 +81,12 @@ private fun CancelApplyButtonRow(
     onCancel: () -> Unit,
     onApply: () -> Unit,
     modifier: Modifier = Modifier,
-    applyButtonEnabled: Boolean = true,
+    applyButtonEnabled: Boolean = true
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         DialogButton(onClick = onCancel) {
             Text(text = stringResource(R.string.cancel))

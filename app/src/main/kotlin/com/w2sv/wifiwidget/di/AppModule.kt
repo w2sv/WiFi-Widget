@@ -8,9 +8,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Qualifier
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

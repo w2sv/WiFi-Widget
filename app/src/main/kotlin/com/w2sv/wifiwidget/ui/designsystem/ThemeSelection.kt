@@ -57,12 +57,12 @@ fun ThemeSelectionRow(
     onSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier,
     buttonSize: Dp = 44.dp,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.Center
 ) {
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         themeIndicatorProperties
             .forEach { properties ->
@@ -81,7 +81,7 @@ private val themeIndicatorProperties =
         ThemeIndicatorProperties(
             theme = Theme.Light,
             labelRes = R.string.light,
-            buttonColoring = ButtonColor.Uniform(Color.White),
+            buttonColoring = ButtonColor.Uniform(Color.White)
         ),
         ThemeIndicatorProperties(
             theme = Theme.Default,
@@ -89,22 +89,22 @@ private val themeIndicatorProperties =
             buttonColoring = ButtonColor.Gradient(
                 Brush.linearGradient(
                     0.5f to Color.White,
-                    0.5f to Color.Black,
-                ),
-            ),
+                    0.5f to Color.Black
+                )
+            )
         ),
         ThemeIndicatorProperties(
             theme = Theme.Dark,
             labelRes = R.string.dark,
-            buttonColoring = ButtonColor.Uniform(Color.Black),
-        ),
+            buttonColoring = ButtonColor.Uniform(Color.Black)
+        )
     )
 
 @Immutable
 private data class ThemeIndicatorProperties(
     val theme: Theme,
     @StringRes val labelRes: Int,
-    val buttonColoring: ButtonColor,
+    val buttonColoring: ButtonColor
 )
 
 @Immutable
@@ -126,26 +126,26 @@ private fun ThemeIndicator(
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(id = properties.labelRes),
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
             buttonColor = properties.buttonColoring,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
-                stringResource(id = properties.labelRes),
+                stringResource(id = properties.labelRes)
             ),
             onClick = onClick,
             isSelected = isSelected,
-            modifier = buttonModifier,
+            modifier = buttonModifier
         )
     }
 }
@@ -156,7 +156,7 @@ private fun ThemeButton(
     contentDescription: String,
     onClick: () -> Unit,
     isSelected: () -> Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val transition = updateTransition(targetState = isSelected(), label = "")
 
@@ -166,14 +166,14 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.overshoot,
+                        easing = Easing.overshoot
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)
                 }
             }
         },
-        label = "",
+        label = ""
     ) { state ->
         if (state) 3.dp else 0.5.dp
     }
@@ -184,14 +184,14 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.overshoot,
+                        easing = Easing.overshoot
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)
                 }
             }
         },
-        label = "",
+        label = ""
     ) { state ->
         if (state) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     }
@@ -208,14 +208,14 @@ private fun ThemeButton(
                     if (buttonColor is ButtonColor.Gradient) {
                         drawCircle(
                             brush = buttonColor.brush,
-                            radius = (constraints.maxWidth / 2).toFloat(),
+                            radius = (constraints.maxWidth / 2).toFloat()
                         )
                     }
                 },
             colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
             onClick = onClick,
             shape = CircleShape,
-            border = BorderStroke(borderWidth, borderColor),
+            border = BorderStroke(borderWidth, borderColor)
         ) {}
     }
 }

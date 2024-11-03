@@ -38,9 +38,9 @@ import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
@@ -65,7 +65,7 @@ fun HomeScreen(
             },
             snackbarHost = {
                 AppSnackbarHost()
-            },
+            }
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
@@ -117,7 +117,7 @@ private fun LandscapeMode(
             .padding(vertical = 16.dp)
             .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly,
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         wifiStatusCard(Modifier.fillMaxWidth(0.4f))
         widgetCard(Modifier.fillMaxWidth(0.7f))
@@ -136,7 +136,7 @@ private fun PortraitMode(
             .padding(paddingValues)
             .padding(bottom = 10.dp),
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.weight(0.15f))
         wifiStatusCard(Modifier.fillMaxWidth(0.8f))
@@ -156,6 +156,6 @@ private fun CopyrightText(modifier: Modifier = Modifier) {
         ),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
-        modifier = modifier,
+        modifier = modifier
     )
 }

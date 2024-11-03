@@ -32,8 +32,8 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 
 @Stable
 data class NavigationDrawerItemState(
@@ -42,7 +42,7 @@ data class NavigationDrawerItemState(
     val useAmoledBlackTheme: () -> Boolean,
     val setUseAmoledBlackTheme: (Boolean) -> Unit,
     val useDynamicColors: () -> Boolean,
-    val setUseDynamicColors: (Boolean) -> Unit,
+    val setUseDynamicColors: (Boolean) -> Unit
 )
 
 @Composable
@@ -120,11 +120,11 @@ private fun Header(modifier: Modifier = Modifier) {
             null,
             modifier = Modifier
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(MaterialTheme.colorScheme.primary)
         )
         Spacer(modifier = Modifier.height(22.dp))
         Text(
-            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
+            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME)
         )
     }
 }

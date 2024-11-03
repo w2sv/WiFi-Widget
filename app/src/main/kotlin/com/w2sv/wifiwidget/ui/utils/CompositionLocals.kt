@@ -9,7 +9,11 @@ val LocalLocationManager =
     staticCompositionLocalOf<LocationManager> { throw UninitializedPropertyAccessException("LocalLocationManager not yet provided") }
 
 val LocalNavHostController =
-    staticCompositionLocalOf<NavHostController> { throw UninitializedPropertyAccessException("LocalRootNavHostController not yet provided") }
+    staticCompositionLocalOf<NavHostController> {
+        throw UninitializedPropertyAccessException(
+            "LocalRootNavHostController not yet provided"
+        )
+    }
 
 val LocalUseDarkTheme =
     compositionLocalOf { false }

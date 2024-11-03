@@ -22,7 +22,7 @@ fun WifiStatusCard(
     ElevatedIconHeaderCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_network_check_24,
-            stringRes = R.string.wifi_status,
+            stringRes = R.string.wifi_status
         ),
         modifier = modifier,
         content = {
@@ -31,7 +31,7 @@ fun WifiStatusCard(
             // Display WifiProperties if wifiState is WifiState.Connected
             AnimatedVisibility(visible = wifiState is WifiState.Connected) {
                 wifiState.connectedOrNull?.let {
-                    Column {  // TODO: why?
+                    Column { // TODO: why?
                         WifiPropertyDisplay(
                             propertiesViewData = it.viewDataFlow,
                             modifier = Modifier

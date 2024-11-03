@@ -31,7 +31,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 fun PropertyInfoDialog(
     data: InfoDialogData,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     InfoDialog(
         modifier = modifier,
@@ -51,7 +51,7 @@ fun PropertyInfoDialog(
                 )
             }
         },
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismissRequest
     )
 }
 
@@ -61,7 +61,7 @@ private fun InfoDialog(
     text: AnnotatedString,
     modifier: Modifier = Modifier,
     learnMoreButton: (@Composable () -> Unit)? = null,
-    onDismissRequest: () -> Unit,
+    onDismissRequest: () -> Unit
 ) {
     AlertDialog(
         modifier = modifier,
@@ -76,7 +76,7 @@ private fun InfoDialog(
             Text(
                 text = title,
                 modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         },
         text = {
@@ -86,11 +86,11 @@ private fun InfoDialog(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
                 Arrangement.Center,
-                Alignment.CenterHorizontally,
+                Alignment.CenterHorizontally
             ) {
                 Text(text = text)
                 learnMoreButton?.invoke()
             }
-        },
+        }
     )
 }

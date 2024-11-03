@@ -15,11 +15,11 @@ import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
@@ -32,10 +32,11 @@ class AppViewModel @Inject constructor(
     ViewModel() {
 
     val startRoute: Route =
-        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true)
+        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) {
             WidgetConfigurationScreenDestination
-        else
+        } else {
             HomeScreenDestination
+        }
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()
 
@@ -63,7 +64,7 @@ class AppViewModel @Inject constructor(
 
     val useAmoledBlackTheme = preferencesRepository.useAmoledBlackTheme.stateIn(
         viewModelScope,
-        SharingStarted.WhileSubscribed(),
+        SharingStarted.WhileSubscribed()
     )
 
     fun saveUseAmoledBlackTheme(value: Boolean) {

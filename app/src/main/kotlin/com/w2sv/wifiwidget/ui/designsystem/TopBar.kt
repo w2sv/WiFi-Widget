@@ -21,7 +21,10 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
+fun AppTopBar(
+    modifier: Modifier = Modifier,
+    onNavigationIconClick: () -> Unit
+) {
     TopAppBar(
         title = {
             Text(
@@ -34,17 +37,17 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
             titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
         ),
         navigationIcon = {
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = stringResource(R.string.open_navigation_drawer),
-                    modifier = Modifier.size(biggerIconSize),
+                    modifier = Modifier.size(biggerIconSize)
                 )
             }
-        },
+        }
     )
 }
 

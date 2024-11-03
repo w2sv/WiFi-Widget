@@ -58,7 +58,7 @@ fun rememberWidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_palette_24,
                     stringRes = R.string.appearance
-                ),
+                )
             ) {
                 AppearanceConfiguration(
                     coloringConfig = widgetConfiguration.coloringConfig.collectAsStateWithLifecycle().value,
@@ -99,7 +99,7 @@ fun rememberWidgetConfigurationCardProperties(
             WidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_bottom_row_24,
-                    stringRes = R.string.bottom_bar,
+                    stringRes = R.string.bottom_bar
                 )
             ) {
                 CheckRowColumn(
@@ -118,7 +118,7 @@ fun rememberWidgetConfigurationCardProperties(
             WidgetConfigurationCardProperties(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
-                    stringRes = R.string.refreshing,
+                    stringRes = R.string.refreshing
                 )
             ) {
                 CheckRowColumn(
@@ -164,7 +164,7 @@ fun rememberWidgetConfigurationCardProperties(
 private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
-    showInfoDialog: (InfoDialogData) -> Unit,
+    showInfoDialog: (InfoDialogData) -> Unit
 ): ImmutableList<CheckRowColumnElement.CheckRow<WifiProperty>> {
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
@@ -231,7 +231,7 @@ private fun WifiProperty.checkRow(
                     if (!it) {
                         locationAccessState.launchRequest(
                             LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                this,
+                                this
                             )
                         )
                     }
@@ -279,10 +279,11 @@ private fun WifiProperty.IP.subPropertyElements(
             subProperties
                 .map { subProperty ->
                     val shakeController =
-                        if (subProperty.isAddressTypeEnablementProperty)
+                        if (subProperty.isAddressTypeEnablementProperty) {
                             ShakeController(shakeConfig)
-                        else
+                        } else {
                             null
+                        }
 
                     CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                         property = subProperty,

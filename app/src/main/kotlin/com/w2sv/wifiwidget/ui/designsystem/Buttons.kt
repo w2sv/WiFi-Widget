@@ -24,9 +24,9 @@ fun DialogButton(
     colors: ButtonColors = ButtonDefaults.elevatedButtonColors(
         disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.primary
     ),
-    content: @Composable (RowScope.() -> Unit),
+    content: @Composable (RowScope.() -> Unit)
 ) {
     ElevatedButton(
         onClick = onClick,
@@ -35,14 +35,14 @@ fun DialogButton(
         border = if (enabled) {
             BorderStroke(
                 Dp.Hairline,
-                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary
             )
         } else {
             null
         },
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
         colors = colors,
-        content = content,
+        content = content
     )
 }
 

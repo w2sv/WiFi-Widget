@@ -23,7 +23,7 @@ fun ElevatedIconHeaderCard(
     ElevatedCard(
         elevation = CardDefaults.elevatedCardElevation(defaultElevation = elevatedCardElevation),
         colors = CardDefaults.elevatedCardColors(containerColor = HomeScreenCardBackground),
-        modifier = modifier,
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.padding(18.dp),

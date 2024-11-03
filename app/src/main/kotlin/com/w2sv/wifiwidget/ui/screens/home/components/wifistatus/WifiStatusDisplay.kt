@@ -44,20 +44,20 @@ fun WifiStatusDisplay(
         modifier = modifier
             .clickable {
                 context.startActivity(
-                    goToWifiSettingsIntent,
+                    goToWifiSettingsIntent
                 )
             }
             .semantics {
                 contentDescription =
                     context.getString(R.string.go_to_wifi_settings_cd)
-            },
+            }
     ) {
         Icon(
             painter = painterResource(id = wifiStatus.iconRes),
             contentDescription = null,
             modifier = Modifier
                 .size(42.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(text = stringResource(id = wifiStatus.labelRes))

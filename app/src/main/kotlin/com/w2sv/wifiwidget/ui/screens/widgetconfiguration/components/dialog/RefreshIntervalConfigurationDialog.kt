@@ -33,10 +33,10 @@ import com.w2sv.wheelpicker.WheelPickerState
 import com.w2sv.wheelpicker.rememberWheelPickerState
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
-import slimber.log.i
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import slimber.log.i
 
 @Composable
 fun RefreshIntervalConfigurationDialog(
@@ -148,7 +148,10 @@ private fun WheelPickerRow(
 }
 
 @Composable
-private fun TimeWheelPicker(state: WheelPickerState, unitText: String) {
+private fun TimeWheelPicker(
+    state: WheelPickerState,
+    unitText: String
+) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         WheelPicker(
             state = state,

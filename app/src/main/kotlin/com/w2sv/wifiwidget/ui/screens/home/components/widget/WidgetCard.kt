@@ -36,12 +36,12 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.LocalLocationManager
 import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -54,7 +54,7 @@ fun WidgetCard(
     ElevatedIconHeaderCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_widgets_24,
-            stringRes = R.string.widget,
+            stringRes = R.string.widget
         ),
         headerRowBottomSpacing = 32.dp,
         modifier = modifier,
@@ -69,7 +69,7 @@ fun WidgetCard(
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
-                        .height(60.dp),
+                        .height(60.dp)
                 )
 
                 Spacer(modifier = Modifier.width(32.dp))
@@ -84,16 +84,16 @@ fun WidgetCard(
                             )
                         }
                     },
-                    modifier = Modifier.size(32.dp),
+                    modifier = Modifier.size(32.dp)
                 )
             }
-        },
+        }
     )
 
     ShowSnackbarOnWidgetPin(
         newWidgetPinned = widgetVM.widgetPinSuccessFlow,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
-        backgroundAccessState = locationAccessState.backgroundAccessState,
+        backgroundAccessState = locationAccessState.backgroundAccessState
     )
 }
 
@@ -117,7 +117,7 @@ private fun ShowSnackbarOnWidgetPin(
                 !locationManager.isLocationEnabledCompat() -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
-                        kind = SnackbarKind.Warning,
+                        kind = SnackbarKind.Warning
                     )
                 )
 
@@ -139,23 +139,26 @@ private fun ShowSnackbarOnWidgetPin(
         snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
             AppSnackbarVisuals(
                 msg = context.getString(R.string.pinned_widget),
-                kind = SnackbarKind.Success,
+                kind = SnackbarKind.Success
             )
         )
     }
 }
 
 @Composable
-private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun PinWidgetButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     ElevatedButton(
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp),
+        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.pin),
-            fontSize = 16.sp,
+            fontSize = 16.sp
         )
     }
 }
@@ -163,14 +166,14 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
 @Composable
 private fun WidgetConfigurationDialogButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
             contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
             modifier = modifier,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = MaterialTheme.colorScheme.primary
         )
     }
 }

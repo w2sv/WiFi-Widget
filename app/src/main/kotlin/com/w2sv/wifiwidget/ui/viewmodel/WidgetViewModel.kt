@@ -13,8 +13,8 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
-import com.w2sv.widget.WifiWidgetRefreshWorker
 import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.widget.WifiWidgetRefreshWorker
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
@@ -26,13 +26,13 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidget
 import com.w2sv.wifiwidget.ui.utils.reversibleStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
@@ -117,13 +117,13 @@ class WidgetViewModel @Inject constructor(
         scope = viewModelScope,
         onStateSynced = {
             WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh " }
-            delay(500)  // To allow fab buttons to disappear before emission of snackbar
+            delay(500) // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
                     msg = it.getString(R.string.updated_widget_configuration),
-                    kind = SnackbarKind.Success,
+                    kind = SnackbarKind.Success
                 )
             }
-        },
+        }
     )
 }

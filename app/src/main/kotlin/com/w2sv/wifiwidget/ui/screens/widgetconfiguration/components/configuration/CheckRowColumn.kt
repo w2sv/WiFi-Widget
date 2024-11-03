@@ -68,9 +68,7 @@ fun CheckRowColumn(
 }
 
 @Composable
-private fun CheckRow(
-    data: CheckRowColumnElement.CheckRow<*>
-) {
+private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>) {
     CheckRow(
         data = data,
         leadingIcon = {
@@ -86,9 +84,7 @@ private fun CheckRow(
 }
 
 @Composable
-private fun CheckRowWithSubProperties(
-    data: CheckRowColumnElement.CheckRow<*>
-) {
+private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>) {
     var expandSubProperties by rememberSaveable {
         mutableStateOf(false)
     }
@@ -135,7 +131,7 @@ private fun SubPropertyCheckRowColumn(
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .padding(start = 24.dp)  // Make background start at the indentation of CheckRow label
+            .padding(start = 24.dp) // Make background start at the indentation of CheckRow label
             .nestedContentBackground()
             .padding(start = subPropertyColumnPadding)
     ) {
@@ -178,7 +174,7 @@ private fun CheckRow(
     data: CheckRowColumnElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
-    leadingIcon: (@Composable () -> Unit)? = null,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     val label = stringResource(id = data.property.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset, label)
@@ -190,18 +186,18 @@ private fun CheckRow(
             .then(data.modifier)
             .thenIfNotNull(data.shakeController) {
                 shake(it)
-            },
+            }
     ) {
         leadingIcon?.invoke()
         Text(
             text = label,
             fontSize = fontSize,
-            modifier = Modifier.weight(1.0f),
+            modifier = Modifier.weight(1.0f)
         )
         data.showInfoDialog?.let {
             InfoIconButton(
                 onClick = { it() },
-                contentDescription = stringResource(id = R.string.info_icon_cd, label),
+                contentDescription = stringResource(id = R.string.info_icon_cd, label)
             )
         }
         Checkbox(
@@ -211,7 +207,7 @@ private fun CheckRow(
             },
             modifier = Modifier.semantics {
                 contentDescription = checkBoxCD
-            },
+            }
         )
     }
 }
@@ -226,7 +222,7 @@ private fun InfoIconButton(
         InfoIcon(
             contentDescription = contentDescription,
             modifier = Modifier.size(biggerIconSize),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.wifiwidget.hilt)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.ktlint)
 }
 
 kotlin {
@@ -71,14 +72,14 @@ android {
         }
     }
     hilt {
-        enableAggregatingTask = true  // Fixes warning
+        enableAggregatingTask = true // Fixes warning
     }
     // Name built apks "{versionName}.apk"
     applicationVariants.all {
         outputs
             .forEach { output ->
                 (output as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName =
-                    "${versionName}.apk"
+                    "$versionName.apk"
             }
     }
 }

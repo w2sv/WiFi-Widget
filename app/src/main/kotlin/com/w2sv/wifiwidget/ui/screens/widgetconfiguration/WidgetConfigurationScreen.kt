@@ -57,9 +57,9 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.Prop
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -102,7 +102,7 @@ fun WidgetConfigurationScreen(
                         animationSpec = tween(easing = Easing.anticipate),
                         targetOffsetX = { it / 2 }
                     ) + fadeOut()
-                },
+                }
             ) {
                 ConfigurationProcedureFABRow(
                     onResetButtonClick = remember { { widgetVM.configuration.reset() } },
@@ -319,7 +319,7 @@ private fun WidgetConfigurationScreenDialog(
                         }
                     }
                 },
-                onDismissRequest = onDismissRequest,
+                onDismissRequest = onDismissRequest
             )
         }
 

@@ -92,7 +92,7 @@ fun AppearanceConfiguration(
 
         AnimatedContent(
             targetState = coloringConfig.isCustomSelected,
-            label = "",
+            label = ""
         ) { isCustomStyleSelected ->
             when (isCustomStyleSelected) {
                 false -> {
@@ -187,7 +187,7 @@ private fun PresetColoringConfiguration(
 private fun CustomColorConfiguration(
     data: WidgetColoring.Style.Custom,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         CustomWidgetColor.entries
@@ -216,7 +216,7 @@ private fun SectionCustomizationRow(
     label: String,
     color: Color,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -239,11 +239,11 @@ private fun SectionCustomizationRow(
                 .colorButton()
                 .semantics { contentDescription = colorPickerButtonCD },
             colors = ButtonDefaults.buttonColors(
-                containerColor = color,
+                containerColor = color
             ),
             onClick = onClick,
             shape = CircleShape,
-            content = {},
+            content = {}
         )
     }
 }

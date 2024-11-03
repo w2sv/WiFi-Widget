@@ -10,9 +10,9 @@ import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.ReversibleStateMap
 import com.w2sv.reversiblestate.ReversibleStatesComposition
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
+import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
 @Stable
 class ReversibleWidgetConfiguration(
@@ -46,9 +46,7 @@ class ReversibleWidgetConfiguration(
                 wifiProperties.appliedStateMap.getValue(it).value
             }
 
-    fun onLocationAccessPermissionGranted(
-        trigger: LocationAccessPermissionRequestTrigger?
-    ) {
+    fun onLocationAccessPermissionGranted(trigger: LocationAccessPermissionRequestTrigger?) {
         when (trigger) {
             is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
                 WifiProperty.NonIP.LocationAccessRequiring.entries.forEach {

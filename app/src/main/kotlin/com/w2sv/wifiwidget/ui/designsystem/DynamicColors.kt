@@ -23,21 +23,21 @@ fun UseDynamicColorsRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .then(modifier),
+            .then(modifier)
     ) {
         leadingIcon?.invoke()
         Text(
             text = stringResource(R.string.dynamic_colors),
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = useDynamicColors,
             onCheckedChange = {
                 onToggleDynamicColors(
-                    it,
+                    it
                 )
-            },
+            }
         )
     }
 }

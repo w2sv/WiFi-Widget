@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 fun BackButtonHeaderWithDivider(
     title: String,
     onBackButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -70,18 +70,18 @@ data class IconHeaderProperties(
 @Composable
 fun IconHeader(
     properties: IconHeaderProperties,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
             Icon(
                 painter = painterResource(id = properties.iconRes),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.tertiary,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp)
             )
         }
         Box(Modifier.weight(0.7f), contentAlignment = Alignment.Center) {
@@ -89,7 +89,7 @@ fun IconHeader(
                 text = stringResource(id = properties.stringRes),
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.tertiary,
+                color = MaterialTheme.colorScheme.tertiary
             )
         }
         Spacer(modifier = Modifier.weight(0.3f))

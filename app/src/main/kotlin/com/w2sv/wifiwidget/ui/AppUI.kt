@@ -15,14 +15,14 @@ import com.ramcosta.composedestinations.navigation.dependency
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.LocalLocationManager
 import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 
 @Composable
 fun AppUI(

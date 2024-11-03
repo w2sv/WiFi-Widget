@@ -9,9 +9,10 @@ import kotlinx.coroutines.CoroutineScope
 fun <K, V> DataStoreFlowMap<K, V>.reversibleStateMap(
     scope: CoroutineScope,
     onStateSynced: suspend (Map<K, V>) -> Unit = {}
-): ReversibleStateMap<K, V> = reversibleStateMap(
-    scope = scope,
-    makeMap = { it.toMutableStateMap() },
-    onStateSynced = onStateSynced,
-    appliedStateMapBasedStateAlignment = true
-)
+): ReversibleStateMap<K, V> =
+    reversibleStateMap(
+        scope = scope,
+        makeMap = { it.toMutableStateMap() },
+        onStateSynced = onStateSynced,
+        appliedStateMapBasedStateAlignment = true
+    )

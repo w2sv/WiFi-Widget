@@ -31,7 +31,7 @@ fun WidgetConfigurationColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
+            .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp)
     ) {
         Spacer(modifier = Modifier.height(verticalColumnCardSpacing))
         Column(verticalArrangement = Arrangement.spacedBy(verticalColumnCardSpacing)) {
@@ -65,7 +65,7 @@ private fun WidgetConfigurationCard(
             properties = properties.iconHeaderProperties,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 18.dp),
+                .padding(vertical = 18.dp)
         )
         properties.content()
     }

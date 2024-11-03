@@ -50,7 +50,7 @@ sealed interface CheckRowColumnElement {
                     showInfoDialog = showInfoDialog,
                     shakeController = shakeController,
                     subPropertyColumnElements = subPropertyColumnElements,
-                    modifier = modifier,
+                    modifier = modifier
                 )
             }
         }
