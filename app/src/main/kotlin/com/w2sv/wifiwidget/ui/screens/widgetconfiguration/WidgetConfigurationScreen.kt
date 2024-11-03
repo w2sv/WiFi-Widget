@@ -50,14 +50,14 @@ import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.WidgetConfigurationColumn
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column.rememberWidgetConfigurationCardProperties
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
-import com.w2sv.wifiwidget.ui.shared_viewmodels.WidgetViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import kotlinx.coroutines.CoroutineScope

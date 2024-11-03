@@ -32,7 +32,7 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
-import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 
 @Stable

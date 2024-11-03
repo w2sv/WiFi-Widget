@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box

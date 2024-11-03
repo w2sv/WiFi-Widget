@@ -30,7 +30,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.w2sv.composed.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.shared_viewmodels.AppViewModel
+import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
 
 @Immutable

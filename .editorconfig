@@ -1,8 +1,6 @@
 # https://editorconfig.org
-root = true
-
 [*]
-indent_style = tab
+indent_style = space
 indent_size = 4
 
 end_of_line = lf
@@ -11,6 +9,8 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 
 [*.{kt,kts}]
+ktlint_code_style = android_studio
+
 max_line_length = 140
 ij_kotlin_allow_trailing_comma = false
 ij_kotlin_allow_trailing_comma_on_call_site = false
@@ -21,6 +21,9 @@ ij_kotlin_packages_to_use_import_on_demand = unset
 # Prevent wildcard imports
 ij_kotlin_name_count_to_use_star_import = 99
 ij_kotlin_name_count_to_use_star_import_for_members = 99
+
+ktlint_function_naming_ignore_when_annotated_with=Composable, Test
+ktlint_standard_filename = disabled
 
 [*.md]
 trim_trailing_whitespace = false
