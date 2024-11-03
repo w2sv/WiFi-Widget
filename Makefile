@@ -76,3 +76,5 @@ publish-bundle:
 create-gh-release:
 	@echo "Create GitHub Release"
 	@gh release create $(VERSION) app/build/outputs/apk/release/$(VERSION).apk -F app/src/main/play/release-notes/en-US/production.txt
+
+# fdroid metadata: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.w2sv.wifiwidget.yml
