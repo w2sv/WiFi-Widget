@@ -43,9 +43,9 @@
 
 ### In-App
 
-- Clean Material 3 Design, featuring animations wherever they're appropriate
+- Juicy Material 3 Design, featuring animations wherever they're appropriate
 - Supports light & dark theme, as well as dynamic colors
-- Different layouts for landscape & portrait mode
+- Adaptive layouts for landscape & portrait mode
 - Live WiFi Status display with property copy-to-clipboard functionality
 
 ### Widget Configuration Options
@@ -63,24 +63,27 @@
         - Whether to display prefix lengths
     - Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security
       Protocol, Gateway, DNS, DHCP
+    - IP Location, IP Location GPS Coordinates, ASN, ISP
+        - fetched from https://ifconfig.co/  
 - Bottom bar elements:
-    - Last refresh date time display
-    - Refresh data button
-    - Go to WiFi settings button
-    - Go to widget configuration button
-- Periodic data refreshing:
+    - Last refresh date time
+    - **Refresh data** button
+    - **WiFi settings** button
+    - **Configure widget** button
+- Data refreshing:
     - Interval
     - Whether to refresh on low battery
 
-<h2 align="center">Tech Stack</h2>
+<h2 align="center">Used Tech Stack</h2>
 
 - Kotlin
 - Jetpack Compose
 - Coroutines & flows
-- Dagger-Hilt for dependency injection
-- OkHttp 3
+- [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
+- [OkHttp](https://square.github.io/okhttp/) for network requests
 - [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
 - Proto & Preferences data store
+- [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization)
 
 <h2 align="center">Screenshots</h2>
 
