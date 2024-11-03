@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration_column
 
-import android.content.Context
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
-import com.w2sv.composed.getAnnotatedString
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
@@ -54,8 +52,6 @@ fun rememberWidgetConfigurationCardProperties(
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
 ): ImmutableList<WidgetConfigurationCardProperties> {
-    val context: Context = LocalContext.current
-
     return remember {
         persistentListOf(
             WidgetConfigurationCardProperties(
@@ -134,8 +130,8 @@ fun rememberWidgetConfigurationCardProperties(
                                 showInfoDialog = {
                                     showInfoDialog(
                                         InfoDialogData(
-                                            title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
-                                            description = context.resources.getAnnotatedString(R.string.refresh_periodically_info)
+                                            title = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
+                                            description = R.string.refresh_periodically_info
                                         )
                                     )
                                 },
@@ -209,7 +205,6 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                     showInfoDialog = showInfoDialog,
                     showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
-                    context = context,
                     scope = scope
                 )
             }
@@ -223,7 +218,6 @@ private fun WifiProperty.checkRow(
     showInfoDialog: (InfoDialogData) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
-    context: Context,
     scope: CoroutineScope
 ): CheckRowColumnElement.CheckRow<WifiProperty> {
     val shakeController = ShakeController(shakeConfig)
@@ -261,7 +255,7 @@ private fun WifiProperty.checkRow(
 
             else -> null
         },
-        showInfoDialog = { showInfoDialog(infoDialogData(context)) }
+        showInfoDialog = { showInfoDialog(infoDialogData()) }
     )
 }
 

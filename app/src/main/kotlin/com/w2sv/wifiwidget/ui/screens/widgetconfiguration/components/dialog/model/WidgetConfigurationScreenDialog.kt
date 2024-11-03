@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.text.AnnotatedString
 import com.w2sv.composed.nullableListSaver
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
@@ -61,8 +60,8 @@ sealed interface WidgetConfigurationScreenDialog {
                 when (it.first()) {
                     Info.SAVER_LABEL -> Info(
                         InfoDialogData(
-                            title = it[1] as String,
-                            description = it[2] as AnnotatedString,
+                            title = it[1] as Int,
+                            description = it[2] as Int,
                             learnMoreUrl = it[3] as String?
                         )
                     )
