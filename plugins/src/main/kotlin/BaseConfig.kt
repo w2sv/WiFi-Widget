@@ -5,6 +5,10 @@ import org.gradle.kotlin.dsl.configure
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 internal fun Project.baseConfig() {
+    with(pluginManager) {
+        apply(libs.findPluginId("ktlint"))
+    }
+
     with(extensions) {
         configure<KotlinProjectExtension> {
             jvmToolchain {
@@ -22,9 +26,11 @@ internal fun Project.baseConfig() {
             }
             compileSdkVersion(libs.findVersionInt("compileSdk"))
             testOptions {
-                unitTests.isReturnDefaultValues = true
+                unitTests {
+                    isReturnDefaultValues = true
+                    isIncludeAndroidResources = true
+                }
                 animationsDisabled = true
-                unitTests.isIncludeAndroidResources = true
             }
             packagingOptions {
                 resources {

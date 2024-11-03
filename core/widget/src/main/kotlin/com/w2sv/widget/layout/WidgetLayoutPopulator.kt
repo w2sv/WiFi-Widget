@@ -41,15 +41,18 @@ internal class WidgetLayoutPopulator @Inject constructor(
     private val appearance = widgetRepository.appearanceBlocking
     private val colors = appearance.getColors(context)
 
-    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
+    fun populate(
+        widget: RemoteViews,
+        appWidgetId: Int
+    ): RemoteViews =
         widget
             .apply {
                 setContentLayout(
-                    appWidgetId = appWidgetId,
+                    appWidgetId = appWidgetId
                 )
                 setBackgroundColor(
                     id = R.id.widget_layout,
-                    color = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
+                    color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
                 )
                 setBottomBar(bottomBar = appearance.bottomRow)
             }
@@ -59,7 +62,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
             WifiStatus.Connected -> {
                 crossVisualize(
                     R.id.no_connection_available_layout,
-                    R.id.wifi_property_list_view,
+                    R.id.wifi_property_list_view
                 )
 
                 @Suppress("DEPRECATION")
@@ -69,7 +72,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
-                        },
+                        }
                 )
 
                 setPendingIntentTemplate(
@@ -90,7 +93,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
             else -> {
                 crossVisualize(
                     R.id.wifi_property_list_view,
-                    R.id.no_connection_available_layout,
+                    R.id.no_connection_available_layout
                 )
 
                 setTextView(
@@ -100,9 +103,9 @@ internal class WidgetLayoutPopulator @Inject constructor(
                             R.string.wifi_disabled
                         } else {
                             R.string.no_wifi_connection
-                        },
+                        }
                     ),
-                    color = colors.secondary,
+                    color = colors.secondary
                 )
 
                 setOnClickPendingIntent(
@@ -146,13 +149,13 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     context,
                     PendingIntentCode.RefreshWidgetData.ordinal,
                     WifiWidgetProvider.getRefreshDataIntent(context),
-                    PendingIntent.FLAG_IMMUTABLE,
-                ),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
             )
             setButton(
                 id = R.id.go_to_wifi_settings_button,
                 show = bottomBar.goToWifiSettingsButton,
-                pendingIntent = goToWifiSettingsPendingIntent(context),
+                pendingIntent = goToWifiSettingsPendingIntent(context)
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
@@ -163,23 +166,27 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     Intent.makeRestartActivityTask(
                         ComponentName(
                             context,
-                            "com.w2sv.wifiwidget.MainActivity",
-                        ),
+                            "com.w2sv.wifiwidget.MainActivity"
+                        )
                     )
                         .putExtra(
                             Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN,
-                            true,
+                            true
                         ),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
-                ),
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
             )
         }
     }
 
-    private fun RemoteViews.setButton(@IdRes id: Int, show: Boolean, pendingIntent: PendingIntent) {
+    private fun RemoteViews.setButton(
+        @IdRes id: Int,
+        show: Boolean,
+        pendingIntent: PendingIntent
+    ) {
         setViewVisibility(
             id,
-            if (show) View.VISIBLE else View.GONE,
+            if (show) View.VISIBLE else View.GONE
         )
 
         if (show) {

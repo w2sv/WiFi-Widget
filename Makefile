@@ -13,7 +13,11 @@ lint:
 	@./gradlew lint
 
 check:
+	@./gradlew ktlintCheck
 	@./gradlew check
+
+ktlint-format:
+	@./gradlew ktlintFormat
 
 # ==============
 # Building
@@ -55,12 +59,10 @@ build-and-publish:
 	@echo "Check"
 	@$(MAKE) check
 
-	@$(MAKE) clean
+	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 	@$(MAKE) baseline-profile
 
 	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
-
-	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 
 	@$(MAKE) build-apk
 	@$(MAKE) create-gh-release

@@ -6,21 +6,22 @@ import kotlinx.coroutines.sync.withLock
 class SuspendingLazy<out T>(initializer: suspend () -> T) {
     private var initializer: (suspend () -> T)? = initializer
     private var mutex: Mutex? = Mutex()
-    private var _value: Any? = UninitializedValue
+    private var value: Any? = UninitializedValue
 
     suspend fun value(): T {
-        val _v1 = _value
-        if (_v1 !== UninitializedValue) {
+        val v1 = value
+        if (v1 !== UninitializedValue) {
             @Suppress("UNCHECKED_CAST")
-            return _v1 as T
+            return v1 as T
         }
         return mutex!!.withLock {
-            val _v2 = _value
-            if (_v2 !== UninitializedValue) {
-                @Suppress("UNCHECKED_CAST") (_v2 as T)
+            val v2 = value
+            if (v2 !== UninitializedValue) {
+                @Suppress("UNCHECKED_CAST")
+                (v2 as T)
             } else {
                 val typedValue = initializer!!.invoke()
-                _value = typedValue
+                value = typedValue
                 initializer = null
                 mutex = null
                 typedValue
@@ -28,10 +29,10 @@ class SuspendingLazy<out T>(initializer: suspend () -> T) {
         }
     }
 
-    val isInitialized: Boolean get() = _value !== UninitializedValue
+    val isInitialized: Boolean get() = value !== UninitializedValue
 
     override fun toString(): String =
-        if (isInitialized) _value.toString() else "SuspendingLazy value not initialized yet."
+        if (isInitialized) value.toString() else "SuspendingLazy value not initialized yet."
 }
 
 private object UninitializedValue

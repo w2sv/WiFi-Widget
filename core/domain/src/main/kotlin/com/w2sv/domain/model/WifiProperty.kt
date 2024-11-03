@@ -157,29 +157,29 @@ sealed interface WifiProperty : WidgetProperty {
                 "https://en.wikipedia.org/wiki/NAT64",
                 true
             )
-            
-            data object IPLocation: Other(
+
+            data object IPLocation : Other(
                 R.string.ip_location,
                 R.string.ip_location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
 
-            data object GpsCoordinates: Other(
+            data object GpsCoordinates : Other(
                 R.string.gps_coordinates,
                 R.string.gps_coordinates_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
 
-            data object ASN: Other(
+            data object ASN : Other(
                 R.string.asn,
                 R.string.asn_description,
                 "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
                 false
             )
 
-            data object ISP: Other(
+            data object ISP : Other(
                 R.string.isp,
                 R.string.isp_description,
                 "https://en.wikipedia.org/wiki/Internet_service_provider",
@@ -243,7 +243,7 @@ sealed interface WifiProperty : WidgetProperty {
             @StringRes override val subscriptResId: Int,
             @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
-            override val defaultIsEnabled: Boolean,
+            override val defaultIsEnabled: Boolean
         ) : IP(subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)) {
 
             data object ULA :
@@ -252,7 +252,7 @@ sealed interface WifiProperty : WidgetProperty {
                     R.string.ula,
                     R.string.unique_local_description,
                     LEARN_MORE_URL,
-                    true,
+                    true
                 )
 
             data object GUA :
@@ -261,7 +261,7 @@ sealed interface WifiProperty : WidgetProperty {
                     R.string.gua,
                     R.string.global_unicast_description,
                     LEARN_MORE_URL,
-                    true,
+                    true
                 )
         }
 

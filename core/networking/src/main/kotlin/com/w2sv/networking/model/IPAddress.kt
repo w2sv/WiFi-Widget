@@ -11,7 +11,7 @@ internal data class IPAddress(
     val isSiteLocal: Boolean,
     val isAnyLocal: Boolean,
     val isLoopback: Boolean,
-    val isMulticast: Boolean,
+    val isMulticast: Boolean
 ) {
     constructor(linkAddress: LinkAddress) : this(
         prefixLength = linkAddress.prefixLength,
@@ -20,7 +20,7 @@ internal data class IPAddress(
         isSiteLocal = linkAddress.address.isSiteLocalAddress,
         isAnyLocal = linkAddress.address.isAnyLocalAddress,
         isLoopback = linkAddress.address.isLoopbackAddress,
-        isMulticast = linkAddress.address.isMulticastAddress,
+        isMulticast = linkAddress.address.isMulticastAddress
     )
 
 //    /**
@@ -56,7 +56,7 @@ internal data class IPAddress(
         val ofCorrectFormat: (String) -> Boolean
     ) {
         V4(0, "0.0.0.0", { it.removeAlphanumeric() == "..." }),
-        V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" }),
+        V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" })
     }
 }
 

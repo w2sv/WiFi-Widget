@@ -7,8 +7,8 @@ import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
-import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
+import kotlinx.coroutines.flow.Flow
 
 interface WidgetRepository {
     val coloringConfig: Flow<WidgetColoring.Config>

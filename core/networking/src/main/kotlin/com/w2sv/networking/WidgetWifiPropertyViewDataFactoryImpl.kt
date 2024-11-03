@@ -15,17 +15,17 @@ import com.w2sv.networking.extensions.ipAddresses
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IFConfigData
 import com.w2sv.networking.model.IPAddress
+import java.io.IOException
+import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
 import slimber.log.i
-import java.io.IOException
-import java.net.InetAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import javax.inject.Inject
 
 private typealias GetSystemIPAddresses = () -> List<IPAddress>
 private typealias GetIFConfigData = suspend () -> Result<IFConfigData>
@@ -41,7 +41,6 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         properties: Iterable<WifiProperty>,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>
     ): Flow<WifiProperty.ViewData> {
-
         val systemIPAddresses by lazy {
             connectivityManager.ipAddresses().log { "Got IP Addresses" }
         }
@@ -289,10 +288,11 @@ private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
     buildList {
         val propertyLabel = resources.getString(
             run {
-                if (this@getViewData is WifiProperty.IP)
+                if (this@getViewData is WifiProperty.IP) {
                     subscriptResId
-                else
+                } else {
                     labelRes
+                }
             }
         )
 
@@ -320,7 +320,7 @@ private fun textualIPv4Representation(address: Int): String? =
             .allocate(Integer.BYTES)
             .order(ByteOrder.LITTLE_ENDIAN)
             .putInt(address)
-            .array(),
+            .array()
     )
         .hostAddress
 

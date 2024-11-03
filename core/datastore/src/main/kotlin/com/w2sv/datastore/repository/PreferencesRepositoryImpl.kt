@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class PreferencesRepositoryImpl @Inject constructor(
-    dataStore: DataStore<Preferences>,
+    dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore),
     PreferencesRepository {
 

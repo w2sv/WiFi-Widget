@@ -1,4 +1,4 @@
-package com.w2sv.datastore.proto.widget_coloring
+package com.w2sv.datastore.proto.widgetcoloring
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
@@ -19,7 +19,10 @@ internal object WidgetColoringProtoSerializer : Serializer<WidgetColoringProto> 
             throw CorruptionException("Cannot read proto.", exception)
         }
 
-    override suspend fun writeTo(t: WidgetColoringProto, output: OutputStream) {
+    override suspend fun writeTo(
+        t: WidgetColoringProto,
+        output: OutputStream
+    ) {
         // writeTo is already called on the data store background thread
         t.writeTo(output)
     }

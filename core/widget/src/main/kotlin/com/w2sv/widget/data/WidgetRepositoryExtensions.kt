@@ -12,7 +12,7 @@ internal val WidgetRepository.appearanceBlocking: WidgetAppearance
         coloringConfig = coloringConfig.firstBlocking(),
         backgroundOpacity = opacity.firstBlocking(),
         fontSize = fontSize.firstBlocking(),
-        bottomRow = bottomRowBlocking,
+        bottomRow = bottomRowBlocking
     )
 
 private val WidgetRepository.bottomRowBlocking: WidgetBottomBarElement

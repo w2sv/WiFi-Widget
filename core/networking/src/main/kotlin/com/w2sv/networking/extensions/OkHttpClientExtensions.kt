@@ -1,12 +1,12 @@
 package com.w2sv.networking.extensions
 
+import java.io.IOException
+import java.net.SocketTimeoutException
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import slimber.log.e
-import java.io.IOException
-import java.net.SocketTimeoutException
 
 internal suspend fun <T> OkHttpClient.fetchFromUrl(
     url: String,

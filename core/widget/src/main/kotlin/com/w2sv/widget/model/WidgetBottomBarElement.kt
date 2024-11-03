@@ -6,7 +6,7 @@ internal data class WidgetBottomBarElement(
     val lastRefreshTimeDisplay: Boolean,
     val refreshButton: Boolean,
     val goToWifiSettingsButton: Boolean,
-    val goToWidgetSettingsButton: Boolean,
+    val goToWidgetSettingsButton: Boolean
 ) {
     constructor(parameters: Map<WidgetBottomBarElement, Boolean>) : this(
         lastRefreshTimeDisplay = parameters.getValue(WidgetBottomBarElement.LastRefreshTimeDisplay),

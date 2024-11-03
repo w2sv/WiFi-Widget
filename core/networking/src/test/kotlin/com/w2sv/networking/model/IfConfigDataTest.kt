@@ -8,7 +8,8 @@ import org.junit.Test
 class IfConfigDataTest {
 
     @Test
-    fun fetch() = runTest {
-        assertTrue(IFConfigData.fetch(client = OkHttpClient()).isSuccess)
-    }
+    fun fetch() =
+        runTest {
+            assertTrue(IFConfigData.fetch(client = OkHttpClient()).isSuccess)
+        }
 }

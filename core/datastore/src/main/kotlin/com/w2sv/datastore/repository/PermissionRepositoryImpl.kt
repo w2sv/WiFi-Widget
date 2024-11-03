@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 internal class PermissionRepositoryImpl @Inject constructor(
-    dataStore: DataStore<Preferences>,
+    dataStore: DataStore<Preferences>
 ) : PreferencesDataStoreRepository(dataStore),
     PermissionRepository {
 

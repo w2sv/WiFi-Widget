@@ -16,7 +16,7 @@ internal data class WidgetAppearance(
     val coloringConfig: WidgetColoring.Config,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
-    val bottomRow: WidgetBottomBarElement,
+    val bottomRow: WidgetBottomBarElement
 ) {
     fun getColors(context: Context): WidgetColors =
         when (val style = coloringConfig.appliedStyle) {
@@ -33,7 +33,7 @@ internal data class WidgetAppearance(
                 WidgetColors(
                     background = style.background,
                     primary = style.primary,
-                    secondary = style.secondary,
+                    secondary = style.secondary
                 )
             }
         }
@@ -41,14 +41,20 @@ internal data class WidgetAppearance(
 
 private sealed interface WidgetTheme {
 
-    fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors
+    fun getColors(
+        context: Context,
+        useDynamicColors: Boolean
+    ): WidgetColors
 
     sealed class DayOrNight(
         @StyleRes private val dynamicWrapperTheme: Int,
-        private val nonDynamicResources: WidgetColors.Resources,
+        private val nonDynamicResources: WidgetColors.Resources
     ) : WidgetTheme {
 
-        override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
+        override fun getColors(
+            context: Context,
+            useDynamicColors: Boolean
+        ): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(context, dynamicWrapperTheme)
             } else {
@@ -61,8 +67,8 @@ private sealed interface WidgetTheme {
         WidgetColors.Resources(
             R.color.background_light,
             R.color.default_label,
-            R.color.foreground_light,
-        ),
+            R.color.foreground_light
+        )
     )
 
     data object Dark : DayOrNight(
@@ -70,44 +76,50 @@ private sealed interface WidgetTheme {
         WidgetColors.Resources(
             R.color.background_dark,
             R.color.default_label,
-            R.color.foreground_dark,
-        ),
+            R.color.foreground_dark
+        )
     )
 
     data object SystemDefault : WidgetTheme {
-        override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
+        override fun getColors(
+            context: Context,
+            useDynamicColors: Boolean
+        ): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(
                     context,
-                    com.google.android.material.R.style.Theme_Material3_DynamicColors_DayNight,
+                    com.google.android.material.R.style.Theme_Material3_DynamicColors_DayNight
                 )
             } else {
                 (if (context.resources.configuration.isNightModeActiveCompat) Dark else Light)
                     .getColors(
                         context,
-                        false,
+                        false
                     )
             }
     }
 }
 
 @SuppressLint("ResourceType")
-private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int): WidgetColors =
+private fun getDynamicWidgetColors(
+    context: Context,
+    @StyleRes wrapperTheme: Int
+): WidgetColors =
     DynamicColors.wrapContextIfAvailable(
         context,
-        wrapperTheme,
+        wrapperTheme
     )
         .obtainStyledAttributes(
             intArrayOf(
                 com.google.android.material.R.attr.colorSurface,
                 com.google.android.material.R.attr.colorPrimary,
-                com.google.android.material.R.attr.colorSecondary,
-            ),
+                com.google.android.material.R.attr.colorSecondary
+            )
         )
         .use {
             WidgetColors(
                 background = it.getColor(0, 0),
                 primary = it.getColor(1, 0),
-                secondary = it.getColor(2, 0),
+                secondary = it.getColor(2, 0)
             )
         }

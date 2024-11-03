@@ -20,15 +20,15 @@ import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
-import javax.inject.Inject
 
 internal class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val viewDataFactory: WifiProperty.ViewData.Factory,
+    private val viewDataFactory: WifiProperty.ViewData.Factory
 ) : RemoteViewsService.RemoteViewsFactory {
 
     override fun onCreate() {}
@@ -45,7 +45,7 @@ internal class WifiPropertyViewsFactory @Inject constructor(
                 properties = widgetRepository.wifiPropertyEnablementMap.enabledKeys(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
                     .enabledKeys()
-                    .toSet(),
+                    .toSet()
             )
                 .toList()
         }
@@ -57,7 +57,8 @@ internal class WifiPropertyViewsFactory @Inject constructor(
         }
     }
 
-    override fun getCount(): Int = viewData.size
+    override fun getCount(): Int =
+        viewData.size
 
     override fun getViewAt(position: Int): RemoteViews =
         try {
@@ -67,7 +68,7 @@ internal class WifiPropertyViewsFactory @Inject constructor(
                 widgetColors = widgetColors,
                 fontSize = fontSize
             )
-        } catch (e: IndexOutOfBoundsException) {  // Fix irreproducible IndexOutOfBoundsException observed in play console
+        } catch (e: IndexOutOfBoundsException) { // Fix irreproducible IndexOutOfBoundsException observed in play console
             i { e.toString() }
             RemoteViews(context.packageName, R.layout.wifi_property)
         }
@@ -78,17 +79,19 @@ internal class WifiPropertyViewsFactory @Inject constructor(
                 setTextColor(R.id.loading_tv, widgetColors.secondary)
             }
 
-    override fun getViewTypeCount(): Int = 1
+    override fun getViewTypeCount(): Int =
+        1
 
     override fun getItemId(position: Int): Long =
         try {
             viewData[position].hashCode().toLong()
-        } catch (e: IndexOutOfBoundsException) {  // Same as above
+        } catch (e: IndexOutOfBoundsException) { // Same as above
             i { e.toString() }
             -1L
         }
 
-    override fun hasStableIds(): Boolean = true
+    override fun hasStableIds(): Boolean =
+        true
 
     override fun onDestroy() {}
 }
@@ -103,9 +106,9 @@ private fun inflatePropertyLayout(
         .apply {
             setTextView(
                 viewId = R.id.property_label_tv,
-                text = if (viewData is WifiProperty.ViewData.NonIP)
+                text = if (viewData is WifiProperty.ViewData.NonIP) {
                     viewData.label
-                else
+                } else {
                     buildSpannedString {
                         append(IP_LABEL)
                         subscript {
@@ -113,15 +116,16 @@ private fun inflatePropertyLayout(
                                 append(viewData.label)
                             }
                         }
-                    },
+                    }
+                },
                 size = fontSize.value,
-                color = widgetColors.primary,
+                color = widgetColors.primary
             )
             setTextView(
                 viewId = R.id.property_value_tv,
                 text = viewData.value,
                 size = fontSize.value,
-                color = widgetColors.secondary,
+                color = widgetColors.secondary
             )
 
             setOnClickFillInIntent(
@@ -139,13 +143,13 @@ private fun inflatePropertyLayout(
                     viewId = R.id.prefix_length_tv,
                     text = prefixLengthText,
                     size = fontSize.subscriptSize,
-                    color = widgetColors.secondary,
+                    color = widgetColors.secondary
                 )
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     setColorStateList(
                         R.id.prefix_length_tv,
                         "setBackgroundTintList",
-                        ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor),
+                        ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
                     )
                 } else {
                     setBackgroundColor(

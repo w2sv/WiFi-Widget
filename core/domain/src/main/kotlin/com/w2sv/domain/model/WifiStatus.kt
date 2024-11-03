@@ -6,7 +6,7 @@ import com.w2sv.core.domain.R
 
 enum class WifiStatus(
     @StringRes val labelRes: Int,
-    @DrawableRes val iconRes: Int,
+    @DrawableRes val iconRes: Int
 ) {
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),
     Disconnected(R.string.disconnected, R.drawable.ic_wifi_find_24),

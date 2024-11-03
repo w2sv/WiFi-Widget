@@ -1,4 +1,4 @@
-package com.w2sv.datastore.proto.widget_coloring
+package com.w2sv.datastore.proto.widgetcoloring
 
 import com.w2sv.datastore.WidgetColoringProto
 import com.w2sv.datastore.proto.Mapper

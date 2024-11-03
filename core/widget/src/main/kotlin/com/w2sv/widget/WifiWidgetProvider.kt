@@ -11,8 +11,8 @@ import com.w2sv.widget.data.refreshingBlocking
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
-import slimber.log.i
 import javax.inject.Inject
+import slimber.log.i
 
 @AndroidEntryPoint
 class WifiWidgetProvider : AppWidgetProvider() {
@@ -55,7 +55,10 @@ class WifiWidgetProvider : AppWidgetProvider() {
         widgetDataRefreshWorkerManager.cancelWorker()
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
+    override fun onReceive(
+        context: Context?,
+        intent: Intent?
+    ) {
         super.onReceive(context, intent) // Required for DI
 
         i {
@@ -71,7 +74,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                     onUpdate(
                         it,
                         appWidgetManager,
-                        appWidgetManager.getWifiWidgetIds(it),
+                        appWidgetManager.getWifiWidgetIds(it)
                     )
                 }
             }
@@ -81,13 +84,13 @@ class WifiWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray,
+        appWidgetIds: IntArray
     ) {
         i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
         val widgetView = RemoteViews(
             context.packageName,
-            R.layout.widget,
+            R.layout.widget
         )
 
         appWidgetIds.forEach { id ->
@@ -98,7 +101,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
                 widgetLayoutPopulator
                     .populate(
                         widget = widgetView,
-                        appWidgetId = id,
+                        appWidgetId = id
                     )
             )
         }

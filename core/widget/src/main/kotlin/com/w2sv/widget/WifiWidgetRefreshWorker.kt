@@ -10,10 +10,10 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.widget.model.WidgetRefreshing
-import slimber.log.i
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.toJavaDuration
+import slimber.log.i
 
 class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
@@ -55,7 +55,10 @@ class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameter
             applyRefreshingSettings(WidgetRefreshing(parameters = parameters, interval = interval))
         }
 
-        private fun enableWorker(refreshOnLowBattery: Boolean, interval: java.time.Duration) {
+        private fun enableWorker(
+            refreshOnLowBattery: Boolean,
+            interval: java.time.Duration
+        ) {
             workManager.enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
@@ -63,10 +66,10 @@ class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameter
                     .setConstraints(
                         Constraints.Builder()
                             .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshOnLowBattery)
-                            .build(),
+                            .build()
                     )
                     .setInitialDelay(interval)
-                    .build(),
+                    .build()
             )
             i { "Enqueued $UNIQUE_WORK_NAME" }
         }
