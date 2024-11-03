@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object WidgetModule {
+internal object WidgetModule {
 
     @Provides
     @Singleton

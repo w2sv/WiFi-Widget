@@ -35,7 +35,7 @@ internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
             )
 
         // Show toast
-        Handler(Looper.getMainLooper()).postAtFrontOfQueue {
+        Handler(Looper.getMainLooper()).post {
             context.applicationContext.showToast(
                 context.getString(R.string.copied_to_clipboard, args.propertyLabel),
                 Toast.LENGTH_SHORT

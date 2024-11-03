@@ -13,8 +13,8 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
-import com.w2sv.widget.WidgetDataRefreshWorker
-import com.w2sv.widget.WidgetProvider
+import com.w2sv.widget.WifiWidgetRefreshWorker
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
@@ -37,7 +37,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
-    private val widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager,
+    private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     @PackageName private val packageName: String,
     @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
@@ -116,7 +116,7 @@ class WidgetViewModel @Inject constructor(
         ),
         scope = viewModelScope,
         onStateSynced = {
-            WidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh " }
+            WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh " }
             delay(500)  // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(

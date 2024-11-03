@@ -1,5 +1,6 @@
 package com.w2sv.networking.model
 
+import com.w2sv.common.utils.log
 import com.w2sv.networking.extensions.fetchFromUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -48,13 +49,13 @@ internal data class IFConfigData(
     val asn: String,
     @SerialName("asn_org") val asnOrg: String
 ) {
-    val location: String by lazy { "$zipCode $city, $regionName, $country" }
-    val gpsLocation: String by lazy { "$latitude, $longitude" }
+    val location: String get() = "$zipCode $city, $regionName, $country"
+    val gpsLocation: String get() = "$latitude, $longitude"
 
     companion object {
         suspend fun fetch(client: OkHttpClient): Result<IFConfigData> =
             client.fetchFromUrl("https://ifconfig.co/json") { jsonString ->
-                json.decodeFromString<IFConfigData>(jsonString)
+                json.decodeFromString<IFConfigData>(jsonString).log { "Fetched $it" }
             }
     }
 }

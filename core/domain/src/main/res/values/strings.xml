@@ -81,8 +81,8 @@
     \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Poor:</b> -91 dBm and below</string>
     <string name="nat64prefix">NAT64 Prefix</string>
     <string name="nat64prefix_description">An IPv6 prefix, typically 64:ff9b::/96, used by NAT64 gateways to translate IPv6 addresses to IPv4 addresses and vice versa. It enables IPv6-only clients to communicate with IPv4-only servers by mapping IPv6 addresses to their corresponding IPv4 addresses. This facilitates seamless interaction between IPv6 and IPv4 networks, aiding in the transition to IPv6.\nWiFi Widget will display the NAT64 Prefix that is used on the current link, if there is one.</string>
-    <string name="location">Location</string>
-    <string name="location_description">The geographic position associated with your public IP. Retrieved from ifconfig.co.</string>
+    <string name="ip_location">IP Location</string>
+    <string name="ip_location_description">The geographic position associated with your public IP. Retrieved from ifconfig.co.</string>
     <string name="gps_coordinates">GPS Coordinates</string>
     <string name="gps_coordinates_description">The GPS Coordinates corresponding to your IP location. Retrieved from ifconfig.co.</string>
     <string name="asn">ASN</string>

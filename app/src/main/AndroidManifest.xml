@@ -31,7 +31,7 @@
         <!--Receivers-->
 
         <receiver
-            android:name="com.w2sv.widget.WidgetProvider"
+            android:name="com.w2sv.widget.WifiWidgetProvider"
             android:exported="false">
 
             <intent-filter>
@@ -49,7 +49,7 @@
         <!--Services-->
 
         <service
-            android:name="com.w2sv.widget.WifiPropertyViewsService"
+            android:name="com.w2sv.widget.layout.WifiPropertyViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>

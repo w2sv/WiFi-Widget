@@ -18,13 +18,9 @@ internal val WidgetRepository.appearanceBlocking: WidgetAppearance
 private val WidgetRepository.bottomRowBlocking: WidgetBottomBarElement
     get() = bottomRowElementEnablementMap
         .mapValuesToFirstBlocking()
-        .run {
-            WidgetBottomBarElement(this)
-        }
+        .run { WidgetBottomBarElement(this) }
 
 internal val WidgetRepository.refreshingBlocking: WidgetRefreshing
     get() = refreshingParametersEnablementMap
         .mapValuesToFirstBlocking()
-        .run {
-            WidgetRefreshing(parameters = this, interval = refreshInterval.firstBlocking())
-        }
+        .run { WidgetRefreshing(parameters = this, interval = refreshInterval.firstBlocking()) }

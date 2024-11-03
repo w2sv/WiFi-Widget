@@ -46,7 +46,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             connectivityManager.ipAddresses().log { "Got IP Addresses" }
         }
         val ifConfigData = SuspendingLazy<Result<IFConfigData>> {
-            IFConfigData.fetch(httpClient).log { "Fetched $it" }
+            IFConfigData.fetch(httpClient)
         }
 
         return flow {
@@ -201,7 +201,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Location -> add(ifConfigData().viewDataValue { it.location })
+                WifiProperty.NonIP.Other.IPLocation -> add(ifConfigData().viewDataValue { it.location })
                 WifiProperty.NonIP.Other.GpsCoordinates -> add(ifConfigData().viewDataValue { it.gpsLocation })
                 WifiProperty.NonIP.Other.ASN -> add(ifConfigData().viewDataValue { it.asn })
                 WifiProperty.NonIP.Other.ISP -> add(ifConfigData().viewDataValue { it.asnOrg })

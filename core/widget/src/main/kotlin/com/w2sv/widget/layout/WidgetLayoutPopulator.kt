@@ -1,11 +1,11 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.layout
 
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
@@ -20,7 +20,7 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
 import com.w2sv.widget.PendingIntentCode
-import com.w2sv.widget.WidgetProvider
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetBottomBarElement
 import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
@@ -35,7 +35,6 @@ import javax.inject.Inject
 internal class WidgetLayoutPopulator @Inject constructor(
     widgetRepository: WidgetRepository,
     @ApplicationContext private val context: Context,
-    private val wifiPropertyViewsFactory: WifiPropertyViewsFactory,
     private val appWidgetManager: AppWidgetManager,
     private val wifiStatusGetter: WifiStatusGetter
 ) {
@@ -55,7 +54,6 @@ internal class WidgetLayoutPopulator @Inject constructor(
                 setBottomBar(bottomBar = appearance.bottomRow)
             }
 
-    @SuppressLint("NewApi")
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
         when (val wifiStatus = wifiStatusGetter()) {
             WifiStatus.Connected -> {
@@ -64,9 +62,14 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     R.id.wifi_property_list_view,
                 )
 
+                @Suppress("DEPRECATION")
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    wifiPropertyViewsFactory.remoteCollectionItems()
+                    Intent(context, WifiPropertyViewsService::class.java)
+                        .apply {
+                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+                        },
                 )
 
                 setPendingIntentTemplate(
@@ -79,7 +82,9 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     )
                 )
 
-                appWidgetManager.updateAppWidget(appWidgetId, this)
+                @Suppress("DEPRECATION")
+                appWidgetManager
+                    .notifyAppWidgetViewDataChanged(appWidgetId, R.id.wifi_property_list_view)
             }
 
             else -> {
@@ -140,7 +145,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     PendingIntentCode.RefreshWidgetData.ordinal,
-                    WidgetProvider.getRefreshDataIntent(context),
+                    WifiWidgetProvider.getRefreshDataIntent(context),
                     PendingIntent.FLAG_IMMUTABLE,
                 ),
             )

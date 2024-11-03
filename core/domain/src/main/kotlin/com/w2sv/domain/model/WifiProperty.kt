@@ -158,9 +158,9 @@ sealed interface WifiProperty : WidgetProperty {
                 true
             )
             
-            data object Location: Other(
-                R.string.location,
-                R.string.location_description,
+            data object IPLocation: Other(
+                R.string.ip_location,
+                R.string.ip_location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
@@ -207,7 +207,7 @@ sealed interface WifiProperty : WidgetProperty {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(NAT64Prefix)
                         }
-                        add(Location)
+                        add(IPLocation)
                         add(GpsCoordinates)
                         add(ASN)
                         add(ISP)

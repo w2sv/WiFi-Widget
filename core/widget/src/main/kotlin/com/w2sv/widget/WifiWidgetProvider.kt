@@ -8,17 +8,17 @@ import android.widget.RemoteViews
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshingBlocking
-import com.w2sv.widget.ui.WidgetLayoutPopulator
+import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import slimber.log.i
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class WidgetProvider : AppWidgetProvider() {
+class WifiWidgetProvider : AppWidgetProvider() {
 
     @Inject
-    internal lateinit var widgetDataRefreshWorkerManager: WidgetDataRefreshWorker.Manager
+    internal lateinit var widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager
 
     @Inject
     internal lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
@@ -32,7 +32,7 @@ class WidgetProvider : AppWidgetProvider() {
     /**
      * Called upon the first AppWidget instance being created.
      *
-     * Enqueues [WidgetDataRefreshWorker] as UniquePeriodicWork if not already enqueued.
+     * Enqueues [WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
      */
     override fun onEnabled(context: Context?) {
         super.onEnabled(context)
@@ -45,7 +45,7 @@ class WidgetProvider : AppWidgetProvider() {
     /**
      * Called upon last AppWidget instance of provider being deleted.
      *
-     * Cancels [WidgetDataRefreshWorker].
+     * Cancels [WifiWidgetRefreshWorker].
      */
     override fun onDisabled(context: Context?) {
         super.onDisabled(context)
@@ -99,7 +99,7 @@ class WidgetProvider : AppWidgetProvider() {
                     .populate(
                         widget = widgetView,
                         appWidgetId = id,
-                    ),
+                    )
             )
         }
     }
@@ -115,7 +115,7 @@ class WidgetProvider : AppWidgetProvider() {
         }
 
         fun getRefreshDataIntent(context: Context): Intent =
-            Intent(context, WidgetProvider::class.java)
+            Intent(context, WifiWidgetProvider::class.java)
                 .setAction(ACTION_REFRESH_DATA)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"

@@ -11,12 +11,11 @@ import androidx.work.WorkerParameters
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.widget.model.WidgetRefreshing
 import slimber.log.i
-import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.toJavaDuration
 
-class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
+class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
 
     private val powerManager = appContext.getSystemService(PowerManager::class.java)
@@ -25,7 +24,7 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
         when (powerManager.isInteractive) {
             false -> i { "System not interactive; Skipping Widget Data refresh" }
             true -> {
-                WidgetProvider.triggerDataRefresh(applicationContext)
+                WifiWidgetProvider.triggerDataRefresh(applicationContext)
                 i { "Refreshed Widget Data" }
             }
         }
@@ -56,11 +55,11 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
             applyRefreshingSettings(WidgetRefreshing(parameters = parameters, interval = interval))
         }
 
-        private fun enableWorker(refreshOnLowBattery: Boolean, interval: Duration) {
+        private fun enableWorker(refreshOnLowBattery: Boolean, interval: java.time.Duration) {
             workManager.enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,
-                PeriodicWorkRequestBuilder<WidgetDataRefreshWorker>(interval)
+                PeriodicWorkRequestBuilder<WifiWidgetRefreshWorker>(interval)
                     .setConstraints(
                         Constraints.Builder()
                             .setRequiresBatteryNotLow(requiresBatteryNotLow = !refreshOnLowBattery)
@@ -80,6 +79,6 @@ class WidgetDataRefreshWorker(appContext: Context, workerParams: WorkerParameter
     }
 
     companion object {
-        private val UNIQUE_WORK_NAME = WidgetDataRefreshWorker::class.java.simpleName
+        private val UNIQUE_WORK_NAME = WifiWidgetRefreshWorker::class.java.simpleName
     }
 }
