@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.AnnotatedString
 import com.w2sv.composed.nullableListSaver
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
@@ -11,14 +12,16 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColo
 sealed interface WidgetConfigurationScreenDialog {
 
     @Immutable
-    data class Info(val data: InfoDialogData) : WidgetConfigurationScreenDialog {
+    @JvmInline
+    value class Info(val data: InfoDialogData) : WidgetConfigurationScreenDialog {
         companion object {
             const val SAVER_LABEL = "Info"
         }
     }
 
     @Immutable
-    data class ColorPicker(val data: ColorPickerDialogData) : WidgetConfigurationScreenDialog {
+    @JvmInline
+    value class ColorPicker(val data: ColorPickerDialogData) : WidgetConfigurationScreenDialog {
         companion object {
             const val SAVER_LABEL = "ColorPicker"
         }
@@ -59,7 +62,7 @@ sealed interface WidgetConfigurationScreenDialog {
                     Info.SAVER_LABEL -> Info(
                         InfoDialogData(
                             title = it[1] as String,
-                            description = it[2] as String,
+                            description = it[2] as AnnotatedString,
                             learnMoreUrl = it[3] as String?
                         )
                     )

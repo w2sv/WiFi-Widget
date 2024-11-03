@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
+import com.w2sv.composed.getAnnotatedString
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
@@ -26,7 +27,7 @@ import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplic
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.toInfoDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
@@ -134,7 +135,7 @@ fun rememberWidgetConfigurationCardProperties(
                                     showInfoDialog(
                                         InfoDialogData(
                                             title = context.getString(WidgetRefreshingParameter.RefreshPeriodically.labelRes),
-                                            description = context.getString(R.string.refresh_periodically_info)
+                                            description = context.resources.getAnnotatedString(R.string.refresh_periodically_info)
                                         )
                                     )
                                 },
@@ -260,7 +261,7 @@ private fun WifiProperty.checkRow(
 
             else -> null
         },
-        showInfoDialog = { showInfoDialog(toInfoDialogData(context)) }
+        showInfoDialog = { showInfoDialog(infoDialogData(context)) }
     )
 }
 

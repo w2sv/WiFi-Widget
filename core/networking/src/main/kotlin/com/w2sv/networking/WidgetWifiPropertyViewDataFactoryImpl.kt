@@ -199,9 +199,9 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 }
 
                 WifiProperty.NonIP.Other.Location -> add(ifConfigData().viewDataValue { it.location })
-                WifiProperty.NonIP.Other.GpsLocation -> add(ifConfigData().viewDataValue { it.gpsLocation })
-                WifiProperty.NonIP.Other.Asn -> add(ifConfigData().viewDataValue { it.asn })
-                WifiProperty.NonIP.Other.AsnOrg -> add(ifConfigData().viewDataValue { it.asnOrg })
+//                WifiProperty.NonIP.Other.GpsCoordinates -> add(ifConfigData().viewDataValue { it.gpsLocation })
+                WifiProperty.NonIP.Other.ASN -> add(ifConfigData().viewDataValue { it.asn })
+                WifiProperty.NonIP.Other.ISP -> add(ifConfigData().viewDataValue { it.asnOrg })
             }
         }
 

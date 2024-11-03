@@ -12,15 +12,15 @@
 
     <string name="show_prefix_length">Show prefix length(s)</string>
 
-    <string name="ssid_description">Service Set Identifier. Your networks name.</string>
-    <string name="bssid_description">Basic Service Set Identifier. A 48-bit label abiding by MAC-48 conventions, which identifies your device\'s basic service set.</string>
+    <string name="ssid_description"><b>Service Set Identifier</b>. Your networks name.</string>
+    <string name="bssid_description"><b>Basic Service Set Identifier</b>. A 48-bit label abiding by MAC-48 conventions, which identifies your device\'s basic service set.</string>
     <string name="frequency_description">The radio frequency band employed for WiFi signal transmission, following the IEEE 802.11 technical standards. Bands for use in WiFi communication provided by IEEE 802.11 lie at 900 MHz, 2.4 GHz, 3.6 GHz, 4.9 GHz, 5 GHz, 5.9 GHz, 6 GHz and 60 GHz. Bands are divided into several distinct channels.</string>
     <string name="channel_description">The sub frequencies which the main frequency bands are divided into, and via which WiFi communication takes place. As per the IEEE 802.11 standard, channels are numbered at 5 MHz spacing within a band (except in the 60 GHz band, where they are 2.16 GHz apart), where the number corresponds to the center frequency of the channel. Although channels are numbered at 5 MHz spacing, transmitters generally occupy at least 20 MHz, and standards allow for channels to be bonded together to form wider channels for faster throughput.</string>
     <string name="link_speed_description">The theoretical data transmission max speed between your device and the router.</string>
-    <string name="rssi_description">Received Signal Strength Indicator. A measurement of the power level of the received signal expressed in decibels (dBm). The dBm value indicates the received power level relative to 1 milliwatt (mW). Higher dBm values signify stronger signals, while lower values indicate weaker ones.</string>
+    <string name="rssi_description"><b>Received Signal Strength Indicator</b>. A measurement of the power level of the received signal expressed in decibels (dBm). The dBm value indicates the received power level relative to 1 milliwatt (mW). Higher dBm values signify stronger signals, while lower values indicate weaker ones.</string>
     <string name="gateway_description">A Gateway is a device uniting the functionality of a modem, i.e., communicating with your ISP (Internet Service Provider), and a router, i.e., translating the data received by the modem and distributing it as WiFi signal to the client devices being present in the network.</string>
-    <string name="dns_description">Domain Name System. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</string>
-    <string name="dhcp_description">Dynamic Host Configuration Protocol. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</string>
+    <string name="dns_description"><b>Domain Name System</b>. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</string>
+    <string name="dhcp_description"><b>Dynamic Host Configuration Protocol</b>. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</string>
     <string name="disabled">Disabled</string>
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
@@ -74,15 +74,17 @@
     <string name="security_description">The used security protocol.</string>
     <string name="signal_strength">Signal Strength</string>
     <string name="signal_strength_description">The signal strength level based on the RSSI. The used mapping function is:
-    \n\t\tExcellent: Up to -60 dBm
-    \n\t\tGood: -61 to -70 dBm
-    \n\t\tFair: -71 to -80 dBm
-    \n\t\tWeak: -81 to -90 dBm
-    \n\t\tPoor: -91 dBm and below</string>
+    \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Excellent:</b> Up to -60 dBm
+    \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Good:</b> -61 to -70 dBm
+    \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Fair:</b> -71 to -80 dBm
+    \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Weak:</b> -81 to -90 dBm
+    \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Poor:</b> -91 dBm and below</string>
     <string name="nat64prefix">NAT64 Prefix</string>
-    <string name="nat64prefix_description">A NAT64 prefix is an IPv6 prefix, typically 64:ff9b::/96, used by NAT64 gateways to translate IPv6 addresses to IPv4 addresses and vice versa. It enables IPv6-only clients to communicate with IPv4-only servers by mapping IPv6 addresses to their corresponding IPv4 addresses. This facilitates seamless interaction between IPv6 and IPv4 networks, aiding in the transition to IPv6.\nWiFi Widget will display the NAT64 Prefix that is used on the current link, if there is one.</string>
+    <string name="nat64prefix_description">An IPv6 prefix, typically 64:ff9b::/96, used by NAT64 gateways to translate IPv6 addresses to IPv4 addresses and vice versa. It enables IPv6-only clients to communicate with IPv4-only servers by mapping IPv6 addresses to their corresponding IPv4 addresses. This facilitates seamless interaction between IPv6 and IPv4 networks, aiding in the transition to IPv6.\nWiFi Widget will display the NAT64 Prefix that is used on the current link, if there is one.</string>
     <string name="location">Location</string>
-    <string name="gps_location">GPS Location</string>
+    <string name="location_description">The geographic position associated with your public IP. Retrieved from ifconfig.co.</string>
     <string name="asn">ASN</string>
-    <string name="asn_org">ASN Org</string>
+    <string name="asn_description">An <b>Autonomous System Number</b> is a unique numerical identifier assigned to an autonomous system, which is a large network or group of networks under a single organization that manages its own routing policies on the internet. ASNs allow these systems to exchange routing information with other networks, enabling efficient and independent management of internet traffic. They are essential for large entities like ISPs, data centers, and multinational companies, as they enable reliable communication and data flow between distinct networks across the internet. Retrieved from ifconfig.co.</string>
+    <string name="isp">ISP</string>
+    <string name="isp_description">Your <b>Internet Service Provider</b>. Retrieved from ifconfig.co.</string>
 </resources>

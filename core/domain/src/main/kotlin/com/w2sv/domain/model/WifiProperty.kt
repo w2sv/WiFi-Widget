@@ -160,29 +160,29 @@ sealed interface WifiProperty : WidgetProperty {
             
             data object Location: Other(
                 R.string.location,
-                0,
-                null,
+                R.string.location_description,
+                "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
 
-            data object GpsLocation: Other(
-                R.string.gps_location,
-                0,
-                null,
-                false
-            )
+//            data object GpsCoordinates: Other(
+//                R.string.gps_coordinates,
+//                0,
+//                "https://en.wikipedia.org/wiki/Internet_geolocation",
+//                false
+//            )
 
-            data object Asn: Other(
+            data object ASN: Other(
                 R.string.asn,
-                0,
-                null,
+                R.string.asn_description,
+                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
                 false
             )
 
-            data object AsnOrg: Other(
-                R.string.asn_org,
-                0,
-                null,
+            data object ISP: Other(
+                R.string.isp,
+                R.string.isp_description,
+                "https://en.wikipedia.org/wiki/Internet_service_provider",
                 false
             )
 
@@ -208,9 +208,8 @@ sealed interface WifiProperty : WidgetProperty {
                             add(NAT64Prefix)
                         }
                         add(Location)
-                        add(GpsLocation)
-                        add(Asn)
-                        add(AsnOrg)
+                        add(ASN)
+                        add(ISP)
                     }
             }
         }
