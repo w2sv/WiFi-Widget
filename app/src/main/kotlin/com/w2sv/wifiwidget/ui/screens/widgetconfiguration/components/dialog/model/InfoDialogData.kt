@@ -8,12 +8,12 @@ import com.w2sv.domain.model.WifiProperty
 data class InfoDialogData(
     @StringRes val titleRes: Int,
     @StringRes val descriptionRes: Int,
-    val learnMoreUrl: String? = null,
+    val learnMoreUrl: String? = null
 )
 
 fun WifiProperty.infoDialogData(): InfoDialogData =
     InfoDialogData(
         titleRes = labelRes,
         descriptionRes = descriptionRes,
-        learnMoreUrl = learnMoreUrl,
+        learnMoreUrl = learnMoreUrl
     )

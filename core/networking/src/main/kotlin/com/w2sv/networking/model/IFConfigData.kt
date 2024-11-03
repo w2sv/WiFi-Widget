@@ -37,7 +37,7 @@ import okhttp3.OkHttpClient
  * ```
  */
 @Serializable
-internal data class IfConfigData(
+internal data class IFConfigData(
 //    val ip: String,
     val country: String,
     @SerialName("region_name") val regionName: String,
@@ -52,9 +52,9 @@ internal data class IfConfigData(
     val gpsLocation: String by lazy { "$latitude, $longitude" }
 
     companion object {
-        suspend fun fetch(client: OkHttpClient): Result<IfConfigData> =
+        suspend fun fetch(client: OkHttpClient): Result<IFConfigData> =
             client.fetchFromUrl("https://ifconfig.co/json") { jsonString ->
-                json.decodeFromString<IfConfigData>(jsonString)
+                json.decodeFromString<IFConfigData>(jsonString)
             }
     }
 }

@@ -9,6 +9,6 @@ class IfConfigDataTest {
 
     @Test
     fun fetch() = runTest {
-        assertNotNull(IfConfigData.fetch(client = OkHttpClient()))
+        assertNotNull(IFConfigData.fetch(client = OkHttpClient()))
     }
 }

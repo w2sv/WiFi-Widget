@@ -11,10 +11,10 @@ import com.w2sv.common.utils.log
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.fetchFromUrl
-import com.w2sv.networking.extensions.getIPAddresses
+import com.w2sv.networking.extensions.ipAddresses
 import com.w2sv.networking.extensions.linkProperties
+import com.w2sv.networking.model.IFConfigData
 import com.w2sv.networking.model.IPAddress
-import com.w2sv.networking.model.IfConfigData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -26,6 +26,9 @@ import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
+
+private typealias GetSystemIPAddresses = () -> List<IPAddress>
+private typealias GetIFConfigData = suspend () -> Result<IFConfigData>
 
 internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
@@ -40,10 +43,10 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     ): Flow<WifiProperty.ViewData> {
 
         val systemIPAddresses by lazy {
-            connectivityManager.getIPAddresses().log { "Got IP Addresses" }
+            connectivityManager.ipAddresses().log { "Got IP Addresses" }
         }
-        val ifConfigData = SuspendingLazy<Result<IfConfigData>> {
-            IfConfigData.fetch(httpClient).log { "Fetched $it" }
+        val ifConfigData = SuspendingLazy<Result<IFConfigData>> {
+            IFConfigData.fetch(httpClient).log { "Fetched $it" }
         }
 
         return flow {
@@ -62,9 +65,9 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     }
 
     private suspend fun WifiProperty.getViewData(
-        systemIPAddresses: () -> List<IPAddress>,
+        systemIPAddresses: GetSystemIPAddresses,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>,
-        ifConfigData: suspend () -> Result<IfConfigData>
+        ifConfigData: GetIFConfigData
     ): List<WifiProperty.ViewData> =
         when (this) {
             is WifiProperty.NonIP -> getViewData(ifConfigData)
@@ -75,7 +78,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: suspend () -> Result<IfConfigData>): List<WifiProperty.ViewData.NonIP> =
+    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: GetIFConfigData): List<WifiProperty.ViewData.NonIP> =
         getViewData(
             values = getValues(ifConfigData),
             resources = resources,
@@ -85,7 +88,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         )
 
     @Suppress("DEPRECATION")
-    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: suspend () -> Result<IfConfigData>): List<String> =
+    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: GetIFConfigData): List<String> =
         buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
@@ -206,7 +209,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         }
 
     private suspend fun WifiProperty.IP.getViewData(
-        systemIPAddresses: () -> List<IPAddress>,
+        systemIPAddresses: GetSystemIPAddresses,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>
     ): List<WifiProperty.ViewData.IPProperty> =
         getViewData(
@@ -234,7 +237,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             }
         )
 
-    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: () -> List<IPAddress>): List<IPAddress> =
+    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: GetSystemIPAddresses): List<IPAddress> =
         when (this) {
             WifiProperty.IP.V6Only.ULA -> systemIPAddresses().filter { it.isUniqueLocal }
             WifiProperty.IP.V6Only.GUA -> systemIPAddresses().filter { it.isGlobalUnicast }
@@ -270,7 +273,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         }
 }
 
-private fun Result<IfConfigData>.viewDataValue(onSuccess: (IfConfigData) -> String): String =
+private fun Result<IFConfigData>.viewDataValue(onSuccess: (IFConfigData) -> String): String =
     requireNotNull(
         getOrNull()
             ?.let(onSuccess)
