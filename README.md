@@ -74,7 +74,7 @@
     - Interval
     - Whether to refresh on low battery
 
-<h2 align="center">Used Tech Stack</h2>
+<h2 align="center">Tech Stack</h2>
 
 - Kotlin
 - Jetpack Compose
