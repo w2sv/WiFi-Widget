@@ -31,10 +31,7 @@ sealed interface WifiProperty : WidgetProperty {
              * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
              * One [WifiProperty] may result in the the creation of multiple [ViewData] elements.
              */
-            operator fun invoke(
-                properties: Iterable<WifiProperty>,
-                ipSubProperties: Set<IP.SubProperty>
-            ): Flow<ViewData>
+            operator fun invoke(properties: Iterable<WifiProperty>, ipSubProperties: Set<IP.SubProperty>): Flow<ViewData>
         }
     }
 

@@ -48,17 +48,11 @@ class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameter
             }
         }
 
-        fun applyRefreshingSettings(
-            parameters: Map<WidgetRefreshingParameter, Boolean>,
-            interval: kotlin.time.Duration
-        ) {
+        fun applyRefreshingSettings(parameters: Map<WidgetRefreshingParameter, Boolean>, interval: kotlin.time.Duration) {
             applyRefreshingSettings(WidgetRefreshing(parameters = parameters, interval = interval))
         }
 
-        private fun enableWorker(
-            refreshOnLowBattery: Boolean,
-            interval: java.time.Duration
-        ) {
+        private fun enableWorker(refreshOnLowBattery: Boolean, interval: java.time.Duration) {
             workManager.enqueueUniquePeriodicWork(
                 UNIQUE_WORK_NAME,
                 ExistingPeriodicWorkPolicy.UPDATE,

@@ -15,7 +15,7 @@ lint:
 check:
 	@./gradlew check
 
-ktlint-format:
+format:
 	@./gradlew ktlintFormat
 
 # ==============
@@ -55,19 +55,19 @@ publish:
 	@echo -e "Retrieved Version: ${VERSION}\n\n Hit enter if you have\n 1. Incremented the version\n 2. Updated the release notes\n\n Otherwise cancel target now."
 	@read
 
-#	@echo "Check"
-#	@$(MAKE) check
+	@echo "Check"
+	@$(MAKE) check
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
-	@#$(MAKE) baseline-profile
+	@$(MAKE) baseline-profile
 
 	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
 
 	@$(MAKE) build-apk
 	@$(MAKE) create-gh-release
 
-#	@$(MAKE) build-aab
-#	@$(MAKE) publish-bundle
+	@$(MAKE) build-aab
+	@$(MAKE) publish-bundle
 
 publish-bundle:
 	@echo "Publish Bundle"

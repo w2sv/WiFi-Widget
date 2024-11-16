@@ -41,10 +41,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
     private val appearance = widgetRepository.appearanceBlocking
     private val colors = appearance.getColors(context)
 
-    fun populate(
-        widget: RemoteViews,
-        appWidgetId: Int
-    ): RemoteViews =
+    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget
             .apply {
                 setContentLayout(

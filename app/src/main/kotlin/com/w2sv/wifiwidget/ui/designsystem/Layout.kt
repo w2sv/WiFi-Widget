@@ -34,10 +34,7 @@ inline fun SystemBarsIgnoringVisibilityPaddedColumn(
 }
 
 @Composable
-fun RowScope.RightAligned(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
+fun RowScope.RightAligned(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Spacer(modifier = modifier.weight(1f))
     content()
 }

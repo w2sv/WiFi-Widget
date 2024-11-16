@@ -68,10 +68,7 @@ data class IconHeaderProperties(
 )
 
 @Composable
-fun IconHeader(
-    properties: IconHeaderProperties,
-    modifier: Modifier = Modifier
-) {
+fun IconHeader(properties: IconHeaderProperties, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier

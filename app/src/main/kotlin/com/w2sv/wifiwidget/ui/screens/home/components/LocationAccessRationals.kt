@@ -81,10 +81,7 @@ fun LocationAccessRationals(state: LocationAccessState) {
 }
 
 @Composable
-private fun LocationAccessPermissionRational(
-    onProceed: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun LocationAccessPermissionRational(onProceed: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         modifier = modifier,
         icon = {
@@ -107,10 +104,7 @@ private fun LocationAccessPermissionRational(
 }
 
 @Composable
-private fun BackgroundLocationAccessRational(
-    launchPermissionRequest: () -> Unit,
-    onDismissRequest: () -> Unit
-) {
+private fun BackgroundLocationAccessRational(launchPermissionRequest: () -> Unit, onDismissRequest: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {

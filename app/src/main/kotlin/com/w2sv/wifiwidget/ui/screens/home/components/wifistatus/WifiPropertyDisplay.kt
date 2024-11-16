@@ -67,10 +67,7 @@ import kotlinx.coroutines.launch
 import slimber.log.i
 
 @Composable
-fun WifiPropertyDisplay(
-    propertiesViewData: Flow<WifiProperty.ViewData>,
-    modifier: Modifier = Modifier
-) {
+fun WifiPropertyDisplay(propertiesViewData: Flow<WifiProperty.ViewData>, modifier: Modifier = Modifier) {
     val viewDataList = rememberRefreshingViewDataList(viewDataFlow = propertiesViewData)
 
     AnimatedVisibility(
@@ -165,10 +162,7 @@ private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewD
 }
 
 @Composable
-private fun PropertyList(
-    viewDataList: ImmutableList<PropertyListElement>,
-    modifier: Modifier = Modifier
-) {
+private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modifier: Modifier = Modifier) {
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
     LazyColumn(
@@ -322,10 +316,7 @@ private fun PropertyDisplayRow(
 }
 
 @Composable
-private fun PrefixLengthDisplayRow(
-    prefixLengthText: String,
-    modifier: Modifier = Modifier
-) {
+private fun PrefixLengthDisplayRow(prefixLengthText: String, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

@@ -256,10 +256,7 @@ private sealed interface NavigationDrawerSheetElement {
 }
 
 @Composable
-private fun SubHeader(
-    @StringRes titleRes: Int,
-    modifier: Modifier = Modifier
-) {
+private fun SubHeader(@StringRes titleRes: Int, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = titleRes),
         modifier = modifier,
@@ -269,10 +266,7 @@ private fun SubHeader(
 }
 
 @Composable
-private fun Item(
-    item: NavigationDrawerSheetElement.Item,
-    modifier: Modifier = Modifier
-) {
+private fun Item(item: NavigationDrawerSheetElement.Item, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .thenIfNotNull(item.type.clickableOrNull) {
@@ -297,10 +291,7 @@ private val iconSize = 28.dp
 private val labelStartPadding = 16.dp
 
 @Composable
-private fun MainItemRow(
-    item: NavigationDrawerSheetElement.Item,
-    modifier: Modifier = Modifier
-) {
+private fun MainItemRow(item: NavigationDrawerSheetElement.Item, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically

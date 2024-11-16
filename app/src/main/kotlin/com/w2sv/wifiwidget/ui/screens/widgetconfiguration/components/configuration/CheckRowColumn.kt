@@ -45,10 +45,7 @@ import kotlinx.collections.immutable.ImmutableList
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun CheckRowColumn(
-    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
-    modifier: Modifier = Modifier
-) {
+fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         elements
             .forEach { data ->
@@ -124,10 +121,7 @@ private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>) {
 }
 
 @Composable
-private fun SubPropertyCheckRowColumn(
-    elements: ImmutableList<CheckRowColumnElement>,
-    modifier: Modifier = Modifier
-) {
+private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElement>, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)

@@ -38,19 +38,13 @@ class WifiStatusMonitor @Inject constructor(
                 channel.trySend(WifiStatus.Connected.log { "Sent $it onAvailable" })
             }
 
-            override fun onCapabilitiesChanged(
-                network: Network,
-                networkCapabilities: NetworkCapabilities
-            ) {
+            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
                 if (network == connectivityManager.activeNetwork) {
                     channel.trySend(WifiStatus.Connected.log { "Sent $it onCapabilitiesChanged" })
                 }
             }
 
-            override fun onLinkPropertiesChanged(
-                network: Network,
-                linkProperties: LinkProperties
-            ) {
+            override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
                 if (network == connectivityManager.activeNetwork) {
                     channel.trySend(WifiStatus.Connected.log { "Sent $it onLinkPropertiesChanged" })
                 }

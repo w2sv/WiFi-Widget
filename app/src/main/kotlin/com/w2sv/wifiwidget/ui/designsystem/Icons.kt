@@ -28,10 +28,7 @@ fun InfoIcon(
 }
 
 @Composable
-fun KeyboardArrowRightIcon(
-    modifier: Modifier = Modifier,
-    tint: Color = LocalContentColor.current
-) {
+fun KeyboardArrowRightIcon(modifier: Modifier = Modifier, tint: Color = LocalContentColor.current) {
     Icon(
         imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
         contentDescription = null,

@@ -324,10 +324,7 @@ private fun textualIPv4Representation(address: Int): String? =
     )
         .hostAddress
 
-private suspend fun fetchPublicIPAddress(
-    httpClient: OkHttpClient,
-    version: IPAddress.Version
-): Result<IPAddress> {
+private suspend fun fetchPublicIPAddress(httpClient: OkHttpClient, version: IPAddress.Version): Result<IPAddress> {
     i { "Fetching public $version address" }
     return httpClient.fetchFromUrl(
         when (version) {

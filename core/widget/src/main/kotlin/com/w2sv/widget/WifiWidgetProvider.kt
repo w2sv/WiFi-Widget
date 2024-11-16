@@ -55,10 +55,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         widgetDataRefreshWorkerManager.cancelWorker()
     }
 
-    override fun onReceive(
-        context: Context?,
-        intent: Intent?
-    ) {
+    override fun onReceive(context: Context?, intent: Intent?) {
         super.onReceive(context, intent) // Required for DI
 
         i {

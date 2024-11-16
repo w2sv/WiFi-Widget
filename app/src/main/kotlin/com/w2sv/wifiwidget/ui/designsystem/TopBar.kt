@@ -21,10 +21,7 @@ import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(
-    modifier: Modifier = Modifier,
-    onNavigationIconClick: () -> Unit
-) {
+fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
     TopAppBar(
         title = {
             Text(

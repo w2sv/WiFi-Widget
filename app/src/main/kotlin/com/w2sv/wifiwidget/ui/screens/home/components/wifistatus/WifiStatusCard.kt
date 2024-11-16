@@ -15,10 +15,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 
 @Composable
-fun WifiStatusCard(
-    wifiState: WifiState,
-    modifier: Modifier = Modifier
-) {
+fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
     ElevatedIconHeaderCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_network_check_24,

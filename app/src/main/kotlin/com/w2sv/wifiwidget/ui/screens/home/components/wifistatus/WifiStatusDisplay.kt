@@ -33,10 +33,7 @@ private fun WifiStatusDisplayPrev() {
 }
 
 @Composable
-fun WifiStatusDisplay(
-    wifiStatus: WifiStatus,
-    modifier: Modifier = Modifier
-) {
+fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
     val context: Context = LocalContext.current
 
     Column(

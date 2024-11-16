@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
@@ -21,10 +21,7 @@ class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
 
     private val scope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
-    override fun onReceive(
-        p0: Context?,
-        p1: Intent?
-    ) {
+    override fun onReceive(context: Context, intent: Intent) {
         scope.launch { widgetPinSuccessFlow.emit(Unit) }
     }
 

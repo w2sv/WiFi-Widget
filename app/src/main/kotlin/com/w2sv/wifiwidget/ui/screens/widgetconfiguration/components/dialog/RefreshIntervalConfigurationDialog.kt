@@ -148,10 +148,7 @@ private fun WheelPickerRow(
 }
 
 @Composable
-private fun TimeWheelPicker(
-    state: WheelPickerState,
-    unitText: String
-) {
+private fun TimeWheelPicker(state: WheelPickerState, unitText: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         WheelPicker(
             state = state,

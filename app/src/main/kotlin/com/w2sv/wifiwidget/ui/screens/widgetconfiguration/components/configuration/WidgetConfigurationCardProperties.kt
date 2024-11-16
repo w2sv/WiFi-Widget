@@ -197,7 +197,8 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     }
 
     return remember {
-        WifiProperty.entries
+        WifiProperty
+            .entries
             .map { property ->
                 property.checkRow(
                     widgetConfiguration = widgetConfiguration,

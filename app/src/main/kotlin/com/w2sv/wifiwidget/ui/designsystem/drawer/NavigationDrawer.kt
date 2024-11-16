@@ -83,10 +83,7 @@ fun NavigationDrawer(
 }
 
 @Composable
-private fun NavigationDrawerSheet(
-    itemState: NavigationDrawerItemState,
-    modifier: Modifier = Modifier
-) {
+private fun NavigationDrawerSheet(itemState: NavigationDrawerItemState, modifier: Modifier = Modifier) {
     ModalDrawerSheet(
         modifier = modifier,
         windowInsets = emptyInsets

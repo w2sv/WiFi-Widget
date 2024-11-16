@@ -146,10 +146,7 @@ private fun ShowSnackbarOnWidgetPin(
 }
 
 @Composable
-private fun PinWidgetButton(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
+private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     ElevatedButton(
         onClick = onClick,
         modifier = modifier,
@@ -164,10 +161,7 @@ private fun PinWidgetButton(
 }
 
 @Composable
-private fun WidgetConfigurationDialogButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun WidgetConfigurationDialogButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,

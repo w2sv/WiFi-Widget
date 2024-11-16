@@ -22,10 +22,7 @@ internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
     @Inject
     lateinit var clipboardManager: ClipboardManager
 
-    override fun onReceive(
-        context: Context,
-        intent: Intent
-    ) {
+    override fun onReceive(context: Context, intent: Intent) {
         val args = Args.fromIntent(intent)
 
         // Copy to clipboard
@@ -50,10 +47,7 @@ internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
     data class Args(val propertyLabel: String, val propertyValue: String) : Parcelable {
 
         companion object {
-            fun getIntent(
-                propertyLabel: String,
-                propertyValue: String
-            ): Intent =
+            fun getIntent(propertyLabel: String, propertyValue: String): Intent =
                 Intent()
                     .putExtra(
                         EXTRA,

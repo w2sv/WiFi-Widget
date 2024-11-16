@@ -101,10 +101,7 @@ fun AppSnackbarHost(
 }
 
 @Composable
-fun AppSnackbar(
-    visuals: AppSnackbarVisuals,
-    modifier: Modifier = Modifier
-) {
+fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
     Snackbar(
         action = {
             visuals.action?.let { action ->

@@ -41,20 +41,14 @@ internal data class WidgetAppearance(
 
 private sealed interface WidgetTheme {
 
-    fun getColors(
-        context: Context,
-        useDynamicColors: Boolean
-    ): WidgetColors
+    fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors
 
     sealed class DayOrNight(
         @StyleRes private val dynamicWrapperTheme: Int,
         private val nonDynamicResources: WidgetColors.Resources
     ) : WidgetTheme {
 
-        override fun getColors(
-            context: Context,
-            useDynamicColors: Boolean
-        ): WidgetColors =
+        override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(context, dynamicWrapperTheme)
             } else {
@@ -81,10 +75,7 @@ private sealed interface WidgetTheme {
     )
 
     data object SystemDefault : WidgetTheme {
-        override fun getColors(
-            context: Context,
-            useDynamicColors: Boolean
-        ): WidgetColors =
+        override fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors =
             if (useDynamicColors) {
                 getDynamicWidgetColors(
                     context,
@@ -101,10 +92,7 @@ private sealed interface WidgetTheme {
 }
 
 @SuppressLint("ResourceType")
-private fun getDynamicWidgetColors(
-    context: Context,
-    @StyleRes wrapperTheme: Int
-): WidgetColors =
+private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int): WidgetColors =
     DynamicColors.wrapContextIfAvailable(
         context,
         wrapperTheme
