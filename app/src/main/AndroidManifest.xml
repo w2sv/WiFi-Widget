@@ -43,7 +43,7 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver android:name="com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver" />
+        <receiver android:name="com.w2sv.widget.WidgetPinSuccessBroadcastReceiver" />
         <receiver android:name="com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver" />
 
         <!--Services-->

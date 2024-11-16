@@ -1,13 +1,10 @@
 package com.w2sv.wifiwidget.ui.viewmodel
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.Intent
 import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.common.di.PackageName
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
@@ -15,34 +12,32 @@ import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.WifiWidgetRefreshWorker
+import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.WidgetPinSuccessBroadcastReceiver
 import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
-import com.w2sv.wifiwidget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.utils.reversibleStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
-    @PackageName private val packageName: String,
     @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     @ApplicationContext context: Context,
-    @WidgetPinSuccessFlow widgetPinSuccessFlow: MutableSharedFlow<Unit>
+    @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) :
     ViewModel() {
 
@@ -50,22 +45,14 @@ class WidgetViewModel @Inject constructor(
     // Pinning
     // =========
 
-    val widgetPinSuccessFlow = widgetPinSuccessFlow.asSharedFlow()
-
     fun attemptWidgetPin(context: Context) {
         appWidgetManager.attemptWifiWidgetPin(
-            packageName = packageName,
-            successCallback = PendingIntent.getBroadcast(
-                context,
-                WidgetPinSuccessBroadcastReceiver.REQUEST_CODE,
-                Intent(context, WidgetPinSuccessBroadcastReceiver::class.java),
-                PendingIntent.FLAG_IMMUTABLE
-            ),
+            context = context,
             onFailure = {
                 viewModelScope.launch {
                     sharedSnackbarVisuals.emit {
                         AppSnackbarVisuals(
-                            msg = it.getString(R.string.widget_pinning_not_supported_by_your_device_launcher),
+                            msg = it.getString(R.string.widget_pinning_failed),
                             kind = SnackbarKind.Warning
                         )
                     }

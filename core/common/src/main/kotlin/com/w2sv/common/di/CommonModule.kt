@@ -7,20 +7,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class PackageName
 
 @InstallIn(SingletonComponent::class)
 @Module
 object CommonModule {
-
-    @PackageName
-    @Provides
-    fun packageName(@ApplicationContext context: Context): String =
-        context.packageName
 
     @Provides
     fun resources(@ApplicationContext context: Context): Resources =
