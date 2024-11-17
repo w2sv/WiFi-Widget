@@ -10,9 +10,9 @@ import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.ReversibleStateMap
 import com.w2sv.reversiblestate.ReversibleStatesComposition
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
-import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 @Stable
 class ReversibleWidgetConfiguration(
@@ -20,6 +20,7 @@ class ReversibleWidgetConfiguration(
     val opacity: ReversibleStateFlow<Float>,
     val fontSize: ReversibleStateFlow<FontSize>,
     val wifiProperties: ReversibleStateMap<WifiProperty, Boolean>,
+    val orderedWifiProperties: ReversibleStateFlow<List<WifiProperty>>,
     val ipSubProperties: ReversibleStateMap<WifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: ReversibleStateMap<WidgetBottomBarElement, Boolean>,
     val refreshInterval: ReversibleStateFlow<Duration>,
@@ -32,6 +33,7 @@ class ReversibleWidgetConfiguration(
         opacity,
         fontSize,
         wifiProperties,
+        orderedWifiProperties,
         ipSubProperties,
         bottomRowMap,
         refreshInterval,

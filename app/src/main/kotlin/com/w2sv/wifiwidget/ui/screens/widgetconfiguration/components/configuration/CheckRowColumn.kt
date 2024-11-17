@@ -2,13 +2,13 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configurat
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -37,12 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
+import com.w2sv.wifiwidget.ui.utils.alphaDecreased
 import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableColumn
@@ -79,19 +82,17 @@ fun CheckRowColumn(
 fun DragAndDroppableCheckRowColumn(
     elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
     modifier: Modifier = Modifier,
-    onSettle: (fromIndex: Int, toIndex: Int) -> Unit
+    onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
     val view = LocalView.current
 
     ReorderableColumn(
         list = elements,
         modifier = modifier,
-        onSettle = onSettle
+        onSettle = onDrop
     ) { _, data, isDragging ->
-        val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "dragElevation")
         val dragAndDropModifier = Modifier
             .longPressDraggableHandle(
-                enabled = data.isChecked(),
                 onDragStarted = {
                     view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
                 },
@@ -99,7 +100,15 @@ fun DragAndDroppableCheckRowColumn(
                     view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
                 }
             )
-            .shadow(elevation = elevation)
+            .thenIf(isDragging) {
+                val alphaDecreasedSecondary = MaterialTheme.colorScheme.secondary.alphaDecreased()
+                shadow(
+                    elevation = 1.dp,
+                    shape = CircleShape,
+                    ambientColor = alphaDecreasedSecondary,
+                    spotColor = alphaDecreasedSecondary
+                )
+            }
 
         key(data.property) {
             when (data.hasSubProperties) {
@@ -130,10 +139,11 @@ private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier
                 modifier = Modifier.size(48.dp),
                 contentAlignment = Alignment.Center
             ) {
-                KeyboardArrowRightIcon(tint = MaterialTheme.colorScheme.onBackground)
+                KeyboardArrowRightIcon(tint = data.leadingIconAndLabelColor)
             }
         },
-        modifier = modifier
+        modifier = modifier,
+        labelColor = data.leadingIconAndLabelColor
     )
 }
 
@@ -168,7 +178,8 @@ private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>, m
                     )
                 }
             },
-            modifier = primaryCheckRowModifier
+            modifier = primaryCheckRowModifier,
+            labelColor = data.leadingIconAndLabelColor
         )
 
         AnimatedVisibility(visible = expandSubProperties) {
@@ -225,6 +236,7 @@ private fun CheckRowBase(
     data: CheckRowColumnElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
+    labelColor: Color = MaterialTheme.colorScheme.onBackground,
     leadingIcon: (@Composable () -> Unit)? = null
 ) {
     val label = stringResource(id = data.property.labelRes)
@@ -243,6 +255,7 @@ private fun CheckRowBase(
         Text(
             text = label,
             fontSize = fontSize,
+            color = labelColor,
             modifier = Modifier.weight(1.0f)
         )
         data.showInfoDialog?.let {

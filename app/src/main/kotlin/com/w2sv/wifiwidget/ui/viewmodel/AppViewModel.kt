@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.spec.Route
 import com.w2sv.common.constants.Extra
@@ -15,11 +14,11 @@ import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
@@ -35,7 +34,7 @@ class AppViewModel @Inject constructor(
         if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) {
             WidgetConfigurationScreenDestination
         } else {
-            HomeScreenDestination
+            WidgetConfigurationScreenDestination
         }
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()

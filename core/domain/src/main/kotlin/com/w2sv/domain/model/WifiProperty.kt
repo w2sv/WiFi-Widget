@@ -5,10 +5,14 @@ import androidx.annotation.StringRes
 import com.w2sv.core.domain.R
 import kotlinx.coroutines.flow.Flow
 
-sealed interface WifiProperty : WidgetProperty {
-    val descriptionRes: Int
-    val learnMoreUrl: String?
-    val defaultIsEnabled: Boolean
+sealed class WifiProperty : WidgetProperty {
+    abstract val descriptionRes: Int
+    abstract val learnMoreUrl: String?
+    abstract val defaultIsEnabled: Boolean
+
+    val ordinal by lazy {
+        entries.indexOf(this)
+    }
 
     sealed interface ViewData {
         val label: String
@@ -35,14 +39,14 @@ sealed interface WifiProperty : WidgetProperty {
         }
     }
 
-    sealed interface NonIP : WifiProperty {
+    sealed class NonIP : WifiProperty() {
 
         sealed class LocationAccessRequiring(
             @StringRes override val labelRes: Int,
             @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
-        ) : NonIP {
+        ) : NonIP() {
 
             data object SSID : LocationAccessRequiring(
                 R.string.ssid,
@@ -69,7 +73,7 @@ sealed interface WifiProperty : WidgetProperty {
             @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
-        ) : NonIP {
+        ) : NonIP() {
 
             data object Frequency : Other(
                 R.string.frequency,
@@ -213,7 +217,7 @@ sealed interface WifiProperty : WidgetProperty {
         }
     }
 
-    sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WifiProperty {
+    sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WifiProperty() {
 
         abstract val subscriptResId: Int
 

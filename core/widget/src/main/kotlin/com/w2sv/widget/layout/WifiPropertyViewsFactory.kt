@@ -20,6 +20,7 @@ import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
@@ -42,7 +43,7 @@ internal class WifiPropertyViewsFactory @Inject constructor(
 
         viewData = runBlocking {
             viewDataFactory(
-                properties = widgetRepository.wifiPropertyEnablementMap.enabledKeys(),
+                properties = widgetRepository.sortedEnabledWifiProperties.first(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
                     .enabledKeys()
                     .toSet()

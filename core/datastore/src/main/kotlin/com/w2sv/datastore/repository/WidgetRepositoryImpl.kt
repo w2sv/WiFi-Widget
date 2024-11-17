@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.w2sv.common.utils.enabledKeysFlow
 import com.w2sv.datastore.proto.widgetcoloring.WidgetColoringDataSource
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
 import com.w2sv.datastoreutils.preferences.PreferencesDataStoreRepository
@@ -16,12 +18,13 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 @Singleton
 internal class WidgetRepositoryImpl @Inject constructor(
@@ -38,12 +41,12 @@ internal class WidgetRepositoryImpl @Inject constructor(
 
     override val opacity = dataStoreFlow(
         key = floatPreferencesKey("opacity"),
-        default = 1.0f
+        default = { 1.0f }
     )
 
-    override val fontSize = dataStoreFlow(
+    override val fontSize = enumDataStoreFlow(
         key = intPreferencesKey("fontSize"),
-        default = FontSize.Small
+        default = { FontSize.Small }
     )
 
     // ================
@@ -52,6 +55,20 @@ internal class WidgetRepositoryImpl @Inject constructor(
 
     override val wifiPropertyEnablementMap: DataStoreFlowMap<WifiProperty, Boolean> =
         dataStoreFlowMap(WifiProperty.entries.associateWith { it.isEnabledDSE })
+
+    override val orderedWifiProperties: DataStoreFlow<List<WifiProperty>> = listDataStoreFlow(
+        key = stringPreferencesKey("wifiPropertyOrder"),
+        default = { WifiProperty.entries },
+        serialize = { it.joinToString(separator = ",") { property -> property.ordinal.toString() } },
+        deserialize = { it.split(",").map { ordinalString -> WifiProperty.entries[ordinalString.toInt()] } }
+    )
+
+    override val sortedEnabledWifiProperties: Flow<List<WifiProperty>> = combine(
+        wifiPropertyEnablementMap.enabledKeysFlow(),
+        orderedWifiProperties
+    ) { enabledKeys, order ->
+        enabledKeys.sortedBy { order.indexOf(it) }
+    }
 
     override val ipSubPropertyEnablementMap: DataStoreFlowMap<WifiProperty.IP.SubProperty, Boolean> =
         dataStoreFlowMap(
@@ -70,10 +87,10 @@ internal class WidgetRepositoryImpl @Inject constructor(
         DataStoreFlow(
             flow = getFlow(
                 preferencesKey = intPreferencesKey("refreshInterval"),
-                defaultValue = 15
+                defaultValue = { 15 }
             )
                 .map { it.minutes },
-            default = 15.minutes,
+            default = { 15.minutes },
             save = { save(intPreferencesKey("refreshInterval"), it.inWholeMinutes.toInt()) }
         )
 }
@@ -81,14 +98,14 @@ internal class WidgetRepositoryImpl @Inject constructor(
 private val WifiProperty.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = booleanPreferencesKey(preferencesKeyName),
-        defaultValue = defaultIsEnabled
+        defaultValue = { defaultIsEnabled }
     )
 
 private val WifiProperty.IP.SubProperty.isEnabledDse
     get() =
         DataStoreEntry.UniType.Impl(
             preferencesKey = booleanPreferencesKey("${property.preferencesKeyName}.${kind.preferencesKeyName}"),
-            defaultValue = true
+            defaultValue = { true }
         )
 
 private val WidgetBottomBarElement.isEnabledDSE
@@ -101,7 +118,7 @@ private val WidgetBottomBarElement.isEnabledDSE
                 WidgetBottomBarElement.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
             }
         ),
-        defaultValue = true
+        defaultValue = { true }
     )
 
 private val WidgetRefreshingParameter.isEnabledDSE
@@ -112,7 +129,7 @@ private val WidgetRefreshingParameter.isEnabledDSE
                 WidgetRefreshingParameter.RefreshPeriodically -> "RefreshPeriodically"
             }
         ),
-        defaultValue = defaultIsEnabled
+        defaultValue = { defaultIsEnabled }
     )
 
 private val Any.preferencesKeyName: String

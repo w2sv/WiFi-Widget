@@ -5,12 +5,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.common.utils.moveElement
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -32,6 +34,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private val checkRowColumnBottomPadding = 8.dp
@@ -92,7 +95,15 @@ fun rememberWidgetConfigurationCardProperties(
                         locationAccessState = locationAccessState,
                         showInfoDialog = showInfoDialog
                     ),
-                    onSettle = { fromIndex: Int, toIndex: Int -> }
+                    onDrop = { fromIndex: Int, toIndex: Int ->
+                        widgetConfiguration
+                            .orderedWifiProperties
+                            .update {
+                                it
+                                    .toMutableList()
+                                    .apply { moveElement(fromIndex, toIndex) }
+                            }
+                    }
                 )
             },
             WidgetConfigurationCard(
@@ -182,9 +193,9 @@ private fun rememberWidgetWifiPropertyCheckRowData(
         )
     }
 
-    return remember {
-        WifiProperty
-            .entries
+    val orderedWifiProperties by widgetConfiguration.orderedWifiProperties.collectAsStateWithLifecycle()
+    return remember(orderedWifiProperties) {
+        orderedWifiProperties
             .map { property ->
                 property.checkRow(
                     widgetConfiguration = widgetConfiguration,

@@ -43,7 +43,7 @@ import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantDecreasedAlpha
+import com.w2sv.wifiwidget.ui.theme.alphaDecreasedOnSurfaceVariant
 import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
 
@@ -279,7 +279,7 @@ private fun Item(item: NavigationDrawerSheetElement.Item, modifier: Modifier = M
         item.explanationRes?.let {
             Text(
                 text = stringResource(id = it),
-                color = MaterialTheme.colorScheme.onSurfaceVariantDecreasedAlpha,
+                color = MaterialTheme.colorScheme.alphaDecreasedOnSurfaceVariant,
                 modifier = Modifier.padding(start = iconSize + labelStartPadding),
                 fontSize = 14.sp
             )

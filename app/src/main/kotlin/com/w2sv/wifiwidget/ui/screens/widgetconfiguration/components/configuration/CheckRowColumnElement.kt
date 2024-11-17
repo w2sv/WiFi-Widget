@@ -1,10 +1,14 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import com.w2sv.domain.model.WidgetProperty
 import com.w2sv.wifiwidget.ui.utils.ShakeController
+import com.w2sv.wifiwidget.ui.utils.orAlphaDecreasedIf
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface CheckRowColumnElement {
@@ -22,6 +26,11 @@ sealed interface CheckRowColumnElement {
         val subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
         val modifier: Modifier = Modifier
     ) : CheckRowColumnElement {
+
+        val leadingIconAndLabelColor: Color
+            @Composable
+            @ReadOnlyComposable
+            get() = MaterialTheme.colorScheme.onBackground.orAlphaDecreasedIf(!isChecked())
 
         val hasSubProperties: Boolean
             get() = subPropertyColumnElements != null

@@ -11,7 +11,7 @@ object AppColor {
     val success = Color(12, 173, 34, 200)
 }
 
-val ColorScheme.onSurfaceVariantDecreasedAlpha: Color
+val ColorScheme.alphaDecreasedOnSurfaceVariant: Color
     @Composable
     @ReadOnlyComposable
     get() = onSurfaceVariant.copy(0.6f)
