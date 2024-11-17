@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -21,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +50,8 @@ import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.alphaDecreased
 import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
-import sh.calvin.reorderable.ReorderableColumn
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 /**
  * For alignment of primary check row click elements with sub property click elements
@@ -84,46 +87,48 @@ fun DragAndDroppableCheckRowColumn(
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        onDrop(from.index, to.index)
+    }
     val view = LocalView.current
 
-    ReorderableColumn(
-        list = elements,
-        modifier = modifier,
-        onSettle = onDrop
-    ) { _, data, isDragging ->
-        val dragAndDropModifier = Modifier
-            .longPressDraggableHandle(
-                onDragStarted = {
-                    view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
-                },
-                onDragStopped = {
-                    view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
-                }
-            )
-            .thenIf(isDragging) {
-                val alphaDecreasedSecondary = MaterialTheme.colorScheme.secondary.alphaDecreased()
-                shadow(
-                    elevation = 1.dp,
-                    shape = CircleShape,
-                    ambientColor = alphaDecreasedSecondary,
-                    spotColor = alphaDecreasedSecondary
-                )
-            }
-
-        key(data.property) {
-            when (data.hasSubProperties) {
-                false -> {
-                    CheckRow(
-                        data = data,
-                        modifier = primaryCheckRowModifier.then(dragAndDropModifier)
+    LazyColumn(state = lazyListState) {
+        items(elements, key = { it.property.labelRes }) { data ->
+            ReorderableItem(reorderableLazyListState, key = data.property.labelRes) { isDragging ->
+                val itemModifier = Modifier
+                    .longPressDraggableHandle(
+                        onDragStarted = {
+                            view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
+                        },
+                        onDragStopped = {
+                            view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
+                        }
                     )
-                }
+                    .thenIf(isDragging) {
+                        val alphaDecreasedSecondary = MaterialTheme.colorScheme.secondary.alphaDecreased()
+                        shadow(
+                            elevation = 1.dp,
+                            shape = CircleShape,
+                            ambientColor = alphaDecreasedSecondary,
+                            spotColor = alphaDecreasedSecondary
+                        )
+                    }
 
-                true -> {
-                    CheckRowWithSubProperties(
-                        data = data,
-                        modifier = dragAndDropModifier
-                    )
+                when (data.hasSubProperties) {
+                    false -> {
+                        CheckRow(
+                            data = data,
+                            modifier = primaryCheckRowModifier.then(itemModifier)
+                        )
+                    }
+
+                    true -> {
+                        CheckRowWithSubProperties(
+                            data = data,
+                            modifier = itemModifier
+                        )
+                    }
                 }
             }
         }
