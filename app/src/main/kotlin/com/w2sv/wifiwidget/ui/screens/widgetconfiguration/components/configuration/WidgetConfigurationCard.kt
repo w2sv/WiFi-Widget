@@ -3,15 +3,16 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configurat
 import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.common.utils.moveElement
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -19,9 +20,8 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.rememberShowSnackbar
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
@@ -34,12 +34,13 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private val checkRowColumnBottomPadding = 8.dp
 
 @Immutable
-data class WidgetConfigurationCardProperties(
+data class WidgetConfigurationCard(
     val iconHeaderProperties: IconHeaderProperties,
     val content: @Composable () -> Unit
 )
@@ -51,10 +52,10 @@ fun rememberWidgetConfigurationCardProperties(
     showInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
-): ImmutableList<WidgetConfigurationCardProperties> {
+): ImmutableList<WidgetConfigurationCard> {
     return remember {
         persistentListOf(
-            WidgetConfigurationCardProperties(
+            WidgetConfigurationCard(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_palette_24,
                     stringRes = R.string.appearance
@@ -82,21 +83,30 @@ fun rememberWidgetConfigurationCardProperties(
                         .padding(horizontal = 16.dp)
                 )
             },
-            WidgetConfigurationCardProperties(
+            WidgetConfigurationCard(
                 IconHeaderProperties(
                     iconRes = R.drawable.ic_checklist_24,
                     stringRes = R.string.properties
                 )
             ) {
-                CheckRowColumn(
+                DragAndDroppableCheckRowColumn(
                     elements = rememberWidgetWifiPropertyCheckRowData(
                         widgetConfiguration = widgetConfiguration,
                         locationAccessState = locationAccessState,
                         showInfoDialog = showInfoDialog
-                    )
+                    ),
+                    onDrop = { fromIndex: Int, toIndex: Int ->
+                        widgetConfiguration
+                            .orderedWifiProperties
+                            .update {
+                                it
+                                    .toMutableList()
+                                    .apply { moveElement(fromIndex, toIndex) }
+                            }
+                    }
                 )
             },
-            WidgetConfigurationCardProperties(
+            WidgetConfigurationCard(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = R.drawable.ic_bottom_row_24,
                     stringRes = R.string.bottom_bar
@@ -115,7 +125,7 @@ fun rememberWidgetConfigurationCardProperties(
                     modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
                 )
             },
-            WidgetConfigurationCardProperties(
+            WidgetConfigurationCard(
                 iconHeaderProperties = IconHeaderProperties(
                     iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
                     stringRes = R.string.refreshing
@@ -167,38 +177,25 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     showInfoDialog: (InfoDialogData) -> Unit
 ): ImmutableList<CheckRowColumnElement.CheckRow<WifiProperty>> {
     val context = LocalContext.current
-    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
     val scope: CoroutineScope = rememberCoroutineScope()
 
-    val showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit = remember {
-        {
-            scope.launch {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                    AppSnackbarVisuals(
-                        msg = context.getString(R.string.leave_at_least_one_property_enabled),
-                        kind = SnackbarKind.Warning
-                    )
-                )
-            }
-        }
+    val showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit = rememberShowSnackbar {
+        AppSnackbarVisuals(
+            msg = context.getString(R.string.leave_at_least_one_property_enabled),
+            kind = SnackbarKind.Warning
+        )
     }
 
-    val showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit = remember {
-        {
-            scope.launch {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
-                    AppSnackbarVisuals(
-                        msg = context.getString(R.string.leave_at_least_one_address_version_enabled),
-                        kind = SnackbarKind.Warning
-                    )
-                )
-            }
-        }
+    val showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit = rememberShowSnackbar {
+        AppSnackbarVisuals(
+            msg = context.getString(R.string.leave_at_least_one_address_version_enabled),
+            kind = SnackbarKind.Warning
+        )
     }
 
-    return remember {
-        WifiProperty
-            .entries
+    val orderedWifiProperties by widgetConfiguration.orderedWifiProperties.collectAsStateWithLifecycle()
+    return remember(orderedWifiProperties) {
+        orderedWifiProperties
             .map { property ->
                 property.checkRow(
                     widgetConfiguration = widgetConfiguration,

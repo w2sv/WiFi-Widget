@@ -15,8 +15,8 @@ internal class PermissionRepositoryImpl @Inject constructor(
     PermissionRepository {
 
     override val locationAccessPermissionRationalShown =
-        dataStoreFlow(booleanPreferencesKey("locationPermissionDialogAnswered"), false)
+        dataStoreFlow(booleanPreferencesKey("locationPermissionDialogAnswered")) { false }
 
     override val locationAccessPermissionRequested =
-        dataStoreFlow(booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce"), false)
+        dataStoreFlow(booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce")) { false }
 }

@@ -34,7 +34,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
 import com.w2sv.wifiwidget.ui.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
@@ -114,7 +114,7 @@ private fun ShowSnackbarOnWidgetPin(
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                !locationManager.isLocationEnabledCompat() -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                !locationManager.isLocationEnabledCompat() -> snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
                         kind = SnackbarKind.Warning
@@ -122,7 +122,7 @@ private fun ShowSnackbarOnWidgetPin(
                 )
 
                 // Warn about (B)SSID not being reliably displayed if background location access not granted
-                backgroundAccessState?.isGranted == false -> snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                backgroundAccessState?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                         kind = SnackbarKind.Warning,
@@ -136,7 +136,7 @@ private fun ShowSnackbarOnWidgetPin(
                 )
             }
         }
-        snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+        snackbarHostState.dismissCurrentAndShow(
             AppSnackbarVisuals(
                 msg = context.getString(R.string.pinned_widget),
                 kind = SnackbarKind.Success

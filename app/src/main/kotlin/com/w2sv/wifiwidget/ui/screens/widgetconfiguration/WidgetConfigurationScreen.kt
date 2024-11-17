@@ -49,7 +49,7 @@ import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
@@ -222,7 +222,7 @@ private fun onBack(
         backPressHandler.invoke(
             onFirstPress = {
                 scope.launch {
-                    snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                    snackbarHostState.dismissCurrentAndShow(
                         AppSnackbarVisuals(
                             msg = context.getString(R.string.go_back_on_unsaved_changes_warning),
                             kind = SnackbarKind.Warning
