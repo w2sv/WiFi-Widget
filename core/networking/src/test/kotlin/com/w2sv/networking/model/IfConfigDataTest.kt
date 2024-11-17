@@ -7,7 +7,7 @@ import org.junit.Test
 class IfConfigDataTest {
 
     @Test
-    fun fetch() =
+    fun `test fetch`() =
         runTest {
             println(IFConfigData.fetch(client = OkHttpClient()).getOrThrow())
         }

@@ -2,7 +2,12 @@ package com.w2sv.networking.model
 
 import android.net.LinkAddress
 import androidx.annotation.IntRange
+import com.w2sv.common.utils.log
 import com.w2sv.common.utils.removeAlphanumeric
+import com.w2sv.networking.extensions.fetchFromUrl
+import okhttp3.OkHttpClient
+import slimber.log.i
+import java.io.IOException
 
 internal data class IPAddress(
     @IntRange(from = 0, to = 128) val prefixLength: Int,
@@ -57,6 +62,32 @@ internal data class IPAddress(
     ) {
         V4(0, "0.0.0.0", { it.removeAlphanumeric() == "..." }),
         V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" })
+    }
+
+    companion object {
+        suspend fun fetchPublic(httpClient: OkHttpClient, version: Version): Result<IPAddress> {
+            i { "Fetching public $version address" }
+            return httpClient.fetchFromUrl(
+                when (version) {
+                    Version.V4 -> "https://api.ipify.org"
+                    Version.V6 -> "https://api6.ipify.org"
+                }
+            ) { address ->
+                if (version.ofCorrectFormat(address)) {
+                    IPAddress(
+                        prefixLength = version.minPrefixLength,
+                        hostAddress = address.log { "Got public $version address $it" },
+                        isLinkLocal = false,
+                        isSiteLocal = false,
+                        isAnyLocal = false,
+                        isLoopback = false,
+                        isMulticast = false
+                    )
+                } else {
+                    throw IOException("Obtained $version address $address of incorrect format")
+                }
+            }
+        }
     }
 }
 
