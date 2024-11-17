@@ -6,6 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import slimber.log.i
 
 /**
  * Data parsed from json retrieved from [ifconfig](https://ifconfig.co/json).
@@ -41,20 +42,24 @@ import okhttp3.OkHttpClient
 internal data class IFConfigData(
 //    val ip: String,
     val country: String,
-    @SerialName("region_name") val regionName: String,
-    @SerialName("zip_code") val zipCode: String,
-    val city: String,
+    @SerialName("region_name") val regionName: String? = null,
+    @SerialName("zip_code") val zipCode: String? = null,
+    val city: String? = null,
     val latitude: Double,
     val longitude: Double,
     val asn: String,
     @SerialName("asn_org") val asnOrg: String
 ) {
-    val location: String get() = "$zipCode $city, $regionName, $country"
+    val location: String get() = when {
+        listOf(regionName, zipCode, city).any { it == null } -> country
+        else -> "$zipCode $city, $regionName, $country"
+    }
     val gpsLocation: String get() = "$latitude, $longitude"
 
     companion object {
         suspend fun fetch(client: OkHttpClient): Result<IFConfigData> =
             client.fetchFromUrl("https://ifconfig.co/json") { jsonString ->
+                i { "Fetched json string: $jsonString" }
                 json.decodeFromString<IFConfigData>(jsonString).log { "Fetched $it" }
             }
     }
