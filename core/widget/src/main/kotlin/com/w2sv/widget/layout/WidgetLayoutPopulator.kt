@@ -18,7 +18,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusGetter
-import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
+import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.data.appearanceBlocking
@@ -74,10 +74,10 @@ internal class WidgetLayoutPopulator @Inject constructor(
 
                 setPendingIntentTemplate(
                     R.id.wifi_property_list_view,
-                    PendingIntent.getBroadcast(
+                    PendingIntent.getActivity(
                         context,
                         PendingIntentCode.CopyPropertyToClipboard.ordinal,
-                        Intent(context, CopyPropertyToClipboardBroadcastReceiver::class.java),
+                        Intent(context, CopyPropertyToClipboardActivity::class.java),
                         PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                     )
                 )

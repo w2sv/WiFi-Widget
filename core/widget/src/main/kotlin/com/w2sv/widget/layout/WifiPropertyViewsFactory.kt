@@ -14,16 +14,16 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.kotlinutils.coroutines.enabledKeys
-import com.w2sv.widget.CopyPropertyToClipboardBroadcastReceiver
+import com.w2sv.kotlinutils.coroutines.flow.enabledKeys
+import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
+import javax.inject.Inject
 
 internal class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -130,7 +130,7 @@ private fun inflatePropertyLayout(
 
             setOnClickFillInIntent(
                 R.id.wifi_property_layout,
-                CopyPropertyToClipboardBroadcastReceiver.Args.getIntent(
+                CopyPropertyToClipboardActivity.Args.getIntent(
                     propertyLabel = viewData.label,
                     propertyValue = viewData.value
                 )

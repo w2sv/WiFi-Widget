@@ -1,46 +1,66 @@
 package com.w2sv.widget
 
-import android.content.BroadcastReceiver
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
+import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.annotation.UiThread
 import com.w2sv.androidutils.os.getParcelableCompat
-import com.w2sv.androidutils.widget.showToast
+import com.w2sv.androidutils.res.getHtmlFormattedText
+import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @AndroidEntryPoint
-internal class CopyPropertyToClipboardBroadcastReceiver : BroadcastReceiver() {
+internal class CopyPropertyToClipboardActivity : ComponentActivity() {
+
+    @Singleton
+    class ToastManager @Inject constructor() {
+
+        @UiThread
+        fun cancelPreviousAndShow(toast: Toast) {
+            this.toast?.cancel()
+            this.toast = toast.also { it.show() }
+        }
+
+        private var toast: Toast? = null
+    }
+
+    @Inject
+    lateinit var toastManager: ToastManager
 
     @Inject
     lateinit var clipboardManager: ClipboardManager
 
-    override fun onReceive(context: Context, intent: Intent) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         val args = Args.fromIntent(intent)
 
         // Copy to clipboard
         clipboardManager
             .setPrimaryClip(
                 ClipData.newPlainText(
-                    null,
+                    args.propertyLabel,
                     args.propertyValue
                 )
             )
 
         // Show toast
-        Handler(Looper.getMainLooper()).post {
-            context.applicationContext.showToast(
-                context.getString(R.string.copied_to_clipboard, args.propertyLabel),
+        toastManager.cancelPreviousAndShow(
+            applicationContext.makeToast(
+                resources.getHtmlFormattedText(R.string.copied_to_clipboard, args.propertyLabel),
                 Toast.LENGTH_SHORT
             )
-        }
+        )
+
+        finishAndRemoveTask()
     }
 
     @Parcelize
