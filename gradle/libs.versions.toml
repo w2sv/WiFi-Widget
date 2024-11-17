@@ -4,7 +4,7 @@ minSdk = "26"  # min for activity.isRequestPinAppWidgetSupported
 compileSdk = "35"
 
 # Plugins
-agp = "8.7.2"
+agp = "8.6.1"
 kotlin = "2.0.21"
 java = "17"
 ksp = "2.0.21-1.0.28"
@@ -32,17 +32,19 @@ datastore = "1.1.1"
 composed = "0.0.6-rc1"
 compose-destinations = "2.0.0-beta01"
 hiltNavigationCompose = "1.2.0"
-datastoreutils = "0.0.4-rc1"
-kotlinutils = "0.1.4-rc1"
+datastoreutils = "0.0.5-rc1"
+kotlinutils = "0.1.5-rc2"
 kotlinxCoroutines = "1.9.0"
+reversiblestate = "0.0.6-rc1"
+androidutils = "0.4.4-rc1"
 
 [libraries]
 
 # w2sv
-w2sv-androidutils = "com.github.w2sv:AndroidUtils:0.4.2-rc2"
+w2sv-androidutils = { module = "com.github.w2sv:AndroidUtils", version.ref = "androidutils" }
 w2sv-colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
 w2sv-kotlinutils = { module = "com.github.w2sv:KotlinUtils", version.ref = "kotlinutils" }
-w2sv-reversiblestate = "com.github.w2sv:ReversibleStateKt:0.0.5-rc1"
+w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "reversiblestate" }
 w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:preferences", version.ref = "datastoreutils" }
 w2sv-datastoreutils-datastoreflow = { module = "com.github.w2sv.DataStoreUtils:datastoreflow", version.ref = "datastoreutils" }
 w2sv-composed = { module = "com.github.w2sv.Composed:composed", version.ref = "composed" }
@@ -87,10 +89,10 @@ compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:
 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }
-androidx-test-rules = "androidx.test:rules:1.6.1"
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTextExtJunit" }
+# androidx-test-rules = "androidx.test:rules:1.6.1"
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
-#androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
+# androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 roboelectric = "org.robolectric:robolectric:4.14"
 mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }

@@ -18,7 +18,7 @@ import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
-import com.w2sv.kotlinutils.coroutines.mapState
+import com.w2sv.kotlinutils.coroutines.flow.mapState
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState

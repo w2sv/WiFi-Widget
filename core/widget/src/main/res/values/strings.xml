@@ -5,5 +5,5 @@
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
     <string name="loading">Loading…</string>
-    <string name="copied_to_clipboard">Copied %1$s to clipboard.</string>
+    <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
 </resources>
