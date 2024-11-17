@@ -24,7 +24,7 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
@@ -167,7 +167,7 @@ class LocationAccessState(
     fun launchRequest(trigger: LocationAccessPermissionRequestTrigger) {
         if (isLaunchingSuppressed(requestLaunchedBefore.value)) {
             scope.launch {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
                         kind = SnackbarKind.Warning,

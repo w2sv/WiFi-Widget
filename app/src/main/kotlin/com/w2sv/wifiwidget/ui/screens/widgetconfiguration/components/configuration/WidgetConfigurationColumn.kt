@@ -23,7 +23,7 @@ import kotlinx.collections.immutable.ImmutableList
 private val verticalColumnCardSpacing = 16.dp
 
 @Composable
-fun WidgetConfigurationColumn(cardProperties: ImmutableList<WidgetConfigurationCardProperties>, modifier: Modifier = Modifier) {
+fun WidgetConfigurationColumn(cardProperties: ImmutableList<WidgetConfigurationCard>, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -42,7 +42,7 @@ fun WidgetConfigurationColumn(cardProperties: ImmutableList<WidgetConfigurationC
 }
 
 @Composable
-private fun WidgetConfigurationCard(properties: WidgetConfigurationCardProperties, modifier: Modifier = Modifier) {
+private fun WidgetConfigurationCard(properties: WidgetConfigurationCard, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .background(

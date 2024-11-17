@@ -155,4 +155,5 @@ dependencies {
     implementation(libs.slimber)
     lintChecks(libs.compose.lint.checks)
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.reorderable)
 }

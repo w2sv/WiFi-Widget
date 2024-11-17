@@ -55,7 +55,7 @@ import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
-import com.w2sv.wifiwidget.ui.designsystem.showSnackbarAndDismissCurrentIfApplicable
+import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
@@ -253,7 +253,7 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
         { viewData, label, scope ->
             clipboardManager.setText(AnnotatedString(viewData.value))
             scope.launch {
-                snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(
+                snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = buildAnnotatedString {
                             append("${context.getString(R.string.copied)} ")

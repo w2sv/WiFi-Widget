@@ -20,6 +20,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.theme.AppColor
 import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -79,9 +83,26 @@ sealed interface SnackbarKind {
 
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 
-suspend fun SnackbarHostState.showSnackbarAndDismissCurrentIfApplicable(snackbarVisuals: SnackbarVisuals) {
+suspend fun SnackbarHostState.dismissCurrentAndShow(snackbarVisuals: SnackbarVisuals) {
     currentSnackbarData?.dismiss()
     showSnackbar(snackbarVisuals)
+}
+
+@Composable
+fun rememberShowSnackbar(
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    snackbarVisuals: () -> SnackbarVisuals
+): () -> Unit {
+    return remember(snackbarHostState) {
+        {
+            scope.launch {
+                snackbarHostState.dismissCurrentAndShow(
+                    snackbarVisuals()
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -92,7 +113,7 @@ fun AppSnackbarHost(
 ) {
     // Show Snackbars collected from sharedSnackbarVisuals
     CollectLatestFromFlow(appVM.makeSnackbarVisualsFlow) {
-        snackbarHostState.showSnackbarAndDismissCurrentIfApplicable(it(context))
+        snackbarHostState.dismissCurrentAndShow(it(context))
     }
 
     SnackbarHost(snackbarHostState) { snackbarData ->

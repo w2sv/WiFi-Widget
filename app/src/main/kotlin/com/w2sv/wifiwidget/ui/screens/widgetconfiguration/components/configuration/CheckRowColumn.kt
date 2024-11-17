@@ -1,6 +1,8 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,12 +21,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -40,18 +45,24 @@ import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
+import sh.calvin.reorderable.ReorderableColumn
 
-// For alignment of primary check row click elements with sub property click elements
+/**
+ * For alignment of primary check row click elements with sub property click elements
+ */
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, modifier: Modifier = Modifier) {
+fun CheckRowColumn(
+    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier = modifier) {
         elements
             .forEach { data ->
                 when (data.hasSubProperties) {
                     false -> {
-                        CheckRow(data = data)
+                        CheckRow(data = data, modifier = primaryCheckRowModifier)
                     }
 
                     true -> {
@@ -65,8 +76,54 @@ fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, m
 }
 
 @Composable
-private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>) {
-    CheckRow(
+fun DragAndDroppableCheckRowColumn(
+    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
+    modifier: Modifier = Modifier,
+    onSettle: (fromIndex: Int, toIndex: Int) -> Unit
+) {
+    val view = LocalView.current
+
+    ReorderableColumn(
+        list = elements,
+        modifier = modifier,
+        onSettle = onSettle
+    ) { _, data, isDragging ->
+        val elevation by animateDpAsState(if (isDragging) 4.dp else 0.dp, label = "dragElevation")
+        val dragAndDropModifier = Modifier
+            .longPressDraggableHandle(
+                enabled = data.isChecked(),
+                onDragStarted = {
+                    view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
+                },
+                onDragStopped = {
+                    view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
+                }
+            )
+            .shadow(elevation = elevation)
+
+        key(data.property) {
+            when (data.hasSubProperties) {
+                false -> {
+                    CheckRow(
+                        data = data,
+                        modifier = primaryCheckRowModifier.then(dragAndDropModifier)
+                    )
+                }
+
+                true -> {
+                    CheckRowWithSubProperties(
+                        data = data,
+                        modifier = dragAndDropModifier
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
+    CheckRowBase(
         data = data,
         leadingIcon = {
             Box(
@@ -76,12 +133,12 @@ private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>) {
                 KeyboardArrowRightIcon(tint = MaterialTheme.colorScheme.onBackground)
             }
         },
-        modifier = primaryCheckRowModifier
+        modifier = modifier
     )
 }
 
 @Composable
-private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>) {
+private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
     var expandSubProperties by rememberSaveable {
         mutableStateOf(false)
     }
@@ -92,8 +149,8 @@ private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>) {
         }
     }
 
-    Column {
-        CheckRow(
+    Column(modifier = modifier) {
+        CheckRowBase(
             data = data,
             leadingIcon = {
                 IconButton(
@@ -125,14 +182,14 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
-            .padding(start = 24.dp) // Make background start at the indentation of CheckRow label
+            .padding(start = 24.dp) // Make background start at the indentation of CheckRowBase label
             .nestedContentBackground()
             .padding(start = subPropertyColumnPadding)
     ) {
         elements.forEach { view ->
             when (view) {
                 is CheckRowColumnElement.CheckRow<*> -> {
-                    CheckRow(
+                    CheckRowBase(
                         data = view,
                         modifier = view.modifier,
                         fontSize = subPropertyCheckRowColumnFontSize,
@@ -164,7 +221,7 @@ private val subPropertyCheckRowColumnFontSize = 14.sp
 private val subPropertyColumnPadding = 12.dp
 
 @Composable
-private fun CheckRow(
+private fun CheckRowBase(
     data: CheckRowColumnElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
