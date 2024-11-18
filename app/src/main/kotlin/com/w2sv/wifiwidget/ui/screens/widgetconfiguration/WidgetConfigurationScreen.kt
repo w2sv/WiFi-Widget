@@ -44,7 +44,7 @@ import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithDivider
+import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithBottomDivider
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
@@ -117,7 +117,7 @@ fun WidgetConfigurationScreen(
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding() + 16.dp)
         ) {
-            BackButtonHeaderWithDivider(
+            BackButtonHeaderWithBottomDivider(
                 title = stringResource(id = R.string.widget_configuration),
                 onBackButtonClick = onBack
             )

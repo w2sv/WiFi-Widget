@@ -367,7 +367,8 @@ sealed class WifiProperty : WidgetProperty {
     }
 
     companion object {
-        val entries: List<WifiProperty>
-            get() = NonIP.LocationAccessRequiring.entries + IP.entries + NonIP.Other.entries
+        val entries: List<WifiProperty> by lazy {
+            NonIP.LocationAccessRequiring.entries + IP.entries + NonIP.Other.entries
+        }
     }
 }

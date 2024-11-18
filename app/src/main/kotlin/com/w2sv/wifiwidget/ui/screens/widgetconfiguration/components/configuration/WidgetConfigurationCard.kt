@@ -19,7 +19,9 @@ import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.rememberShowSnackbar
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
@@ -86,7 +88,24 @@ fun rememberWidgetConfigurationCardProperties(
             WidgetConfigurationCard(
                 IconHeaderProperties(
                     iconRes = R.drawable.ic_checklist_24,
-                    stringRes = R.string.properties
+                    stringRes = R.string.properties,
+                    trailingIcon = {
+                        val propertiesInDefaultOrder by widgetConfiguration.propertiesInDefaultOrder.collectAsStateWithLifecycle()
+                        MoreIconButtonWithDropdownMenu(
+                            menuItems = remember {
+                                persistentListOf(
+                                    DropdownMenuItemProperties(
+                                        R.string.restore_default_order,
+                                        onClick = {
+                                            widgetConfiguration.restoreDefaultPropertyOrder()
+                                        },
+                                        enabled = { !propertiesInDefaultOrder },
+                                        leadingIconRes = R.drawable.ic_restart_alt_24
+                                    )
+                                )
+                            }
+                        )
+                    }
                 )
             ) {
                 DragAndDroppableCheckRowColumn(

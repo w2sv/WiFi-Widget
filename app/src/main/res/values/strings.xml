@@ -79,4 +79,7 @@
     <string name="share_explanation">Share the app with someone who might appreciate it</string>
     <string name="report_a_bug_explanation">Help make the app better!</string>
     <string name="go_back_on_unsaved_changes_warning">Going back now will lead to all your unsaved changes being lost.</string>
+    <string name="restore_default_order">Restore default order</string>
+    <string name="move_disabled_properties_to_the_bottom">Move disabled properties to the bottom</string>
+    <string name="show_dropdown_menu">Show dropdown menu</string>
 </resources>
