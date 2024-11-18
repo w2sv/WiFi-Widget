@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -40,6 +41,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.utils.onAtLeastAndroidR
+import com.w2sv.common.utils.onAtLeastAndroidU
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
@@ -87,31 +90,36 @@ fun DragAndDroppableCheckRowColumn(
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
+    val view = LocalView.current
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         onDrop(from.index, to.index)
+        onAtLeastAndroidU { view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK) }
     }
-    val view = LocalView.current
 
-    LazyColumn(state = lazyListState) {
+    LazyColumn(
+        state = lazyListState,
+        modifier = modifier.heightIn(max = 2_000.dp),  // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that accommodates the column height")
+        userScrollEnabled = false
+    ) {
         items(elements, key = { it.property.labelRes }) { data ->
             ReorderableItem(reorderableLazyListState, key = data.property.labelRes) { isDragging ->
                 val itemModifier = Modifier
                     .longPressDraggableHandle(
                         onDragStarted = {
-                            view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START)
+                            onAtLeastAndroidR { view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START) }
                         },
                         onDragStopped = {
-                            view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END)
+                            onAtLeastAndroidR { view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END) }
                         }
                     )
                     .thenIf(isDragging) {
-                        val alphaDecreasedSecondary = MaterialTheme.colorScheme.secondary.alphaDecreased()
+                        val shadowColor = MaterialTheme.colorScheme.secondary.alphaDecreased()
                         shadow(
                             elevation = 1.dp,
                             shape = CircleShape,
-                            ambientColor = alphaDecreasedSecondary,
-                            spotColor = alphaDecreasedSecondary
+                            ambientColor = shadowColor,
+                            spotColor = shadowColor
                         )
                     }
 
