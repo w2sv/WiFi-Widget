@@ -64,7 +64,8 @@ fun BackButtonHeaderWithDivider(
 
 data class IconHeaderProperties(
     @DrawableRes val iconRes: Int,
-    @StringRes val stringRes: Int
+    @StringRes val stringRes: Int,
+    val trailingIcon: (@Composable () -> Unit)? = null
 )
 
 @Composable
@@ -89,6 +90,8 @@ fun IconHeader(properties: IconHeaderProperties, modifier: Modifier = Modifier) 
                 color = MaterialTheme.colorScheme.tertiary
             )
         }
-        Spacer(modifier = Modifier.weight(0.3f))
+        Box(modifier = Modifier.weight(0.3f), contentAlignment = Alignment.Center) {
+            properties.trailingIcon?.invoke()
+        }
     }
 }

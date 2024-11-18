@@ -1,15 +1,31 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
 import androidx.compose.animation.core.Spring
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.utils.moveElement
@@ -30,6 +46,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidget
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
+import com.w2sv.wifiwidget.ui.utils.alphaDecreased
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -86,7 +103,8 @@ fun rememberWidgetConfigurationCardProperties(
             WidgetConfigurationCard(
                 IconHeaderProperties(
                     iconRes = R.drawable.ic_checklist_24,
-                    stringRes = R.string.properties
+                    stringRes = R.string.properties,
+                    trailingIcon = { MoreIconButtonWithDropdownMenu(widgetConfiguration) }
                 )
             ) {
                 DragAndDroppableCheckRowColumn(
@@ -165,6 +183,39 @@ fun rememberWidgetConfigurationCardProperties(
                     },
                     modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
                 )
+            }
+        )
+    }
+}
+
+@Composable
+private fun MoreIconButtonWithDropdownMenu(widgetConfiguration: ReversibleWidgetConfiguration) {
+    var expanded by rememberSaveable {
+        mutableStateOf(false)
+    }
+    IconButton(onClick = { expanded = !expanded }) {
+        Icon(Icons.Default.MoreVert, "")
+    }
+
+    val isDefaultPropertyOder by widgetConfiguration.isDefaultPropertyOrder.collectAsStateWithLifecycle()
+    DropdownMenu(
+        expanded = expanded,
+        onDismissRequest = { expanded = false },
+        modifier = Modifier.border(
+            width = Dp.Hairline,
+            color = MaterialTheme.colorScheme.secondary.alphaDecreased(),
+            shape = MaterialTheme.shapes.extraSmall
+        ),
+        offset = DpOffset((-8).dp, 0.dp)
+    ) {
+        DropdownMenuItem(
+            text = { Text(text = stringResource(R.string.restore_default_order)) },
+            onClick = {
+                widgetConfiguration.restoreDefaultPropertyOrder()
+            },
+            enabled = !isDefaultPropertyOder,
+            leadingIcon = {
+                Icon(painterResource(R.drawable.ic_restart_alt_24), null)
             }
         )
     }

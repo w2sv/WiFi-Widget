@@ -10,4 +10,6 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.w2sv.androidutils)
     implementation(libs.slimber)
+
+    testImplementation(libs.bundles.unitTest)
 }
