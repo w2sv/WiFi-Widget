@@ -6,6 +6,7 @@ import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.spec.Route
 import com.w2sv.common.constants.Extra
@@ -34,7 +35,7 @@ class AppViewModel @Inject constructor(
         if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) {
             WidgetConfigurationScreenDestination
         } else {
-            WidgetConfigurationScreenDestination
+            HomeScreenDestination
         }
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()

@@ -76,7 +76,7 @@ sealed interface WidgetConfigurationScreenDialog {
 
                     RefreshIntervalConfiguration.SAVER_LABEL -> RefreshIntervalConfiguration
 
-                    else -> throw IllegalArgumentException("Invalid WidgetConfigurationScreenDialog type label")
+                    else -> error("Invalid WidgetConfigurationScreenDialog type label")
                 }
             }
         )

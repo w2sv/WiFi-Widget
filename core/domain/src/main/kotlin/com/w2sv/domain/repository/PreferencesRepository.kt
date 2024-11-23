@@ -7,4 +7,5 @@ interface PreferencesRepository {
     val inAppTheme: DataStoreFlow<Theme>
     val useDynamicTheme: DataStoreFlow<Boolean>
     val useAmoledBlackTheme: DataStoreFlow<Boolean>
+    val propertyReorderingDiscoveryShown: DataStoreFlow<Boolean>
 }

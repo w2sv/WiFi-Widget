@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
@@ -35,11 +36,21 @@ class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
+    private val preferencesRepository: PreferencesRepository,
     @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
     @ApplicationContext context: Context,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) :
     ViewModel() {
+
+    val propertyReorderingDiscoveryShown =
+        preferencesRepository.propertyReorderingDiscoveryShown.stateIn(viewModelScope, SharingStarted.WhileSubscribed()) { true }
+
+    fun savePropertyReorderingDiscoveryShown() {
+        viewModelScope.launch {
+            preferencesRepository.propertyReorderingDiscoveryShown.save(true)
+        }
+    }
 
     // =========
     // Pinning
@@ -89,7 +100,10 @@ class WidgetViewModel @Inject constructor(
             started = SharingStarted.Eagerly
         ),
         wifiProperties = repository.wifiPropertyEnablementMap.reversibleStateMap(scope = viewModelScope),
-        orderedWifiProperties = repository.orderedWifiProperties.reversibleStateFlow(scope = viewModelScope, started = SharingStarted.Eagerly),
+        orderedWifiProperties = repository.orderedWifiProperties.reversibleStateFlow(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly
+        ),
         ipSubProperties = repository.ipSubPropertyEnablementMap.reversibleStateMap(scope = viewModelScope),
         bottomRowMap = repository.bottomRowElementEnablementMap.reversibleStateMap(scope = viewModelScope),
         refreshInterval = refreshInterval,

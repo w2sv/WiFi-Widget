@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,19 +16,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.w2sv.composed.OnChange
 import com.w2sv.composed.isPortraitModeActive
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import kotlinx.collections.immutable.ImmutableList
+import slimber.log.i
 
 private val verticalColumnCardSpacing = 16.dp
 
 @Composable
-fun WidgetConfigurationColumn(cardProperties: ImmutableList<WidgetConfigurationCard>, modifier: Modifier = Modifier) {
+fun WidgetConfigurationColumn(
+    cardProperties: ImmutableList<WidgetConfigurationCard>,
+    scrollState: ScrollState,
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp)
     ) {
         Spacer(modifier = Modifier.height(verticalColumnCardSpacing))

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
@@ -53,6 +54,7 @@ import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.OptionalPropertyReorderingDiscoveryDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
@@ -122,6 +124,8 @@ fun WidgetConfigurationScreen(
                 onBackButtonClick = onBack
             )
 
+            val scrollState = rememberScrollState()
+
             var dialogData by rememberSaveable(stateSaver = WidgetConfigurationScreenDialog.nullableStateSaver) {
                 mutableStateOf(null)
             }
@@ -133,6 +137,8 @@ fun WidgetConfigurationScreen(
                     onDismissRequest = remember { { dialogData = null } }
                 )
             }
+
+            OptionalPropertyReorderingDiscoveryDialog(scrollState)
 
             WidgetConfigurationColumn(
                 cardProperties = rememberWidgetConfigurationCardProperties(
@@ -154,7 +160,8 @@ fun WidgetConfigurationScreen(
                                 WidgetConfigurationScreenDialog.RefreshIntervalConfiguration
                         }
                     }
-                )
+                ),
+                scrollState = scrollState
             )
         }
     }
