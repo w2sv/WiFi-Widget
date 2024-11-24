@@ -96,7 +96,7 @@ fun DragAndDroppableCheckRowColumn(
         onAtLeastAndroidU { view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK) }
     }
 
-    // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that accommodates the column height")
+    // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that'll surely accommodate the column height")
     LazyColumn(
         state = lazyListState,
         modifier = modifier.heightIn(max = 2_000.dp),
