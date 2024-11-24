@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configurat
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,6 +49,7 @@ import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
+import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.alphaDecreased
@@ -207,22 +209,23 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
             .padding(start = 24.dp) // Make background start at the indentation of CheckRowBase label
             .nestedContentBackground()
             .padding(start = subPropertyColumnPadding)
+            .animateContentSize()
     ) {
-        elements.forEach { view ->
-            when (view) {
+        elements.forEach { element ->
+            when (element) {
                 is CheckRowColumnElement.CheckRow<*> -> {
-                    CheckRowBase(
-                        data = view,
-                        modifier = view.modifier,
-                        fontSize = subPropertyCheckRowColumnFontSize,
-                        leadingIcon = {
-                            SubPropertyKeyboardArrowRightIcon()
-                        }
-                    )
+                    if (element.show()) {
+                        CheckRowBase(
+                            data = element,
+                            modifier = element.modifier,
+                            fontSize = subPropertyCheckRowColumnFontSize,
+                            leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
+                        )
+                    }
                 }
 
                 is CheckRowColumnElement.Custom -> {
-                    view.content()
+                    element.content()
                 }
             }
         }

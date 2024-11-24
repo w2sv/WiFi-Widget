@@ -14,14 +14,14 @@ import kotlinx.collections.immutable.ImmutableList
 sealed interface CheckRowColumnElement {
 
     @Immutable
-    @JvmInline
-    value class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
+    data class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
 
     @Immutable
     data class CheckRow<T : WidgetProperty>(
         val property: T,
         val isChecked: () -> Boolean,
         val onCheckedChange: (Boolean) -> Unit,
+        val show: () -> Boolean = { true },
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
         val subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
@@ -42,6 +42,7 @@ sealed interface CheckRowColumnElement {
                 isCheckedMap: MutableMap<T, Boolean>,
                 allowCheckChange: (Boolean) -> Boolean = { true },
                 onCheckedChangedDisallowed: () -> Unit = {},
+                show: () -> Boolean = { true },
                 showInfoDialog: (() -> Unit)? = null,
                 shakeController: ShakeController? = null,
                 subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
@@ -57,6 +58,7 @@ sealed interface CheckRowColumnElement {
                             onCheckedChangedDisallowed()
                         }
                     },
+                    show = show,
                     showInfoDialog = showInfoDialog,
                     shakeController = shakeController,
                     subPropertyColumnElements = subPropertyColumnElements,

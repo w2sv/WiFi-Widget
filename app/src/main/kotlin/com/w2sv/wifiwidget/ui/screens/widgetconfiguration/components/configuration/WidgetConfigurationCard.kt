@@ -32,6 +32,7 @@ import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
@@ -291,16 +292,16 @@ private fun WifiProperty.IP.subPropertyElements(
                 }
             )
         }
-        addAll(
-            subProperties
-                .map { subProperty ->
-                    val shakeController =
-                        if (subProperty.isAddressTypeEnablementProperty) {
-                            ShakeController(shakeConfig)
-                        } else {
-                            null
-                        }
+        subProperties
+            .forEach { subProperty ->
+                val shakeController =
+                    if (subProperty.isAddressTypeEnablementProperty) {
+                        ShakeController(shakeConfig)
+                    } else {
+                        null
+                    }
 
+                add(
                     CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                         property = subProperty,
                         isCheckedMap = ipSubPropertyEnablementMap,
@@ -314,6 +315,13 @@ private fun WifiProperty.IP.subPropertyElements(
                             scope.launch { shakeController?.shake() }
                             showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                         },
+                        show = {
+                            if (subProperty.kind == WifiProperty.IP.SubProperty.Kind.ShowSubnetMask) {
+                                ipSubPropertyEnablementMap.getValue(subProperty.copy(kind = WifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled))
+                            } else {
+                                true
+                            }
+                        },
                         shakeController = shakeController,
                         modifier = Modifier
                             .thenIf(
@@ -321,8 +329,8 @@ private fun WifiProperty.IP.subPropertyElements(
                                 onTrue = { padding(start = 8.dp) }
                             )
                     )
-                }
-        )
+                )
+            }
     }
         .toPersistentList()
 }
