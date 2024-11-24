@@ -1,7 +1,3 @@
-- Added WiFi properties:
-    - IP Location
-    - GPS Coordinates
-    - ASN
-    - ISP
-- UI improvements
-- Performance improvements
+- New feature: reordering of WiFi properties 🚀
+- Fixed occasionally occurring __MissingFieldException__ on newly added properties
+- Made the __Copied to clipboard__ message on click on a WiFi property on the widget appear more reliably and improved its appearance
