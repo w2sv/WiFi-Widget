@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.common.utils.moveElement
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -120,7 +119,7 @@ fun rememberWidgetConfigurationCardProperties(
                             .update {
                                 it
                                     .toMutableList()
-                                    .apply { moveElement(fromIndex, toIndex) }
+                                    .apply { add(toIndex, removeAt(fromIndex)) }
                             }
                     }
                 )
