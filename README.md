@@ -64,7 +64,8 @@
     - Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security
       Protocol, Gateway, DNS, DHCP
     - IP Location, IP Location GPS Coordinates, ASN, ISP
-        - fetched from https://ifconfig.co/  
+        - fetched from https://ifconfig.co/
+- WiFi property appearance order
 - Bottom bar elements:
     - Last refresh date time
     - **Refresh data** button
