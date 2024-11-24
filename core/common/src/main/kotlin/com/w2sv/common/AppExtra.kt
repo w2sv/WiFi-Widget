@@ -1,6 +1,6 @@
-package com.w2sv.common.constants
+package com.w2sv.common
 
-object Extra {
+object AppExtra {
     const val INVOKE_WIDGET_CONFIGURATION_SCREEN =
         "com.w2sv.wifiwidget.extra.INVOKE_WIDGET_CONFIGURATION_SCREEN"
 }

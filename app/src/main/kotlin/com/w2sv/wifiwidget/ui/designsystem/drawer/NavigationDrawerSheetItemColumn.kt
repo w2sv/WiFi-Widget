@@ -37,7 +37,7 @@ import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.androidutils.packagePlayStoreUrl
 import com.w2sv.androidutils.startActivity
 import com.w2sv.androidutils.widget.showToast
-import com.w2sv.common.constants.AppUrl
+import com.w2sv.common.AppUrl
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R

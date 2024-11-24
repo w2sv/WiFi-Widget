@@ -1,4 +1,4 @@
-package com.w2sv.common.constants
+package com.w2sv.common
 
 object AppUrl {
     const val LICENSE = "https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE"
