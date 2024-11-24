@@ -59,7 +59,7 @@ publish:
 	@$(MAKE) check
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
-	@$(MAKE) baseline-profile
+	@#$(MAKE) baseline-profile
 
 	@echo "Pushing latest changes";git add .;git commit -m "${VERSION}";git push
 
