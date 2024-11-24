@@ -13,7 +13,7 @@ import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.appwidget.setColorFilter
 import com.w2sv.androidutils.graphics.getAlphaSetColor
-import com.w2sv.common.constants.Extra
+import com.w2sv.common.AppExtra
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
@@ -167,7 +167,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                         )
                     )
                         .putExtra(
-                            Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN,
+                            AppExtra.INVOKE_WIDGET_CONFIGURATION_SCREEN,
                             true
                         ),
                     PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

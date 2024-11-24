@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.spec.Route
-import com.w2sv.common.constants.Extra
+import com.w2sv.common.AppExtra
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
@@ -32,7 +32,7 @@ class AppViewModel @Inject constructor(
     ViewModel() {
 
     val startRoute: Route =
-        if (savedStateHandle.get<Boolean>(Extra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) {
+        if (savedStateHandle.get<Boolean>(AppExtra.INVOKE_WIDGET_CONFIGURATION_SCREEN) == true) {
             WidgetConfigurationScreenDestination
         } else {
             HomeScreenDestination
