@@ -5,12 +5,13 @@ import androidx.annotation.IntRange
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.removeAlphanumeric
 import com.w2sv.networking.extensions.fetchFromUrl
-import java.io.IOException
 import okhttp3.OkHttpClient
 import slimber.log.i
+import java.io.IOException
 
 internal data class IPAddress(
-    @IntRange(from = 0, to = 128) val prefixLength: Int,
+    @IntRange(from = 0, to = 128)
+    val prefixLength: Int,
     private val hostAddress: String?,
     val isLinkLocal: Boolean,
     val isSiteLocal: Boolean,
@@ -32,6 +33,9 @@ internal data class IPAddress(
      * @see <a href="https://stackoverflow.com/a/33094601/12083276">SO reference</a>
      */
     val subnetMask by lazy {
+        if (prefixLength > 32) {
+            throw IllegalArgumentException("Attempting to create a subnetMask for an IPAddress with prefixLength > 32 $this")
+        }
         val shift = 0xffffffff shl (32 - prefixLength)
         "${((shift and 0xff000000) shr 24) and 0xff}" +
             ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
