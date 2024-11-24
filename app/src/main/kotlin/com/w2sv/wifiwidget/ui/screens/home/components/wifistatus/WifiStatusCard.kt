@@ -28,17 +28,15 @@ fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
             // Display WifiProperties if wifiState is WifiState.Connected
             AnimatedVisibility(visible = wifiState is WifiState.Connected) {
                 wifiState.connectedOrNull?.let {
-                    Column { // TODO: why?
-                        WifiPropertyDisplay(
-                            propertiesViewData = it.viewDataFlow,
-                            modifier = Modifier
-                                .padding(top = 12.dp)
-                                .thenIf(
-                                    condition = isPortraitModeActive,
-                                    onTrue = { fillMaxHeight(0.32f) }
-                                )
-                        )
-                    }
+                    WifiPropertyDisplay(
+                        propertiesViewData = it.viewDataFlow,
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .thenIf(
+                                condition = isPortraitModeActive,
+                                onTrue = { fillMaxHeight(0.32f) }
+                            )
+                    )
                 }
             }
         }
