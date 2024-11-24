@@ -90,10 +90,8 @@ android {
             }
     }
     dependenciesInfo {
-        // Disables dependency metadata when building APKs.
+        // Disable dependency metadata when building APKs for fdroid reproducibility
         includeInApk = false
-        // Disables dependency metadata when building Android App Bundles.
-        includeInBundle = false
     }
 }
 
