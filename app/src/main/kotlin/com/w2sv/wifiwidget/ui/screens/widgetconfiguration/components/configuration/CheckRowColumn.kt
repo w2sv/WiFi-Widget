@@ -62,10 +62,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun CheckRowColumn(
-    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
-    modifier: Modifier = Modifier,
-) {
+fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         elements
             .forEach { data ->
@@ -97,9 +94,10 @@ fun DragAndDroppableCheckRowColumn(
         onAtLeastAndroidU { view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK) }
     }
 
+    // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that accommodates the column height")
     LazyColumn(
         state = lazyListState,
-        modifier = modifier.heightIn(max = 2_000.dp),  // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that accommodates the column height")
+        modifier = modifier.heightIn(max = 2_000.dp),
         userScrollEnabled = false
     ) {
         items(elements, key = { it.property.labelRes }) { data ->

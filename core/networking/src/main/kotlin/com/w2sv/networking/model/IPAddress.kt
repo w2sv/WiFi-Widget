@@ -5,9 +5,9 @@ import androidx.annotation.IntRange
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.removeAlphanumeric
 import com.w2sv.networking.extensions.fetchFromUrl
+import java.io.IOException
 import okhttp3.OkHttpClient
 import slimber.log.i
-import java.io.IOException
 
 internal data class IPAddress(
     @IntRange(from = 0, to = 128) val prefixLength: Int,

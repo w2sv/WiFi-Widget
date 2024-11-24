@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import com.w2sv.widget.di.MutableWidgetPinSuccessFlow
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * To be invoked on successful widget pin triggered from within the app. Emits on [MutableWidgetPinSuccessFlow].

@@ -19,10 +19,7 @@ fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
  * Calls [AppWidgetManager.requestPinAppWidget] if [android.appwidget.AppWidgetManager.isRequestPinAppWidgetSupported] returns true.
  * Otherwise invokes [onFailure].
  */
-fun AppWidgetManager.attemptWifiWidgetPin(
-    context: Context,
-    onFailure: () -> Unit
-) {
+fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: () -> Unit) {
     if (isRequestPinAppWidgetSupported) {
         requestPinAppWidget(
             ComponentName(context.packageName, WifiWidgetProvider::class.java.name),

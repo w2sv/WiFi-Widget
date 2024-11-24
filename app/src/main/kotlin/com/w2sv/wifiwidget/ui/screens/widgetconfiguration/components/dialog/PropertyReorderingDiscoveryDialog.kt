@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

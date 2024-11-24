@@ -35,9 +35,9 @@ import androidx.core.app.ShareCompat
 import com.w2sv.androidutils.openUrl
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.androidutils.packagePlayStoreUrl
+import com.w2sv.androidutils.startActivity
 import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.constants.AppUrl
-import com.w2sv.common.utils.startActivityWithActivityNotFoundExceptionHandling
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
@@ -129,7 +129,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     labelRes = R.string.rate,
                     explanationRes = R.string.rate_the_app_in_the_playstore,
                     type = NavigationDrawerSheetElement.Item.Clickable {
-                        context.startActivityWithActivityNotFoundExceptionHandling(
+                        context.startActivity(
                             intent = Intent(
                                 Intent.ACTION_VIEW,
                                 Uri.parse(context.packagePlayStoreUrl)

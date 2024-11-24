@@ -13,9 +13,9 @@ import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {
