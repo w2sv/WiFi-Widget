@@ -137,28 +137,32 @@ private fun inflatePropertyLayout(
                 )
             )
 
-            viewData.ipPropertyOrNull?.prefixLengthText?.let { prefixLengthText ->
-                setViewVisibility(R.id.prefix_length_row, View.VISIBLE)
+            viewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.let { subPropertyValues ->
+                setViewVisibility(R.id.ip_sub_property_row, View.VISIBLE)
 
-                setTextView(
-                    viewId = R.id.prefix_length_tv,
-                    text = prefixLengthText,
-                    size = fontSize.subscriptSize,
-                    color = widgetColors.secondary
-                )
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    setColorStateList(
-                        R.id.prefix_length_tv,
-                        "setBackgroundTintList",
-                        ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
-                    )
-                } else {
-                    setBackgroundColor(
-                        R.id.prefix_length_tv,
-                        widgetColors.ipSubPropertyBackgroundColor
-                    )
-                }
-            } ?: setViewVisibility(R.id.prefix_length_row, View.GONE)
+                (subPropertyValues.reversed() zip ipSubPropertyTextViews)
+                    .forEach { (value, viewId) ->
+                        setTextView(
+                            viewId = viewId,
+                            text = value,
+                            size = fontSize.subscriptSize,
+                            color = widgetColors.secondary
+                        )
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            setColorStateList(
+                                viewId,
+                                "setBackgroundTintList",
+                                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
+                            )
+                        } else {
+                            setBackgroundColor(
+                                viewId,
+                                widgetColors.ipSubPropertyBackgroundColor
+                            )
+                        }
+                    }
+            } ?: setViewVisibility(R.id.ip_sub_property_row, View.GONE)
         }
 
+private val ipSubPropertyTextViews = listOf(R.id.ip_sub_property_tv_2, R.id.ip_sub_property_tv_1)
 private const val IP_LABEL = "IP"

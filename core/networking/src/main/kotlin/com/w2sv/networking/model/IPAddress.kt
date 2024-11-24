@@ -28,18 +28,22 @@ internal data class IPAddress(
         isMulticast = linkAddress.address.isMulticastAddress
     )
 
-//    /**
-//     * Reference: https://stackoverflow.com/a/33094601/12083276
-//     */
-//    fun getNetmask(): String {
-//        val shift = 0xffffffff shl (32 - prefixLength)
-//        return "${((shift and 0xff000000) shr 24) and 0xff}" +
-//                ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-//                ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-//                ".${(shift and 0x000000ff) and 0xff}"
-//    }
+    /**
+     * @see <a href="https://stackoverflow.com/a/33094601/12083276">SO reference</a>
+     */
+    val subnetMask by lazy {
+        val shift = 0xffffffff shl (32 - prefixLength)
+        "${((shift and 0xff000000) shr 24) and 0xff}" +
+            ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+            ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+            ".${(shift and 0x000000ff) and 0xff}"
+    }
 
     val version: Version = if (prefixLength < Version.V6.minPrefixLength) Version.V4 else Version.V6
+
+    val isV4: Boolean get() = version == Version.V4
+    val isV6: Boolean get() = version == Version.V6
+
     val hostAddressRepresentation: String = hostAddress ?: version.fallbackAddress
 
     /**

@@ -14,7 +14,8 @@ import kotlinx.collections.immutable.ImmutableList
 sealed interface CheckRowColumnElement {
 
     @Immutable
-    data class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
+    @JvmInline
+    value class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
 
     @Immutable
     data class CheckRow<T : WidgetProperty>(

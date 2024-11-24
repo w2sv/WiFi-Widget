@@ -27,8 +27,12 @@ sealed class WifiProperty : WidgetProperty {
         data class IPProperty(
             override val label: String,
             override val value: String,
-            val prefixLengthText: String?
-        ) : ViewData
+            private val subPropertyValues: List<String>
+        ) : ViewData {
+
+            val nonEmptySubPropertyValuesOrNull: List<String>?
+                get() = subPropertyValues.ifEmpty { null }
+        }
 
         interface Factory {
             /**
@@ -219,12 +223,16 @@ sealed class WifiProperty : WidgetProperty {
 
     sealed class IP(subPropertyKinds: List<SubProperty.Kind>) : WifiProperty() {
 
+        @get:StringRes
         abstract val subscriptResId: Int
 
         val subProperties = subPropertyKinds.map { SubProperty(this, it) }
 
         val showPrefixLengthSubProperty: SubProperty
             get() = SubProperty(this, SubProperty.Kind.ShowPrefixLength)
+
+        val showSubnetMaskSubProperty: SubProperty
+            get() = SubProperty(this, SubProperty.Kind.ShowSubnetMask)
 
         data class SubProperty(val property: IP, val kind: Kind) : WidgetProperty {
 
@@ -233,6 +241,7 @@ sealed class WifiProperty : WidgetProperty {
 
             sealed class Kind(@StringRes val labelRes: Int) {
                 data object ShowPrefixLength : Kind(R.string.show_prefix_length)
+                data object ShowSubnetMask : Kind(R.string.show_ipv4_subnet_mask)
             }
 
             val isAddressTypeEnablementProperty: Boolean
@@ -279,6 +288,7 @@ sealed class WifiProperty : WidgetProperty {
                 add(AddressTypeEnablement.V6Enabled)
                 if (includePrefixLength) {
                     add(SubProperty.Kind.ShowPrefixLength)
+                    add(SubProperty.Kind.ShowSubnetMask)
                 }
             }
         ) {

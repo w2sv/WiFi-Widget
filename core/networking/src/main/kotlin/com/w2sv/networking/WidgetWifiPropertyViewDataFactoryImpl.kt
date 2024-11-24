@@ -229,7 +229,14 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WifiProperty.ViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
-                    prefixLengthText = if (ipSubProperties.contains(showPrefixLengthSubProperty)) "/${ipAddress.prefixLength}" else null
+                    subPropertyValues = buildList {
+                        if (ipAddress.isV4 && ipSubProperties.contains(showSubnetMaskSubProperty)) {
+                            add(ipAddress.subnetMask)
+                        }
+                        if (ipSubProperties.contains(showPrefixLengthSubProperty)) {
+                            add("/${ipAddress.prefixLength}")
+                        }
+                    }
                 )
             }
         )

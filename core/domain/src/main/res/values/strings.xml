@@ -10,7 +10,8 @@
     <string name="dns">DNS</string>
     <string name="dhcp">DHCP</string>
 
-    <string name="show_prefix_length">Show prefix length(s)</string>
+    <string name="show_prefix_length">Show prefix length</string>
+    <string name="show_ipv4_subnet_mask">Show IPv4 subnet mask</string>
 
     <string name="ssid_description"><b>Service Set Identifier</b>. Your networks name.</string>
     <string name="bssid_description"><b>Basic Service Set Identifier</b>. A 48-bit label abiding by MAC-48 conventions, which identifies your device\'s basic service set.</string>

@@ -26,14 +26,22 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/prefix_length_row"
+        android:id="@+id/ip_sub_property_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="end"
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/prefix_length_tv"
+            android:id="@+id/ip_sub_property_tv_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="6dp"
+            android:background="@drawable/rounded_corner_shape"
+            android:paddingHorizontal="6dp" />
+
+        <TextView
+            android:id="@+id/ip_sub_property_tv_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="6dp"
