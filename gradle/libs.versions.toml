@@ -95,7 +95,7 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 # androidx-test-rules = "androidx.test:rules:1.6.1"
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 # androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
-roboelectric = "org.robolectric:robolectric:4.14"
+roboelectric = "org.robolectric:robolectric:4.14.1"
 mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
