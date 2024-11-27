@@ -5,7 +5,7 @@ compileSdk = "35"
 
 # Plugins
 agp = "8.6.1"
-kotlin = "2.0.21"
+kotlin = "2.1.0"
 java = "17"
 ksp = "2.0.21-1.0.28"
 triplet-play = "3.12.1"
