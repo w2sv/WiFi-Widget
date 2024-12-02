@@ -230,10 +230,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
                     subPropertyValues = buildList {
-                        if (ipAddress.isV4 && ipSubProperties.contains(showSubnetMaskSubProperty)) {
-                            add(ipAddress.subnetMask)
+                        if (ipSubProperties.contains(showSubnetMaskSubProperty)) {
+                            ipAddress.asV4OrNull?.subnetMask?.let { subnetMask ->
+                                add(subnetMask)
+                            }
                         }
-                        if (ipSubProperties.contains(showPrefixLengthSubProperty)) {
+                        if (ipSubProperties.contains(showPrefixLengthSubProperty) && ipAddress.prefixLength != null) {
                             add("/${ipAddress.prefixLength}")
                         }
                     }
@@ -243,8 +245,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: GetSystemIPAddresses): List<IPAddress> =
         when (this) {
-            WifiProperty.IP.V6Only.ULA -> systemIPAddresses().filter { it.isUniqueLocal }
-            WifiProperty.IP.V6Only.GUA -> systemIPAddresses().filter { it.isGlobalUnicast }
+            WifiProperty.IP.V6Only.ULA -> systemIPAddresses().filter { it.asV6OrNull?.isUniqueLocal == true }
+            WifiProperty.IP.V6Only.GUA -> systemIPAddresses().filter { it.asV6OrNull?.isGlobalUnicast == true }
         }
 
     private suspend fun WifiProperty.IP.V4AndV6.getAddresses(
@@ -277,6 +279,9 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         }
 }
 
+/**
+ * @return the result of [onSuccess] or the simpleName of the held exception.
+ */
 private fun Result<IFConfigData>.viewDataValue(onSuccess: (IFConfigData) -> String): String =
     requireNotNull(
         getOrNull()

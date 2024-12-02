@@ -6,7 +6,7 @@ import android.net.NetworkCapabilities
 import com.w2sv.networking.model.IPAddress
 
 internal fun ConnectivityManager.ipAddresses(): List<IPAddress> =
-    linkProperties?.linkAddresses?.map { IPAddress(it) } ?: emptyList()
+    linkProperties?.linkAddresses?.map(IPAddress::fromLinkAddress) ?: emptyList()
 
 internal val ConnectivityManager.linkProperties: LinkProperties?
     get() = getLinkProperties(activeNetwork)

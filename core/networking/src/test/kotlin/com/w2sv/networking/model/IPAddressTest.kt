@@ -43,17 +43,10 @@ class IPAddressTest {
             assertEquals(expectedMask, dummyIPAddress(prefixLength).subnetMask)
         }
     }
-
-    @Test
-    fun `subnetMask should throw an exception for prefix length greater than 32`() {
-        assertThrows<IllegalArgumentException> {
-            dummyIPAddress(33).subnetMask
-        }
-    }
 }
 
-private fun dummyIPAddress(prefixLength: Int): IPAddress =
-    IPAddress(
+private fun dummyIPAddress(prefixLength: Int): IPAddress.V4 =
+    IPAddress.V4(
         prefixLength = prefixLength,
         hostAddress = "10.0.0.1",
         isLinkLocal = false,

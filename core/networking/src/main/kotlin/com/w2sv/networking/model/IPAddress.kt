@@ -8,71 +8,123 @@ import com.w2sv.networking.extensions.fetchFromUrl
 import okhttp3.OkHttpClient
 import slimber.log.i
 import java.io.IOException
+import java.net.Inet4Address
+import java.net.Inet6Address
 
-internal data class IPAddress(
-    @IntRange(from = 0, to = 128)
-    val prefixLength: Int,
-    private val hostAddress: String?,
-    val isLinkLocal: Boolean,
-    val isSiteLocal: Boolean,
-    val isAnyLocal: Boolean,
-    val isLoopback: Boolean,
-    val isMulticast: Boolean
-) {
-    constructor(linkAddress: LinkAddress) : this(
-        prefixLength = linkAddress.prefixLength,
-        hostAddress = linkAddress.address.hostAddress,
-        isLinkLocal = linkAddress.address.isLinkLocalAddress,
-        isSiteLocal = linkAddress.address.isSiteLocalAddress,
-        isAnyLocal = linkAddress.address.isAnyLocalAddress,
-        isLoopback = linkAddress.address.isLoopbackAddress,
-        isMulticast = linkAddress.address.isMulticastAddress
-    )
-
-    /**
-     * @see <a href="https://stackoverflow.com/a/33094601/12083276">SO reference</a>
-     */
-    val subnetMask by lazy {
-        if (prefixLength > 32) {
-            throw IllegalArgumentException("Attempting to create a subnetMask for an IPAddress with prefixLength > 32 $this")
-        }
-        val shift = 0xffffffff shl (32 - prefixLength)
-        "${((shift and 0xff000000) shr 24) and 0xff}" +
-            ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
-            ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
-            ".${(shift and 0x000000ff) and 0xff}"
-    }
-
-    val version: Version = if (prefixLength < Version.V6.minPrefixLength) Version.V4 else Version.V6
-
-    val isV4: Boolean get() = version == Version.V4
-    val isV6: Boolean get() = version == Version.V6
+internal sealed class IPAddress(val version: Version) {
+    protected abstract val hostAddress: String?
+    abstract val prefixLength: Int?
+    abstract val isLinkLocal: Boolean
+    abstract val isSiteLocal: Boolean
+    abstract val isAnyLocal: Boolean
+    abstract val isLoopback: Boolean
+    abstract val isMulticast: Boolean
 
     val hostAddressRepresentation: String = hostAddress ?: version.fallbackAddress
 
-    /**
-     * @see <a href="https://networklessons.com/ipv6/ipv6-address-types">reference</a>
-     * @see <a href="https://datatracker.ietf.org/doc/html/rfc4193">reference</a>
-     */
-    val isUniqueLocal: Boolean
-        get() = ulaIdentificationRegex.matches(hostAddressRepresentation.substring(0, 2))
+    protected abstract val isLocal: Boolean
 
-    val isGlobalUnicast: Boolean
-        get() = !isLocal && !isMulticast
+    val asV4OrNull: V4?
+        get() = this as? V4
 
-    private val isLocal: Boolean
-        get() = isSiteLocal || isLinkLocal || isAnyLocal || isUniqueLocal
+    val asV6OrNull: V6?
+        get() = this as? V6
 
     enum class Version(
-        val minPrefixLength: Int,
         val fallbackAddress: String,
         val ofCorrectFormat: (String) -> Boolean
     ) {
-        V4(0, "0.0.0.0", { it.removeAlphanumeric() == "..." }),
-        V6(64, ":::::::", { it.removeAlphanumeric() == ":::::::" })
+        V4("0.0.0.0", { it.removeAlphanumeric() == "..." }),
+        V6(":::::::", { it.removeAlphanumeric() == ":::::::" })
+    }
+
+    data class V4(
+        @IntRange(from = 0, to = 32)
+        override val prefixLength: Int?,
+        override val hostAddress: String?,
+        override val isLinkLocal: Boolean,
+        override val isSiteLocal: Boolean,
+        override val isAnyLocal: Boolean,
+        override val isLoopback: Boolean,
+        override val isMulticast: Boolean
+    ) : IPAddress(Version.V4) {
+
+        /**
+         * @see <a href="https://stackoverflow.com/a/33094601/12083276">SO reference</a>
+         */
+        val subnetMask: String? by lazy {
+            prefixLength?.let {
+                val shift = 0xffffffff shl (32 - it)
+                "${((shift and 0xff000000) shr 24) and 0xff}" +
+                    ".${((shift and 0x00ff0000) shr 16) and 0xff}" +
+                    ".${((shift and 0x0000ff00) shr 8) and 0xff}" +
+                    ".${(shift and 0x000000ff) and 0xff}"
+            }
+        }
+
+        override val isLocal: Boolean
+            get() = isSiteLocal || isLinkLocal || isAnyLocal
+    }
+
+    data class V6(
+        @IntRange(from = 0, to = 128)
+        override val prefixLength: Int?,
+        override val hostAddress: String?,
+        override val isLinkLocal: Boolean,
+        override val isSiteLocal: Boolean,
+        override val isAnyLocal: Boolean,
+        override val isLoopback: Boolean,
+        override val isMulticast: Boolean
+    ) : IPAddress(Version.V6) {
+
+        /**
+         * @see <a href="https://networklessons.com/ipv6/ipv6-address-types">reference</a>
+         * @see <a href="https://datatracker.ietf.org/doc/html/rfc4193">reference</a>
+         */
+        val isUniqueLocal: Boolean
+            get() = ulaIdentificationRegex.matches(hostAddressRepresentation.substring(0, 2))
+
+        val isGlobalUnicast: Boolean
+            get() = !isLocal && !isMulticast
+
+        override val isLocal: Boolean
+            get() = isSiteLocal || isLinkLocal || isAnyLocal || isUniqueLocal
+
+        companion object {
+            private val ulaIdentificationRegex = Regex("^(fc|fd)")
+        }
     }
 
     companion object {
+        fun fromLinkAddress(linkAddress: LinkAddress): IPAddress =
+            when (linkAddress.address) {
+                is Inet4Address -> {
+                    V4(
+                        hostAddress = linkAddress.address.hostAddress,
+                        prefixLength = linkAddress.prefixLength.also { require(it <= 32) },
+                        isLinkLocal = linkAddress.address.isLinkLocalAddress,
+                        isSiteLocal = linkAddress.address.isSiteLocalAddress,
+                        isAnyLocal = linkAddress.address.isAnyLocalAddress,
+                        isLoopback = linkAddress.address.isLoopbackAddress,
+                        isMulticast = linkAddress.address.isMulticastAddress
+                    )
+                }
+
+                is Inet6Address -> {
+                    V6(
+                        hostAddress = linkAddress.address.hostAddress,
+                        prefixLength = linkAddress.prefixLength,
+                        isLinkLocal = linkAddress.address.isLinkLocalAddress,
+                        isSiteLocal = linkAddress.address.isSiteLocalAddress,
+                        isAnyLocal = linkAddress.address.isAnyLocalAddress,
+                        isLoopback = linkAddress.address.isLoopbackAddress,
+                        isMulticast = linkAddress.address.isMulticastAddress
+                    )
+                }
+
+                else -> error("Invalid InetAddress child.")
+            }
+
         suspend fun fetchPublic(httpClient: OkHttpClient, version: Version): Result<IPAddress> {
             i { "Fetching public $version address" }
             return httpClient.fetchFromUrl(
@@ -81,16 +133,28 @@ internal data class IPAddress(
                     Version.V6 -> "https://api6.ipify.org"
                 }
             ) { address ->
+                i { "Got public $version address $address" }
                 if (version.ofCorrectFormat(address)) {
-                    IPAddress(
-                        prefixLength = version.minPrefixLength,
-                        hostAddress = address.log { "Got public $version address $it" },
-                        isLinkLocal = false,
-                        isSiteLocal = false,
-                        isAnyLocal = false,
-                        isLoopback = false,
-                        isMulticast = false
-                    )
+                    when (version) {
+                        Version.V4 -> V4(
+                            hostAddress = address,
+                            prefixLength = null,
+                            isLinkLocal = false,
+                            isSiteLocal = false,
+                            isAnyLocal = false,
+                            isLoopback = false,
+                            isMulticast = false
+                        )
+                        Version.V6 -> V6(
+                            hostAddress = address,
+                            prefixLength = null,
+                            isLinkLocal = false,
+                            isSiteLocal = false,
+                            isAnyLocal = false,
+                            isLoopback = false,
+                            isMulticast = false
+                        )
+                    }
                 } else {
                     throw IOException("Obtained $version address $address of incorrect format")
                 }
@@ -98,5 +162,3 @@ internal data class IPAddress(
         }
     }
 }
-
-private val ulaIdentificationRegex = Regex("^(fc|fd)")
