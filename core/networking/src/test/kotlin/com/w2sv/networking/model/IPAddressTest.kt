@@ -3,8 +3,10 @@ package com.w2sv.networking.model
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import org.junit.Test
-import org.junit.jupiter.api.assertThrows
+import java.net.Inet4Address
+import java.net.Inet6Address
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class IPAddressTest {
@@ -40,18 +42,48 @@ class IPAddressTest {
         )
 
         cases.forEach { (prefixLength, expectedMask) ->
-            assertEquals(expectedMask, dummyIPAddress(prefixLength).subnetMask)
+            assertEquals(expectedMask, testIPv4Address(prefixLength = prefixLength).subnetMask)
         }
+    }
+
+    @Test
+    fun `isUniqueLocal should return true for unique local addresses`() {
+        // Test cases with unique local IPv6 addresses
+        listOf(
+            "fc00::1",
+            "fd12:3456:789a:1::1",
+            "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff"
+        )
+            .forEach { address ->
+                assertTrue(testIPv6Address(address).isUniqueLocal, "Expected $address to be unique local")
+            }
+    }
+
+    @Test
+    fun `isUniqueLocal should return false for non-unique local addresses`() {
+        listOf(
+            "2001:db8::1", // Global Unicast
+            "fe80::1",     // Link-local
+            "ff00::1",     // Multicast
+            "::1",         // Loopback
+            "2001::1"      // Global Unicast
+        )
+            .forEach { address ->
+                assertFalse(testIPv6Address(address).isUniqueLocal, "Expected $address to not be unique local")
+            }
     }
 }
 
-private fun dummyIPAddress(prefixLength: Int): IPAddress.V4 =
+private fun testIPv4Address(hostAddress: String = "10.0.0.1", prefixLength: Int = 32): IPAddress.V4 =
     IPAddress.V4(
+        hostAddress = hostAddress,
         prefixLength = prefixLength,
-        hostAddress = "10.0.0.1",
-        isLinkLocal = false,
-        isSiteLocal = false,
-        isAnyLocal = false,
-        isLoopback = false,
-        isMulticast = false
+        inetAddress = Inet4Address.getByName(hostAddress) as Inet4Address
+    )
+
+private fun testIPv6Address(hostAddress: String, prefixLength: Int = 64): IPAddress.V6 =
+    IPAddress.V6(
+        hostAddress = hostAddress,
+        prefixLength = prefixLength,
+        inetAddress = Inet6Address.getByName(hostAddress) as Inet6Address
     )
