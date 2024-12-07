@@ -1,21 +1,27 @@
 package com.w2sv.networking.model
 
+import android.net.ConnectivityManager
 import android.net.LinkAddress
 import androidx.annotation.IntRange
+import androidx.annotation.VisibleForTesting
+import com.w2sv.common.utils.log
 import com.w2sv.networking.extensions.fetchFromUrl
+import com.w2sv.networking.extensions.linkProperties
 import okhttp3.OkHttpClient
 import slimber.log.i
 import java.io.IOException
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress
+import kotlin.and
 
 internal sealed class IPAddress(val version: Version) {
     protected abstract val hostAddress: String?
     abstract val prefixLength: Int?
     protected abstract val inetAddress: InetAddress
 
-    val hostAddressRepresentation: String = hostAddress ?: version.fallbackAddress
+    val hostAddressRepresentation: String
+        get() = hostAddress ?: version.fallbackAddress
 
     /**
      * @see InetAddress.isSiteLocalAddress
@@ -48,9 +54,9 @@ internal sealed class IPAddress(val version: Version) {
     val asV6OrNull: V6?
         get() = this as? V6
 
-    enum class Version(val fallbackAddress: String) {
-        V4("0.0.0.0"),
-        V6(":::::::")
+    enum class Version(val fallbackAddress: String, val publicAddressFetchUrl: String) {
+        V4("0.0.0.0", "https://api.ipify.org"),
+        V6(":::::::", "https://api6.ipify.org")
     }
 
     data class V4(
@@ -82,34 +88,50 @@ internal sealed class IPAddress(val version: Version) {
     ) : IPAddress(Version.V6) {
 
         /**
-         * https://cs.android.com/android/platform/superproject/+/android14-qpr3-release:packages/modules/Connectivity/staticlibs/framework/com/android/net/module/util/ConnectivityUtils.java?q=ConnectivityUtils.isIPv6ULA&ss=android%2Fplatform%2Fsuperproject
-         * @see <a href="https://networklessons.com/ipv6/ipv6-address-types">reference</a>
-         * @see <a href="https://datatracker.ietf.org/doc/html/rfc4193">reference</a>
+         * Taken from [ConnectivityUtils](https://cs.android.com/android/platform/superproject/+/android14-qpr3-release:packages/modules/Connectivity/staticlibs/framework/com/android/net/module/util/ConnectivityUtils.java?q=ConnectivityUtils.isIPv6ULA&ss=android%2Fplatform%2Fsuperproject),
+         * which is a hidden Android API, found through the private function [LinkAddress].isIpv6ULA.
+         *
+         * Per [RFC 4193 section 8](https://datatracker.ietf.org/doc/html/rfc4193#section-8), fc00::/ 7 identifies these addresses
+         *
+         * Further references:
+         * @see <a href="https://networklessons.com/ipv6/ipv6-address-types#Unique_Local">reference</a>
          */
         val isUniqueLocal: Boolean
-            get() = (inetAddress.address[0].toInt() and 0xfe) == 0xfc
+            get() = (inetAddress.firstByte and 0xfe) == 0xfc
 
+        /**
+         * As per [RFC 4291 section 2.5.4](https://datatracker.ietf.org/doc/html/rfc4291#section-2.5.4) & [RFC 3513](https://datatracker.ietf.org/doc/html/rfc3513#section-4)
+         * Addresses matching the range 2000::/3 (-> binary prefix of 001)
+         *
+         * Further references:
+         * [Reddit](https://www.reddit.com/r/ipv6/comments/u7aqxg/what_if_20003_gets_extended/?rdt=54218)
+         */
         val isGlobalUnicast: Boolean
-            get() = !isLocal && !isMulticast
-
-        private val isLocal: Boolean
-            get() = isSiteLocal || isLinkLocal || isAnyLocal || isUniqueLocal
+            get() = (inetAddress.firstByte and 0xff and 0xe0) == 0x20 // Matches the range 2000::/3
     }
 
     companion object {
+        fun systemAddresses(connectivityManager: ConnectivityManager): List<IPAddress> =
+            connectivityManager.linkProperties?.linkAddresses?.map(::fromLinkAddress).log{"IP Addresses: $it"} ?: emptyList()
+
+        @VisibleForTesting
         fun fromLinkAddress(linkAddress: LinkAddress): IPAddress =
             fromInetAddress(linkAddress.address, linkAddress.prefixLength)
 
+        /**
+         * Fetches the public IP address string from the respective [Version.publicAddressFetchUrl] and parses it via [InetAddress.getByName].
+         *
+         * @return a [Result] wrapping either
+         * - [com.w2sv.networking.model.IPAddress] for valid address strings matching the [version]
+         * - [java.net.UnknownHostException] if the retrieved address is invalid
+         * - [IOException] if the parsed [com.w2sv.networking.model.IPAddress] type doesn't match [version]
+         * - an exception thrown by [fetchFromUrl]
+         */
         suspend fun fetchPublic(httpClient: OkHttpClient, version: Version): Result<IPAddress> {
             i { "Fetching public $version address" }
-            return httpClient.fetchFromUrl(
-                when (version) {
-                    Version.V4 -> "https://api.ipify.org"
-                    Version.V6 -> "https://api6.ipify.org"
-                }
-            ) { address ->
+            return httpClient.fetchFromUrl(version.publicAddressFetchUrl) { address ->
                 i { "Got public $version address $address" }
-                fromInetAddress(InetAddress.getByName(address), null)
+                fromInetAddress(address = InetAddress.getByName(address), prefixLength = null)
                     .also {
                         if (it.version != version) {
                             throw IOException("Obtained $version address $address of incorrect format")
@@ -118,7 +140,8 @@ internal sealed class IPAddress(val version: Version) {
             }
         }
 
-        private fun fromInetAddress(address: InetAddress, prefixLength: Int?): IPAddress =
+        @VisibleForTesting
+        fun fromInetAddress(address: InetAddress, prefixLength: Int?): IPAddress =
             when (address) {
                 is Inet4Address -> {
                     V4(
@@ -140,3 +163,6 @@ internal sealed class IPAddress(val version: Version) {
             }
     }
 }
+
+private val InetAddress.firstByte: Int
+    get() = address.first().toInt()

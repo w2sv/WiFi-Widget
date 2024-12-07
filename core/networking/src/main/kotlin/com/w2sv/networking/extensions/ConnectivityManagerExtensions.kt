@@ -3,11 +3,14 @@ package com.w2sv.networking.extensions
 import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.NetworkCapabilities
-import com.w2sv.networking.model.IPAddress
 
-internal fun ConnectivityManager.ipAddresses(): List<IPAddress> =
-    linkProperties?.linkAddresses?.map(IPAddress::fromLinkAddress) ?: emptyList()
-
+/**
+ * @return the [LinkProperties] for the currently active network, retrieved via [ConnectivityManager.getActiveNetwork] or `null` if:
+ * - there is no active network or it is blocked
+ * - if the network is unknown
+ *
+ *  @see ConnectivityManager.getLinkProperties
+ */
 internal val ConnectivityManager.linkProperties: LinkProperties?
     get() = getLinkProperties(activeNetwork)
 

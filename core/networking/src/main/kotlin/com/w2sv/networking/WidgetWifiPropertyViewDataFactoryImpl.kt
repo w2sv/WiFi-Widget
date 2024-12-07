@@ -8,22 +8,20 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.SuspendingLazy
-import com.w2sv.common.utils.log
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.WifiProperty
-import com.w2sv.networking.extensions.ipAddresses
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IFConfigData
 import com.w2sv.networking.model.IPAddress
-import java.net.InetAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
+import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import javax.inject.Inject
 
 private typealias GetSystemIPAddresses = () -> List<IPAddress>
 private typealias GetIFConfigData = suspend () -> Result<IFConfigData>
@@ -40,7 +38,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         ipSubProperties: Set<WifiProperty.IP.SubProperty>
     ): Flow<WifiProperty.ViewData> {
         val systemIPAddresses by lazy {
-            connectivityManager.ipAddresses().log { "Got IP Addresses" }
+            IPAddress.systemAddresses(connectivityManager)
         }
         val ifConfigData = SuspendingLazy {
             IFConfigData.fetch(httpClient)
