@@ -177,17 +177,24 @@ sealed class WifiProperty : WidgetProperty {
                 false
             )
 
-            data object ASN : Other(
-                R.string.asn,
-                R.string.asn_description,
-                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
-                false
-            )
-
             data object ISP : Other(
                 R.string.isp,
                 R.string.isp_description,
                 "https://en.wikipedia.org/wiki/Internet_service_provider",
+                false
+            )
+
+//            data object AS : Other(
+//                R.string.as_name,
+//                R.string.as_name_description,
+//                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
+//                false
+//            )
+
+            data object ASN : Other(
+                R.string.as_number,
+                R.string.as_number_description,
+                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
                 false
             )
 
@@ -214,8 +221,9 @@ sealed class WifiProperty : WidgetProperty {
                         }
                         add(IPLocation)
                         add(GpsCoordinates)
-                        add(ASN)
                         add(ISP)
+//                        add(AS)
+                        add(ASN)
                     }
             }
         }
