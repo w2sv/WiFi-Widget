@@ -268,26 +268,11 @@ private fun WifiProperty.checkRow(
                     scope = scope
                 )
 
-            is WifiProperty.NonIP.Other.Location -> {
-                IpLocationParameter.entries.map { parameter ->
-                    val parameterShakeController = ShakeController()
-                    CheckRowColumnElement.CheckRow.fromIsCheckedMap(
-                        property = parameter,
-                        isCheckedMap = widgetConfiguration.ipLocationParameters,
-                        allowCheckChange = { newValue ->
-                            (newValue || widgetConfiguration.ipLocationParameters.moreThanOnePropertyEnabled()).also {
-                                if (!it) {
-                                    scope.launch { parameterShakeController.shake() }
-                                    showLeaveAtLeastOnePropertyEnabledSnackbar()
-                                }
-                            }
-                        },
-                        shakeController = parameterShakeController
-                    )
-                }
-                    .toPersistentList()
-
-            }
+            is WifiProperty.NonIP.Other.Location -> subPropertyElements(
+                ipLocationParameters = widgetConfiguration.ipLocationParameters,
+                showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
+                scope = scope
+            )
 
             else -> null
         },
@@ -353,6 +338,29 @@ private fun WifiProperty.IP.subPropertyElements(
     }
         .toPersistentList()
 }
+
+private fun WifiProperty.NonIP.Other.Location.subPropertyElements(
+    ipLocationParameters: MutableMap<IpLocationParameter, Boolean>,
+    showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
+    scope: CoroutineScope
+): ImmutableList<CheckRowColumnElement> =
+    IpLocationParameter.entries.map { parameter ->
+        val shapeController = ShakeController()
+        CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+            property = parameter,
+            isCheckedMap = ipLocationParameters,
+            allowCheckChange = { newValue ->
+                (newValue || ipLocationParameters.moreThanOnePropertyEnabled()).also {
+                    if (!it) {
+                        scope.launch { shapeController.shake() }
+                        showLeaveAtLeastOnePropertyEnabledSnackbar()
+                    }
+                }
+            },
+            shakeController = shapeController
+        )
+    }
+        .toPersistentList()
 
 private fun WifiProperty.IP.SubProperty.allowCheckedChange(
     newValue: Boolean,
