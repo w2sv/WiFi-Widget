@@ -13,7 +13,7 @@ import com.w2sv.datastoreutils.preferences.PreferencesDataStoreRepository
 import com.w2sv.datastoreutils.preferences.map.DataStoreEntry
 import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.IpLocationParameter
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -95,8 +95,8 @@ internal class WidgetRepositoryImpl @Inject constructor(
             save = { save(intPreferencesKey("refreshInterval"), it.inWholeMinutes.toInt()) }
         )
 
-    override val ipLocationParameters: DataStoreFlowMap<IpLocationParameter, Boolean> =
-        dataStoreFlowMap(IpLocationParameter.entries.associateWith { it.isEnabledDSE })
+    override val locationParameters: DataStoreFlowMap<LocationParameter, Boolean> =
+        dataStoreFlowMap(LocationParameter.entries.associateWith { it.isEnabledDSE })
 }
 
 private val WifiProperty.isEnabledDSE
@@ -136,17 +136,17 @@ private val WidgetRefreshingParameter.isEnabledDSE
         defaultValue = { defaultIsEnabled }
     )
 
-private val IpLocationParameter.isEnabledDSE
+private val LocationParameter.isEnabledDSE
     get() = DataStoreEntry.UniType.Impl(
         preferencesKey = booleanPreferencesKey(name),
         defaultValue = {
             when (this) {
-                IpLocationParameter.ZipCode -> true
-                IpLocationParameter.District -> false
-                IpLocationParameter.City -> true
-                IpLocationParameter.Region -> false
-                IpLocationParameter.Country -> true
-                IpLocationParameter.Continent -> false
+                LocationParameter.ZipCode -> true
+                LocationParameter.District -> false
+                LocationParameter.City -> true
+                LocationParameter.Region -> false
+                LocationParameter.Country -> true
+                LocationParameter.Continent -> false
             }
         }
     )

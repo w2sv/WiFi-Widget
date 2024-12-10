@@ -3,7 +3,7 @@ package com.w2sv.domain.repository
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
 import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.IpLocationParameter
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -25,5 +25,5 @@ interface WidgetRepository {
     val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomBarElement, Boolean>
     val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean>
     val refreshInterval: DataStoreFlow<Duration>
-    val ipLocationParameters: DataStoreFlowMap<IpLocationParameter, Boolean>
+    val locationParameters: DataStoreFlowMap<LocationParameter, Boolean>
 }

@@ -12,7 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
-import com.w2sv.domain.model.IpLocationParameter
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
@@ -269,7 +269,7 @@ private fun WifiProperty.checkRow(
                 )
 
             is WifiProperty.NonIP.Other.Location -> subPropertyElements(
-                ipLocationParameters = widgetConfiguration.ipLocationParameters,
+                locationParameters = widgetConfiguration.locationParameters,
                 showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
                 scope = scope
             )
@@ -340,17 +340,17 @@ private fun WifiProperty.IP.subPropertyElements(
 }
 
 private fun WifiProperty.NonIP.Other.Location.subPropertyElements(
-    ipLocationParameters: MutableMap<IpLocationParameter, Boolean>,
+    locationParameters: MutableMap<LocationParameter, Boolean>,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
 ): ImmutableList<CheckRowColumnElement> =
-    IpLocationParameter.entries.map { parameter ->
+    LocationParameter.entries.map { parameter ->
         val shapeController = ShakeController()
         CheckRowColumnElement.CheckRow.fromIsCheckedMap(
             property = parameter,
-            isCheckedMap = ipLocationParameters,
+            isCheckedMap = locationParameters,
             allowCheckChange = { newValue ->
-                (newValue || ipLocationParameters.moreThanOnePropertyEnabled()).also {
+                (newValue || locationParameters.moreThanOnePropertyEnabled()).also {
                     if (!it) {
                         scope.launch { shapeController.shake() }
                         showLeaveAtLeastOnePropertyEnabledSnackbar()

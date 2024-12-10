@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 
 import androidx.compose.runtime.Stable
 import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.IpLocationParameter
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -27,7 +27,7 @@ class ReversibleWidgetConfiguration(
     val bottomRowMap: ReversibleStateMap<WidgetBottomBarElement, Boolean>,
     val refreshInterval: ReversibleStateFlow<Duration>,
     val refreshingParametersMap: ReversibleStateMap<WidgetRefreshingParameter, Boolean>,
-    val ipLocationParameters: ReversibleStateMap<IpLocationParameter, Boolean>,
+    val locationParameters: ReversibleStateMap<LocationParameter, Boolean>,
     private val scope: CoroutineScope,
     onStateSynced: suspend () -> Unit
 ) : ReversibleStatesComposition(
@@ -41,7 +41,7 @@ class ReversibleWidgetConfiguration(
         bottomRowMap,
         refreshInterval,
         refreshingParametersMap,
-        ipLocationParameters
+        locationParameters
     ),
     scope = scope,
     onStateSynced = { onStateSynced() }

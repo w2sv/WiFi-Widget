@@ -1,7 +1,7 @@
 package com.w2sv.networking.model
 
 import com.w2sv.common.utils.log
-import com.w2sv.domain.model.IpLocationParameter
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.networking.extensions.fetchFromUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -34,17 +34,16 @@ internal data class IpApiData(
     @SerialName("as") private val asNumberAndOrganization: String = "",
 //    @SerialName("asname") val asName: String = ""
 ) {
-    fun location(parameters: Map<IpLocationParameter, Boolean>): String? {
-        val parameterToField = mapOf(
-            IpLocationParameter.ZipCode to zip,
-            IpLocationParameter.District to district,
-            IpLocationParameter.City to city,
-            IpLocationParameter.Region to regionName,
-            IpLocationParameter.Country to country,
-            IpLocationParameter.Continent to continent
+    fun location(parameters: Collection<LocationParameter>): String? {
+        return mapOf(
+            LocationParameter.ZipCode to zip,
+            LocationParameter.District to district,
+            LocationParameter.City to city,
+            LocationParameter.Region to regionName,
+            LocationParameter.Country to country,
+            LocationParameter.Continent to continent
         )
-        return parameters
-            .map { (parameter, isEnabled) -> if (isEnabled) parameterToField.getValue(parameter) else null }
+            .map { (parameter, field) -> if (parameters.contains(parameter)) field else null }
             .filter { !it.isNullOrBlank() }
             .joinToString(", ")
     }
