@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 
 @Stable
-class ShakeController(private val config: ShakeConfig) {
+class ShakeController(private val config: ShakeConfig = shakeConfig) {
 
     suspend fun shake() {
         for (i in 0..config.iterations) {
@@ -28,6 +28,12 @@ class ShakeController(private val config: ShakeConfig) {
     internal val offset: Float
         get() = animatable.value
 }
+
+private val shakeConfig = ShakeConfig(
+    iterations = 2,
+    translateX = 20f,
+    stiffness = Spring.StiffnessHigh
+)
 
 @Immutable
 data class ShakeConfig(

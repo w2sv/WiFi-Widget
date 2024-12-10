@@ -1,6 +1,7 @@
 package com.w2sv.networking.model
 
 import com.w2sv.common.utils.log
+import com.w2sv.domain.model.IpLocationParameter
 import com.w2sv.networking.extensions.fetchFromUrl
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -20,7 +21,7 @@ import java.io.IOException
 internal data class IpApiData(
     private val status: String = "",
     private val message: String = "",
-//    private val continent: String = "",
+    private val continent: String = "",
     private val country: String = "",
     private val regionName: String = "",
     private val city: String = "",
@@ -33,14 +34,22 @@ internal data class IpApiData(
     @SerialName("as") private val asNumberAndOrganization: String = "",
 //    @SerialName("asname") val asName: String = ""
 ) {
-    val location: String? by lazy {
-        listOf(zip, district, city, regionName, country)
-            .filter { it.isNotBlank() }
+    fun location(parameters: Map<IpLocationParameter, Boolean>): String? {
+        val parameterToField = mapOf(
+            IpLocationParameter.ZipCode to zip,
+            IpLocationParameter.District to district,
+            IpLocationParameter.City to city,
+            IpLocationParameter.Region to regionName,
+            IpLocationParameter.Country to country,
+            IpLocationParameter.Continent to continent
+        )
+        return parameters
+            .map { (parameter, isEnabled) -> if (isEnabled) parameterToField.getValue(parameter) else null }
+            .filter { !it.isNullOrBlank() }
             .joinToString(", ")
-            .ifEmpty { null }
     }
 
-    val gpsLocation: String? by lazy {
+    val gpsCoordinates: String? by lazy {
         if (lat == -1.0 || lon == -1.0) null else "$lat, $lon"
     }
 

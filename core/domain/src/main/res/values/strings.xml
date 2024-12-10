@@ -82,10 +82,10 @@
     \n&#xA0;&#xA0;&#xA0;&#xA0;<b>Poor:</b> -91 dBm and below</string>
     <string name="nat64prefix">NAT64 Prefix</string>
     <string name="nat64prefix_description">An IPv6 prefix, typically 64:ff9b::/96, used by NAT64 gateways to translate IPv6 addresses to IPv4 addresses and vice versa. It enables IPv6-only clients to communicate with IPv4-only servers by mapping IPv6 addresses to their corresponding IPv4 addresses. This facilitates seamless interaction between IPv6 and IPv4 networks, aiding in the transition to IPv6.\nWiFi Widget will display the NAT64 Prefix that is used on the current link, if there is one.</string>
-    <string name="ip_location">IP Location</string>
-    <string name="ip_location_description">The geographic position associated with your public IP. Retrieved from ip-api.com.</string>
-    <string name="gps_coordinates">GPS Coordinates</string>
-    <string name="gps_coordinates_description">The GPS Coordinates corresponding to your IP location. Retrieved from ip-api.com.</string>
+    <string name="location">Location</string>
+    <string name="location_description">The geographic position associated with your public IP. Retrieved from ip-api.com.</string>
+    <string name="gps_location">GPS Location</string>
+    <string name="gps_location_description">The GPS coordinates associated with your public IP. Retrieved from ip-api.com.</string>
     <string name="as_number">ASN</string>
     <string name="as_number_description">The unique numerical identifier assigned to an <b>Autonomous System</b>, which is a large network or group of networks under a single organization that manages its own routing policies on the internet. ASNs allow these systems to exchange routing information with other networks, enabling efficient and independent management of internet traffic. They are essential for large entities like ISPs, data centers, and multinational companies, as they enable reliable communication and data flow between distinct networks across the internet. Retrieved from ip-api.com.</string>
 <!--    <string name="as_name">AS</string>-->

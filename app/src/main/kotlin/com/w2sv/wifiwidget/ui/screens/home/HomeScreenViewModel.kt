@@ -7,6 +7,7 @@ import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.kotlinutils.coroutines.flow.mapValuesToFirstBlocking
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,7 +35,8 @@ class HomeScreenViewModel @Inject constructor(
             WifiStatus.Connected -> WifiState.Connected(
                 viewDataFlow = wifiPropertyViewDataFactory(
                     properties = enabledWifiProperties,
-                    ipSubProperties = enabledIpSubProperties.toSet()
+                    ipSubProperties = enabledIpSubProperties.toSet(),
+                    ipLocationParameters = widgetRepository.ipLocationParameters.mapValuesToFirstBlocking()
                 )
             )
         }

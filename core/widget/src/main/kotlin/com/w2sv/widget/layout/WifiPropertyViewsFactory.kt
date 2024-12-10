@@ -16,6 +16,7 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.enabledKeys
+import com.w2sv.kotlinutils.coroutines.flow.mapValuesToFirstBlocking
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
@@ -47,7 +48,8 @@ internal class WifiPropertyViewsFactory @Inject constructor(
                 properties = widgetRepository.sortedEnabledWifiProperties.first(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap
                     .enabledKeys()
-                    .toSet()
+                    .toSet(),
+                ipLocationParameters = widgetRepository.ipLocationParameters.mapValuesToFirstBlocking()
             )
                 .toList()
         }

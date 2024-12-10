@@ -9,6 +9,7 @@ import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.SuspendingLazy
 import com.w2sv.core.networking.R
+import com.w2sv.domain.model.IpLocationParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IpApiData
@@ -35,7 +36,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     override fun invoke(
         properties: Iterable<WifiProperty>,
-        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+        ipSubProperties: Set<WifiProperty.IP.SubProperty>,
+        ipLocationParameters: Map<IpLocationParameter, Boolean>
     ): Flow<WifiProperty.ViewData> {
         val systemIPAddresses by lazy {
             IPAddress.systemAddresses(connectivityManager)
@@ -51,7 +53,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                         .getViewData(
                             systemIPAddresses = { systemIPAddresses },
                             ipSubProperties = ipSubProperties,
-                            ipApiData = { ipApiData.value() }
+                            ipApiData = { ipApiData.value() },
+                            ipLocationParameters = ipLocationParameters
                         )
                         .forEach { emit(it) }
                 }
@@ -62,10 +65,11 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private suspend fun WifiProperty.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
         ipSubProperties: Set<WifiProperty.IP.SubProperty>,
-        ipApiData: GetIpApiData
+        ipApiData: GetIpApiData,
+        ipLocationParameters: Map<IpLocationParameter, Boolean>
     ): List<WifiProperty.ViewData> =
         when (this) {
-            is WifiProperty.NonIP -> getViewData(ipApiData)
+            is WifiProperty.NonIP -> getViewData(ipApiData, ipLocationParameters)
 
             is WifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
@@ -73,9 +77,9 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private suspend fun WifiProperty.NonIP.getViewData(ipApiData: GetIpApiData): List<WifiProperty.ViewData.NonIP> =
+    private suspend fun WifiProperty.NonIP.getViewData(ipApiData: GetIpApiData, ipLocationParameters: Map<IpLocationParameter, Boolean>): List<WifiProperty.ViewData.NonIP> =
         getViewData(
-            values = getValues(ipApiData),
+            values = getValues(ipApiData, ipLocationParameters),
             resources = resources,
             makeViewData = { label, value ->
                 WifiProperty.ViewData.NonIP(value, label)
@@ -83,7 +87,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         )
 
     @Suppress("DEPRECATION")
-    private suspend fun WifiProperty.NonIP.getValues(ipApiData: GetIpApiData): List<String> =
+    private suspend fun WifiProperty.NonIP.getValues(ipApiData: GetIpApiData, ipLocationParameters: Map<IpLocationParameter, Boolean>): List<String> =
         buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
@@ -196,8 +200,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.IPLocation -> ipApiData().viewDataValue { it.location }?.let(::add)
-                WifiProperty.NonIP.Other.GpsCoordinates -> ipApiData().viewDataValue { it.gpsLocation }?.let(::add)
+                WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(ipLocationParameters) }?.let(::add)
+                WifiProperty.NonIP.Other.IpGpsLocation -> ipApiData().viewDataValue { it.gpsCoordinates }?.let(::add)
                 WifiProperty.NonIP.Other.ISP -> ipApiData().viewDataValue { it.isp }?.let(::add)
 //                WifiProperty.NonIP.Other.AS -> ipApiData().viewDataValue { it.asName }?.let(::add)
                 WifiProperty.NonIP.Other.ASN -> ipApiData().viewDataValue { it.asn }?.let(::add)

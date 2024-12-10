@@ -39,7 +39,11 @@ sealed class WifiProperty : WidgetProperty {
              * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
              * One [WifiProperty] may result in the the creation of multiple [ViewData] elements.
              */
-            operator fun invoke(properties: Iterable<WifiProperty>, ipSubProperties: Set<IP.SubProperty>): Flow<ViewData>
+            operator fun invoke(
+                properties: Iterable<WifiProperty>,
+                ipSubProperties: Set<IP.SubProperty>,
+                ipLocationParameters: Map<IpLocationParameter, Boolean>
+            ): Flow<ViewData>
         }
     }
 
@@ -163,16 +167,16 @@ sealed class WifiProperty : WidgetProperty {
                 true
             )
 
-            data object IPLocation : Other(
-                R.string.ip_location,
-                R.string.ip_location_description,
+            data object Location : Other(
+                R.string.location,
+                R.string.location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
 
-            data object GpsCoordinates : Other(
-                R.string.gps_coordinates,
-                R.string.gps_coordinates_description,
+            data object IpGpsLocation : Other(
+                R.string.gps_location,
+                R.string.gps_location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
@@ -219,8 +223,8 @@ sealed class WifiProperty : WidgetProperty {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(NAT64Prefix)
                         }
-                        add(IPLocation)
-                        add(GpsCoordinates)
+                        add(Location)
+                        add(IpGpsLocation)
                         add(ISP)
 //                        add(AS)
                         add(ASN)
