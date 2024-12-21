@@ -33,7 +33,7 @@ compose-destinations = "2.0.0-beta01"
 hiltNavigationCompose = "1.2.0"
 datastoreutils = "0.0.6-rc2"
 kotlinutils = "0.1.5-rc2"
-kotlinxCoroutines = "1.9.0"
+kotlinxCoroutines = "1.10.1"
 reversiblestate = "0.0.6-rc2"
 androidutils = "0.4.4-rc1"
 
