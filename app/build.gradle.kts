@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 
@@ -12,7 +13,9 @@ plugins {
 }
 
 kotlin {
-    jvmToolchain(libs.versions.java.get().toInt())
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 android {
@@ -98,7 +101,7 @@ android {
 // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#compose-compiler-options-dsl
 composeCompiler {
     includeSourceInformation = true
-    stabilityConfigurationFile.set(rootProject.file("compose_compiler_config.conf"))
+    stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_compiler_config.conf"))
     metricsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
     reportsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
 }

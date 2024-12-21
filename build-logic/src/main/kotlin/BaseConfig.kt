@@ -1,18 +1,18 @@
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Project
-import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.configure
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 internal fun Project.baseConfig() {
-    with(pluginManager) {
+    pluginManager.apply {
         apply(libs.findPluginId("ktlint"))
     }
 
-    with(extensions) {
-        configure<KotlinProjectExtension> {
-            jvmToolchain {
-                languageVersion.set(JavaLanguageVersion.of(libs.findVersionInt("java")))
+    extensions.apply {
+        configure<KotlinAndroidProjectExtension> {
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_17)
             }
         }
         configure<BaseExtension> {

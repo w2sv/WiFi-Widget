@@ -6,10 +6,6 @@ plugins {
     alias(libs.plugins.baselineprofile)
 }
 
-kotlin {
-    jvmToolchain(libs.versions.java.get().toInt())
-}
-
 val mvdName = "Pixel 6 API 33"
 
 android {

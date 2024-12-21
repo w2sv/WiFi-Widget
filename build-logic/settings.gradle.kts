@@ -2,7 +2,7 @@
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "plugins"
+rootProject.name = "build-logic"
 
 dependencyResolutionManagement {
     repositories {
