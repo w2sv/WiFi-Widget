@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -117,7 +117,7 @@ fun DragAndDroppableCheckRowColumn(
                         val shadowColor = MaterialTheme.colorScheme.secondary.alphaDecreased()
                         shadow(
                             elevation = 1.dp,
-                            shape = CircleShape,
+                            shape = RoundedCornerShape(32.dp),
                             ambientColor = shadowColor,
                             spotColor = shadowColor
                         )

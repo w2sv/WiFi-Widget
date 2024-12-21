@@ -39,7 +39,11 @@ sealed class WifiProperty : WidgetProperty {
              * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
              * One [WifiProperty] may result in the the creation of multiple [ViewData] elements.
              */
-            operator fun invoke(properties: Iterable<WifiProperty>, ipSubProperties: Set<IP.SubProperty>): Flow<ViewData>
+            operator fun invoke(
+                properties: Iterable<WifiProperty>,
+                ipSubProperties: Collection<IP.SubProperty>,
+                locationParameters: Collection<LocationParameter>
+            ): Flow<ViewData>
         }
     }
 
@@ -163,24 +167,17 @@ sealed class WifiProperty : WidgetProperty {
                 true
             )
 
-            data object IPLocation : Other(
-                R.string.ip_location,
-                R.string.ip_location_description,
+            data object Location : Other(
+                R.string.location,
+                R.string.location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
                 false
             )
 
-            data object GpsCoordinates : Other(
-                R.string.gps_coordinates,
-                R.string.gps_coordinates_description,
+            data object IpGpsLocation : Other(
+                R.string.gps_location,
+                R.string.gps_location_description,
                 "https://en.wikipedia.org/wiki/Internet_geolocation",
-                false
-            )
-
-            data object ASN : Other(
-                R.string.asn,
-                R.string.asn_description,
-                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
                 false
             )
 
@@ -188,6 +185,20 @@ sealed class WifiProperty : WidgetProperty {
                 R.string.isp,
                 R.string.isp_description,
                 "https://en.wikipedia.org/wiki/Internet_service_provider",
+                false
+            )
+
+//            data object AS : Other(
+//                R.string.as_name,
+//                R.string.as_name_description,
+//                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
+//                false
+//            )
+
+            data object ASN : Other(
+                R.string.as_number,
+                R.string.as_number_description,
+                "https://en.wikipedia.org/wiki/Autonomous_system_(Internet)",
                 false
             )
 
@@ -212,10 +223,11 @@ sealed class WifiProperty : WidgetProperty {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                             add(NAT64Prefix)
                         }
-                        add(IPLocation)
-                        add(GpsCoordinates)
-                        add(ASN)
+                        add(Location)
+                        add(IpGpsLocation)
                         add(ISP)
+//                        add(AS)
+                        add(ASN)
                     }
             }
         }

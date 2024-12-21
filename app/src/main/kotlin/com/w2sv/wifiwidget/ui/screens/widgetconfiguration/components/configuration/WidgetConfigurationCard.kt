@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
-import androidx.compose.animation.core.Spring
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -13,6 +12,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
@@ -29,7 +29,6 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -236,7 +235,7 @@ private fun WifiProperty.checkRow(
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
 ): CheckRowColumnElement.CheckRow<WifiProperty> {
-    val shakeController = ShakeController(shakeConfig)
+    val shakeController = ShakeController()
 
     return CheckRowColumnElement.CheckRow.fromIsCheckedMap(
         property = this,
@@ -253,7 +252,7 @@ private fun WifiProperty.checkRow(
                     }
                 }
             }
-            (isCheckedNew || widgetConfiguration.moreThanOnePropertyChecked()).also {
+            (isCheckedNew || widgetConfiguration.wifiProperties.moreThanOnePropertyEnabled()).also {
                 if (!it) {
                     showLeaveAtLeastOnePropertyEnabledSnackbar()
                 }
@@ -269,14 +268,20 @@ private fun WifiProperty.checkRow(
                     scope = scope
                 )
 
+            is WifiProperty.NonIP.Other.Location -> subPropertyElements(
+                locationParameters = widgetConfiguration.locationParameters,
+                showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
+                scope = scope
+            )
+
             else -> null
         },
         showInfoDialog = { showInfoDialog(infoDialogData()) }
     )
 }
 
-private fun ReversibleWidgetConfiguration.moreThanOnePropertyChecked(): Boolean =
-    wifiProperties.values.count { it } > 1
+private fun Map<*, Boolean>.moreThanOnePropertyEnabled(): Boolean =
+    values.count { it } > 1
 
 private fun WifiProperty.IP.subPropertyElements(
     ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
@@ -295,7 +300,7 @@ private fun WifiProperty.IP.subPropertyElements(
             .forEach { subProperty ->
                 val shakeController =
                     if (subProperty.isAddressTypeEnablementProperty) {
-                        ShakeController(shakeConfig)
+                        ShakeController()
                     } else {
                         null
                     }
@@ -336,11 +341,28 @@ private fun WifiProperty.IP.subPropertyElements(
         .toPersistentList()
 }
 
-private val shakeConfig = ShakeConfig(
-    iterations = 2,
-    translateX = 20f,
-    stiffness = Spring.StiffnessHigh
-)
+private fun WifiProperty.NonIP.Other.Location.subPropertyElements(
+    locationParameters: MutableMap<LocationParameter, Boolean>,
+    showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
+    scope: CoroutineScope
+): ImmutableList<CheckRowColumnElement> =
+    LocationParameter.entries.map { parameter ->
+        val shapeController = ShakeController()
+        CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+            property = parameter,
+            isCheckedMap = locationParameters,
+            allowCheckChange = { newValue ->
+                (newValue || locationParameters.moreThanOnePropertyEnabled()).also {
+                    if (!it) {
+                        scope.launch { shapeController.shake() }
+                        showLeaveAtLeastOnePropertyEnabledSnackbar()
+                    }
+                }
+            },
+            shakeController = shapeController
+        )
+    }
+        .toPersistentList()
 
 private fun WifiProperty.IP.SubProperty.allowCheckedChange(
     newValue: Boolean,

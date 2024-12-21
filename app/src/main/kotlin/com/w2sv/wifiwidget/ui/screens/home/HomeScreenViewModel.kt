@@ -10,11 +10,11 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -26,15 +26,17 @@ class HomeScreenViewModel @Inject constructor(
     val wifiState = combine(
         wifiStatusMonitor.wifiStatus.distinctUntilChanged(),
         widgetRepository.sortedEnabledWifiProperties.distinctUntilChanged(),
-        widgetRepository.ipSubPropertyEnablementMap.enabledKeysFlow().distinctUntilChanged()
-    ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties ->
+        widgetRepository.ipSubPropertyEnablementMap.enabledKeysFlow().distinctUntilChanged(),
+        widgetRepository.locationParameters.enabledKeysFlow().distinctUntilChanged(),
+    ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties, enabledLocationParameters ->
         when (wifiStatus) {
             WifiStatus.Disabled -> WifiState.Disabled
             WifiStatus.Disconnected -> WifiState.Disconnected
             WifiStatus.Connected -> WifiState.Connected(
                 viewDataFlow = wifiPropertyViewDataFactory(
                     properties = enabledWifiProperties,
-                    ipSubProperties = enabledIpSubProperties.toSet()
+                    ipSubProperties = enabledIpSubProperties,
+                    locationParameters = enabledLocationParameters
                 )
             )
         }

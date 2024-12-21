@@ -9,22 +9,23 @@ import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.SuspendingLazy
 import com.w2sv.core.networking.R
+import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.linkProperties
-import com.w2sv.networking.model.IFConfigData
 import com.w2sv.networking.model.IPAddress
-import java.net.InetAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import javax.inject.Inject
+import com.w2sv.networking.model.IpApiData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
+import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import javax.inject.Inject
 
 private typealias GetSystemIPAddresses = () -> List<IPAddress>
-private typealias GetIFConfigData = suspend () -> Result<IFConfigData>
+private typealias GetIpApiData = suspend () -> Result<IpApiData>
 
 internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val httpClient: OkHttpClient,
@@ -35,13 +36,14 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     override fun invoke(
         properties: Iterable<WifiProperty>,
-        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+        ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
+        locationParameters: Collection<LocationParameter>
     ): Flow<WifiProperty.ViewData> {
         val systemIPAddresses by lazy {
             IPAddress.systemAddresses(connectivityManager)
         }
-        val ifConfigData = SuspendingLazy {
-            IFConfigData.fetch(httpClient)
+        val ipApiData = SuspendingLazy {
+            IpApiData.fetch(httpClient)
         }
 
         return flow {
@@ -51,7 +53,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                         .getViewData(
                             systemIPAddresses = { systemIPAddresses },
                             ipSubProperties = ipSubProperties,
-                            ifConfigData = { ifConfigData.value() }
+                            ipApiData = { ipApiData.value() },
+                            locationParameters = locationParameters
                         )
                         .forEach { emit(it) }
                 }
@@ -61,11 +64,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WifiProperty.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Set<WifiProperty.IP.SubProperty>,
-        ifConfigData: GetIFConfigData
+        ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
+        ipApiData: GetIpApiData,
+        locationParameters: Collection<LocationParameter>
     ): List<WifiProperty.ViewData> =
         when (this) {
-            is WifiProperty.NonIP -> getViewData(ifConfigData)
+            is WifiProperty.NonIP -> getViewData(ipApiData, locationParameters)
 
             is WifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
@@ -73,9 +77,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             )
         }
 
-    private suspend fun WifiProperty.NonIP.getViewData(ifConfigData: GetIFConfigData): List<WifiProperty.ViewData.NonIP> =
+    private suspend fun WifiProperty.NonIP.getViewData(
+        ipApiData: GetIpApiData,
+        locationParameters: Collection<LocationParameter>
+    ): List<WifiProperty.ViewData.NonIP> =
         getViewData(
-            values = getValues(ifConfigData),
+            values = getValues(ipApiData, locationParameters),
             resources = resources,
             makeViewData = { label, value ->
                 WifiProperty.ViewData.NonIP(value, label)
@@ -83,7 +90,10 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         )
 
     @Suppress("DEPRECATION")
-    private suspend fun WifiProperty.NonIP.getValues(ifConfigData: GetIFConfigData): List<String> =
+    private suspend fun WifiProperty.NonIP.getValues(
+        ipApiData: GetIpApiData,
+        locationParameters: Collection<LocationParameter>
+    ): List<String> =
         buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
@@ -196,16 +206,17 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.IPLocation -> add(ifConfigData().viewDataValue { it.location })
-                WifiProperty.NonIP.Other.GpsCoordinates -> add(ifConfigData().viewDataValue { it.gpsLocation })
-                WifiProperty.NonIP.Other.ASN -> add(ifConfigData().viewDataValue { it.asn })
-                WifiProperty.NonIP.Other.ISP -> add(ifConfigData().viewDataValue { it.asnOrg })
+                WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(locationParameters) }?.let(::add)
+                WifiProperty.NonIP.Other.IpGpsLocation -> ipApiData().viewDataValue { it.gpsCoordinates }?.let(::add)
+                WifiProperty.NonIP.Other.ISP -> ipApiData().viewDataValue { it.isp }?.let(::add)
+//                WifiProperty.NonIP.Other.AS -> ipApiData().viewDataValue { it.asName }?.let(::add)
+                WifiProperty.NonIP.Other.ASN -> ipApiData().viewDataValue { it.asn }?.let(::add)
             }
         }
 
     private suspend fun WifiProperty.IP.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Set<WifiProperty.IP.SubProperty>
+        ipSubProperties: Collection<WifiProperty.IP.SubProperty>
     ): List<WifiProperty.ViewData.IPProperty> =
         getViewData(
             values = when (this) {
@@ -280,13 +291,11 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 /**
  * @return the result of [onSuccess] or the simpleName of the held exception.
  */
-private fun Result<IFConfigData>.viewDataValue(onSuccess: (IFConfigData) -> String): String =
-    requireNotNull(
-        getOrNull()
+private fun Result<IpApiData>.viewDataValue(onSuccess: (IpApiData) -> String?): String? =
+    exceptionOrNull()
+        ?.let { it::class.simpleName }
+        ?: getOrNull()
             ?.let(onSuccess)
-            ?: exceptionOrNull()
-                ?.let { it::class.simpleName }
-    )
 
 private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
     values: List<T>,

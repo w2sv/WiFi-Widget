@@ -116,6 +116,7 @@ class WidgetViewModel @Inject constructor(
                 )
             }
         ),
+        locationParameters = repository.locationParameters.reversibleStateMap(scope = viewModelScope),
         scope = viewModelScope,
         onStateSynced = {
             WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh " }
