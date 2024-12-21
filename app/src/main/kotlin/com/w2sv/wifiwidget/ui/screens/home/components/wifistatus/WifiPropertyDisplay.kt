@@ -45,7 +45,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.BaselineShift
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -276,7 +275,7 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     }
 }
 
-private val horizontalPadding = 12.dp
+private val horizontalPadding = 8.dp
 
 @Composable
 private fun PropertyDisplayRow(
@@ -307,18 +306,15 @@ private fun PropertyDisplayRow(
 
     Row(
         modifier = modifier.clickable { onClick(viewData, label, scope) },
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = label,
-            color = MaterialTheme.colorScheme.primary
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.fillMaxWidth(0.4f)
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = viewData.value,
-            textAlign = TextAlign.End
-        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(text = viewData.value)
     }
 }
 
@@ -327,18 +323,18 @@ private fun SubPropertyValueRow(values: ImmutableList<String>, modifier: Modifie
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End)
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End)
     ) {
         values.forEach {
             Text(
                 text = it,
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 modifier = Modifier
                     .background(
                         color = MaterialTheme.colorScheme.secondaryContainer,
                         shape = MaterialTheme.shapes.medium
                     )
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 6.dp)
             )
         }
     }

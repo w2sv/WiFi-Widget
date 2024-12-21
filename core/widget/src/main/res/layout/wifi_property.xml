@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:paddingVertical="0.5dp">
+    android:paddingVertical="1.5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,17 +12,16 @@
 
         <TextView
             android:id="@+id/property_label_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:bufferType="spannable"
             android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/property_value_tv"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:paddingEnd="6dp" />
+            android:layout_weight="1" />
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +43,6 @@
             android:id="@+id/ip_sub_property_tv_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="6dp"
             android:background="@drawable/rounded_corner_shape"
             android:paddingHorizontal="6dp" />
     </LinearLayout>
