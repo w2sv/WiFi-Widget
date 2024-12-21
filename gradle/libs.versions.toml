@@ -103,7 +103,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 
-# Plugins
+# Convention plugins
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
@@ -126,6 +126,7 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
 
-# Project plugins
-wifiwidget-library = { id = "wifiwidget.library", version = "unspecified" }
-wifiwidget-hilt = { id = "wifiwidget.hilt", version = "unspecified" }
+# Convention plugins
+wifiwidget-library = { id = "wifiwidget.library" }
+wifiwidget-application = { id = "wifiwidget.application" }
+wifiwidget-hilt = { id = "wifiwidget.hilt" }

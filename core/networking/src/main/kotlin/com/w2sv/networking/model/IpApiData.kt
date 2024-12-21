@@ -3,12 +3,12 @@ package com.w2sv.networking.model
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.LocationParameter
 import com.w2sv.networking.extensions.fetchFromUrl
+import java.io.IOException
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import slimber.log.i
-import java.io.IOException
 
 /**
  * Data fetched from json retrieved from [ip-api](http://ip-api.com/json?fields=5828601).
@@ -31,7 +31,7 @@ internal data class IpApiData(
     private val lon: Double = -1.0,
     val timezone: String = "",
     val isp: String = "",
-    @SerialName("as") private val asNumberAndOrganization: String = "",
+    @SerialName("as") private val asNumberAndOrganization: String = ""
 //    @SerialName("asname") val asName: String = ""
 ) {
     fun location(parameters: Collection<LocationParameter>): String? {
@@ -54,10 +54,11 @@ internal data class IpApiData(
 
     val asn: String? by lazy {
         asNumberAndOrganization.run {
-            if (isBlank())
+            if (isBlank()) {
                 null
-            else
+            } else {
                 substringBefore(" ")
+            }
         }
     }
 

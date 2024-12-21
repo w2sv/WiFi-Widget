@@ -1,40 +1,23 @@
 import java.io.FileInputStream
 import java.util.Properties
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.play)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.wifiwidget.application)
     alias(libs.plugins.wifiwidget.hilt)
+    alias(libs.plugins.play)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.compose.compiler)
-    alias(libs.plugins.ktlint)
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_17
-    }
 }
 
 android {
-    val packageName = "com.w2sv.wifiwidget"
-
-    namespace = packageName
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
     defaultConfig {
-        applicationId = packageName
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.compileSdk.get().toInt()
+        applicationId = namespace
 
-        versionCode = project.findProperty("versionCode")!!.toString().toInt()
+        versionCode = project.property("versionCode").toString().toInt()
         versionName = version.toString()
 
         // Name built bundles "{versionName}-{buildFlavor}.aab"
         setProperty("archivesBaseName", versionName)
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
         create("release") {
@@ -69,20 +52,12 @@ android {
         compose = true
         buildConfig = true
     }
-    packaging {
-        resources {
-            excludes.add("/META-INF/*")
-        }
-    }
     lint {
         checkDependencies = true
         xmlReport = false
         htmlReport = true
         textReport = false
         htmlOutput = project.layout.buildDirectory.file("reports/lint-results-debug.html").get().asFile
-    }
-    hilt {
-        enableAggregatingTask = true // Fixes warning
     }
     // Name built apks "{versionName}.apk"
     applicationVariants.all {

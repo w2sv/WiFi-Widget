@@ -21,11 +21,11 @@ import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
-import javax.inject.Inject
 
 internal class WifiPropertyViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,

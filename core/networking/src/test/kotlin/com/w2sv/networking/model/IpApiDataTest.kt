@@ -1,10 +1,10 @@
 package com.w2sv.networking.model
 
 import com.w2sv.domain.model.LocationParameter
+import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient
 import org.junit.Test
-import kotlin.test.assertNotNull
 
 class IpApiDataTest {
 
