@@ -32,7 +32,6 @@ import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeConfig
 import com.w2sv.wifiwidget.ui.utils.ShakeController
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
@@ -317,7 +316,9 @@ private fun WifiProperty.IP.subPropertyElements(
                         },
                         show = {
                             if (subProperty.kind == WifiProperty.IP.SubProperty.Kind.ShowSubnetMask) {
-                                ipSubPropertyEnablementMap.getValue(subProperty.copy(kind = WifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled))
+                                ipSubPropertyEnablementMap.getValue(
+                                    subProperty.copy(kind = WifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled)
+                                )
                             } else {
                                 true
                             }

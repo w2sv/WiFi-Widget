@@ -7,13 +7,12 @@ import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.log
 import com.w2sv.networking.extensions.fetchFromUrl
 import com.w2sv.networking.extensions.linkProperties
-import okhttp3.OkHttpClient
-import slimber.log.i
 import java.io.IOException
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress
-import kotlin.and
+import okhttp3.OkHttpClient
+import slimber.log.i
 
 internal sealed class IPAddress(val version: Version) {
     protected abstract val hostAddress: String?
@@ -112,7 +111,7 @@ internal sealed class IPAddress(val version: Version) {
 
     companion object {
         fun systemAddresses(connectivityManager: ConnectivityManager): List<IPAddress> =
-            connectivityManager.linkProperties?.linkAddresses?.map(::fromLinkAddress).log{"IP Addresses: $it"} ?: emptyList()
+            connectivityManager.linkProperties?.linkAddresses?.map(::fromLinkAddress).log { "IP Addresses: $it" } ?: emptyList()
 
         @VisibleForTesting
         fun fromLinkAddress(linkAddress: LinkAddress): IPAddress =

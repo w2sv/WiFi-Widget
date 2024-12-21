@@ -1,15 +1,15 @@
 package com.w2sv.networking.model
 
 import android.net.LinkAddress
-import kotlinx.coroutines.test.runTest
-import okhttp3.OkHttpClient
-import org.junit.Test
-import org.mockito.Mockito
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlinx.coroutines.test.runTest
+import okhttp3.OkHttpClient
+import org.junit.Test
+import org.mockito.Mockito
 
 class IPAddressTest {
 
@@ -45,8 +45,8 @@ class IPAddressTest {
             "192.168.1.1" to true,
             "10.0.0.1" to true,
             "172.16.0.1" to true,
-            "8.8.8.8" to false,    // Public
-            "1.1.1.1" to false,    // Public
+            "8.8.8.8" to false, // Public
+            "1.1.1.1" to false, // Public
             "203.0.113.1" to false // Public
         ).forEach { (address, expected) ->
             assertEquals(expected, testIPAddressFromLinkAddress(address, 24).isSiteLocal)
@@ -60,8 +60,8 @@ class IPAddressTest {
             "169.254.0.0" to true,
             "169.254.255.255" to true,
             "192.168.1.1" to false, // Private
-            "8.8.8.8" to false,     // Public
-            "1.1.1.1" to false      // Public
+            "8.8.8.8" to false, // Public
+            "1.1.1.1" to false // Public
         ).forEach { (address, expected) ->
             assertEquals(expected, testIPAddressFromLinkAddress(address, 24).isLinkLocal)
         }
@@ -70,12 +70,12 @@ class IPAddressTest {
     @Test
     fun `test isAnyLocal`() {
         listOf(
-            "::" to true,       // Any Local
-            "::1" to false,     // Loopback
+            "::" to true, // Any Local
+            "::1" to false, // Loopback
             "fe80::1" to false, // Link-local
             "2001:db8::1" to false, // Global Unicast
             "ff00::1" to false, // Multicast
-            "fc00::1" to false  // Unique-local
+            "fc00::1" to false // Unique-local
         ).forEach { (address, expected) ->
             assertEquals(expected, testIPv6Address(address).isAnyLocal)
         }
@@ -84,12 +84,12 @@ class IPAddressTest {
     @Test
     fun `test isMulticast`() {
         listOf(
-            "ff00::1" to true,      // Multicast
-            "ff02::1" to true,      // Multicast
-            "ff05::1" to true,      // Multicast
+            "ff00::1" to true, // Multicast
+            "ff02::1" to true, // Multicast
+            "ff05::1" to true, // Multicast
             "2001:db8::1" to false, // Global Unicast
-            "fe80::1" to false,     // Link-local
-            "::1" to false          // Loopback
+            "fe80::1" to false, // Link-local
+            "::1" to false // Loopback
         ).forEach { (address, expected) ->
             assertEquals(expected, testIPv6Address(address).isMulticast)
         }
@@ -98,12 +98,12 @@ class IPAddressTest {
     @Test
     fun `test isLoopback`() {
         listOf(
-            "::1" to true,       // Loopback
+            "::1" to true, // Loopback
             "127.0.0.1" to true, // IPv4 Loopback
             "2001:db8::1" to false, // Global Unicast
-            "fe80::1" to false,   // Link-local
-            "fc00::1" to false,   // Unique-local
-            "ff00::1" to false    // Multicast
+            "fe80::1" to false, // Link-local
+            "fc00::1" to false, // Unique-local
+            "ff00::1" to false // Multicast
         ).forEach { (address, expected) ->
             assertEquals(expected, testIPAddressFromInetAddress(address).isLoopback)
         }
@@ -136,10 +136,10 @@ class IPAddressTest {
             "fd12:3456:789a:1::1" to true,
             "fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff" to true,
             "2001:db8::1" to false, // Global Unicast
-            "fe80::1" to false,     // Link-local
-            "ff00::1" to false,     // Multicast
-            "::1" to false,         // Loopback
-            "2001::1" to false      // Global Unicast
+            "fe80::1" to false, // Link-local
+            "ff00::1" to false, // Multicast
+            "::1" to false, // Loopback
+            "2001::1" to false // Global Unicast
         )
             .forEach { (address, expected) ->
                 assertEquals(expected, testIPv6Address(address).isUniqueLocal)
@@ -157,12 +157,12 @@ class IPAddressTest {
             "2607:f8b0:4004:803::200e" to true,
             "2001:4860:4860::8888" to true,
             // False cases
-            "fe80::1" to false,                     // Link-local
-            "fec0::1" to false,                     // Site-local
-            "fd00::1" to false,                     // Unique local
-            "ff02::1" to false,                     // Multicast
-            "::1" to false,                         // Loopback
-            "::" to false                           // Any local
+            "fe80::1" to false, // Link-local
+            "fec0::1" to false, // Site-local
+            "fd00::1" to false, // Unique local
+            "ff02::1" to false, // Multicast
+            "::1" to false, // Loopback
+            "::" to false // Any local
         )
             .forEach { (hostAddress, expected) ->
                 assertEquals(expected, testIPv6Address(hostAddress).isGlobalUnicast)

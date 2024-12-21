@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable

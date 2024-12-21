@@ -20,10 +20,11 @@ ij_kotlin_allow_trailing_comma_on_call_site = false
 ij_kotlin_packages_to_use_import_on_demand = unset
 ktlint_standard_no-wildcard-imports = enabled
 
-ktlint_function_naming_ignore_when_annotated_with=Composable, Test
+ktlint_function_naming_ignore_when_annotated_with = Composable, Test
 ktlint_standard_filename = disabled
-ktlint_function_signature_body_expression_wrapping=always
-ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than=3
+ktlint_function_signature_body_expression_wrapping = always
+ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 3
+ktlint_standard_discouraged-comment-location = disabled
 
 [*.md]
 max_line_length = unset
