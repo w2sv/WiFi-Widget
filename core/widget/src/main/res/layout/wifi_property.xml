@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/wifi_property_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +16,8 @@
             android:layout_width="@dimen/wifi_property_label_width"
             android:layout_height="wrap_content"
             android:bufferType="spannable"
-            android:paddingEnd="6dp" />
+            android:paddingEnd="6dp"
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:id="@+id/property_value_tv"
@@ -33,7 +35,8 @@
         <TextView
             android:id="@+id/ip_sub_property_tv_1"
             style="@style/IpSubPropertyTextView"
-            android:layout_marginEnd="6dp" />
+            android:layout_marginEnd="6dp"
+            tools:ignore="RtlSymmetry" />
 
         <TextView
             android:id="@+id/ip_sub_property_tv_2"

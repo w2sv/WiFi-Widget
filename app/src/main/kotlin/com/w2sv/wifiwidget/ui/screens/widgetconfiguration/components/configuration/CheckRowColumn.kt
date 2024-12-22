@@ -95,7 +95,9 @@ fun DragAndDroppableCheckRowColumn(
 
     LazyColumn(
         state = lazyListState,
-        modifier = modifier.heightIn(max = 2_000.dp),  // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that'll surely accommodate the column height")
+        modifier = modifier.heightIn(
+            max = 2_000.dp // Necessary due to nesting inside scrollable column. Chosen arbitrarily.
+        ),
         userScrollEnabled = false
     ) {
         items(elements, key = { it.property.labelRes }) { data ->
