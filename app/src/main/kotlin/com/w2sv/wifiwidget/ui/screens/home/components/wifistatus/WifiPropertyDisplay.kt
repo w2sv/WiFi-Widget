@@ -304,14 +304,11 @@ private fun PropertyDisplayRow(
         }
     }
 
-    Row(
-        modifier = modifier.clickable { onClick(viewData, label, scope) },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = modifier.clickable { onClick(viewData, label, scope) }) {
         Text(
             text = label,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.fillMaxWidth(0.4f)
+            modifier = Modifier.fillMaxWidth(0.35f)
         )
         Spacer(modifier = Modifier.width(6.dp))
         Text(text = viewData.value)

@@ -12,16 +12,15 @@
 
         <TextView
             android:id="@+id/property_label_tv"
-            android:layout_width="100dp"
+            android:layout_width="@dimen/wifi_property_label_width"
             android:layout_height="wrap_content"
             android:bufferType="spannable"
             android:paddingEnd="6dp" />
 
         <TextView
             android:id="@+id/property_value_tv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout
@@ -38,7 +37,7 @@
 
         <TextView
             android:id="@+id/ip_sub_property_tv_2"
-            style="@style/IpSubPropertyTextView"/>
+            style="@style/IpSubPropertyTextView" />
     </LinearLayout>
 
 </LinearLayout>
