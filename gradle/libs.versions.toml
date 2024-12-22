@@ -33,7 +33,7 @@ compose-destinations = "2.0.0-beta01"
 hiltNavigationCompose = "1.2.0"
 datastoreutils = "0.0.6-rc2"
 kotlinutils = "0.1.5-rc2"
-kotlinxCoroutines = "1.9.0"
+kotlinxCoroutines = "1.10.1"
 reversiblestate = "0.0.6-rc2"
 androidutils = "0.4.4-rc1"
 
@@ -72,7 +72,7 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 
 # Google
 google-material = "com.google.android.material:material:1.12.0"
-google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.36.0"
+google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.0"
 google-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 google-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
