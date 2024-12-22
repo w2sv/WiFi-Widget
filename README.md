@@ -121,7 +121,7 @@
 
 <h2 align="center">Architecture</h2>
 
-- Multi-modular design
+- Multi-modular build
 - Convention plugins for gradle code reuse, whilst keeping modules independent from one another
 - "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
