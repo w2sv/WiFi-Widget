@@ -53,14 +53,13 @@
 
 ### Widget
 - Property copy-to-clipboard functionality on click
-
-    #### Configuration Options
+- **Configuration options:**
     - Appearance:
         - Size
         - Light/dark theme with static/dynamic, or entirely custom colors
         - Background opacity
         - Font size
-    - Displayed WiFi properties:
+    - Displayed properties:
         - SSID
         - BSSID
         - IP Addresses:
