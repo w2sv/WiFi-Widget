@@ -6,4 +6,11 @@
         <item name="android:background">@drawable/widget_background</item>
     </style>
 
+    <style name="IpSubPropertyTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/rounded_corner_shape</item>
+        <item name="android:paddingHorizontal">6dp</item>
+    </style>
+
 </resources>

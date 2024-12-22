@@ -10,5 +10,5 @@ enum class FontSize(@StringRes val labelRes: Int, val value: Float) {
     Large(labelRes = R.string.large, value = 17f),
     VeryLarge(labelRes = R.string.very_large, value = 18f);
 
-    val subscriptSize: Float = value - 2f
+    val subscriptSize: Float by lazy { value - 2f }
 }
