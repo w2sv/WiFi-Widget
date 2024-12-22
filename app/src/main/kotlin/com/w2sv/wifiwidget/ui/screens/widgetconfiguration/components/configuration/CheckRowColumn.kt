@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
@@ -34,7 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -42,8 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.utils.onAtLeastAndroidR
-import com.w2sv.common.utils.onAtLeastAndroidU
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
@@ -89,17 +87,15 @@ fun DragAndDroppableCheckRowColumn(
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
-    val view = LocalView.current
+    val localHapticFeedback = LocalHapticFeedback.current
     val lazyListState = rememberLazyListState()
     val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
         onDrop(from.index, to.index)
-        onAtLeastAndroidU { view.performHapticFeedback(HapticFeedbackConstants.SEGMENT_FREQUENT_TICK) }
     }
 
-    // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that'll surely accommodate the column height")
     LazyColumn(
         state = lazyListState,
-        modifier = modifier.heightIn(max = 2_000.dp),
+        modifier = modifier.heightIn(max = 2_000.dp),  // Max height necessary due to nesting inside scrollable column. Chosen arbitrarily ("some height that'll surely accommodate the column height")
         userScrollEnabled = false
     ) {
         items(elements, key = { it.property.labelRes }) { data ->
@@ -107,10 +103,7 @@ fun DragAndDroppableCheckRowColumn(
                 val itemModifier = Modifier
                     .longPressDraggableHandle(
                         onDragStarted = {
-                            onAtLeastAndroidR { view.performHapticFeedback(HapticFeedbackConstants.GESTURE_START) }
-                        },
-                        onDragStopped = {
-                            onAtLeastAndroidR { view.performHapticFeedback(HapticFeedbackConstants.GESTURE_END) }
+                            localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress)
                         }
                     )
                     .thenIf(isDragging) {
