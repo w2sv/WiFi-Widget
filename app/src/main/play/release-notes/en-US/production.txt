@@ -1,3 +1,6 @@
-- New feature: reordering of WiFi properties 🚀
-- Fixed occasionally occurring __MissingFieldException__ on newly added properties
-- Made the __Copied to clipboard__ message on click on a WiFi property on the widget appear more reliably and improved its appearance
+- Enable display of IPv4 subnet masks
+- Enable configuration of location parameters
+- Migrate to ip-api.com for more reliable (gps) location, isp & asn retrieval
+- Fix reordering indication shadow on expanded items
+- Improve IP Address type determination
+- Left-align wifi property values on widget and in-app
