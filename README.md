@@ -43,37 +43,71 @@
 
 ### In-App
 
-- Juicy Material 3 Design, featuring animations wherever they're appropriate
-- Supports light & dark theme, as well as dynamic colors
+- Neat Material 3 Design, featuring smooth animations wherever they're appropriate
+- Configurable theme:
+    - Light / dark
+    - Dynamic / static colors
+    - AMOLED black
 - Adaptive layouts for landscape & portrait mode
-- Live WiFi Status display with property copy-to-clipboard functionality
+- Live WiFi Status display with property copy-to-clipboard functionality on click
 
-### Widget Configuration Options
+### Widget
+- Property copy-to-clipboard functionality on click
 
-- Appearance:
-    - Size
-    - Light/dark theme with static/dynamic colors, or custom colors
-    - Background opacity
-    - Font size
-- Displayed WiFi properties:
-    - SSID, BSSID
-    - IPs: Loopback, Site Local, Link Local, ULA, Multicast, Global Unicast, Public (fetched
-      from https://api.ipify.org)
-        - For address types that support IPv4 & IPv6, you may choose which versions to include
-        - Whether to display prefix lengths
-    - Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security
-      Protocol, Gateway, DNS, DHCP
-    - IP Location, IP Location GPS Coordinates, ASN, ISP
-        - fetched from https://ip-api.com/
-- WiFi property appearance order
-- Bottom bar elements:
-    - Last refresh date time
-    - **Refresh data** button
-    - **WiFi settings** button
-    - **Configure widget** button
-- Data refreshing:
-    - Interval
-    - Whether to refresh on low battery
+    #### Configuration Options
+    - Appearance:
+        - Size
+        - Light/dark theme with static/dynamic, or entirely custom colors
+        - Background opacity
+        - Font size
+    - Displayed WiFi properties:
+        - SSID
+        - BSSID
+        - IP Addresses:
+            - Loopback
+            - Site Local
+            - Link Local
+            - Unique Local Address
+            - Multicast
+            - Global Unicast
+            - Public
+                - fetched from [api.ipify.org](https://api.ipify.org)
+            ---
+            - For address types supporting IPv4 & IPv6, you may choose which versions to include (IPv4 | Ipv6 | both)
+            - Display of prefix lengths (IPv4 & IPv6), and/or subnet masks (IPv4 only)
+        - Frequency
+        - Channel
+        - Link Speed
+        - RSSI
+        - Signal Strength
+        - Standard
+        - WiFi Generation
+        - Security Protocol
+        - Gateway
+        - DNS(s)
+        - DHCP
+        - NAT64 Prefix
+        - From [ip-api.com/](https://ip-api.com/)
+            - Location:
+                - Zip Code
+                - District
+                - City
+                - Region
+                - Country
+                - Continent  
+            - GPS Location
+            - ASN
+            - ISP
+    - Property appearance order
+    - Bottom bar elements inclusion:
+        - Last refresh date time
+        - Buttons:
+            - Refresh data
+            - Open WiFi settings
+            - Open widget settings
+    - Data refreshing:
+        - Interval
+        - Whether to refresh on low battery
 
 <h2 align="center">Tech Stack</h2>
 
@@ -81,10 +115,9 @@
 - Jetpack Compose
 - Coroutines & flows
 - [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
-- [OkHttp](https://square.github.io/okhttp/) for network requests
+- [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
 - [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
 - Proto & Preferences data store
-- [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization)
 
 <h2 align="center">Screenshots</h2>
 
