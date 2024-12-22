@@ -117,6 +117,13 @@
 - [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
 - [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
 - Proto & Preferences data store
+- JUnit 4 & [mockito](https://github.com/mockito/mockito) for unit testing
+
+<h2 align="center">Architecture</h2>
+
+- Multi-modular design
+- Convention plugins for gradle code reuse, whilst keeping modules independent from one another
+- "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
 <h2 align="center">Screenshots</h2>
 
