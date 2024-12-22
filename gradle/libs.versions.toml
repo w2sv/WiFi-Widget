@@ -86,7 +86,7 @@ okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
 compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
-reorderable = { module = "sh.calvin.reorderable:reorderable", version = "2.4.1" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version = "2.4.2" }
 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }
