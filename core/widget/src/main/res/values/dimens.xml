@@ -8,6 +8,7 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="min_width">160dp</dimen>
     <dimen name="min_height">100dp</dimen>
     <dimen name="min_resize_height">40dp</dimen>
+    <dimen name="min_resize_width">100dp</dimen>
     <dimen name="widget_padding">10dp</dimen>
     <dimen name="wifi_property_label_width">100dp</dimen>
 </resources>

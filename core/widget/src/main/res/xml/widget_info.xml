@@ -5,6 +5,7 @@
     android:minWidth="@dimen/min_width"
     android:minHeight="@dimen/min_height"
     android:minResizeHeight="@dimen/min_resize_height"
+    android:minResizeWidth="@dimen/min_resize_width"
     android:resizeMode="vertical|horizontal"
     android:updatePeriodMillis="0"
-    android:widgetCategory="home_screen" /><!--Default size: 2x2; Resizing down to 2x1 and up to full-screen possible-->
+    android:widgetCategory="home_screen" /><!--Default size: 3x2; Resizing down to 2x1 and up to full-screen possible-->
