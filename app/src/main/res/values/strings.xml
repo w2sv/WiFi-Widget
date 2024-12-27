@@ -83,4 +83,5 @@
     <string name="show_dropdown_menu">Show dropdown menu</string>
     <string name="okay">Okay!</string>
     <string name="property_reordering_discovery_dialog_text">You can change the order in which the properties appear on the widget by long-clicking on a property and moving it to a different position.</string>
+    <string name="value_alignment">Value alignment</string>
 </resources>

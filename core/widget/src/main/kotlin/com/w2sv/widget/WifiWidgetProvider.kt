@@ -59,7 +59,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         super.onReceive(context, intent) // Required for DI
 
         i {
-            "${this::class.java.simpleName}.onReceive | ${intent?.action} | ${
+            "onReceive | ${intent?.action} | ${
                 intent?.extras?.keySet()?.toList()
             } | ${appWidgetManager.getWifiWidgetIds(context!!).toList()}"
         }
@@ -83,7 +83,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        i { "${this::class.java.simpleName}.onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
+        i { "onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
 
         val widgetView = RemoteViews(
             context.packageName,

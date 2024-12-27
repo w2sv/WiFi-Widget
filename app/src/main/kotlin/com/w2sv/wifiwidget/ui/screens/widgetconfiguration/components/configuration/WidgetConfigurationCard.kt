@@ -79,6 +79,12 @@ fun rememberWidgetConfigurationCardProperties(
                         { widgetConfiguration.fontSize.value = it }
                     },
                     showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
+                    propertyValueAlignment = widgetConfiguration.propertyValueAlignment.collectAsStateWithLifecycle().value,
+                    setPropertyValueAlignment = remember {
+                        {
+                            widgetConfiguration.propertyValueAlignment.value = it
+                        }
+                    },
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                 )

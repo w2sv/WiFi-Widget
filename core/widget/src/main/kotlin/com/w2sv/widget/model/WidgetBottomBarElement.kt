@@ -15,7 +15,7 @@ internal data class WidgetBottomBarElement(
         goToWidgetSettingsButton = parameters.getValue(WidgetBottomBarElement.GoToWidgetSettingsButton)
     )
 
-    val anyEnabled: Boolean
+    val isAnyEnabled: Boolean
         get() = listOf(
             lastRefreshTimeDisplay,
             refreshButton,

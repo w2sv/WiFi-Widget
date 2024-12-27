@@ -12,13 +12,11 @@ internal val WidgetRepository.appearanceBlocking: WidgetAppearance
         coloringConfig = coloringConfig.firstBlocking(),
         backgroundOpacity = opacity.firstBlocking(),
         fontSize = fontSize.firstBlocking(),
-        bottomRow = bottomRowBlocking
+        propertyValueAlignment = propertyValueAlignment.firstBlocking(),
+        bottomRow = bottomRowElementEnablementMap
+            .mapValuesToFirstBlocking()
+            .run { WidgetBottomBarElement(this) }
     )
-
-private val WidgetRepository.bottomRowBlocking: WidgetBottomBarElement
-    get() = bottomRowElementEnablementMap
-        .mapValuesToFirstBlocking()
-        .run { WidgetBottomBarElement(this) }
 
 internal val WidgetRepository.refreshingBlocking: WidgetRefreshing
     get() = refreshingParametersEnablementMap

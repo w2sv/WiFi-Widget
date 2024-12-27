@@ -98,4 +98,6 @@
     <string name="region">Region</string>
     <string name="country">Country</string>
     <string name="continent">Continent</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
 </resources>

@@ -118,7 +118,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
     // ============
 
     private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement) {
-        if (!bottomBar.anyEnabled) {
+        if (!bottomBar.isAnyEnabled) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
             setViewVisibility(R.id.bottom_row, View.VISIBLE)

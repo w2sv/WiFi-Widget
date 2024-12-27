@@ -29,12 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.domain.model.FontSize
+import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
-import com.w2sv.wifiwidget.ui.designsystem.SliderRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
@@ -55,101 +56,162 @@ fun AppearanceConfiguration(
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
     setFontSize: (FontSize) -> Unit,
+    propertyValueAlignment: PropertyValueAlignment,
+    setPropertyValueAlignment: (PropertyValueAlignment) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        SingleChoiceSegmentedButtonRow(
+        ColoringConfiguration(
+            coloringConfig = coloringConfig,
+            setColoringConfig = setColoringConfig,
+            showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
             modifier = Modifier
                 .padding(bottom = verticalPadding)
                 .align(Alignment.CenterHorizontally)
-        ) {
-            coloringConfig.styles.forEachIndexed { i, style ->
-                SegmentedButton(
-                    selected = style.javaClass == coloringConfig.appliedStyle.javaClass,
-                    onClick = {
-                        if (style.javaClass != coloringConfig.appliedStyle.javaClass) {
-                            setColoringConfig(coloringConfig.copy(isCustomSelected = style is WidgetColoring.Style.Custom))
-                        }
-                    },
-                    colors = SegmentedButtonDefaults.colors(
-                        inactiveContainerColor = HomeScreenCardBackground
-                    ),
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = i,
-                        count = 2
-                    )
-                ) {
-                    Text(text = stringResource(id = style.labelRes))
-                }
-            }
-        }
-
-        val styleConfigurationModifier =
-            Modifier
-                .nestedContentBackground()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
-
-        AnimatedContent(
-            targetState = coloringConfig.isCustomSelected,
-            label = ""
-        ) { isCustomStyleSelected ->
-            when (isCustomStyleSelected) {
-                false -> {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        PresetColoringConfiguration(
-                            data = coloringConfig.preset,
-                            setData = remember { { setColoringConfig(coloringConfig.copy(preset = it)) } },
-                            modifier = styleConfigurationModifier.fillMaxWidth(0.9f)
-                        )
-                    }
-                }
-
-                true -> {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        CustomColorConfiguration(
-                            data = coloringConfig.custom,
-                            showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                            modifier = styleConfigurationModifier.fillMaxWidth(0.7f)
-                        )
-                    }
-                }
-            }
-        }
-
-        SliderRow(
-            label = stringResource(R.string.background_opacity),
-            slider = {
-                SliderWithLabel(
-                    value = opacity,
-                    steps = 9,
-                    makeLabel = remember { { "${(it * 100).roundToInt()}%" } },
-                    onValueChanged = setOpacity,
-                    contentDescription = stringResource(id = R.string.opacity_slider_cd)
-                )
-            },
+        )
+        BackgroundOpacitySliderRow(
+            opacity = opacity,
+            setOpacity = setOpacity,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = verticalPadding)
         )
-
-        val context: Context = LocalContext.current
-        SliderRow(
-            label = stringResource(id = R.string.font_size),
-            slider = {
-                SliderWithLabel(
-                    value = fontSize.ordinal.toFloat(),
-                    steps = remember { FontSize.entries.size - 2 },
-                    makeLabel = remember { { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) } },
-                    onValueChanged = remember { { setFontSize(enumEntryByOrdinal(it.roundToInt())) } },
-                    contentDescription = stringResource(id = R.string.font_size_slider_cd),
-                    valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
-                )
+        FontSizeSliderRow(
+            fontSize = fontSize,
+            setFontSize = setFontSize,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = verticalPadding)
+        )
+        ArrowRightLabelContentRow(
+            stringResource(R.string.value_alignment),
+            content = {
+                SingleChoiceSegmentedButtonRow {
+                    PropertyValueAlignment.entries.forEach {
+                        SegmentedButton(
+                            selected = it == propertyValueAlignment,
+                            onClick = { setPropertyValueAlignment(it) },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = it.ordinal,
+                                count = 2
+                            )
+                        ) {
+                            Text(it.name)
+                        }
+                    }
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 6.dp)
+                .padding(vertical = verticalPadding)
         )
+    }
+}
+
+@Composable
+private fun FontSizeSliderRow(
+    fontSize: FontSize,
+    setFontSize: (FontSize) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context: Context = LocalContext.current
+    ArrowRightLabelContentRow(
+        label = stringResource(id = R.string.font_size),
+        content = {
+            SliderWithLabel(
+                value = fontSize.ordinal.toFloat(),
+                steps = remember { FontSize.entries.size - 2 },
+                makeLabel = remember { { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) } },
+                onValueChanged = remember { { setFontSize(enumEntryByOrdinal(it.roundToInt())) } },
+                contentDescription = stringResource(id = R.string.font_size_slider_cd),
+                valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
+            )
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun BackgroundOpacitySliderRow(
+    opacity: Float,
+    setOpacity: (Float) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    ArrowRightLabelContentRow(
+        label = stringResource(R.string.background_opacity),
+        content = {
+            SliderWithLabel(
+                value = opacity,
+                steps = 9,
+                makeLabel = remember { { "${(it * 100).roundToInt()}%" } },
+                onValueChanged = setOpacity,
+                contentDescription = stringResource(id = R.string.opacity_slider_cd)
+            )
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun ColoringConfiguration(
+    coloringConfig: WidgetColoring.Config,
+    setColoringConfig: (WidgetColoring.Config) -> Unit,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+        coloringConfig.styles.forEachIndexed { i, style ->
+            SegmentedButton(
+                selected = style.javaClass == coloringConfig.appliedStyle.javaClass,
+                onClick = {
+                    if (style.javaClass != coloringConfig.appliedStyle.javaClass) {
+                        setColoringConfig(coloringConfig.copy(isCustomSelected = style is WidgetColoring.Style.Custom))
+                    }
+                },
+                colors = SegmentedButtonDefaults.colors(
+                    inactiveContainerColor = HomeScreenCardBackground
+                ),
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = i,
+                    count = 2
+                )
+            ) {
+                Text(text = stringResource(id = style.labelRes))
+            }
+        }
+    }
+
+    val styleConfigurationModifier =
+        Modifier
+            .nestedContentBackground()
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+
+    AnimatedContent(
+        targetState = coloringConfig.isCustomSelected,
+        label = ""
+    ) { isCustomStyleSelected ->
+        when (isCustomStyleSelected) {
+            false -> {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    PresetColoringConfiguration(
+                        data = coloringConfig.preset,
+                        setData = remember { { setColoringConfig(coloringConfig.copy(preset = it)) } },
+                        modifier = styleConfigurationModifier.fillMaxWidth(0.9f)
+                    )
+                }
+            }
+
+            true -> {
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    CustomColorConfiguration(
+                        data = coloringConfig.custom,
+                        showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
+                        modifier = styleConfigurationModifier.fillMaxWidth(0.7f)
+                    )
+                }
+            }
+        }
     }
 }
 

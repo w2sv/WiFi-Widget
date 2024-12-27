@@ -17,9 +17,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SliderRow(
+fun ArrowRightLabelContentRow(
     label: String,
-    slider: @Composable () -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -29,7 +29,7 @@ fun SliderRow(
         KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp))
         Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
         Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
-            slider()
+            content()
         }
     }
 }

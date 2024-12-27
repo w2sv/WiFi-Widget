@@ -4,6 +4,7 @@ import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
 import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.LocationParameter
+import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -17,6 +18,7 @@ interface WidgetRepository {
 
     val opacity: DataStoreFlow<Float>
     val fontSize: DataStoreFlow<FontSize>
+    val propertyValueAlignment: DataStoreFlow<PropertyValueAlignment>
 
     val sortedEnabledWifiProperties: Flow<List<WifiProperty>>
     val wifiPropertyEnablementMap: DataStoreFlowMap<WifiProperty, Boolean>

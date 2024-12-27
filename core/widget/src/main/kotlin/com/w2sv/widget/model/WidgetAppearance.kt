@@ -9,6 +9,7 @@ import com.google.android.material.color.DynamicColors
 import com.w2sv.androidutils.res.isNightModeActiveCompat
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
+import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 
@@ -16,6 +17,7 @@ internal data class WidgetAppearance(
     val coloringConfig: WidgetColoring.Config,
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
+    val propertyValueAlignment: PropertyValueAlignment,
     val bottomRow: WidgetBottomBarElement
 ) {
     fun getColors(context: Context): WidgetColors =

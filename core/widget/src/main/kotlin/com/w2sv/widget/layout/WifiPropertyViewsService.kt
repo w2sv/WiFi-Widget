@@ -10,8 +10,8 @@ internal class WifiPropertyViewsService :
     RemoteViewsService() {
 
     @Inject
-    lateinit var wifiPropertyViewsFactory: WifiPropertyViewsFactory
+    lateinit var wifiPropertyRemoteViewsFactory: WifiPropertyRemoteViewsFactory
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory =
-        wifiPropertyViewsFactory
+        wifiPropertyRemoteViewsFactory
 }

@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 import androidx.compose.runtime.Stable
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.LocationParameter
+import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -21,6 +22,7 @@ class ReversibleWidgetConfiguration(
     val coloringConfig: ReversibleStateFlow<WidgetColoring.Config>,
     val opacity: ReversibleStateFlow<Float>,
     val fontSize: ReversibleStateFlow<FontSize>,
+    val propertyValueAlignment: ReversibleStateFlow<PropertyValueAlignment>,
     val wifiProperties: ReversibleStateMap<WifiProperty, Boolean>,
     val orderedWifiProperties: ReversibleStateFlow<List<WifiProperty>>,
     val ipSubProperties: ReversibleStateMap<WifiProperty.IP.SubProperty, Boolean>,
@@ -35,6 +37,7 @@ class ReversibleWidgetConfiguration(
         coloringConfig,
         opacity,
         fontSize,
+        propertyValueAlignment,
         wifiProperties,
         orderedWifiProperties,
         ipSubProperties,

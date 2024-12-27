@@ -14,6 +14,7 @@ import com.w2sv.datastoreutils.preferences.map.DataStoreEntry
 import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.LocationParameter
+import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
@@ -48,6 +49,11 @@ internal class WidgetRepositoryImpl @Inject constructor(
     override val fontSize = enumDataStoreFlow(
         key = intPreferencesKey("fontSize"),
         default = { FontSize.Small }
+    )
+
+    override val propertyValueAlignment = enumDataStoreFlow(
+        key = intPreferencesKey("propertyValueAlignment"),
+        default = { PropertyValueAlignment.Right }
     )
 
     // ================
