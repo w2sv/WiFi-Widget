@@ -49,7 +49,7 @@ fun AppUI(
             val locationAccessState = rememberLocationAccessState()
             val context = LocalContext.current
 
-            // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
+            // Trigger onGrantActions on location permission state having been newly granted
             CollectFromFlow(locationAccessState.newStatus) {
                 it.grantedOrNull?.onGrantAction?.let { onGrantAction ->
                     when (onGrantAction) {

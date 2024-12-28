@@ -121,7 +121,7 @@ private fun ShowSnackbarOnWidgetPin(
                     )
                 )
 
-                !locationAccessState.isGranted -> snackbarHostState.dismissCurrentAndShow(
+                !locationAccessState.allPermissionsGranted -> snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
                         kind = SnackbarKind.Warning,

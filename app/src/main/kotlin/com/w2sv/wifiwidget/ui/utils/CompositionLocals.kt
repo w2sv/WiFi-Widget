@@ -16,4 +16,8 @@ val LocalNavHostController =
     }
 
 val LocalUseDarkTheme =
-    compositionLocalOf { false }
+    compositionLocalOf<Boolean> {
+        throw UninitializedPropertyAccessException(
+            "LocalUseDarkTheme not yet provided"
+        )
+    }

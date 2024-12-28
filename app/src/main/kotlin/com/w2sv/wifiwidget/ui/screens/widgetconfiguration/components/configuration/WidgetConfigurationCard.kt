@@ -248,7 +248,7 @@ private fun WifiProperty.checkRow(
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
             if (this is WifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
-                return@fromIsCheckedMap locationAccessState.isGranted.also {
+                return@fromIsCheckedMap locationAccessState.allPermissionsGranted.also {
                     if (!it) {
                         locationAccessState.launchMultiplePermissionRequest(EnablePropertyOnReversibleConfiguration(this))
                     }

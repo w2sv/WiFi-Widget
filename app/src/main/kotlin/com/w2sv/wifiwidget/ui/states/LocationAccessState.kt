@@ -64,16 +64,13 @@ fun rememberLocationAccessState(
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     context: Context = LocalContext.current
 ): LocationAccessState {
-    // Necessary evil
+    // Necessary for connecting permissionState.onPermissionsResult & LocationAccessState.onRequestResult
     val requestResult = remember {
         MutableSharedFlow<Boolean>()
     }
 
     val permissionState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ),
+        permissions = listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION),
         onPermissionsResult = {
             scope.launch {
                 requestResult.emit(it.values.all { it })
@@ -107,7 +104,7 @@ fun rememberLocationAccessState(
     }
 
     // Emit new status on state.isGranted change
-    OnChange(state.isGranted) {
+    OnChange(state.allPermissionsGranted) {
         i { "New location access permission grant status=$it" }
         state.emitNewStatus(it)
     }
@@ -134,8 +131,6 @@ class LocationAccessState(
     private val context: Context
 ) : MultiplePermissionsState by permissionsState {
 
-    val isGranted: Boolean by ::allPermissionsGranted
-
     val newStatus get() = _newStatus.asSharedFlow()
     private val _newStatus =
         MutableSharedFlow<LocationAccessPermissionStatus>()
@@ -144,12 +139,7 @@ class LocationAccessState(
         scope.launch {
             _newStatus.emit(
                 when (granted) {
-                    true -> LocationAccessPermissionStatus.Granted(
-                        onGrantAction.also {
-                            onGrantAction = null
-                        }
-                    )
-
+                    true -> LocationAccessPermissionStatus.Granted(onGrantAction.also { onGrantAction = null })
                     false -> LocationAccessPermissionStatus.NotGranted
                 }
                     .also {
