@@ -71,6 +71,9 @@ android {
         // Disable dependency metadata when building APKs for fdroid reproducibility
         includeInApk = false
     }
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
+    }
 }
 
 // https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#compose-compiler-options-dsl

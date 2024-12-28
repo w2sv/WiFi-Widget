@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.isGranted
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.isLocationEnabledCompat
@@ -135,7 +136,7 @@ private fun ShowSnackbarOnWidgetPin(
                 )
 
                 // Warn about (B)SSID not being reliably displayed if background location access not granted
-                locationAccessState.backgroundAccessState?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
+                locationAccessState.backgroundAccessState?.status?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                         kind = SnackbarKind.Warning,

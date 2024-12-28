@@ -1,17 +1,42 @@
 package com.w2sv.wifiwidget.ui.states
 
+import android.Manifest
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.w2sv.common.utils.log
+import com.w2sv.composed.OnChange
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun rememberBackgroundLocationAccessState(scope: CoroutineScope = rememberCoroutineScope()): BackgroundLocationAccessState? {
+    val permissionState = if (backgroundLocationAccessGrantRequired) {
+        rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    } else {
+        null
+    }
+
+    return remember(scope) {
+        permissionState?.let {
+            BackgroundLocationAccessState(it, scope)
+        }
+    }
+        .also {
+            OnChange(it?.status?.isGranted) {
+                it.log { "background access granted=$it" }
+            }
+        }
+}
+
 @Stable
 class BackgroundLocationAccessState(
     private val permissionState: PermissionState,
@@ -33,5 +58,5 @@ class BackgroundLocationAccessState(
 }
 
 @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
-val backgroundLocationAccessGrantRequired: Boolean
+private val backgroundLocationAccessGrantRequired: Boolean
     get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q

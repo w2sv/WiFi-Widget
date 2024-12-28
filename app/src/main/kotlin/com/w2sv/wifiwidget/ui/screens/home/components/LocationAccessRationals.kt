@@ -57,7 +57,7 @@ sealed interface LocationAccessPermissionStatus {
 
 @Composable
 fun LocationAccessRationals(state: LocationAccessState) {
-    if (state.showRational.collectAsStateWithLifecycle().value) {
+    if (!state.rationalShown.collectAsStateWithLifecycle().value) {
         LocationAccessPermissionRational(
             onProceed = {
                 state.onRationalShown()

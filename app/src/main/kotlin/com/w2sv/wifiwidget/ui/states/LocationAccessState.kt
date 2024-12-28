@@ -7,18 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.openAppSettings
-import com.w2sv.composed.CollectFromFlow
-import com.w2sv.composed.OnChange
+import com.w2sv.common.utils.log
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
-import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
-import com.w2sv.kotlinutils.coroutines.flow.mapState
+import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
@@ -30,11 +27,14 @@ import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOn
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import slimber.log.i
 
 @Composable
 fun rememberLocationAccessState(
@@ -53,16 +53,15 @@ fun rememberLocationAccessState(
         context = context
     )
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun rememberLocationAccessState(
-    requestLaunchedBefore: DataStoreFlow<Boolean>,
+private fun rememberLocationAccessState(
+    requestLaunchedBefore: Flow<Boolean>,
     saveRequestLaunchedBefore: () -> Unit,
-    rationalShown: DataStoreFlow<Boolean>,
+    rationalShown: Flow<Boolean>,
     saveRationalShown: () -> Unit,
-    scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    context: Context = LocalContext.current
+    scope: CoroutineScope,
+    snackbarHostState: SnackbarHostState,
+    context: Context
 ): LocationAccessState {
     // Necessary for connecting permissionState.onPermissionsResult & LocationAccessState.onRequestResult
     val requestResult = remember {
@@ -78,53 +77,32 @@ fun rememberLocationAccessState(
         }
     )
 
-    val backgroundAccessPermissionState = if (backgroundLocationAccessGrantRequired) {
-        rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-    } else {
-        null
-    }
+    val backgroundAccessState = rememberBackgroundLocationAccessState(scope)
 
-    val state = remember(scope, snackbarHostState, context) {
+    return remember(scope, snackbarHostState, context) {
         LocationAccessState(
             permissionsState = permissionState,
-            backgroundAccessState = backgroundAccessPermissionState?.let {
-                BackgroundLocationAccessState(
-                    permissionState = it,
-                    scope = scope
-                )
-            },
-            requestLaunchedBefore = requestLaunchedBefore,
-            saveRequestLaunched = saveRequestLaunchedBefore,
-            rationalShown = rationalShown,
+            requestResult = requestResult,
+            backgroundAccessState = backgroundAccessState,
+            requestLaunchedBefore = requestLaunchedBefore.stateIn(scope, SharingStarted.Eagerly, false),
+            saveRequestLaunchedBefore = saveRequestLaunchedBefore,
+            rationalShown = rationalShown.stateIn(scope, SharingStarted.Eagerly, true),
             saveRationalShown = saveRationalShown,
             snackbarHostState = snackbarHostState,
             scope = scope,
             context = context
         )
     }
-
-    // Emit new status on state.isGranted change
-    OnChange(state.allPermissionsGranted) {
-        i { "New location access permission grant status=$it" }
-        state.emitNewStatus(it)
-    }
-
-    // Forward requestResult to state
-    CollectFromFlow(requestResult) {
-        state.onRequestResult(it)
-    }
-
-    return state
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Stable
 class LocationAccessState(
     permissionsState: MultiplePermissionsState,
+    requestResult: SharedFlow<Boolean>,
     val backgroundAccessState: BackgroundLocationAccessState?,
-    requestLaunchedBefore: DataStoreFlow<Boolean>,
-    private val saveRequestLaunched: () -> Unit,
-    rationalShown: DataStoreFlow<Boolean>,
+    private val requestLaunchedBefore: StateFlow<Boolean>,
+    private val saveRequestLaunchedBefore: () -> Unit,
+    val rationalShown: StateFlow<Boolean>,
     private val saveRationalShown: () -> Unit,
     private val snackbarHostState: SnackbarHostState,
     private val scope: CoroutineScope,
@@ -135,25 +113,30 @@ class LocationAccessState(
     private val _newStatus =
         MutableSharedFlow<LocationAccessPermissionStatus>()
 
-    internal fun emitNewStatus(granted: Boolean) {
-        scope.launch {
+    init {
+        snapshotFlow { allPermissionsGranted }.collectOn(scope) { granted ->
             _newStatus.emit(
                 when (granted) {
                     true -> LocationAccessPermissionStatus.Granted(onGrantAction.also { onGrantAction = null })
                     false -> LocationAccessPermissionStatus.NotGranted
                 }
-                    .also {
-                        i { "Emitted newStatus=$it" }
-                    }
+                    .log { "Emitted newStatus=$it" }
             )
+        }
+
+        requestResult.collectOn(scope) { granted ->
+            if (!requestLaunchedBefore.value) {
+                saveRequestLaunchedBefore()
+            }
+            if (granted) {
+                backgroundAccessState?.showRationalIfPermissionNotGranted()
+            }
         }
     }
 
     // ===================
     // Requesting
     // ===================
-
-    private val requestLaunchedBefore = requestLaunchedBefore.stateIn(scope, SharingStarted.Eagerly)
 
     fun launchMultiplePermissionRequest(
         onGrantAction: LocationAccessPermissionOnGrantAction?,
@@ -187,25 +170,9 @@ class LocationAccessState(
 
     private var onGrantAction: LocationAccessPermissionOnGrantAction? = null
 
-    fun onRequestResult(granted: Boolean) {
-        if (!requestLaunchedBefore.value) {
-            saveRequestLaunched()
-        }
-        if (granted) {
-            backgroundAccessState?.showRationalIfPermissionNotGranted()
-        }
-    }
-
     // ===================
     // Rational
     // ===================
-
-    val showRational = rationalShown
-        .stateIn(
-            scope,
-            SharingStarted.Eagerly
-        )
-        .mapState { !it }
 
     fun onRationalShown() {
         saveRationalShown()
