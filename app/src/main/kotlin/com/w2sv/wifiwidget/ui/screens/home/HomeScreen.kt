@@ -52,9 +52,7 @@ fun HomeScreen(
     scope: CoroutineScope = rememberCoroutineScope(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
-    NavigationDrawer(
-        state = drawerState
-    ) {
+    NavigationDrawer(state = drawerState) {
         Scaffold(
             topBar = {
                 AppTopBar {

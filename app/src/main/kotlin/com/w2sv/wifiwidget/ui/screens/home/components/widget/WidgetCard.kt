@@ -35,8 +35,8 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
+import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
-import com.w2sv.wifiwidget.ui.states.BackgroundLocationAccessState
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.LocalLocationManager
 import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
@@ -93,7 +93,7 @@ fun WidgetCard(
     ShowSnackbarOnWidgetPin(
         newWidgetPinned = widgetVM.widgetPinSuccessFlow,
         anyLocationAccessRequiringPropertyEnabled = { widgetVM.configuration.anyLocationAccessRequiringPropertyEnabled },
-        backgroundAccessState = locationAccessState.backgroundAccessState
+        locationAccessState = locationAccessState
     )
 }
 
@@ -104,7 +104,7 @@ fun WidgetCard(
 private fun ShowSnackbarOnWidgetPin(
     newWidgetPinned: Flow<Unit>,
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
-    backgroundAccessState: BackgroundLocationAccessState?
+    locationAccessState: LocationAccessState
 ) {
     val context = LocalContext.current
     val snackbarHostState = LocalSnackbarHostState.current
@@ -121,15 +121,28 @@ private fun ShowSnackbarOnWidgetPin(
                     )
                 )
 
+                !locationAccessState.isGranted -> snackbarHostState.dismissCurrentAndShow(
+                    AppSnackbarVisuals(
+                        msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
+                        kind = SnackbarKind.Warning,
+                        action = SnackbarAction(
+                            label = context.getString(R.string.grant),
+                            callback = {
+                                locationAccessState.launchMultiplePermissionRequest(TriggerWidgetDataRefresh, skipSnackbarIfInAppPromptingSuppressed = true)
+                            }
+                        )
+                    )
+                )
+
                 // Warn about (B)SSID not being reliably displayed if background location access not granted
-                backgroundAccessState?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
+                locationAccessState.backgroundAccessState?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
                         kind = SnackbarKind.Warning,
                         action = SnackbarAction(
                             label = context.getString(R.string.grant),
                             callback = {
-                                backgroundAccessState.launchPermissionRequest()
+                                locationAccessState.backgroundAccessState.launchPermissionRequest()
                             }
                         )
                     )

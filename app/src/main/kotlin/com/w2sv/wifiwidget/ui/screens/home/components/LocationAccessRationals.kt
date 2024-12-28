@@ -23,14 +23,18 @@ import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 
 @Immutable
-sealed interface LocationAccessPermissionRequestTrigger {
-    @Immutable
-    data object InitialAppLaunch : LocationAccessPermissionRequestTrigger
+sealed interface LocationAccessPermissionOnGrantAction
 
-    @Immutable
-    data class PropertyCheckChange(val property: WifiProperty.NonIP.LocationAccessRequiring) :
-        LocationAccessPermissionRequestTrigger
-}
+@Immutable
+data object EnableLocationAccessDependentProperties : LocationAccessPermissionOnGrantAction
+
+@Immutable
+data object TriggerWidgetDataRefresh : LocationAccessPermissionOnGrantAction
+
+@Immutable
+@JvmInline
+value class EnablePropertyOnReversibleConfiguration(val property: WifiProperty.NonIP.LocationAccessRequiring) :
+    LocationAccessPermissionOnGrantAction
 
 @Immutable
 sealed interface LocationAccessPermissionStatus {
@@ -38,8 +42,12 @@ sealed interface LocationAccessPermissionStatus {
     data object NotGranted : LocationAccessPermissionStatus
 
     @Immutable
-    data class Granted(val trigger: LocationAccessPermissionRequestTrigger?) :
+    @JvmInline
+    value class Granted(val onGrantAction: LocationAccessPermissionOnGrantAction?) :
         LocationAccessPermissionStatus
+
+    val grantedOrNull: Granted?
+        get() = this as? Granted
 
     companion object {
         fun get(isGranted: Boolean): LocationAccessPermissionStatus =

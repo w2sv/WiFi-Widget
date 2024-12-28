@@ -23,7 +23,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.rememberShowSnackbar
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
@@ -250,11 +250,7 @@ private fun WifiProperty.checkRow(
             if (this is WifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
                 return@fromIsCheckedMap locationAccessState.isGranted.also {
                     if (!it) {
-                        locationAccessState.launchRequest(
-                            LocationAccessPermissionRequestTrigger.PropertyCheckChange(
-                                this
-                            )
-                        )
+                        locationAccessState.launchMultiplePermissionRequest(EnablePropertyOnReversibleConfiguration(this))
                     }
                 }
             }

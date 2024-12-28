@@ -7,14 +7,17 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.generated.NavGraphs
 import com.ramcosta.composedestinations.navigation.dependency
+import com.w2sv.common.utils.log
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
+import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.LocalLocationManager
@@ -44,13 +47,17 @@ fun AppUI(
         ) {
             val navController = rememberNavController()
             val locationAccessState = rememberLocationAccessState()
+            val context = LocalContext.current
 
             // Call configuration.onLocationAccessPermissionStatusChanged on new location access permission status
             CollectFromFlow(locationAccessState.newStatus) {
-                if (it is LocationAccessPermissionStatus.Granted) {
-                    widgetVM.configuration.onLocationAccessPermissionGranted(
-                        it.trigger
-                    )
+                it.grantedOrNull?.onGrantAction?.let { onGrantAction ->
+                    when (onGrantAction) {
+                        TriggerWidgetDataRefresh -> WifiWidgetProvider.triggerDataRefresh(context)
+                            .log { "Triggered widget data refresh upon LocationAccessPermissionStatus having been granted" }
+
+                        else -> widgetVM.configuration.onLocationAccessPermissionGranted(onGrantAction)
+                    }
                 }
             }
 

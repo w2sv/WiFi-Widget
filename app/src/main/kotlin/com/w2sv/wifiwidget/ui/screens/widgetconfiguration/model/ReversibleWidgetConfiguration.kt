@@ -12,10 +12,12 @@ import com.w2sv.kotlinutils.coroutines.flow.mapState
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.ReversibleStateMap
 import com.w2sv.reversiblestate.ReversibleStatesComposition
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
-import kotlin.time.Duration
+import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
+import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 @Stable
 class ReversibleWidgetConfiguration(
@@ -55,17 +57,17 @@ class ReversibleWidgetConfiguration(
                 wifiProperties.appliedStateMap.getValue(it).value
             }
 
-    fun onLocationAccessPermissionGranted(trigger: LocationAccessPermissionRequestTrigger?) {
-        when (trigger) {
-            is LocationAccessPermissionRequestTrigger.InitialAppLaunch -> {
+    fun onLocationAccessPermissionGranted(onGrantAction: LocationAccessPermissionOnGrantAction) {
+        when (onGrantAction) {
+            is EnableLocationAccessDependentProperties -> {
                 WifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
                     wifiProperties[it] = true
                 }
                 scope.launch { wifiProperties.sync() }
             }
 
-            is LocationAccessPermissionRequestTrigger.PropertyCheckChange -> {
-                wifiProperties[trigger.property] = true
+            is EnablePropertyOnReversibleConfiguration -> {
+                wifiProperties[onGrantAction.property] = true
             }
 
             else -> Unit

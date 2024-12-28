@@ -25,7 +25,8 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionRequestTrigger
+import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
+import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -144,8 +145,8 @@ class LocationAccessState(
             _newStatus.emit(
                 when (granted) {
                     true -> LocationAccessPermissionStatus.Granted(
-                        requestTrigger.also {
-                            requestTrigger = null
+                        onGrantAction.also {
+                            onGrantAction = null
                         }
                     )
 
@@ -164,9 +165,17 @@ class LocationAccessState(
 
     private val requestLaunchedBefore = requestLaunchedBefore.stateIn(scope, SharingStarted.Eagerly)
 
-    fun launchRequest(trigger: LocationAccessPermissionRequestTrigger) {
-        if (isLaunchingSuppressed(requestLaunchedBefore.value)) {
-            scope.launch {
+    fun launchMultiplePermissionRequest(
+        onGrantAction: LocationAccessPermissionOnGrantAction?,
+        skipSnackbarIfInAppPromptingSuppressed: Boolean = false
+    ) {
+        fun setOnGrantActionAnd(block: () -> Unit) {
+            this.onGrantAction = onGrantAction
+            block()
+        }
+
+        when {
+            isLaunchingSuppressed(requestLaunchedBefore.value) && !skipSnackbarIfInAppPromptingSuppressed -> scope.launch {
                 snackbarHostState.dismissCurrentAndShow(
                     AppSnackbarVisuals(
                         msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
@@ -174,19 +183,19 @@ class LocationAccessState(
                         action = SnackbarAction(
                             label = context.getString(R.string.go_to_app_settings),
                             callback = {
-                                context.openAppSettings()
+                                setOnGrantActionAnd { context.openAppSettings() }
                             }
                         )
                     )
                 )
             }
-        } else {
-            requestTrigger = trigger
-            launchMultiplePermissionRequest()
+
+            isLaunchingSuppressed(requestLaunchedBefore.value) -> setOnGrantActionAnd { context.openAppSettings() }
+            else -> setOnGrantActionAnd { launchMultiplePermissionRequest() }
         }
     }
 
-    private var requestTrigger: LocationAccessPermissionRequestTrigger? = null
+    private var onGrantAction: LocationAccessPermissionOnGrantAction? = null
 
     fun onRequestResult(granted: Boolean) {
         if (!requestLaunchedBefore.value) {
@@ -210,6 +219,9 @@ class LocationAccessState(
 
     fun onRationalShown() {
         saveRationalShown()
-        launchRequest(trigger = LocationAccessPermissionRequestTrigger.InitialAppLaunch)
+        launchMultiplePermissionRequest(
+            onGrantAction = EnableLocationAccessDependentProperties,
+            skipSnackbarIfInAppPromptingSuppressed = true
+        )
     }
 }
