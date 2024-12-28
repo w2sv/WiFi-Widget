@@ -56,9 +56,11 @@
 - **Configuration options:**
     - Appearance:
         - Size
+          - from 2x1 to fullscreen
         - Light/dark theme with static/dynamic, or entirely custom colors
         - Background opacity
         - Font size
+        - Property value alignment (left | right)
     - Displayed properties:
         - SSID
         - BSSID
@@ -93,7 +95,7 @@
                 - City
                 - Region
                 - Country
-                - Continent  
+                - Continent
             - GPS Location
             - ASN
             - ISP

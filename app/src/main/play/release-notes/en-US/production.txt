@@ -1,6 +1,2 @@
-- Enable display of IPv4 subnet masks
-- Enable configuration of location parameters
-- Migrate to ip-api.com for more reliable (gps) location, isp & asn retrieval
-- Fix reordering indication shadow on expanded items
-- Improve IP Address type determination
-- Left-align wifi property values on widget and in-app
+- Enable configuration of property alignment on widget and set default back to right-aligned upon popular demand
+- Enable resizing the widget to a width of 2 cells
