@@ -19,7 +19,7 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.enabledKeys
 import com.w2sv.widget.CopyPropertyToClipboardActivity
-import com.w2sv.widget.data.appearanceBlocking
+import com.w2sv.widget.data.appearance
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -46,24 +46,24 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     private var layout by Delegates.notNull<Int>()
 
     override fun onDataSetChanged() {
-        i { "onDataSetChanged" }
+        i { "onDataSetChanged | ${Thread.currentThread()}" }
 
-        viewData = runBlocking {
-            viewDataFactory(
+        runBlocking {
+            viewData = viewDataFactory(
                 properties = widgetRepository.sortedEnabledWifiProperties.first(),
                 ipSubProperties = widgetRepository.ipSubPropertyEnablementMap.enabledKeys(),
                 locationParameters = widgetRepository.locationParameters.enabledKeys()
             )
                 .toList()
-        }
-            .log { "Set propertyViewData=$it" }
+                .log { "Set propertyViewData=$it" }
 
-        widgetRepository.appearanceBlocking.let {
-            widgetColors = it.getColors(context)
-            fontSize = it.fontSize
-            layout = when (it.propertyValueAlignment) {
-                PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
-                PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
+            widgetRepository.appearance().let {
+                widgetColors = it.getColors(context)
+                fontSize = it.fontSize
+                layout = when (it.propertyValueAlignment) {
+                    PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
+                    PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
+                }
             }
         }
     }
@@ -82,7 +82,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
             )
         } catch (e: IndexOutOfBoundsException) { // Fix irreproducible IndexOutOfBoundsException observed in play console
             e.log()
-            RemoteViews(context.packageName, R.layout.wifi_property_left_aligned)
+            RemoteViews(context.packageName, layout)
         }
 
     override fun getLoadingView(): RemoteViews =
