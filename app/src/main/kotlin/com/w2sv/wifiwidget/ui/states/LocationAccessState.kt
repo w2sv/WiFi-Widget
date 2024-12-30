@@ -77,7 +77,7 @@ private fun rememberLocationAccessState(
         }
     )
 
-    val backgroundAccessState = rememberBackgroundLocationAccessState(scope)
+    val backgroundAccessState = rememberBackgroundLocationAccessState()
 
     return remember(scope, snackbarHostState, context) {
         LocationAccessState(

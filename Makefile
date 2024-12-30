@@ -2,6 +2,18 @@ SHELL=/bin/bash
 
 VERSION := $(shell grep '^version=' gradle.properties | cut -d'=' -f2)
 
+# ==============
+# Development
+# ==============
+
+grant-location-access-permission:
+	@adb shell pm grant com.w2sv.wifiwidget.debug android.permission.ACCESS_FINE_LOCATION
+	@adb shell pm grant com.w2sv.wifiwidget.debug android.permission.ACCESS_COARSE_LOCATION
+
+revoke-location-access-permission:
+	@adb shell pm revoke com.w2sv.wifiwidget.debug android.permission.ACCESS_FINE_LOCATION
+	@adb shell pm revoke com.w2sv.wifiwidget.debug android.permission.ACCESS_COARSE_LOCATION
+
 optimize-drawables:
 	@avocado app/src/main/res/drawable/*.xml
 

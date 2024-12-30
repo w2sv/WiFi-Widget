@@ -123,7 +123,7 @@ class WidgetViewModel @Inject constructor(
         locationParameters = repository.locationParameters.reversibleStateMap(scope = viewModelScope),
         scope = viewModelScope,
         onStateSynced = {
-            WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh" }
+            WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
             delay(500) // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(

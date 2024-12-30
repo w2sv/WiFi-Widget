@@ -26,6 +26,7 @@ import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
+import slimber.log.i
 
 @Composable
 fun AppUI(
@@ -52,6 +53,7 @@ fun AppUI(
             // Trigger onGrantActions on location permission state having been newly granted
             CollectFromFlow(locationAccessState.newStatus) {
                 it.grantedOrNull?.onGrantAction?.let { onGrantAction ->
+                    i { "Collected onGrantAction=$onGrantAction" }
                     when (onGrantAction) {
                         TriggerWidgetDataRefresh -> WifiWidgetProvider.triggerDataRefresh(context)
                             .log { "Triggered widget data refresh upon LocationAccessPermissionStatus having been granted" }

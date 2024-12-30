@@ -5,16 +5,11 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.rememberStyledTextResource
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
@@ -58,31 +53,13 @@ sealed interface LocationAccessPermissionStatus {
 @Composable
 fun LocationAccessRationals(state: LocationAccessState) {
     if (!state.rationalShown.collectAsStateWithLifecycle().value) {
-        LocationAccessPermissionRational(
-            onProceed = {
-                state.onRationalShown()
-            }
-        )
+        LocationAccessPermissionRational(onProceed = state::onRationalShown)
     }
-    state.backgroundAccessState?.let { backgroundAccessState ->
-        var showRational by rememberSaveable {
-            mutableStateOf(false)
-        }
-
-        CollectFromFlow(backgroundAccessState.showRational) {
-            showRational = true
-        }
-
-        if (showRational) {
+    state.backgroundAccessState?.run {
+        if (showRational.collectAsStateWithLifecycle().value) {
             BackgroundLocationAccessRational(
-                launchPermissionRequest = remember {
-                    { backgroundAccessState.launchPermissionRequest() }
-                },
-                onDismissRequest = remember {
-                    {
-                        showRational = false
-                    }
-                }
+                launchPermissionRequest = remember { { launchPermissionRequest() } },
+                onDismissRequest = remember { { hideRational() } }
             )
         }
     }

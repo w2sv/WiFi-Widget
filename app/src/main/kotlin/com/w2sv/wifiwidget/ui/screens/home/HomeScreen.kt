@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
+import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.isLandscapeModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
@@ -38,9 +39,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import slimber.log.i
+import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
@@ -61,9 +63,7 @@ fun HomeScreen(
                     }
                 }
             },
-            snackbarHost = {
-                AppSnackbarHost()
-            }
+            snackbarHost = { AppSnackbarHost() }
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
@@ -91,6 +91,11 @@ fun HomeScreen(
                     widgetCard = widgetCard
                 )
             }
+        }
+
+        CollectFromFlow(locationAccessState.newStatus) {
+            i { "Triggering HomeScreenViewModel.onLocationAccessChanged on new location access status $it" }
+            homeScreenVM.onLocationAccessChanged()
         }
 
         LocationAccessRationals(state = locationAccessState)

@@ -6,54 +6,48 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.common.utils.log
 import com.w2sv.composed.OnChange
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
-fun rememberBackgroundLocationAccessState(scope: CoroutineScope = rememberCoroutineScope()): BackgroundLocationAccessState? {
+fun rememberBackgroundLocationAccessState(): BackgroundLocationAccessState? {
     val permissionState = if (backgroundLocationAccessGrantRequired) {
         rememberPermissionState(permission = Manifest.permission.ACCESS_BACKGROUND_LOCATION)
     } else {
         null
     }
 
-    return remember(scope) {
+    return remember {
         permissionState?.let {
-            BackgroundLocationAccessState(it, scope)
+            BackgroundLocationAccessState(it)
         }
     }
         .also {
             OnChange(it?.status?.isGranted) {
-                it.log { "background access granted=$it" }
+                it.log { "Background location access granted=$it" }
             }
         }
 }
 
 @Stable
-class BackgroundLocationAccessState(
-    private val permissionState: PermissionState,
-    private val scope: CoroutineScope
-) : PermissionState by permissionState {
+class BackgroundLocationAccessState(private val permissionState: PermissionState) : PermissionState by permissionState {
 
-    val isGranted by status::isGranted
-
-    val showRational get() = _showRational.asSharedFlow()
-    private val _showRational = MutableSharedFlow<Unit>()
+    val showRational get() = _showRational.asStateFlow()
+    private val _showRational = MutableStateFlow(false)
 
     fun showRationalIfPermissionNotGranted() {
-        if (!isGranted) {
-            scope.launch {
-                _showRational.emit(Unit)
-            }
+        if (!status.isGranted) {
+            _showRational.value = true
         }
+    }
+
+    fun hideRational() {
+        _showRational.value = false
     }
 }
 
