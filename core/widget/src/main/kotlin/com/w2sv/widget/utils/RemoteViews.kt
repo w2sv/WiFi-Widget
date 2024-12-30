@@ -17,3 +17,10 @@ internal fun RemoteViews.setTextView(
     size?.let { setTextViewTextSize(viewId, COMPLEX_UNIT_SP, it) }
     color?.let { setTextColor(viewId, it) }
 }
+
+internal fun RemoteViews.setViewVisibility(@IdRes viewId: Int, visible: Boolean, ifVisible: RemoteViews.() -> Unit) {
+    setViewVisibility(
+        viewId,
+        if (visible) View.VISIBLE.also { ifVisible() } else View.GONE
+    )
+}

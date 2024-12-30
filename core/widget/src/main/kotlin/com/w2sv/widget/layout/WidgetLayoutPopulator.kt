@@ -6,7 +6,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
 import com.w2sv.androidutils.appwidget.crossVisualize
@@ -25,6 +24,7 @@ import com.w2sv.widget.model.WidgetBottomBarElement
 import com.w2sv.widget.utils.activityPendingIntent
 import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
 import com.w2sv.widget.utils.setTextView
+import com.w2sv.widget.utils.setViewVisibility
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -117,13 +117,8 @@ internal class WidgetLayoutPopulator @Inject constructor(
     // ============
 
     private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement, appWidgetId: Int) {
-        if (!bottomBar.isAnyEnabled) {
-            setViewVisibility(R.id.bottom_row, View.GONE)
-        } else {
-            setViewVisibility(R.id.bottom_row, View.VISIBLE)
-
-            if (bottomBar.lastRefreshTimeDisplay) {
-                setViewVisibility(R.id.last_updated_tv, View.VISIBLE)
+        setViewVisibility(R.id.bottom_row, bottomBar.isAnyEnabled) {
+            setViewVisibility(R.id.last_updated_tv, bottomBar.lastRefreshTimeDisplay) {
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
                 val now = Date()
@@ -134,8 +129,6 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
                     size = appearance.fontSize.value
                 )
-            } else {
-                setViewVisibility(R.id.last_updated_tv, View.INVISIBLE)
             }
 
             setButton(
@@ -179,12 +172,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
         show: Boolean,
         pendingIntent: PendingIntent
     ) {
-        setViewVisibility(
-            id,
-            if (show) View.VISIBLE else View.GONE
-        )
-
-        if (show) {
+        setViewVisibility(id, show) {
             setColorFilter(id, colors.primary)
             setOnClickPendingIntent(id, pendingIntent)
         }
