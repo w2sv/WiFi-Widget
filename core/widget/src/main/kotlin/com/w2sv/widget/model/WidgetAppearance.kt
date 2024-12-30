@@ -18,7 +18,7 @@ internal data class WidgetAppearance(
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
     val propertyValueAlignment: PropertyValueAlignment,
-    val bottomRow: WidgetBottomBarElement
+    val bottomBar: WidgetBottomBarElement
 ) {
     fun getColors(context: Context): WidgetColors =
         when (val style = coloringConfig.appliedStyle) {

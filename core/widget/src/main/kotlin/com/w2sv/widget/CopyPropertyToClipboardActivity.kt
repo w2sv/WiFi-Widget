@@ -7,30 +7,18 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import androidx.annotation.UiThread
 import com.w2sv.androidutils.os.getParcelableCompat
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
+import com.w2sv.common.utils.ToastManager
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.parcelize.Parcelize
+import slimber.log.i
 
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {
-
-    @Singleton
-    class ToastManager @Inject constructor() {
-
-        @UiThread
-        fun cancelPreviousAndShow(toast: Toast) {
-            this.toast?.cancel()
-            this.toast = toast.also { it.show() }
-        }
-
-        private var toast: Toast? = null
-    }
 
     @Inject
     lateinit var toastManager: ToastManager
@@ -42,6 +30,8 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val args = Args.fromIntent(intent)
+
+        i { "onCreate | $args" }
 
         // Copy to clipboard
         clipboardManager

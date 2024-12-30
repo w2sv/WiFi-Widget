@@ -5,6 +5,9 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import com.w2sv.androidutils.os.getIntExtraOrNull
+import com.w2sv.common.utils.log
+import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.data.refreshingBlocking
@@ -55,26 +58,21 @@ class WifiWidgetProvider : AppWidgetProvider() {
         widgetDataRefreshWorkerManager.cancelWorker()
     }
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        super.onReceive(context, intent) // Required for DI
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
 
-        i {
-            "onReceive | ${intent?.action} | ${
-                intent?.extras?.keySet()?.toList()
-            } | ${appWidgetManager.getWifiWidgetIds(context!!).toList()}"
-        }
+        i { "onReceive | Action=${intent.action} | Extras=${intent.extras?.toMapString()}" }
 
-        when (intent?.action) {
-            ACTION_REFRESH_DATA -> {
-                context?.let {
-                    // Refresh data
-                    onUpdate(
-                        it,
-                        appWidgetManager,
-                        appWidgetManager.getWifiWidgetIds(it)
-                    )
-                }
-            }
+        if (intent.action == ACTION_REFRESH_DATA) {
+            onUpdate(
+                context = context,
+                appWidgetManager = appWidgetManager,
+                appWidgetIds = intent
+                    .getIntExtraOrNull(AppWidgetManager.EXTRA_APPWIDGET_ID, WIDGET_ID_UNSPECIFIED)
+                    .log { "Got widget id $it for ACTION_REFRESH_DATA" }
+                    ?.let { intArrayOf(it) }
+                    ?: appWidgetManager.getWifiWidgetIds(context)
+            )
         }
     }
 
@@ -114,10 +112,12 @@ class WifiWidgetProvider : AppWidgetProvider() {
             context.sendBroadcast(getRefreshDataIntent(context))
         }
 
-        fun getRefreshDataIntent(context: Context): Intent =
+        fun getRefreshDataIntent(context: Context, widgetId: Int = WIDGET_ID_UNSPECIFIED): Intent =
             Intent(context, WifiWidgetProvider::class.java)
                 .setAction(ACTION_REFRESH_DATA)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 
         private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
+        private const val WIDGET_ID_UNSPECIFIED = -1
     }
 }

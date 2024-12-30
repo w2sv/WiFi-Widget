@@ -39,10 +39,10 @@ import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import java.util.Calendar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import slimber.log.i
-import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 

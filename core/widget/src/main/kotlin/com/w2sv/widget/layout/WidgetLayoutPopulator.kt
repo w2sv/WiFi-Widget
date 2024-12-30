@@ -19,10 +19,10 @@ import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
-import com.w2sv.widget.PendingIntentCode
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.data.appearanceBlocking
 import com.w2sv.widget.model.WidgetBottomBarElement
+import com.w2sv.widget.utils.activityPendingIntent
 import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -51,7 +51,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
                 )
-                setBottomBar(bottomBar = appearance.bottomRow)
+                setBottomBar(bottomBar = appearance.bottomBar, appWidgetId = appWidgetId)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -74,9 +74,8 @@ internal class WidgetLayoutPopulator @Inject constructor(
 
                 setPendingIntentTemplate(
                     R.id.wifi_property_list_view,
-                    PendingIntent.getActivity(
+                    activityPendingIntent(
                         context,
-                        PendingIntentCode.CopyPropertyToClipboard.ordinal,
                         Intent(context, CopyPropertyToClipboardActivity::class.java),
                         PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                     )
@@ -117,7 +116,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement) {
+    private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement, appWidgetId: Int) {
         if (!bottomBar.isAnyEnabled) {
             setViewVisibility(R.id.bottom_row, View.GONE)
         } else {
@@ -144,8 +143,8 @@ internal class WidgetLayoutPopulator @Inject constructor(
                 show = bottomBar.refreshButton,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
-                    PendingIntentCode.RefreshWidgetData.ordinal,
-                    WifiWidgetProvider.getRefreshDataIntent(context),
+                    appWidgetId,
+                    WifiWidgetProvider.getRefreshDataIntent(context, appWidgetId),
                     PendingIntent.FLAG_IMMUTABLE
                 )
             )
@@ -157,9 +156,8 @@ internal class WidgetLayoutPopulator @Inject constructor(
             setButton(
                 id = R.id.go_to_widget_settings_button,
                 show = bottomBar.goToWidgetSettingsButton,
-                pendingIntent = PendingIntent.getActivity(
+                pendingIntent = activityPendingIntent(
                     context,
-                    PendingIntentCode.GoToWidgetConfiguration.ordinal,
                     Intent.makeRestartActivityTask(
                         ComponentName(
                             context,
@@ -170,7 +168,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                             AppExtra.INVOKE_WIDGET_CONFIGURATION_SCREEN,
                             true
                         ),
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE
                 )
             )
         }

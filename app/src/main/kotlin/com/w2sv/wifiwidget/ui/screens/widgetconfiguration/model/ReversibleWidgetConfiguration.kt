@@ -15,9 +15,9 @@ import com.w2sv.reversiblestate.ReversibleStatesComposition
 import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
+import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
 @Stable
 class ReversibleWidgetConfiguration(

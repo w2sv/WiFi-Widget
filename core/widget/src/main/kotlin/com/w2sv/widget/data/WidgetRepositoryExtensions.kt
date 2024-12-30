@@ -13,7 +13,7 @@ internal val WidgetRepository.appearanceBlocking: WidgetAppearance
         backgroundOpacity = opacity.firstBlocking(),
         fontSize = fontSize.firstBlocking(),
         propertyValueAlignment = propertyValueAlignment.firstBlocking(),
-        bottomRow = bottomRowElementEnablementMap
+        bottomBar = bottomRowElementEnablementMap
             .mapValuesToFirstBlocking()
             .run { WidgetBottomBarElement(this) }
     )

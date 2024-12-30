@@ -129,7 +129,10 @@ private fun ShowSnackbarOnWidgetPin(
                         action = SnackbarAction(
                             label = context.getString(R.string.grant),
                             callback = {
-                                locationAccessState.launchMultiplePermissionRequest(TriggerWidgetDataRefresh, skipSnackbarIfInAppPromptingSuppressed = true)
+                                locationAccessState.launchMultiplePermissionRequest(
+                                    TriggerWidgetDataRefresh,
+                                    skipSnackbarIfInAppPromptingSuppressed = true
+                                )
                             }
                         )
                     )
