@@ -14,6 +14,9 @@ import com.w2sv.widget.data.refreshingBlocking
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import slimber.log.i
 
@@ -81,24 +84,26 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        i { "onUpdate | appWidgetIds=${appWidgetIds.toList()}" }
+        CoroutineScope(Dispatchers.IO).launch {
+            i { "onUpdate | appWidgetIds=${appWidgetIds.toList()} | ${Thread.currentThread()}" }
 
-        val widgetView = RemoteViews(
-            context.packageName,
-            R.layout.widget
-        )
-
-        appWidgetIds.forEach { id ->
-            i { "updateWidget | appWidgetId=$id" }
-
-            appWidgetManager.updateAppWidget(
-                id,
-                widgetLayoutPopulator
-                    .populate(
-                        widget = widgetView,
-                        appWidgetId = id
-                    )
+            val widgetView = RemoteViews(
+                context.packageName,
+                R.layout.widget
             )
+
+            appWidgetIds.forEach { id ->
+                i { "updateWidget | appWidgetId=$id" }
+
+                appWidgetManager.updateAppWidget(
+                    id,
+                    widgetLayoutPopulator
+                        .populate(
+                            widget = widgetView,
+                            appWidgetId = id
+                        )
+                )
+            }
         }
     }
 
