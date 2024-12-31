@@ -4,21 +4,21 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.widget.RemoteViews
 import com.w2sv.androidutils.os.getIntExtraOrNull
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
-import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.data.refreshingBlocking
+import com.w2sv.widget.data.InternalWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WifiWidgetProvider : AppWidgetProvider() {
@@ -33,19 +33,18 @@ class WifiWidgetProvider : AppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetRepository: WidgetRepository
+    internal lateinit var widgetRepository: InternalWidgetRepository
 
     /**
      * Called upon the first AppWidget instance being created.
      *
      * Enqueues [WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
      */
-    override fun onEnabled(context: Context?) {
+    override fun onEnabled(context: Context) {
         super.onEnabled(context)
-
         i { "onEnabled" }
 
-        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshingBlocking)
+        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshing.value)
     }
 
     /**
@@ -53,18 +52,19 @@ class WifiWidgetProvider : AppWidgetProvider() {
      *
      * Cancels [WifiWidgetRefreshWorker].
      */
-    override fun onDisabled(context: Context?) {
+    override fun onDisabled(context: Context) {
         super.onDisabled(context)
-
         i { "onDisabled" }
 
         widgetDataRefreshWorkerManager.cancelWorker()
+        WallpaperChangeReceiverService.stop(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-
         i { "onReceive | Action=${intent.action} | Extras=${intent.extras?.toMapString()}" }
+
+        WallpaperChangeReceiverService.start(context)
 
         if (intent.action == ACTION_REFRESH_DATA) {
             onUpdate(
@@ -77,6 +77,11 @@ class WifiWidgetProvider : AppWidgetProvider() {
                     ?: appWidgetManager.getWifiWidgetIds(context)
             )
         }
+    }
+
+    override fun onAppWidgetOptionsChanged(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetId: Int, newOptions: Bundle?) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+        i { "onAppWidgetOptionsChanged | Bundle=${newOptions?.toMapString()}" }
     }
 
     override fun onUpdate(

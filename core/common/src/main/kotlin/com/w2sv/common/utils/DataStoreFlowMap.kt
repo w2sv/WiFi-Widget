@@ -19,3 +19,10 @@ fun <K> DataStoreFlowMap<K, Boolean>.enabledKeysFlow(): Flow<Set<K>> =
             }
         }
     }
+
+fun <K, V> DataStoreFlowMap<K, V>.mapFlow(): Flow<Map<K, V>> =
+    combine(
+        entries.map { (k, v) ->
+            v.map { k to it }
+        }
+    ) { it.toMap() }

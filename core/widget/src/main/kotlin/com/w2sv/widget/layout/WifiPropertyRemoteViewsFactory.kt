@@ -16,10 +16,9 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WifiProperty
-import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.enabledKeys
 import com.w2sv.widget.CopyPropertyToClipboardActivity
-import com.w2sv.widget.data.appearance
+import com.w2sv.widget.data.InternalWidgetRepository
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -32,7 +31,7 @@ import kotlin.properties.Delegates
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val widgetRepository: WidgetRepository,
+    private val widgetRepository: InternalWidgetRepository,
     private val viewDataFactory: WifiProperty.ViewData.Factory
 ) : RemoteViewsService.RemoteViewsFactory {
 
@@ -56,14 +55,14 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
             )
                 .toList()
                 .log { "Set propertyViewData=$it" }
+        }
+        widgetColors = widgetRepository.widgetColors(context)
 
-            widgetRepository.appearance().let {
-                widgetColors = it.getColors(context)
-                fontSize = it.fontSize
-                layout = when (it.propertyValueAlignment) {
-                    PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
-                    PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
-                }
+        widgetRepository.widgetAppearance.value.let {
+            fontSize = it.fontSize
+            layout = when (it.propertyValueAlignment) {
+                PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
+                PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
             }
         }
     }
