@@ -15,11 +15,10 @@ import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppExtra
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.WifiStatus
-import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.data.appearanceBlocking
+import com.w2sv.widget.data.InternalWidgetRepository
 import com.w2sv.widget.model.WidgetBottomBarElement
 import com.w2sv.widget.utils.activityPendingIntent
 import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
@@ -33,13 +32,13 @@ import java.util.Locale
 import javax.inject.Inject
 
 internal class WidgetLayoutPopulator @Inject constructor(
-    widgetRepository: WidgetRepository,
+    widgetRepository: InternalWidgetRepository,
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val wifiStatusGetter: WifiStatusGetter
 ) {
-    private val appearance = widgetRepository.appearanceBlocking
-    private val colors = appearance.getColors(context)
+    private val appearance = widgetRepository.widgetAppearance.value
+    private val colors = widgetRepository.widgetColors(context)
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget

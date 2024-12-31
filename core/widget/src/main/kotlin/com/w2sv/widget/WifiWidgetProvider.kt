@@ -4,21 +4,21 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.widget.RemoteViews
 import com.w2sv.androidutils.os.getIntExtraOrNull
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
-import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.data.refreshingBlocking
+import com.w2sv.widget.data.InternalWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WifiWidgetProvider : AppWidgetProvider() {
@@ -33,7 +33,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetRepository: WidgetRepository
+    internal lateinit var widgetRepository: InternalWidgetRepository
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -45,7 +45,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
 
         i { "onEnabled" }
 
-        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshingBlocking)
+        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshing.value)
     }
 
     /**
@@ -77,6 +77,12 @@ class WifiWidgetProvider : AppWidgetProvider() {
                     ?: appWidgetManager.getWifiWidgetIds(context)
             )
         }
+    }
+
+    override fun onAppWidgetOptionsChanged(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetId: Int, newOptions: Bundle?) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
+
+        i { "onAppWidgetOptionsChanged | Bundle=${newOptions?.toMapString()}" }
     }
 
     override fun onUpdate(
