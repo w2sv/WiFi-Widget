@@ -40,9 +40,8 @@ class WifiWidgetProvider : AppWidgetProvider() {
      *
      * Enqueues [WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
      */
-    override fun onEnabled(context: Context?) {
+    override fun onEnabled(context: Context) {
         super.onEnabled(context)
-
         i { "onEnabled" }
 
         widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshing.value)
@@ -53,18 +52,19 @@ class WifiWidgetProvider : AppWidgetProvider() {
      *
      * Cancels [WifiWidgetRefreshWorker].
      */
-    override fun onDisabled(context: Context?) {
+    override fun onDisabled(context: Context) {
         super.onDisabled(context)
-
         i { "onDisabled" }
 
         widgetDataRefreshWorkerManager.cancelWorker()
+        WallpaperChangeReceiverService.stop(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-
         i { "onReceive | Action=${intent.action} | Extras=${intent.extras?.toMapString()}" }
+
+        WallpaperChangeReceiverService.start(context)
 
         if (intent.action == ACTION_REFRESH_DATA) {
             onUpdate(
@@ -81,7 +81,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
 
     override fun onAppWidgetOptionsChanged(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetId: Int, newOptions: Bundle?) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-
         i { "onAppWidgetOptionsChanged | Bundle=${newOptions?.toMapString()}" }
     }
 

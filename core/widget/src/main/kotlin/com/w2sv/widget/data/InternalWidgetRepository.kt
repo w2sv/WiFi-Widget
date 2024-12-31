@@ -1,7 +1,9 @@
 package com.w2sv.widget.data
 
 import android.content.Context
+import com.w2sv.androidutils.res.isNightModeActiveCompat
 import com.w2sv.common.utils.mapFlow
+import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.stateInWithBlockingInitial
@@ -40,19 +42,19 @@ internal class InternalWidgetRepository @Inject constructor(widgetRepository: Wi
             .stateInWithBlockingInitial(scope)
     }
 
-    private var lastWidgetColors: WidgetColors? = null
-    private var lastColoringConfig: WidgetColoring.Config? = null
+    private var widgetColorParametersToColorsCache: Pair<WidgetColorParameters, WidgetColors>? = null
 
     fun widgetColors(context: Context): WidgetColors {
-        val coloringConfig = widgetAppearance.value.coloringConfig
-        lastWidgetColors?.let {
-            if (lastColoringConfig == coloringConfig) {
-                return it
+        val appliedStyle = widgetAppearance.value.coloringConfig.appliedStyle
+        val parameters = WidgetColorParameters.get(appliedStyle, context)
+
+        widgetColorParametersToColorsCache?.let { (cachedParameters, cachedColors) ->
+            if (cachedParameters == parameters) {
+                return cachedColors
             }
         }
-        return WidgetColors.fromConfig(coloringConfig, context).also {
-            lastWidgetColors = it
-            lastColoringConfig = coloringConfig
+        return WidgetColors.fromStyle(appliedStyle, context).also { colors ->
+            widgetColorParametersToColorsCache = parameters to colors
         }
     }
 
@@ -62,5 +64,27 @@ internal class InternalWidgetRepository @Inject constructor(widgetRepository: Wi
             refreshInterval
         ) { t1, t2 -> WidgetRefreshing(t1, t2) }
             .stateInWithBlockingInitial(scope)
+    }
+}
+
+private sealed interface WidgetColorParameters {
+
+    val style: WidgetColoring.Style
+
+    data class DefaultTheme(override val style: WidgetColoring.Style, val isNightModeActive: Boolean) : WidgetColorParameters
+
+    @JvmInline
+    value class Other(override val style: WidgetColoring.Style) : WidgetColorParameters
+
+    companion object {
+        fun get(style: WidgetColoring.Style, context: Context): WidgetColorParameters =
+            if ((style as? WidgetColoring.Style.Preset)?.theme == Theme.Default) {
+                DefaultTheme(
+                    style,
+                    context.resources.configuration.isNightModeActiveCompat
+                )
+            } else {
+                Other(style)
+            }
     }
 }

@@ -36,8 +36,8 @@ internal data class WidgetColors(
     }
 
     companion object {
-        fun fromConfig(coloringConfig: WidgetColoring.Config, context: Context): WidgetColors =
-            when (val style = coloringConfig.appliedStyle) {
+        fun fromStyle(style: WidgetColoring.Style, context: Context): WidgetColors =
+            when (style) {
                 is WidgetColoring.Style.Preset -> {
                     when (style.theme) {
                         Theme.Dark -> WidgetTheme.Dark
