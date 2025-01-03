@@ -1,5 +1,6 @@
 package com.w2sv.widget.model
 
+import android.content.Context
 import androidx.annotation.FloatRange
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
@@ -11,4 +12,7 @@ internal data class WidgetAppearance(
     val fontSize: FontSize,
     val propertyValueAlignment: PropertyValueAlignment,
     val bottomBar: WidgetBottomBarElement
-)
+) {
+    fun widgetColors(context: Context): WidgetColors =
+        WidgetColors.fromStyle(coloringConfig.appliedStyle, context)
+}

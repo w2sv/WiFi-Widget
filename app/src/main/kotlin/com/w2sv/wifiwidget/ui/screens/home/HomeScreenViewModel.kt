@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.common.utils.enabledKeysFlow
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.model.WifiStatus
@@ -10,13 +9,13 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -36,9 +35,9 @@ class HomeScreenViewModel @Inject constructor(
 
     val wifiState = combine(
         wifiStatusMonitor.wifiStatus.distinctUntilChanged(),
-        widgetRepository.sortedEnabledWifiProperties.distinctUntilChanged(),
-        widgetRepository.ipSubPropertyEnablementMap.enabledKeysFlow().distinctUntilChanged(),
-        widgetRepository.locationParameters.enabledKeysFlow().distinctUntilChanged(),
+        widgetRepository.sortedEnabledWifiProperties,
+        widgetRepository.enabledIpSubProperties,
+        widgetRepository.enabledLocationParameters,
         locationAccessChanged
     ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties, enabledLocationParameters, _ ->
         when (wifiStatus) {
@@ -47,8 +46,8 @@ class HomeScreenViewModel @Inject constructor(
             WifiStatus.Connected -> WifiState.Connected(
                 viewDataFlow = wifiPropertyViewDataFactory(
                     properties = enabledWifiProperties,
-                    ipSubProperties = enabledIpSubProperties,
-                    locationParameters = enabledLocationParameters
+                    getIpSubProperties = { enabledIpSubProperties },
+                    getLocationParameters = { enabledLocationParameters }
                 )
             )
         }

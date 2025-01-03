@@ -10,7 +10,7 @@ import com.w2sv.androidutils.os.getIntExtraOrNull
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
-import com.w2sv.widget.data.InternalWidgetRepository
+import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,7 +33,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetRepository: InternalWidgetRepository
+    internal lateinit var widgetRepository: WidgetModuleWidgetRepository
 
     /**
      * Called upon the first AppWidget instance being created.

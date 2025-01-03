@@ -20,13 +20,18 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.kotlinutils.coroutines.flow.stateInWithBlockingInitial
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 
 @Singleton
 internal class WidgetRepositoryImpl @Inject constructor(
@@ -34,6 +39,8 @@ internal class WidgetRepositoryImpl @Inject constructor(
     private val widgetColoringDataSource: WidgetColoringDataSource
 ) : PreferencesDataStoreRepository(dataStore),
     WidgetRepository {
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val coloringConfig: Flow<WidgetColoring.Config> = widgetColoringDataSource.config
 
@@ -63,18 +70,21 @@ internal class WidgetRepositoryImpl @Inject constructor(
     override val wifiPropertyEnablementMap: DataStoreFlowMap<WifiProperty, Boolean> =
         dataStoreFlowMap(WifiProperty.entries.associateWith { it.isEnabledDSE })
 
-    override val orderedWifiProperties: DataStoreFlow<List<WifiProperty>> = listDataStoreFlow(
+    override val wifiPropertyOrder: DataStoreFlow<List<WifiProperty>> = listDataStoreFlow(
         key = stringPreferencesKey("wifiPropertyOrder"),
         default = { WifiProperty.entries },
         serialize = { it.joinToString(separator = ",") { property -> property.ordinal.toString() } },
         deserialize = { it.split(",").map { ordinalString -> WifiProperty.entries[ordinalString.toInt()] } }
     )
 
-    override val sortedEnabledWifiProperties: Flow<List<WifiProperty>> = combine(
-        wifiPropertyEnablementMap.enabledKeysFlow(),
-        orderedWifiProperties
-    ) { enabledKeys, order ->
-        enabledKeys.sortedBy { order.indexOf(it) }
+    override val sortedEnabledWifiProperties: StateFlow<List<WifiProperty>> by lazy {
+        combine(
+            wifiPropertyEnablementMap.enabledKeysFlow(),
+            wifiPropertyOrder
+        ) { enabledKeys, order ->
+            enabledKeys.sortedBy { order.indexOf(it) }
+        }
+            .stateInWithBlockingInitial(scope)
     }
 
     override val ipSubPropertyEnablementMap: DataStoreFlowMap<WifiProperty.IP.SubProperty, Boolean> =
@@ -83,6 +93,10 @@ internal class WidgetRepositoryImpl @Inject constructor(
                 .flatMap { it.subProperties }
                 .associateWith { it.isEnabledDse }
         )
+
+    override val enabledIpSubProperties: StateFlow<Set<WifiProperty.IP.SubProperty>> by lazy {
+        ipSubPropertyEnablementMap.enabledKeysFlow().stateInWithBlockingInitial(scope)
+    }
 
     override val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomBarElement, Boolean> =
         dataStoreFlowMap(WidgetBottomBarElement.entries.associateWith { it.isEnabledDSE })
@@ -103,6 +117,10 @@ internal class WidgetRepositoryImpl @Inject constructor(
 
     override val locationParameters: DataStoreFlowMap<LocationParameter, Boolean> =
         dataStoreFlowMap(LocationParameter.entries.associateWith { it.isEnabledDSE })
+
+    override val enabledLocationParameters: StateFlow<Set<LocationParameter>> by lazy {
+        locationParameters.enabledKeysFlow().stateInWithBlockingInitial(scope)
+    }
 }
 
 private val WifiProperty.isEnabledDSE

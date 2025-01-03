@@ -120,7 +120,7 @@ fun rememberWidgetConfigurationCardProperties(
                     ),
                     onDrop = { fromIndex: Int, toIndex: Int ->
                         widgetConfiguration
-                            .orderedWifiProperties
+                            .wifiPropertyOrder
                             .update {
                                 it
                                     .toMutableList()
@@ -216,7 +216,7 @@ private fun rememberWidgetWifiPropertyCheckRowData(
         )
     }
 
-    val orderedWifiProperties by widgetConfiguration.orderedWifiProperties.collectAsStateWithLifecycle()
+    val orderedWifiProperties by widgetConfiguration.wifiPropertyOrder.collectAsStateWithLifecycle()
     return remember(orderedWifiProperties) {
         orderedWifiProperties
             .map { property ->

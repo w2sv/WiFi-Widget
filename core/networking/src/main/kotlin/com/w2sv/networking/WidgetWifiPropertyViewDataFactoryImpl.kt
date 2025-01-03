@@ -14,15 +14,15 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IPAddress
 import com.w2sv.networking.model.IpApiData
-import java.net.InetAddress
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import okhttp3.OkHttpClient
+import java.net.InetAddress
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import javax.inject.Inject
 
 private typealias GetSystemIPAddresses = () -> List<IPAddress>
 private typealias GetIpApiData = suspend () -> Result<IpApiData>
@@ -36,8 +36,8 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     override fun invoke(
         properties: Iterable<WifiProperty>,
-        ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
-        locationParameters: Collection<LocationParameter>
+        getIpSubProperties: () -> Collection<WifiProperty.IP.SubProperty>,
+        getLocationParameters: () -> Collection<LocationParameter>
     ): Flow<WifiProperty.ViewData> {
         val systemIPAddresses by lazy {
             IPAddress.systemAddresses(connectivityManager)
@@ -52,9 +52,9 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     property
                         .getViewData(
                             systemIPAddresses = { systemIPAddresses },
-                            ipSubProperties = ipSubProperties,
+                            ipSubProperties = getIpSubProperties,
                             ipApiData = { ipApiData.value() },
-                            locationParameters = locationParameters
+                            locationParameters = getLocationParameters
                         )
                         .forEach { emit(it) }
                 }
@@ -64,22 +64,22 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WifiProperty.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
+        ipSubProperties: () -> Collection<WifiProperty.IP.SubProperty>,
         ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
+        locationParameters: () -> Collection<LocationParameter>
     ): List<WifiProperty.ViewData> =
         when (this) {
             is WifiProperty.NonIP -> getViewData(ipApiData, locationParameters)
 
             is WifiProperty.IP -> getViewData(
                 systemIPAddresses = systemIPAddresses,
-                ipSubProperties = ipSubProperties
+                getIpSubProperties = ipSubProperties
             )
         }
 
     private suspend fun WifiProperty.NonIP.getViewData(
         ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
+        locationParameters: () -> Collection<LocationParameter>
     ): List<WifiProperty.ViewData.NonIP> =
         getViewData(
             values = getValues(ipApiData, locationParameters),
@@ -92,7 +92,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     @Suppress("DEPRECATION")
     private suspend fun WifiProperty.NonIP.getValues(
         ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
+        locationParameters: () -> Collection<LocationParameter>
     ): List<String> =
         buildList {
             when (this@getValues) {
@@ -206,7 +206,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(locationParameters) }?.let(::add)
+                WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(locationParameters()) }?.let(::add)
                 WifiProperty.NonIP.Other.IpGpsLocation -> ipApiData().viewDataValue { it.gpsCoordinates }?.let(::add)
                 WifiProperty.NonIP.Other.ISP -> ipApiData().viewDataValue { it.isp }?.let(::add)
 //                WifiProperty.NonIP.Other.AS -> ipApiData().viewDataValue { it.asName }?.let(::add)
@@ -216,9 +216,10 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
     private suspend fun WifiProperty.IP.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Collection<WifiProperty.IP.SubProperty>
-    ): List<WifiProperty.ViewData.IPProperty> =
-        getViewData(
+        getIpSubProperties: () -> Collection<WifiProperty.IP.SubProperty>
+    ): List<WifiProperty.ViewData.IPProperty> {
+        val ipSubProperties by lazy { getIpSubProperties() }
+        return getViewData(
             values = when (this) {
                 is WifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
                 is WifiProperty.IP.V4AndV6 -> getAddresses(
@@ -251,6 +252,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 )
             }
         )
+    }
 
     private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: GetSystemIPAddresses): List<IPAddress> =
         when (this) {
