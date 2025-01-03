@@ -63,6 +63,8 @@ androidx-annotation = "androidx.annotation:annotation:1.9.1"
 # .Compose
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-tooling" }
+androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose-tooling" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-tooling" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-tooling" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-tooling" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
@@ -91,11 +93,12 @@ reorderable = { module = "sh.calvin.reorderable:reorderable", version = "2.4.1" 
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTextExtJunit" }
-# androidx-test-rules = "androidx.test:rules:1.6.1"
+androidx-test-rules = "androidx.test:rules:1.6.1"
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 # androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
 # roboelectric = "org.robolectric:robolectric:4.14.1"
 mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
+mockito-android = "org.mockito:mockito-android:5.15.2"
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 
@@ -110,6 +113,7 @@ ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devto
 
 [bundles]
 unitTest = ["junit", "androidx-test-ext-junit", "mockito-kotlin", "kotlinx-coroutines-test", "kotlin-test-junit"]
+androidTest = ["androidx-test-rules", "androidx-test-runner", "androidx-test-ext-junit", "androidx-compose-ui-test", "androidx-compose-ui-test-manifest", "mockito-kotlin", "mockito-android"]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
