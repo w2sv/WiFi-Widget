@@ -136,3 +136,7 @@ dependencies {
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.reorderable)
 }
+
+dependencies {
+    androidTestImplementation(libs.bundles.androidTest)
+}
