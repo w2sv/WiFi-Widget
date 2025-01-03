@@ -53,12 +53,13 @@ dependencies {
 
     implementation(libs.w2sv.datastoreutils.preferences)
     implementation(libs.w2sv.datastoreutils.datastoreflow)
+    implementation(libs.w2sv.kotlinutils)
+    implementation(libs.w2sv.androidutils)
 
     implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
     implementation(libs.protobuf.kotlin.lite)
 
-    implementation(libs.w2sv.androidutils)
     implementation(libs.slimber)
 }

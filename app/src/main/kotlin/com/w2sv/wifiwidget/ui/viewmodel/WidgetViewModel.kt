@@ -104,7 +104,7 @@ class WidgetViewModel @Inject constructor(
             started = SharingStarted.Eagerly
         ),
         wifiProperties = repository.wifiPropertyEnablementMap.reversibleStateMap(scope = viewModelScope),
-        orderedWifiProperties = repository.orderedWifiProperties.reversibleStateFlow(
+        wifiPropertyOrder = repository.wifiPropertyOrder.reversibleStateFlow(
             scope = viewModelScope,
             started = SharingStarted.Eagerly
         ),

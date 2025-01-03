@@ -26,7 +26,7 @@ class ReversibleWidgetConfiguration(
     val fontSize: ReversibleStateFlow<FontSize>,
     val propertyValueAlignment: ReversibleStateFlow<PropertyValueAlignment>,
     val wifiProperties: ReversibleStateMap<WifiProperty, Boolean>,
-    val orderedWifiProperties: ReversibleStateFlow<List<WifiProperty>>,
+    val wifiPropertyOrder: ReversibleStateFlow<List<WifiProperty>>,
     val ipSubProperties: ReversibleStateMap<WifiProperty.IP.SubProperty, Boolean>,
     val bottomRowMap: ReversibleStateMap<WidgetBottomBarElement, Boolean>,
     val refreshInterval: ReversibleStateFlow<Duration>,
@@ -41,7 +41,7 @@ class ReversibleWidgetConfiguration(
         fontSize,
         propertyValueAlignment,
         wifiProperties,
-        orderedWifiProperties,
+        wifiPropertyOrder,
         ipSubProperties,
         bottomRowMap,
         refreshInterval,
@@ -75,8 +75,8 @@ class ReversibleWidgetConfiguration(
     }
 
     fun restoreDefaultPropertyOrder() {
-        orderedWifiProperties.value = WifiProperty.entries
+        wifiPropertyOrder.value = WifiProperty.entries
     }
 
-    val propertiesInDefaultOrder = orderedWifiProperties.mapState { it == WifiProperty.entries }
+    val propertiesInDefaultOrder = wifiPropertyOrder.mapState { it == WifiProperty.entries }
 }

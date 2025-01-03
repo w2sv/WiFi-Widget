@@ -11,6 +11,7 @@ import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import kotlin.time.Duration
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface WidgetRepository {
     val coloringConfig: Flow<WidgetColoring.Config>
@@ -20,12 +21,17 @@ interface WidgetRepository {
     val fontSize: DataStoreFlow<FontSize>
     val propertyValueAlignment: DataStoreFlow<PropertyValueAlignment>
 
-    val sortedEnabledWifiProperties: Flow<List<WifiProperty>>
+    val sortedEnabledWifiProperties: StateFlow<List<WifiProperty>>
+    val wifiPropertyOrder: DataStoreFlow<List<WifiProperty>>
     val wifiPropertyEnablementMap: DataStoreFlowMap<WifiProperty, Boolean>
-    val orderedWifiProperties: DataStoreFlow<List<WifiProperty>>
+
+    val enabledIpSubProperties: StateFlow<Set<WifiProperty.IP.SubProperty>>
     val ipSubPropertyEnablementMap: DataStoreFlowMap<WifiProperty.IP.SubProperty, Boolean>
+
     val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomBarElement, Boolean>
     val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean>
     val refreshInterval: DataStoreFlow<Duration>
+
     val locationParameters: DataStoreFlowMap<LocationParameter, Boolean>
+    val enabledLocationParameters: StateFlow<Set<LocationParameter>>
 }
