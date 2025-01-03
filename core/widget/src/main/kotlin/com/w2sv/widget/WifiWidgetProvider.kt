@@ -57,14 +57,11 @@ class WifiWidgetProvider : AppWidgetProvider() {
         i { "onDisabled" }
 
         widgetDataRefreshWorkerManager.cancelWorker()
-        WallpaperChangeReceiverService.stop(context)
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         i { "onReceive | Action=${intent.action} | Extras=${intent.extras?.toMapString()}" }
-
-        WallpaperChangeReceiverService.start(context)
 
         if (intent.action == ACTION_REFRESH_DATA) {
             onUpdate(
