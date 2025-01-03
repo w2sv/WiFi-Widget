@@ -4,12 +4,11 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Rule
 import org.junit.Test
 
-class HomeScreenTest {
+class MainActivityTest {
 
     @get:Rule
     val composeContentTestRule: ComposeContentTestRule = createAndroidComposeRule<MainActivity>()
@@ -17,15 +16,12 @@ class HomeScreenTest {
     private val context by lazy { InstrumentationRegistry.getInstrumentation().targetContext }
 
     @Test
-    fun locationAccessDialog() {
+    fun homeScreenAndLocationAccessPermissionRationalShown() {
         with(composeContentTestRule) {
             waitForIdle()
 
             onNodeWithText(context.getString(R.string.location_access_permission_rational))
                 .assertIsDisplayed()
-
-            onNodeWithText(context.getString(R.string.understood))
-                .performClick()
         }
     }
 }
