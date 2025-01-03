@@ -23,6 +23,14 @@ internal annotation class MutableWidgetPinSuccessFlow
 @Retention(AnnotationRetention.BINARY)
 annotation class WidgetPinSuccessFlow
 
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class MutableWallpaperChangedFlow
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class WallpaperChangedFlow
+
 @InstallIn(SingletonComponent::class)
 @Module
 internal object WidgetModule {
@@ -52,4 +60,15 @@ internal object WidgetModule {
     @Provides
     fun widgetPinSuccessFlow(@MutableWidgetPinSuccessFlow mutableWidgetPinSuccessFlow: MutableSharedFlow<Unit>): SharedFlow<Unit> =
         mutableWidgetPinSuccessFlow.asSharedFlow()
+
+    @MutableWallpaperChangedFlow
+    @Provides
+    @Singleton
+    fun mutableWallpaperChangedFlow(): MutableSharedFlow<Unit> =
+        MutableSharedFlow()
+
+    @WallpaperChangedFlow
+    @Provides
+    fun wallpaperChangedFlow(@MutableWallpaperChangedFlow mutableWallpaperChangedFlow: MutableSharedFlow<Unit>): SharedFlow<Unit> =
+        mutableWallpaperChangedFlow.asSharedFlow()
 }

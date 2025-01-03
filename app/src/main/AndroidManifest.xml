@@ -58,9 +58,5 @@
             android:name="com.w2sv.widget.layout.WifiPropertyViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <service
-            android:name="com.w2sv.widget.WallpaperChangeReceiverService"
-            android:exported="false" />
-
     </application>
 </manifest>

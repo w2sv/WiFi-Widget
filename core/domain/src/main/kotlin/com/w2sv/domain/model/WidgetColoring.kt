@@ -21,6 +21,9 @@ interface WidgetColoring {
 
     sealed interface Style {
 
+        val asPresetOrNull: Preset?
+            get() = this as? Preset
+
         data class Preset(
             val theme: Theme = Theme.Default,
             val useDynamicColors: Boolean = dynamicColorsSupported
