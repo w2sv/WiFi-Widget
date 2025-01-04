@@ -135,8 +135,7 @@ dependencies {
     lintChecks(libs.compose.lint.checks)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.reorderable)
-}
 
-dependencies {
+    testImplementation(libs.bundles.unitTest)
     androidTestImplementation(libs.bundles.androidTest)
 }
