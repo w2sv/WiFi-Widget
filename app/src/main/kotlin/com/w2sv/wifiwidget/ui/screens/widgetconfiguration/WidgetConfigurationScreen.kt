@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration
 
-import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -19,7 +18,6 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -31,7 +29,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -48,9 +45,7 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithBottomDivider
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
@@ -59,9 +54,11 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.Prop
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.WidgetConfigurationScreenDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
+import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
+import com.w2sv.wifiwidget.ui.utils.rememberScopedSnackbarEmitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -173,7 +170,7 @@ private fun rememberOnBack(
     configuration: ReversibleWidgetConfiguration,
     navigator: DestinationsNavigator,
     scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+    scopedSnackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope)
 ): () -> Unit {
     val backPressHandler = remember {
         BackPressHandler(
@@ -181,18 +178,15 @@ private fun rememberOnBack(
             confirmationWindowDuration = 2500L
         )
     }
-    val context = LocalContext.current
 
-    return remember(navigator, snackbarHostState) {
+    return remember(navigator, scopedSnackbarEmitter) {
         {
             when (invoker) {
                 WidgetConfigurationScreenInvoker.App -> {
                     onBack(
                         configuration = configuration,
                         backPressHandler = backPressHandler,
-                        scope = scope,
-                        context = context,
-                        snackbarHostState = snackbarHostState
+                        scopedSnackbarEmitter = scopedSnackbarEmitter
                     ) { navigator.popBackStack() }
                 }
 
@@ -200,9 +194,7 @@ private fun rememberOnBack(
                     onBack(
                         configuration = configuration,
                         backPressHandler = backPressHandler,
-                        scope = scope,
-                        context = context,
-                        snackbarHostState = snackbarHostState
+                        scopedSnackbarEmitter = scopedSnackbarEmitter
                     ) {
                         navigator.navigate(HomeScreenDestination) {
                             launchSingleTop = true
@@ -220,31 +212,27 @@ private fun rememberOnBack(
 private fun onBack(
     configuration: ReversibleWidgetConfiguration,
     backPressHandler: BackPressHandler,
-    scope: CoroutineScope,
-    context: Context,
-    snackbarHostState: SnackbarHostState,
+    scopedSnackbarEmitter: ScopedSnackbarEmitter,
     navigate: () -> Unit
 ) {
     if (configuration.statesDissimilar.value) {
         backPressHandler.invoke(
             onFirstPress = {
-                scope.launch {
-                    snackbarHostState.dismissCurrentAndShow(
-                        AppSnackbarVisuals(
-                            msg = context.getString(R.string.go_back_on_unsaved_changes_warning),
-                            kind = SnackbarKind.Warning
-                        )
+                scopedSnackbarEmitter.dismissCurrentAndShow {
+                    AppSnackbarVisuals(
+                        msg = getString(R.string.go_back_on_unsaved_changes_warning),
+                        kind = SnackbarKind.Warning
                     )
                 }
             },
             onSecondPress = {
                 configuration.reset()
-                snackbarHostState.currentSnackbarData?.dismiss()
+                scopedSnackbarEmitter.dismissCurrent()
                 navigate()
             }
         )
     } else {
-        snackbarHostState.currentSnackbarData?.dismiss()
+        scopedSnackbarEmitter.dismissCurrent()
         navigate()
     }
 }

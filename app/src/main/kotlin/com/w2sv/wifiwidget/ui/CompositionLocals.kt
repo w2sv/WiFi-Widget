@@ -1,6 +1,7 @@
-package com.w2sv.wifiwidget.ui.utils
+package com.w2sv.wifiwidget.ui
 
 import android.location.LocationManager
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController
@@ -21,3 +22,5 @@ val LocalUseDarkTheme =
             "LocalUseDarkTheme not yet provided"
         )
     }
+
+val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }

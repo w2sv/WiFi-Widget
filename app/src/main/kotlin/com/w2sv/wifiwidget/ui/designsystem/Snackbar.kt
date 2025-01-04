@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
@@ -13,29 +12,24 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.w2sv.composed.CollectLatestFromFlow
+import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.w2sv.wifiwidget.ui.utils.SnackbarEmitter
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -81,42 +75,14 @@ sealed interface SnackbarKind {
     }
 }
 
-val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
-
-suspend fun SnackbarHostState.dismissCurrentAndShow(snackbarVisuals: SnackbarVisuals) {
-    currentSnackbarData?.dismiss()
-    showSnackbar(snackbarVisuals)
-}
-
 @Composable
-fun rememberShowSnackbar(
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarVisuals: () -> SnackbarVisuals
-): () -> Unit {
-    return remember(snackbarHostState) {
-        {
-            scope.launch {
-                snackbarHostState.dismissCurrentAndShow(
-                    snackbarVisuals()
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AppSnackbarHost(
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
-    context: Context = LocalContext.current,
-    appVM: AppViewModel = hiltViewModel()
-) {
+fun AppSnackbarHost(snackbarEmitter: SnackbarEmitter = rememberSnackbarEmitter(), appVM: AppViewModel = activityViewModel()) {
     // Show Snackbars collected from sharedSnackbarVisuals
-    CollectLatestFromFlow(appVM.makeSnackbarVisualsFlow) {
-        snackbarHostState.dismissCurrentAndShow(it(context))
+    CollectLatestFromFlow(appVM.makeSnackbarVisualsFlow) { makeSnackbarVisuals ->
+        snackbarEmitter.dismissCurrentAndShowSuspending { makeSnackbarVisuals() }
     }
 
-    SnackbarHost(snackbarHostState) { snackbarData ->
+    SnackbarHost(snackbarEmitter.snackbarHostState) { snackbarData ->
         AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
     }
 }

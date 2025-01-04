@@ -18,7 +18,11 @@ internal fun RemoteViews.setTextView(
     color?.let { setTextColor(viewId, it) }
 }
 
-internal fun RemoteViews.setViewVisibility(@IdRes viewId: Int, visible: Boolean, ifVisible: RemoteViews.() -> Unit) {
+internal fun RemoteViews.setViewVisibility(
+    @IdRes viewId: Int,
+    visible: Boolean,
+    ifVisible: RemoteViews.() -> Unit
+) {
     setViewVisibility(
         viewId,
         if (visible) View.VISIBLE.also { ifVisible() } else View.GONE

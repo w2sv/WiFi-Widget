@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
@@ -22,7 +21,6 @@ import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.rememberShowSnackbar
 import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
@@ -30,6 +28,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ShakeController
+import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -85,8 +84,7 @@ fun rememberWidgetConfigurationCardProperties(
                             widgetConfiguration.propertyValueAlignment.value = it
                         }
                     },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                    modifier = Modifier.padding(horizontal = 16.dp)
                 )
             },
             WidgetConfigurationCard(
@@ -199,22 +197,8 @@ private fun rememberWidgetWifiPropertyCheckRowData(
     locationAccessState: LocationAccessState,
     showInfoDialog: (InfoDialogData) -> Unit
 ): ImmutableList<CheckRowColumnElement.CheckRow<WifiProperty>> {
-    val context = LocalContext.current
     val scope: CoroutineScope = rememberCoroutineScope()
-
-    val showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit = rememberShowSnackbar {
-        AppSnackbarVisuals(
-            msg = context.getString(R.string.leave_at_least_one_property_enabled),
-            kind = SnackbarKind.Warning
-        )
-    }
-
-    val showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit = rememberShowSnackbar {
-        AppSnackbarVisuals(
-            msg = context.getString(R.string.leave_at_least_one_address_version_enabled),
-            kind = SnackbarKind.Warning
-        )
-    }
+    val snackbarEmitter = rememberSnackbarEmitter()
 
     val orderedWifiProperties by widgetConfiguration.wifiPropertyOrder.collectAsStateWithLifecycle()
     return remember(orderedWifiProperties) {
@@ -224,9 +208,23 @@ private fun rememberWidgetWifiPropertyCheckRowData(
                     widgetConfiguration = widgetConfiguration,
                     locationAccessState = locationAccessState,
                     showInfoDialog = showInfoDialog,
-                    showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
-                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
-                    scope = scope
+                    showLeaveAtLeastOnePropertyEnabledSnackbar = {
+                        snackbarEmitter.dismissCurrentAndShow(scope) {
+                            AppSnackbarVisuals(
+                                msg = getString(R.string.leave_at_least_one_property_enabled),
+                                kind = SnackbarKind.Warning
+                            )
+                        }
+                    },
+                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = {
+                        snackbarEmitter.dismissCurrentAndShow(scope) {
+                            AppSnackbarVisuals(
+                                msg = getString(R.string.leave_at_least_one_address_version_enabled),
+                                kind = SnackbarKind.Warning
+                            )
+                        }
+                    },
+                    shakeScope = scope
                 )
             }
             .toPersistentList()
@@ -239,7 +237,7 @@ private fun WifiProperty.checkRow(
     showInfoDialog: (InfoDialogData) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
-    scope: CoroutineScope
+    shakeScope: CoroutineScope
 ): CheckRowColumnElement.CheckRow<WifiProperty> {
     val shakeController = ShakeController()
 
@@ -260,20 +258,20 @@ private fun WifiProperty.checkRow(
                 }
             }
         },
-        onCheckedChangedDisallowed = { scope.launch { shakeController.shake() } },
+        onCheckedChangedDisallowed = { shakeScope.launch { shakeController.shake() } },
         shakeController = shakeController,
         subPropertyColumnElements = when (this) {
             is WifiProperty.IP ->
                 subPropertyElements(
                     ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
-                    scope = scope
+                    shakeScope = shakeScope
                 )
 
             is WifiProperty.NonIP.Other.Location -> subPropertyElements(
                 locationParameters = widgetConfiguration.locationParameters,
                 showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
-                scope = scope
+                scope = shakeScope
             )
 
             else -> null
@@ -288,7 +286,7 @@ private fun Map<*, Boolean>.moreThanOnePropertyEnabled(): Boolean =
 private fun WifiProperty.IP.subPropertyElements(
     ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
-    scope: CoroutineScope
+    shakeScope: CoroutineScope
 ): ImmutableList<CheckRowColumnElement> {
     return buildList {
         if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
@@ -318,7 +316,7 @@ private fun WifiProperty.IP.subPropertyElements(
                             )
                         },
                         onCheckedChangedDisallowed = {
-                            scope.launch { shakeController?.shake() }
+                            shakeScope.launch { shakeController?.shake() }
                             showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                         },
                         show = {

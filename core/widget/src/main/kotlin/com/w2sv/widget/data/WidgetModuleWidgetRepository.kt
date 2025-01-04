@@ -6,12 +6,12 @@ import com.w2sv.kotlinutils.coroutines.flow.stateInWithBlockingInitial
 import com.w2sv.widget.model.WidgetAppearance
 import com.w2sv.widget.model.WidgetBottomBarElement
 import com.w2sv.widget.model.WidgetRefreshing
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class WidgetModuleWidgetRepository @Inject constructor(widgetRepository: WidgetRepository) :

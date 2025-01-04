@@ -1,8 +1,7 @@
-package com.w2sv.wifiwidget.ui.viewmodel
+package com.w2sv.wifiwidget.ui.sharedviewmodel
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
@@ -16,7 +15,8 @@ import com.w2sv.widget.WifiWidgetRefreshWorker
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
+import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
+import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
@@ -37,7 +37,7 @@ class WidgetViewModel @Inject constructor(
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
     private val preferencesRepository: PreferencesRepository,
-    @MakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<(Context) -> SnackbarVisuals>,
+    @MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
     @ApplicationContext context: Context,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) :
@@ -63,7 +63,7 @@ class WidgetViewModel @Inject constructor(
                 viewModelScope.launch {
                     sharedSnackbarVisuals.emit {
                         AppSnackbarVisuals(
-                            msg = it.getString(R.string.widget_pinning_failed),
+                            msg = getString(R.string.widget_pinning_failed),
                             kind = SnackbarKind.Warning
                         )
                     }
@@ -127,7 +127,7 @@ class WidgetViewModel @Inject constructor(
             delay(500) // To allow fab buttons to disappear before emission of snackbar
             sharedSnackbarVisuals.emit {
                 AppSnackbarVisuals(
-                    msg = it.getString(R.string.updated_widget_configuration),
+                    msg = getString(R.string.updated_widget_configuration),
                     kind = SnackbarKind.Success
                 )
             }

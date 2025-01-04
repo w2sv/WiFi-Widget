@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.states
 
 import android.Manifest
 import android.content.Context
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -18,14 +17,14 @@ import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
+import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
+import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.utils.rememberScopedSnackbarEmitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +39,7 @@ import kotlinx.coroutines.launch
 fun rememberLocationAccessState(
     appVM: AppViewModel = hiltViewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    snackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope),
     context: Context = LocalContext.current
 ): LocationAccessState =
     rememberLocationAccessState(
@@ -49,7 +48,7 @@ fun rememberLocationAccessState(
         rationalShown = appVM.locationAccessRationalShown,
         saveRationalShown = appVM::saveLocationAccessRationalShown,
         scope = scope,
-        snackbarHostState = snackbarHostState,
+        snackbarEmitter = snackbarEmitter,
         context = context
     )
 
@@ -60,7 +59,7 @@ private fun rememberLocationAccessState(
     rationalShown: Flow<Boolean>,
     saveRationalShown: () -> Unit,
     scope: CoroutineScope,
-    snackbarHostState: SnackbarHostState,
+    snackbarEmitter: ScopedSnackbarEmitter,
     context: Context
 ): LocationAccessState {
     // Necessary for connecting permissionState.onPermissionsResult & LocationAccessState.onRequestResult
@@ -79,18 +78,18 @@ private fun rememberLocationAccessState(
 
     val backgroundAccessState = rememberBackgroundLocationAccessState()
 
-    return remember(scope, snackbarHostState, context) {
+    return remember(scope, snackbarEmitter) {
         LocationAccessState(
             permissionsState = permissionState,
             requestResult = requestResult,
+            scope = scope,
             backgroundAccessState = backgroundAccessState,
             requestLaunchedBefore = requestLaunchedBefore.stateIn(scope, SharingStarted.Eagerly, false),
             saveRequestLaunchedBefore = saveRequestLaunchedBefore,
             rationalShown = rationalShown.stateIn(scope, SharingStarted.Eagerly, true),
             saveRationalShown = saveRationalShown,
-            snackbarHostState = snackbarHostState,
-            scope = scope,
-            context = context
+            snackbarEmitter = snackbarEmitter,
+            openAppSettings = { context.openAppSettings() }
         )
     }
 }
@@ -99,14 +98,14 @@ private fun rememberLocationAccessState(
 class LocationAccessState(
     permissionsState: MultiplePermissionsState,
     requestResult: SharedFlow<Boolean>,
+    scope: CoroutineScope,
     val backgroundAccessState: BackgroundLocationAccessState?,
     private val requestLaunchedBefore: StateFlow<Boolean>,
     private val saveRequestLaunchedBefore: () -> Unit,
     val rationalShown: StateFlow<Boolean>,
     private val saveRationalShown: () -> Unit,
-    private val snackbarHostState: SnackbarHostState,
-    private val scope: CoroutineScope,
-    private val context: Context
+    private val snackbarEmitter: ScopedSnackbarEmitter,
+    private val openAppSettings: () -> Unit
 ) : MultiplePermissionsState by permissionsState {
 
     val newStatus get() = _newStatus.asSharedFlow()
@@ -148,22 +147,18 @@ class LocationAccessState(
         }
 
         when {
-            isLaunchingSuppressed(requestLaunchedBefore.value) && !skipSnackbarIfInAppPromptingSuppressed -> scope.launch {
-                snackbarHostState.dismissCurrentAndShow(
-                    AppSnackbarVisuals(
-                        msg = context.getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                        kind = SnackbarKind.Warning,
-                        action = SnackbarAction(
-                            label = context.getString(R.string.go_to_app_settings),
-                            callback = {
-                                setOnGrantActionAnd { context.openAppSettings() }
-                            }
-                        )
+            isLaunchingSuppressed(requestLaunchedBefore.value) && !skipSnackbarIfInAppPromptingSuppressed -> snackbarEmitter.dismissCurrentAndShow {
+                AppSnackbarVisuals(
+                    msg = getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                    kind = SnackbarKind.Warning,
+                    action = SnackbarAction(
+                        label = getString(R.string.go_to_app_settings),
+                        callback = openAppSettings
                     )
                 )
             }
 
-            isLaunchingSuppressed(requestLaunchedBefore.value) -> setOnGrantActionAnd { context.openAppSettings() }
+            isLaunchingSuppressed(requestLaunchedBefore.value) -> setOnGrantActionAnd(openAppSettings)
             else -> setOnGrantActionAnd { launchMultiplePermissionRequest() }
         }
     }

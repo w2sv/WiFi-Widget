@@ -7,13 +7,13 @@ import android.content.Intent
 import android.content.IntentFilter
 import com.w2sv.widget.di.MutableWallpaperChangedFlow
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
 import slimber.log.i
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltAndroidApp
 class Application : Application() {
