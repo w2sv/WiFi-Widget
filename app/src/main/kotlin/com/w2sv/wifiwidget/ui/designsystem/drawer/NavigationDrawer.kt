@@ -32,8 +32,8 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
+import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.viewmodel.AppViewModel
 
 @Stable
 data class NavigationDrawerItemState(

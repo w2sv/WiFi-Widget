@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.states
 
-import android.content.Context
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
@@ -11,6 +10,9 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,27 +21,26 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.runner.RunWith
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @RunWith(AndroidJUnit4::class)
 class LocationAccessStateTest {
 
     @Test
-    fun `newStatus emits on multiplePermissionsState allPermissionsGranted changes`() = runTest {
-        val multiplePermissionsState = MultiplePermissionsStateTestImpl()
+    fun `newStatus emits on multiplePermissionsState allPermissionsGranted changes`() =
+        runTest {
+            val multiplePermissionsState = MultiplePermissionsStateTestImpl()
 
-        locationAccessState(multiplePermissionsState).newStatus.test {
-            Snapshot.withMutableSnapshot { multiplePermissionsState.allPermissionsGrantedState.value = true }
-            assertEquals(LocationAccessPermissionStatus.Granted(null), awaitItem())
+            locationAccessState(multiplePermissionsState).newStatus.test {
+                Snapshot.withMutableSnapshot { multiplePermissionsState.allPermissionsGrantedState.value = true }
+                assertEquals(LocationAccessPermissionStatus.Granted(null), awaitItem())
 
-            Snapshot.withMutableSnapshot { multiplePermissionsState.allPermissionsGrantedState.value = false }
-            assertEquals(LocationAccessPermissionStatus.NotGranted, awaitItem())
+                Snapshot.withMutableSnapshot { multiplePermissionsState.allPermissionsGrantedState.value = false }
+                assertEquals(LocationAccessPermissionStatus.NotGranted, awaitItem())
+            }
         }
-    }
 
     @Test
-    fun `saveRequestLaunchedBefore called on requestResult emission while requestLaunchedBefore false and not called if requestLaunchedBefore true`() =
+    fun `saveRequestLaunchedBefore called on requestResult emission while requestLaunchedBefore false and not called if true`() =
         runTest {
             val requestResult = MutableSharedFlow<Boolean>()
             val requestLaunchedBefore = MutableStateFlow(false)
@@ -48,7 +49,7 @@ class LocationAccessStateTest {
             locationAccessState(
                 requestResult = requestResult,
                 requestLaunchedBefore = requestLaunchedBefore,
-                saveRequestLaunchedBefore = { saveRequestLaunchedBeforeCallCount += 1 },
+                saveRequestLaunchedBefore = { saveRequestLaunchedBeforeCallCount += 1 }
             )
 
             requestResult.emit(false)
@@ -68,21 +69,19 @@ private fun locationAccessState(
     saveRequestLaunchedBefore: () -> Unit = {},
     rationalShown: MutableStateFlow<Boolean> = MutableStateFlow(false),
     saveRationalShown: () -> Unit = {},
-    snackbarHostState: SnackbarHostState = SnackbarHostState(),
-    scope: CoroutineScope = TestScope(UnconfinedTestDispatcher()),
-    context: Context = ApplicationProvider.getApplicationContext()
+    scope: CoroutineScope = TestScope(UnconfinedTestDispatcher())
 ): LocationAccessState {
     return LocationAccessState(
         permissionsState = permissionsState,
         requestResult = requestResult,
+        scope = scope,
         backgroundAccessState = null,
         requestLaunchedBefore = requestLaunchedBefore,
         saveRequestLaunchedBefore = saveRequestLaunchedBefore,
         rationalShown = rationalShown,
         saveRationalShown = saveRationalShown,
-        snackbarHostState = snackbarHostState,
-        scope = scope,
-        context = context
+        snackbarEmitter = ScopedSnackbarEmitter(SnackbarHostState(), ApplicationProvider.getApplicationContext(), scope),
+        openAppSettings = {}
     )
 }
 

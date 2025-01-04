@@ -29,20 +29,19 @@ import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.isLocationEnabledCompat
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.LocalLocationManager
+import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
+import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.LocalLocationManager
-import com.w2sv.wifiwidget.ui.utils.LocalNavHostController
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
+import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -107,27 +106,26 @@ private fun ShowSnackbarOnWidgetPin(
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
     locationAccessState: LocationAccessState
 ) {
-    val context = LocalContext.current
-    val snackbarHostState = LocalSnackbarHostState.current
+    val snackbarEmitter = rememberSnackbarEmitter()
     val locationManager = LocalLocationManager.current
 
     CollectLatestFromFlow(newWidgetPinned) {
         if (anyLocationAccessRequiringPropertyEnabled()) {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                !locationManager.isLocationEnabledCompat() -> snackbarHostState.dismissCurrentAndShow(
+                !locationManager.isLocationEnabledCompat() -> snackbarEmitter.dismissCurrentAndShowSuspending {
                     AppSnackbarVisuals(
-                        msg = context.getString(R.string.on_pin_widget_wo_gps_enabled),
+                        msg = getString(R.string.on_pin_widget_wo_gps_enabled),
                         kind = SnackbarKind.Warning
                     )
-                )
+                }
 
-                !locationAccessState.allPermissionsGranted -> snackbarHostState.dismissCurrentAndShow(
+                !locationAccessState.allPermissionsGranted -> snackbarEmitter.dismissCurrentAndShowSuspending {
                     AppSnackbarVisuals(
-                        msg = context.getString(R.string.on_pin_widget_wo_location_access_permission),
+                        msg = getString(R.string.on_pin_widget_wo_location_access_permission),
                         kind = SnackbarKind.Warning,
                         action = SnackbarAction(
-                            label = context.getString(R.string.grant),
+                            label = getString(R.string.grant),
                             callback = {
                                 locationAccessState.launchMultiplePermissionRequest(
                                     TriggerWidgetDataRefresh,
@@ -136,29 +134,29 @@ private fun ShowSnackbarOnWidgetPin(
                             }
                         )
                     )
-                )
+                }
 
                 // Warn about (B)SSID not being reliably displayed if background location access not granted
-                locationAccessState.backgroundAccessState?.status?.isGranted == false -> snackbarHostState.dismissCurrentAndShow(
+                locationAccessState.backgroundAccessState?.status?.isGranted == false -> snackbarEmitter.dismissCurrentAndShowSuspending {
                     AppSnackbarVisuals(
-                        msg = context.getString(R.string.on_pin_widget_wo_background_location_access_permission),
+                        msg = getString(R.string.on_pin_widget_wo_background_location_access_permission),
                         kind = SnackbarKind.Warning,
                         action = SnackbarAction(
-                            label = context.getString(R.string.grant),
+                            label = getString(R.string.grant),
                             callback = {
                                 locationAccessState.backgroundAccessState.launchPermissionRequest()
                             }
                         )
                     )
-                )
+                }
             }
         }
-        snackbarHostState.dismissCurrentAndShow(
+        snackbarEmitter.dismissCurrentAndShowSuspending {
             AppSnackbarVisuals(
-                msg = context.getString(R.string.pinned_widget),
+                msg = getString(R.string.pinned_widget),
                 kind = SnackbarKind.Success
             )
-        )
+        }
     }
 }
 

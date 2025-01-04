@@ -15,7 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.w2sv.wifiwidget.ui.utils.LocalUseDarkTheme
+import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 
 @SuppressLint("NewApi")
 @Composable

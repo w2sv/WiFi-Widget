@@ -25,7 +25,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -53,10 +52,9 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.dismissCurrentAndShow
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
+import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -65,7 +63,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.launch
 import slimber.log.i
 
 @Composable
@@ -251,24 +248,21 @@ private typealias OnPropertyRowClick = (WifiProperty.ViewData, CharSequence, Cor
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
-    val snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
-    val context: Context = LocalContext.current
+    val snackbarEmitter = rememberSnackbarEmitter()
 
     return remember {
         { viewData, label, scope ->
             clipboardManager.setText(AnnotatedString(viewData.value))
-            scope.launch {
-                snackbarHostState.dismissCurrentAndShow(
-                    AppSnackbarVisuals(
-                        msg = buildAnnotatedString {
-                            append("${context.getString(R.string.copied)} ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                                append(label)
-                            }
-                            append(" ${context.getString(R.string.to_clipboard)}.")
-                        },
-                        kind = SnackbarKind.Success
-                    )
+            snackbarEmitter.dismissCurrentAndShow(scope) {
+                AppSnackbarVisuals(
+                    msg = buildAnnotatedString {
+                        append("${getString(R.string.copied)} ")
+                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                            append(label)
+                        }
+                        append(" ${getString(R.string.to_clipboard)}.")
+                    },
+                    kind = SnackbarKind.Success
                 )
             }
         }

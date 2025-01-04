@@ -1,8 +1,6 @@
-package com.w2sv.wifiwidget.ui.viewmodel
+package com.w2sv.wifiwidget.ui.sharedviewmodel
 
-import android.content.Context
 import android.location.LocationManager
-import androidx.compose.material3.SnackbarVisuals
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,7 +11,8 @@ import com.w2sv.common.AppExtra
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
-import com.w2sv.wifiwidget.di.MakeSnackbarVisualsFlow
+import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
+import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    @MakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<(Context) -> SnackbarVisuals>,
+    @MutableMakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<MakeSnackbarVisuals>,
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository,
     val locationManager: LocationManager,

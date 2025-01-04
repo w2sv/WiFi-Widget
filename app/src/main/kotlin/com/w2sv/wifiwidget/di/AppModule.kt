@@ -14,16 +14,18 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class MakeSnackbarVisualsFlow
+annotation class MutableMakeSnackbarVisualsFlow
+
+typealias MakeSnackbarVisuals = Context.() -> SnackbarVisuals
 
 @InstallIn(SingletonComponent::class)
 @Module
 object AppModule {
 
-    @MakeSnackbarVisualsFlow
+    @MutableMakeSnackbarVisualsFlow
     @Provides
     @Singleton
-    fun mutableSnackbarVisualsFlow(): MutableSharedFlow<(Context) -> SnackbarVisuals> =
+    fun mutableSnackbarVisualsFlow(): MutableSharedFlow<MakeSnackbarVisuals> =
         MutableSharedFlow()
 
     @Provides

@@ -16,8 +16,8 @@ import com.w2sv.composed.OnChange
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
+import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.viewmodel.WidgetViewModel
 
 /**
  * The scroll (pixel) value beyond which the dialog will be triggered. Corresponds to a scroll position where the WiFi property configuration card header
