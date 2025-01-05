@@ -1,10 +1,10 @@
-package com.w2sv.baselineprofile
+package com.w2sv.wifiwidget.baselineprofile
 
-import android.content.Context
+import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.benchmark.macro.junit4.BaselineProfileRule
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.w2sv.wifiwidget.StartupBenchmarks
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -34,7 +34,7 @@ import org.junit.runner.RunWith
  **/
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class BaselineProfileGenerator {
+class StartupBaselineProfile {
 
     @get:Rule
     val rule = BaselineProfileRule()
@@ -44,12 +44,8 @@ class BaselineProfileGenerator {
         rule.collect(
             packageName = "com.w2sv.wifiwidget",
             // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
-            includeInStartupProfile = true
-        ) {
-            pressHome()
-            startActivityAndWait()
-
-            device.criticalUserJourney()
-        }
+            includeInStartupProfile = true,
+            profileBlock = MacrobenchmarkScope::startActivityAndWait
+        )
     }
 }

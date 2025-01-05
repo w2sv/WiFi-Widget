@@ -50,8 +50,6 @@ internal object WidgetModule {
 
     @WidgetPinSuccessFlow
     @Provides
-    fun widgetPinSuccessFlow(
-        @MutableWidgetPinSuccessFlow mutableWidgetPinSuccessFlow: MutableSharedFlow<Unit>
-    ): SharedFlow<Unit> =
+    fun widgetPinSuccessFlow(@MutableWidgetPinSuccessFlow mutableWidgetPinSuccessFlow: MutableSharedFlow<Unit>): SharedFlow<Unit> =
         mutableWidgetPinSuccessFlow.asSharedFlow()
 }
