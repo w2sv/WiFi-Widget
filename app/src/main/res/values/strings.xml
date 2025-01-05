@@ -31,8 +31,8 @@
     <string name="color_picker_button_cd">Open the %s color picker dialog.</string>
     <string name="you_re_not_signed_into_the_play_store">You\'re not signed into the Play Store</string>
     <string name="version">Version: %s</string>
-    <string name="share_action_text">Check out WiFi Widget!\nhttps://play.google.com/store/apps/details?id=com.w2sv.wifiwidget</string>
-    <string name="inflate_the_widget_configuration_dialog">Inflate the widget configuration dialog.</string>
+    <string name="share_action_text">Check out WiFi Widget!\n%s</string>
+    <string name="open_widget_configuration_screen_button_cd">Open the widget configuration screen.</string>
     <string name="legal">Legal</string>
     <string name="more">More</string>
     <string name="support_the_app">Support the app</string>
@@ -51,7 +51,6 @@
     <string name="wifi_status">WiFi Status</string>
     <string name="widget">Widget</string>
     <string name="updated_widget_configuration">Updated widget configuration.</string>
-    <string name="copyright_text">© 2022 - %1$s | W2SV</string>
     <string name="ip">IP</string>
     <string name="report_a_bug_request_a_feature">Report a bug / request a feature</string>
     <string name="retrieving_properties">Retrieving properties…</string>

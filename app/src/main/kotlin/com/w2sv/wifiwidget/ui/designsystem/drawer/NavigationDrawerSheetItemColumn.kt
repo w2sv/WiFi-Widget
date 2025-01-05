@@ -148,7 +148,7 @@ internal fun NavigationDrawerSheetItemColumn(
                     type = NavigationDrawerSheetElement.Item.Clickable {
                         ShareCompat.IntentBuilder(context)
                             .setType("text/plain")
-                            .setText(context.getString(R.string.share_action_text))
+                            .setText(context.getString(R.string.share_action_text, AppUrl.PLAY_STORE_ENTRY))
                             .startChooser()
                     }
                 ),

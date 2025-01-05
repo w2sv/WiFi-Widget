@@ -34,11 +34,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -162,12 +166,18 @@ private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewD
     return viewDataList
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modifier: Modifier = Modifier) {
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
     LazyColumn(
-        modifier = modifier.nestedContentBackground(color = MaterialTheme.colorScheme.background),
+        modifier = modifier
+            .nestedContentBackground(color = MaterialTheme.colorScheme.background)
+            .semantics {
+                testTagsAsResourceId = true
+                testTag = "scrollableWifiPropertyList"
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
