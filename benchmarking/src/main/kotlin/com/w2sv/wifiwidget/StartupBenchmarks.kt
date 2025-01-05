@@ -1,4 +1,4 @@
-package com.w2sv.baselineprofile
+package com.w2sv.wifiwidget
 
 import androidx.benchmark.macro.BaselineProfileMode
 import androidx.benchmark.macro.CompilationMode

@@ -36,7 +36,7 @@ format:
 
 baseline-profile:
 	@echo "Generate baseline profile"
-	@./gradlew :app:generateReleaseBaselineProfile
+	@./gradlew :app:generateReleaseBaselineProfile --console verbose
 
 build-aab:
 	@echo "Build AAB"
