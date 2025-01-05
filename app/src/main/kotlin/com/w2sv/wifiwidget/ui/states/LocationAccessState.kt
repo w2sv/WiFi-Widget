@@ -147,16 +147,17 @@ class LocationAccessState(
         }
 
         when {
-            isLaunchingSuppressed(requestLaunchedBefore.value) && !skipSnackbarIfInAppPromptingSuppressed -> snackbarEmitter.dismissCurrentAndShow {
-                AppSnackbarVisuals(
-                    msg = getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                    kind = SnackbarKind.Warning,
-                    action = SnackbarAction(
-                        label = getString(R.string.go_to_app_settings),
-                        callback = openAppSettings
+            isLaunchingSuppressed(requestLaunchedBefore.value) && !skipSnackbarIfInAppPromptingSuppressed ->
+                snackbarEmitter.dismissCurrentAndShow {
+                    AppSnackbarVisuals(
+                        msg = getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
+                        kind = SnackbarKind.Warning,
+                        action = SnackbarAction(
+                            label = getString(R.string.go_to_app_settings),
+                            callback = openAppSettings
+                        )
                     )
-                )
-            }
+                }
 
             isLaunchingSuppressed(requestLaunchedBefore.value) -> setOnGrantActionAnd(openAppSettings)
             else -> setOnGrantActionAnd { launchMultiplePermissionRequest() }

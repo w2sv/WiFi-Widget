@@ -1,2 +1,4 @@
-- Enable configuration of property alignment on widget and set default back to right-aligned upon popular demand
-- Enable resizing the widget to a width of 2 cells
+- Show 'location access missing' snackbar upon in-app widget pinning with access requiring properties active, but no access
+- Fix background location access grant initially not being recognized
+- Fix widget property copy-to-clipboard functionality on click
+- Improve in-app and widget refreshing performance

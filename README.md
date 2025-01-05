@@ -112,14 +112,16 @@
 
 <h2 align="center">Tech Stack</h2>
 
-- Kotlin
-- Jetpack Compose
+- Kotlin only
+- Jetpack Compose for in-app UI, xml for widget UI
 - Coroutines & flows
 - [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
 - [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
 - [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
 - Proto & Preferences data store
-- JUnit 4 & [mockito](https://github.com/mockito/mockito) for unit testing
+- JUnit 4, [mockito](https://github.com/mockito/mockito), [robolectric](https://robolectric.org/) & [turbine](https://github.com/cashapp/turbine) for unit testing
+- JUnit 4 Compose android (instrumented) testing
+- Androidx Macro benchmarking & baseline profile generation with app-specific usage journey, implemented with [UI Automator](https://developer.android.com/training/testing/other-components/ui-automator)
 
 <h2 align="center">Architecture</h2>
 
