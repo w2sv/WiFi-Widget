@@ -180,7 +180,7 @@ private fun WidgetConfigurationDialogButton(onClick: () -> Unit, modifier: Modif
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Default.Settings,
-            contentDescription = stringResource(R.string.inflate_the_widget_configuration_dialog),
+            contentDescription = stringResource(R.string.open_widget_configuration_screen_button_cd),
             modifier = modifier,
             tint = MaterialTheme.colorScheme.primary
         )

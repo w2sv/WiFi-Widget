@@ -153,10 +153,7 @@ private fun PortraitMode(
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
     Text(
-        text = stringResource(
-            R.string.copyright_text,
-            Calendar.getInstance().get(Calendar.YEAR)
-        ),
+        text = remember { "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV" },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
         modifier = modifier

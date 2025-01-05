@@ -1,9 +1,10 @@
 package com.w2sv.baselineprofile
 
+import android.content.Context
 import androidx.benchmark.macro.junit4.BaselineProfileRule
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,29 +41,15 @@ class BaselineProfileGenerator {
 
     @Test
     fun generate() {
-        // This example works only with the variant with application id `com.w2sv.wifiwidget`."
         rule.collect(
             packageName = "com.w2sv.wifiwidget",
-            maxIterations = 15,
-            stableIterations = 3,
             // See: https://d.android.com/topic/performance/baselineprofiles/dex-layout-optimizations
             includeInStartupProfile = true
         ) {
-            // This block defines the app's critical user journey. Here we are interested in
-            // optimizing for app startup. But you can also navigate and scroll through your most important UI.
-
-            // Start default activity for your app
             pressHome()
             startActivityAndWait()
 
-            // TODO Write more interactions to optimize advanced journeys of your app.
-            // For example:
-            // 1. Wait until the content is asynchronously loaded
-            // 2. Scroll the feed content
-            // 3. Navigate to detail screen
-
-            // Check UiAutomator documentation for more information how to interact with the app.
-            // https://d.android.com/training/testing/other-components/ui-automator
+            device.criticalUserJourney()
         }
     }
 }
