@@ -10,7 +10,7 @@ import dagger.hilt.components.SingletonComponent
 
 @InstallIn(SingletonComponent::class)
 @Module
-object CommonModule {
+internal object CommonModule {
 
     @Provides
     fun resources(@ApplicationContext context: Context): Resources =

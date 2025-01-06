@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.enabledKeysFlow
 import com.w2sv.datastore.proto.widgetcoloring.WidgetColoringDataSource
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
@@ -26,8 +27,6 @@ import javax.inject.Singleton
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -36,11 +35,10 @@ import kotlinx.coroutines.flow.map
 @Singleton
 internal class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
-    private val widgetColoringDataSource: WidgetColoringDataSource
+    private val widgetColoringDataSource: WidgetColoringDataSource,
+    @AppIoScope private val scope: CoroutineScope
 ) : PreferencesDataStoreRepository(dataStore),
     WidgetRepository {
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override val coloringConfig: Flow<WidgetColoring.Config> = widgetColoringDataSource.config
 

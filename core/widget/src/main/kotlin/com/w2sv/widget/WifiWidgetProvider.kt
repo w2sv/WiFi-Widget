@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.RemoteViews
 import com.w2sv.androidutils.os.getIntExtraOrNull
+import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
@@ -16,7 +17,6 @@ import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import slimber.log.i
 
@@ -34,6 +34,10 @@ class WifiWidgetProvider : AppWidgetProvider() {
 
     @Inject
     internal lateinit var widgetRepository: WidgetModuleWidgetRepository
+
+    @Inject
+    @AppDefaultScope
+    internal lateinit var scope: CoroutineScope
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -91,7 +95,7 @@ class WifiWidgetProvider : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        scope.launch {
             i { "onUpdate | appWidgetIds=${appWidgetIds.toList()} | ${Thread.currentThread()}" }
 
             val widgetView = RemoteViews(

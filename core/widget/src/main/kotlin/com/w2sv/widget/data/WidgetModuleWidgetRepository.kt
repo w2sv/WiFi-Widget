@@ -1,5 +1,6 @@
 package com.w2sv.widget.data
 
+import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.mapFlow
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.stateInWithBlockingInitial
@@ -9,15 +10,13 @@ import com.w2sv.widget.model.WidgetRefreshing
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 
 @Singleton
-internal class WidgetModuleWidgetRepository @Inject constructor(widgetRepository: WidgetRepository) :
-    WidgetRepository by widgetRepository {
-
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+internal class WidgetModuleWidgetRepository @Inject constructor(
+    widgetRepository: WidgetRepository,
+    @AppIoScope private val scope: CoroutineScope
+) : WidgetRepository by widgetRepository {
 
     val widgetAppearance by lazy {
         combine(
