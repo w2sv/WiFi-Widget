@@ -1,137 +1,142 @@
 [versions]
-# SDKs
-minSdk = "26"  # min for activity.isRequestPinAppWidgetSupported
-compileSdk = "35"
-
-# Plugins
 agp = "8.7.3"
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.29"
-triplet-play = "3.12.1"
-hilt = "2.54"
-baselineprofile = "1.3.3"
-protobuf-plugin = "0.9.4"
-ktlint = "12.1.2"
-
-# Libraries
-androidx-activity-compose = "1.9.3"
-compose-tooling = "1.7.6"
-compose-material3 = "1.3.1"
-lifecycle = "2.8.7"
-okhttp = "4.12.0"
-compose-lint-checks = "1.4.2"
-kotlinxCollectionsImmutable = "0.3.8"
-androidxTextExtJunit = "1.2.1"
-junit = "4.13.2"
-benchmarkMacroJunit4 = "1.3.3"
-profileinstaller = "1.4.1"
-runner = "1.6.2"
-protobuf = "4.29.2"
-datastore = "1.1.1"
-composed = "0.0.6-rc1"
-compose-destinations = "2.0.0-beta01"
-hiltNavigationCompose = "1.2.0"
-datastoreutils = "0.0.6-rc2"
-kotlinutils = "0.1.5-rc2"
-kotlinxCoroutines = "1.10.1"
-reversiblestate = "0.0.6-rc2"
 androidutils = "0.4.4-rc1"
+androidx-activity-compose = "1.9.3"
+androidxTextExtJunit = "1.2.1"
+baselineprofile = "1.3.3"
+benchmarkMacroJunit4 = "1.3.3"
+# @keep
+compileSdk = "35"
+# @pin
+compose-destinations = "2.0.0-beta12"
+compose-lint-checks = "1.4.2"
+compose-material3 = "1.3.1"
+compose-tooling = "1.7.6"
+composed = "0.0.6-rc1"
+datastore = "1.1.1"
+datastoreutils = "0.0.6-rc2"
+hilt = "2.54"
+hiltNavigationCompose = "1.2.0"
+junit = "4.13.2"
+kotlin = "2.1.0"
+kotlinutils = "0.1.5-rc2"
+kotlinxCollectionsImmutable = "0.3.8"
+kotlinxCoroutines = "1.10.1"
+ksp = "2.1.0-1.0.29"
+ktlint = "12.1.2"
+lifecycle = "2.8.7"
+# @keep
+minSdk = "26"
+okhttp = "4.12.0"
+profileinstaller = "1.4.1"
+protobuf = "4.29.2"
+protobuf-plugin = "0.9.4"
+reversiblestate = "0.0.6-rc2"
+runner = "1.6.2"
+triplet-play = "3.12.1"
+versionCatalogUpdate = "0.8.5"
+versions = "0.51.0"
 
 [libraries]
-
-# w2sv
-w2sv-androidutils = { module = "com.github.w2sv:AndroidUtils", version.ref = "androidutils" }
-w2sv-colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
-w2sv-kotlinutils = { module = "com.github.w2sv:KotlinUtils", version.ref = "kotlinutils" }
-w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "reversiblestate" }
-w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:preferences", version.ref = "datastoreutils" }
-w2sv-datastoreutils-datastoreflow = { module = "com.github.w2sv.DataStoreUtils:datastoreflow", version.ref = "datastoreutils" }
-w2sv-composed = { module = "com.github.w2sv.Composed:composed", version.ref = "composed" }
-w2sv-composed-permissions = { module = "com.github.w2sv.Composed:permissions", version.ref = "composed" }
-w2sv-composeWheelPicker = "com.github.w2sv:compose-wheel-picker:0.0.2-rc1"
-
-# Androidx
-androidx-appcompat = "androidx.appcompat:appcompat:1.7.0"
-androidx-core = "androidx.core:core-ktx:1.15.0"
-androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
-androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
-androidx-workmanager = "androidx.work:work-runtime-ktx:2.10.0"
-androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
-androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
+# @keep
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidx-annotation = "androidx.annotation:annotation:1.9.1"
-
-# .Compose
+androidx-appcompat = "androidx.appcompat:appcompat:1.7.0"
+androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
+androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose-tooling" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "compose-tooling" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose-tooling" }
-androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-tooling" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-tooling" }
-androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-tooling" }
 androidx-compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
-androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-core = "androidx.core:core-ktx:1.15.0"
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-
-# Google
-google-material = "com.google.android.material:material:1.12.0"
+androidx-lifecycle-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+androidx-lifecycle-runtime = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle" }
+androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
+androidx-splashscreen = "androidx.core:core-splashscreen:1.0.1"
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidxTextExtJunit" }
+androidx-test-rules = "androidx.test:rules:1.6.1"
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "runner" }
+androidx-workmanager = "androidx.work:work-runtime-ktx:2.10.0"
+compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
+compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
+compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.0"
 google-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 google-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
-protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
-
-# Other
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
-slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
-okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
-compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
-compose-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
-compose-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
-reorderable = { module = "sh.calvin.reorderable:reorderable", version = "2.4.1" }
-
-# Testing
+google-material = "com.google.android.material:material:1.12.0"
 junit = { module = "junit:junit", version.ref = "junit" }
-androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTextExtJunit" }
-androidx-test-rules = "androidx.test:rules:1.6.1"
-androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
-# androidx-test-uiautomator = "androidx.test.uiautomator:uiautomator:2.3.0"
-roboelectric = "org.robolectric:robolectric:4.14.1"
-mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
-mockito-android = "org.mockito:mockito-android:5.15.2"
+# @keep
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3"
+# @keep
+ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+mockito-android = "org.mockito:mockito-android:5.15.2"
+mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
+okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+protobuf-kotlin-lite = { module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
+protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
+reorderable = "sh.calvin.reorderable:reorderable:2.4.2"
+roboelectric = "org.robolectric:robolectric:4.14.1"
+slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
 turbine = "app.cash.turbine:turbine:1.2.0"
-
-# .Benchmarking
-androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmarkMacroJunit4" }
-androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
-
-# Convention plugins
-android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
-kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
-ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+w2sv-androidutils = { module = "com.github.w2sv:AndroidUtils", version.ref = "androidutils" }
+w2sv-colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
+w2sv-composeWheelPicker = "com.github.w2sv:compose-wheel-picker:0.0.2-rc1"
+w2sv-composed = { module = "com.github.w2sv.Composed:composed", version.ref = "composed" }
+w2sv-composed-permissions = { module = "com.github.w2sv.Composed:permissions", version.ref = "composed" }
+w2sv-datastoreutils-datastoreflow = { module = "com.github.w2sv.DataStoreUtils:datastoreflow", version.ref = "datastoreutils" }
+w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:preferences", version.ref = "datastoreutils" }
+w2sv-kotlinutils = { module = "com.github.w2sv:KotlinUtils", version.ref = "kotlinutils" }
+w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "reversiblestate" }
 
 [bundles]
-unitTest = ["junit", "androidx-test-ext-junit", "mockito-kotlin", "kotlinx-coroutines-test", "kotlin-test-junit", "roboelectric", "turbine"]
-androidTest = ["androidx-test-rules", "androidx-test-runner", "androidx-test-ext-junit", "androidx-compose-ui-test-junit4", "androidx-compose-ui-test-manifest", "mockito-kotlin", "mockito-android"]
+androidTest = [
+    "androidx-compose-ui-test-junit4",
+    "androidx-compose-ui-test-manifest",
+    "androidx-test-ext-junit",
+    "androidx-test-rules",
+    "androidx-test-runner",
+    "mockito-android",
+    "mockito-kotlin",
+]
+unitTest = [
+    "androidx-test-ext-junit",
+    "junit",
+    "kotlin-test-junit",
+    "kotlinx-coroutines-test",
+    "mockito-kotlin",
+    "roboelectric",
+    "turbine",
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-test = { id = "com.android.test", version.ref = "agp" }
+baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
-baselineprofile = { id = "androidx.baselineprofile", version.ref = "baselineprofile" }
-hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
-
-# Convention plugins
-wifiwidget-library = { id = "wifiwidget.library" }
+versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
+# @keep
 wifiwidget-application = { id = "wifiwidget.application" }
+# @keep
 wifiwidget-hilt = { id = "wifiwidget.hilt" }
+# @keep
+wifiwidget-library = { id = "wifiwidget.library" }
