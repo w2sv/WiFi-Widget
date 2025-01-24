@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.play) apply false
     alias(libs.plugins.android.test) apply false
     alias(libs.plugins.baselineprofile) apply false
+    alias(libs.plugins.module.graph) apply true
     alias(libs.plugins.ktlint)
     alias(libs.plugins.versions)
     alias(libs.plugins.versionCatalogUpdate)

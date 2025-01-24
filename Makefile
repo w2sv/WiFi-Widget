@@ -21,14 +21,11 @@ clean:
 	@echo "Clean"
 	@./gradlew clean
 
-lint:
-	@./gradlew lint
-
-check:
-	@./gradlew check
-
 format:
 	@./gradlew ktlintFormat
+
+generate-dependency-graph:
+	@./gradlew generateModulesGraphvizText --no-configure-on-demand -Pmodules.graph.output.gv=all_modules
 
 # ==============
 # Building
@@ -68,7 +65,7 @@ publish:
 	@read
 
 	@echo "Check"
-	@$(MAKE) check
+	@./gradlew check
 
 	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in archive dir
 	@#$(MAKE) baseline-profile

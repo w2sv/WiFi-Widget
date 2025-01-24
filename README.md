@@ -129,6 +129,9 @@
 - Convention plugins for gradle code reuse, whilst keeping modules independent from one another
 - "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
+<h3 align="center">Dependency Graph</h2>
+![Dependency graph](docs/graphs/dependency_graph.svg)
+
 <h2 align="center">Screenshots</h2>
 
 | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
