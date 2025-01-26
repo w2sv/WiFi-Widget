@@ -1,23 +1,23 @@
 <p align="center">
-  <a href=""><img width="200" height="200" src="https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/res/mipmap-xxxhdpi/logo_round.png"></a>
+  <a href=""><img width="200" height="200" src="https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/res/mipmap-xxxhdpi/logo_round.png" alt=""></a>
 </p>
 <h1 align="center">WiFi Widget</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DPlay%2520Store%26m%3D%24version"/>
+  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DPlay%2520Store%26m%3D%24version" alt=""/>
   <img alt="F-Droid" src="https://img.shields.io/f-droid/v/com.w2sv.wifiwidget">
   <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/w2sv/WiFi-Widget?include_prereleases"/>
 
   <br>
 
   <a href="https://github.com/w2sv/WiFi-Widget/releases">
-    <img src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total?label=Downloads&logo=github"/>
+    <img src="https://img.shields.io/github/downloads/w2sv/WiFi-Widget/total?label=Downloads&logo=github" alt=""/>
   </a>
-  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls"/>
+  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DDownloads%26m%3D%24totalinstalls" alt=""/>
 
   <br>
 
-  <img src="https://img.shields.io/github/license/w2sv/WiFi-Widget">
+  <img src="https://img.shields.io/github/license/w2sv/WiFi-Widget" alt="">
   <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/w2sv/WiFi-Widget">
   <a href="https://github.com/w2sv/WiFi-Widget/actions/workflows/workflow.yaml"><img alt="Check & Assemble Debug" src="https://github.com/w2sv/WiFi-Widget/actions/workflows/workflow.yaml/badge.svg"></a>
 
@@ -30,6 +30,12 @@
 </p>
 
 ------
+
+<h2 align="center">Screenshots</h2>
+
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
+|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/5.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/6.jpg) |
 
 <h2 align="center">Download</h2>
 
@@ -130,13 +136,9 @@
 - "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
 <h3 align="center">Dependency Graph</h2>
-![Dependency graph](docs/graphs/dependency_graph.svg)
-
-<h2 align="center">Screenshots</h2>
-
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
-|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
-| ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/5.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/6.jpg) |
+<p align="center">
+<img src="docs/graphs/dependency_graph.svg" alt=""/>
+</p>
 
 <h2 align="center">Credits</h2>
 
