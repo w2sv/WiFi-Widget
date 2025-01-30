@@ -85,7 +85,7 @@ mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:5.4.0"
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 protobuf-kotlin-lite = { module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
-reorderable = "sh.calvin.reorderable:reorderable:2.4.2"
+reorderable = "sh.calvin.reorderable:reorderable:2.4.3"
 roboelectric = "org.robolectric:robolectric:4.14.1"
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
 turbine = "app.cash.turbine:turbine:1.2.0"
