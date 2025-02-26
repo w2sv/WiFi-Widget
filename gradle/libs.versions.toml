@@ -1,7 +1,7 @@
 [versions]
 agp = "8.7.3"
 androidutils = "0.4.4-rc1"
-androidx-activity-compose = "1.9.3"
+androidx-activity-compose = "1.10.1"
 androidxTextExtJunit = "1.2.1"
 baselineprofile = "1.3.3"
 benchmarkMacroJunit4 = "1.3.3"
