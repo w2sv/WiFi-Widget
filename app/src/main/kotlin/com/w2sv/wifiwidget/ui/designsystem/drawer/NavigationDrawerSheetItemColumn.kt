@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.designsystem.drawer
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ShareCompat
+import androidx.core.net.toUri
 import com.w2sv.androidutils.openUrl
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.androidutils.packagePlayStoreUrl
@@ -132,7 +132,7 @@ internal fun NavigationDrawerSheetItemColumn(
                         context.startActivity(
                             intent = Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(context.packagePlayStoreUrl)
+                                context.packagePlayStoreUrl.toUri()
                             )
                                 .setPackage("com.android.vending"),
                             onActivityNotFoundException = {
@@ -217,16 +217,16 @@ private sealed interface NavigationDrawerSheetElement {
 
     @Immutable
     data class Header(
-        @StringRes val titleRes: Int,
+        @param:StringRes val titleRes: Int,
         override val modifier: Modifier = Modifier
             .padding(top = 20.dp, bottom = 4.dp)
     ) : NavigationDrawerSheetElement
 
     @Immutable
     data class Item(
-        @DrawableRes val iconRes: Int,
-        @StringRes val labelRes: Int,
-        @StringRes val explanationRes: Int? = null,
+        @param:DrawableRes val iconRes: Int,
+        @param:StringRes val labelRes: Int,
+        @param:StringRes val explanationRes: Int? = null,
         val visible: (() -> Boolean)? = null,
         override val modifier: Modifier = Modifier
             .fillMaxWidth()

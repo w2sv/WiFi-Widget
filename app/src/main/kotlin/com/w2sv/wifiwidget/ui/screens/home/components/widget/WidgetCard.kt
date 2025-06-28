@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.isGranted
 import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
-import com.ramcosta.composedestinations.navigation.navigate
 import com.w2sv.androidutils.isLocationEnabledCompat
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
@@ -37,7 +36,6 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.WidgetConfigurationScreenInvoker
 import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
@@ -75,15 +73,7 @@ fun WidgetCard(
                 Spacer(modifier = Modifier.width(32.dp))
 
                 WidgetConfigurationDialogButton(
-                    onClick = remember {
-                        {
-                            navController.navigate(
-                                WidgetConfigurationScreenDestination(
-                                    invoker = WidgetConfigurationScreenInvoker.App
-                                )
-                            )
-                        }
-                    },
+                    onClick = { navController.navigate(WidgetConfigurationScreenDestination) },
                     modifier = Modifier.size(32.dp)
                 )
             }

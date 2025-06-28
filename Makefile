@@ -24,6 +24,12 @@ clean:
 format:
 	@./gradlew ktlintFormat
 
+update-dependencies:
+	@./gradlew versionCatalogUpdate
+
+update-gradle:
+	@./gradlew wrapper --gradle-version latest
+
 generate-dependency-graph:
 	@./gradlew generateModulesGraphvizText --no-configure-on-demand -Pmodules.graph.output.gv=all_modules
 

@@ -5,9 +5,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.RemoteViews
 import androidx.annotation.IdRes
+import androidx.core.net.toUri
 import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.appwidget.setColorFilter
@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 internal class WidgetLayoutPopulator @Inject constructor(
     widgetRepository: WidgetModuleWidgetRepository,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val wifiStatusGetter: WifiStatusGetter
 ) {
@@ -67,7 +67,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     Intent(context, WifiPropertyViewsService::class.java)
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                            data = Uri.parse(toUri(Intent.URI_INTENT_SCHEME))
+                            data = toUri(Intent.URI_INTENT_SCHEME).toUri()
                         }
                 )
 

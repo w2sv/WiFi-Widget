@@ -30,7 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
@@ -39,10 +38,7 @@ import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.generated.destinations.HomeScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
 import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
@@ -68,20 +64,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-enum class WidgetConfigurationScreenInvoker { App, Widget }
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Destination<RootGraph>(style = HorizontalSlideTransitions::class)
 @Composable
 fun WidgetConfigurationScreen(
     locationAccessState: LocationAccessState,
     navigator: DestinationsNavigator,
-    invoker: WidgetConfigurationScreenInvoker = WidgetConfigurationScreenInvoker.Widget,
     widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val onBack: () -> Unit = rememberOnBack(
-        invoker = invoker,
         configuration = widgetVM.configuration,
         navigator = navigator,
         scope = scope
@@ -176,7 +168,6 @@ fun WidgetConfigurationScreen(
 
 @Composable
 private fun rememberOnBack(
-    invoker: WidgetConfigurationScreenInvoker,
     configuration: ReversibleWidgetConfiguration,
     navigator: DestinationsNavigator,
     scope: CoroutineScope = rememberCoroutineScope(),
@@ -191,30 +182,12 @@ private fun rememberOnBack(
 
     return remember(navigator, scopedSnackbarEmitter) {
         {
-            when (invoker) {
-                WidgetConfigurationScreenInvoker.App -> {
-                    onBack(
-                        configuration = configuration,
-                        backPressHandler = backPressHandler,
-                        scopedSnackbarEmitter = scopedSnackbarEmitter
-                    ) { navigator.popBackStack() }
-                }
-
-                WidgetConfigurationScreenInvoker.Widget -> {
-                    onBack(
-                        configuration = configuration,
-                        backPressHandler = backPressHandler,
-                        scopedSnackbarEmitter = scopedSnackbarEmitter
-                    ) {
-                        navigator.navigate(HomeScreenDestination) {
-                            launchSingleTop = true
-                            popUpTo(WidgetConfigurationScreenDestination) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                }
-            }
+            onBack(
+                configuration = configuration,
+                backPressHandler = backPressHandler,
+                scopedSnackbarEmitter = scopedSnackbarEmitter,
+                navigate = { navigator.popBackStack() }
+            )
         }
     }
 }

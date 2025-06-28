@@ -71,8 +71,10 @@ android {
         // Disable dependency metadata when building APKs for fdroid reproducibility
         includeInApk = false
     }
-    kotlinOptions {
-        freeCompilerArgs += "-opt-in=com.google.accompanist.permissions.ExperimentalPermissionsApi"
+    kotlin {
+        compilerOptions {
+            optIn.add("com.google.accompanist.permissions.ExperimentalPermissionsApi")
+        }
     }
 }
 

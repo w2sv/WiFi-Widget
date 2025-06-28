@@ -68,7 +68,7 @@ fun AppUI(
                     DestinationsNavHost(
                         navGraph = NavGraphs.root,
                         navController = navController,
-                        startRoute = appVM.startRoute,
+                        start = appVM.startDirection,
                         dependenciesContainerBuilder = {
                             dependency(locationAccessState)
                         }
