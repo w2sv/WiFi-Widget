@@ -2,21 +2,16 @@ package com.w2sv.wifiwidget.ui
 
 import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.navigation.dependency
 import com.w2sv.common.utils.log
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
 import com.w2sv.widget.WifiWidgetProvider
+import com.w2sv.wifiwidget.ui.navigation.NavGraph
+import com.w2sv.wifiwidget.ui.navigation.Screen
 import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
@@ -27,6 +22,7 @@ import slimber.log.i
 
 @Composable
 fun AppUI(
+    initialScreen: Screen,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
     appVM: AppViewModel = activityViewModel(),
     widgetVM: WidgetViewModel = activityViewModel()
@@ -43,7 +39,6 @@ fun AppUI(
             useAmoledBlackTheme = appVM.useAmoledBlackTheme.collectAsStateWithLifecycle().value,
             setSystemBarStyles = setSystemBarStyles
         ) {
-            val navController = rememberNavController()
             val locationAccessState = rememberLocationAccessState()
             val context = LocalContext.current
 
@@ -62,18 +57,9 @@ fun AppUI(
 
             CompositionLocalProvider(
                 LocalLocationManager provides appVM.locationManager,
-                LocalNavHostController provides navController
+                LocalLocationAccessState provides locationAccessState
             ) {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    DestinationsNavHost(
-                        navGraph = NavGraphs.root,
-                        navController = navController,
-                        start = appVM.startDirection,
-                        dependenciesContainerBuilder = {
-                            dependency(locationAccessState)
-                        }
-                    )
-                }
+                NavGraph(initialScreen = initialScreen)
             }
         }
     }

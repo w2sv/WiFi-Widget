@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.play)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -117,6 +118,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.splashscreen)
     implementation(libs.androidx.workmanager)
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3.android)
 
     // Compose libraries
     implementation(libs.androidx.compose.material3)
@@ -128,8 +132,6 @@ dependencies {
     implementation(libs.androidx.compose.viewmodel)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.google.accompanist.permissions)
-    implementation(libs.compose.destinations)
-    ksp(libs.compose.destinations.ksp)
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Other libraries

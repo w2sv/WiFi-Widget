@@ -26,10 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.isLandscapeModeActive
+import com.w2sv.wifiwidget.ui.LocalLocationAccessState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppTopBar
 import com.w2sv.wifiwidget.ui.designsystem.drawer.NavigationDrawer
@@ -38,20 +37,19 @@ import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import java.util.Calendar
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import slimber.log.i
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
-@Destination<RootGraph>(start = true)
 @Composable
 fun HomeScreen(
-    locationAccessState: LocationAccessState,
-    homeScreenVM: HomeScreenViewModel = hiltViewModel(),
-    scope: CoroutineScope = rememberCoroutineScope(),
-    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    locationAccessState: LocationAccessState = LocalLocationAccessState.current,
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
+    homeScreenVM: HomeScreenViewModel = hiltViewModel()
 ) {
+    val scope = rememberCoroutineScope()
+
     NavigationDrawer(state = drawerState) {
         Scaffold(
             topBar = {

@@ -15,26 +15,24 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.isGranted
-import com.ramcosta.composedestinations.generated.destinations.WidgetConfigurationScreenDestination
 import com.w2sv.androidutils.isLocationEnabledCompat
 import com.w2sv.composed.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalLocationManager
-import com.w2sv.wifiwidget.ui.LocalNavHostController
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
+import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
@@ -47,8 +45,10 @@ fun WidgetCard(
     locationAccessState: LocationAccessState,
     modifier: Modifier = Modifier,
     widgetVM: WidgetViewModel = activityViewModel(),
-    navController: NavHostController = LocalNavHostController.current
+    navigator: Navigator = LocalNavigator.current
 ) {
+    val context = LocalContext.current
+
     ElevatedIconHeaderCard(
         iconHeaderProperties = IconHeaderProperties(
             iconRes = R.drawable.ic_widgets_24,
@@ -57,14 +57,9 @@ fun WidgetCard(
         headerRowBottomSpacing = 32.dp,
         modifier = modifier,
         content = {
-            val context = LocalContext.current
             Row(verticalAlignment = Alignment.CenterVertically) {
                 PinWidgetButton(
-                    onClick = remember {
-                        {
-                            widgetVM.attemptWidgetPin(context)
-                        }
-                    },
+                    onClick = { widgetVM.attemptWidgetPin(context) },
                     modifier = Modifier
                         .fillMaxWidth(0.7f)
                         .height(60.dp)
@@ -73,7 +68,7 @@ fun WidgetCard(
                 Spacer(modifier = Modifier.width(32.dp))
 
                 WidgetConfigurationDialogButton(
-                    onClick = { navController.navigate(WidgetConfigurationScreenDestination) },
+                    onClick = { navigator.toWidgetConfiguration() },
                     modifier = Modifier.size(32.dp)
                 )
             }

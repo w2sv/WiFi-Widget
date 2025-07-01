@@ -1,12 +1,15 @@
 package com.w2sv.wifiwidget
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.w2sv.common.AppExtra
 import com.w2sv.wifiwidget.ui.AppUI
+import com.w2sv.wifiwidget.ui.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -21,6 +24,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AppUI(
+                initialScreen = remember(intent) { intent.initialScreen() },
                 setSystemBarStyles = remember {
                     { statusBarStyle, navigationBarStyle ->
                         enableEdgeToEdge(statusBarStyle, navigationBarStyle)
@@ -30,3 +34,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private fun Intent.initialScreen(): Screen =
+    if (getBooleanExtra(AppExtra.INVOKE_WIDGET_CONFIGURATION_SCREEN, false)) {
+        Screen.WidgetConfiguration
+    } else {
+        Screen.Home
+    }

@@ -4,23 +4,18 @@ import android.location.LocationManager
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.navigation.NavHostController
+import com.w2sv.wifiwidget.ui.states.LocationAccessState
 
 val LocalLocationManager =
-    staticCompositionLocalOf<LocationManager> { throw UninitializedPropertyAccessException("LocalLocationManager not yet provided") }
+    staticCompositionLocalOf<LocationManager> { noCompositionLocalProvidedFor("LocalLocationManager") }
 
-val LocalNavHostController =
-    staticCompositionLocalOf<NavHostController> {
-        throw UninitializedPropertyAccessException(
-            "LocalRootNavHostController not yet provided"
-        )
-    }
+val LocalLocationAccessState =
+    staticCompositionLocalOf<LocationAccessState> { noCompositionLocalProvidedFor("LocationAccessState") }
 
-val LocalUseDarkTheme =
-    compositionLocalOf<Boolean> {
-        throw UninitializedPropertyAccessException(
-            "LocalUseDarkTheme not yet provided"
-        )
-    }
+val LocalUseDarkTheme = compositionLocalOf<Boolean> { noCompositionLocalProvidedFor("LocalUseDarkTheme") }
 
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
+
+fun noCompositionLocalProvidedFor(name: String): Nothing {
+    error("$name not provided")
+}

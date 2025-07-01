@@ -28,7 +28,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,17 +35,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.LocalLocationAccessState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithBottomDivider
 import com.w2sv.wifiwidget.ui.designsystem.Easing
-import com.w2sv.wifiwidget.ui.designsystem.HorizontalSlideTransitions
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
+import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
@@ -64,27 +62,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Destination<RootGraph>(style = HorizontalSlideTransitions::class)
 @Composable
 fun WidgetConfigurationScreen(
-    locationAccessState: LocationAccessState,
-    navigator: DestinationsNavigator,
+    locationAccessState: LocationAccessState = LocalLocationAccessState.current,
+    navigator: Navigator = LocalNavigator.current,
     widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val onBack: () -> Unit = rememberOnBack(
         configuration = widgetVM.configuration,
-        navigator = navigator,
+        leaveScreen = navigator::leaveWidgetConfiguration,
         scope = scope
     )
 
     BackHandler(onBack = onBack)
 
     Scaffold(
-        snackbarHost = {
-            AppSnackbarHost()
-        },
+        snackbarHost = { AppSnackbarHost() },
         floatingActionButton = {
             AnimatedVisibility(
                 visible = widgetVM.configuration.statesDissimilar.collectAsState().value,
@@ -169,7 +163,7 @@ fun WidgetConfigurationScreen(
 @Composable
 private fun rememberOnBack(
     configuration: ReversibleWidgetConfiguration,
-    navigator: DestinationsNavigator,
+    leaveScreen: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
     scopedSnackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope)
 ): () -> Unit {
@@ -180,13 +174,13 @@ private fun rememberOnBack(
         )
     }
 
-    return remember(navigator, scopedSnackbarEmitter) {
+    return remember(scopedSnackbarEmitter) {
         {
             onBack(
                 configuration = configuration,
                 backPressHandler = backPressHandler,
                 scopedSnackbarEmitter = scopedSnackbarEmitter,
-                navigate = { navigator.popBackStack() }
+                leaveScreen = leaveScreen
             )
         }
     }
@@ -196,7 +190,7 @@ private fun onBack(
     configuration: ReversibleWidgetConfiguration,
     backPressHandler: BackPressHandler,
     scopedSnackbarEmitter: ScopedSnackbarEmitter,
-    navigate: () -> Unit
+    leaveScreen: () -> Unit
 ) {
     if (configuration.statesDissimilar.value) {
         backPressHandler.invoke(
@@ -211,12 +205,12 @@ private fun onBack(
             onSecondPress = {
                 configuration.reset()
                 scopedSnackbarEmitter.dismissCurrent()
-                navigate()
+                leaveScreen()
             }
         )
     } else {
         scopedSnackbarEmitter.dismissCurrent()
-        navigate()
+        leaveScreen()
     }
 }
 
