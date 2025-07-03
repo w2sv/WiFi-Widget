@@ -103,7 +103,7 @@ private val themeIndicatorProperties =
 @Immutable
 private data class ThemeIndicatorProperties(
     val theme: Theme,
-    @StringRes val labelRes: Int,
+    @all:StringRes val labelRes: Int,
     val buttonColoring: ButtonColor
 )
 

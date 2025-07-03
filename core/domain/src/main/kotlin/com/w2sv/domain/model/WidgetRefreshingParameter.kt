@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import com.w2sv.core.domain.R
 
 enum class WidgetRefreshingParameter(
-    @StringRes override val labelRes: Int,
+    @all:StringRes override val labelRes: Int,
     val defaultIsEnabled: Boolean
 ) :
     WidgetProperty {

@@ -22,6 +22,7 @@ internal fun Project.applyBaseConfig(namespace: Namespace = Namespace.Auto) {
         configure<KotlinAndroidProjectExtension> {
             compilerOptions {
                 jvmTarget.set(JvmTarget.JVM_17)
+                freeCompilerArgs.add("-Xannotation-target-all")
             }
         }
         configure<BaseExtension> {

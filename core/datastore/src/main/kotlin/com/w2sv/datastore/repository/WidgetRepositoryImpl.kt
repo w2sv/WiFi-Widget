@@ -36,7 +36,7 @@ import kotlinx.coroutines.flow.map
 internal class WidgetRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
     private val widgetColoringDataSource: WidgetColoringDataSource,
-    @AppIoScope private val scope: CoroutineScope
+    @param:AppIoScope private val scope: CoroutineScope
 ) : PreferencesDataStoreRepository(dataStore),
     WidgetRepository {
 

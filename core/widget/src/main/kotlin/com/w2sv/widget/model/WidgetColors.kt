@@ -14,14 +14,14 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 
 internal data class WidgetColors(
-    @ColorInt val background: Int,
-    @ColorInt val primary: Int,
-    @ColorInt val secondary: Int
+    @all:ColorInt val background: Int,
+    @all:ColorInt val primary: Int,
+    @all:ColorInt val secondary: Int
 ) {
     data class Resources(
-        @ColorRes val background: Int,
-        @ColorRes val primary: Int,
-        @ColorRes val secondary: Int
+        @all:ColorRes val background: Int,
+        @all:ColorRes val primary: Int,
+        @all:ColorRes val secondary: Int
     ) {
         fun getColors(context: Context): WidgetColors =
             WidgetColors(
@@ -63,7 +63,7 @@ private sealed interface WidgetTheme {
     fun getColors(context: Context, useDynamicColors: Boolean): WidgetColors
 
     sealed class DayOrNight(
-        @StyleRes private val dynamicWrapperTheme: Int,
+        @all:StyleRes private val dynamicWrapperTheme: Int,
         private val nonDynamicResources: WidgetColors.Resources
     ) : WidgetTheme {
 

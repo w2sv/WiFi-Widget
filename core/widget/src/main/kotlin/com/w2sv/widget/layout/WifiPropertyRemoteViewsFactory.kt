@@ -28,7 +28,7 @@ import kotlinx.coroutines.runBlocking
 import slimber.log.i
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val widgetRepository: WidgetModuleWidgetRepository,
     private val viewDataFactory: WifiProperty.ViewData.Factory
 ) : RemoteViewsService.RemoteViewsFactory {

@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.combine
 @Singleton
 internal class WidgetModuleWidgetRepository @Inject constructor(
     widgetRepository: WidgetRepository,
-    @AppIoScope private val scope: CoroutineScope
+    @param:AppIoScope private val scope: CoroutineScope
 ) : WidgetRepository by widgetRepository {
 
     val widgetAppearance by lazy {

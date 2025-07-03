@@ -30,9 +30,9 @@ interface WidgetColoring {
         ) : Style
 
         data class Custom(
-            @ColorInt val background: Int = -7859146,
-            @ColorInt val primary: Int = -5898336,
-            @ColorInt val secondary: Int = -1
+            @all:ColorInt val background: Int = -7859146,
+            @all:ColorInt val primary: Int = -5898336,
+            @all:ColorInt val secondary: Int = -1
         ) : Style
 
         @get:StringRes
