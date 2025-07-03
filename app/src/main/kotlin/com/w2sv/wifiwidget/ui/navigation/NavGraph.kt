@@ -33,14 +33,14 @@ fun NavGraph(initialScreen: Screen) {
             entryDecorators = listOf(rememberSavedStateNavEntryDecorator(), rememberViewModelStoreNavEntryDecorator()),
             transitionSpec = {
                 ContentTransform(
-                    slideInHorizontally() + fadeIn(),
-                    slideOutHorizontally() + fadeOut()
+                    slideInHorizontally(initialOffsetX = { it / 2 }) + fadeIn(),
+                    slideOutHorizontally(targetOffsetX = { -it / 2 }) + fadeOut()
                 )
             },
             popTransitionSpec = {
                 ContentTransform(
-                    slideInHorizontally() + fadeIn(),
-                    slideOutHorizontally() + fadeOut()
+                    slideInHorizontally(initialOffsetX = { -it / 2 }) + fadeIn(),
+                    slideOutHorizontally(targetOffsetX = { it / 2 }) + fadeOut()
                 )
             },
             entryProvider = entryProvider {
