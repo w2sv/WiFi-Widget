@@ -5,6 +5,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -52,14 +53,17 @@ sealed interface LocationAccessPermissionStatus {
 
 @Composable
 fun LocationAccessRationals(state: LocationAccessState) {
-    if (!state.rationalShown.collectAsStateWithLifecycle().value) {
+    val rationalShown by state.rationalShown.collectAsStateWithLifecycle()
+
+    if (!rationalShown) {
         LocationAccessPermissionRational(onProceed = state::onRationalShown)
     }
     state.backgroundAccessState?.run {
-        if (showRational.collectAsStateWithLifecycle().value) {
+        val showBackgroundAccessRational by showRational.collectAsStateWithLifecycle()
+        if (showBackgroundAccessRational) {
             BackgroundLocationAccessRational(
-                launchPermissionRequest = remember { { launchPermissionRequest() } },
-                onDismissRequest = remember { { hideRational() } }
+                launchPermissionRequest = ::launchPermissionRequest,
+                onDismissRequest = ::hideRational
             )
         }
     }

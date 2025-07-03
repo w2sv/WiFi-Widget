@@ -60,30 +60,21 @@ fun rememberWidgetConfigurationCardProperties(
                     stringRes = R.string.appearance
                 )
             ) {
+                val coloringConfig by widgetConfiguration.coloringConfig.collectAsStateWithLifecycle()
+                val opacity by widgetConfiguration.opacity.collectAsStateWithLifecycle()
+                val fontSize by widgetConfiguration.fontSize.collectAsStateWithLifecycle()
+                val propertyValueAlignment by widgetConfiguration.propertyValueAlignment.collectAsStateWithLifecycle()
+
                 AppearanceConfiguration(
-                    coloringConfig = widgetConfiguration.coloringConfig.collectAsStateWithLifecycle().value,
-                    setColoringConfig = remember {
-                        {
-                            widgetConfiguration.coloringConfig.value = it
-                        }
-                    },
-                    opacity = widgetConfiguration.opacity.collectAsStateWithLifecycle().value,
-                    setOpacity = remember {
-                        {
-                            widgetConfiguration.opacity.value = it
-                        }
-                    },
-                    fontSize = widgetConfiguration.fontSize.collectAsStateWithLifecycle().value,
-                    setFontSize = remember {
-                        { widgetConfiguration.fontSize.value = it }
-                    },
+                    coloringConfig = coloringConfig,
+                    setColoringConfig = { widgetConfiguration.coloringConfig.value = it },
+                    opacity = opacity,
+                    setOpacity = { widgetConfiguration.opacity.value = it },
+                    fontSize = fontSize,
+                    setFontSize = { widgetConfiguration.fontSize.value = it },
                     showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                    propertyValueAlignment = widgetConfiguration.propertyValueAlignment.collectAsStateWithLifecycle().value,
-                    setPropertyValueAlignment = remember {
-                        {
-                            widgetConfiguration.propertyValueAlignment.value = it
-                        }
-                    },
+                    propertyValueAlignment = propertyValueAlignment,
+                    setPropertyValueAlignment = { widgetConfiguration.propertyValueAlignment.value = it },
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             },
@@ -168,8 +159,9 @@ fun rememberWidgetConfigurationCardProperties(
                                 },
                                 subPropertyColumnElements = persistentListOf(
                                     CheckRowColumnElement.Custom {
+                                        val refreshInterval by widgetConfiguration.refreshInterval.collectAsStateWithLifecycle()
                                         RefreshIntervalConfigurationRow(
-                                            interval = widgetConfiguration.refreshInterval.collectAsStateWithLifecycle().value,
+                                            interval = refreshInterval,
                                             showConfigurationDialog = showRefreshIntervalConfigurationDialog,
                                             modifier = Modifier
                                                 .fillMaxWidth()

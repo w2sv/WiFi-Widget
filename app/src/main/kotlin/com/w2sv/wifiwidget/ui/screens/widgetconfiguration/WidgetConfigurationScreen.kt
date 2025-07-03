@@ -20,7 +20,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +34,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessState
@@ -80,8 +80,9 @@ fun WidgetConfigurationScreen(
     Scaffold(
         snackbarHost = { AppSnackbarHost() },
         floatingActionButton = {
+            val configurationStatesDissimilar by widgetVM.configuration.statesDissimilar.collectAsStateWithLifecycle()
             AnimatedVisibility(
-                visible = widgetVM.configuration.statesDissimilar.collectAsState().value,
+                visible = configurationStatesDissimilar,
                 enter = remember {
                     slideInHorizontally(
                         animationSpec = tween(easing = Easing.anticipate),
@@ -96,8 +97,8 @@ fun WidgetConfigurationScreen(
                 }
             ) {
                 ConfigurationProcedureFABRow(
-                    onResetButtonClick = remember { { widgetVM.configuration.reset() } },
-                    onApplyButtonClick = remember { { scope.launch { widgetVM.configuration.sync() } } },
+                    onResetButtonClick = { widgetVM.configuration.reset() },
+                    onApplyButtonClick = { scope.launch { widgetVM.configuration.sync() } },
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -123,7 +124,7 @@ fun WidgetConfigurationScreen(
                 WidgetConfigurationScreenDialog(
                     dialog = it,
                     widgetConfiguration = widgetVM.configuration,
-                    onDismissRequest = remember { { dialogData = null } }
+                    onDismissRequest = { dialogData = null }
                 )
             }
 
@@ -133,21 +134,15 @@ fun WidgetConfigurationScreen(
                 cardProperties = rememberWidgetConfigurationCardProperties(
                     widgetConfiguration = widgetVM.configuration,
                     locationAccessState = locationAccessState,
-                    showInfoDialog = remember {
-                        {
-                            dialogData = WidgetConfigurationScreenDialog.Info(it)
-                        }
+                    showInfoDialog = {
+                        dialogData = WidgetConfigurationScreenDialog.Info(it)
                     },
-                    showCustomColorConfigurationDialog = remember {
-                        {
-                            dialogData = WidgetConfigurationScreenDialog.ColorPicker(it)
-                        }
+                    showCustomColorConfigurationDialog = {
+                        dialogData = WidgetConfigurationScreenDialog.ColorPicker(it)
                     },
-                    showRefreshIntervalConfigurationDialog = remember {
-                        {
-                            dialogData =
-                                WidgetConfigurationScreenDialog.RefreshIntervalConfiguration
-                        }
+                    showRefreshIntervalConfigurationDialog = {
+                        dialogData =
+                            WidgetConfigurationScreenDialog.RefreshIntervalConfiguration
                     }
                 ),
                 scrollState = scrollState,
@@ -280,15 +275,13 @@ private fun WidgetConfigurationScreenDialog(
         is WidgetConfigurationScreenDialog.ColorPicker -> {
             ColorPickerDialog(
                 properties = dialog.data,
-                applyColor = remember {
-                    {
-                        widgetConfiguration.coloringConfig.update {
-                            it.copy(
-                                custom = dialog.data.createCustomColoringData(
-                                    it.custom
-                                )
+                applyColor = {
+                    widgetConfiguration.coloringConfig.update {
+                        it.copy(
+                            custom = dialog.data.createCustomColoringData(
+                                it.custom
                             )
-                        }
+                        )
                     }
                 },
                 onDismissRequest = onDismissRequest
@@ -296,11 +289,10 @@ private fun WidgetConfigurationScreenDialog(
         }
 
         is WidgetConfigurationScreenDialog.RefreshIntervalConfiguration -> {
+            val refreshInterval by widgetConfiguration.refreshInterval.collectAsStateWithLifecycle()
             RefreshIntervalConfigurationDialog(
-                interval = widgetConfiguration.refreshInterval.collectAsState().value,
-                setInterval = remember {
-                    { widgetConfiguration.refreshInterval.value = it }
-                },
+                interval = refreshInterval,
+                setInterval = { widgetConfiguration.refreshInterval.value = it },
                 onDismissRequest = onDismissRequest
             )
         }

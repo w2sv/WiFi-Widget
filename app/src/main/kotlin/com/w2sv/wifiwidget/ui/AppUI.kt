@@ -1,66 +1,55 @@
 package com.w2sv.wifiwidget.ui
 
+import android.location.LocationManager
 import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.common.utils.log
-import com.w2sv.composed.CollectFromFlow
 import com.w2sv.domain.model.Theme
-import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.navigation.Screen
-import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
-import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import slimber.log.i
 
 @Composable
 fun AppUI(
     initialScreen: Screen,
+    locationManager: LocationManager,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
-    appVM: AppViewModel = activityViewModel(),
-    widgetVM: WidgetViewModel = activityViewModel()
+    appVM: AppViewModel = activityViewModel()
 ) {
+    val theme by appVM.theme.collectAsStateWithLifecycle()
+    val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
+    val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
+
     CompositionLocalProvider(
-        LocalUseDarkTheme provides when (appVM.theme.collectAsStateWithLifecycle().value) {
-            Theme.Light -> false
-            Theme.Dark -> true
-            Theme.Default -> isSystemInDarkTheme()
-        }
+        LocalUseDarkTheme provides rememberUseDarkTheme(theme = theme),
+        LocalLocationAccessState provides rememberLocationAccessState(),
+        LocalLocationManager provides locationManager
     ) {
         AppTheme(
-            useDynamicTheme = appVM.useDynamicColors.collectAsStateWithLifecycle().value,
-            useAmoledBlackTheme = appVM.useAmoledBlackTheme.collectAsStateWithLifecycle().value,
+            useDynamicTheme = useDynamicColors,
+            useAmoledBlackTheme = useAmoledBlackTheme,
             setSystemBarStyles = setSystemBarStyles
         ) {
-            val locationAccessState = rememberLocationAccessState()
-            val context = LocalContext.current
+            NavGraph(initialScreen = initialScreen)
+        }
+    }
+}
 
-            // Trigger onGrantActions on location permission state having been newly granted
-            CollectFromFlow(locationAccessState.newStatus) {
-                it.grantedOrNull?.onGrantAction?.let { onGrantAction ->
-                    i { "Collected onGrantAction=$onGrantAction" }
-                    when (onGrantAction) {
-                        TriggerWidgetDataRefresh -> WifiWidgetProvider.triggerDataRefresh(context)
-                            .log { "Triggered widget data refresh upon LocationAccessPermissionStatus having been granted" }
-
-                        else -> widgetVM.configuration.onLocationAccessPermissionGranted(onGrantAction)
-                    }
-                }
-            }
-
-            CompositionLocalProvider(
-                LocalLocationManager provides appVM.locationManager,
-                LocalLocationAccessState provides locationAccessState
-            ) {
-                NavGraph(initialScreen = initialScreen)
-            }
+@Composable
+private fun rememberUseDarkTheme(theme: Theme): Boolean {
+    val isSystemInDarkTheme = isSystemInDarkTheme()
+    return remember(theme, isSystemInDarkTheme) {
+        when (theme) {
+            Theme.Light -> false
+            Theme.Dark -> true
+            Theme.Default -> isSystemInDarkTheme
         }
     }
 }

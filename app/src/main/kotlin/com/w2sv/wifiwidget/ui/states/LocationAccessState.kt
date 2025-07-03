@@ -13,8 +13,10 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.w2sv.androidutils.openAppSettings
 import com.w2sv.common.utils.log
+import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
+import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
@@ -22,8 +24,11 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
+import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
+import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.utils.rememberScopedSnackbarEmitter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -34,15 +39,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import slimber.log.i
 
 @Composable
 fun rememberLocationAccessState(
     appVM: AppViewModel = hiltViewModel(),
+    widgetVM: WidgetViewModel = activityViewModel(),
     scope: CoroutineScope = rememberCoroutineScope(),
     snackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope),
     context: Context = LocalContext.current
-): LocationAccessState =
-    rememberLocationAccessState(
+): LocationAccessState {
+    val state = rememberLocationAccessState(
         requestLaunchedBefore = appVM.locationAccessPermissionRequested,
         saveRequestLaunchedBefore = appVM::saveLocationAccessPermissionRequested,
         rationalShown = appVM.locationAccessRationalShown,
@@ -51,6 +58,20 @@ fun rememberLocationAccessState(
         snackbarEmitter = snackbarEmitter,
         context = context
     )
+    // Trigger onGrantActions on location permission state having been newly granted
+    CollectFromFlow(state.newStatus) {
+        it.grantedOrNull?.onGrantAction?.let { onGrantAction ->
+            i { "Collected onGrantAction=$onGrantAction" }
+            when (onGrantAction) {
+                TriggerWidgetDataRefresh -> WifiWidgetProvider.triggerDataRefresh(context)
+                    .log { "Triggered widget data refresh upon LocationAccessPermissionStatus having been granted" }
+
+                else -> widgetVM.configuration.onLocationAccessPermissionGranted(onGrantAction)
+            }
+        }
+    }
+    return state
+}
 
 @Composable
 private fun rememberLocationAccessState(
