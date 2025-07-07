@@ -32,7 +32,6 @@
     <string name="you_re_not_signed_into_the_play_store">You\'re not signed into the Play Store</string>
     <string name="version">Version: %s</string>
     <string name="share_action_text">Check out WiFi Widget!\n%s</string>
-    <string name="open_widget_configuration_screen_button_cd">Open the widget configuration screen.</string>
     <string name="legal">Legal</string>
     <string name="more">More</string>
     <string name="support_the_app">Support the app</string>
@@ -84,4 +83,5 @@
     <string name="okay">Okay!</string>
     <string name="property_reordering_discovery_dialog_text">You can change the order in which the properties appear on the widget by long-clicking on a property and moving it to a different position.</string>
     <string name="value_alignment">Value alignment</string>
+    <string name="configure">Configure</string>
 </resources>

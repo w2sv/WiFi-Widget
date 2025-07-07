@@ -1,18 +1,15 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.widget
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,19 +54,21 @@ fun WidgetCard(
         headerRowBottomSpacing = 32.dp,
         modifier = modifier,
         content = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                val buttonHeight = 60.dp
                 PinWidgetButton(
                     onClick = { widgetVM.attemptWidgetPin(context) },
                     modifier = Modifier
-                        .fillMaxWidth(0.7f)
-                        .height(60.dp)
+                        .fillMaxWidth(0.58f)
+                        .height(buttonHeight)
                 )
-
-                Spacer(modifier = Modifier.width(32.dp))
-
-                WidgetConfigurationDialogButton(
+                WidgetConfigurationButton(
                     onClick = { navigator.toWidgetConfiguration() },
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.height(buttonHeight)
                 )
             }
         }
@@ -147,11 +146,9 @@ private fun ShowSnackbarOnWidgetPin(
 
 @Composable
 private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    ElevatedButton(
+    Button(
         onClick = onClick,
         modifier = modifier,
-        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 16.dp)
     ) {
         Text(
             text = stringResource(R.string.pin),
@@ -161,13 +158,17 @@ private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) 
 }
 
 @Composable
-private fun WidgetConfigurationDialogButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    IconButton(onClick = onClick) {
-        Icon(
-            imageVector = Icons.Default.Settings,
-            contentDescription = stringResource(R.string.open_widget_configuration_screen_button_cd),
-            modifier = modifier,
-            tint = MaterialTheme.colorScheme.primary
-        )
+private fun WidgetConfigurationButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    FilledTonalButton(
+        onClick = onClick,
+        modifier = modifier
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default.Settings,
+                contentDescription = null
+            )
+            Text(stringResource(R.string.configure))
+        }
     }
 }
