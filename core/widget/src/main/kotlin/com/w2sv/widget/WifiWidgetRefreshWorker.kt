@@ -15,8 +15,7 @@ import javax.inject.Singleton
 import kotlin.time.toJavaDuration
 import slimber.log.i
 
-class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
+class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
     private val powerManager = appContext.getSystemService(PowerManager::class.java)
 
@@ -32,9 +31,7 @@ class WifiWidgetRefreshWorker(appContext: Context, workerParams: WorkerParameter
     }
 
     @Singleton
-    class Manager @Inject constructor(
-        private val workManager: WorkManager
-    ) {
+    class Manager @Inject constructor(private val workManager: WorkManager) {
         internal fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
             with(widgetRefreshing) {
                 when (refreshPeriodically) {

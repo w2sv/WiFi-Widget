@@ -217,16 +217,16 @@ private sealed interface NavigationDrawerSheetElement {
 
     @Immutable
     data class Header(
-        @all:StringRes val titleRes: Int,
+        @param:StringRes val titleRes: Int,
         override val modifier: Modifier = Modifier
             .padding(top = 20.dp, bottom = 4.dp)
     ) : NavigationDrawerSheetElement
 
     @Immutable
     data class Item(
-        @all:DrawableRes val iconRes: Int,
-        @all:StringRes val labelRes: Int,
-        @all:StringRes val explanationRes: Int? = null,
+        @param:DrawableRes val iconRes: Int,
+        @param:StringRes val labelRes: Int,
+        @param:StringRes val explanationRes: Int? = null,
         val visible: (() -> Boolean)? = null,
         override val modifier: Modifier = Modifier
             .fillMaxWidth()
@@ -245,10 +245,7 @@ private sealed interface NavigationDrawerSheetElement {
         data class Clickable(val onClick: () -> Unit) : Type
 
         @Immutable
-        data class Switch(
-            val checked: () -> Boolean,
-            val onCheckedChange: (Boolean) -> Unit
-        ) : Type
+        data class Switch(val checked: () -> Boolean, val onCheckedChange: (Boolean) -> Unit) : Type
 
         @Immutable
         data class Custom(val content: @Composable RowScope.() -> Unit) : Type

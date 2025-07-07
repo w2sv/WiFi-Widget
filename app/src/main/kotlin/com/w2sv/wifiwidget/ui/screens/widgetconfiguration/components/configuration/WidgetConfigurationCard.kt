@@ -39,10 +39,7 @@ import kotlinx.coroutines.launch
 private val checkRowColumnBottomPadding = 8.dp
 
 @Immutable
-data class WidgetConfigurationCard(
-    val iconHeaderProperties: IconHeaderProperties,
-    val content: @Composable () -> Unit
-)
+data class WidgetConfigurationCard(val iconHeaderProperties: IconHeaderProperties, val content: @Composable () -> Unit)
 
 @Composable
 fun rememberWidgetConfigurationCardProperties(
@@ -51,8 +48,8 @@ fun rememberWidgetConfigurationCardProperties(
     showInfoDialog: (InfoDialogData) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     showRefreshIntervalConfigurationDialog: () -> Unit
-): ImmutableList<WidgetConfigurationCard> {
-    return remember {
+): ImmutableList<WidgetConfigurationCard> =
+    remember {
         persistentListOf(
             WidgetConfigurationCard(
                 iconHeaderProperties = IconHeaderProperties(
@@ -181,7 +178,6 @@ fun rememberWidgetConfigurationCardProperties(
             }
         )
     }
-}
 
 @Composable
 private fun rememberWidgetWifiPropertyCheckRowData(
@@ -279,8 +275,8 @@ private fun WifiProperty.IP.subPropertyElements(
     ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     shakeScope: CoroutineScope
-): ImmutableList<CheckRowColumnElement> {
-    return buildList {
+): ImmutableList<CheckRowColumnElement> =
+    buildList {
         if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
             add(
                 CheckRowColumnElement.Custom {
@@ -331,7 +327,6 @@ private fun WifiProperty.IP.subPropertyElements(
             }
     }
         .toPersistentList()
-}
 
 private fun WifiProperty.NonIP.Other.Location.subPropertyElements(
     locationParameters: MutableMap<LocationParameter, Boolean>,
@@ -362,12 +357,13 @@ private fun WifiProperty.IP.SubProperty.allowCheckedChange(
 ): Boolean =
     when (val capturedKind = kind) {
         is WifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
-            newValue || subPropertyEnablementMap.getValue(
-                WifiProperty.IP.SubProperty(
-                    property = property,
-                    kind = capturedKind.opposingAddressTypeEnablement
+            newValue ||
+                subPropertyEnablementMap.getValue(
+                    WifiProperty.IP.SubProperty(
+                        property = property,
+                        kind = capturedKind.opposingAddressTypeEnablement
+                    )
                 )
-            )
         }
 
         else -> true

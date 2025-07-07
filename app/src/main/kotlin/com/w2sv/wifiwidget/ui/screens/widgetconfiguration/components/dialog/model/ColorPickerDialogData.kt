@@ -11,11 +11,7 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
 @Stable
-class ColorPickerDialogData(
-    val customWidgetColor: CustomWidgetColor,
-    val appliedColor: Color,
-    initialColor: Color
-) {
+class ColorPickerDialogData(val customWidgetColor: CustomWidgetColor, val appliedColor: Color, initialColor: Color) {
     constructor(customWidgetColor: CustomWidgetColor, appliedColor: Color) : this(
         customWidgetColor = customWidgetColor,
         appliedColor = appliedColor,

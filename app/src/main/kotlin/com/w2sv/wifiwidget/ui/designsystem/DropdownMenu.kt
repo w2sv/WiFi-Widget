@@ -30,10 +30,10 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 data class DropdownMenuItemProperties(
-    @all:StringRes val textRes: Int,
+    @param:StringRes val textRes: Int,
     val onClick: () -> Unit,
     val enabled: () -> Boolean,
-    @all:DrawableRes val leadingIconRes: Int
+    @param:DrawableRes val leadingIconRes: Int
 )
 
 @SuppressLint("ComposeMultipleContentEmitters")

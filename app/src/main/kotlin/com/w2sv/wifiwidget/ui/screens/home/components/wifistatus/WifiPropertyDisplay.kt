@@ -70,7 +70,7 @@ import kotlinx.coroutines.flow.onEmpty
 import slimber.log.i
 
 private val horizontalPadding = 8.dp
-private const val labelValueColumnSplit = 0.4f
+private const val LABEL_VALUE_COLUMN_SPLIT = 0.4f
 
 @Composable
 fun WifiPropertyDisplay(propertiesViewData: Flow<WifiProperty.ViewData>, modifier: Modifier = Modifier) {
@@ -235,7 +235,7 @@ private fun Header(modifier: Modifier = Modifier) {
             text = stringResource(id = R.string.properties),
             fontWeight = FontWeight.SemiBold,
             fontSize = 17.sp,
-            modifier = Modifier.fillMaxWidth(labelValueColumnSplit)
+            modifier = Modifier.fillMaxWidth(LABEL_VALUE_COLUMN_SPLIT)
         )
         Text(
             text = stringResource(R.string.click_to_copy_to_clipboard),
@@ -301,7 +301,7 @@ private fun PropertyDisplay(
     }
 
     Row(modifier = modifier.clickable { onClick(viewData, label, scope) }) {
-        Column(modifier = Modifier.fillMaxWidth(labelValueColumnSplit)) {
+        Column(modifier = Modifier.fillMaxWidth(LABEL_VALUE_COLUMN_SPLIT)) {
             Text(
                 text = label,
                 color = MaterialTheme.colorScheme.primary

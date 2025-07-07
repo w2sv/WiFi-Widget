@@ -80,7 +80,8 @@ fun RefreshIntervalConfigurationDialog(
             i { "${hourPickerState.snappedIndex} ${minutePickerState.snappedIndex}" }
 
             isInvalidSelection =
-                hourPickerState.snappedIndex == 0 && minutePickerState.snappedIndex < 15
+                hourPickerState.snappedIndex == 0 &&
+                minutePickerState.snappedIndex < 15
             if (!isInvalidSelection) {
                 configuredInterval =
                     hourPickerState.snappedIndex.hours + minutePickerState.snappedIndex.minutes

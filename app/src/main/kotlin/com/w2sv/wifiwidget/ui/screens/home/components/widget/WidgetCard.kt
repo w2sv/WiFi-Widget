@@ -148,7 +148,7 @@ private fun ShowSnackbarOnWidgetPin(
 private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Text(
             text = stringResource(R.string.pin),

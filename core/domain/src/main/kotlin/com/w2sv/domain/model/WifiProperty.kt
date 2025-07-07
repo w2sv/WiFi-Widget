@@ -21,14 +21,10 @@ sealed class WifiProperty : WidgetProperty {
         val ipPropertyOrNull: IPProperty?
             get() = this as? IPProperty
 
-        data class NonIP(override val value: String, override val label: String) :
-            ViewData
+        data class NonIP(override val value: String, override val label: String) : ViewData
 
-        data class IPProperty(
-            override val label: String,
-            override val value: String,
-            private val subPropertyValues: List<String>
-        ) : ViewData {
+        data class IPProperty(override val label: String, override val value: String, private val subPropertyValues: List<String>) :
+            ViewData {
 
             val nonEmptySubPropertyValuesOrNull: List<String>?
                 get() = subPropertyValues.ifEmpty { null }
@@ -50,8 +46,8 @@ sealed class WifiProperty : WidgetProperty {
     sealed class NonIP : WifiProperty() {
 
         sealed class LocationAccessRequiring(
-            @all:StringRes override val labelRes: Int,
-            @all:StringRes override val descriptionRes: Int,
+            @param:StringRes override val labelRes: Int,
+            @param:StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : NonIP() {
@@ -77,8 +73,8 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class Other(
-            @all:StringRes override val labelRes: Int,
-            @all:StringRes override val descriptionRes: Int,
+            @param:StringRes override val labelRes: Int,
+            @param:StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : NonIP() {
@@ -251,7 +247,7 @@ sealed class WifiProperty : WidgetProperty {
             override val labelRes: Int
                 get() = kind.labelRes
 
-            sealed class Kind(@all:StringRes val labelRes: Int) {
+            sealed class Kind(@param:StringRes val labelRes: Int) {
                 data object ShowPrefixLength : Kind(R.string.show_prefix_length)
                 data object ShowSubnetMask : Kind(R.string.show_ipv4_subnet_mask)
             }
@@ -261,9 +257,9 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class V6Only(
-            @all:StringRes override val labelRes: Int,
-            @all:StringRes override val subscriptResId: Int,
-            @all:StringRes override val descriptionRes: Int,
+            @param:StringRes override val labelRes: Int,
+            @param:StringRes override val subscriptResId: Int,
+            @param:StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : IP(subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)) {
@@ -288,9 +284,9 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class V4AndV6(
-            @all:StringRes override val labelRes: Int,
-            @all:StringRes override val subscriptResId: Int,
-            @all:StringRes override val descriptionRes: Int,
+            @param:StringRes override val labelRes: Int,
+            @param:StringRes override val subscriptResId: Int,
+            @param:StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean,
             includePrefixLength: Boolean
@@ -310,8 +306,7 @@ sealed class WifiProperty : WidgetProperty {
             val v6EnabledSubProperty: SubProperty
                 get() = SubProperty(this, AddressTypeEnablement.V6Enabled)
 
-            sealed class AddressTypeEnablement(@StringRes labelRes: Int) :
-                SubProperty.Kind(labelRes) {
+            sealed class AddressTypeEnablement(@StringRes labelRes: Int) : SubProperty.Kind(labelRes) {
 
                 abstract val opposingAddressTypeEnablement: AddressTypeEnablement
 

@@ -8,19 +8,18 @@ import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
 import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
     @MutableMakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<MakeSnackbarVisuals>,
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository
-) :
-    ViewModel() {
+) : ViewModel() {
 
     val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()
 

@@ -70,8 +70,8 @@ private fun locationAccessState(
     rationalShown: MutableStateFlow<Boolean> = MutableStateFlow(false),
     saveRationalShown: () -> Unit = {},
     scope: CoroutineScope = TestScope(UnconfinedTestDispatcher())
-): LocationAccessState {
-    return LocationAccessState(
+): LocationAccessState =
+    LocationAccessState(
         permissionsState = permissionsState,
         requestResult = requestResult,
         scope = scope,
@@ -83,7 +83,6 @@ private fun locationAccessState(
         snackbarEmitter = ScopedSnackbarEmitter(SnackbarHostState(), ApplicationProvider.getApplicationContext(), scope),
         openAppSettings = {}
     )
-}
 
 private class MultiplePermissionsStateTestImpl : MultiplePermissionsState {
     override val permissions: List<PermissionState> = emptyList()

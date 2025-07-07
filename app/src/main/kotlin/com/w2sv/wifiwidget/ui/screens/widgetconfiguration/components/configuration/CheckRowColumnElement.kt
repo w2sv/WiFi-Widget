@@ -47,8 +47,8 @@ sealed interface CheckRowColumnElement {
                 shakeController: ShakeController? = null,
                 subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
                 modifier: Modifier = Modifier
-            ): CheckRow<T> {
-                return CheckRow(
+            ): CheckRow<T> =
+                CheckRow(
                     property = property,
                     isChecked = { isCheckedMap.getValue(property) },
                     onCheckedChange = {
@@ -64,7 +64,6 @@ sealed interface CheckRowColumnElement {
                     subPropertyColumnElements = subPropertyColumnElements,
                     modifier = modifier
                 )
-            }
         }
     }
 }

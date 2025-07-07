@@ -16,10 +16,7 @@ fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityMan
 internal fun WifiManager.getNoConnectionPresentStatus(): WifiStatus =
     if (isWifiEnabled) WifiStatus.Disconnected else WifiStatus.Disabled
 
-class WifiStatusGetter @Inject constructor(
-    private val wifiManager: WifiManager,
-    private val connectivityManager: ConnectivityManager
-) {
+class WifiStatusGetter @Inject constructor(private val wifiManager: WifiManager, private val connectivityManager: ConnectivityManager) {
     operator fun invoke(): WifiStatus =
         getWifiStatus(wifiManager, connectivityManager)
 }

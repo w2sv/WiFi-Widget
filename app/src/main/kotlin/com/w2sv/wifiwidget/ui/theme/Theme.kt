@@ -67,8 +67,8 @@ fun AppTheme(
 }
 
 @Composable
-private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorScheme {
-    return copy(
+private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorScheme =
+    copy(
         primary = primary.animate(animationSpec),
         primaryContainer = primaryContainer.animate(animationSpec),
         secondary = secondary.animate(animationSpec),
@@ -106,9 +106,7 @@ private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorSchem
         outlineVariant = outlineVariant.animate(animationSpec),
         scrim = scrim.animate(animationSpec)
     )
-}
 
 @Composable
-private fun Color.animate(animationSpec: AnimationSpec<Color>): Color {
-    return animateColorAsState(this, animationSpec, label = "").value
-}
+private fun Color.animate(animationSpec: AnimationSpec<Color>): Color =
+    animateColorAsState(this, animationSpec, label = "").value

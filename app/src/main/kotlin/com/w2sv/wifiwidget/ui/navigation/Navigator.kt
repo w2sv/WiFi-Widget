@@ -10,7 +10,9 @@ interface Navigator {
     fun popBackStack()
 }
 
-class NavigatorImpl(backStack: NavBackStack) : Navigator, Nav3Navigator(backStack) {
+class NavigatorImpl(backStack: NavBackStack) :
+    Nav3Navigator(backStack),
+    Navigator {
     override fun toWidgetConfiguration() =
         launchSingleTop(Screen.WidgetConfiguration)
 

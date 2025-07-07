@@ -40,8 +40,7 @@ class WidgetViewModel @Inject constructor(
     @param:MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
     @ApplicationContext context: Context,
     @param:WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
-) :
-    ViewModel() {
+) : ViewModel() {
 
     val propertyReorderingDiscoveryShown =
         preferencesRepository.propertyReorderingDiscoveryShown.stateIn(viewModelScope, SharingStarted.WhileSubscribed()) { true }

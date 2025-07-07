@@ -34,8 +34,8 @@ internal data class IpApiData(
     @SerialName("as") private val asNumberAndOrganization: String = ""
 //    @SerialName("asname") val asName: String = ""
 ) {
-    fun location(parameters: Collection<LocationParameter>): String? {
-        return mapOf(
+    fun location(parameters: Collection<LocationParameter>): String? =
+        mapOf(
             LocationParameter.ZipCode to zip,
             LocationParameter.District to district,
             LocationParameter.City to city,
@@ -46,7 +46,6 @@ internal data class IpApiData(
             .map { (parameter, field) -> if (parameters.contains(parameter)) field else null }
             .filter { !it.isNullOrBlank() }
             .joinToString(", ")
-    }
 
     val gpsCoordinates: String? by lazy {
         if (lat == -1.0 || lon == -1.0) null else "$lat, $lon"

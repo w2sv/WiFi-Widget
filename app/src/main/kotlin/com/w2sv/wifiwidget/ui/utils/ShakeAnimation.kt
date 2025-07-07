@@ -36,11 +36,7 @@ private val shakeConfig = ShakeConfig(
 )
 
 @Immutable
-data class ShakeConfig(
-    val iterations: Int,
-    val translateX: Float,
-    val stiffness: Float = Spring.StiffnessMedium
-)
+data class ShakeConfig(val iterations: Int, val translateX: Float, val stiffness: Float = Spring.StiffnessMedium)
 
 fun Modifier.shake(controller: ShakeController): Modifier =
     graphicsLayer { translationX = controller.offset }

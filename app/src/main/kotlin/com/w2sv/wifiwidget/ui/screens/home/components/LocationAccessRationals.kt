@@ -6,7 +6,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -39,8 +38,7 @@ sealed interface LocationAccessPermissionStatus {
 
     @Immutable
     @JvmInline
-    value class Granted(val onGrantAction: LocationAccessPermissionOnGrantAction?) :
-        LocationAccessPermissionStatus
+    value class Granted(val onGrantAction: LocationAccessPermissionOnGrantAction?) : LocationAccessPermissionStatus
 
     val grantedOrNull: Granted?
         get() = this as? Granted

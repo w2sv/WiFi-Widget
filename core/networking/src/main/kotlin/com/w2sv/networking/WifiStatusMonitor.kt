@@ -14,10 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 
-class WifiStatusMonitor @Inject constructor(
-    private val wifiManager: WifiManager,
-    private val connectivityManager: ConnectivityManager
-) {
+class WifiStatusMonitor @Inject constructor(private val wifiManager: WifiManager, private val connectivityManager: ConnectivityManager) {
     private val networkRequest = NetworkRequest
         .Builder()
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
