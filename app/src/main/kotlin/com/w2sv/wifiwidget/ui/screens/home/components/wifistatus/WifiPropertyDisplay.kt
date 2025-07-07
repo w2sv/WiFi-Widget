@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +20,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,6 +68,9 @@ import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEmpty
 import slimber.log.i
+
+private val horizontalPadding = 8.dp
+private const val labelValueColumnSplit = 0.4f
 
 @Composable
 fun WifiPropertyDisplay(propertiesViewData: Flow<WifiProperty.ViewData>, modifier: Modifier = Modifier) {
@@ -186,7 +189,7 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
                     .fillMaxWidth()
                     .padding(
                         top = 8.dp,
-                        bottom = 2.dp,
+                        bottom = 4.dp,
                         start = horizontalPadding,
                         end = horizontalPadding
                     )
@@ -195,28 +198,20 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
         itemsIndexed(viewDataList) { i, viewData ->
             when (viewData) {
                 is PropertyListElement.Property -> {
-                    PropertyDisplayRow(
+                    PropertyDisplay(
                         viewData = viewData.property,
+                        subPropertyValues = viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
                         onClick = onPropertyRowClick,
                         modifier = Modifier
                             .fillMaxWidth()
                             .heightIn(min = 26.dp)
                             .padding(horizontal = horizontalPadding)
                     )
-                    viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.let { subPropertyValues ->
-                        SubPropertyValueRow(
-                            values = subPropertyValues.toPersistentList(),
-                            modifier = Modifier
-                                .padding(horizontal = horizontalPadding)
-                                .padding(bottom = 2.dp)
-                                .fillMaxWidth()
-                        )
-                    }
                     if (i != viewDataList.lastIndex) {
                         HorizontalDivider(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 2.dp),
+                                .padding(vertical = 3.dp),
                             color = HomeScreenCardBackground
                         )
                     }
@@ -234,14 +229,13 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
 private fun Header(modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
         Text(
             text = stringResource(id = R.string.properties),
             fontWeight = FontWeight.SemiBold,
             fontSize = 17.sp,
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier.fillMaxWidth(labelValueColumnSplit)
         )
         Text(
             text = stringResource(R.string.click_to_copy_to_clipboard),
@@ -279,17 +273,15 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     }
 }
 
-private val horizontalPadding = 8.dp
-
 @Composable
-private fun PropertyDisplayRow(
+private fun PropertyDisplay(
     viewData: WifiProperty.ViewData,
+    subPropertyValues: ImmutableList<String>?,
     onClick: OnPropertyRowClick,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val context: Context = LocalContext.current
-
     val label = remember(viewData) {
         buildAnnotatedString {
             if (viewData is WifiProperty.ViewData.IPProperty) {
@@ -309,34 +301,28 @@ private fun PropertyDisplayRow(
     }
 
     Row(modifier = modifier.clickable { onClick(viewData, label, scope) }) {
-        Text(
-            text = label,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.fillMaxWidth(0.35f)
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(text = viewData.value)
-    }
-}
-
-@Composable
-private fun SubPropertyValueRow(values: ImmutableList<String>, modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End)
-    ) {
-        values.forEach {
+        Column(modifier = Modifier.fillMaxWidth(labelValueColumnSplit)) {
             Text(
-                text = it,
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .padding(horizontal = 6.dp)
+                text = label,
+                color = MaterialTheme.colorScheme.primary
             )
+        }
+        Column {
+            Text(text = viewData.value)
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
+                subPropertyValues?.forEach {
+                    Text(
+                        text = it,
+                        fontSize = 13.sp,
+                        modifier = Modifier
+                            .background(
+                                color = MaterialTheme.colorScheme.secondaryContainer,
+                                shape = MaterialTheme.shapes.medium
+                            )
+                            .padding(horizontal = 6.dp)
+                    )
+                }
+            }
         }
     }
 }
