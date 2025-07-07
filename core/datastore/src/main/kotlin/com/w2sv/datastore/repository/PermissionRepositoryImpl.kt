@@ -9,9 +9,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class PermissionRepositoryImpl @Inject constructor(
-    dataStore: DataStore<Preferences>
-) : PreferencesDataStoreRepository(dataStore),
+internal class PermissionRepositoryImpl @Inject constructor(dataStore: DataStore<Preferences>) :
+    PreferencesDataStoreRepository(dataStore),
     PermissionRepository {
 
     override val locationAccessPermissionRationalShown =

@@ -19,7 +19,8 @@ internal fun UiDevice.criticalUserJourney() {
 }
 
 private fun UiDevice.closeLocationAccessPermissionRationalAndRequestDialogIfOpen() {
-    findObject(By.text("Understood"))?.let { // 'Understood' button is part of the location access rational dialog
+    // 'Understood' button is part of the location access rational dialog
+    findObject(By.text("Understood"))?.let {
         it.click() // Closes the rational dialog
         waitForIdle() // Wait until location access permission request dialog appears
         pressBack() // Closes location access permission request dialog

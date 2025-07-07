@@ -6,8 +6,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-internal class WifiPropertyViewsService :
-    RemoteViewsService() {
+internal class WifiPropertyViewsService : RemoteViewsService() {
 
     @Inject
     lateinit var wifiPropertyRemoteViewsFactory: WifiPropertyRemoteViewsFactory

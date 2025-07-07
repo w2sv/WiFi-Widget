@@ -13,9 +13,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class PreferencesRepositoryImpl @Inject constructor(
-    dataStore: DataStore<Preferences>
-) : PreferencesDataStoreRepository(dataStore),
+internal class PreferencesRepositoryImpl @Inject constructor(dataStore: DataStore<Preferences>) :
+    PreferencesDataStoreRepository(dataStore),
     PreferencesRepository {
 
     override val inAppTheme =
