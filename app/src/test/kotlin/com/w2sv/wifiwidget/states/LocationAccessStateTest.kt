@@ -3,8 +3,6 @@ package com.w2sv.wifiwidget.states
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
@@ -20,9 +18,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.runner.RunWith
+import org.mockito.Mockito.mock
 
-@RunWith(AndroidJUnit4::class)
 class LocationAccessStateTest {
 
     @Test
@@ -80,7 +77,7 @@ private fun locationAccessState(
         saveRequestLaunchedBefore = saveRequestLaunchedBefore,
         rationalShown = rationalShown,
         saveRationalShown = saveRationalShown,
-        snackbarEmitter = ScopedSnackbarEmitter(SnackbarHostState(), ApplicationProvider.getApplicationContext(), scope),
+        snackbarEmitter = ScopedSnackbarEmitter(SnackbarHostState(), mock(), scope),
         openAppSettings = {}
     )
 
