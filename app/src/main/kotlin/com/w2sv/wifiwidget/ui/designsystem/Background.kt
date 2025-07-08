@@ -22,7 +22,7 @@ fun Modifier.nestedContentBackground(
             shape = shape
         )
 
-val HomeScreenCardBackground: Color
+val CardContainerColor: Color
     @Composable
     @ReadOnlyComposable
     get() = MaterialTheme.colorScheme.surfaceContainer

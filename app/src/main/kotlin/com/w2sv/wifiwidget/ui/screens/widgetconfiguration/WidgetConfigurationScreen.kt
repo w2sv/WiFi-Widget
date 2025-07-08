@@ -30,9 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
@@ -58,6 +55,7 @@ import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 import com.w2sv.wifiwidget.ui.utils.rememberScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.utils.resourceIdTestTag
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -146,10 +144,7 @@ fun WidgetConfigurationScreen(
                     }
                 ),
                 scrollState = scrollState,
-                modifier = Modifier.semantics {
-                    testTagsAsResourceId = true
-                    testTag = "scrollableWidgetConfigurationColumn"
-                }
+                modifier = Modifier.resourceIdTestTag("scrollableWidgetConfigurationColumn")
             )
         }
     }

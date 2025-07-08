@@ -40,9 +40,6 @@ import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -55,10 +52,11 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
+import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
+import com.w2sv.wifiwidget.ui.utils.resourceIdTestTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -177,10 +175,7 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
     LazyColumn(
         modifier = modifier
             .nestedContentBackground(color = MaterialTheme.colorScheme.background)
-            .semantics {
-                testTagsAsResourceId = true
-                testTag = "scrollableWifiPropertyList"
-            },
+            .resourceIdTestTag("scrollableWifiPropertyList"),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
@@ -212,7 +207,7 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 3.dp),
-                            color = HomeScreenCardBackground
+                            color = CardContainerColor
                         )
                     }
                 }

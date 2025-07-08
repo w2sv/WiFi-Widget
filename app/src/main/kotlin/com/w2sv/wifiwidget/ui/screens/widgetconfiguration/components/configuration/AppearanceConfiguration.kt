@@ -34,7 +34,7 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
-import com.w2sv.wifiwidget.ui.designsystem.HomeScreenCardBackground
+import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
@@ -170,7 +170,7 @@ private fun ColoringConfiguration(
                     }
                 },
                 colors = SegmentedButtonDefaults.colors(
-                    inactiveContainerColor = HomeScreenCardBackground
+                    inactiveContainerColor = CardContainerColor
                 ),
                 shape = SegmentedButtonDefaults.itemShape(
                     index = i,
