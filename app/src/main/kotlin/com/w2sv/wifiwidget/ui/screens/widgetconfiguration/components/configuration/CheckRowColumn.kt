@@ -5,10 +5,12 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -17,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -26,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -171,14 +173,13 @@ private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>, m
         CheckRowBase(
             data = data,
             leadingIcon = {
-                IconButton(
-                    onClick = remember {
-                        {
-                            expandSubProperties = !expandSubProperties
-                        }
-                    },
-                    colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary),
-                    enabled = data.isChecked()
+                FilledTonalIconButton(
+                    onClick = { expandSubProperties = !expandSubProperties },
+                    enabled = data.isChecked(),
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
+                        disabledContainerColor = Color.Transparent
+                    )
                 ) {
                     Icon(
                         imageVector = if (expandSubProperties) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -255,12 +256,16 @@ private fun CheckRowBase(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
+            .padding(start = 4.dp)
             .then(data.modifier)
             .thenIfNotNull(data.shakeController) {
                 shake(it)
             }
     ) {
-        leadingIcon?.invoke()
+        leadingIcon?.run {
+            invoke()
+            Spacer(Modifier.width(4.dp))
+        }
         Text(
             text = label,
             fontSize = fontSize,
