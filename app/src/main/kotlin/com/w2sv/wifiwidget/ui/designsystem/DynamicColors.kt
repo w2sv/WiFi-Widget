@@ -15,7 +15,7 @@ import com.w2sv.wifiwidget.R
 @Composable
 fun UseDynamicColorsRow(
     useDynamicColors: Boolean,
-    onToggleDynamicColors: (Boolean) -> Unit,
+    toggleDynamicColors: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     leadingIcon: (@Composable () -> Unit)? = null
 ) {
@@ -33,11 +33,7 @@ fun UseDynamicColorsRow(
         Spacer(modifier = Modifier.weight(1f))
         Switch(
             checked = useDynamicColors,
-            onCheckedChange = {
-                onToggleDynamicColors(
-                    it
-                )
-            }
+            onCheckedChange = { toggleDynamicColors(it) }
         )
     }
 }

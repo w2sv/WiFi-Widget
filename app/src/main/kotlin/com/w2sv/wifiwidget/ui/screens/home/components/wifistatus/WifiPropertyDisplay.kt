@@ -53,8 +53,8 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
+import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import com.w2sv.wifiwidget.ui.utils.resourceIdTestTag
 import kotlinx.collections.immutable.ImmutableList
@@ -172,48 +172,48 @@ private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewD
 private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modifier: Modifier = Modifier) {
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
-    LazyColumn(
-        modifier = modifier
-            .nestedContentBackground(color = MaterialTheme.colorScheme.background)
-            .resourceIdTestTag("scrollableWifiPropertyList"),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item {
-            Header(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        top = 8.dp,
-                        bottom = 4.dp,
-                        start = horizontalPadding,
-                        end = horizontalPadding
-                    )
-            )
-        }
-        itemsIndexed(viewDataList) { i, viewData ->
-            when (viewData) {
-                is PropertyListElement.Property -> {
-                    PropertyDisplay(
-                        viewData = viewData.property,
-                        subPropertyValues = viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
-                        onClick = onPropertyRowClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 26.dp)
-                            .padding(horizontal = horizontalPadding)
-                    )
-                    if (i != viewDataList.lastIndex) {
-                        HorizontalDivider(
+    SecondLevelElevatedCard(modifier = modifier) {
+        LazyColumn(
+            modifier = Modifier.resourceIdTestTag("scrollableWifiPropertyList"),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Header(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            top = 8.dp,
+                            bottom = 8.dp,
+                            start = horizontalPadding,
+                            end = horizontalPadding
+                        )
+                )
+            }
+            itemsIndexed(viewDataList) { i, viewData ->
+                when (viewData) {
+                    is PropertyListElement.Property -> {
+                        PropertyDisplay(
+                            viewData = viewData.property,
+                            subPropertyValues = viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
+                            onClick = onPropertyRowClick,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 3.dp),
-                            color = CardContainerColor
+                                .heightIn(min = 26.dp)
+                                .padding(horizontal = horizontalPadding)
                         )
+                        if (i != viewDataList.lastIndex) {
+                            HorizontalDivider(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 3.dp),
+                                color = CardContainerColor
+                            )
+                        }
                     }
-                }
 
-                is PropertyListElement.LoadingAnimation -> {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    is PropertyListElement.LoadingAnimation -> {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                    }
                 }
             }
         }
