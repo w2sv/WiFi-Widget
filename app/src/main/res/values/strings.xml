@@ -80,8 +80,7 @@
     <string name="go_back_on_unsaved_changes_warning">Going back now will lead to all your unsaved changes being lost.</string>
     <string name="restore_default_order">Restore default order</string>
     <string name="show_dropdown_menu">Show dropdown menu</string>
-    <string name="okay">Okay!</string>
-    <string name="property_reordering_discovery_dialog_text">You can change the order in which the properties appear on the widget by long-clicking on a property and moving it to a different position.</string>
     <string name="value_alignment">Value alignment</string>
     <string name="configure">Configure</string>
+    <string name="wifi_property_reordering_information">Click and hold a property to change the order in which they appear on the widget</string>
 </resources>

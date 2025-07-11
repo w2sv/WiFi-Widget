@@ -1,10 +1,10 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,13 +19,12 @@ private val verticalColumnCardSpacing = 16.dp
 @Composable
 fun WidgetConfigurationColumn(
     cardProperties: ImmutableList<WidgetConfigurationCard>,
-    scrollState: ScrollState,
     modifier: Modifier = Modifier
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp)
     ) {
         Column(

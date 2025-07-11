@@ -1,14 +1,21 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.LocationParameter
@@ -19,6 +26,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
+import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
@@ -27,7 +35,9 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.utils.ShakeController
+import com.w2sv.wifiwidget.ui.utils.WithLocalContentColor
 import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -98,6 +108,19 @@ fun rememberWidgetConfigurationCardProperties(
                     }
                 )
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 14.dp)
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    WithLocalContentColor(MaterialTheme.colorScheme.onSurfaceVariantLowAlpha) {
+                        InfoIcon()
+                        Text(stringResource(R.string.wifi_property_reordering_information), fontSize = 13.sp)
+                    }
+                }
                 DragAndDroppableCheckRowColumn(
                     elements = rememberWidgetWifiPropertyCheckRowData(
                         widgetConfiguration = widgetConfiguration,

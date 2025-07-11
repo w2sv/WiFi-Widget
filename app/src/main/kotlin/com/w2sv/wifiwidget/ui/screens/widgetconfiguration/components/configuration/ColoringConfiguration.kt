@@ -37,6 +37,7 @@ import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 
 @Composable
 fun ColoringConfiguration(
@@ -160,7 +161,7 @@ private fun PresetColoringConfiguration(
             )
             Text(
                 stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                 fontSize = 13.sp,
                 modifier = Modifier.padding(start = 32.dp)
             )

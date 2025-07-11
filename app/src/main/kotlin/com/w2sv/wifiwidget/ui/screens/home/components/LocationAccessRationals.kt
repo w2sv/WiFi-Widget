@@ -71,9 +71,7 @@ fun LocationAccessRationals(state: LocationAccessState) {
 private fun LocationAccessPermissionRational(onProceed: () -> Unit, modifier: Modifier = Modifier) {
     AlertDialog(
         modifier = modifier,
-        icon = {
-            InfoIcon()
-        },
+        icon = { InfoIcon() },
         text = {
             Text(
                 text = rememberStyledTextResource(id = R.string.location_access_permission_rational),
@@ -109,11 +107,7 @@ private fun BackgroundLocationAccessRational(launchPermissionRequest: () -> Unit
                 Text(text = stringResource(id = R.string.maybe_later))
             }
         },
-        icon = {
-            InfoIcon()
-        },
-        text = {
-            Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational))
-        }
+        icon = { InfoIcon() },
+        text = { Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational)) }
     )
 }

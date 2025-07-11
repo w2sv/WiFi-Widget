@@ -18,7 +18,7 @@ val biggerIconSize = 28.dp
 fun InfoIcon(
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    tint: Color = MaterialTheme.colorScheme.primary
+    tint: Color = LocalContentColor.current
 ) {
     Icon(
         imageVector = Icons.Outlined.Info,

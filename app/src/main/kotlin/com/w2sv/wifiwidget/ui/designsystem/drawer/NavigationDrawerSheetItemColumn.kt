@@ -44,7 +44,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.theme.alphaDecreasedOnSurfaceVariant
+import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.utils.OptionalAnimatedVisibility
 
 @Composable
@@ -276,7 +276,7 @@ private fun Item(item: NavigationDrawerSheetElement.Item, modifier: Modifier = M
         item.explanationRes?.let {
             Text(
                 text = stringResource(id = it),
-                color = MaterialTheme.colorScheme.alphaDecreasedOnSurfaceVariant,
+                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                 modifier = Modifier.padding(start = iconSize + labelStartPadding),
                 fontSize = 14.sp
             )
