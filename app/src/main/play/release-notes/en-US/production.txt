@@ -1,4 +1,4 @@
-- Show 'location access missing' snackbar upon in-app widget pinning with access requiring properties active, but no access
-- Fix background location access grant initially not being recognized
-- Fix widget property copy-to-clipboard functionality on click
-- Improve in-app and widget refreshing performance
+- Target Android 16
+- Smoother screen transitions
+- More refined and user-friendly UI
+- Performance improvements and bug fixes
