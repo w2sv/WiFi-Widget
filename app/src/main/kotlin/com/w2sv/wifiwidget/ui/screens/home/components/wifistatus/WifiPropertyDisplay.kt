@@ -174,7 +174,7 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
 
     SecondLevelElevatedCard(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.resourceIdTestTag("scrollableWifiPropertyList"),
+            modifier = Modifier.resourceIdTestTag("wifiPropertyColumn"),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {

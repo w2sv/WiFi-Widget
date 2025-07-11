@@ -144,7 +144,7 @@ fun WidgetConfigurationScreen(
                     }
                 ),
                 scrollState = scrollState,
-                modifier = Modifier.resourceIdTestTag("scrollableWidgetConfigurationColumn")
+                modifier = Modifier.resourceIdTestTag("widgetConfigurationColumn")
             )
         }
     }

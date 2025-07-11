@@ -123,7 +123,6 @@
 - Coroutines & flows
 - [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
 - [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
-- [compose-destinations](https://github.com/raamcosta/compose-destinations) for navigation
 - Proto & Preferences data store
 - JUnit 4, [mockito](https://github.com/mockito/mockito), [robolectric](https://robolectric.org/) & [turbine](https://github.com/cashapp/turbine) for unit testing
 - JUnit 4 Compose android (instrumented) testing
