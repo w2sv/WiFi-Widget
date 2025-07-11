@@ -21,7 +21,7 @@ import slimber.log.i
 
 @Composable
 fun NavGraph(initialScreen: Screen) {
-    val backStack = rememberNavBackStack(initialScreen)
+    val backStack = rememberNavBackStack(Screen.WidgetConfiguration)
     val navigator = remember(backStack) { NavigatorImpl(backStack) }
 
     OnChange(backStack.size) { i { "BackStack=${backStack.map { screen -> screen::class.java.simpleName }}" } }
