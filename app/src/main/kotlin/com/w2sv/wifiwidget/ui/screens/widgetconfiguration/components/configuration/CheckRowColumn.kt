@@ -38,8 +38,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -47,16 +45,25 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
-import com.w2sv.wifiwidget.ui.designsystem.biggerIconSize
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.utils.alphaDecreased
+import com.w2sv.wifiwidget.ui.utils.contentDescription
 import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+
+private object CheckRowDefaults {
+    /**
+     * The padding in between the leading icon (keyboard right arrow) and the property label.
+     */
+    val leadingIconLabelPadding = 4.dp
+    val startPadding = 4.dp
+}
 
 /**
  * For alignment of primary check row click elements with sub property click elements
@@ -204,7 +211,7 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
             .padding(horizontal = 16.dp)
             .padding(start = 24.dp) // Make background start at the indentation of CheckRowBase label
             .nestedContentBackground()
-            .padding(start = subPropertyColumnPadding)
+            .padding(start = SubPropertyColumnDefaults.verticalPadding)
             .animateContentSize()
     ) {
         elements.forEach { element ->
@@ -214,7 +221,7 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
                         CheckRowBase(
                             data = element,
                             modifier = element.modifier,
-                            fontSize = subPropertyCheckRowColumnFontSize,
+                            fontSize = SubPropertyColumnDefaults.fontSize,
                             leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
                         )
                     }
@@ -228,18 +235,22 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
     }
 }
 
-@Composable
-fun VersionsHeader(modifier: Modifier = Modifier) {
-    Text(
-        text = stringResource(R.string.versions),
-        modifier = modifier.padding(top = subPropertyColumnPadding),
-        fontSize = subPropertyCheckRowColumnFontSize,
-        fontWeight = FontWeight.SemiBold
-    )
+object SubPropertyColumnDefaults {
+    val fontSize = 14.sp
+    val verticalPadding = 12.dp
 }
 
-private val subPropertyCheckRowColumnFontSize = 14.sp
-private val subPropertyColumnPadding = 12.dp
+@Composable
+fun VersionsHeader(modifier: Modifier = Modifier) {
+    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+        SubPropertyKeyboardArrowRightIcon(modifier = Modifier.padding(end = CheckRowDefaults.leadingIconLabelPadding))
+        Text(
+            text = stringResource(R.string.versions),
+            fontSize = SubPropertyColumnDefaults.fontSize,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
+}
 
 @Composable
 private fun CheckRowBase(
@@ -256,15 +267,13 @@ private fun CheckRowBase(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 4.dp)
+            .padding(start = CheckRowDefaults.startPadding)
             .then(data.modifier)
-            .thenIfNotNull(data.shakeController) {
-                shake(it)
-            }
+            .thenIfNotNull(data.shakeController) { shake(it) }
     ) {
         leadingIcon?.run {
             invoke()
-            Spacer(Modifier.width(4.dp))
+            Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelPadding))
         }
         Text(
             text = label,
@@ -274,18 +283,14 @@ private fun CheckRowBase(
         )
         data.showInfoDialog?.let {
             InfoIconButton(
-                onClick = { it() },
+                onClick = it,
                 contentDescription = stringResource(id = R.string.info_icon_cd, label)
             )
         }
         Checkbox(
             checked = data.isChecked(),
-            onCheckedChange = {
-                data.onCheckedChange(it)
-            },
-            modifier = Modifier.semantics {
-                contentDescription = checkBoxCD
-            }
+            onCheckedChange = { data.onCheckedChange(it) },
+            modifier = Modifier.contentDescription(checkBoxCD)
         )
     }
 }
@@ -299,7 +304,7 @@ private fun InfoIconButton(
     IconButton(onClick = onClick, modifier = modifier) {
         InfoIcon(
             contentDescription = contentDescription,
-            modifier = Modifier.size(biggerIconSize),
+            modifier = Modifier.size(IconDefaults.SizeBig),
             tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }

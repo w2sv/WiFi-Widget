@@ -303,7 +303,7 @@ private fun WifiProperty.IP.subPropertyElements(
         if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
             add(
                 CheckRowColumnElement.Custom {
-                    VersionsHeader()
+                    VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.verticalPadding))
                 }
             )
         }
@@ -351,25 +351,25 @@ private fun WifiProperty.IP.subPropertyElements(
     }
         .toPersistentList()
 
-private fun WifiProperty.NonIP.Other.Location.subPropertyElements(
+private fun subPropertyElements(
     locationParameters: MutableMap<LocationParameter, Boolean>,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
 ): ImmutableList<CheckRowColumnElement> =
     LocationParameter.entries.map { parameter ->
-        val shapeController = ShakeController()
+        val shakeController = ShakeController()
         CheckRowColumnElement.CheckRow.fromIsCheckedMap(
             property = parameter,
             isCheckedMap = locationParameters,
             allowCheckChange = { newValue ->
                 (newValue || locationParameters.moreThanOnePropertyEnabled()).also {
                     if (!it) {
-                        scope.launch { shapeController.shake() }
+                        scope.launch { shakeController.shake() }
                         showLeaveAtLeastOnePropertyEnabledSnackbar()
                     }
                 }
             },
-            shakeController = shapeController
+            shakeController = shakeController
         )
     }
         .toPersistentList()

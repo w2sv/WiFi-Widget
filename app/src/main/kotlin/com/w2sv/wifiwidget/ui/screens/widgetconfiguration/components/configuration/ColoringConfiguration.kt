@@ -21,8 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +36,7 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mode
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
+import com.w2sv.wifiwidget.ui.utils.contentDescription
 
 @Composable
 fun ColoringConfiguration(
@@ -223,7 +222,7 @@ private fun SectionCustomizationRow(
         Button(
             modifier = Modifier
                 .colorButton()
-                .semantics { contentDescription = colorPickerButtonCD },
+                .contentDescription(colorPickerButtonCD),
             colors = ButtonDefaults.buttonColors(
                 containerColor = color
             ),

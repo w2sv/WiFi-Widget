@@ -12,9 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.w2sv.wifiwidget.ui.utils.contentDescription
 
 @Composable
 fun ArrowRightLabelContentRow(
@@ -55,10 +54,7 @@ fun SliderWithLabel(
         Slider(
             value = value,
             onValueChange = onValueChanged,
-            modifier = Modifier
-                .semantics {
-                    this.contentDescription = contentDescription
-                },
+            modifier = Modifier.contentDescription(contentDescription),
             steps = steps,
             valueRange = valueRange
         )

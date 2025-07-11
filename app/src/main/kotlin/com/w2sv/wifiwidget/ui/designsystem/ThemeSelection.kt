@@ -32,14 +32,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.utils.contentDescription
 
 @Preview
 @Composable
@@ -196,9 +195,7 @@ private fun ThemeButton(
         val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
         Button(
             modifier = Modifier
-                .semantics {
-                    this.contentDescription = contentDescription
-                }
+                .contentDescription(contentDescription)
                 .size(size)
                 .drawBehind {
                     if (buttonColor is ButtonColor.Gradient) {

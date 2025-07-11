@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -15,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
@@ -26,7 +24,6 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
         title = {
             Text(
                 text = stringResource(id = R.string.app_name),
-                modifier = Modifier.padding(start = 8.dp),
                 maxLines = 1
             )
         },
@@ -41,7 +38,7 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
                 Icon(
                     imageVector = Icons.Filled.Menu,
                     contentDescription = stringResource(R.string.open_navigation_drawer),
-                    modifier = Modifier.size(biggerIconSize)
+                    modifier = Modifier.size(IconDefaults.SizeBig)
                 )
             }
         }
