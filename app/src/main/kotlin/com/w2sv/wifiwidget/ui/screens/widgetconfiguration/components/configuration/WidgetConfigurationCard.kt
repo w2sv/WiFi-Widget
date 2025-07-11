@@ -149,6 +149,7 @@ fun rememberWidgetConfigurationCardProperties(
                         WidgetBottomBarElement.entries.map {
                             CheckRowColumnElement.CheckRow.fromIsCheckedMap(
                                 property = it,
+                                explanation = it.explanation,
                                 isCheckedMap = widgetConfiguration.bottomRowMap
                             )
                         }

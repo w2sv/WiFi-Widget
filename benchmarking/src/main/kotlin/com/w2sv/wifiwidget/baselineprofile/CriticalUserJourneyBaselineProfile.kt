@@ -30,12 +30,12 @@ class CriticalUserJourneyBaselineProfile {
 private fun UiDevice.criticalUserJourney() {
     closeLocationAccessPermissionRationalAndRequestDialogIfOpen()
 
-    flingObject(ResourceNames.wifiPropertyColumn, Direction.DOWN)
+    flingObject(ResourceNames.WIFI_PROPERTY_COLUMN, Direction.DOWN)
 
     goToWidgetConfigurationScreen()
     waitForIdle()
 
-    flingObject(ResourceNames.widgetConfigurationColumn, Direction.DOWN)
+    flingObject(ResourceNames.WIDGET_CONFIGURATION_COLUMN, Direction.DOWN)
 
     pressBack()
 }
@@ -54,6 +54,6 @@ private fun UiDevice.goToWidgetConfigurationScreen() {
 }
 
 private object ResourceNames {
-    const val wifiPropertyColumn = "wifiPropertyColumn"
-    const val widgetConfigurationColumn = "widgetConfigurationColumn"
+    const val WIFI_PROPERTY_COLUMN = "wifiPropertyColumn"
+    const val WIDGET_CONFIGURATION_COLUMN = "widgetConfigurationColumn"
 }

@@ -100,4 +100,7 @@
     <string name="continent">Continent</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
+    <string name="refresh_button_explanation">Trigger a data refresh</string>
+    <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
+    <string name="go_to_widget_settings_button_explanation">Open this screen</string>
 </resources>

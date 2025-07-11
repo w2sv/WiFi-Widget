@@ -50,8 +50,10 @@ import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
+import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.utils.alphaDecreased
 import com.w2sv.wifiwidget.ui.utils.contentDescription
+import com.w2sv.wifiwidget.ui.utils.offsetClip
 import com.w2sv.wifiwidget.ui.utils.shake
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem
@@ -263,35 +265,47 @@ private fun CheckRowBase(
     val label = stringResource(id = data.property.labelRes)
     val checkBoxCD = stringResource(id = R.string.set_unset, label)
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = CheckRowDefaults.startPadding)
-            .then(data.modifier)
-            .thenIfNotNull(data.shakeController) { shake(it) }
-    ) {
-        leadingIcon?.run {
-            invoke()
-            Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelPadding))
-        }
-        Text(
-            text = label,
-            fontSize = fontSize,
-            color = labelColor,
-            modifier = Modifier.weight(1.0f)
-        )
-        data.showInfoDialog?.let {
-            InfoIconButton(
-                onClick = it,
-                contentDescription = stringResource(id = R.string.info_icon_cd, label)
+    Column {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(start = CheckRowDefaults.startPadding)
+                .then(data.modifier)
+                .thenIfNotNull(data.shakeController) { shake(it) }
+        ) {
+            leadingIcon?.run {
+                invoke()
+                Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelPadding))
+            }
+            Text(
+                text = label,
+                modifier = Modifier.weight(1.0f),
+                fontSize = fontSize,
+                color = labelColor
+            )
+            data.showInfoDialog?.let {
+                InfoIconButton(
+                    onClick = it,
+                    contentDescription = stringResource(id = R.string.info_icon_cd, label)
+                )
+            }
+            Checkbox(
+                checked = data.isChecked(),
+                onCheckedChange = { data.onCheckedChange(it) },
+                modifier = Modifier.contentDescription(checkBoxCD)
             )
         }
-        Checkbox(
-            checked = data.isChecked(),
-            onCheckedChange = { data.onCheckedChange(it) },
-            modifier = Modifier.contentDescription(checkBoxCD)
-        )
+        data.explanation?.let {
+            Text(
+                stringResource(it),
+                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
+                fontSize = 13.sp,
+                modifier = Modifier
+                    .padding(start = 56.dp)
+                    .offsetClip(dy = (-10).dp)
+            )
+        }
     }
 }
 

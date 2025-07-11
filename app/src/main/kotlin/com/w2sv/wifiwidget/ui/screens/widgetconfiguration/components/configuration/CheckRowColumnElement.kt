@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import androidx.annotation.StringRes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -19,6 +20,7 @@ sealed interface CheckRowColumnElement {
     @Immutable
     data class CheckRow<T : WidgetProperty>(
         val property: T,
+        @param:StringRes val explanation: Int? = null,
         val isChecked: () -> Boolean,
         val onCheckedChange: (Boolean) -> Unit,
         val show: () -> Boolean = { true },
@@ -39,6 +41,7 @@ sealed interface CheckRowColumnElement {
         companion object {
             fun <T : WidgetProperty> fromIsCheckedMap(
                 property: T,
+                @StringRes explanation: Int? = null,
                 isCheckedMap: MutableMap<T, Boolean>,
                 allowCheckChange: (Boolean) -> Boolean = { true },
                 onCheckedChangedDisallowed: () -> Unit = {},
@@ -50,6 +53,7 @@ sealed interface CheckRowColumnElement {
             ): CheckRow<T> =
                 CheckRow(
                     property = property,
+                    explanation = explanation,
                     isChecked = { isCheckedMap.getValue(property) },
                     onCheckedChange = {
                         if (allowCheckChange(it)) {
