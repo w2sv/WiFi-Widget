@@ -5,9 +5,9 @@ import androidx.compose.ui.graphics.Color
 import com.w2sv.domain.model.WidgetColoring
 
 enum class CustomWidgetColor(@param:StringRes val labelRes: Int) {
-    Background(com.w2sv.core.domain.R.string.background),
-    Primary(com.w2sv.core.domain.R.string.primary),
-    Secondary(com.w2sv.core.domain.R.string.secondary);
+    Background(com.w2sv.core.common.R.string.background),
+    Primary(com.w2sv.core.common.R.string.primary),
+    Secondary(com.w2sv.core.common.R.string.secondary);
 
     fun getColor(data: WidgetColoring.Style.Custom): Color =
         Color(

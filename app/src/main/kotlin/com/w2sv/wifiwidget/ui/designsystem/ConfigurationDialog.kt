@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 
 private val elevatedCardDialogElevation = 16.dp
 

@@ -9,7 +9,7 @@ import androidx.core.content.res.use
 import com.google.android.material.color.DynamicColors
 import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.androidutils.res.isNightModeActiveCompat
-import com.w2sv.core.widget.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.model.WidgetColoring
 

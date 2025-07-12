@@ -12,7 +12,7 @@ import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.common.utils.log
-import com.w2sv.core.widget.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WifiProperty

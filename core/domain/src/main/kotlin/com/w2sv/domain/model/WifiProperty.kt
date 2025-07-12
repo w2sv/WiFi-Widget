@@ -2,7 +2,7 @@ package com.w2sv.domain.model
 
 import android.os.Build
 import androidx.annotation.StringRes
-import com.w2sv.core.domain.R
+import com.w2sv.core.common.R
 import kotlinx.coroutines.flow.Flow
 
 sealed class WifiProperty : WidgetProperty {

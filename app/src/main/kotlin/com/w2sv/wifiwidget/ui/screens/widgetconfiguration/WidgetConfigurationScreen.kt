@@ -32,7 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -212,7 +212,7 @@ private fun ConfigurationProcedureFABRow(
             onClick = onResetButtonClick,
             icon = {
                 Icon(
-                    painter = painterResource(id = com.w2sv.core.common.R.drawable.ic_refresh_24),
+                    painter = painterResource(id = R.drawable.ic_refresh_24),
                     contentDescription = null
                 )
             }

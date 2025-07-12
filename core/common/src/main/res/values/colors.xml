@@ -1,3 +1,5 @@
 <resources>
     <color name="blue_chill">#1EA8B5</color>
+    <color name="dark_cyan">#158a92</color>
+    <color name="logo_background">@color/dark_cyan</color>
 </resources>

@@ -14,7 +14,7 @@ import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.WifiWidgetRefreshWorker
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
 import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals

@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.composed.extensions.thenIfNotNull
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon

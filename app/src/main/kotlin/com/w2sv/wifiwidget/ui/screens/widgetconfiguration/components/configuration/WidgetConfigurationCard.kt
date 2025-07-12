@@ -22,7 +22,7 @@ import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties

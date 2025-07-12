@@ -40,7 +40,7 @@ import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.AppUrl
 import com.w2sv.composed.OnChange
 import com.w2sv.composed.extensions.thenIfNotNull
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow

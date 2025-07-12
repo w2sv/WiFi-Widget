@@ -13,7 +13,7 @@ import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.appwidget.setColorFilter
 import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppExtra
-import com.w2sv.core.widget.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.networking.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity

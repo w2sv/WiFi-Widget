@@ -2,7 +2,7 @@ package com.w2sv.domain.model
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.w2sv.core.domain.R
+import com.w2sv.core.common.R
 
 enum class WifiStatus(@param:StringRes val labelRes: Int, @param:DrawableRes val iconRes: Int) {
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),

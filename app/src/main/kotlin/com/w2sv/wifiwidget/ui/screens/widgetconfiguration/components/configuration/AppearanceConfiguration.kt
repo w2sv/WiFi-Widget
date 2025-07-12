@@ -19,7 +19,7 @@ import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.enumEntryByOrdinal
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData

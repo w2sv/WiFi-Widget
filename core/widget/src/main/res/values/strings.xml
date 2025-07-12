@@ -1,9 +1,0 @@
-<resources>
-    <string name="widget_description">Monitor your WiFi connection details</string>
-
-    <string name="refresh_data">Refresh data</string>
-    <string name="no_wifi_connection">No WiFi Connection</string>
-    <string name="wifi_disabled">WiFi Disabled</string>
-    <string name="loading">Loading…</string>
-    <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
-</resources>
