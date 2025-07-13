@@ -1,19 +1,15 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -84,14 +80,12 @@ private fun RefreshIntervalConfigurationRow(
     showConfigurationDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
+    PropertyConfigurationRow(
+        R.string.interval,
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        fontSize = SubPropertyColumnDefaults.fontSize,
+        leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
     ) {
-        SubPropertyKeyboardArrowRightIcon(modifier = Modifier.padding(end = CheckRowDefaults.leadingIconLabelGap))
-        Text(text = stringResource(R.string.interval))
-        Spacer(modifier = Modifier.weight(1f))
-
         Text(
             text = remember(interval) {
                 interval.run {
@@ -106,7 +100,7 @@ private fun RefreshIntervalConfigurationRow(
         FilledTonalIconButton(
             onClick = showConfigurationDialog,
             modifier = Modifier
-                .padding(horizontal = 4.dp)
+                .padding(start = 8.dp, end = 4.dp)
                 .size(38.dp)
         ) {
             Icon(

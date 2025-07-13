@@ -1,10 +1,11 @@
 package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -51,6 +52,7 @@ import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
+import com.w2sv.wifiwidget.ui.utils.ShakeController
 import com.w2sv.wifiwidget.ui.utils.alphaDecreased
 import com.w2sv.wifiwidget.ui.utils.contentDescription
 import com.w2sv.wifiwidget.ui.utils.offsetClip
@@ -223,7 +225,6 @@ private fun SubPropertyColumn(elements: ImmutableList<ConfigurationColumnElement
             .padding(start = 24.dp) // Make background start at the indentation of CheckRowBase label
             .nestedContentBackground()
             .padding(start = SubPropertyColumnDefaults.startPadding)
-            .animateContentSize()
     ) {
         elements.forEach { element ->
             when (element) {
@@ -266,46 +267,68 @@ private fun CheckRowBase(
     leadingIcon: (@Composable () -> Unit)? = null
 ) {
     val label = stringResource(id = data.property.labelRes)
-    val checkBoxCD = stringResource(id = R.string.set_unset, label)
+    PropertyConfigurationRow(
+        data.property.labelRes,
+        modifier = modifier.then(data.modifier),
+        fontSize = fontSize,
+        labelColor = labelColor,
+        shakeController = data.shakeController,
+        explanationRes = data.explanation,
+        leadingIcon = leadingIcon
+    ) {
+        data.showInfoDialog?.let {
+            InfoIconButton(
+                onClick = it,
+                contentDescription = stringResource(id = R.string.info_icon_cd, label)
+            )
+        }
+        Checkbox(
+            checked = data.isChecked(),
+            onCheckedChange = { data.onCheckedChange(it) },
+            modifier = Modifier.contentDescription(stringResource(id = R.string.set_unset, label))
+        )
+    }
+}
 
-    Column {
+@Composable
+fun PropertyConfigurationRow(
+    @StringRes labelRes: Int,
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = TextUnit.Unspecified,
+    labelColor: Color = MaterialTheme.colorScheme.onBackground,
+    shakeController: ShakeController? = null,
+    @StringRes explanationRes: Int? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    endContent: @Composable RowScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = CheckRowDefaults.startPadding)
+            .thenIfNotNull(shakeController) { shake(it) }) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(start = CheckRowDefaults.startPadding)
-                .then(data.modifier)
-                .thenIfNotNull(data.shakeController) { shake(it) }
+            modifier = Modifier.fillMaxWidth()
         ) {
             leadingIcon?.run {
                 invoke()
                 Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelGap))
             }
             Text(
-                text = label,
+                text = stringResource(id = labelRes),
                 modifier = Modifier.weight(1.0f),
                 fontSize = fontSize,
                 color = labelColor
             )
-            data.showInfoDialog?.let {
-                InfoIconButton(
-                    onClick = it,
-                    contentDescription = stringResource(id = R.string.info_icon_cd, label)
-                )
-            }
-            Checkbox(
-                checked = data.isChecked(),
-                onCheckedChange = { data.onCheckedChange(it) },
-                modifier = Modifier.contentDescription(checkBoxCD)
-            )
+            endContent()
         }
-        data.explanation?.let {
+        explanationRes?.let {
             Text(
                 stringResource(it),
                 color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                 fontSize = 13.sp,
                 modifier = Modifier
-                    .padding(start = 56.dp)
+                    .padding(start = 52.dp) // Align with label above
                     .offsetClip(dy = (-10).dp) // Shift explanation up a bit to increase its visual coherence with the main row
             )
         }
