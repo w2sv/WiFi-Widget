@@ -15,9 +15,9 @@ import com.w2sv.androidutils.openAppSettings
 import com.w2sv.common.utils.log
 import com.w2sv.composed.CollectFromFlow
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
+import com.w2sv.core.common.R
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind

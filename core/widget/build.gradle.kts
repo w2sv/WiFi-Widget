@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.domain)
     implementation(projects.core.networking)
+    implementation(projects.core.datastore)
 
     implementation(libs.androidx.workmanager)
     implementation(libs.androidx.glance.appwidget)

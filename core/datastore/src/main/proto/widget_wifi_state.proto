@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_package = "com.w2sv.datastore";
+option java_multiple_files = true;
+
+message WidgetWifiStateProto {
+  WifiStatusProto type = 1;
+  repeated WifiPropertyProto properties = 2;
+}
+
+message WifiPropertyProto {
+    string label = 1;
+    string value = 2;
+    repeated string sub_property_values = 3;
+}
+
+enum WifiStatusProto {
+    DISABLED = 0;
+    NO_CONNECTION = 1;
+    PROPERTIES_LOADING = 2;
+    PROPERTIES_AVAILABLE = 3;
+}

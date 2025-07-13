@@ -27,9 +27,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.BuildConfig
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
 import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel

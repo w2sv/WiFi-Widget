@@ -14,10 +14,7 @@ import androidx.compose.runtime.Composable
  * Supports positional formatting just like Context#getString().
  */
 @Composable
-internal fun stringResource(
-    @StringRes id: Int,
-    vararg formatArgs: Any
-): String {
+internal fun stringResource(@StringRes id: Int, vararg formatArgs: Any): String {
     val context = androidx.glance.LocalContext.current
     return context.getString(id, *formatArgs)
 }

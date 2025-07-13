@@ -17,9 +17,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.widget.utils.goToWifiSettingsIntent
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.utils.contentDescription
 

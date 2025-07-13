@@ -36,8 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.Theme
 import com.w2sv.core.common.R
+import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.utils.contentDescription
 
 @Preview

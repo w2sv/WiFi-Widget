@@ -8,7 +8,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.SuspendingLazy
-import com.w2sv.core.networking.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.linkProperties

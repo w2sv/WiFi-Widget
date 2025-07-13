@@ -25,8 +25,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.os.dynamicColorsSupported
-import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.core.common.R
+import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow

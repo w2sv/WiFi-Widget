@@ -11,7 +11,8 @@ internal data class WidgetAppearance(
     @param:FloatRange(0.0, 1.0) val backgroundOpacity: Float,
     val fontSize: FontSize,
     val propertyValueAlignment: PropertyValueAlignment,
-    val bottomBar: WidgetBottomBarElement
+    val topBar: TopBar,
+    val showLastRefreshTime: Boolean
 ) {
     fun widgetColors(context: Context): WidgetColors =
         WidgetColors.fromStyle(coloringConfig.appliedStyle, context)

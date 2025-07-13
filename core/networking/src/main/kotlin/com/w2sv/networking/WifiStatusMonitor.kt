@@ -8,11 +8,11 @@ import android.net.NetworkRequest
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiStatus
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import javax.inject.Inject
 
 class WifiStatusMonitor @Inject constructor(private val wifiManager: WifiManager, private val connectivityManager: ConnectivityManager) {
     private val networkRequest = NetworkRequest
@@ -48,17 +48,11 @@ class WifiStatusMonitor @Inject constructor(private val wifiManager: WifiManager
             }
 
             override fun onUnavailable() {
-                channel.trySend(
-                    wifiManager.getNoConnectionPresentStatus()
-                        .log { "Sent $it onUnavailable" }
-                )
+                channel.trySend(wifiManager.getNoConnectionPresentStatus().log { "Sent $it onUnavailable" })
             }
 
             override fun onLost(network: Network) {
-                channel.trySend(
-                    wifiManager.getNoConnectionPresentStatus()
-                        .log { "Sent $it onLost" }
-                )
+                channel.trySend(wifiManager.getNoConnectionPresentStatus().log { "Sent $it onLost" })
             }
         }
 

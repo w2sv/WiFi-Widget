@@ -12,7 +12,6 @@ import androidx.core.text.scale
 import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.common.utils.log
-import com.w2sv.core.common.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WifiProperty
@@ -21,11 +20,11 @@ import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import kotlin.properties.Delegates
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @param:ApplicationContext private val context: Context,
@@ -55,14 +54,14 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
                 .log { "Set propertyViewData=$it" }
         }
 
-        widgetRepository.widgetAppearance.value.run {
-            widgetColors = widgetColors(context)
-            this@WifiPropertyRemoteViewsFactory.fontSize = fontSize
-            layout = when (propertyValueAlignment) {
-                PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
-                PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
-            }
-        }
+//        widgetRepository.widgetAppearance.value.run {
+//            widgetColors = widgetColors(context)
+//            this@WifiPropertyRemoteViewsFactory.fontSize = fontSize
+//            layout = when (propertyValueAlignment) {
+//                PropertyValueAlignment.Left -> com.w2sv.core.widget.R.layout.wifi_property_left_aligned
+//                PropertyValueAlignment.Right -> com.w2sv.core.widget.R.layout.wifi_property_right_aligned
+//            }
+//        }
     }
 
     override fun getCount(): Int =
@@ -83,9 +82,9 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         }
 
     override fun getLoadingView(): RemoteViews =
-        RemoteViews(context.packageName, R.layout.loading)
+        RemoteViews(context.packageName, com.w2sv.core.widget.R.layout.loading)
             .apply {
-                setTextColor(R.id.loading_tv, widgetColors.secondary)
+                setTextColor(com.w2sv.core.widget.R.id.loading_tv, widgetColors.secondary)
             }
 
     override fun getViewTypeCount(): Int =
@@ -120,7 +119,7 @@ private fun inflatePropertyLayout(
         .apply {
             // Label TextView
             setTextView(
-                viewId = R.id.property_label_tv,
+                viewId = com.w2sv.core.widget.R.id.property_label_tv,
                 text = if (viewData is WifiProperty.ViewData.NonIP) {
                     viewData.label
                 } else {
@@ -139,7 +138,7 @@ private fun inflatePropertyLayout(
 
             // Value TextView
             setTextView(
-                viewId = R.id.property_value_tv,
+                viewId = com.w2sv.core.widget.R.id.property_value_tv,
                 text = viewData.value,
                 size = fontSize.value,
                 color = widgetColors.secondary
@@ -147,7 +146,7 @@ private fun inflatePropertyLayout(
 
             // OnClickFillInIntent
             setOnClickFillInIntent(
-                R.id.wifi_property_layout,
+                com.w2sv.core.widget.R.id.wifi_property_layout,
                 CopyPropertyToClipboardActivity.Args.getIntent(
                     propertyLabel = viewData.label,
                     propertyValue = viewData.value
@@ -156,9 +155,9 @@ private fun inflatePropertyLayout(
 
             // IP sub property row
             viewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.let { subPropertyValues ->
-                setViewVisibility(R.id.ip_sub_property_row, View.VISIBLE)
+                setViewVisibility(com.w2sv.core.widget.R.id.ip_sub_property_row, View.VISIBLE)
 
-                val subPropertyViewIterator = sequenceOf(R.id.ip_sub_property_tv_2, R.id.ip_sub_property_tv_1).iterator()
+                val subPropertyViewIterator = sequenceOf(com.w2sv.core.widget.R.id.ip_sub_property_tv_2, com.w2sv.core.widget.R.id.ip_sub_property_tv_1).iterator()
                 subPropertyValues.reversed().forEach { value ->
                     val viewId = subPropertyViewIterator.next()
                     setTextView(
@@ -181,7 +180,7 @@ private fun inflatePropertyLayout(
                     }
                 }
                 subPropertyViewIterator.forEachRemaining { setViewVisibility(it, View.GONE) }
-            } ?: setViewVisibility(R.id.ip_sub_property_row, View.GONE)
+            } ?: setViewVisibility(com.w2sv.core.widget.R.id.ip_sub_property_row, View.GONE)
         }
 }
 

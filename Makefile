@@ -33,6 +33,9 @@ update-gradle:
 generate-dependency-graph:
 	@./gradlew generateModulesGraphvizText --no-configure-on-demand -Pmodules.graph.output.gv=all_modules
 
+generate-proto:
+	@./gradlew generateDebugProto
+
 # ==============
 # Building
 # ==============

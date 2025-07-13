@@ -21,7 +21,7 @@ sealed class WifiProperty : WidgetProperty {
         val ipPropertyOrNull: IPProperty?
             get() = this as? IPProperty
 
-        data class NonIP(override val value: String, override val label: String) : ViewData
+        data class NonIP(override val label: String, override val value: String) : ViewData
 
         data class IPProperty(override val label: String, override val value: String, private val subPropertyValues: List<String>) :
             ViewData {

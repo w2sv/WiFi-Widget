@@ -72,18 +72,18 @@ private sealed interface WidgetTheme {
     data object Light : DayOrNight(
         com.google.android.material.R.style.Theme_Material3_DynamicColors_Light,
         WidgetColors.Resources(
-            R.color.background_light,
-            R.color.default_label,
-            R.color.foreground_light
+            com.w2sv.core.widget.R.color.background_light,
+            com.w2sv.core.widget.R.color.default_label,
+            com.w2sv.core.widget.R.color.foreground_light
         )
     )
 
     data object Dark : DayOrNight(
         com.google.android.material.R.style.Theme_Material3_DynamicColors_Dark,
         WidgetColors.Resources(
-            R.color.background_dark,
-            R.color.default_label,
-            R.color.foreground_dark
+            com.w2sv.core.widget.R.color.background_dark,
+            com.w2sv.core.widget.R.color.default_label,
+            com.w2sv.core.widget.R.color.foreground_dark
         )
     )
 

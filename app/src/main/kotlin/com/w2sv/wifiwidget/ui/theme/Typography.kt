@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.theme
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
-import com.w2sv.core.common.R
+import com.w2sv.wifiwidget.R
 
 private val defaultTypography = Typography()
 private val jost = Font(R.font.jost).toFontFamily()

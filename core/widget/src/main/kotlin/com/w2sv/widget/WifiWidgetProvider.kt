@@ -10,7 +10,7 @@ import com.w2sv.androidutils.os.getIntExtraOrNull
 import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.common.utils.log
 import com.w2sv.common.utils.toMapString
-import com.w2sv.core.common.R
+import com.w2sv.core.widget.R
 import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
