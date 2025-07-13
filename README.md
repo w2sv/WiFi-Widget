@@ -101,9 +101,9 @@
 
 <h2 align="center">Architecture</h2>
 
-- Multi-modular build
-- Convention plugins for gradle code reuse whilst keeping modules independent from one another
-- "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
+- **Multi-modular build**
+- **Gradle Convention plugins** for gradle code reuse whilst keeping modules independent from one another
+- **Clean architecture** (or however you wanna call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
 <h3 align="center">Module Dependency Graph</h2>
 <p align="center">
