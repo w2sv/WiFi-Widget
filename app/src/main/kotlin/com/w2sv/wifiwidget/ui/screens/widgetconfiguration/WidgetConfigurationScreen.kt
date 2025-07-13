@@ -42,7 +42,7 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationColumn
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCardProperties
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.rememberWidgetConfigurationCards
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.ColorPickerDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.PropertyInfoDialog
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.RefreshIntervalConfigurationDialog
@@ -123,7 +123,7 @@ fun WidgetConfigurationScreen(
             }
 
             WidgetConfigurationColumn(
-                cardProperties = rememberWidgetConfigurationCardProperties(
+                cardProperties = rememberWidgetConfigurationCards(
                     widgetConfiguration = widgetVM.configuration,
                     locationAccessState = locationAccessState,
                     showInfoDialog = {

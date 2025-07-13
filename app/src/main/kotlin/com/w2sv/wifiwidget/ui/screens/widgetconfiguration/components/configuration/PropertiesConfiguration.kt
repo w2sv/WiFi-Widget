@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,8 +18,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.extensions.thenIf
 import com.w2sv.domain.model.LocationParameter
-import com.w2sv.domain.model.WidgetBottomBarElement
-import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -30,7 +27,6 @@ import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
@@ -46,169 +42,76 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-private val checkRowColumnBottomPadding = 8.dp
-
-@Immutable
-data class WidgetConfigurationCard(val iconHeaderProperties: IconHeaderProperties, val content: @Composable () -> Unit)
-
-@Composable
-fun rememberWidgetConfigurationCardProperties(
+fun propertiesConfigurationCard(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
-    showInfoDialog: (InfoDialogData) -> Unit,
-    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
-    showRefreshIntervalConfigurationDialog: () -> Unit
-): ImmutableList<WidgetConfigurationCard> =
-    remember {
-        persistentListOf(
-            WidgetConfigurationCard(
-                iconHeaderProperties = IconHeaderProperties(
-                    iconRes = R.drawable.ic_palette_24,
-                    stringRes = R.string.appearance
-                )
-            ) {
-                val coloringConfig by widgetConfiguration.coloringConfig.collectAsStateWithLifecycle()
-                val opacity by widgetConfiguration.opacity.collectAsStateWithLifecycle()
-                val fontSize by widgetConfiguration.fontSize.collectAsStateWithLifecycle()
-                val propertyValueAlignment by widgetConfiguration.propertyValueAlignment.collectAsStateWithLifecycle()
-
-                AppearanceConfiguration(
-                    coloringConfig = coloringConfig,
-                    setColoringConfig = { widgetConfiguration.coloringConfig.value = it },
-                    opacity = opacity,
-                    setOpacity = { widgetConfiguration.opacity.value = it },
-                    fontSize = fontSize,
-                    setFontSize = { widgetConfiguration.fontSize.value = it },
-                    showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
-                    propertyValueAlignment = propertyValueAlignment,
-                    setPropertyValueAlignment = { widgetConfiguration.propertyValueAlignment.value = it },
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-            },
-            WidgetConfigurationCard(
-                IconHeaderProperties(
-                    iconRes = R.drawable.ic_checklist_24,
-                    stringRes = R.string.properties,
-                    trailingIcon = {
-                        val propertiesInDefaultOrder by widgetConfiguration.propertiesInDefaultOrder.collectAsStateWithLifecycle()
-                        MoreIconButtonWithDropdownMenu(
-                            menuItems = remember {
-                                persistentListOf(
-                                    DropdownMenuItemProperties(
-                                        R.string.restore_default_order,
-                                        onClick = {
-                                            widgetConfiguration.restoreDefaultPropertyOrder()
-                                        },
-                                        enabled = { !propertiesInDefaultOrder },
-                                        leadingIconRes = R.drawable.ic_restart_alt_24
-                                    )
-                                )
-                            }
-                        )
-                    }
-                )
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp)
-                        .padding(bottom = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    WithLocalContentColor(MaterialTheme.colorScheme.onSurfaceVariantLowAlpha) {
-                        InfoIcon()
-                        Text(stringResource(R.string.wifi_property_reordering_information), fontSize = 13.sp)
-                    }
-                }
-                DragAndDroppableCheckRowColumn(
-                    elements = rememberWidgetWifiPropertyCheckRowData(
-                        widgetConfiguration = widgetConfiguration,
-                        locationAccessState = locationAccessState,
-                        showInfoDialog = showInfoDialog
-                    ),
-                    onDrop = { fromIndex: Int, toIndex: Int ->
-                        widgetConfiguration
-                            .wifiPropertyOrder
-                            .update {
-                                it
-                                    .toMutableList()
-                                    .apply { add(toIndex, removeAt(fromIndex)) }
-                            }
-                    }
-                )
-            },
-            WidgetConfigurationCard(
-                iconHeaderProperties = IconHeaderProperties(
-                    iconRes = R.drawable.ic_bottom_row_24,
-                    stringRes = R.string.bottom_bar
-                )
-            ) {
-                CheckRowColumn(
-                    elements = remember {
-                        WidgetBottomBarElement.entries.map {
-                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
-                                property = it,
-                                explanation = it.explanation,
-                                isCheckedMap = widgetConfiguration.bottomRowMap
-                            )
-                        }
-                            .toPersistentList()
-                    },
-                    modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
-                )
-            },
-            WidgetConfigurationCard(
-                iconHeaderProperties = IconHeaderProperties(
-                    iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
-                    stringRes = R.string.refreshing
-                )
-            ) {
-                CheckRowColumn(
-                    elements = remember {
+    showInfoDialog: (InfoDialogData) -> Unit
+): WidgetConfigurationCard =
+    WidgetConfigurationCard(
+        IconHeaderProperties(
+            iconRes = R.drawable.ic_checklist_24,
+            stringRes = R.string.properties,
+            trailingIcon = {
+                val propertiesInDefaultOrder by widgetConfiguration.propertiesInDefaultOrder.collectAsStateWithLifecycle()
+                MoreIconButtonWithDropdownMenu(
+                    menuItems = remember {
                         persistentListOf(
-                            CheckRowColumnElement.CheckRow.fromIsCheckedMap(
-                                property = WidgetRefreshingParameter.RefreshPeriodically,
-                                isCheckedMap = widgetConfiguration.refreshingParametersMap,
-                                showInfoDialog = {
-                                    showInfoDialog(
-                                        InfoDialogData(
-                                            titleRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
-                                            descriptionRes = R.string.refresh_periodically_info
-                                        )
-                                    )
-                                },
-                                subPropertyColumnElements = persistentListOf(
-                                    CheckRowColumnElement.Custom {
-                                        val refreshInterval by widgetConfiguration.refreshInterval.collectAsStateWithLifecycle()
-                                        RefreshIntervalConfigurationRow(
-                                            interval = refreshInterval,
-                                            showConfigurationDialog = showRefreshIntervalConfigurationDialog,
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp)
-                                        )
-                                    },
-                                    CheckRowColumnElement.CheckRow.fromIsCheckedMap(
-                                        property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                                        isCheckedMap = widgetConfiguration.refreshingParametersMap
-                                    )
-                                )
+                            DropdownMenuItemProperties(
+                                R.string.restore_default_order,
+                                onClick = { widgetConfiguration.restoreDefaultPropertyOrder() },
+                                enabled = { !propertiesInDefaultOrder },
+                                leadingIconRes = R.drawable.ic_restart_alt_24
                             )
                         )
-                    },
-                    modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
+                    }
                 )
             }
         )
+    ) {
+        PropertyReorderingInformation(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp)
+                .padding(bottom = 8.dp)
+        )
+        DragAndDroppableCheckRowColumn(
+            elements = rememberWidgetWifiPropertyCheckRowData(
+                widgetConfiguration = widgetConfiguration,
+                locationAccessState = locationAccessState,
+                showInfoDialog = showInfoDialog
+            ),
+            onDrop = { fromIndex: Int, toIndex: Int ->
+                widgetConfiguration
+                    .wifiPropertyOrder
+                    .update {
+                        it
+                            .toMutableList()
+                            .apply { add(toIndex, removeAt(fromIndex)) }
+                    }
+            }
+        )
     }
+
+@Composable
+private fun PropertyReorderingInformation(modifier: Modifier = Modifier) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        WithLocalContentColor(MaterialTheme.colorScheme.onSurfaceVariantLowAlpha) {
+            InfoIcon()
+            Text(stringResource(R.string.wifi_property_reordering_information), fontSize = 13.sp)
+        }
+    }
+}
 
 @Composable
 private fun rememberWidgetWifiPropertyCheckRowData(
     widgetConfiguration: ReversibleWidgetConfiguration,
     locationAccessState: LocationAccessState,
     showInfoDialog: (InfoDialogData) -> Unit
-): ImmutableList<CheckRowColumnElement.CheckRow<WifiProperty>> {
+): ImmutableList<ConfigurationColumnElement.CheckRow<WifiProperty>> {
     val scope: CoroutineScope = rememberCoroutineScope()
     val snackbarEmitter = rememberSnackbarEmitter()
 
@@ -250,10 +153,10 @@ private fun WifiProperty.checkRow(
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     shakeScope: CoroutineScope
-): CheckRowColumnElement.CheckRow<WifiProperty> {
+): ConfigurationColumnElement.CheckRow<WifiProperty> {
     val shakeController = ShakeController()
 
-    return CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+    return ConfigurationColumnElement.CheckRow.fromIsCheckedMap(
         property = this,
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
@@ -299,12 +202,12 @@ private fun WifiProperty.IP.subPropertyElements(
     ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     shakeScope: CoroutineScope
-): ImmutableList<CheckRowColumnElement> =
+): ImmutableList<ConfigurationColumnElement> =
     buildList {
         if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
             add(
-                CheckRowColumnElement.Custom {
-                    VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.verticalPadding))
+                ConfigurationColumnElement.Custom {
+                    VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.startPadding))
                 }
             )
         }
@@ -318,7 +221,7 @@ private fun WifiProperty.IP.subPropertyElements(
                     }
 
                 add(
-                    CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+                    ConfigurationColumnElement.CheckRow.fromIsCheckedMap(
                         property = subProperty,
                         isCheckedMap = ipSubPropertyEnablementMap,
                         allowCheckChange = { newValue ->
@@ -344,7 +247,7 @@ private fun WifiProperty.IP.subPropertyElements(
                         modifier = Modifier
                             .thenIf(
                                 condition = subProperty.isAddressTypeEnablementProperty,
-                                onTrue = { padding(start = 8.dp) }
+                                onTrue = { padding(start = 16.dp) }
                             )
                     )
                 )
@@ -356,10 +259,10 @@ private fun subPropertyElements(
     locationParameters: MutableMap<LocationParameter, Boolean>,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
-): ImmutableList<CheckRowColumnElement> =
+): ImmutableList<ConfigurationColumnElement> =
     LocationParameter.entries.map { parameter ->
         val shakeController = ShakeController()
-        CheckRowColumnElement.CheckRow.fromIsCheckedMap(
+        ConfigurationColumnElement.CheckRow.fromIsCheckedMap(
             property = parameter,
             isCheckedMap = locationParameters,
             allowCheckChange = { newValue ->

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.appearance
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
@@ -10,24 +10,58 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
+import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.WidgetConfigurationCard
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.ColorPickerDialogData
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
 import kotlin.math.roundToInt
 
 object AppearanceConfigurationDefaults {
     val verticalPadding = 12.dp
 }
+
+fun appearanceConfigurationCard(
+    widgetConfiguration: ReversibleWidgetConfiguration,
+    showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit
+): WidgetConfigurationCard =
+    WidgetConfigurationCard(
+        iconHeaderProperties = IconHeaderProperties(
+            iconRes = R.drawable.ic_palette_24,
+            stringRes = R.string.appearance
+        )
+    ) {
+        val coloringConfig by widgetConfiguration.coloringConfig.collectAsStateWithLifecycle()
+        val opacity by widgetConfiguration.opacity.collectAsStateWithLifecycle()
+        val fontSize by widgetConfiguration.fontSize.collectAsStateWithLifecycle()
+        val propertyValueAlignment by widgetConfiguration.propertyValueAlignment.collectAsStateWithLifecycle()
+
+        AppearanceConfiguration(
+            coloringConfig = coloringConfig,
+            setColoringConfig = { widgetConfiguration.coloringConfig.value = it },
+            opacity = opacity,
+            setOpacity = { widgetConfiguration.opacity.value = it },
+            fontSize = fontSize,
+            setFontSize = { widgetConfiguration.fontSize.value = it },
+            showCustomColorConfigurationDialog = showCustomColorConfigurationDialog,
+            propertyValueAlignment = propertyValueAlignment,
+            setPropertyValueAlignment = { widgetConfiguration.propertyValueAlignment.value = it },
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

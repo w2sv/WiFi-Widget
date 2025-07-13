@@ -12,10 +12,10 @@ import com.w2sv.wifiwidget.ui.utils.ShakeController
 import com.w2sv.wifiwidget.ui.utils.orAlphaDecreasedIf
 import kotlinx.collections.immutable.ImmutableList
 
-sealed interface CheckRowColumnElement {
+sealed interface ConfigurationColumnElement {
 
     @Immutable
-    data class Custom(val content: @Composable () -> Unit) : CheckRowColumnElement
+    data class Custom(val content: @Composable () -> Unit) : ConfigurationColumnElement
 
     @Immutable
     data class CheckRow<T : WidgetProperty>(
@@ -26,9 +26,9 @@ sealed interface CheckRowColumnElement {
         val show: () -> Boolean = { true },
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
-        val subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
+        val subPropertyColumnElements: ImmutableList<ConfigurationColumnElement>? = null,
         val modifier: Modifier = Modifier
-    ) : CheckRowColumnElement {
+    ) : ConfigurationColumnElement {
 
         val leadingIconAndLabelColor: Color
             @Composable
@@ -48,7 +48,7 @@ sealed interface CheckRowColumnElement {
                 show: () -> Boolean = { true },
                 showInfoDialog: (() -> Unit)? = null,
                 shakeController: ShakeController? = null,
-                subPropertyColumnElements: ImmutableList<CheckRowColumnElement>? = null,
+                subPropertyColumnElements: ImmutableList<ConfigurationColumnElement>? = null,
                 modifier: Modifier = Modifier
             ): CheckRow<T> =
                 CheckRow(

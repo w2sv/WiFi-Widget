@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration
+package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.configuration.appearance
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement

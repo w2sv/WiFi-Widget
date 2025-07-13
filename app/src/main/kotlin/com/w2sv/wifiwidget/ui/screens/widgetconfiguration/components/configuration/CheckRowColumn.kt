@@ -59,12 +59,21 @@ import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-private object CheckRowDefaults {
+object CheckRowDefaults {
     /**
      * The padding in between the leading icon (keyboard right arrow) and the property label.
      */
-    val leadingIconLabelPadding = 4.dp
+    val leadingIconLabelGap = 4.dp
+
+    /**
+     * To create a small gap in between the sub property toggle icon button background and the left card edge.
+     */
     val startPadding = 4.dp
+}
+
+object SubPropertyColumnDefaults {
+    val fontSize = 14.sp
+    val startPadding = 12.dp
 }
 
 /**
@@ -73,7 +82,7 @@ private object CheckRowDefaults {
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, modifier: Modifier = Modifier) {
+fun CheckRowColumn(elements: ImmutableList<ConfigurationColumnElement.CheckRow<*>>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         elements
             .forEach { data ->
@@ -94,7 +103,7 @@ fun CheckRowColumn(elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>, m
 
 @Composable
 fun DragAndDroppableCheckRowColumn(
-    elements: ImmutableList<CheckRowColumnElement.CheckRow<*>>,
+    elements: ImmutableList<ConfigurationColumnElement.CheckRow<*>>,
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
@@ -150,7 +159,7 @@ fun DragAndDroppableCheckRowColumn(
 }
 
 @Composable
-private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
+private fun CheckRow(data: ConfigurationColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
     CheckRowBase(
         data = data,
         leadingIcon = {
@@ -167,7 +176,7 @@ private fun CheckRow(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier
 }
 
 @Composable
-private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
+private fun CheckRowWithSubProperties(data: ConfigurationColumnElement.CheckRow<*>, modifier: Modifier = Modifier) {
     var expandSubProperties by rememberSaveable {
         mutableStateOf(false)
     }
@@ -201,35 +210,34 @@ private fun CheckRowWithSubProperties(data: CheckRowColumnElement.CheckRow<*>, m
         )
 
         AnimatedVisibility(visible = expandSubProperties) {
-            SubPropertyCheckRowColumn(elements = data.subPropertyColumnElements!!)
+            SubPropertyColumn(elements = data.subPropertyColumnElements!!)
         }
     }
 }
 
 @Composable
-private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElement>, modifier: Modifier = Modifier) {
+private fun SubPropertyColumn(elements: ImmutableList<ConfigurationColumnElement>, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .padding(horizontal = 16.dp)
             .padding(start = 24.dp) // Make background start at the indentation of CheckRowBase label
             .nestedContentBackground()
-            .padding(start = SubPropertyColumnDefaults.verticalPadding)
+            .padding(start = SubPropertyColumnDefaults.startPadding)
             .animateContentSize()
     ) {
         elements.forEach { element ->
             when (element) {
-                is CheckRowColumnElement.CheckRow<*> -> {
+                is ConfigurationColumnElement.CheckRow<*> -> {
                     if (element.show()) {
                         CheckRowBase(
                             data = element,
-                            modifier = element.modifier,
                             fontSize = SubPropertyColumnDefaults.fontSize,
                             leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
                         )
                     }
                 }
 
-                is CheckRowColumnElement.Custom -> {
+                is ConfigurationColumnElement.Custom -> {
                     element.content()
                 }
             }
@@ -237,15 +245,10 @@ private fun SubPropertyCheckRowColumn(elements: ImmutableList<CheckRowColumnElem
     }
 }
 
-object SubPropertyColumnDefaults {
-    val fontSize = 14.sp
-    val verticalPadding = 12.dp
-}
-
 @Composable
 fun VersionsHeader(modifier: Modifier = Modifier) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        SubPropertyKeyboardArrowRightIcon(modifier = Modifier.padding(end = CheckRowDefaults.leadingIconLabelPadding))
+        SubPropertyKeyboardArrowRightIcon(modifier = Modifier.padding(end = CheckRowDefaults.leadingIconLabelGap))
         Text(
             text = stringResource(R.string.versions),
             fontSize = SubPropertyColumnDefaults.fontSize,
@@ -256,7 +259,7 @@ fun VersionsHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CheckRowBase(
-    data: CheckRowColumnElement.CheckRow<*>,
+    data: ConfigurationColumnElement.CheckRow<*>,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     labelColor: Color = MaterialTheme.colorScheme.onBackground,
@@ -276,7 +279,7 @@ private fun CheckRowBase(
         ) {
             leadingIcon?.run {
                 invoke()
-                Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelPadding))
+                Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelGap))
             }
             Text(
                 text = label,
@@ -303,7 +306,7 @@ private fun CheckRowBase(
                 fontSize = 13.sp,
                 modifier = Modifier
                     .padding(start = 56.dp)
-                    .offsetClip(dy = (-10).dp)
+                    .offsetClip(dy = (-10).dp) // Shift explanation up a bit to increase its visual coherence with the main row
             )
         }
     }
