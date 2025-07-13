@@ -49,7 +49,7 @@
 
 ### In-App
 
-- Neat Material 3 Design, featuring smooth animations wherever they're appropriate
+- Neat Material 3 Design
 - Configurable theme:
     - Light / dark
     - Dynamic / static colors
@@ -61,69 +61,40 @@
 - Property copy-to-clipboard functionality on click
 - **Configuration options:**
     - Appearance:
-        - Size
-          - from 2x1 to fullscreen
+        - Size: from 2x1 to fullscreen
         - Light/dark theme with static/dynamic, or entirely custom colors
         - Background opacity
         - Font size
         - Property value alignment (left | right)
     - Displayed properties:
-        - SSID
-        - BSSID
-        - IP Addresses:
-            - Loopback
-            - Site Local
-            - Link Local
-            - Unique Local Address
-            - Multicast
-            - Global Unicast
-            - Public
-                - fetched from [api.ipify.org](https://api.ipify.org)
-            ---
-            - For address types supporting IPv4 & IPv6, you may choose which versions to include (IPv4 | Ipv6 | both)
-            - Display of prefix lengths (IPv4 & IPv6), and/or subnet masks (IPv4 only)
-        - Frequency
-        - Channel
-        - Link Speed
-        - RSSI
-        - Signal Strength
-        - Standard
-        - WiFi Generation
-        - Security Protocol
-        - Gateway
-        - DNS(s)
-        - DHCP
-        - NAT64 Prefix
-        - From [ip-api.com/](https://ip-api.com/)
-            - Location:
-                - Zip Code
-                - District
-                - City
-                - Region
-                - Country
-                - Continent
-            - GPS Location
-            - ASN
-            - ISP
+        - **Basic Info**: SSID, BSSID, Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security Protocol  
+        - **IP Addresses**:
+          - Types: Loopback, Site Local, Link Local, Unique Local, Multicast, Global Unicast, Public (via [api.ipify.org](https://api.ipify.org))
+          - Options: IPv4, IPv6, or both; show prefix lengths (IPv4/IPv6) and subnet masks (IPv4)
+        - **Network Details**: Gateway, DNS, DHCP, NAT64 Prefix  
+        - **Location Info** (via [ip-api.com](https://ip-api.com/)):
+          - Region: Zip Code, District, City, Region, Country, Continent  
+        - **Other**: GPS Location, ASN, ISP
     - Property appearance order
-    - Bottom bar elements inclusion:
+    - Bottom bar elements:
         - Last refresh date time
         - Buttons:
             - Refresh data
             - Open WiFi settings
             - Open widget settings
-    - Data refreshing:
-        - Interval
+    - Automatic data refreshing:
+        - Interval: between 15 min and 24h 
         - Whether to refresh on low battery
 
 <h2 align="center">Tech Stack</h2>
 
 - Kotlin only
-- Jetpack Compose for in-app UI, xml for widget UI
+- Jetpack Compose for in-app UI, xml & RemoteViews for widget UI
+- [Jetpack Navigation 3](https://developer.android.com/guide/navigation/navigation-3?hl=de)
 - Coroutines & flows
 - [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
 - [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
-- Proto & Preferences data store
+- Proto & Preferences data storage
 - JUnit 4, [mockito](https://github.com/mockito/mockito), [robolectric](https://robolectric.org/) & [turbine](https://github.com/cashapp/turbine) for unit testing
 - JUnit 4 Compose android (instrumented) testing
 - Androidx Macro benchmarking & baseline profile generation with app-specific usage journey, implemented with [UI Automator](https://developer.android.com/training/testing/other-components/ui-automator)
@@ -131,12 +102,12 @@
 <h2 align="center">Architecture</h2>
 
 - Multi-modular build
-- Convention plugins for gradle code reuse, whilst keeping modules independent from one another
+- Convention plugins for gradle code reuse whilst keeping modules independent from one another
 - "Clean architecture" (or however you want to call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
 
-<h3 align="center">Dependency Graph</h2>
+<h3 align="center">Module Dependency Graph</h2>
 <p align="center">
-<img src="docs/graphs/dependency_graph.svg" alt=""/>
+    <img src="docs/graphs/dependency_graph.svg" alt=""/>
 </p>
 
 <h2 align="center">Credits</h2>
