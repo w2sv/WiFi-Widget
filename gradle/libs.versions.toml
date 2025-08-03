@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.0"
+agp = "8.12.0"
 androidutils = "0.4.5-rc1"
 androidx-activity-compose = "1.10.1"
 androidxTextExtJunit = "1.2.1"
