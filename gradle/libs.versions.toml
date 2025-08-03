@@ -23,7 +23,7 @@ kotlinxCoroutines = "1.10.2"
 ksp = "2.2.0-2.0.2"
 ktlint = "13.0.0"
 lifecycle = "2.9.1"
-lifecycleViewmodelNavigation3 = "1.0.0-alpha03"
+lifecycleViewmodelNavigation3 = "1.0.0-alpha04"
 # @keep
 minSdk = "26"
 moduleGraph = "2.9.0"
