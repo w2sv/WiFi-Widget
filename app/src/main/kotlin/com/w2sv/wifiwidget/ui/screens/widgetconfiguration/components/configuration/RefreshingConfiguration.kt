@@ -22,8 +22,8 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.time.Duration
+import kotlinx.collections.immutable.persistentListOf
 
 fun refreshingConfigurationCard(
     widgetConfiguration: ReversibleWidgetConfiguration,

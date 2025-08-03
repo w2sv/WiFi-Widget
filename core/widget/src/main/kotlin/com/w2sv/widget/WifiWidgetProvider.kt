@@ -1,27 +1,21 @@
 package com.w2sv.widget
 
 import android.appwidget.AppWidgetManager
-import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
-import android.os.Bundle
 import android.widget.RemoteViews
 import com.w2sv.androidutils.os.getIntExtraOrNull
-import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.common.utils.log
-import com.w2sv.common.utils.toMapString
 import com.w2sv.core.widget.R
 import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import slimber.log.i
 
 @AndroidEntryPoint
-class WifiWidgetProvider : AppWidgetProvider() {
+class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
     @Inject
     internal lateinit var widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager
@@ -35,10 +29,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
     @Inject
     internal lateinit var widgetRepository: WidgetModuleWidgetRepository
 
-    @Inject
-    @AppDefaultScope
-    internal lateinit var scope: CoroutineScope
-
     /**
      * Called upon the first AppWidget instance being created.
      *
@@ -46,8 +36,6 @@ class WifiWidgetProvider : AppWidgetProvider() {
      */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        i { "onEnabled" }
-
         widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshing.value)
     }
 
@@ -58,14 +46,11 @@ class WifiWidgetProvider : AppWidgetProvider() {
      */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        i { "onDisabled" }
-
         widgetDataRefreshWorkerManager.cancelWorker()
     }
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
-        i { "onReceive | Action=${intent.action} | Extras=${intent.extras?.toMapString()}" }
 
         if (intent.action == ACTION_REFRESH_DATA) {
             onUpdate(
@@ -80,41 +65,26 @@ class WifiWidgetProvider : AppWidgetProvider() {
         }
     }
 
-    override fun onAppWidgetOptionsChanged(
-        context: Context?,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetId: Int,
-        newOptions: Bundle?
-    ) {
-        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
-        i { "onAppWidgetOptionsChanged | Bundle=${newOptions?.toMapString()}" }
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-        scope.launch {
-            i { "onUpdate | appWidgetIds=${appWidgetIds.toList()} | ${Thread.currentThread()}" }
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
 
-            val widgetView = RemoteViews(
-                context.packageName,
-                R.layout.widget
-            )
+        appWidgetIds.forEach { id ->
+            i { "updateWidget | appWidgetId=$id" }
 
-            appWidgetIds.forEach { id ->
-                i { "updateWidget | appWidgetId=$id" }
-
-                appWidgetManager.updateAppWidget(
-                    id,
-                    widgetLayoutPopulator
-                        .populate(
-                            widget = widgetView,
-                            appWidgetId = id
-                        )
+            appWidgetManager.updateAppWidget(
+                id,
+                widgetLayoutPopulator.populate(
+                    widget = RemoteViews(
+                        context.packageName,
+                        R.layout.widget
+                    ),
+                    appWidgetId = id
                 )
-            }
+            )
         }
     }
 

@@ -305,7 +305,8 @@ fun PropertyConfigurationRow(
         modifier = modifier
             .fillMaxWidth()
             .padding(start = CheckRowDefaults.startPadding)
-            .thenIfNotNull(shakeController) { shake(it) }) {
+            .thenIfNotNull(shakeController) { shake(it) }
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
