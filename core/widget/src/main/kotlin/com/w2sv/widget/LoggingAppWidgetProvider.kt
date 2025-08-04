@@ -5,7 +5,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import com.w2sv.common.utils.toMapString
+import com.w2sv.androidutils.os.toMapString
 import slimber.log.i
 
 /**
