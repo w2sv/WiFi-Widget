@@ -18,7 +18,7 @@ android {
         versionName = version.toString()
 
         // Name built bundles "{versionName}-{buildFlavor}.aab"
-        setProperty("archivesBaseName", versionName)
+//        setProperty("archivesBaseName", versionName)
     }
     signingConfigs {
         create("release") {

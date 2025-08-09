@@ -36,7 +36,6 @@ reversiblestate = "0.0.6-rc2"
 runner = "1.6.2"
 triplet-play = "3.12.1"
 versionCatalogUpdate = "1.0.0"
-versions = "0.52.0"
 
 [libraries]
 # @keep
@@ -134,7 +133,6 @@ module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "module
 play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 protobuf = { id = "com.google.protobuf", version.ref = "protobuf-plugin" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
-versions = { id = "com.github.ben-manes.versions", version.ref = "versions" }
 # @keep
 wifiwidget-application = { id = "wifiwidget.application" }
 # @keep
