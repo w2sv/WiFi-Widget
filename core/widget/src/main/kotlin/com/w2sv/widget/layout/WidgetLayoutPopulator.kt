@@ -100,7 +100,8 @@ internal class WidgetLayoutPopulator @Inject constructor(
                             R.string.no_wifi_connection
                         }
                     ),
-                    color = colors.secondary
+                    color = colors.secondary,
+                    size = appearance.fontSize.value + 2
                 )
 
                 setOnClickPendingIntent(
