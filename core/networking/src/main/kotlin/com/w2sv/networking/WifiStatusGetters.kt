@@ -6,8 +6,8 @@ import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.networking.extensions.isActiveNetworkWifi
 import com.w2sv.networking.extensions.isAnyWifiConnected
-import slimber.log.d
 import javax.inject.Inject
+import slimber.log.d
 
 fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus {
     d {

@@ -38,4 +38,3 @@ internal val ConnectivityManager.isAnyWifiConnected: Boolean
  */
 private fun ConnectivityManager.isWifiConnection(network: Network): Boolean =
     getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
-
