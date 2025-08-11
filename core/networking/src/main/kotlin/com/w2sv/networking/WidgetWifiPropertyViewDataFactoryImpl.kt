@@ -93,15 +93,17 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private suspend fun WifiProperty.NonIP.getValues(
         ipApiData: GetIpApiData,
         locationParameters: () -> Collection<LocationParameter>
-    ): List<String> =
-        buildList {
+    ): List<String> {
+        val dhcpInfo by lazy { wifiManager.dhcpInfo }
+        val connectionInfo by lazy { wifiManager.connectionInfo }
+        return buildList {
             when (this@getValues) {
                 WifiProperty.NonIP.Other.DNS -> {
                     add(
-                        textualIPv4Representation(wifiManager.dhcpInfo.dns1)
+                        textualIPv4Representation(dhcpInfo.dns1)
                             ?: IPAddress.Version.V4.fallbackAddress
                     )
-                    textualIPv4Representation(wifiManager.dhcpInfo.dns2)?.let { address ->
+                    textualIPv4Representation(dhcpInfo.dns2)?.let { address ->
                         if (address != IPAddress.Version.V4.fallbackAddress) {
                             add(address)
                         }
@@ -109,24 +111,24 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 }
 
                 WifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
-                    wifiManager.connectionInfo.ssid
+                    connectionInfo.ssid
                         ?.replace("\"", "")
                         .takeIf { it != "<unknown ssid>" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
                 WifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
-                    wifiManager.connectionInfo.bssid
+                    connectionInfo.bssid
                         ?.takeIf { it != "02:00:00:00:00:00" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
-                WifiProperty.NonIP.Other.Frequency -> add("${wifiManager.connectionInfo.frequency} MHz")
-                WifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(wifiManager.connectionInfo.frequency).toString())
-                WifiProperty.NonIP.Other.LinkSpeed -> add("${wifiManager.connectionInfo.linkSpeed} Mbps")
-                WifiProperty.NonIP.Other.RSSI -> add("${wifiManager.connectionInfo.rssi} dBm")
+                WifiProperty.NonIP.Other.Frequency -> add("${connectionInfo.frequency} MHz")
+                WifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(connectionInfo.frequency).toString())
+                WifiProperty.NonIP.Other.LinkSpeed -> add("${connectionInfo.linkSpeed} Mbps")
+                WifiProperty.NonIP.Other.RSSI -> add("${connectionInfo.rssi} dBm")
                 WifiProperty.NonIP.Other.SignalStrength -> {
-                    val rssi = wifiManager.connectionInfo.rssi
+                    val rssi = connectionInfo.rssi
                     add(
                         resources.getString(
                             when {
@@ -142,7 +144,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
                 WifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
-                        when (wifiManager.connectionInfo.wifiStandard) {
+                        when (connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "802.11ac"
                             ScanResult.WIFI_STANDARD_11AD -> "802.11ad"
                             ScanResult.WIFI_STANDARD_11AX -> "802.11ax"
@@ -156,7 +158,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
                 WifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
-                        when (wifiManager.connectionInfo.wifiStandard) {
+                        when (connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5"
                             ScanResult.WIFI_STANDARD_11AD -> "WiGig"
                             ScanResult.WIFI_STANDARD_11AX -> "Wi-Fi 6"
@@ -170,7 +172,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
 
                 WifiProperty.NonIP.Other.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     add(
-                        when (wifiManager.connectionInfo.currentSecurityType) {
+                        when (connectionInfo.currentSecurityType) {
                             WifiInfo.SECURITY_TYPE_OPEN -> "Open"
                             WifiInfo.SECURITY_TYPE_WEP -> "WEP"
                             WifiInfo.SECURITY_TYPE_PSK -> "PSK (WPA/WPA2)"
@@ -190,12 +192,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 }
 
                 WifiProperty.NonIP.Other.Gateway -> add(
-                    textualIPv4Representation(wifiManager.dhcpInfo.gateway)
+                    textualIPv4Representation(dhcpInfo.gateway)
                         ?: IPAddress.Version.V4.fallbackAddress
                 )
 
                 WifiProperty.NonIP.Other.DHCP -> add(
-                    textualIPv4Representation(wifiManager.dhcpInfo.serverAddress)
+                    textualIPv4Representation(dhcpInfo.serverAddress)
                         ?: IPAddress.Version.V4.fallbackAddress
                 )
 
@@ -209,10 +211,10 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                 WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(locationParameters()) }?.let(::add)
                 WifiProperty.NonIP.Other.IpGpsLocation -> ipApiData().viewDataValue { it.gpsCoordinates }?.let(::add)
                 WifiProperty.NonIP.Other.ISP -> ipApiData().viewDataValue { it.isp }?.let(::add)
-//                WifiProperty.NonIP.Other.AS -> ipApiData().viewDataValue { it.asName }?.let(::add)
                 WifiProperty.NonIP.Other.ASN -> ipApiData().viewDataValue { it.asn }?.let(::add)
             }
         }
+    }
 
     private suspend fun WifiProperty.IP.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
