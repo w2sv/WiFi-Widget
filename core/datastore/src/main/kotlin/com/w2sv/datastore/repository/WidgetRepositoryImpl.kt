@@ -53,7 +53,7 @@ internal class WidgetRepositoryImpl @Inject constructor(
 
     override val fontSize = enumDataStoreFlow(
         key = intPreferencesKey("fontSize"),
-        default = { FontSize.Small }
+        default = { FontSize.Medium }
     )
 
     override val propertyValueAlignment = enumDataStoreFlow(
