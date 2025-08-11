@@ -2,16 +2,28 @@ package com.w2sv.networking
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
+import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiStatus
-import com.w2sv.networking.extensions.isWifiConnected
+import com.w2sv.networking.extensions.isActiveNetworkWifi
+import com.w2sv.networking.extensions.isAnyWifiConnected
+import slimber.log.d
 import javax.inject.Inject
 
-fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus =
-    when {
+fun getWifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus {
+    d {
+        "isWifiEnabled=${wifiManager.isWifiEnabled} | " +
+            "isWifiConnected=${connectivityManager.isActiveNetworkWifi} | " +
+            "isDefaultNetworkActive=${connectivityManager.isDefaultNetworkActive} | " +
+            "activeNetwork=${connectivityManager.activeNetwork}"
+    }
+    return when {
         !wifiManager.isWifiEnabled -> WifiStatus.Disabled
-        connectivityManager.isWifiConnected == true -> WifiStatus.Connected
+        connectivityManager.isActiveNetworkWifi -> WifiStatus.Connected
+        connectivityManager.isAnyWifiConnected -> WifiStatus.ConnectedInactive
         else -> WifiStatus.Disconnected
     }
+        .log("Determined WifiStatus")
+}
 
 internal fun WifiManager.getNoConnectionPresentStatus(): WifiStatus =
     if (isWifiEnabled) WifiStatus.Disconnected else WifiStatus.Disabled

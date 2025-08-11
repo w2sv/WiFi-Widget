@@ -25,6 +25,7 @@
     <string name="disabled">Disabled</string>
     <string name="disconnected">Disconnected</string>
     <string name="connected">Connected</string>
+    <string name="connected_inactive">Connected, inactive</string>
 
     <string name="loopback">Loopback</string>
     <string name="site_local_ip">Site Local IP</string>

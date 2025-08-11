@@ -2,6 +2,7 @@ package com.w2sv.networking.extensions
 
 import android.net.ConnectivityManager
 import android.net.LinkProperties
+import android.net.Network
 import android.net.NetworkCapabilities
 
 /**
@@ -15,11 +16,26 @@ internal val ConnectivityManager.linkProperties: LinkProperties?
     get() = getLinkProperties(activeNetwork)
 
 /**
- * activeNetwork: null when there is no default network, or when the default network is blocked.
- * getNetworkCapabilities: null if the network is unknown or if the |network| argument is null.
+ * @return `true` if the active default network uses Wi-Fi transport.
+ * Wi-Fi may still be connected but return `false` here if another network
+ * (e.g., mobile data) is the default route.
  *
- * Reference: https://stackoverflow.com/questions/3841317/how-do-i-see-if-wi-fi-is-connected-on-android
+ * @see ConnectivityManager.getActiveNetwork
  */
-internal val ConnectivityManager.isWifiConnected: Boolean?
-    get() =
-        getNetworkCapabilities(activeNetwork)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+internal val ConnectivityManager.isActiveNetworkWifi: Boolean
+    get() = activeNetwork?.let(::isWifiConnection) ?: false
+
+/**
+ * @return `true` if any connected network uses Wi-Fi transport, regardless of
+ * whether it is the active default route for internet traffic.
+ */
+internal val ConnectivityManager.isAnyWifiConnected: Boolean
+    @Suppress("DEPRECATION")
+    get() = allNetworks.any { isWifiConnection(it) }
+
+/**
+ * @return `true` if [network] uses Wi-Fi transport.
+ */
+private fun ConnectivityManager.isWifiConnection(network: Network): Boolean =
+    getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+

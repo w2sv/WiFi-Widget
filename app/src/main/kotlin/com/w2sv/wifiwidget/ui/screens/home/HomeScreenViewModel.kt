@@ -43,7 +43,7 @@ class HomeScreenViewModel @Inject constructor(
         when (wifiStatus) {
             WifiStatus.Disabled -> WifiState.Disabled
             WifiStatus.Disconnected -> WifiState.Disconnected
-            WifiStatus.Connected -> WifiState.Connected(
+            WifiStatus.Connected, WifiStatus.ConnectedInactive -> WifiState.Connected(
                 viewDataFlow = wifiPropertyViewDataFactory(
                     properties = enabledWifiProperties,
                     getIpSubProperties = { enabledIpSubProperties },
