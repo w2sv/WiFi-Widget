@@ -54,9 +54,9 @@
             android:id="@+id/last_updated_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="6dp"
             tools:ignore="RelativeOverlap" />
 
+        <!-- Spacer in between text at the start and buttons at the end -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -66,12 +66,14 @@
         <ImageButton
             android:id="@+id/refresh_button"
             style="@style/BottomBarButton"
+            android:layout_marginEnd="8dp"
             android:contentDescription="@string/refresh_data"
             android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
             android:id="@+id/go_to_wifi_settings_button"
             style="@style/BottomBarButton"
+            android:layout_marginEnd="8dp"
             android:contentDescription="@string/open_wifi_settings_button"
             android:src="@drawable/ic_wifi_settings_24" />
 
