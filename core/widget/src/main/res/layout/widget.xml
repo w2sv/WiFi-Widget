@@ -49,7 +49,8 @@
         android:id="@+id/bottom_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="4dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="4dp"
         android:gravity="center_vertical"
         android:weightSum="1">
 
