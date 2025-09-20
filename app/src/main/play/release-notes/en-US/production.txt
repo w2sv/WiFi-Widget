@@ -1,4 +1,7 @@
-- Target Android 16
-- Smoother screen transitions
-- More refined and user-friendly UI
-- Performance improvements and bug fixes
+- Fix: blank widget on Pixels with Android 16 build BP3A.250905.014
+- Show wifi details for inactive connected networks
+- Make bottom bar button larger
+- Enable edge-to-edge on widget
+- Set default font size to medium
+
+Note: you will need to set up a new widget
