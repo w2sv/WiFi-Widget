@@ -113,7 +113,7 @@ private fun getDynamicWidgetColors(context: Context, @StyleRes wrapperTheme: Int
         .obtainStyledAttributes(
             intArrayOf(
                 com.google.android.material.R.attr.colorSurface,
-                com.google.android.material.R.attr.colorPrimary,
+                com.google.android.material.R.attr.colorPrimaryFixed,
                 com.google.android.material.R.attr.colorSecondary
             )
         )
