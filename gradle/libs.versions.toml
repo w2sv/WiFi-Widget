@@ -80,7 +80,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 # @keep
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
-mockito-android = "org.mockito:mockito-android:5.18.0"
+mockito-android = "org.mockito:mockito-android:5.20.0"
 mockito-kotlin = "org.mockito.kotlin:mockito-kotlin:6.0.0"
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 protobuf-kotlin-lite = { module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
