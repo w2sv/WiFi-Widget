@@ -10,6 +10,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
+import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import slimber.log.i

@@ -5,7 +5,6 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
-import android.widget.RemoteViewsService
 import androidx.annotation.LayoutRes
 import androidx.core.text.buildSpannedString
 import androidx.core.text.scale
@@ -19,6 +18,7 @@ import com.w2sv.domain.model.WifiProperty
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.model.WidgetColors
+import com.w2sv.widget.utils.logging.LoggingRemoteViewsFactory
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -31,7 +31,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val widgetRepository: WidgetModuleWidgetRepository,
     private val viewDataFactory: WifiProperty.ViewData.Factory
-) : RemoteViewsService.RemoteViewsFactory {
+) : LoggingRemoteViewsFactory() {
 
     private lateinit var viewData: List<WifiProperty.ViewData>
     private lateinit var widgetColors: WidgetColors
@@ -39,12 +39,12 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     private var layout by Delegates.notNull<Int>()
 
     override fun onCreate() {
-        i { "onCreate" }
+        super.onCreate()
         updateViewData()
     }
 
     override fun onDataSetChanged() {
-        i { "onDataSetChanged | ${Thread.currentThread()}" }
+        super.onDataSetChanged()
         updateViewData()
     }
 
@@ -105,10 +105,6 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
 
     override fun hasStableIds(): Boolean =
         true
-
-    override fun onDestroy() {
-        i { "onDestroy" }
-    }
 }
 
 private fun inflatePropertyLayout(

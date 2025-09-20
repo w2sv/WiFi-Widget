@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.utils.logging
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -9,7 +9,7 @@ import com.w2sv.androidutils.os.toMapString
 import slimber.log.i
 
 /**
- * An [AppWidgetProvider] that logs upon invocation of its callbacks.
+ * An [android.appwidget.AppWidgetProvider] that logs upon invocation of its callbacks.
  */
 abstract class LoggingAppWidgetProvider : AppWidgetProvider() {
 
