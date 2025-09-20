@@ -33,18 +33,22 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     private val viewDataFactory: WifiProperty.ViewData.Factory
 ) : RemoteViewsService.RemoteViewsFactory {
 
-    override fun onCreate() {
-        i { "onCreate" }
-    }
-
     private lateinit var viewData: List<WifiProperty.ViewData>
     private lateinit var widgetColors: WidgetColors
     private lateinit var fontSize: FontSize
     private var layout by Delegates.notNull<Int>()
 
+    override fun onCreate() {
+        i { "onCreate" }
+        updateViewData()
+    }
+
     override fun onDataSetChanged() {
         i { "onDataSetChanged | ${Thread.currentThread()}" }
+        updateViewData()
+    }
 
+    private fun updateViewData() {
         runBlocking {
             viewData = viewDataFactory(
                 properties = widgetRepository.sortedEnabledWifiProperties.value,
