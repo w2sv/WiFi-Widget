@@ -15,6 +15,7 @@
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- clipToPadding makes paddingVertical scrollable -->
         <ListView
             android:id="@+id/wifi_property_list_view"
             android:layout_width="match_parent"
@@ -22,7 +23,9 @@
             android:divider="@null"
             android:gravity="center"
             android:orientation="vertical"
-            android:scrollbars="none" />
+            android:scrollbars="none"
+            android:paddingVertical="6dp"
+            android:clipToPadding="false" />
 
         <LinearLayout
             android:id="@+id/no_connection_available_layout"
@@ -46,7 +49,7 @@
         android:id="@+id/bottom_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="1dp"
+        android:paddingVertical="4dp"
         android:gravity="center_vertical"
         android:weightSum="1">
 
