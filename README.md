@@ -1,11 +1,21 @@
 <p align="center">
   <a href=""><img width="200" height="200" src="https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/res/mipmap-xxxhdpi/logo_round.png" alt=""></a>
 </p>
-<h1 align="center">WiFi Widget</h1>
+
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>WiFi Widget</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 <p align="center">
-  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DPlay%2520Store%26m%3D%24version" alt=""/>
+  <img src="https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.w2sv.wifiwidget%26l%3DPlay%2520Store%26m%3D%24version"/>
   <img alt="F-Droid" src="https://img.shields.io/f-droid/v/com.w2sv.wifiwidget">
+  <img src="https://img.shields.io/f-droid/v/com.w2sv.wifiwidget?baseUrl=https://apt.izzysoft.de/fdroid&label=IzzyOnDroid">
   <img alt="GitHub release (latest by date including pre-releases)" src="https://img.shields.io/github/v/release/w2sv/WiFi-Widget?include_prereleases"/>
 
   <br>
@@ -31,21 +41,36 @@
 
 ------
 
-<h2 align="center">Screenshots</h2>
-
 | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/1.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/2.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/3.jpg) |
 |----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|
 | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/4.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/5.jpg) | ![](https://github.com/w2sv/WiFi-Widget/blob/main/app/src/main/play/listings/en-US/graphics/phone-screenshots/6.jpg) |
 
-<h2 align="center">Download</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Where to get it</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 <p align="center">
 <a href="https://play.google.com/store/apps/details?id=com.w2sv.wifiwidget"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png" height="80"/></a>
 <a href="https://f-droid.org/packages/com.w2sv.wifiwidget/"><img alt="Download from F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="80"/></a>
+<a href="https://apt.izzysoft.de/packages/com.w2sv.wifiwidget"><img alt="Download from IzzyOnDroid" src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" height="80"/></a>
 <a href="https://github.com/w2sv/WiFi-Widget/releases/latest"><img alt="Get it on GitHub" src="https://github.com/machiav3lli/oandbackupx/blob/034b226cea5c1b30eb4f6a6f313e4dadcbb0ece4/badge_github.png" height="80"/></a>
 </p>
 
-<h2 align="center">Features</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Features</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 ### In-App
 
@@ -86,7 +111,15 @@
         - Interval: between 15 min and 24h 
         - Whether to refresh on low battery
 
-<h2 align="center">Tech Stack</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Tech Stack</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 - Kotlin only
 - Jetpack Compose for in-app UI, xml & RemoteViews for widget UI
@@ -99,18 +132,33 @@
 - JUnit 4 Compose android (instrumented) testing
 - Androidx Macro benchmarking & baseline profile generation with app-specific usage journey, implemented with [UI Automator](https://developer.android.com/training/testing/other-components/ui-automator)
 
-<h2 align="center">Architecture</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Architecture</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 - **Multi-modular build**
 - **Gradle Convention plugins** for gradle code reuse whilst keeping modules independent from one another
-- **Clean architecture** (or however you wanna call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces
+- **Clean architecture** (or however you wanna call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces:
 
-<h3 align="center">Module Dependency Graph</h2>
 <p align="center">
     <img src="docs/graphs/dependency_graph.svg" alt=""/>
 </p>
 
-<h2 align="center">Credits</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Credits</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 <p align="center">
 Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> taken
@@ -119,13 +167,29 @@ where it is licensed
 under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.
 </p>
 
-<h2 align="center">Donations</h2>
-<br>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>Donations</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
+
 <p align="center">
 <a href="https://www.buymeacoffee.com/w2sv" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: 41px !important;width: 174px !important" ></a>
 </p>
 
-<h2 align="center">License</h2>
+<div id="user-content-toc">
+  <ul style="list-style: none; padding-left: 0;">
+    <summary>
+      <div align="center">
+        <h1>License</h1>
+      </div>
+    </summary>
+  </ul>
+</div>
 
 <p align="center">
 <a href="https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE">GPL-3.0 License</a> © <a href="https://github.com/w2sv">w2sv</a> [2022 - Present]
