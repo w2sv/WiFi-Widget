@@ -4,6 +4,9 @@ import android.net.ConnectivityManager
 import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.TransportInfo
+import android.os.Build
+import androidx.annotation.RequiresApi
 
 /**
  * @return the [LinkProperties] for the currently active network, retrieved via [ConnectivityManager.getActiveNetwork] or `null` if:
@@ -22,7 +25,7 @@ internal val ConnectivityManager.linkProperties: LinkProperties?
  *
  * @see ConnectivityManager.getActiveNetwork
  */
-internal val ConnectivityManager.isActiveNetworkWifi: Boolean
+internal val ConnectivityManager.activeNetworkIsWifi: Boolean
     get() = activeNetwork?.let(::isWifiConnection) ?: false
 
 /**
@@ -38,3 +41,7 @@ internal val ConnectivityManager.isAnyWifiConnected: Boolean
  */
 private fun ConnectivityManager.isWifiConnection(network: Network): Boolean =
     getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+
+@get:RequiresApi(Build.VERSION_CODES.Q)
+internal val ConnectivityManager.activeNetworkTransportInfo: TransportInfo?
+    get() = getNetworkCapabilities(activeNetwork)?.transportInfo
