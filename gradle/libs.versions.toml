@@ -36,7 +36,7 @@ protobuf-plugin = "0.9.5"
 reversiblestate = "0.0.6-rc2"
 runner = "1.7.0"
 triplet-play = "3.12.1"
-versionCatalogUpdate = "1.0.0"
+versionCatalogUpdate = "1.0.1"
 
 [libraries]
 # @keep
