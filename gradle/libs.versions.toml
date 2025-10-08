@@ -28,7 +28,7 @@ lifecycleViewmodelNavigation3 = "2.10.0-alpha03"
 # @keep
 minSdk = "26"
 moduleGraph = "2.9.0"
-nav3Core = "1.0.0-alpha09"
+nav3Core = "1.0.0-alpha11"
 okhttp = "5.1.0"
 profileinstaller = "1.4.1"
 protobuf = "4.32.1"
