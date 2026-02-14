@@ -25,7 +25,4 @@ internal class PreferencesRepositoryImpl @Inject constructor(dataStore: DataStor
 
     override val useAmoledBlackTheme =
         dataStoreFlow(booleanPreferencesKey("useAmoledBlackTheme")) { false }
-
-    override val propertyReorderingDiscoveryShown: DataStoreFlow<Boolean> =
-        dataStoreFlow(booleanPreferencesKey("propertyReorderingDiscoveryShown")) { false }
 }

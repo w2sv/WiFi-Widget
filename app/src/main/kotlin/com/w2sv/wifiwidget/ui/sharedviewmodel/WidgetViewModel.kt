@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WidgetColoring
-import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
@@ -23,33 +22,23 @@ import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidget
 import com.w2sv.wifiwidget.ui.utils.reversibleStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
-    private val preferencesRepository: PreferencesRepository,
     @param:MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
     @ApplicationContext context: Context,
     @param:WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) : ViewModel() {
-
-    val propertyReorderingDiscoveryShown =
-        preferencesRepository.propertyReorderingDiscoveryShown.stateIn(viewModelScope, SharingStarted.WhileSubscribed()) { true }
-
-    fun savePropertyReorderingDiscoveryShown() {
-        viewModelScope.launch {
-            preferencesRepository.propertyReorderingDiscoveryShown.save(true)
-        }
-    }
 
     // =========
     // Pinning
