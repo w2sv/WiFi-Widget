@@ -4,7 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.w2sv.androidutils.os.getIntExtraOrNull
+import com.w2sv.androidutils.content.getIntExtraOrNull
+import com.w2sv.androidutils.content.intent
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.widget.data.WidgetModuleWidgetRepository
@@ -12,8 +13,8 @@ import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WifiWidgetProvider : LoggingAppWidgetProvider() {
@@ -100,7 +101,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
         }
 
         fun getRefreshDataIntent(context: Context, widgetId: Int = WIDGET_ID_UNSPECIFIED): Intent =
-            Intent(context, WifiWidgetProvider::class.java)
+            intent<WifiWidgetProvider>(context)
                 .setAction(ACTION_REFRESH_DATA)
                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
 

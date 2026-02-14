@@ -7,7 +7,7 @@ import org.gradle.api.Project
 class LibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.applyPlugins("android-library", "kotlin-android", catalog = catalog)
+            pluginManager.applyPlugins("android-library", catalog = catalog)
             applyBaseConfig()
         }
     }

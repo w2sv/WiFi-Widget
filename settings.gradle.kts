@@ -23,6 +23,7 @@ rootProject.name = "WiFi_Widget"
 include(":app")
 include(":benchmarking")
 include(":core:datastore")
+include(":core:datastore-proto")
 include(":core:domain")
 include(":core:common")
 include(":core:networking")

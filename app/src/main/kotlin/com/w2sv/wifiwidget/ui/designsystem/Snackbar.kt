@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.CollectLatestFromFlow
+import com.w2sv.composed.core.CollectLatestFromFlow
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
 import com.w2sv.wifiwidget.ui.utils.SnackbarEmitter

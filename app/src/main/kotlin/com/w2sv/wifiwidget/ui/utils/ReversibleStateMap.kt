@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.utils
 
-import com.w2sv.composed.extensions.toMutableStateMap
+import com.w2sv.composed.core.extensions.toMutableStateMap
 import com.w2sv.datastoreutils.preferences.map.DataStoreFlowMap
 import com.w2sv.reversiblestate.ReversibleStateMap
 import com.w2sv.reversiblestate.datastore.android.reversibleStateMap

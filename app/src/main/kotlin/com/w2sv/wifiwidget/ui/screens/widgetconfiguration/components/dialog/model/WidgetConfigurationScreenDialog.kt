@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.w2sv.composed.nullableListSaver
+import com.w2sv.composed.core.nullableListSaver
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
 @Immutable

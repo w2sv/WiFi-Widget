@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.extensions.thenIf
-import com.w2sv.composed.isPortraitModeActive
+import com.w2sv.composed.core.extensions.thenIf
+import com.w2sv.composed.core.isPortraitModeActive
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties

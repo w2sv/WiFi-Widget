@@ -11,9 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.w2sv.androidutils.openAppSettings
+import com.w2sv.androidutils.content.openAppSettings
 import com.w2sv.common.utils.log
-import com.w2sv.composed.CollectFromFlow
+import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.composed.permissions.extensions.isLaunchingSuppressed
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.widget.WifiWidgetProvider

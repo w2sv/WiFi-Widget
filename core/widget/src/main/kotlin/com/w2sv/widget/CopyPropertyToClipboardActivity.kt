@@ -7,15 +7,15 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.ComponentActivity
-import com.w2sv.androidutils.os.getParcelableCompat
+import com.w2sv.androidutils.content.getParcelableCompat
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.common.utils.ToastManager
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {

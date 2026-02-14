@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.composed.extensions.thenIf
+import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.wifiwidget.R

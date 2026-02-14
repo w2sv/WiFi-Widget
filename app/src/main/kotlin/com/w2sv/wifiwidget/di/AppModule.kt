@@ -3,14 +3,15 @@ package com.w2sv.wifiwidget.di
 import android.content.Context
 import android.location.LocationManager
 import androidx.compose.material3.SnackbarVisuals
+import com.w2sv.androidutils.service.systemService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Qualifier
 import javax.inject.Singleton
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -31,5 +32,5 @@ object AppModule {
     @Provides
     @Singleton
     fun locationManager(@ApplicationContext context: Context): LocationManager =
-        context.getSystemService(LocationManager::class.java)
+        context.systemService()
 }

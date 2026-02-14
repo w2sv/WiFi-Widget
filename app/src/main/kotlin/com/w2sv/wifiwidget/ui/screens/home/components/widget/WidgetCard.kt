@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.accompanist.permissions.isGranted
-import com.w2sv.androidutils.isLocationEnabledCompat
-import com.w2sv.composed.CollectLatestFromFlow
+import com.w2sv.androidutils.location.isLocationEnabledCompat
+import com.w2sv.composed.core.CollectLatestFromFlow
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.LocalLocationManager
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals

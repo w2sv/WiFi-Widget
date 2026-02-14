@@ -11,7 +11,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.w2sv.androidutils)
-    implementation(libs.slimber)
     implementation(libs.okhttp3)
     testImplementation(libs.bundles.unitTest)
 }

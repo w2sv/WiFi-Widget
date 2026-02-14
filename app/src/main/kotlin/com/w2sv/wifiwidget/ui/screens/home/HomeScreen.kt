@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.composed.CollectFromFlow
-import com.w2sv.composed.isLandscapeModeActive
+import com.w2sv.composed.core.CollectFromFlow
+import com.w2sv.composed.core.isLandscapeModeActive
 import com.w2sv.wifiwidget.ui.LocalLocationAccessState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.AppTopBar
