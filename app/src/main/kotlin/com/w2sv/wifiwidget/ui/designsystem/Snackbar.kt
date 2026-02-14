@@ -78,8 +78,8 @@ sealed interface SnackbarKind {
 @Composable
 fun AppSnackbarHost(snackbarEmitter: SnackbarEmitter = rememberSnackbarEmitter(), appVM: AppViewModel = activityViewModel()) {
     // Show Snackbars collected from sharedSnackbarVisuals
-    CollectLatestFromFlow(appVM.makeSnackbarVisualsFlow) { makeSnackbarVisuals ->
-        snackbarEmitter.dismissCurrentAndShowSuspending { makeSnackbarVisuals() }
+    CollectLatestFromFlow(appVM.snackbarBuilderFlow) { builder ->
+        snackbarEmitter.dismissCurrentAndShowSuspending { builder() }
     }
 
     SnackbarHost(snackbarEmitter.snackbarHostState) { snackbarData ->

@@ -5,23 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
-import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
-import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
+import com.w2sv.wifiwidget.ui.snackbarvisuals.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
-    @MutableMakeSnackbarVisualsFlow makeSnackbarVisualsFlow: MutableSharedFlow<MakeSnackbarVisuals>,
+    val snackbarBuilderFlow: SharedFlow<@JvmSuppressWildcards SnackbarBuilder>,
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
-
-    val makeSnackbarVisualsFlow = makeSnackbarVisualsFlow.asSharedFlow()
 
     val theme = preferencesRepository.inAppTheme.stateIn(
         viewModelScope,

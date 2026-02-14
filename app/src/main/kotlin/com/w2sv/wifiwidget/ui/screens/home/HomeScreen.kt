@@ -35,11 +35,11 @@ import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
+import com.w2sv.wifiwidget.ui.utils.ModifierReceivingComposable
+import com.w2sv.wifiwidget.ui.utils.rememberMovableContentOf
 import kotlinx.coroutines.launch
 import slimber.log.i
 import java.util.Calendar
-
-private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
 @Composable
 fun HomeScreen(
@@ -56,15 +56,11 @@ fun HomeScreen(
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
 
-            val wifiStatusCard: ModifierReceivingComposable = remember {
-                movableContentOf { mod ->
-                    WifiStatusCard(wifiState = wifiState, modifier = mod)
-                }
+            val wifiStatusCard: ModifierReceivingComposable = rememberMovableContentOf {
+                WifiStatusCard(wifiState = wifiState, modifier = it)
             }
-            val widgetCard: ModifierReceivingComposable = remember {
-                movableContentOf { mod ->
-                    WidgetCard(locationAccessState = locationAccessState, modifier = mod)
-                }
+            val widgetCard: ModifierReceivingComposable = rememberMovableContentOf {
+                WidgetCard(locationAccessState = locationAccessState, modifier = it)
             }
 
             if (isLandscapeModeActive) {

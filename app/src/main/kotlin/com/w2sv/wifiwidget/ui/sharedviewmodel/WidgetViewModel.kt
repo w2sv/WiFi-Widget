@@ -14,16 +14,14 @@ import com.w2sv.widget.WifiWidgetRefreshWorker
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.di.MakeSnackbarVisuals
-import com.w2sv.wifiwidget.di.MutableMakeSnackbarVisualsFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
+import com.w2sv.wifiwidget.ui.snackbarvisuals.EmitSnackbarBuilder
 import com.w2sv.wifiwidget.ui.utils.reversibleStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -35,7 +33,7 @@ class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
-    @MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
+    private val emitSnackbarBuilder: EmitSnackbarBuilder,
     @ApplicationContext context: Context,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) : ViewModel() {
@@ -49,7 +47,7 @@ class WidgetViewModel @Inject constructor(
             context = context,
             onFailure = {
                 viewModelScope.launch {
-                    sharedSnackbarVisuals.emit {
+                    emitSnackbarBuilder {
                         AppSnackbarVisuals(
                             msg = getString(R.string.widget_pinning_failed),
                             kind = SnackbarKind.Warning
@@ -114,7 +112,7 @@ class WidgetViewModel @Inject constructor(
             onStateSynced = {
                 WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
                 delay(500) // To allow fab buttons to disappear before emission of snackbar
-                sharedSnackbarVisuals.emit {
+                emitSnackbarBuilder {
                     AppSnackbarVisuals(
                         msg = getString(R.string.updated_widget_configuration),
                         kind = SnackbarKind.Success
