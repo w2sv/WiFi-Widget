@@ -69,8 +69,8 @@ fun BackButtonHeaderWithBottomDivider(
 // ===============
 
 data class IconHeaderProperties(
-    @param:DrawableRes val iconRes: Int,
-    @param:StringRes val stringRes: Int,
+    @DrawableRes val iconRes: Int,
+    @StringRes val stringRes: Int,
     val trailingIcon: (@Composable () -> Unit)? = null
 )
 

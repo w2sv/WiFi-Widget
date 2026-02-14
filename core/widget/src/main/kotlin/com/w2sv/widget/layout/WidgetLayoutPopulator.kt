@@ -33,7 +33,7 @@ import javax.inject.Inject
 
 internal class WidgetLayoutPopulator @Inject constructor(
     widgetRepository: WidgetModuleWidgetRepository,
-    @param:ApplicationContext private val context: Context,
+    @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val wifiStatusGetter: WifiStatusGetter
 ) {

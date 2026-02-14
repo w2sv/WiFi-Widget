@@ -46,8 +46,8 @@ sealed class WifiProperty : WidgetProperty {
     sealed class NonIP : WifiProperty() {
 
         sealed class LocationAccessRequiring(
-            @param:StringRes override val labelRes: Int,
-            @param:StringRes override val descriptionRes: Int,
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : NonIP() {
@@ -73,8 +73,8 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class Other(
-            @param:StringRes override val labelRes: Int,
-            @param:StringRes override val descriptionRes: Int,
+            @StringRes override val labelRes: Int,
+            @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : NonIP() {
@@ -247,7 +247,7 @@ sealed class WifiProperty : WidgetProperty {
             override val labelRes: Int
                 get() = kind.labelRes
 
-            sealed class Kind(@param:StringRes val labelRes: Int) {
+            sealed class Kind(@StringRes val labelRes: Int) {
                 data object ShowPrefixLength : Kind(R.string.show_prefix_length)
                 data object ShowSubnetMask : Kind(R.string.show_ipv4_subnet_mask)
             }
@@ -257,9 +257,9 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class V6Only(
-            @param:StringRes override val labelRes: Int,
-            @param:StringRes override val subscriptResId: Int,
-            @param:StringRes override val descriptionRes: Int,
+            @StringRes override val labelRes: Int,
+            @StringRes override val subscriptResId: Int,
+            @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean
         ) : IP(subPropertyKinds = listOf(SubProperty.Kind.ShowPrefixLength)) {
@@ -284,9 +284,9 @@ sealed class WifiProperty : WidgetProperty {
         }
 
         sealed class V4AndV6(
-            @param:StringRes override val labelRes: Int,
-            @param:StringRes override val subscriptResId: Int,
-            @param:StringRes override val descriptionRes: Int,
+            @StringRes override val labelRes: Int,
+            @StringRes override val subscriptResId: Int,
+            @StringRes override val descriptionRes: Int,
             override val learnMoreUrl: String?,
             override val defaultIsEnabled: Boolean,
             includePrefixLength: Boolean

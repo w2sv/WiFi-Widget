@@ -27,9 +27,9 @@ interface WidgetColoring {
         data class Preset(val theme: Theme = Theme.Default, val useDynamicColors: Boolean = dynamicColorsSupported) : Style
 
         data class Custom(
-            @param:ColorInt val background: Int = -7859146,
-            @param:ColorInt val primary: Int = -5898336,
-            @param:ColorInt val secondary: Int = -1
+            @ColorInt val background: Int = -7859146,
+            @ColorInt val primary: Int = -5898336,
+            @ColorInt val secondary: Int = -1
         ) : Style
 
         @get:StringRes

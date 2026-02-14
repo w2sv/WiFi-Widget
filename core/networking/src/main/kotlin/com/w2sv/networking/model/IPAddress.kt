@@ -59,7 +59,7 @@ internal sealed class IPAddress(val version: Version) {
     }
 
     data class V4(
-        @param:IntRange(from = 0, to = 32)
+        @IntRange(from = 0, to = 32)
         override val prefixLength: Int?,
         override val hostAddress: String?,
         override val inetAddress: Inet4Address
@@ -80,7 +80,7 @@ internal sealed class IPAddress(val version: Version) {
     }
 
     data class V6(
-        @param:IntRange(from = 0, to = 128)
+        @IntRange(from = 0, to = 128)
         override val prefixLength: Int?,
         override val hostAddress: String?,
         override val inetAddress: Inet6Address

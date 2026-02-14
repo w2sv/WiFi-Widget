@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.WifiProperty
 
 @Immutable
-data class InfoDialogData(@param:StringRes val titleRes: Int, @param:StringRes val descriptionRes: Int, val learnMoreUrl: String? = null)
+data class InfoDialogData(@StringRes val titleRes: Int, @StringRes val descriptionRes: Int, val learnMoreUrl: String? = null)
 
 fun WifiProperty.infoDialogData(): InfoDialogData =
     InfoDialogData(

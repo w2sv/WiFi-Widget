@@ -217,16 +217,16 @@ private sealed interface NavigationDrawerSheetElement {
 
     @Immutable
     data class Header(
-        @param:StringRes val titleRes: Int,
+        @StringRes val titleRes: Int,
         override val modifier: Modifier = Modifier
             .padding(top = 20.dp, bottom = 4.dp)
     ) : NavigationDrawerSheetElement
 
     @Immutable
     data class Item(
-        @param:DrawableRes val iconRes: Int,
-        @param:StringRes val labelRes: Int,
-        @param:StringRes val explanationRes: Int? = null,
+        @DrawableRes val iconRes: Int,
+        @StringRes val labelRes: Int,
+        @StringRes val explanationRes: Int? = null,
         val visible: (() -> Boolean)? = null,
         override val modifier: Modifier = Modifier
             .fillMaxWidth()

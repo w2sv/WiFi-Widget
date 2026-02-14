@@ -35,9 +35,9 @@ class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
     private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
     private val appWidgetManager: AppWidgetManager,
-    @param:MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
+    @MutableMakeSnackbarVisualsFlow private val sharedSnackbarVisuals: MutableSharedFlow<MakeSnackbarVisuals>,
     @ApplicationContext context: Context,
-    @param:WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
+    @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) : ViewModel() {
 
     // =========

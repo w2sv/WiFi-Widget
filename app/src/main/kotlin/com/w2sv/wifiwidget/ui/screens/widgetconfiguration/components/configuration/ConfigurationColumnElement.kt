@@ -20,7 +20,7 @@ sealed interface ConfigurationColumnElement {
     @Immutable
     data class CheckRow<T : WidgetProperty>(
         val property: T,
-        @param:StringRes val explanation: Int? = null,
+        @StringRes val explanation: Int? = null,
         val isChecked: () -> Boolean,
         val onCheckedChange: (Boolean) -> Unit,
         val show: () -> Boolean = { true },
