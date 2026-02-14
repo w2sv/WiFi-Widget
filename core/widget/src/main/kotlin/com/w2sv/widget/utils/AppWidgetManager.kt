@@ -1,11 +1,9 @@
 package com.w2sv.widget.utils
 
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import com.w2sv.androidutils.appwidget.getAppWidgetIds
 import com.w2sv.androidutils.content.componentName
-import com.w2sv.androidutils.content.intent
 import com.w2sv.widget.WidgetPinSuccessBroadcastReceiver
 import com.w2sv.widget.WifiWidgetProvider
 
@@ -16,7 +14,7 @@ fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
     getAppWidgetIds(packageName, WifiWidgetProvider::class.java)
 
 /**
- * Calls [AppWidgetManager.requestPinAppWidget] if [android.appwidget.AppWidgetManager.isRequestPinAppWidgetSupported] returns true.
+ * Calls [AppWidgetManager.requestPinAppWidget] if [AppWidgetManager.isRequestPinAppWidgetSupported] returns true.
  * Otherwise invokes [onFailure].
  */
 fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: () -> Unit) {
@@ -24,12 +22,7 @@ fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: () -> Uni
         requestPinAppWidget(
             componentName<WifiWidgetProvider>(context),
             null,
-            PendingIntent.getBroadcast(
-                context,
-                WidgetPinSuccessBroadcastReceiver.REQUEST_CODE,
-                intent<WidgetPinSuccessBroadcastReceiver>(context),
-                PendingIntent.FLAG_IMMUTABLE
-            )
+            WidgetPinSuccessBroadcastReceiver.pendingIntent(context)
         )
     } else {
         onFailure()
