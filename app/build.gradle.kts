@@ -66,7 +66,12 @@ android {
 
 kotlin {
     compilerOptions {
-        optIn.add("com.google.accompanist.permissions.ExperimentalPermissionsApi")
+        optIn.addAll(
+            "com.google.accompanist.permissions.ExperimentalPermissionsApi",
+            "androidx.compose.material3.ExperimentalMaterial3Api",
+            "androidx.compose.foundation.ExperimentalFoundationApi",
+            "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+        )
     }
 }
 

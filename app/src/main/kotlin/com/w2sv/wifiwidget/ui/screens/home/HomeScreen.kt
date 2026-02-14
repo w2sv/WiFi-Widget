@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -30,15 +29,15 @@ import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.composed.core.isLandscapeModeActive
 import com.w2sv.wifiwidget.ui.LocalLocationAccessState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
-import com.w2sv.wifiwidget.ui.designsystem.AppTopBar
+import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
 import com.w2sv.wifiwidget.ui.designsystem.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.screens.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import java.util.Calendar
 import kotlinx.coroutines.launch
 import slimber.log.i
+import java.util.Calendar
 
 private typealias ModifierReceivingComposable = @Composable (Modifier) -> Unit
 
@@ -52,13 +51,7 @@ fun HomeScreen(
 
     NavigationDrawer(state = drawerState) {
         Scaffold(
-            topBar = {
-                AppTopBar {
-                    scope.launch {
-                        drawerState.open()
-                    }
-                }
-            },
+            topBar = { NavigationDrawerScreenTopAppBar { scope.launch { drawerState.open() } } },
             snackbarHost = { AppSnackbarHost() }
         ) { paddingValues ->
             val wifiState by homeScreenVM.wifiState.collectAsStateWithLifecycle()
@@ -95,12 +88,6 @@ fun HomeScreen(
         }
 
         LocationAccessRationals(state = locationAccessState)
-
-        BackHandler(enabled = drawerState.isOpen) {
-            scope.launch {
-                drawerState.close()
-            }
-        }
     }
 }
 

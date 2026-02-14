@@ -1,9 +1,11 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.statusBarsIgnoringVisibility
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -17,9 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
+fun NavigationDrawerScreenTopAppBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {
     TopAppBar(
         title = {
             Text(
@@ -37,11 +38,12 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
             IconButton(onClick = onNavigationIconClick) {
                 Icon(
                     imageVector = Icons.Filled.Menu,
-                    contentDescription = stringResource(R.string.open_navigation_drawer),
-                    modifier = Modifier.size(IconDefaults.SizeBig)
+                    contentDescription = stringResource(R.string.open_navigation_drawer)
                 )
             }
-        }
+        },
+        windowInsets = WindowInsets.statusBarsIgnoringVisibility // Apply status bar insets also if status bar hidden during immersive mode
+            .only(WindowInsetsSides.Horizontal + WindowInsetsSides.Top)
     )
 }
 
@@ -49,6 +51,6 @@ fun AppTopBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) 
 @Composable
 private fun Preview() {
     AppTheme {
-        AppTopBar {}
+        NavigationDrawerScreenTopAppBar {}
     }
 }

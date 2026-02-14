@@ -4,9 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -30,8 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.designsystem.SystemBarsIgnoringVisibilityPaddedColumn
-import com.w2sv.wifiwidget.ui.designsystem.emptyInsets
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.utils.activityViewModel
 
@@ -74,6 +75,7 @@ fun NavigationDrawer(
         modifier = modifier,
         drawerContent = {
             NavigationDrawerSheet(
+                drawerState = state,
                 itemState = itemState
             )
         },
@@ -83,14 +85,16 @@ fun NavigationDrawer(
 }
 
 @Composable
-private fun NavigationDrawerSheet(itemState: NavigationDrawerItemState, modifier: Modifier = Modifier) {
+private fun NavigationDrawerSheet(drawerState: DrawerState, itemState: NavigationDrawerItemState, modifier: Modifier = Modifier) {
     ModalDrawerSheet(
+        drawerState = drawerState,
         modifier = modifier,
-        windowInsets = emptyInsets
+        windowInsets = WindowInsets()
     ) {
-        SystemBarsIgnoringVisibilityPaddedColumn(
+        Column(
             modifier = Modifier
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .windowInsetsPadding(WindowInsets.systemBarsIgnoringVisibility),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Header(
