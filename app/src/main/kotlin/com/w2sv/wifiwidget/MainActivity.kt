@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.w2sv.common.AppExtra
+import com.w2sv.common.AppAction
 import com.w2sv.wifiwidget.ui.AppUI
 import com.w2sv.wifiwidget.ui.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
 }
 
 private fun Intent.initialScreen(): Screen =
-    if (getBooleanExtra(AppExtra.INVOKE_WIDGET_CONFIGURATION_SCREEN, false)) {
+    if (action == AppAction.OPEN_WIDGET_CONFIGURATION_SCREEN) {
         Screen.WidgetConfiguration
     } else {
         Screen.Home
