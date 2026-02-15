@@ -10,7 +10,7 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.WifiWidgetRefreshWorker
+import com.w2sv.widget.WifiWidgetRefreshManager
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
     private val repository: WidgetRepository,
-    private val widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager,
+    private val widgetRefreshManager: WifiWidgetRefreshManager,
     private val appWidgetManager: AppWidgetManager,
     private val emitSnackbarBuilder: EmitSnackbarBuilder,
     @ApplicationContext context: Context,
@@ -101,7 +101,7 @@ class WidgetViewModel @Inject constructor(
             refreshingParametersMap = repository.refreshingParametersEnablementMap.reversibleStateMap(
                 scope = viewModelScope,
                 onStateSynced = {
-                    widgetDataRefreshWorkerManager.applyRefreshingSettings(
+                    widgetRefreshManager.applyRefreshingSettings(
                         parameters = it,
                         interval = refreshInterval.value
                     )
