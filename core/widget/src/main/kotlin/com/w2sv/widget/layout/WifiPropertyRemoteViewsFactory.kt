@@ -15,21 +15,23 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.CopyPropertyToClipboardActivity
-import com.w2sv.widget.data.WidgetModuleWidgetRepository
 import com.w2sv.widget.model.WidgetColors
+import com.w2sv.widget.model.widgetAppearance
 import com.w2sv.widget.utils.logging.LoggingRemoteViewsFactory
 import com.w2sv.widget.utils.setTextView
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import kotlin.properties.Delegates
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
+import javax.inject.Inject
+import kotlin.properties.Delegates
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val widgetRepository: WidgetModuleWidgetRepository,
+    private val widgetRepository: WidgetRepository,
     private val viewDataFactory: WifiProperty.ViewData.Factory
 ) : LoggingRemoteViewsFactory() {
 
@@ -57,14 +59,14 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
             )
                 .toList()
                 .log { "Set propertyViewData=$it" }
-        }
 
-        widgetRepository.widgetAppearance.value.run {
-            widgetColors = widgetColors(context)
-            this@WifiPropertyRemoteViewsFactory.fontSize = fontSize
-            layout = when (propertyValueAlignment) {
-                PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
-                PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
+            widgetRepository.widgetAppearance().first().run {
+                widgetColors = widgetColors(context)
+                this@WifiPropertyRemoteViewsFactory.fontSize = fontSize
+                layout = when (propertyValueAlignment) {
+                    PropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
+                    PropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
+                }
             }
         }
     }

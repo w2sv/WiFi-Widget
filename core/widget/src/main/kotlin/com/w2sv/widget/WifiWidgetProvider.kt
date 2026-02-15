@@ -8,11 +8,13 @@ import com.w2sv.androidutils.content.getIntExtraOrNull
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
-import com.w2sv.widget.data.WidgetModuleWidgetRepository
+import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.layout.WidgetLayoutPopulator
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import slimber.log.i
 import javax.inject.Inject
 
@@ -29,7 +31,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetRepository: WidgetModuleWidgetRepository
+    internal lateinit var widgetRepository: WidgetRepository
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -38,7 +40,9 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
      */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        refreshManager.applyRefreshingSettings(widgetRepository.refreshing.value)
+
+        val refreshing = runBlocking { widgetRepository.refreshing.first() }
+        refreshManager.applyRefreshingSettings(refreshing)
     }
 
     /**

@@ -24,6 +24,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -101,10 +102,8 @@ class WidgetViewModel @Inject constructor(
             refreshingParametersMap = repository.refreshingParametersEnablementMap.reversibleStateMap(
                 scope = viewModelScope,
                 onStateSynced = {
-                    widgetRefreshManager.applyRefreshingSettings(
-                        parameters = it,
-                        interval = refreshInterval.value
-                    )
+                    val refreshing = repository.refreshing.first()
+                    widgetRefreshManager.applyRefreshingSettings(refreshing )
                 }
             ),
             locationParameters = repository.locationParameters.reversibleStateMap(scope = viewModelScope),

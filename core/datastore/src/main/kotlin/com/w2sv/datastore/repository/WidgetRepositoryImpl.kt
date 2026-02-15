@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.enabledKeysFlow
+import com.w2sv.common.utils.mapFlow
 import com.w2sv.datastore.proto.widgetcoloring.WidgetColoringDataSource
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
 import com.w2sv.datastoreutils.preferences.PreferencesDataStoreRepository
@@ -18,19 +19,20 @@ import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.model.WidgetRefreshing
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.kotlinutils.coroutines.flow.stateInWithBlockingInitial
-import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 
 @Singleton
 internal class WidgetRepositoryImpl @Inject constructor(
@@ -112,6 +114,17 @@ internal class WidgetRepositoryImpl @Inject constructor(
             default = { 15.minutes },
             save = { save(intPreferencesKey("refreshInterval"), it.inWholeMinutes.toInt()) }
         )
+
+    override val refreshing: Flow<WidgetRefreshing> = combine(
+        refreshingParametersEnablementMap.mapFlow(),
+        refreshInterval
+    ) { parameters, interval ->
+        WidgetRefreshing(
+            refreshPeriodically = parameters.getValue(WidgetRefreshingParameter.RefreshPeriodically),
+            refreshOnLowBattery = parameters.getValue(WidgetRefreshingParameter.RefreshOnLowBattery),
+            refreshInterval = interval
+        )
+    }
 
     override val locationParameters: DataStoreFlowMap<LocationParameter, Boolean> =
         dataStoreFlowMap(LocationParameter.entries.associateWith { it.isEnabledDSE })

@@ -4,21 +4,16 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.w2sv.domain.model.WidgetRefreshingParameter
-import com.w2sv.widget.model.WidgetRefreshing
+import com.w2sv.domain.model.WidgetRefreshing
 import slimber.log.i
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
 @Singleton
 class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {
-    fun applyRefreshingSettings(parameters: Map<WidgetRefreshingParameter, Boolean>, interval: Duration) {
-        applyRefreshingSettings(WidgetRefreshing(parameters = parameters, interval = interval))
-    }
 
-    internal fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
+    fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
         with(widgetRefreshing) {
             when (refreshPeriodically) {
                 true -> enableWorker(

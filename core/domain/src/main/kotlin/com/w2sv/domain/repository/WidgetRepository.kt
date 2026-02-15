@@ -7,6 +7,7 @@ import com.w2sv.domain.model.LocationParameter
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WidgetBottomBarElement
 import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.model.WidgetRefreshing
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
 import kotlin.time.Duration
@@ -31,6 +32,7 @@ interface WidgetRepository {
     val bottomRowElementEnablementMap: DataStoreFlowMap<WidgetBottomBarElement, Boolean>
     val refreshingParametersEnablementMap: DataStoreFlowMap<WidgetRefreshingParameter, Boolean>
     val refreshInterval: DataStoreFlow<Duration>
+    val refreshing: Flow<WidgetRefreshing>
 
     val locationParameters: DataStoreFlowMap<LocationParameter, Boolean>
     val enabledLocationParameters: StateFlow<Set<LocationParameter>>

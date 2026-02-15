@@ -7,16 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Qualifier
 import javax.inject.Singleton
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class WidgetPinSuccessFlow
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-internal annotation class MutableWidgetPinSuccessFlow
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -7,7 +7,6 @@ import android.content.Intent
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.widget.di.EmitWidgetPinSuccess
-import com.w2sv.widget.di.MutableWidgetPinSuccessFlow
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
