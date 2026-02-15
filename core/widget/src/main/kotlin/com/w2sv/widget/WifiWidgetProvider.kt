@@ -20,7 +20,7 @@ import javax.inject.Inject
 class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
     @Inject
-    internal lateinit var widgetDataRefreshWorkerManager: WifiWidgetRefreshWorker.Manager
+    internal lateinit var refreshManager: WifiWidgetRefreshManager
 
     @Inject
     internal lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
@@ -38,7 +38,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
      */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-        widgetDataRefreshWorkerManager.applyRefreshingSettings(widgetRepository.refreshing.value)
+        refreshManager.applyRefreshingSettings(widgetRepository.refreshing.value)
     }
 
     /**
@@ -48,7 +48,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
      */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        widgetDataRefreshWorkerManager.cancelWorker()
+        refreshManager.cancelWorker()
     }
 
     override fun onReceive(context: Context, intent: Intent) {

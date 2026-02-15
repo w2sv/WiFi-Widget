@@ -3,6 +3,7 @@ package com.w2sv.widget.di
 import android.appwidget.AppWidgetManager
 import android.content.ClipboardManager
 import android.content.Context
+import android.os.PowerManager
 import androidx.work.WorkManager
 import com.w2sv.androidutils.service.systemService
 import dagger.Module
@@ -29,5 +30,10 @@ internal object WidgetModule {
     @Provides
     @Singleton
     fun clipboardManager(@ApplicationContext context: Context): ClipboardManager =
+        context.systemService()
+
+    @Provides
+    @Singleton
+    fun powerManager(@ApplicationContext context: Context): PowerManager =
         context.systemService()
 }

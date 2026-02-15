@@ -9,6 +9,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.networking)
     implementation(libs.androidx.workmanager)
+    implementation(libs.androidx.hilt.work)
     implementation(libs.google.material)
     implementation(libs.w2sv.androidutils)
 }
