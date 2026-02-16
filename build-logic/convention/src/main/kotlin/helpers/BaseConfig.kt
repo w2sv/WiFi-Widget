@@ -33,7 +33,6 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
-                "-opt-in=kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi",
                 "-Xannotation-default-target=param-property",
                 "-Xwhen-guards",
                 "-Xexplicit-backing-fields",
@@ -41,6 +40,7 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
                 "-Xcontext-sensitive-resolution",
                 "-Xcontext-parameters"
             )
+            optIn.add("kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi")
         }
     }
 }
