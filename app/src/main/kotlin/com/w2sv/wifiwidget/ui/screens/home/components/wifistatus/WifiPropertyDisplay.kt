@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.WifiViewData
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
@@ -71,8 +71,8 @@ private val horizontalPadding = 8.dp
 private const val LABEL_VALUE_COLUMN_SPLIT = 0.4f
 
 @Composable
-fun WifiPropertyDisplay(propertiesViewData: Flow<WifiProperty.ViewData>, modifier: Modifier = Modifier) {
-    val viewDataList = rememberRefreshingViewDataList(viewDataFlow = propertiesViewData)
+fun WifiPropertyDisplay(wifiViewData: Flow<WifiViewData>, modifier: Modifier = Modifier) {
+    val viewDataList = rememberRefreshingViewDataList(wifiViewDataFlow = wifiViewData)
 
     AnimatedVisibility(
         visible = viewDataList.isNotEmpty(),
@@ -120,24 +120,24 @@ private sealed interface PropertyListElement {
 
     @JvmInline
     @Immutable
-    value class Property(val property: WifiProperty.ViewData) : PropertyListElement
+    value class Property(val property: WifiViewData) : PropertyListElement
 
     @Immutable
     data object LoadingAnimation : PropertyListElement
 }
 
 @Composable
-private fun rememberRefreshingViewDataList(viewDataFlow: Flow<WifiProperty.ViewData>): SnapshotStateList<PropertyListElement> {
+private fun rememberRefreshingViewDataList(wifiViewDataFlow: Flow<WifiViewData>): SnapshotStateList<PropertyListElement> {
     val viewDataList = remember {
         mutableStateListOf<PropertyListElement>(PropertyListElement.LoadingAnimation)
     }
 
-    LaunchedEffect(viewDataFlow) {
+    LaunchedEffect(wifiViewDataFlow) {
         i { "Collecting viewDataList" }
 
         var lastCollectedIndex = Int.MAX_VALUE
 
-        viewDataFlow
+        wifiViewDataFlow
             .onEmpty { viewDataList.clear() }
             .onCompletion { cause ->
                 if (viewDataList.lastOrNull() == PropertyListElement.LoadingAnimation) {
@@ -193,7 +193,7 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
                 when (viewData) {
                     is PropertyListElement.Property -> {
                         PropertyDisplay(
-                            viewData = viewData.property,
+                            wifiViewData = viewData.property,
                             subPropertyValues = viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
                             onClick = onPropertyRowClick,
                             modifier = Modifier
@@ -242,7 +242,7 @@ private fun Header(modifier: Modifier = Modifier) {
     }
 }
 
-private typealias OnPropertyRowClick = (WifiProperty.ViewData, CharSequence, CoroutineScope) -> Unit
+private typealias OnPropertyRowClick = (WifiViewData, CharSequence, CoroutineScope) -> Unit
 
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
@@ -270,16 +270,16 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
 
 @Composable
 private fun PropertyDisplay(
-    viewData: WifiProperty.ViewData,
+    wifiViewData: WifiViewData,
     subPropertyValues: ImmutableList<String>?,
     onClick: OnPropertyRowClick,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val context: Context = LocalContext.current
-    val label = remember(viewData) {
+    val label = remember(wifiViewData) {
         buildAnnotatedString {
-            if (viewData is WifiProperty.ViewData.IPProperty) {
+            if (wifiViewData is WifiViewData.IPProperty) {
                 append(context.getString(R.string.ip))
                 withStyle(
                     SpanStyle(
@@ -287,15 +287,15 @@ private fun PropertyDisplay(
                         fontSize = 12.sp
                     )
                 ) {
-                    append(viewData.label)
+                    append(wifiViewData.label)
                 }
             } else {
-                append(viewData.label)
+                append(wifiViewData.label)
             }
         }
     }
 
-    Row(modifier = modifier.clickable { onClick(viewData, label, scope) }) {
+    Row(modifier = modifier.clickable { onClick(wifiViewData, label, scope) }) {
         Column(modifier = Modifier.fillMaxWidth(LABEL_VALUE_COLUMN_SPLIT)) {
             Text(
                 text = label,
@@ -303,7 +303,7 @@ private fun PropertyDisplay(
             )
         }
         Column {
-            Text(text = viewData.value)
+            Text(text = wifiViewData.value)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
                 subPropertyValues?.forEach {
                     Text(

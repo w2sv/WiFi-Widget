@@ -10,6 +10,7 @@ import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.SuspendingLazy
 import com.w2sv.core.networking.R
 import com.w2sv.domain.model.LocationParameter
+import com.w2sv.domain.model.WifiViewData
 import com.w2sv.domain.model.WifiProperty
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.model.IPAddress
@@ -32,13 +33,13 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
     private val resources: Resources
-) : WifiProperty.ViewData.Factory {
+) : WifiViewData.Factory {
 
     override fun invoke(
         properties: Iterable<WifiProperty>,
         ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
         locationParameters: Collection<LocationParameter>
-    ): Flow<WifiProperty.ViewData> {
+    ): Flow<WifiViewData> {
         val systemIPAddresses by lazy {
             IPAddress.systemAddresses(connectivityManager)
         }
@@ -67,7 +68,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
         ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
         ipApiData: GetIpApiData,
         locationParameters: Collection<LocationParameter>
-    ): List<WifiProperty.ViewData> =
+    ): List<WifiViewData> =
         when (this) {
             is WifiProperty.NonIP -> getViewData(ipApiData, locationParameters)
 
@@ -80,12 +81,12 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private suspend fun WifiProperty.NonIP.getViewData(
         ipApiData: GetIpApiData,
         locationParameters: Collection<LocationParameter>
-    ): List<WifiProperty.ViewData.NonIP> =
+    ): List<WifiViewData.NonIP> =
         getViewData(
             values = getValues(ipApiData, locationParameters),
             resources = resources,
             makeViewData = { label, value ->
-                WifiProperty.ViewData.NonIP(value, label)
+                WifiViewData.NonIP(value, label)
             }
         )
 
@@ -219,7 +220,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
     private suspend fun WifiProperty.IP.getViewData(
         systemIPAddresses: GetSystemIPAddresses,
         ipSubProperties: Collection<WifiProperty.IP.SubProperty>
-    ): List<WifiProperty.ViewData.IPProperty> {
+    ): List<WifiViewData.IPProperty> {
         return getViewData(
             values = when (this) {
                 is WifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
@@ -237,7 +238,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
             },
             resources = resources,
             makeViewData = { label, ipAddress ->
-                WifiProperty.ViewData.IPProperty(
+                WifiViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
                     subPropertyValues = buildList {
@@ -300,7 +301,7 @@ private fun Result<IpApiData>.viewDataValue(onSuccess: (IpApiData) -> String?): 
         ?: getOrNull()
             ?.let(onSuccess)
 
-private fun <T, R : WifiProperty.ViewData> WifiProperty.getViewData(
+private fun <T, R : WifiViewData> WifiProperty.getViewData(
     values: List<T>,
     resources: Resources,
     makeViewData: (String, T) -> R

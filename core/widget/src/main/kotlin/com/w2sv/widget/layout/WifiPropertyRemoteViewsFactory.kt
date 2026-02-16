@@ -14,7 +14,7 @@ import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
-import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.WifiViewData
 import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.model.WidgetColors
@@ -32,10 +32,10 @@ import kotlin.properties.Delegates
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
     private val widgetRepository: WidgetRepository,
-    private val viewDataFactory: WifiProperty.ViewData.Factory
+    private val wifiViewDataFactory: WifiViewData.Factory
 ) : LoggingRemoteViewsFactory() {
 
-    private lateinit var viewData: List<WifiProperty.ViewData>
+    private lateinit var wifiViewData: List<WifiViewData>
     private lateinit var widgetColors: WidgetColors
     private lateinit var fontSize: FontSize
     private var layout by Delegates.notNull<Int>()
@@ -52,7 +52,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
 
     private fun updateViewData() {
         runBlocking {
-            viewData = viewDataFactory(
+            wifiViewData = wifiViewDataFactory(
                 properties = widgetRepository.sortedEnabledWifiProperties.first(),
                 ipSubProperties = widgetRepository.enabledIpSubProperties.first(),
                 locationParameters = widgetRepository.enabledLocationParameters.first()
@@ -72,13 +72,13 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     }
 
     override fun getCount(): Int =
-        viewData.size
+        wifiViewData.size
 
     override fun getViewAt(position: Int): RemoteViews =
         try {
             inflatePropertyLayout(
                 layout = layout,
-                viewData = viewData[position],
+                wifiViewData = wifiViewData[position],
                 packageName = context.packageName,
                 widgetColors = widgetColors,
                 fontSize = fontSize
@@ -99,7 +99,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
 
     override fun getItemId(position: Int): Long =
         try {
-            viewData[position].hashCode().toLong()
+            wifiViewData[position].hashCode().toLong()
         } catch (e: IndexOutOfBoundsException) { // Same as above
             i { e.toString() }
             -1L
@@ -111,26 +111,26 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
 
 private fun inflatePropertyLayout(
     @LayoutRes layout: Int,
-    viewData: WifiProperty.ViewData,
+    wifiViewData: WifiViewData,
     packageName: String,
     widgetColors: WidgetColors,
     fontSize: FontSize
 ): RemoteViews {
-    i { "Inflating property layout for $viewData" }
+    i { "Inflating property layout for $wifiViewData" }
 
     return RemoteViews(packageName, layout)
         .apply {
             // Label TextView
             setTextView(
                 viewId = R.id.property_label_tv,
-                text = if (viewData is WifiProperty.ViewData.NonIP) {
-                    viewData.label
+                text = if (wifiViewData is WifiViewData.NonIP) {
+                    wifiViewData.label
                 } else {
                     buildSpannedString {
                         append(IP_LABEL)
                         subscript {
                             scale(0.8f) {
-                                append(viewData.label)
+                                append(wifiViewData.label)
                             }
                         }
                     }
@@ -142,7 +142,7 @@ private fun inflatePropertyLayout(
             // Value TextView
             setTextView(
                 viewId = R.id.property_value_tv,
-                text = viewData.value,
+                text = wifiViewData.value,
                 size = fontSize.value,
                 color = widgetColors.secondary
             )
@@ -151,13 +151,13 @@ private fun inflatePropertyLayout(
             setOnClickFillInIntent(
                 R.id.wifi_property_layout,
                 CopyPropertyToClipboardActivity.Args.getIntent(
-                    propertyLabel = viewData.label,
-                    propertyValue = viewData.value
+                    propertyLabel = wifiViewData.label,
+                    propertyValue = wifiViewData.value
                 )
             )
 
             // IP sub property row
-            viewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.let { subPropertyValues ->
+            wifiViewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.let { subPropertyValues ->
                 setViewVisibility(R.id.ip_sub_property_row, View.VISIBLE)
 
                 val subPropertyViewIterator = sequenceOf(R.id.ip_sub_property_tv_2, R.id.ip_sub_property_tv_1).iterator()

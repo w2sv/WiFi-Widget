@@ -3,7 +3,6 @@ package com.w2sv.domain.model
 import android.os.Build
 import androidx.annotation.StringRes
 import com.w2sv.core.domain.R
-import kotlinx.coroutines.flow.Flow
 
 sealed class WifiProperty : WidgetProperty {
     abstract val descriptionRes: Int
@@ -12,35 +11,6 @@ sealed class WifiProperty : WidgetProperty {
 
     val ordinal by lazy {
         entries.indexOf(this)
-    }
-
-    sealed interface ViewData {
-        val label: String
-        val value: String
-
-        val ipPropertyOrNull: IPProperty?
-            get() = this as? IPProperty
-
-        data class NonIP(override val value: String, override val label: String) : ViewData
-
-        data class IPProperty(override val label: String, override val value: String, private val subPropertyValues: List<String>) :
-            ViewData {
-
-            val nonEmptySubPropertyValuesOrNull: List<String>?
-                get() = subPropertyValues.ifEmpty { null }
-        }
-
-        interface Factory {
-            /**
-             * @return Flow of [ViewData], the element-order of which corresponds to the one of the [properties].
-             * One [WifiProperty] may result in the the creation of multiple [ViewData] elements.
-             */
-            operator fun invoke(
-                properties: Iterable<WifiProperty>,
-                ipSubProperties: Collection<IP.SubProperty>,
-                locationParameters: Collection<LocationParameter>
-            ): Flow<ViewData>
-        }
     }
 
     sealed class NonIP : WifiProperty() {
