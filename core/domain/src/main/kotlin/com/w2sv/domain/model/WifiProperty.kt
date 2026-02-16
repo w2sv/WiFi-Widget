@@ -37,8 +37,8 @@ sealed class WifiProperty : WidgetProperty {
              */
             operator fun invoke(
                 properties: Iterable<WifiProperty>,
-                getIpSubProperties: () -> Collection<IP.SubProperty>,
-                getLocationParameters: () -> Collection<LocationParameter>
+                ipSubProperties: Collection<IP.SubProperty>,
+                locationParameters: Collection<LocationParameter>
             ): Flow<ViewData>
         }
     }

@@ -53,9 +53,9 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     private fun updateViewData() {
         runBlocking {
             viewData = viewDataFactory(
-                properties = widgetRepository.sortedEnabledWifiProperties.value,
-                getIpSubProperties = { widgetRepository.enabledIpSubProperties.value },
-                getLocationParameters = { widgetRepository.enabledLocationParameters.value }
+                properties = widgetRepository.sortedEnabledWifiProperties.first(),
+                ipSubProperties = widgetRepository.enabledIpSubProperties.first(),
+                locationParameters = widgetRepository.enabledLocationParameters.first()
             )
                 .toList()
                 .log { "Set propertyViewData=$it" }

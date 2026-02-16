@@ -9,13 +9,13 @@ import com.w2sv.domain.repository.WidgetRepository
 import com.w2sv.networking.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -24,20 +24,16 @@ class HomeScreenViewModel @Inject constructor(
     wifiPropertyViewDataFactory: WifiProperty.ViewData.Factory
 ) : ViewModel() {
 
-    fun onLocationAccessChanged() {
-        viewModelScope.launch { locationAccessChanged.emit(Unit) }
-    }
-
     /**
-     * For computation of a new wifiState upon locationAccessChange triggered through a snackbar action.
+     * For computation of a new wifiState upon location access change.
      */
     private val locationAccessChanged = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
 
     val wifiState = combine(
         wifiStatusMonitor.wifiStatus.distinctUntilChanged(),
-        widgetRepository.sortedEnabledWifiProperties,
-        widgetRepository.enabledIpSubProperties,
-        widgetRepository.enabledLocationParameters,
+        widgetRepository.sortedEnabledWifiProperties.distinctUntilChanged(),
+        widgetRepository.enabledIpSubProperties.distinctUntilChanged(),
+        widgetRepository.enabledLocationParameters.distinctUntilChanged(),
         locationAccessChanged
     ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties, enabledLocationParameters, _ ->
         when (wifiStatus) {
@@ -54,4 +50,8 @@ class HomeScreenViewModel @Inject constructor(
             .log { "Set wifiState=$it" }
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
+
+    fun onLocationAccessChanged() {
+        viewModelScope.launch { locationAccessChanged.emit(Unit) }
+    }
 }
