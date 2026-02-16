@@ -68,7 +68,7 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
                     )
 
             fun fromIntent(intent: Intent): Args =
-                intent.getParcelableCompat(EXTRA)!!
+                checkNotNull(intent.getParcelableCompat(EXTRA))
 
             private const val EXTRA =
                 "com.w2sv.wifiwidget.extra.CopyPropertyToClipboardBroadcastReceiverArgs"

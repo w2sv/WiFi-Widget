@@ -9,7 +9,7 @@ import com.w2sv.androidutils.content.intent
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.widget.layout.WidgetLayoutPopulator
+import com.w2sv.widget.layout.WidgetRenderer
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +25,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     internal lateinit var refreshManager: WifiWidgetRefreshManager
 
     @Inject
-    internal lateinit var widgetLayoutPopulator: WidgetLayoutPopulator
+    internal lateinit var widgetRenderer: WidgetRenderer
 
     @Inject
     internal lateinit var appWidgetManager: AppWidgetManager
@@ -83,7 +83,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
             appWidgetManager.updateAppWidget(
                 id,
-                widgetLayoutPopulator.populate(
+                widgetRenderer.populate(
                     widget = RemoteViews(
                         context.packageName,
                         R.layout.widget

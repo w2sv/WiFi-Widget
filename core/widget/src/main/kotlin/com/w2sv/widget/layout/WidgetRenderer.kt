@@ -11,6 +11,7 @@ import androidx.core.net.toUri
 import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.appwidget.setColorFilter
+import com.w2sv.androidutils.content.intent
 import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppAction
 import com.w2sv.core.widget.R
@@ -34,11 +35,11 @@ import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
-internal class WidgetLayoutPopulator @Inject constructor(
+internal class WidgetRenderer @Inject constructor(
     widgetRepository: WidgetRepository,
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val wifiStatusGetter: WifiStatusGetter
+    private val getWifiStatus: WifiStatusGetter
 ) {
     private val appearance = runBlocking { widgetRepository.widgetAppearance().first() }
     private val colors = appearance.widgetColors(context)
@@ -57,7 +58,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
-        when (val wifiStatus = wifiStatusGetter()) {
+        when (val wifiStatus = getWifiStatus()) {
             WifiStatus.Connected -> {
                 crossVisualize(
                     R.id.no_connection_available_layout,
@@ -67,7 +68,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                 @Suppress("DEPRECATION")
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    Intent(context, WifiPropertyViewsService::class.java)
+                    intent<WifiPropertyViewsService>(context)
                         .apply {
                             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
                             data = toUri(Intent.URI_INTENT_SCHEME).toUri()
@@ -78,7 +79,7 @@ internal class WidgetLayoutPopulator @Inject constructor(
                     R.id.wifi_property_list_view,
                     activityPendingIntent(
                         context,
-                        Intent(context, CopyPropertyToClipboardActivity::class.java),
+                        intent<CopyPropertyToClipboardActivity>(context),
                         PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                     )
                 )
