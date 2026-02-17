@@ -3,8 +3,9 @@ package com.w2sv.widget
 import android.content.Context
 import android.os.PowerManager
 import androidx.hilt.work.HiltWorker
-import androidx.work.Worker
+import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import slimber.log.i
@@ -13,13 +14,15 @@ import slimber.log.i
 internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
-    private val powerManager: PowerManager
-) : Worker(context, params) {
+    private val powerManager: PowerManager,
+    private val remoteNetworkInfoRepository: RemoteNetworkInfoRepository
+) : CoroutineWorker(context, params) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
         if (!powerManager.isInteractive) {
             i { "System not interactive; Skipping Widget Data refresh" }
         } else {
+            remoteNetworkInfoRepository.refresh()
             WifiWidgetProvider.triggerDataRefresh(applicationContext)
             i { "Refreshed Widget Data" }
         }

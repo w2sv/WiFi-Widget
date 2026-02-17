@@ -160,7 +160,7 @@ private fun WifiProperty.checkRow(
         property = this,
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
-            if (this is WifiProperty.NonIP.LocationAccessRequiring && isCheckedNew) {
+            if ((this as? WifiProperty.NonIP)?.requiresLocationAccess == true && isCheckedNew) {
                 return@fromIsCheckedMap locationAccessState.allPermissionsGranted.also {
                     if (!it) {
                         locationAccessState.launchMultiplePermissionRequest(EnablePropertyOnReversibleConfiguration(this))
@@ -183,7 +183,7 @@ private fun WifiProperty.checkRow(
                     shakeScope = shakeScope
                 )
 
-            is WifiProperty.NonIP.Other.Location -> subPropertyElements(
+            is WifiProperty.NonIP.Location -> subPropertyElements(
                 locationParameters = widgetConfiguration.locationParameters,
                 showLeaveAtLeastOnePropertyEnabledSnackbar = showLeaveAtLeastOnePropertyEnabledSnackbar,
                 scope = shakeScope
@@ -204,7 +204,7 @@ private fun WifiProperty.IP.subPropertyElements(
     shakeScope: CoroutineScope
 ): ImmutableList<ConfigurationColumnElement> =
     buildList {
-        if (this@subPropertyElements is WifiProperty.IP.V4AndV6) {
+        if (this@subPropertyElements is WifiProperty.IP.V64) {
             add(
                 ConfigurationColumnElement.Custom {
                     VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.startPadding))
@@ -237,7 +237,7 @@ private fun WifiProperty.IP.subPropertyElements(
                         show = {
                             if (subProperty.kind == WifiProperty.IP.SubProperty.Kind.ShowSubnetMask) {
                                 ipSubPropertyEnablementMap.getValue(
-                                    subProperty.copy(kind = WifiProperty.IP.V4AndV6.AddressTypeEnablement.V4Enabled)
+                                    subProperty.copy(kind = WifiProperty.IP.V64.AddressTypeEnablement.V4Enabled)
                                 )
                             } else {
                                 true
@@ -283,7 +283,7 @@ private fun WifiProperty.IP.SubProperty.allowCheckedChange(
     subPropertyEnablementMap: Map<WifiProperty.IP.SubProperty, Boolean>
 ): Boolean =
     when (val capturedKind = kind) {
-        is WifiProperty.IP.V4AndV6.AddressTypeEnablement -> {
+        is WifiProperty.IP.V64.AddressTypeEnablement -> {
             newValue ||
                 subPropertyEnablementMap.getValue(
                     WifiProperty.IP.SubProperty(

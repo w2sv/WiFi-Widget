@@ -21,7 +21,7 @@ import com.w2sv.domain.model.WidgetColoring
 import com.w2sv.domain.model.WidgetRefreshing
 import com.w2sv.domain.model.WidgetRefreshingParameter
 import com.w2sv.domain.model.WifiProperty
-import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -31,11 +31,11 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @Singleton
-internal class WidgetRepositoryImpl @Inject constructor(
+internal class WidgetConfigRepositoryImpl @Inject constructor(
     dataStore: DataStore<Preferences>,
     private val widgetColoringDataSource: WidgetColoringDataSource,
 ) : PreferencesDataStoreRepository(dataStore),
-    WidgetRepository {
+    WidgetConfigRepository {
 
     override val coloringConfig: Flow<WidgetColoring.Config> = widgetColoringDataSource.config
 

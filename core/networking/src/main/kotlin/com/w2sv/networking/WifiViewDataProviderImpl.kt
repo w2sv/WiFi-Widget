@@ -7,128 +7,84 @@ import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.annotation.VisibleForTesting
-import com.w2sv.common.utils.SuspendingLazy
 import com.w2sv.core.networking.R
-import com.w2sv.domain.model.LocationParameter
-import com.w2sv.domain.model.WifiViewData
+import com.w2sv.domain.model.IpAddress
+import com.w2sv.domain.model.IpApiData
+import com.w2sv.domain.model.RemoteNetworkInfo
 import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.WifiViewData
 import com.w2sv.networking.extensions.linkProperties
-import com.w2sv.networking.model.IPAddress
-import com.w2sv.networking.model.IpApiData
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import okhttp3.OkHttpClient
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import javax.inject.Inject
 
-private typealias GetSystemIPAddresses = () -> List<IPAddress>
-private typealias GetIpApiData = suspend () -> Result<IpApiData>
-
-internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
-    private val httpClient: OkHttpClient,
+internal class WifiViewDataProviderImpl @Inject constructor(
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
     private val resources: Resources
-) : WifiViewData.Factory {
+) : WifiViewData.Provider {
 
     override fun invoke(
         properties: Iterable<WifiProperty>,
         ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
-        locationParameters: Collection<LocationParameter>
-    ): Flow<WifiViewData> {
-        val systemIPAddresses by lazy {
-            IPAddress.systemAddresses(connectivityManager)
-        }
-        val ipApiData = SuspendingLazy {
-            IpApiData.fetch(httpClient)
-        }
-
-        return flow {
-            properties
-                .forEach { property ->
-                    property
-                        .getViewData(
-                            systemIPAddresses = { systemIPAddresses },
-                            ipSubProperties = ipSubProperties,
-                            ipApiData = { ipApiData.value() },
-                            locationParameters = locationParameters
-                        )
-                        .forEach { emit(it) }
-                }
-        }
-            .flowOn(Dispatchers.IO)
-    }
-
-    private suspend fun WifiProperty.getViewData(
-        systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
-        ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
+        remoteNetworkInfo: RemoteNetworkInfo
     ): List<WifiViewData> =
-        when (this) {
-            is WifiProperty.NonIP -> getViewData(ipApiData, locationParameters)
+        properties.flatMap { property ->
+            when (property) {
+                is WifiProperty.NonIP -> property.viewData(remoteNetworkInfo.ipApiData)
 
-            is WifiProperty.IP -> getViewData(
-                systemIPAddresses = systemIPAddresses,
-                ipSubProperties = ipSubProperties
-            )
+                is WifiProperty.IP -> property.viewData(
+                    systemIps = systemIpAddresses(connectivityManager),
+                    publicIps = remoteNetworkInfo.publicIps,
+                    subProperties = ipSubProperties
+                )
+            }
         }
 
-    private suspend fun WifiProperty.NonIP.getViewData(
-        ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
-    ): List<WifiViewData.NonIP> =
-        getViewData(
-            values = getValues(ipApiData, locationParameters),
+    private fun WifiProperty.NonIP.viewData(ipApiData: IpApiData?): List<WifiViewData.NonIP> =
+        viewData(
+            values = getValues(ipApiData),
             resources = resources,
-            makeViewData = { label, value ->
-                WifiViewData.NonIP(value, label)
-            }
+            makeViewData = { label, value -> WifiViewData.NonIP(value, label) }
         )
 
     @Suppress("DEPRECATION")
-    private suspend fun WifiProperty.NonIP.getValues(
-        ipApiData: GetIpApiData,
-        locationParameters: Collection<LocationParameter>
-    ): List<String> {
+    private fun WifiProperty.NonIP.getValues(ipApiData: IpApiData?): List<String> {
         val dhcpInfo by lazy { wifiManager.dhcpInfo }
         val connectionInfo by lazy { wifiManager.connectionInfo }
         return buildList {
             when (this@getValues) {
-                WifiProperty.NonIP.Other.DNS -> {
+                WifiProperty.NonIP.DNS -> {
                     add(
                         textualIPv4Representation(dhcpInfo.dns1)
-                            ?: IPAddress.Version.V4.fallbackAddress
+                            ?: IpAddress.Version.V4.fallbackAddress
                     )
                     textualIPv4Representation(dhcpInfo.dns2)?.let { address ->
-                        if (address != IPAddress.Version.V4.fallbackAddress) {
+                        if (address != IpAddress.Version.V4.fallbackAddress) {
                             add(address)
                         }
                     }
                 }
 
-                WifiProperty.NonIP.LocationAccessRequiring.SSID -> add(
+                WifiProperty.NonIP.SSID -> add(
                     connectionInfo.ssid
                         ?.replace("\"", "")
                         .takeIf { it != "<unknown ssid>" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
-                WifiProperty.NonIP.LocationAccessRequiring.BSSID -> add(
+                WifiProperty.NonIP.BSSID -> add(
                     connectionInfo.bssid
                         ?.takeIf { it != "02:00:00:00:00:00" }
                         ?: resources.getString(R.string.no_location_access)
                 )
 
-                WifiProperty.NonIP.Other.Frequency -> add("${connectionInfo.frequency} MHz")
-                WifiProperty.NonIP.Other.Channel -> add(frequencyToChannel(connectionInfo.frequency).toString())
-                WifiProperty.NonIP.Other.LinkSpeed -> add("${connectionInfo.linkSpeed} Mbps")
-                WifiProperty.NonIP.Other.RSSI -> add("${connectionInfo.rssi} dBm")
-                WifiProperty.NonIP.Other.SignalStrength -> {
+                WifiProperty.NonIP.Frequency -> add("${connectionInfo.frequency} MHz")
+                WifiProperty.NonIP.Channel -> add(frequencyToChannel(connectionInfo.frequency).toString())
+                WifiProperty.NonIP.LinkSpeed -> add("${connectionInfo.linkSpeed} Mbps")
+                WifiProperty.NonIP.RSSI -> add("${connectionInfo.rssi} dBm")
+                WifiProperty.NonIP.SignalStrength -> {
                     val rssi = connectionInfo.rssi
                     add(
                         resources.getString(
@@ -143,7 +99,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WifiProperty.NonIP.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         when (connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "802.11ac"
@@ -157,7 +113,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WifiProperty.NonIP.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         when (connectionInfo.wifiStandard) {
                             ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5"
@@ -171,7 +127,7 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                WifiProperty.NonIP.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                     add(
                         when (connectionInfo.currentSecurityType) {
                             WifiInfo.SECURITY_TYPE_OPEN -> "Open"
@@ -192,116 +148,87 @@ internal class WidgetWifiPropertyViewDataFactoryImpl @Inject constructor(
                     )
                 }
 
-                WifiProperty.NonIP.Other.Gateway -> add(
+                WifiProperty.NonIP.Gateway -> add(
                     textualIPv4Representation(dhcpInfo.gateway)
-                        ?: IPAddress.Version.V4.fallbackAddress
+                        ?: IpAddress.Version.V4.fallbackAddress
                 )
 
-                WifiProperty.NonIP.Other.DHCP -> add(
+                WifiProperty.NonIP.DHCP -> add(
                     textualIPv4Representation(dhcpInfo.serverAddress)
-                        ?: IPAddress.Version.V4.fallbackAddress
+                        ?: IpAddress.Version.V4.fallbackAddress
                 )
 
-                WifiProperty.NonIP.Other.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WifiProperty.NonIP.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                     add(
                         connectivityManager.linkProperties?.nat64Prefix?.address?.hostAddress
                             ?: resources.getString(R.string.none)
                     )
                 }
 
-                WifiProperty.NonIP.Other.Location -> ipApiData().viewDataValue { it.location(locationParameters) }?.let(::add)
-                WifiProperty.NonIP.Other.IpGpsLocation -> ipApiData().viewDataValue { it.gpsCoordinates }?.let(::add)
-                WifiProperty.NonIP.Other.ISP -> ipApiData().viewDataValue { it.isp }?.let(::add)
-                WifiProperty.NonIP.Other.ASN -> ipApiData().viewDataValue { it.asn }?.let(::add)
+                WifiProperty.NonIP.Location -> ipApiData?.location?.let(::add)
+                WifiProperty.NonIP.IpGpsLocation -> ipApiData?.gpsCoordinates?.let(::add)
+                WifiProperty.NonIP.ISP -> ipApiData?.isp?.let(::add)
+                WifiProperty.NonIP.ASN -> ipApiData?.asn?.let(::add)
             }
         }
     }
 
-    private suspend fun WifiProperty.IP.getViewData(
-        systemIPAddresses: GetSystemIPAddresses,
-        ipSubProperties: Collection<WifiProperty.IP.SubProperty>
-    ): List<WifiViewData.IPProperty> {
-        return getViewData(
-            values = when (this) {
-                is WifiProperty.IP.V6Only -> getAddresses(systemIPAddresses)
-                is WifiProperty.IP.V4AndV6 -> getAddresses(
-                    systemIPAddresses = systemIPAddresses,
-                    versionsToBeIncluded = buildSet {
-                        if (ipSubProperties.contains(v4EnabledSubProperty)) {
-                            add(IPAddress.Version.V4)
+    private fun WifiProperty.IP.viewData(
+        systemIps: List<IpAddress>,
+        publicIps: Map<IpAddress.Version, IpAddress?>,
+        subProperties: Collection<WifiProperty.IP.SubProperty>
+    ): List<WifiViewData.IPProperty> =
+        viewData(
+            values = getAddresses(
+                systemIps = systemIps,
+                publicIps = publicIps,
+                versionsToBeIncluded = buildSet {
+                    if (this@viewData is WifiProperty.IP.V64) {
+                        if (subProperties.contains(v4EnabledSubProperty)) {
+                            add(IpAddress.Version.V4)
                         }
-                        if (ipSubProperties.contains(v6EnabledSubProperty)) {
-                            add(IPAddress.Version.V6)
+                        if (subProperties.contains(v6EnabledSubProperty)) {
+                            add(IpAddress.Version.V6)
                         }
                     }
-                )
-            },
+                }
+            ),
             resources = resources,
             makeViewData = { label, ipAddress ->
                 WifiViewData.IPProperty(
                     label = label,
                     value = ipAddress.hostAddressRepresentation,
                     subPropertyValues = buildList {
-                        if (ipSubProperties.contains(showSubnetMaskSubProperty)) {
+                        if (subProperties.contains(showSubnetMaskSubProperty)) {
                             ipAddress.asV4OrNull?.subnetMask?.let { subnetMask ->
                                 add(subnetMask)
                             }
                         }
-                        if (ipSubProperties.contains(showPrefixLengthSubProperty) && ipAddress.prefixLength != null) {
+                        if (subProperties.contains(showPrefixLengthSubProperty) && ipAddress.prefixLength != null) {
                             add("/${ipAddress.prefixLength}")
                         }
                     }
                 )
             }
         )
-    }
 
-    private fun WifiProperty.IP.V6Only.getAddresses(systemIPAddresses: GetSystemIPAddresses): List<IPAddress> =
+    private fun WifiProperty.IP.getAddresses(
+        systemIps: List<IpAddress>,
+        publicIps: Map<IpAddress.Version, IpAddress?>,
+        versionsToBeIncluded: Set<IpAddress.Version>
+    ): List<IpAddress> =
         when (this) {
-            WifiProperty.IP.V6Only.ULA -> systemIPAddresses().filter { it.asV6OrNull?.isUniqueLocal == true }
-            WifiProperty.IP.V6Only.GUA -> systemIPAddresses().filter { it.asV6OrNull?.isGlobalUnicast == true }
-        }
-
-    private suspend fun WifiProperty.IP.V4AndV6.getAddresses(
-        systemIPAddresses: () -> List<IPAddress>,
-        versionsToBeIncluded: Set<IPAddress.Version>
-    ): List<IPAddress> =
-        when (this) {
-            WifiProperty.IP.V4AndV6.Loopback -> systemIPAddresses().filterByVersionAndPredicate(
-                versionsToBeIncluded
-            ) { it.isLoopback }
-
-            WifiProperty.IP.V4AndV6.SiteLocal -> systemIPAddresses().filterByVersionAndPredicate(
-                versionsToBeIncluded
-            ) { it.isSiteLocal }
-
-            WifiProperty.IP.V4AndV6.LinkLocal -> systemIPAddresses().filterByVersionAndPredicate(
-                versionsToBeIncluded
-            ) { it.isLinkLocal }
-
-            WifiProperty.IP.V4AndV6.Multicast -> systemIPAddresses().filterByVersionAndPredicate(
-                versionsToBeIncluded
-            ) { it.isMulticast }
-
-            WifiProperty.IP.V4AndV6.Public -> buildList {
-                versionsToBeIncluded.forEach { version ->
-                    IPAddress.fetchPublic(httpClient, version)
-                        .onSuccess { add(it) }
-                }
-            }
+            WifiProperty.IP.ULA -> systemIps.filter { it.asV6OrNull?.isUniqueLocal == true }
+            WifiProperty.IP.GUA -> systemIps.filter { it.asV6OrNull?.isGlobalUnicast == true }
+            WifiProperty.IP.Loopback -> systemIps.filterByVersionAndPredicate(versionsToBeIncluded) { it.isLoopback }
+            WifiProperty.IP.SiteLocal -> systemIps.filterByVersionAndPredicate(versionsToBeIncluded) { it.isSiteLocal }
+            WifiProperty.IP.LinkLocal -> systemIps.filterByVersionAndPredicate(versionsToBeIncluded) { it.isLinkLocal }
+            WifiProperty.IP.Multicast -> systemIps.filterByVersionAndPredicate(versionsToBeIncluded) { it.isMulticast }
+            WifiProperty.IP.Public -> versionsToBeIncluded.mapNotNull { version -> publicIps.getValue(version) }
         }
 }
 
-/**
- * @return the result of [onSuccess] or the simpleName of the held exception.
- */
-private fun Result<IpApiData>.viewDataValue(onSuccess: (IpApiData) -> String?): String? =
-    exceptionOrNull()
-        ?.let { it::class.simpleName }
-        ?: getOrNull()
-            ?.let(onSuccess)
-
-private fun <T, R : WifiViewData> WifiProperty.getViewData(
+private fun <T, R : WifiViewData> WifiProperty.viewData(
     values: List<T>,
     resources: Resources,
     makeViewData: (String, T) -> R
@@ -309,7 +236,7 @@ private fun <T, R : WifiViewData> WifiProperty.getViewData(
     buildList {
         val propertyLabel = resources.getString(
             run {
-                if (this@getViewData is WifiProperty.IP) {
+                if (this@viewData is WifiProperty.IP) {
                     subscriptResId
                 } else {
                     labelRes
@@ -326,10 +253,10 @@ private fun <T, R : WifiViewData> WifiProperty.getViewData(
         }
     }
 
-private inline fun List<IPAddress>.filterByVersionAndPredicate(
-    versionsToBeIncluded: Iterable<IPAddress.Version>,
-    predicate: (IPAddress) -> Boolean
-): List<IPAddress> =
+private inline fun List<IpAddress>.filterByVersionAndPredicate(
+    versionsToBeIncluded: Iterable<IpAddress.Version>,
+    predicate: (IpAddress) -> Boolean
+): List<IpAddress> =
     filter { predicate(it) && versionsToBeIncluded.contains(it.version) }
 
 /**
@@ -349,7 +276,6 @@ internal fun textualIPv4Representation(address: Int): String? =
 
 /**
  * [Reference](https://stackoverflow.com/a/58646104/12083276)
- *
  * @param frequency in MHz
  */
 private fun frequencyToChannel(frequency: Int): Int =

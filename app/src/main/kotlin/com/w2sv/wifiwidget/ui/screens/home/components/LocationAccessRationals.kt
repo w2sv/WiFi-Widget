@@ -28,7 +28,7 @@ data object TriggerWidgetDataRefresh : LocationAccessPermissionOnGrantAction
 
 @Immutable
 @JvmInline
-value class EnablePropertyOnReversibleConfiguration(val property: WifiProperty.NonIP.LocationAccessRequiring) :
+value class EnablePropertyOnReversibleConfiguration(val property: WifiProperty.NonIP) :
     LocationAccessPermissionOnGrantAction
 
 @Immutable

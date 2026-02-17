@@ -52,17 +52,12 @@ class ReversibleWidgetConfiguration(
     onStateSynced = { onStateSynced() }
 ) {
     val anyLocationAccessRequiringPropertyEnabled: Boolean
-        get() = WifiProperty.NonIP.LocationAccessRequiring.entries
-            .any {
-                wifiProperties.appliedStateMap.getValue(it).value
-            }
+        get() = WifiProperty.locationAccessRequiring.any { wifiProperties.appliedStateMap.getValue(it).value }
 
     fun onLocationAccessPermissionGranted(onGrantAction: LocationAccessPermissionOnGrantAction) {
         when (onGrantAction) {
             is EnableLocationAccessDependentProperties -> {
-                WifiProperty.NonIP.LocationAccessRequiring.entries.forEach {
-                    wifiProperties[it] = true
-                }
+                WifiProperty.locationAccessRequiring.forEach { wifiProperties[it] = true }
                 scope.launch { wifiProperties.sync() }
             }
 

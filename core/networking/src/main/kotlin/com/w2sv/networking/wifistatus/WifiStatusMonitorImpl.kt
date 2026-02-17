@@ -1,4 +1,4 @@
-package com.w2sv.networking
+package com.w2sv.networking.wifistatus
 
 import android.net.ConnectivityManager
 import android.net.LinkProperties
@@ -8,22 +8,22 @@ import android.net.NetworkRequest
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiStatus
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import javax.inject.Inject
 
-class WifiStatusMonitor @Inject constructor(private val wifiManager: WifiManager, private val connectivityManager: ConnectivityManager) {
+internal class WifiStatusMonitorImpl @Inject constructor(private val wifiManager: WifiManager, private val connectivityManager: ConnectivityManager): WifiStatusMonitor {
     private val networkRequest = NetworkRequest
         .Builder()
         .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
         .build()
 
-    val wifiStatus: Flow<WifiStatus> = callbackFlow {
+    override val wifiStatus: Flow<WifiStatus> = callbackFlow {
         // Send initial value
         channel.trySend(
-            getWifiStatus(
+            wifiStatus(
                 wifiManager,
                 connectivityManager
             )
@@ -35,7 +35,10 @@ class WifiStatusMonitor @Inject constructor(private val wifiManager: WifiManager
                 channel.trySend(WifiStatus.Connected.log { "Sent $it onAvailable" })
             }
 
-            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
                 if (network == connectivityManager.activeNetwork) {
                     channel.trySend(WifiStatus.Connected.log { "Sent $it onCapabilitiesChanged" })
                 }

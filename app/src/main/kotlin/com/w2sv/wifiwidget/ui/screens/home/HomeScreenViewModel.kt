@@ -5,23 +5,31 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WifiStatus
 import com.w2sv.domain.model.WifiViewData
-import com.w2sv.domain.repository.WidgetRepository
-import com.w2sv.networking.WifiStatusMonitor
+import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
+import com.w2sv.kotlinutils.coroutines.flow.combineToTriple
+import com.w2sv.networking.wifistatus.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    widgetRepository: WidgetRepository,
+    widgetConfigRepository: WidgetConfigRepository,
     wifiStatusMonitor: WifiStatusMonitor,
-    wifiViewDataFactory: WifiViewData.Factory
+    wifiViewDataProvider: WifiViewData.Provider,
+    remoteNetworkInfoRepository: RemoteNetworkInfoRepository
 ) : ViewModel() {
 
     /**
@@ -29,27 +37,41 @@ class HomeScreenViewModel @Inject constructor(
      */
     private val locationAccessChanged = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
 
-    val wifiState = combine(
-        wifiStatusMonitor.wifiStatus.distinctUntilChanged(),
-        widgetRepository.sortedEnabledWifiProperties.distinctUntilChanged(),
-        widgetRepository.enabledIpSubProperties.distinctUntilChanged(),
-        widgetRepository.enabledLocationParameters.distinctUntilChanged(),
-        locationAccessChanged
-    ) { wifiStatus, enabledWifiProperties, enabledIpSubProperties, enabledLocationParameters, _ ->
-        when (wifiStatus) {
-            WifiStatus.Disabled -> WifiState.Disabled
-            WifiStatus.Disconnected -> WifiState.Disconnected
-            WifiStatus.Connected, WifiStatus.ConnectedInactive -> WifiState.Connected(
-                wifiViewDataFlow = wifiViewDataFactory(
-                    properties = enabledWifiProperties,
-                    ipSubProperties = enabledIpSubProperties,
-                    locationParameters = enabledLocationParameters
-                )
-            )
+    val wifiState: StateFlow<WifiState> = wifiStatusMonitor.wifiStatus
+        .flatMapLatest { wifiStatus ->
+            when (wifiStatus) {
+                WifiStatus.Disabled -> flowOf(WifiState.Disabled)
+                WifiStatus.Disconnected -> flowOf(WifiState.Disconnected)
+                WifiStatus.Connected, WifiStatus.ConnectedInactive -> connectedWifiState
+            }
+                .log { "Set wifiState=$it" }
         }
-            .log { "Set wifiState=$it" }
-    }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
+
+    // TODO trigger on locationAccessChanged
+    private val connectedWifiState: Flow<WifiState.Connected> = combineToTriple(
+        widgetConfigRepository.sortedEnabledWifiProperties.distinctUntilChanged(),
+        widgetConfigRepository.enabledIpSubProperties.distinctUntilChanged(),
+        widgetConfigRepository.enabledLocationParameters.distinctUntilChanged()
+    )
+        .flatMapLatest { (enabledWifiProperties, enabledIpSubProperties, enabledLocationParameters) ->
+            flow {
+                // Refresh remote data
+                remoteNetworkInfoRepository.refresh()
+
+                // Emit the connected state with freshly fetched data
+                val remoteNetworkInfo = remoteNetworkInfoRepository.data.first()
+                emit(
+                    WifiState.Connected(
+                        wifiViewData = wifiViewDataProvider(
+                            properties = enabledWifiProperties,
+                            ipSubProperties = enabledIpSubProperties,
+                            remoteNetworkInfo = remoteNetworkInfo
+                        )
+                    )
+                )
+            }
+        }
 
     fun onLocationAccessChanged() {
         viewModelScope.launch { locationAccessChanged.emit(Unit) }

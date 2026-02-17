@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.WidgetColoring
-import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.reversiblestate.datastore.reversibleStateFlow
 import com.w2sv.widget.WifiWidgetProvider
@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
-    private val repository: WidgetRepository,
+    private val repository: WidgetConfigRepository,
     private val widgetRefreshManager: WifiWidgetRefreshManager,
     private val appWidgetManager: AppWidgetManager,
     private val emitSnackbarBuilder: EmitSnackbarBuilder,

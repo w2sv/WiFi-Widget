@@ -1,11 +1,11 @@
 package com.w2sv.widget.model
 
 import com.w2sv.common.utils.mapFlow
-import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 
-internal fun WidgetRepository.widgetAppearance(): Flow<WidgetAppearance> =
+internal fun WidgetConfigRepository.widgetAppearance(): Flow<WidgetAppearance> =
     combine(
         coloringConfig,
         opacity,

@@ -1,38 +1,38 @@
 package com.w2sv.networking.extensions
 
-import java.io.IOException
-import java.net.SocketTimeoutException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import slimber.log.e
+import java.io.IOException
+import java.net.SocketTimeoutException
 
 internal suspend fun <T> OkHttpClient.fetchFromUrl(
     url: String,
     timeout: Long = 5_000,
     onSuccess: (String) -> T
-): Result<T> {
+): Result<T> = withContext(Dispatchers.IO) {
     val request = Request.Builder()
         .url(url)
         .build()
 
-    return try {
+    try {
         withTimeout(timeout) {
             newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
                     throw IOException("Unexpected code $response")
                 }
-                response
-                    .body
-                    ?.string()
-                    ?.let { Result.success(onSuccess(it)) }
-                    ?: throw IOException("Empty response body")
+                Result.success(onSuccess(response.body!!.string()))
             }
         }
     } catch (e: Exception) {
         when (e) {
-            is SocketTimeoutException, is TimeoutCancellationException -> e { "Timed out with ${e.message} trying to fetch data from $url" }
+            is SocketTimeoutException, is TimeoutCancellationException ->
+                e { "Timed out with ${e.message} trying to fetch data from $url" }
+
             else -> {
                 e { "Received ${e.message} when trying to fetch data from $url" }
                 e.printStackTrace()

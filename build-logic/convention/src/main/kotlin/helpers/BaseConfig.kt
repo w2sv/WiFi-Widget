@@ -40,7 +40,10 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
                 "-Xcontext-sensitive-resolution",
                 "-Xcontext-parameters"
             )
-            optIn.add("kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi")
+            optIn.addAll(
+                "kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi",
+                "kotlinx.coroutines.ExperimentalCoroutinesApi"
+            )
         }
     }
 }

@@ -15,7 +15,8 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.FontSize
 import com.w2sv.domain.model.PropertyValueAlignment
 import com.w2sv.domain.model.WifiViewData
-import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.model.WidgetColors
 import com.w2sv.widget.model.widgetAppearance
@@ -31,8 +32,9 @@ import kotlin.properties.Delegates
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val widgetRepository: WidgetRepository,
-    private val wifiViewDataFactory: WifiViewData.Factory
+    private val widgetConfigRepository: WidgetConfigRepository,
+    private val remoteNetworkInfoRepository: RemoteNetworkInfoRepository,
+    private val wifiViewDataProvider: WifiViewData.Provider
 ) : LoggingRemoteViewsFactory() {
 
     private lateinit var wifiViewData: List<WifiViewData>
@@ -52,15 +54,15 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
 
     private fun updateViewData() {
         runBlocking {
-            wifiViewData = wifiViewDataFactory(
-                properties = widgetRepository.sortedEnabledWifiProperties.first(),
-                ipSubProperties = widgetRepository.enabledIpSubProperties.first(),
-                locationParameters = widgetRepository.enabledLocationParameters.first()
+            wifiViewData = wifiViewDataProvider(
+                properties = widgetConfigRepository.sortedEnabledWifiProperties.first(),
+                ipSubProperties = widgetConfigRepository.enabledIpSubProperties.first(),
+                remoteNetworkInfo = remoteNetworkInfoRepository.data.value
             )
                 .toList()
                 .log { "Set propertyViewData=$it" }
 
-            widgetRepository.widgetAppearance().first().run {
+            widgetConfigRepository.widgetAppearance().first().run {
                 widgetColors = widgetColors(context)
                 this@WifiPropertyRemoteViewsFactory.fontSize = fontSize
                 layout = when (propertyValueAlignment) {

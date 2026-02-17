@@ -13,20 +13,19 @@ import kotlin.time.toJavaDuration
 @Singleton
 class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {
 
-    fun applyRefreshingSettings(widgetRefreshing: WidgetRefreshing) {
-        with(widgetRefreshing) {
-            when (refreshPeriodically) {
-                true -> enableWorker(
-                    refreshOnLowBattery = refreshOnLowBattery,
-                    interval = refreshInterval.toJavaDuration()
-                )
+    fun applyRefreshingSettings(settings: WidgetRefreshing) {
+        when (settings.refreshPeriodically) {
+            true -> enableWorker(
+                refreshOnLowBattery = settings.refreshOnLowBattery,
+                interval = settings.refreshInterval.toJavaDuration()
+            )
 
-                false -> cancelWorker()
-            }
+            false -> cancelWorker()
         }
     }
 
     private fun enableWorker(refreshOnLowBattery: Boolean, interval: java.time.Duration) {
+        i { "Enqueuing ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
         workManager.enqueueUniquePeriodicWork(
             WifiWidgetRefreshWorker.UNIQUE_WORK_NAME,
             ExistingPeriodicWorkPolicy.UPDATE,
@@ -39,11 +38,10 @@ class WifiWidgetRefreshManager @Inject constructor(private val workManager: Work
                 .setInitialDelay(interval)
                 .build()
         )
-        i { "Enqueued ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
     }
 
     internal fun cancelWorker() {
+        i { "Cancelling ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
         workManager.cancelUniqueWork(WifiWidgetRefreshWorker.UNIQUE_WORK_NAME)
-        i { "Cancelled ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
     }
 }

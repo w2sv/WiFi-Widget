@@ -13,6 +13,7 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.screens.home.components.wifistatus.model.WifiState
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
@@ -31,7 +32,7 @@ fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
             AnimatedVisibility(visible = wifiState is WifiState.Connected) {
                 wifiState.connectedOrNull?.let {
                     WifiPropertyDisplay(
-                        wifiViewData = it.wifiViewDataFlow,
+                        wifiViewData = it.wifiViewData.toImmutableList(),
                         modifier = Modifier
                             .padding(top = 12.dp)
                             .thenIf(

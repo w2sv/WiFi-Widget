@@ -1,6 +1,7 @@
 package com.w2sv.networking.model
 
 import android.net.LinkAddress
+import com.w2sv.networking.isGlobalUnicast
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress

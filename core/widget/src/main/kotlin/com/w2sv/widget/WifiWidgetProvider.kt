@@ -8,7 +8,7 @@ import com.w2sv.androidutils.content.getIntExtraOrNull
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
-import com.w2sv.domain.repository.WidgetRepository
+import com.w2sv.domain.repository.WidgetConfigRepository
 import com.w2sv.widget.layout.WidgetRenderer
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
@@ -31,7 +31,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetRepository: WidgetRepository
+    internal lateinit var widgetConfigRepository: WidgetConfigRepository
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -41,7 +41,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
-        val refreshing = runBlocking { widgetRepository.refreshing.first() }
+        val refreshing = runBlocking { widgetConfigRepository.refreshing.first() }
         refreshManager.applyRefreshingSettings(refreshing)
     }
 

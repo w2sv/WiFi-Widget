@@ -12,5 +12,5 @@ sealed class WifiState(val status: WifiStatus) {
 
     data object Disabled : WifiState(WifiStatus.Disabled)
     data object Disconnected : WifiState(WifiStatus.Disconnected)
-    data class Connected(val wifiViewDataFlow: Flow<WifiViewData>) : WifiState(WifiStatus.Connected)
+    data class Connected(val wifiViewData: List<WifiViewData>) : WifiState(WifiStatus.Connected)
 }

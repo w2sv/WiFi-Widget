@@ -13,7 +13,7 @@ import com.w2sv.domain.model.WifiProperty
 import kotlinx.coroutines.flow.Flow
 import kotlin.time.Duration
 
-interface WidgetRepository {
+interface WidgetConfigRepository {
     val coloringConfig: Flow<WidgetColoring.Config>
     suspend fun saveColoringConfig(config: WidgetColoring.Config)
 

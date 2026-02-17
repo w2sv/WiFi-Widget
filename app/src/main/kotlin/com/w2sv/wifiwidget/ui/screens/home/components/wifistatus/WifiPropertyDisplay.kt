@@ -27,14 +27,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -58,37 +53,30 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
 import com.w2sv.wifiwidget.ui.utils.resourceIdTestTag
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectIndexed
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onEmpty
-import slimber.log.i
 
 private val horizontalPadding = 8.dp
 private const val LABEL_VALUE_COLUMN_SPLIT = 0.4f
 
+// TODO
 @Composable
-fun WifiPropertyDisplay(wifiViewData: Flow<WifiViewData>, modifier: Modifier = Modifier) {
-    val viewDataList = rememberRefreshingViewDataList(wifiViewDataFlow = wifiViewData)
-
+fun WifiPropertyDisplay(wifiViewData: ImmutableList<WifiViewData>, modifier: Modifier = Modifier) {
     AnimatedVisibility(
-        visible = viewDataList.isNotEmpty(),
+        visible = wifiViewData.isNotEmpty(),
         label = "",
         modifier = modifier.fillMaxWidth(),
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically()
     ) {
-        AnimatedContent(viewDataList.firstOrNull(), label = "") {
+        AnimatedContent(wifiViewData.firstOrNull(), label = "") {
             when (it) {
-                is PropertyListElement.Property -> {
-                    PropertyList(viewDataList = viewDataList.toImmutableList())
+                null -> {
+                    PropertyLoadingView(modifier = Modifier.fillMaxSize())
                 }
 
                 else -> {
-                    PropertyLoadingView(modifier = Modifier.fillMaxSize())
+                    PropertyList(viewDataList = wifiViewData)
                 }
             }
         }
@@ -115,61 +103,8 @@ private fun PropertyLoadingView(modifier: Modifier = Modifier) {
     }
 }
 
-@Immutable
-private sealed interface PropertyListElement {
-
-    @JvmInline
-    @Immutable
-    value class Property(val property: WifiViewData) : PropertyListElement
-
-    @Immutable
-    data object LoadingAnimation : PropertyListElement
-}
-
 @Composable
-private fun rememberRefreshingViewDataList(wifiViewDataFlow: Flow<WifiViewData>): SnapshotStateList<PropertyListElement> {
-    val viewDataList = remember {
-        mutableStateListOf<PropertyListElement>(PropertyListElement.LoadingAnimation)
-    }
-
-    LaunchedEffect(wifiViewDataFlow) {
-        i { "Collecting viewDataList" }
-
-        var lastCollectedIndex = Int.MAX_VALUE
-
-        wifiViewDataFlow
-            .onEmpty { viewDataList.clear() }
-            .onCompletion { cause ->
-                if (viewDataList.lastOrNull() == PropertyListElement.LoadingAnimation) {
-                    viewDataList.removeAt(viewDataList.lastIndex)
-                }
-                if (cause == null && lastCollectedIndex < viewDataList.lastIndex) {
-                    i { "Removing range ${lastCollectedIndex + 1} - ${viewDataList.size}" }
-                    viewDataList.removeRange(lastCollectedIndex + 1, viewDataList.size)
-                }
-            }
-            .collectIndexed { index, value ->
-                val wrapped = PropertyListElement.Property(value)
-                try {
-                    viewDataList[index] = wrapped
-                } catch (_: IndexOutOfBoundsException) {
-                    viewDataList.add(wrapped)
-                }
-
-                lastCollectedIndex = index
-
-                if (viewDataList.lastIndex < index + 1) {
-                    viewDataList.add(PropertyListElement.LoadingAnimation)
-                }
-            }
-    }
-
-    return viewDataList
-}
-
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modifier: Modifier = Modifier) {
+private fun PropertyList(viewDataList: ImmutableList<WifiViewData>, modifier: Modifier = Modifier) {
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
     SecondLevelElevatedCard(modifier = modifier) {
@@ -190,30 +125,22 @@ private fun PropertyList(viewDataList: ImmutableList<PropertyListElement>, modif
                 )
             }
             itemsIndexed(viewDataList) { i, viewData ->
-                when (viewData) {
-                    is PropertyListElement.Property -> {
-                        PropertyDisplay(
-                            wifiViewData = viewData.property,
-                            subPropertyValues = viewData.property.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
-                            onClick = onPropertyRowClick,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 26.dp)
-                                .padding(horizontal = horizontalPadding)
-                        )
-                        if (i != viewDataList.lastIndex) {
-                            HorizontalDivider(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 3.dp),
-                                color = CardContainerColor
-                            )
-                        }
-                    }
-
-                    is PropertyListElement.LoadingAnimation -> {
-                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
-                    }
+                PropertyDisplay(
+                    wifiViewData = viewData,
+                    subPropertyValues = viewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
+                    onClick = onPropertyRowClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 26.dp)
+                        .padding(horizontal = horizontalPadding)
+                )
+                if (i != viewDataList.lastIndex) {
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 3.dp),
+                        color = CardContainerColor
+                    )
                 }
             }
         }

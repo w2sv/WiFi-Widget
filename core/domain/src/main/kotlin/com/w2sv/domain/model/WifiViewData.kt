@@ -1,7 +1,5 @@
 package com.w2sv.domain.model
 
-import kotlinx.coroutines.flow.Flow
-
 sealed interface WifiViewData {
     val label: String
     val value: String
@@ -18,15 +16,15 @@ sealed interface WifiViewData {
             get() = subPropertyValues.ifEmpty { null }
     }
 
-    interface Factory {
+    fun interface Provider {
         /**
-         * @return Flow of [WifiViewData], the element-order of which corresponds to the one of the [properties].
+         * @return List of [WifiViewData], the element-order of which corresponds to the one of the [properties].
          * One [WifiProperty] may result in the the creation of multiple [WifiViewData] elements.
          */
         operator fun invoke(
             properties: Iterable<WifiProperty>,
             ipSubProperties: Collection<WifiProperty.IP.SubProperty>,
-            locationParameters: Collection<LocationParameter>
-        ): Flow<WifiViewData>
+            remoteNetworkInfo: RemoteNetworkInfo
+        ): List<WifiViewData>
     }
 }
