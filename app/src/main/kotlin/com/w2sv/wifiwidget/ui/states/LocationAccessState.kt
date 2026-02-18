@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screens.home.components.EnableLocationAccessDependentProperties
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionOnGrantAction
+import com.w2sv.wifiwidget.ui.screens.home.components.OnLocationAccessGrant
 import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
 import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
@@ -159,7 +159,7 @@ class LocationAccessState(
     // ===================
 
     fun launchMultiplePermissionRequest(
-        onGrantAction: LocationAccessPermissionOnGrantAction?,
+        onGrantAction: OnLocationAccessGrant?,
         skipSnackbarIfInAppPromptingSuppressed: Boolean = false
     ) {
         fun setOnGrantActionAnd(block: () -> Unit) {
@@ -185,7 +185,7 @@ class LocationAccessState(
         }
     }
 
-    private var onGrantAction: LocationAccessPermissionOnGrantAction? = null
+    private var onGrantAction: OnLocationAccessGrant? = null
 
     // ===================
     // Rational

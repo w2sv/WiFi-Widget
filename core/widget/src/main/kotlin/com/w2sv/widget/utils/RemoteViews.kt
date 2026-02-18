@@ -1,10 +1,12 @@
 package com.w2sv.widget.utils
 
+import android.content.Context
 import android.util.TypedValue.COMPLEX_UNIT_SP
 import android.view.View
 import android.widget.RemoteViews
 import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
+import androidx.annotation.LayoutRes
 
 internal fun RemoteViews.setTextView(
     @IdRes viewId: Int,
@@ -28,3 +30,6 @@ internal fun RemoteViews.setViewVisibility(
         if (visible) View.VISIBLE.also { ifVisible() } else View.GONE
     )
 }
+
+internal fun remoteViews(context: Context, @LayoutRes layout: Int): RemoteViews =
+    RemoteViews(context.packageName, layout)

@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.mod
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.wifiproperty.WifiProperty
 
 @Immutable
 data class InfoDialogData(@StringRes val titleRes: Int, @StringRes val descriptionRes: Int, val learnMoreUrl: String? = null)

@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.common.utils.minutes
-import com.w2sv.domain.model.WidgetRefreshingParameter
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.WidgetRefreshingParameter
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon

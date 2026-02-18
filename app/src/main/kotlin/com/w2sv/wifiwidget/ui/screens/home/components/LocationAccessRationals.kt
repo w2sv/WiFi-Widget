@@ -11,25 +11,24 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.core.rememberStyledTextResource
-import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 
 @Immutable
-sealed interface LocationAccessPermissionOnGrantAction
+sealed interface OnLocationAccessGrant {
+    @Immutable
+    data object EnableLocationAccessDependentProperties : OnLocationAccessGrant
 
-@Immutable
-data object EnableLocationAccessDependentProperties : LocationAccessPermissionOnGrantAction
+    @Immutable
+    data object TriggerWidgetDataRefresh : OnLocationAccessGrant
 
-@Immutable
-data object TriggerWidgetDataRefresh : LocationAccessPermissionOnGrantAction
-
-@Immutable
-@JvmInline
-value class EnablePropertyOnReversibleConfiguration(val property: WifiProperty.NonIP) :
-    LocationAccessPermissionOnGrantAction
+    @Immutable
+    @JvmInline
+    value class EnableProperty(val property: WifiProperty) : OnLocationAccessGrant
+}
 
 @Immutable
 sealed interface LocationAccessPermissionStatus {
@@ -38,7 +37,7 @@ sealed interface LocationAccessPermissionStatus {
 
     @Immutable
     @JvmInline
-    value class Granted(val onGrantAction: LocationAccessPermissionOnGrantAction?) : LocationAccessPermissionStatus
+    value class Granted(val onGrantAction: OnLocationAccessGrant?) : LocationAccessPermissionStatus
 
     val grantedOrNull: Granted?
         get() = this as? Granted

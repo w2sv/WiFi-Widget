@@ -7,7 +7,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.w2sv.domain.model.WidgetProperty
+import com.w2sv.domain.model.Labelled
 import com.w2sv.wifiwidget.ui.utils.ShakeController
 import com.w2sv.wifiwidget.ui.utils.orAlphaDecreasedIf
 import kotlinx.collections.immutable.ImmutableList
@@ -18,7 +18,7 @@ sealed interface ConfigurationColumnElement {
     data class Custom(val content: @Composable () -> Unit) : ConfigurationColumnElement
 
     @Immutable
-    data class CheckRow<T : WidgetProperty>(
+    data class CheckRow<T : Labelled>(
         val property: T,
         @StringRes val explanation: Int? = null,
         val isChecked: () -> Boolean,
@@ -39,7 +39,7 @@ sealed interface ConfigurationColumnElement {
             get() = subPropertyColumnElements != null
 
         companion object {
-            fun <T : WidgetProperty> fromIsCheckedMap(
+            fun <T : Labelled> fromIsCheckedMap(
                 property: T,
                 @StringRes explanation: Int? = null,
                 isCheckedMap: MutableMap<T, Boolean>,

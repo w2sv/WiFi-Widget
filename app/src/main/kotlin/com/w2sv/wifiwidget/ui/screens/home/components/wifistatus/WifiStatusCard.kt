@@ -32,7 +32,7 @@ fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
             AnimatedVisibility(visible = wifiState is WifiState.Connected) {
                 wifiState.connectedOrNull?.let {
                     WifiPropertyDisplay(
-                        wifiViewData = it.wifiViewData.toImmutableList(),
+                        wifiPropertyViewData = it.wifiPropertyViewData.toImmutableList(),
                         modifier = Modifier
                             .padding(top = 12.dp)
                             .thenIf(

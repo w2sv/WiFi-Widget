@@ -7,7 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.CustomWidgetColor
 
 @Stable

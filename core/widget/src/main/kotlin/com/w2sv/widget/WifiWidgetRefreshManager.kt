@@ -4,7 +4,7 @@ import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.w2sv.domain.model.WidgetRefreshing
+import com.w2sv.domain.model.widget.WidgetRefreshing
 import slimber.log.i
 import javax.inject.Inject
 import javax.inject.Singleton

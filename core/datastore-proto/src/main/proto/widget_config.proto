@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+option java_package = "com.w2sv.datastore";
+option java_multiple_files = true;
+
+message WifiWidgetConfigProto {
+    map<int32, WifiPropertyConfigProto> properties = 1;
+    repeated int32 order = 2;
+    WidgetAppearanceProto appearance = 3;
+    WidgetRefreshingProto refreshing = 4;
+    map<int32, bool> bottom_bar_elements = 5;
+}
+
+/*
+ * =========================
+ * Property Config
+ * =========================
+ */
+message WifiPropertyConfigProto {
+    bool is_enabled = 1;
+    map<int32, bool> settings = 2;
+}
+
+/*
+ * =========================
+ * Appearance
+ * =========================
+ */
+message WidgetAppearanceProto {
+    WidgetColoringProto coloring = 1;
+    float background_opacity = 2;
+    FontSizeProto font_size = 3;
+    AlignmentProto property_value_alignment = 4;
+}
+
+message WidgetColoringProto {
+    Preset preset = 1;
+    Custom custom = 2;
+    bool is_custom_selected = 3;
+
+    message Preset {
+        Theme theme = 1;
+        bool useDynamicColors = 2;
+
+        enum Theme {
+            LIGHT = 0;
+            SYSTEM_DEFAULT = 1;
+            DARK = 2;
+        }
+    }
+
+    message Custom {
+        sint32 background = 1;
+        sint32 primary = 2;
+        sint32 secondary = 3;
+    }
+}
+
+enum FontSizeProto {
+    VERY_SMALL = 0;
+    SMALL = 1;
+    MEDIUM = 2;
+    LARGE = 3;
+    VERY_LARGE = 4;
+}
+
+enum AlignmentProto {
+    LEFT = 0;
+    RIGHT = 1;
+}
+
+/*
+ * =========================
+ * Refreshing
+ * =========================
+ */
+message WidgetRefreshingProto {
+    bool refresh_periodically = 1;
+    bool refresh_on_low_battery = 2;
+    int64 refresh_interval_minutes = 3;
+}

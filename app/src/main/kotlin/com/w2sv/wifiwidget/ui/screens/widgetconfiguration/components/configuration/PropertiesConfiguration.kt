@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.core.extensions.thenIf
-import com.w2sv.domain.model.LocationParameter
-import com.w2sv.domain.model.WifiProperty
+import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
+import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
@@ -26,7 +26,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.home.components.EnablePropertyOnReversibleConfiguration
+import com.w2sv.wifiwidget.ui.screens.home.components.EnableProperty
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.InfoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.components.dialog.model.infoDialogData
 import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
@@ -160,10 +160,10 @@ private fun WifiProperty.checkRow(
         property = this,
         isCheckedMap = widgetConfiguration.wifiProperties,
         allowCheckChange = { isCheckedNew ->
-            if ((this as? WifiProperty.NonIP)?.requiresLocationAccess == true && isCheckedNew) {
+            if (requiresLocationAccess && isCheckedNew) {
                 return@fromIsCheckedMap locationAccessState.allPermissionsGranted.also {
                     if (!it) {
-                        locationAccessState.launchMultiplePermissionRequest(EnablePropertyOnReversibleConfiguration(this))
+                        locationAccessState.launchMultiplePermissionRequest(EnableProperty(this))
                     }
                 }
             }
@@ -176,7 +176,7 @@ private fun WifiProperty.checkRow(
         onCheckedChangedDisallowed = { shakeScope.launch { shakeController.shake() } },
         shakeController = shakeController,
         subPropertyColumnElements = when (this) {
-            is WifiProperty.IP ->
+            is WifiProperty.IpProperty ->
                 subPropertyElements(
                     ipSubPropertyEnablementMap = widgetConfiguration.ipSubProperties,
                     showLeaveAtLeastOneAddressVersionEnabledSnackbar = showLeaveAtLeastOneAddressVersionEnabledSnackbar,
@@ -198,13 +198,13 @@ private fun WifiProperty.checkRow(
 private fun Map<*, Boolean>.moreThanOnePropertyEnabled(): Boolean =
     values.count { it } > 1
 
-private fun WifiProperty.IP.subPropertyElements(
-    ipSubPropertyEnablementMap: MutableMap<WifiProperty.IP.SubProperty, Boolean>,
+private fun WifiProperty.IpProperty.subPropertyElements(
+    ipSubPropertyEnablementMap: MutableMap<WifiProperty.IpProperty.SubProperty, Boolean>,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     shakeScope: CoroutineScope
 ): ImmutableList<ConfigurationColumnElement> =
     buildList {
-        if (this@subPropertyElements is WifiProperty.IP.V64) {
+        if (this@subPropertyElements is WifiProperty.IpProperty.V64) {
             add(
                 ConfigurationColumnElement.Custom {
                     VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.startPadding))
@@ -214,7 +214,7 @@ private fun WifiProperty.IP.subPropertyElements(
         subProperties
             .forEach { subProperty ->
                 val shakeController =
-                    if (subProperty.isAddressTypeEnablementProperty) {
+                    if (subProperty.isAddressTypeEnablement) {
                         ShakeController()
                     } else {
                         null
@@ -235,9 +235,9 @@ private fun WifiProperty.IP.subPropertyElements(
                             showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                         },
                         show = {
-                            if (subProperty.kind == WifiProperty.IP.SubProperty.Kind.ShowSubnetMask) {
+                            if (subProperty.kind == WifiProperty.IpProperty.SubProperty.Kind.ShowSubnetMask) {
                                 ipSubPropertyEnablementMap.getValue(
-                                    subProperty.copy(kind = WifiProperty.IP.V64.AddressTypeEnablement.V4Enabled)
+                                    subProperty.copy(kind = WifiProperty.IpProperty.V64.AddressTypeEnablement.V4Enabled)
                                 )
                             } else {
                                 true
@@ -246,7 +246,7 @@ private fun WifiProperty.IP.subPropertyElements(
                         shakeController = shakeController,
                         modifier = Modifier
                             .thenIf(
-                                condition = subProperty.isAddressTypeEnablementProperty,
+                                condition = subProperty.isAddressTypeEnablement,
                                 onTrue = { padding(start = 16.dp) }
                             )
                     )
@@ -278,15 +278,15 @@ private fun subPropertyElements(
     }
         .toPersistentList()
 
-private fun WifiProperty.IP.SubProperty.allowCheckedChange(
+private fun WifiProperty.IpProperty.SubProperty.allowCheckedChange(
     newValue: Boolean,
-    subPropertyEnablementMap: Map<WifiProperty.IP.SubProperty, Boolean>
+    subPropertyEnablementMap: Map<WifiProperty.IpProperty.SubProperty, Boolean>
 ): Boolean =
     when (val capturedKind = kind) {
-        is WifiProperty.IP.V64.AddressTypeEnablement -> {
+        is WifiProperty.IpProperty.V64.AddressTypeEnablement -> {
             newValue ||
                 subPropertyEnablementMap.getValue(
-                    WifiProperty.IP.SubProperty(
+                    WifiProperty.IpProperty.SubProperty(
                         property = property,
                         kind = capturedKind.opposingAddressTypeEnablement
                     )

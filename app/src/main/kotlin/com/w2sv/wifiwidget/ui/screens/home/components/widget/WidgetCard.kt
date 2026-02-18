@@ -32,7 +32,6 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.Navigator
-import com.w2sv.wifiwidget.ui.screens.home.components.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedviewmodel.WidgetViewModel
 import com.w2sv.wifiwidget.ui.states.LocationAccessState
 import com.w2sv.wifiwidget.ui.utils.activityViewModel

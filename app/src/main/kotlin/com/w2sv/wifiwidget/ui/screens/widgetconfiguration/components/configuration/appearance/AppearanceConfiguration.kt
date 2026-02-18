@@ -16,9 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.domain.model.FontSize
-import com.w2sv.domain.model.PropertyValueAlignment
-import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.model.widget.FontSize
+import com.w2sv.domain.model.widget.Alignment
+import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
@@ -70,8 +70,8 @@ fun AppearanceConfiguration(
     setOpacity: (Float) -> Unit,
     fontSize: FontSize,
     setFontSize: (FontSize) -> Unit,
-    propertyValueAlignment: PropertyValueAlignment,
-    setPropertyValueAlignment: (PropertyValueAlignment) -> Unit,
+    propertyValueAlignment: Alignment,
+    setPropertyValueAlignment: (Alignment) -> Unit,
     showCustomColorConfigurationDialog: (ColorPickerDialogData) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -100,7 +100,7 @@ fun AppearanceConfiguration(
             stringResource(R.string.value_alignment),
             content = {
                 SingleChoiceSegmentedButtonRow {
-                    PropertyValueAlignment.entries.forEach {
+                    Alignment.entries.forEach {
                         SegmentedButton(
                             selected = it == propertyValueAlignment,
                             onClick = { setPropertyValueAlignment(it) },

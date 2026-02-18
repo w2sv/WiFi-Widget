@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.isPortraitModeActive
-import com.w2sv.domain.model.WidgetBottomBarElement
+import com.w2sv.domain.model.widget.WidgetBottomBarElement
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeaderProperties

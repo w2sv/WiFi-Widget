@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screens.home.components.wifistatus
 
-import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -31,9 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -44,7 +41,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.WifiViewData
+import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
+import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
@@ -61,22 +59,22 @@ private const val LABEL_VALUE_COLUMN_SPLIT = 0.4f
 
 // TODO
 @Composable
-fun WifiPropertyDisplay(wifiViewData: ImmutableList<WifiViewData>, modifier: Modifier = Modifier) {
+fun WifiPropertyDisplay(wifiPropertyViewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
     AnimatedVisibility(
-        visible = wifiViewData.isNotEmpty(),
+        visible = wifiPropertyViewData.isNotEmpty(),
         label = "",
         modifier = modifier.fillMaxWidth(),
         enter = fadeIn() + slideInVertically(),
         exit = fadeOut() + slideOutVertically()
     ) {
-        AnimatedContent(wifiViewData.firstOrNull(), label = "") {
+        AnimatedContent(wifiPropertyViewData.firstOrNull(), label = "") {
             when (it) {
                 null -> {
                     PropertyLoadingView(modifier = Modifier.fillMaxSize())
                 }
 
                 else -> {
-                    PropertyList(viewDataList = wifiViewData)
+                    PropertyList(viewDataList = wifiPropertyViewData)
                 }
             }
         }
@@ -104,7 +102,7 @@ private fun PropertyLoadingView(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun PropertyList(viewDataList: ImmutableList<WifiViewData>, modifier: Modifier = Modifier) {
+private fun PropertyList(viewDataList: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
     val onPropertyRowClick = rememberOnPropertyRowClick()
 
     SecondLevelElevatedCard(modifier = modifier) {
@@ -126,8 +124,8 @@ private fun PropertyList(viewDataList: ImmutableList<WifiViewData>, modifier: Mo
             }
             itemsIndexed(viewDataList) { i, viewData ->
                 PropertyDisplay(
-                    wifiViewData = viewData,
-                    subPropertyValues = viewData.ipPropertyOrNull?.nonEmptySubPropertyValuesOrNull?.toPersistentList(),
+                    wifiPropertyViewData = viewData,
+                    subPropertyValues = viewData.subValues.toPersistentList(),
                     onClick = onPropertyRowClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -169,11 +167,11 @@ private fun Header(modifier: Modifier = Modifier) {
     }
 }
 
-private typealias OnPropertyRowClick = (WifiViewData, CharSequence, CoroutineScope) -> Unit
+private typealias OnPropertyRowClick = (WifiPropertyViewData, CharSequence, CoroutineScope) -> Unit
 
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
-    val clipboardManager: ClipboardManager = LocalClipboardManager.current
+    val clipboardManager = LocalClipboardManager.current
     val snackbarEmitter = rememberSnackbarEmitter()
 
     return remember {
@@ -195,34 +193,34 @@ private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     }
 }
 
+private fun SubscriptableText.toAnnotatedString(): AnnotatedString =
+    buildAnnotatedString {
+        append(text)
+        subscript?.let {
+            withStyle(
+                SpanStyle(
+                    baselineShift = BaselineShift.Subscript,
+                    fontSize = 12.sp
+                )
+            ) {
+                append(it)
+            }
+        }
+    }
+
 @Composable
 private fun PropertyDisplay(
-    wifiViewData: WifiViewData,
+    wifiPropertyViewData: WifiPropertyViewData,
     subPropertyValues: ImmutableList<String>?,
     onClick: OnPropertyRowClick,
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val context: Context = LocalContext.current
-    val label = remember(wifiViewData) {
-        buildAnnotatedString {
-            if (wifiViewData is WifiViewData.IPProperty) {
-                append(context.getString(R.string.ip))
-                withStyle(
-                    SpanStyle(
-                        baselineShift = BaselineShift.Subscript,
-                        fontSize = 12.sp
-                    )
-                ) {
-                    append(wifiViewData.label)
-                }
-            } else {
-                append(wifiViewData.label)
-            }
-        }
+    val label = remember(wifiPropertyViewData) {
+        wifiPropertyViewData.label.toAnnotatedString()
     }
 
-    Row(modifier = modifier.clickable { onClick(wifiViewData, label, scope) }) {
+    Row(modifier = modifier.clickable { onClick(wifiPropertyViewData, label, scope) }) {
         Column(modifier = Modifier.fillMaxWidth(LABEL_VALUE_COLUMN_SPLIT)) {
             Text(
                 text = label,
@@ -230,7 +228,7 @@ private fun PropertyDisplay(
             )
         }
         Column {
-            Text(text = wifiViewData.value)
+            Text(text = wifiPropertyViewData.value)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
                 subPropertyValues?.forEach {
                     Text(

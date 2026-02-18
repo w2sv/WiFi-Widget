@@ -15,13 +15,12 @@ import com.w2sv.androidutils.content.intent
 import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppAction
 import com.w2sv.core.widget.R
-import com.w2sv.domain.model.WifiStatus
-import com.w2sv.domain.repository.WidgetConfigRepository
+import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.domain.model.widget.WidgetBottomBarElement
+import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.wifistatus.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.model.WidgetBottomBarElement
-import com.w2sv.widget.model.widgetAppearance
 import com.w2sv.widget.utils.activityPendingIntent
 import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
 import com.w2sv.widget.utils.setTextView
@@ -36,25 +35,24 @@ import java.util.Locale
 import javax.inject.Inject
 
 internal class WidgetRenderer @Inject constructor(
-    widgetConfigRepository: WidgetConfigRepository,
+    widgetConfigFlow: WidgetConfigFlow,
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val getWifiStatus: WifiStatusGetter
 ) {
-    private val appearance = runBlocking { widgetConfigRepository.widgetAppearance().first() }
-    private val colors = appearance.widgetColors(context)
+    private val config = runBlocking { widgetConfigFlow.first() } // TODO: wrong
+    private val appearance = config.appearance
+    private val colors = appearance.resolvedWidgetColors(context)
 
     fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
         widget
             .apply {
-                setContentLayout(
-                    appWidgetId = appWidgetId
-                )
+                setContentLayout(appWidgetId = appWidgetId)
                 setBackgroundColor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
                 )
-                setBottomBar(bottomBar = appearance.bottomBar, appWidgetId = appWidgetId)
+                setBottomBar(bottomBar = config.bottomBar(), appWidgetId = appWidgetId)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -120,9 +118,9 @@ internal class WidgetRenderer @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomBar(bottomBar: WidgetBottomBarElement, appWidgetId: Int) {
-        setViewVisibility(R.id.bottom_row, bottomBar.isAnyEnabled) {
-            setViewVisibility(R.id.last_updated_tv, bottomBar.lastRefreshTimeDisplay) {
+    private fun RemoteViews.setBottomBar(bottomBar: List<WidgetBottomBarElement>, appWidgetId: Int) {
+        setViewVisibility(R.id.bottom_row, bottomBar.isNotEmpty()) {
+            setViewVisibility(R.id.last_updated_tv, WidgetBottomBarElement.LastRefreshTimeDisplay in bottomBar) {
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
                 val now = Date()
@@ -137,7 +135,7 @@ internal class WidgetRenderer @Inject constructor(
 
             setButton(
                 id = R.id.refresh_button,
-                show = bottomBar.refreshButton,
+                show = WidgetBottomBarElement.RefreshButton in bottomBar,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     appWidgetId,
@@ -147,12 +145,12 @@ internal class WidgetRenderer @Inject constructor(
             )
             setButton(
                 id = R.id.go_to_wifi_settings_button,
-                show = bottomBar.goToWifiSettingsButton,
+                show = WidgetBottomBarElement.GoToWifiSettingsButton in bottomBar,
                 pendingIntent = goToWifiSettingsPendingIntent(context)
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
-                show = bottomBar.goToWidgetSettingsButton,
+                show = WidgetBottomBarElement.GoToWidgetSettingsButton in bottomBar,
                 pendingIntent = activityPendingIntent(
                     context,
                     Intent.makeRestartActivityTask(

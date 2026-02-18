@@ -1,6 +1,6 @@
 package com.w2sv.domain.repository
 
-import com.w2sv.domain.model.RemoteNetworkInfo
+import com.w2sv.domain.model.networking.RemoteNetworkInfo
 import kotlinx.coroutines.flow.StateFlow
 
 /**

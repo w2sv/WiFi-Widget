@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
-import com.w2sv.domain.model.WidgetColoring
+import com.w2sv.domain.model.widget.WidgetColoring
 
 enum class CustomWidgetColor(@StringRes val labelRes: Int) {
     Background(com.w2sv.core.domain.R.string.background),

@@ -5,10 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
-import com.w2sv.domain.model.WidgetColoring
-import com.w2sv.domain.repository.WidgetConfigRepository
-import com.w2sv.reversiblestate.ReversibleStateFlow
-import com.w2sv.reversiblestate.datastore.reversibleStateFlow
+import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.WifiWidgetRefreshManager
 import com.w2sv.widget.di.WidgetPinSuccessFlow
@@ -16,32 +13,24 @@ import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfiguration
+import com.w2sv.wifiwidget.ui.screens.widgetconfiguration.model.ReversibleWidgetConfig
 import com.w2sv.wifiwidget.ui.snackbarvisuals.EmitSnackbarBuilder
-import com.w2sv.wifiwidget.ui.utils.reversibleStateMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class WidgetViewModel @Inject constructor(
-    private val repository: WidgetConfigRepository,
+    repository: WidgetConfigDataSource,
     private val widgetRefreshManager: WifiWidgetRefreshManager,
     private val appWidgetManager: AppWidgetManager,
     private val emitSnackbarBuilder: EmitSnackbarBuilder,
     @ApplicationContext context: Context,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>
 ) : ViewModel() {
-
-    // =========
-    // Pinning
-    // =========
 
     fun attemptWidgetPin(context: Context) {
         appWidgetManager.attemptWifiWidgetPin(
@@ -59,65 +48,18 @@ class WidgetViewModel @Inject constructor(
         )
     }
 
-    // =========
-    // Configuration
-    // =========
-
-    private val refreshInterval = repository.refreshInterval.reversibleStateFlow(
+    val configuration = ReversibleWidgetConfig(
         scope = viewModelScope,
-        started = SharingStarted.Eagerly
-    )
-
-    val configuration by lazy {
-        ReversibleWidgetConfiguration(
-            coloringConfig = ReversibleStateFlow(
-                scope = viewModelScope,
-                appliedStateFlow = repository.coloringConfig.stateIn(
-                    scope = viewModelScope,
-                    started = SharingStarted.Eagerly,
-                    initialValue = WidgetColoring.Config()
-                ),
-                syncState = { repository.saveColoringConfig(it) }
-            ),
-            opacity = repository.opacity.reversibleStateFlow(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly
-            ),
-            fontSize = repository.fontSize.reversibleStateFlow(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly
-            ),
-            propertyValueAlignment = repository.propertyValueAlignment.reversibleStateFlow(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly
-            ),
-            wifiProperties = repository.wifiPropertyEnablementMap.reversibleStateMap(scope = viewModelScope),
-            wifiPropertyOrder = repository.wifiPropertyOrder.reversibleStateFlow(
-                scope = viewModelScope,
-                started = SharingStarted.Eagerly
-            ),
-            ipSubProperties = repository.ipSubPropertyEnablementMap.reversibleStateMap(scope = viewModelScope),
-            bottomRowMap = repository.bottomRowElementEnablementMap.reversibleStateMap(scope = viewModelScope),
-            refreshInterval = refreshInterval,
-            refreshingParametersMap = repository.refreshingParametersEnablementMap.reversibleStateMap(
-                scope = viewModelScope,
-                onStateSynced = {
-                    val refreshing = repository.refreshing.first()
-                    widgetRefreshManager.applyRefreshingSettings(refreshing )
-                }
-            ),
-            locationParameters = repository.locationParameters.reversibleStateMap(scope = viewModelScope),
-            scope = viewModelScope,
-            onStateSynced = {
-                WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
-                delay(500) // To allow fab buttons to disappear before emission of snackbar
-                emitSnackbarBuilder {
-                    AppSnackbarVisuals(
-                        msg = getString(R.string.updated_widget_configuration),
-                        kind = SnackbarKind.Success
-                    )
-                }
+        dataSource = repository,
+        onStateSynced = {
+            WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
+            delay(500) // To allow fab buttons to disappear before emission of snackbar
+            emitSnackbarBuilder {
+                AppSnackbarVisuals(
+                    msg = getString(R.string.updated_widget_configuration),
+                    kind = SnackbarKind.Success
+                )
             }
-        )
-    }
+        }
+    )
 }

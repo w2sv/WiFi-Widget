@@ -30,6 +30,9 @@ update-dependencies:
 update-gradle:
 	@./gradlew wrapper --gradle-version latest
 
+generate-proto:
+	@./gradlew :datastore-proto:generateDebugProto
+
 generate-dependency-graph:
 	@./gradlew generateModulesGraphvizText --no-configure-on-demand -Pmodules.graph.output.gv=all_modules
 

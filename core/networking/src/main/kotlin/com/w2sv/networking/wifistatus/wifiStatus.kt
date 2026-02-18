@@ -3,9 +3,9 @@ package com.w2sv.networking.wifistatus
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.log
-import com.w2sv.domain.model.WifiStatus
-import com.w2sv.networking.extensions.isActiveNetworkWifi
-import com.w2sv.networking.extensions.isAnyWifiConnected
+import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.networking.isActiveNetworkWifi
+import com.w2sv.networking.isAnyWifiConnected
 import slimber.log.d
 
 fun wifiStatus(wifiManager: WifiManager, connectivityManager: ConnectivityManager): WifiStatus {

@@ -3,15 +3,15 @@ package com.w2sv.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.widget.RemoteViews
 import com.w2sv.androidutils.content.getIntExtraOrNull
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
-import com.w2sv.domain.repository.WidgetConfigRepository
+import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.layout.WidgetRenderer
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
+import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -31,7 +31,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     internal lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetConfigRepository: WidgetConfigRepository
+    internal lateinit var widgetConfigFlow: WidgetConfigFlow
 
     /**
      * Called upon the first AppWidget instance being created.
@@ -41,7 +41,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
-        val refreshing = runBlocking { widgetConfigRepository.refreshing.first() }
+        val refreshing = runBlocking { widgetConfigFlow.first().refreshing }
         refreshManager.applyRefreshingSettings(refreshing)
     }
 
@@ -84,10 +84,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
             appWidgetManager.updateAppWidget(
                 id,
                 widgetRenderer.populate(
-                    widget = RemoteViews(
-                        context.packageName,
-                        R.layout.widget
-                    ),
+                    widget = remoteViews(context, R.layout.widget),
                     appWidgetId = id
                 )
             )
