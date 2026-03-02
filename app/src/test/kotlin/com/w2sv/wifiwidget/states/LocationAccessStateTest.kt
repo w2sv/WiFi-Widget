@@ -6,9 +6,8 @@ import androidx.compose.runtime.snapshots.Snapshot
 import app.cash.turbine.test
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.PermissionState
-import com.w2sv.wifiwidget.ui.screens.home.components.LocationAccessPermissionStatus
-import com.w2sv.wifiwidget.ui.states.LocationAccessState
-import com.w2sv.wifiwidget.ui.utils.ScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.locationaccess.LocationAccessState
+import com.w2sv.wifiwidget.ui.util.ScopedSnackbarEmitter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.CoroutineScope

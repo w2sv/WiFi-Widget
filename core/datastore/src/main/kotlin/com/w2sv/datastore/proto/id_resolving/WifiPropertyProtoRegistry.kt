@@ -5,4 +5,4 @@ import com.w2sv.domain.model.wifiproperty.WifiProperty
 /**
  * Central lookup for resolving [WifiProperty] instances from their proto IDs.
  */
-internal object WifiPropertyProtoRegistry : ProtoRegistry<WifiProperty>(WifiProperty.Companion.entries)
+internal object WifiPropertyProtoRegistry : ProtoRegistry<WifiProperty>(WifiProperty.entries)

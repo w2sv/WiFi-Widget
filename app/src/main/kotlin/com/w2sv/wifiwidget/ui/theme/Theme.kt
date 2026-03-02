@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 fun AppTheme(
     useDarkTheme: Boolean = LocalUseDarkTheme.current,
     useAmoledBlackTheme: Boolean = false,
-    useDynamicTheme: Boolean = false,
+    useDynamicColors: Boolean = false,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit = { _, _ -> },
     content: @Composable () -> Unit
 ) {
@@ -47,9 +47,9 @@ fun AppTheme(
 
     MaterialTheme(
         colorScheme = when {
-            useDynamicTheme && useDarkTheme -> dynamicDarkColorScheme(context)
-            useDynamicTheme && !useDarkTheme -> dynamicLightColorScheme(context)
-            !useDynamicTheme && useDarkTheme -> darkColors
+            useDynamicColors && useDarkTheme -> dynamicDarkColorScheme(context)
+            useDynamicColors && !useDarkTheme -> dynamicLightColorScheme(context)
+            !useDynamicColors && useDarkTheme -> darkColors
             else -> lightColors
         }
             .run {

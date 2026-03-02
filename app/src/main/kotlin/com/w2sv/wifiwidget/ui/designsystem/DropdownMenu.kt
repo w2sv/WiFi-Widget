@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.utils.alphaDecreased
+import com.w2sv.wifiwidget.ui.util.alphaDecreased
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable

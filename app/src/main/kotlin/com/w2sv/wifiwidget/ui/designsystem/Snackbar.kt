@@ -25,11 +25,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.CollectLatestFromFlow
-import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
 import com.w2sv.wifiwidget.ui.theme.AppColor
-import com.w2sv.wifiwidget.ui.utils.SnackbarEmitter
-import com.w2sv.wifiwidget.ui.utils.activityViewModel
-import com.w2sv.wifiwidget.ui.utils.rememberSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.SnackbarBuilderFlow
+import com.w2sv.wifiwidget.ui.util.SnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.rememberSnackbarEmitter
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -76,9 +75,9 @@ sealed interface SnackbarKind {
 }
 
 @Composable
-fun AppSnackbarHost(snackbarEmitter: SnackbarEmitter = rememberSnackbarEmitter(), appVM: AppViewModel = activityViewModel()) {
+fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow, snackbarEmitter: SnackbarEmitter = rememberSnackbarEmitter()) {
     // Show Snackbars collected from sharedSnackbarVisuals
-    CollectLatestFromFlow(appVM.snackbarBuilderFlow) { builder ->
+    CollectLatestFromFlow(snackbarBuilderFlow) { builder ->
         snackbarEmitter.dismissCurrentAndShowSuspending { builder() }
     }
 

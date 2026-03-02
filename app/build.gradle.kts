@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.play)
     alias(libs.plugins.baselineprofile)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
 }
 

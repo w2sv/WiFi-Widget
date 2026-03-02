@@ -6,5 +6,5 @@ import kotlin.time.Duration.Companion.minutes
 data class WidgetRefreshing(
     val refreshPeriodically: Boolean = true,
     val refreshOnLowBattery: Boolean = true,
-    val refreshInterval: Duration = 15.minutes
+    val interval: Duration = 15.minutes
 )

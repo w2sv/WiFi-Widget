@@ -8,12 +8,12 @@ internal fun WidgetRefreshing.toProto(): WidgetRefreshingProto =
     WidgetRefreshingProto.newBuilder()
         .setRefreshPeriodically(refreshPeriodically)
         .setRefreshOnLowBattery(refreshOnLowBattery)
-        .setRefreshIntervalMinutes(refreshInterval.inWholeMinutes)
+        .setRefreshIntervalMinutes(interval.inWholeMinutes)
         .build()
 
 internal fun WidgetRefreshingProto.toExternal(): WidgetRefreshing =
     WidgetRefreshing(
         refreshPeriodically = refreshPeriodically,
         refreshOnLowBattery = refreshOnLowBattery,
-        refreshInterval = refreshIntervalMinutes.minutes
+        interval = refreshIntervalMinutes.minutes
     )

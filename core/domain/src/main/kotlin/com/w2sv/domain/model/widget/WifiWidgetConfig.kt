@@ -5,10 +5,11 @@ import com.w2sv.domain.model.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
+import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.trueKeys
 
 data class WifiWidgetConfig(
-    val properties: Map<WifiProperty, WifiPropertyConfig<*>>,
+    val properties: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
     val orderedProperties: List<WifiProperty>,
     val appearance: WidgetAppearance,
     val refreshing: WidgetRefreshing,
@@ -19,6 +20,16 @@ data class WifiWidgetConfig(
 
     fun orderedEnabledProperties(): List<WifiProperty> =
         orderedProperties.filter { isEnabled(it) }
+
+    val propertiesInDefaultOrder: Boolean
+        get() = orderedProperties == WifiProperty.entries
+
+    // TODO test
+    fun withModifiedPropertyPosition(from: Int, to: Int): WifiWidgetConfig =
+        copy(orderedProperties = orderedProperties.copy { add(to, removeAt(from)) })
+
+    fun withDefaultPropertyOrder(): WifiWidgetConfig =
+        copy(orderedProperties = WifiProperty.entries)
 
     // ================
     // Property Config Access

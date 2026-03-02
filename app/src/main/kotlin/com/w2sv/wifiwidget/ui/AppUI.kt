@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui
 
-import android.location.LocationManager
 import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -11,15 +10,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.navigation.Screen
-import com.w2sv.wifiwidget.ui.sharedviewmodel.AppViewModel
-import com.w2sv.wifiwidget.ui.states.rememberLocationAccessState
+import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.utils.activityViewModel
+import com.w2sv.wifiwidget.ui.util.activityViewModel
 
 @Composable
 fun AppUI(
     initialScreen: Screen,
-    locationManager: LocationManager,
+    isGpsEnabled: () -> Boolean,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
     appVM: AppViewModel = activityViewModel()
 ) {
@@ -29,11 +27,10 @@ fun AppUI(
 
     CompositionLocalProvider(
         LocalUseDarkTheme provides rememberUseDarkTheme(theme = theme),
-        LocalLocationAccessState provides rememberLocationAccessState(),
-        LocalLocationManager provides locationManager
+        LocalLocationAccessCapability provides rememberLocationAccessCapability(isGpsEnabled = isGpsEnabled)
     ) {
         AppTheme(
-            useDynamicTheme = useDynamicColors,
+            useDynamicColors = useDynamicColors,
             useAmoledBlackTheme = useAmoledBlackTheme,
             setSystemBarStyles = setSystemBarStyles
         ) {

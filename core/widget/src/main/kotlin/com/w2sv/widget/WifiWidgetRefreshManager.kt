@@ -17,7 +17,7 @@ class WifiWidgetRefreshManager @Inject constructor(private val workManager: Work
         when (settings.refreshPeriodically) {
             true -> enableWorker(
                 refreshOnLowBattery = settings.refreshOnLowBattery,
-                interval = settings.refreshInterval.toJavaDuration()
+                interval = settings.interval.toJavaDuration()
             )
 
             false -> cancelWorker()

@@ -4,9 +4,6 @@ import android.content.res.ColorStateList
 import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
-import androidx.core.text.buildSpannedString
-import androidx.core.text.scale
-import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.widget.FontSize
@@ -22,14 +19,7 @@ internal fun RemoteViews.inflatePropertyLayout(
     // Label TextView
     setTextView(
         viewId = R.id.property_label_tv,
-        text = buildSpannedString {
-            append(viewData.label.text)
-            subscript {
-                scale(0.8f) {
-                    append(viewData.label.subscript)
-                }
-            }
-        },
+        text = viewData.label.toSpannedString(0.8f),
         size = fontSize.value,
         color = widgetColors.primary
     )

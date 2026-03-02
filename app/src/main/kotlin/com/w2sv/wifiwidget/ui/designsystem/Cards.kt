@@ -29,7 +29,7 @@ val CardContainerColor: Color
 
 @Composable
 fun ElevatedIconHeaderCard(
-    iconHeaderProperties: IconHeaderProperties,
+    iconHeader: IconHeader,
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.elevatedCardColors(containerColor = CardContainerColor),
     elevation: CardElevation = AppDefaults.elevatedCardElevation,
@@ -47,7 +47,7 @@ fun ElevatedIconHeaderCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             IconHeader(
-                properties = iconHeaderProperties,
+                properties = iconHeader,
                 modifier = Modifier.padding(headerPadding)
             )
             content()
