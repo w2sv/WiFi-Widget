@@ -12,8 +12,11 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGrant
+import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 @Stable
 class LocationPermissionCapabilityImpl(
@@ -25,10 +28,13 @@ class LocationPermissionCapabilityImpl(
     private val saveRationalShown: () -> Unit,
     private val showSnackbar: (SnackbarBuilder) -> Unit,
     private val openAppSettings: () -> Unit
-): LocationPermissionCapability {
+) : LocationPermissionCapability {
     override val foregroundPermissionsGranted: Boolean by foregroundPermissionsState::allPermissionsGranted
     override val isBackgroundPermissionMissing: Boolean
         get() = backgroundPermissionState?.status?.isGranted == false
+
+    private val _grantEvents = MutableSharedFlow<OnLocationAccessGranted>()
+    override val grantEvents: Flow<OnLocationAccessGranted> = _grantEvents.asSharedFlow()
 
     // ========= Foreground Rational =========
 
@@ -38,7 +44,7 @@ class LocationPermissionCapabilityImpl(
     override fun onForegroundRationalProceed() {
         saveRationalShown()
         showForegroundRational = false
-        launchForegroundPermission()
+        requestPermission(OnLocationAccessGranted.EnableLocationAccessRequiringProperties)
     }
 
     // ========= Background Rational =========
@@ -46,7 +52,7 @@ class LocationPermissionCapabilityImpl(
     override var showBackgroundRational by mutableStateOf(false)
         private set
 
-    override fun maybeShowBackgroundRational() {
+    private fun maybeShowBackgroundRational() {
         if (isBackgroundPermissionMissing) {
             showBackgroundRational = true
         }
@@ -63,9 +69,8 @@ class LocationPermissionCapabilityImpl(
 
     // ========= Grant Actions =========
 
-    private var pendingOnGrantAction by mutableStateOf<OnLocationAccessGrant?>(null)
-
-    override fun requestPermission(onGrant: OnLocationAccessGrant?) {
+    private var pendingOnGrantAction: OnLocationAccessGranted? = null
+    override fun requestPermission(onGrant: OnLocationAccessGranted?) {
         pendingOnGrantAction = onGrant
 
         when {
@@ -75,8 +80,11 @@ class LocationPermissionCapabilityImpl(
         }
     }
 
-    override fun consumeOnGrantAction(): OnLocationAccessGrant? =
-        pendingOnGrantAction.also { pendingOnGrantAction = null }
+    override suspend fun onPermissionGranted() {
+        pendingOnGrantAction?.let { _grantEvents.emit(it) }
+        pendingOnGrantAction = null
+        maybeShowBackgroundRational()
+    }
 
     // ========= Internal Helpers =========
 

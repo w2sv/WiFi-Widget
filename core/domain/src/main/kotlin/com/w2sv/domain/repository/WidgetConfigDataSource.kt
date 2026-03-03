@@ -7,5 +7,5 @@ typealias WidgetConfigFlow = Flow<WifiWidgetConfig>
 
 interface WidgetConfigDataSource {
     val config: WidgetConfigFlow
-    suspend fun update(config: WifiWidgetConfig)
+    suspend fun update(transform: (WifiWidgetConfig) -> WifiWidgetConfig)
 }

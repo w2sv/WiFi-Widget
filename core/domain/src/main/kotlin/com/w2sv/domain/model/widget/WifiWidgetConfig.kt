@@ -7,6 +7,7 @@ import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
 import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.trueKeys
+import com.w2sv.kotlinutils.update
 
 data class WifiWidgetConfig(
     val properties: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
@@ -24,12 +25,27 @@ data class WifiWidgetConfig(
     val propertiesInDefaultOrder: Boolean
         get() = orderedProperties == WifiProperty.entries
 
+    val isAnyLocationAccessRequiringPropertyEnabled: Boolean
+        get() = WifiProperty.locationAccessRequiring.any { property -> isEnabled(property) }
+
     // TODO test
     fun withModifiedPropertyPosition(from: Int, to: Int): WifiWidgetConfig =
         copy(orderedProperties = orderedProperties.copy { add(to, removeAt(from)) })
 
     fun withDefaultPropertyOrder(): WifiWidgetConfig =
         copy(orderedProperties = WifiProperty.entries)
+
+    fun withConfiguredPropertyEnablement(property: WifiProperty, isEnabled: Boolean): WifiWidgetConfig =
+        copy(properties = properties.copy { update(property) { it.copy(isEnabled = isEnabled) } })
+
+    fun withEnabledLocationAccessRequiringProperties(): WifiWidgetConfig =
+        copy(
+            properties = properties.copy {
+                WifiProperty.locationAccessRequiring.forEach { property ->
+                    update(property) { it.copy(isEnabled = true) }
+                }
+            }
+        )
 
     // ================
     // Property Config Access

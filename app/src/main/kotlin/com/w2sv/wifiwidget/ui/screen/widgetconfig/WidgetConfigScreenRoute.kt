@@ -11,12 +11,15 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
+import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
+import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.ScopedSnackbarEmitter
 import com.w2sv.wifiwidget.ui.util.rememberScopedSnackbarEmitter
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +28,7 @@ import kotlinx.coroutines.flow.update
 @Composable
 fun WidgetConfigScreenRoute(
     navigator: Navigator = LocalNavigator.current,
+    locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack: () -> Unit = rememberOnBack(
@@ -33,9 +37,24 @@ fun WidgetConfigScreenRoute(
         scope = rememberCoroutineScope()
     )
 
-    BackHandler(onBack = onBack)
+    val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
+    val configHasChanged by viewModel.reversibleConfig.statesDissimilar.collectAsStateWithLifecycle()
 
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
+
+    CollectFromFlow(locationAccessCapability.grantEvents) { event ->
+        event.asEnabledPropertyOrNull?.run {
+            viewModel.reversibleConfig.update {
+                it.withConfiguredPropertyEnablement(
+                    property = property,
+                    isEnabled = true
+                )
+            }
+        }
+    }
+
+    BackHandler(onBack = onBack)
+
     dialog?.let {
         WidgetConfigDialog(
             dialog = it,
@@ -44,9 +63,6 @@ fun WidgetConfigScreenRoute(
             onDismissRequest = { dialog = null }
         )
     }
-
-    val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
-    val configHasChanged by viewModel.reversibleConfig.statesDissimilar.collectAsStateWithLifecycle()
 
     WidgetConfigScreen(
         config = config,

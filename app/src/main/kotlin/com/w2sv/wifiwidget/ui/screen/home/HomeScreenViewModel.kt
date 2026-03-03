@@ -6,10 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
-import com.w2sv.domain.repository.WidgetConfigFlow
+import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.networking.wifistatus.WifiStatusMonitor
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
@@ -37,10 +36,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    widgetConfigFlow: WidgetConfigFlow,
     wifiStatusMonitor: WifiStatusMonitor,
     wifiPropertyViewDataProvider: WifiPropertyViewDataProvider,
     remoteNetworkInfoRepository: RemoteNetworkInfoRepository,
+    private val widgetConfigDataSource: WidgetConfigDataSource,
     private val appWidgetManager: AppWidgetManager,
     private val emitSnackbarBuilder: EmitSnackbarBuilder,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>,
@@ -53,9 +52,9 @@ class HomeScreenViewModel @Inject constructor(
      */
     private val locationAccessChanged = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
 
-    val anyLocationAccessRequiringPropertyEnabled: Boolean get() = _anyLocationAccessRequiringPropertyEnabled.value
-    private val _anyLocationAccessRequiringPropertyEnabled = widgetConfigFlow
-        .map { config -> WifiProperty.locationAccessRequiring.any { property -> config.isEnabled(property) } }
+    val isAnyLocationAccessRequiringPropertyEnabled: Boolean get() = _isAnyLocationAccessRequiringPropertyEnabled.value
+    private val _isAnyLocationAccessRequiringPropertyEnabled = widgetConfigDataSource.config
+        .map { it.isAnyLocationAccessRequiringPropertyEnabled }
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
@@ -74,7 +73,7 @@ class HomeScreenViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
 
     // TODO trigger on locationAccessChange
-    private val connectedWifiState: Flow<WifiState.Connected> = widgetConfigFlow.flatMapLatest { config ->
+    private val connectedWifiState: Flow<WifiState.Connected> = widgetConfigDataSource.config.flatMapLatest { config ->
         flow {
             // Refresh remote data
             remoteNetworkInfoRepository.refresh()
@@ -111,5 +110,9 @@ class HomeScreenViewModel @Inject constructor(
 
     fun onLocationAccessChanged() {
         viewModelScope.launch { locationAccessChanged.emit(Unit) }
+    }
+
+    fun enableLocationAccessRequiringProperties() {
+        viewModelScope.launch { widgetConfigDataSource.update { it.withEnabledLocationAccessRequiringProperties() } }
     }
 }

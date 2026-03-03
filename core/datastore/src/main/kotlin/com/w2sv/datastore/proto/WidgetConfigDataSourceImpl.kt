@@ -20,7 +20,7 @@ internal class WidgetConfigDataSourceImpl @Inject constructor(private val dataSt
         .map { it.toExternal() }
         .flowOn(Dispatchers.IO)
 
-    override suspend fun update(config: WifiWidgetConfig) {
-        dataStore.updateData { config.toProto() }
+    override suspend fun update(transform: (WifiWidgetConfig) -> WifiWidgetConfig) {
+        dataStore.updateData { transform(it.toExternal()).toProto() }
     }
 }

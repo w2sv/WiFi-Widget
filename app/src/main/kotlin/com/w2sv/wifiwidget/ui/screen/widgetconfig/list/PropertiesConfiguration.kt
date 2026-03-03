@@ -33,7 +33,7 @@ import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.infoDialogData
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGrant
+import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
@@ -160,7 +160,7 @@ private fun WifiProperty.checkRow(
                 when {
                     requiresLocationAccess && isCheckedNew -> locationAccess.foregroundPermissionsGranted.also {
                         if (!it) {
-                            locationAccess.requestPermission(OnLocationAccessGrant.EnableProperty(this))
+                            locationAccess.requestPermission(OnLocationAccessGranted.EnableProperty(this))
                         }
                     }
 
