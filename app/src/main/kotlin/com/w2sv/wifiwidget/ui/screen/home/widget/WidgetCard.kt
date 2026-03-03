@@ -48,12 +48,14 @@ fun WidgetCard(
                 PinWidgetButton(
                     onClick = pinWidget,
                     modifier = Modifier
-                        .fillMaxWidth(0.58f)
+                        .weight(0.6f)
                         .height(buttonHeight)
                 )
                 WidgetConfigurationButton(
                     onClick = { navigator.toWidgetConfiguration() },
-                    modifier = Modifier.height(buttonHeight)
+                    modifier = Modifier
+                        .height(buttonHeight)
+                        .weight(0.4f)
                 )
             }
         }
