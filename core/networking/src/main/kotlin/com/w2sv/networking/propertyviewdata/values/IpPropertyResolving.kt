@@ -44,7 +44,7 @@ private fun WifiProperty.IpProperty.getAddresses(
     WifiProperty.SiteLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isSiteLocal }
     WifiProperty.LinkLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLinkLocal }
     WifiProperty.MulticastIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isMulticast }
-    WifiProperty.PublicIp -> enabledVersions.mapNotNull { version -> publicIps.getValue(version) }
+    WifiProperty.PublicIp -> enabledVersions.mapNotNull { version -> publicIps[version] }
 }
 
 private inline fun List<IpAddress>.filterByVersionAndPredicate(
