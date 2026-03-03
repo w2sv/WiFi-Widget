@@ -31,8 +31,11 @@ import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigList
+import com.w2sv.wifiwidget.ui.util.PreviewOf
+import com.w2sv.wifiwidget.ui.util.ScreenPreviews
 import com.w2sv.wifiwidget.ui.util.SnackbarBuilderFlow
 import com.w2sv.wifiwidget.ui.util.resourceIdTestTag
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun WidgetConfigScreen(
@@ -84,6 +87,23 @@ fun WidgetConfigScreen(
                 modifier = Modifier.resourceIdTestTag("widgetConfigurationColumn")
             )
         }
+    }
+}
+
+@ScreenPreviews
+@Composable
+private fun Prev() {
+    PreviewOf {
+        WidgetConfigScreen(
+            config = WifiWidgetConfig.default,
+            updateConfig = {},
+            configHasChanged = true,
+            resetConfig = {},
+            saveChanges = {},
+            showDialog = {},
+            onBackButtonClick = {},
+            snackbarBuilderFlow = emptyFlow()
+        )
     }
 }
 
