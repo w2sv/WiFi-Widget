@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
+import androidx.annotation.ColorInt
 import androidx.annotation.IdRes
 import androidx.core.net.toUri
 import com.w2sv.androidutils.appwidget.crossVisualize
@@ -16,8 +17,9 @@ import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppAction
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetUtility
-import com.w2sv.domain.repository.WidgetConfigFlow
+import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.networking.wifistatus.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WifiWidgetProvider
@@ -26,8 +28,6 @@ import com.w2sv.widget.utils.goToWifiSettingsPendingIntent
 import com.w2sv.widget.utils.setTextView
 import com.w2sv.widget.utils.setViewVisibility
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -35,27 +35,26 @@ import java.util.Locale
 import javax.inject.Inject
 
 internal class WidgetRenderer @Inject constructor(
-    widgetConfigFlow: WidgetConfigFlow,
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val getWifiStatus: WifiStatusGetter
 ) {
-    private val config = runBlocking { widgetConfigFlow.first() } // TODO: wrong
-    private val appearance = config.appearance
-    private val colors = appearance.resolvedWidgetColors(context)
+    operator fun invoke(widget: RemoteViews, appWidgetId: Int, config: WifiWidgetConfig, colors: WidgetColors): RemoteViews =
+        widget.apply {
+            setContentLayout(appWidgetId = appWidgetId, colors = colors, fontSize = config.appearance.fontSize)
+            setBackgroundColor(
+                id = R.id.widget_layout,
+                color = getAlphaSetColor(colors.background, config.appearance.backgroundOpacity)
+            )
+            setBottomBar(
+                utilities = config.enabledUtilities(),
+                appWidgetId = appWidgetId,
+                colors = colors,
+                fontSize = config.appearance.fontSize
+            )
+        }
 
-    fun populate(widget: RemoteViews, appWidgetId: Int): RemoteViews =
-        widget
-            .apply {
-                setContentLayout(appWidgetId = appWidgetId)
-                setBackgroundColor(
-                    id = R.id.widget_layout,
-                    color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
-                )
-                setBottomBar(utilities = config.enabledUtilities(), appWidgetId = appWidgetId)
-            }
-
-    private fun RemoteViews.setContentLayout(appWidgetId: Int) {
+    private fun RemoteViews.setContentLayout(appWidgetId: Int, colors: WidgetColors, fontSize: FontSize) {
         when (val wifiStatus = getWifiStatus()) {
             WifiStatus.Connected -> {
                 crossVisualize(
@@ -66,11 +65,10 @@ internal class WidgetRenderer @Inject constructor(
                 @Suppress("DEPRECATION")
                 setRemoteAdapter(
                     R.id.wifi_property_list_view,
-                    intent<WifiPropertyViewsService>(context)
-                        .apply {
-                            putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-                            data = toUri(Intent.URI_INTENT_SCHEME).toUri()
-                        }
+                    intent<WifiPropertyViewsService>(context).apply {
+                        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+                        data = toUri(Intent.URI_INTENT_SCHEME).toUri()
+                    }
                 )
 
                 setPendingIntentTemplate(
@@ -103,7 +101,7 @@ internal class WidgetRenderer @Inject constructor(
                         }
                     ),
                     color = colors.secondary,
-                    size = appearance.fontSize.value + 2
+                    size = fontSize.value + 2
                 )
 
                 setOnClickPendingIntent(
@@ -115,10 +113,10 @@ internal class WidgetRenderer @Inject constructor(
     }
 
     // ============
-    // Bottom Row
+    // Bottom Bar
     // ============
 
-    private fun RemoteViews.setBottomBar(utilities: List<WidgetUtility>, appWidgetId: Int) {
+    private fun RemoteViews.setBottomBar(utilities: List<WidgetUtility>, appWidgetId: Int, colors: WidgetColors, fontSize: FontSize) {
         setViewVisibility(R.id.bottom_row, utilities.isNotEmpty()) {
             setViewVisibility(R.id.last_updated_tv, WidgetUtility.LastRefreshTimeDisplay in utilities) {
                 setTextColor(R.id.last_updated_tv, colors.secondary)
@@ -129,13 +127,14 @@ internal class WidgetRenderer @Inject constructor(
                     text = "${
                         DateFormat.getTimeInstance(DateFormat.SHORT).format(now)
                     } ${SimpleDateFormat("EE", Locale.getDefault()).format(now)}",
-                    size = appearance.fontSize.value
+                    size = fontSize.value
                 )
             }
 
             setButton(
                 id = R.id.refresh_button,
                 show = WidgetUtility.RefreshButton in utilities,
+                color = colors.primary,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     appWidgetId,
@@ -146,11 +145,13 @@ internal class WidgetRenderer @Inject constructor(
             setButton(
                 id = R.id.go_to_wifi_settings_button,
                 show = WidgetUtility.GoToWifiSettingsButton in utilities,
+                color = colors.primary,
                 pendingIntent = goToWifiSettingsPendingIntent(context)
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
                 show = WidgetUtility.GoToWidgetSettingsButton in utilities,
+                color = colors.primary,
                 pendingIntent = activityPendingIntent(
                     context,
                     Intent.makeRestartActivityTask(
@@ -165,15 +166,16 @@ internal class WidgetRenderer @Inject constructor(
             )
         }
     }
+}
 
-    private fun RemoteViews.setButton(
-        @IdRes id: Int,
-        show: Boolean,
-        pendingIntent: PendingIntent
-    ) {
-        setViewVisibility(id, show) {
-            setColorFilter(id, colors.primary)
-            setOnClickPendingIntent(id, pendingIntent)
-        }
+private fun RemoteViews.setButton(
+    @IdRes id: Int,
+    show: Boolean,
+    @ColorInt color: Int,
+    pendingIntent: PendingIntent
+) {
+    setViewVisibility(id, show) {
+        setColorFilter(id, color)
+        setOnClickPendingIntent(id, pendingIntent)
     }
 }
