@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,7 +37,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -108,20 +108,9 @@ private fun PropertyList(viewDataList: ImmutableList<WifiPropertyViewData>, modi
     SecondLevelElevatedCard(modifier = modifier) {
         LazyColumn(
             modifier = Modifier.resourceIdTestTag("wifiPropertyColumn"),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(vertical = 6.dp)
         ) {
-            item {
-                Header(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            top = 8.dp,
-                            bottom = 8.dp,
-                            start = horizontalPadding,
-                            end = horizontalPadding
-                        )
-                )
-            }
             itemsIndexed(viewDataList) { i, viewData ->
                 PropertyDisplay(
                     wifiPropertyViewData = viewData,
@@ -142,28 +131,6 @@ private fun PropertyList(viewDataList: ImmutableList<WifiPropertyViewData>, modi
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun Header(modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        Text(
-            text = stringResource(id = R.string.properties),
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 17.sp,
-            modifier = Modifier.fillMaxWidth(LABEL_VALUE_COLUMN_SPLIT)
-        )
-        Text(
-            text = stringResource(R.string.click_to_copy_to_clipboard),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            fontSize = 12.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
     }
 }
 
