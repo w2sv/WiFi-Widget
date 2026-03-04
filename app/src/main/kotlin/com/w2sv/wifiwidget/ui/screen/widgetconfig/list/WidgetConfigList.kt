@@ -66,7 +66,7 @@ fun WidgetConfigList(
         }
         item {
             BottomBarConfigCard(
-                { config.bottomBarElements.getValue(it) },
+                isEnabled = { config.bottomBarElements.getValue(it) },
                 update = { property, isEnabled ->
                     updateConfig {
                         copy(bottomBarElements = bottomBarElements.copy {
