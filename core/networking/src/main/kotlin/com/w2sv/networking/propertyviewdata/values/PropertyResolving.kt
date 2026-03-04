@@ -112,19 +112,19 @@ internal fun WifiProperty.resolve(
         }
 
         WifiProperty.DNS -> listOf(dhcpInfo.dns1, dhcpInfo.dns2).forEach { dns ->
-            textualIPv4Representation(dns)?.let { add(WifiPropertyValue(it.txt)) }
+            textualIPv4Representation(dns)?.add()
         }
 
-        WifiProperty.Gateway -> textualIPv4Representation(dhcpInfo.gateway)?.let { add(WifiPropertyValue(it.txt)) }
-        WifiProperty.DHCP -> textualIPv4Representation(dhcpInfo.serverAddress)?.let { add(WifiPropertyValue(it.txt)) }
+        WifiProperty.Gateway -> textualIPv4Representation(dhcpInfo.gateway)?.add()
+        WifiProperty.DHCP -> textualIPv4Representation(dhcpInfo.serverAddress)?.add()
         WifiProperty.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            linkProperties?.nat64Prefix?.address?.hostAddress?.let { add(WifiPropertyValue(it.txt)) }
+            linkProperties?.nat64Prefix?.address?.hostAddress?.add()
         }
 
-        WifiProperty.Location -> ipApiData?.location?.let { add(WifiPropertyValue(it.txt)) }
-        WifiProperty.IpGpsLocation -> ipApiData?.gpsCoordinates?.let { add(WifiPropertyValue(it.txt)) }
-        WifiProperty.ISP -> ipApiData?.isp?.let { add(WifiPropertyValue(it.txt)) }
-        WifiProperty.ASN -> ipApiData?.asn?.let { add(WifiPropertyValue(it.txt)) }
+        WifiProperty.Location -> ipApiData?.location?.add()
+        WifiProperty.IpGpsLocation -> ipApiData?.gpsCoordinates?.add()
+        WifiProperty.ISP -> ipApiData?.isp?.add()
+        WifiProperty.ASN -> ipApiData?.asn?.add()
         is WifiProperty.IpProperty -> addAll(
             resolve(
                 publicIps = snapshot.publicIps,
@@ -133,6 +133,11 @@ internal fun WifiProperty.resolve(
             )
         )
     }
+}
+
+context(listBuilder: MutableList<WifiPropertyValue>)
+private fun String.add() {
+    listBuilder.add(WifiPropertyValue(txt))
 }
 
 /**
