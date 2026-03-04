@@ -8,7 +8,7 @@ message WifiWidgetConfigProto {
     repeated int32 order = 2;
     WidgetAppearanceProto appearance = 3;
     WidgetRefreshingProto refreshing = 4;
-    map<int32, bool> bottom_bar_elements = 5;
+    map<int32, bool> utilities = 5;
 }
 
 /*

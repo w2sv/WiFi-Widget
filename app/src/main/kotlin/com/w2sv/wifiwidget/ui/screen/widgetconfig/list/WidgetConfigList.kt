@@ -11,15 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.isPortraitModeActive
-import com.w2sv.domain.model.widget.WidgetBottomBarElement
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.kotlinutils.copy
-import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConfigCard
-import kotlinx.collections.immutable.toPersistentList
 
 private val checkRowColumnBottomPadding = 8.dp
 private val verticalItemSpacing = 16.dp
@@ -64,10 +61,10 @@ fun WidgetConfigList(
             )
         }
         item {
-            BottomBarConfigCard(
-                isEnabled = { config.bottomBarElements.getValue(it) },
+            UtilitiesConfigCard(
+                isEnabled = { config.utilities.getValue(it) },
                 update = { property, isEnabled ->
-                    updateConfig { copy(bottomBarElements = bottomBarElements.copy { put(property, isEnabled) }) }
+                    updateConfig { copy(utilities = utilities.copy { put(property, isEnabled) }) }
                 },
                 modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
             )
@@ -80,33 +77,6 @@ fun WidgetConfigList(
                 modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
             )
         }
-    }
-}
-
-@Composable
-private fun BottomBarConfigCard(
-    isEnabled: (WidgetBottomBarElement) -> Boolean,
-    update: (WidgetBottomBarElement, Boolean) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    WidgetConfigSectionCard(
-        header = IconHeader(
-            iconRes = R.drawable.ic_bottom_row_24,
-            stringRes = R.string.bottom_bar
-        )
-    ) {
-        CheckRowColumn(
-            elements = WidgetBottomBarElement.entries.map { element ->
-                ConfigListElement.CheckRow(
-                    property = element,
-                    isChecked = { isEnabled(element) },
-                    onCheckedChange = { update(element, it) },
-                    explanation = element.explanation
-                )
-            }
-                .toPersistentList(),
-            modifier = modifier
-        )
     }
 }
 

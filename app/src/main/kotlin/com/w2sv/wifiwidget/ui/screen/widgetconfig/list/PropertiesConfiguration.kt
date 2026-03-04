@@ -54,8 +54,8 @@ fun WifiPropertiesConfigCard(
 ) {
     WidgetConfigSectionCard(
         IconHeader(
-            iconRes = R.drawable.ic_checklist_24,
-            stringRes = R.string.properties,
+            iconRes = com.w2sv.core.domain.R.drawable.ic_wifi_24,
+            stringRes = R.string.wifi_properties,
             trailingIcon = {
                 MoreIconButtonWithDropdownMenu(
                     menuItems = remember {

@@ -15,7 +15,7 @@ data class WifiWidgetConfig(
     val orderedProperties: List<WifiProperty>,
     val appearance: WidgetAppearance,
     val refreshing: WidgetRefreshing,
-    val bottomBarElements: Map<WidgetBottomBarElement, Boolean>
+    val utilities: Map<WidgetUtility, Boolean>
 ) {
     fun isEnabled(property: WifiProperty): Boolean =
         properties.getValue(property).isEnabled
@@ -72,8 +72,8 @@ data class WifiWidgetConfig(
     // BottomBar
     // ================
 
-    fun bottomBar(): List<WidgetBottomBarElement> =
-        bottomBarElements.trueKeys()
+    fun enabledUtilities(): List<WidgetUtility> =
+        utilities.trueKeys()
 
     companion object {
         val default = WifiWidgetConfig(
@@ -90,7 +90,7 @@ data class WifiWidgetConfig(
             orderedProperties = WifiProperty.entries,
             appearance = WidgetAppearance(),
             refreshing = WidgetRefreshing(),
-            bottomBarElements = WidgetBottomBarElement.entries.associateWith { true }
+            utilities = WidgetUtility.entries.associateWith { true }
         )
     }
 }

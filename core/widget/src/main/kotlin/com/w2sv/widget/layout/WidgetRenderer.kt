@@ -16,7 +16,7 @@ import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.common.AppAction
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.widget.WidgetBottomBarElement
+import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.wifistatus.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
@@ -52,7 +52,7 @@ internal class WidgetRenderer @Inject constructor(
                     id = R.id.widget_layout,
                     color = getAlphaSetColor(colors.background, appearance.backgroundOpacity)
                 )
-                setBottomBar(bottomBar = config.bottomBar(), appWidgetId = appWidgetId)
+                setBottomBar(utilities = config.enabledUtilities(), appWidgetId = appWidgetId)
             }
 
     private fun RemoteViews.setContentLayout(appWidgetId: Int) {
@@ -118,9 +118,9 @@ internal class WidgetRenderer @Inject constructor(
     // Bottom Row
     // ============
 
-    private fun RemoteViews.setBottomBar(bottomBar: List<WidgetBottomBarElement>, appWidgetId: Int) {
-        setViewVisibility(R.id.bottom_row, bottomBar.isNotEmpty()) {
-            setViewVisibility(R.id.last_updated_tv, WidgetBottomBarElement.LastRefreshTimeDisplay in bottomBar) {
+    private fun RemoteViews.setBottomBar(utilities: List<WidgetUtility>, appWidgetId: Int) {
+        setViewVisibility(R.id.bottom_row, utilities.isNotEmpty()) {
+            setViewVisibility(R.id.last_updated_tv, WidgetUtility.LastRefreshTimeDisplay in utilities) {
                 setTextColor(R.id.last_updated_tv, colors.secondary)
 
                 val now = Date()
@@ -135,7 +135,7 @@ internal class WidgetRenderer @Inject constructor(
 
             setButton(
                 id = R.id.refresh_button,
-                show = WidgetBottomBarElement.RefreshButton in bottomBar,
+                show = WidgetUtility.RefreshButton in utilities,
                 pendingIntent = PendingIntent.getBroadcast(
                     context,
                     appWidgetId,
@@ -145,12 +145,12 @@ internal class WidgetRenderer @Inject constructor(
             )
             setButton(
                 id = R.id.go_to_wifi_settings_button,
-                show = WidgetBottomBarElement.GoToWifiSettingsButton in bottomBar,
+                show = WidgetUtility.GoToWifiSettingsButton in utilities,
                 pendingIntent = goToWifiSettingsPendingIntent(context)
             )
             setButton(
                 id = R.id.go_to_widget_settings_button,
-                show = WidgetBottomBarElement.GoToWidgetSettingsButton in bottomBar,
+                show = WidgetUtility.GoToWidgetSettingsButton in utilities,
                 pendingIntent = activityPendingIntent(
                     context,
                     Intent.makeRestartActivityTask(

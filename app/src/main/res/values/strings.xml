@@ -20,6 +20,7 @@
     <string name="default_">Default</string>
     <string name="dark">Dark</string>
     <string name="theme">Theme</string>
+    <string name="wifi_properties">WiFi Properties</string>
     <string name="properties">Properties</string>
     <string name="refreshing">Refreshing</string>
     <string name="opacity_slider_cd">Change the background opacity.</string>
@@ -39,7 +40,7 @@
     <string name="developer">Developer</string>
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="appearance">Appearance</string>
-    <string name="bottom_bar">Bottom Bar Elements</string>
+    <string name="utilities">Utilities</string>
     <string name="grant">Grant</string>
     <string name="maybe_later">Maybe later</string>
     <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. Since Android forbids the retrieval of any WiFi-related data while the device is dormant, this trigger will only go through when emitted while your phone is not dormant.\nThe refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>

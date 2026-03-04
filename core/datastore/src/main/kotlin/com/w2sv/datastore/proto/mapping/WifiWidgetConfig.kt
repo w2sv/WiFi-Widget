@@ -2,7 +2,7 @@ package com.w2sv.datastore.proto.mapping
 
 import com.w2sv.datastore.WifiWidgetConfigProto
 import com.w2sv.datastore.proto.id_resolving.WifiPropertyProtoRegistry
-import com.w2sv.domain.model.widget.WidgetBottomBarElement
+import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 
 internal fun WifiWidgetConfig.toProto(): WifiWidgetConfigProto =
@@ -17,8 +17,8 @@ internal fun WifiWidgetConfig.toProto(): WifiWidgetConfigProto =
             proto.addAllOrder(orderedProperties.map { it.protoId })
             proto.appearance = appearance.toProto()
             proto.refreshing = refreshing.toProto()
-            bottomBarElements.forEach { (element, enabled) ->
-                proto.putBottomBarElements(element.ordinal, enabled)
+            utilities.forEach { (element, enabled) ->
+                proto.putUtilities(element.ordinal, enabled)
             }
         }
         .build()
@@ -31,7 +31,7 @@ internal fun WifiWidgetConfigProto.toExternal(): WifiWidgetConfig =
         orderedProperties = orderList.map(WifiPropertyProtoRegistry::invoke),
         appearance = appearance.toExternal(),
         refreshing = refreshing.toExternal(),
-        bottomBarElements = bottomBarElementsMap.mapKeys { (id, _) ->
-            WidgetBottomBarElement.entries[id]
+        utilities = utilitiesMap.mapKeys { (id, _) ->
+            WidgetUtility.entries[id]
         }
     )
