@@ -25,8 +25,8 @@ import kotlin.time.Duration
 
 @Composable
 fun RefreshingConfigCard(
-    refreshing: () -> WidgetRefreshing,
-    update: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
+    refreshing: WidgetRefreshing,
+    updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -37,43 +37,52 @@ fun RefreshingConfigCard(
         )
     ) {
         CheckRowColumn(
-            elements = remember {
-                persistentListOf(
-                    ConfigListElement.CheckRow(
-                        property = WidgetRefreshingParameter.RefreshPeriodically,
-                        isChecked = { refreshing().refreshPeriodically },
-                        onCheckedChange = { update { copy(refreshPeriodically = it) } },
-                        showInfoDialog = {
-                            showDialog(
-                                WidgetConfigDialog.Info(
-                                    titleRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
-                                    descriptionRes = R.string.refresh_periodically_info
-                                )
-                            )
-                        },
-                        subPropertyColumnElements = persistentListOf(
-                            ConfigListElement.Custom {
-                                RefreshIntervalConfigurationRow(
-                                    interval = refreshing().interval,
-                                    showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing().interval)) },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp)
-                                )
-                            },
-                            ConfigListElement.CheckRow(
-                                property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                                isChecked = { refreshing().refreshOnLowBattery },
-                                onCheckedChange = { update { copy(refreshOnLowBattery = it) } },
-                            )
-                        )
-                    )
+            elements = persistentListOf(
+                refreshingCheckRow(
+                    refreshing = refreshing,
+                    updateRefreshing = updateRefreshing,
+                    showDialog = showDialog
                 )
-            },
+            ),
             modifier = modifier
         )
     }
 }
+
+private fun refreshingCheckRow(
+    refreshing: WidgetRefreshing,
+    updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
+    showDialog: (WidgetConfigDialog) -> Unit,
+): ConfigListElement.CheckRow =
+    ConfigListElement.CheckRow(
+        property = WidgetRefreshingParameter.RefreshPeriodically,
+        isChecked = { refreshing.refreshPeriodically },
+        onCheckedChange = { updateRefreshing { copy(refreshPeriodically = it) } },
+        showInfoDialog = {
+            showDialog(
+                WidgetConfigDialog.Info(
+                    titleRes = WidgetRefreshingParameter.RefreshPeriodically.labelRes,
+                    descriptionRes = R.string.refresh_periodically_info
+                )
+            )
+        },
+        subPropertyColumnElements = persistentListOf(
+            ConfigListElement.Custom {
+                RefreshIntervalConfigurationRow(
+                    interval = refreshing.interval,
+                    showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            },
+            ConfigListElement.CheckRow(
+                property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                isChecked = { refreshing.refreshOnLowBattery },
+                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } },
+            )
+        )
+    )
 
 @Composable
 private fun RefreshIntervalConfigurationRow(

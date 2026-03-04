@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,14 +22,14 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConf
 import kotlinx.collections.immutable.toPersistentList
 
 private val checkRowColumnBottomPadding = 8.dp
-private val verticalCardSpacing = 16.dp
+private val verticalItemSpacing = 16.dp
 private val widgetConfigCardInnerPadding = PaddingValues(vertical = 18.dp)
 
 private val listContentPadding: PaddingValues
     @Composable
     get() = PaddingValues(
         bottom = if (isPortraitModeActive) 140.dp else 90.dp,  // for FABs
-        top = verticalCardSpacing
+        top = verticalItemSpacing
     )
 
 typealias UpdateWidgetConfig = (WifiWidgetConfig.() -> WifiWidgetConfig) -> Unit
@@ -47,7 +46,7 @@ fun WidgetConfigList(
         state = state,
         modifier = modifier.padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(verticalCardSpacing),
+        verticalArrangement = Arrangement.spacedBy(verticalItemSpacing),
         contentPadding = listContentPadding
     ) {
         item {
@@ -68,22 +67,15 @@ fun WidgetConfigList(
             BottomBarConfigCard(
                 isEnabled = { config.bottomBarElements.getValue(it) },
                 update = { property, isEnabled ->
-                    updateConfig {
-                        copy(bottomBarElements = bottomBarElements.copy {
-                            put(
-                                property,
-                                isEnabled
-                            )
-                        })
-                    }
+                    updateConfig { copy(bottomBarElements = bottomBarElements.copy { put(property, isEnabled) }) }
                 },
                 modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
             )
         }
         item {
             RefreshingConfigCard(
-                refreshing = { config.refreshing },
-                update = { updateRefreshing -> updateConfig { copy(refreshing = updateRefreshing(refreshing)) } },
+                refreshing = config.refreshing,
+                updateRefreshing = { updateRefreshing -> updateConfig { copy(refreshing = updateRefreshing(refreshing)) } },
                 showDialog = showDialog,
                 modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
             )
@@ -104,17 +96,15 @@ private fun BottomBarConfigCard(
         )
     ) {
         CheckRowColumn(
-            elements = remember {
-                WidgetBottomBarElement.entries.map { element ->
-                    ConfigListElement.CheckRow(
-                        property = element,
-                        isChecked = { isEnabled(element) },
-                        onCheckedChange = { update(element, it) },
-                        explanation = element.explanation
-                    )
-                }
-                    .toPersistentList()
-            },
+            elements = WidgetBottomBarElement.entries.map { element ->
+                ConfigListElement.CheckRow(
+                    property = element,
+                    isChecked = { isEnabled(element) },
+                    onCheckedChange = { update(element, it) },
+                    explanation = element.explanation
+                )
+            }
+                .toPersistentList(),
             modifier = modifier
         )
     }
