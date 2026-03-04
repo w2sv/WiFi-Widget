@@ -37,7 +37,7 @@ internal data class IpApiResponse(
             asn = asn()
         )
 
-    private fun location(parameters: Collection<LocationParameter>): String =
+    private fun location(parameters: Collection<LocationParameter>): String? =
         mapOf(
             LocationParameter.ZipCode to zip,
             LocationParameter.District to district,
@@ -49,6 +49,7 @@ internal data class IpApiResponse(
             .map { (parameter, field) -> field.takeIf { parameters.contains(parameter) } }
             .filter { !it.isNullOrBlank() }
             .joinToString(", ")
+            .ifBlank { null }
 
     private fun gpsCoordinates(): String? =
         "$lat, $lon".takeIf { lat == -1.0 || lon == -1.0 }

@@ -18,7 +18,6 @@ internal fun WifiProperty.resolve(
     snapshot: WifiSnapshot,
     enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>
 ): List<WifiPropertyValue> = buildList {
-
     val connectionInfo = snapshot.connectionInfo
     val dhcpInfo = snapshot.dhcpInfo
     val linkProperties = snapshot.linkProperties
