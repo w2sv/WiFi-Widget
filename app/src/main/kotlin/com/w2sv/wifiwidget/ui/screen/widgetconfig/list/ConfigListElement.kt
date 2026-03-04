@@ -18,8 +18,8 @@ sealed interface ConfigListElement {
     data class Custom(val content: @Composable () -> Unit) : ConfigListElement
 
     @Immutable
-    data class CheckRow<T : Labelled>(
-        val property: T,
+    data class CheckRow(
+        val property: Labelled,
         @StringRes val explanation: Int? = null,
         val isChecked: () -> Boolean,
         val onCheckedChange: (Boolean) -> Unit,

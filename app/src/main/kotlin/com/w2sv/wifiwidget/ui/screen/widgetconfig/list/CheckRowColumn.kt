@@ -84,7 +84,7 @@ object SubPropertyColumnDefaults {
 private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 
 @Composable
-fun CheckRowColumn(elements: ImmutableList<ConfigListElement.CheckRow<*>>, modifier: Modifier = Modifier) {
+fun CheckRowColumn(elements: ImmutableList<ConfigListElement.CheckRow>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         elements
             .forEach { data ->
@@ -105,7 +105,7 @@ fun CheckRowColumn(elements: ImmutableList<ConfigListElement.CheckRow<*>>, modif
 
 @Composable
 fun DragAndDroppableCheckRowColumn(
-    elements: ImmutableList<ConfigListElement.CheckRow<*>>,
+    elements: ImmutableList<ConfigListElement.CheckRow>,
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
 ) {
@@ -161,7 +161,7 @@ fun DragAndDroppableCheckRowColumn(
 }
 
 @Composable
-private fun CheckRow(data: ConfigListElement.CheckRow<*>, modifier: Modifier = Modifier) {
+private fun CheckRow(data: ConfigListElement.CheckRow, modifier: Modifier = Modifier) {
     CheckRowBase(
         data = data,
         leadingIcon = {
@@ -178,7 +178,7 @@ private fun CheckRow(data: ConfigListElement.CheckRow<*>, modifier: Modifier = M
 }
 
 @Composable
-private fun CheckRowWithSubProperties(data: ConfigListElement.CheckRow<*>, modifier: Modifier = Modifier) {
+private fun CheckRowWithSubProperties(data: ConfigListElement.CheckRow, modifier: Modifier = Modifier) {
     var expandSubProperties by rememberSaveable {
         mutableStateOf(false)
     }
@@ -228,7 +228,7 @@ private fun SubPropertyColumn(elements: ImmutableList<ConfigListElement>, modifi
     ) {
         elements.forEach { element ->
             when (element) {
-                is ConfigListElement.CheckRow<*> -> {
+                is ConfigListElement.CheckRow -> {
                     if (element.show()) {
                         CheckRowBase(
                             data = element,
@@ -260,7 +260,7 @@ fun VersionsHeader(modifier: Modifier = Modifier) {
 
 @Composable
 private fun CheckRowBase(
-    data: ConfigListElement.CheckRow<*>,
+    data: ConfigListElement.CheckRow,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     labelColor: Color = MaterialTheme.colorScheme.onBackground,

@@ -115,7 +115,7 @@ private fun wifiPropertyCheckRowData(
     locationAccess: LocationAccessCapability,
     scope: CoroutineScope,
     snackbarController: SnackbarController
-): ImmutableList<ConfigListElement.CheckRow<WifiProperty>> =
+): ImmutableList<ConfigListElement.CheckRow> =
     config.orderedProperties
         .map { property ->
             property.checkRow(
@@ -148,7 +148,7 @@ private fun WifiProperty.checkRow(
     showDialog: (WidgetConfigDialog) -> Unit,
     showSnackbar: (SnackbarBuilder) -> Unit,
     scope: CoroutineScope
-): ConfigListElement.CheckRow<WifiProperty> {
+): ConfigListElement.CheckRow {
     val shakeController = ShakeController()
 
     return ConfigListElement.CheckRow(
