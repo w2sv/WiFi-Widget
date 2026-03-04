@@ -6,8 +6,6 @@ import com.w2sv.datastore.proto.mapping.toExternal
 import com.w2sv.datastore.proto.mapping.toProto
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.domain.repository.WidgetConfigDataSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,9 +14,7 @@ import javax.inject.Singleton
 internal class WidgetConfigDataSourceImpl @Inject constructor(private val dataStore: DataStore<WifiWidgetConfigProto>) :
     WidgetConfigDataSource {
 
-    override val config = dataStore.data
-        .map { it.toExternal() }
-        .flowOn(Dispatchers.IO)
+    override val config = dataStore.data.map { it.toExternal() }
 
     override suspend fun update(transform: (WifiWidgetConfig) -> WifiWidgetConfig) {
         dataStore.updateData { transform(it.toExternal()).toProto() }

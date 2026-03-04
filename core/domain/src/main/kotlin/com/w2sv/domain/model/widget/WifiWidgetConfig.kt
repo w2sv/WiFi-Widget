@@ -9,6 +9,7 @@ import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.trueKeys
 import com.w2sv.kotlinutils.update
 
+// TODO test
 data class WifiWidgetConfig(
     val properties: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
     val orderedProperties: List<WifiProperty>,
@@ -19,6 +20,7 @@ data class WifiWidgetConfig(
     fun isEnabled(property: WifiProperty): Boolean =
         properties.getValue(property).isEnabled
 
+    // TODO exclude unsupported properties
     fun orderedEnabledProperties(): List<WifiProperty> =
         orderedProperties.filter { isEnabled(it) }
 
@@ -28,7 +30,6 @@ data class WifiWidgetConfig(
     val isAnyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WifiProperty.locationAccessRequiring.any { property -> isEnabled(property) }
 
-    // TODO test
     fun withModifiedPropertyPosition(from: Int, to: Int): WifiWidgetConfig =
         copy(orderedProperties = orderedProperties.copy { add(to, removeAt(from)) })
 
