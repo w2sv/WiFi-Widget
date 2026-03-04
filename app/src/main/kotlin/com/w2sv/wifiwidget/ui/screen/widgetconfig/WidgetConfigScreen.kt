@@ -41,9 +41,9 @@ import kotlinx.coroutines.flow.emptyFlow
 fun WidgetConfigScreen(
     config: WifiWidgetConfig,
     updateConfig: UpdateWidgetConfig,
-    configHasChanged: Boolean,
-    resetConfig: () -> Unit,
-    saveChanges: () -> Unit,
+    configIsDirty: Boolean,
+    revertConfig: () -> Unit,
+    commitChanges: () -> Unit,
     showDialog: (WidgetConfigDialog) -> Unit,
     onBackButtonClick: () -> Unit,
     snackbarBuilderFlow: SnackbarBuilderFlow
@@ -52,7 +52,7 @@ fun WidgetConfigScreen(
         snackbarHost = { AppSnackbarHost(snackbarBuilderFlow) },
         floatingActionButton = {
             AnimatedVisibility(
-                visible = configHasChanged,
+                visible = configIsDirty,
                 enter = slideInHorizontally(
                     animationSpec = tween(easing = Easing.anticipate),
                     initialOffsetX = { it / 2 }
@@ -63,8 +63,8 @@ fun WidgetConfigScreen(
                 ) + fadeOut()
             ) {
                 ConfigurationProcedureFABRow(
-                    onResetButtonClick = resetConfig,
-                    onApplyButtonClick = saveChanges,
+                    onResetButtonClick = revertConfig,
+                    onApplyButtonClick = commitChanges,
                     modifier = Modifier.padding(top = 8.dp)
                 )
             }
@@ -97,9 +97,9 @@ private fun Prev() {
         WidgetConfigScreen(
             config = WifiWidgetConfig.default,
             updateConfig = {},
-            configHasChanged = true,
-            resetConfig = {},
-            saveChanges = {},
+            configIsDirty = true,
+            revertConfig = {},
+            commitChanges = {},
             showDialog = {},
             onBackButtonClick = {},
             snackbarBuilderFlow = emptyFlow()

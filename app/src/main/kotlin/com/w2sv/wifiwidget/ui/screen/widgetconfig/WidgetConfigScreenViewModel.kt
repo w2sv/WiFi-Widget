@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,13 +43,13 @@ class WidgetConfigScreenViewModel @Inject constructor(
 
     val reversibleConfig = ReversibleStateFlow(
         scope = viewModelScope,
-        appliedStateFlow = dataSource.config.stateIn(
+        appliedState = dataSource.config.stateIn(
             scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(),
+            started = SharingStarted.Eagerly,
             initialValue = WifiWidgetConfig.default
         ),
-        syncState = {
-            dataSource.update { it }
+        commitState = { state ->
+            dataSource.update { state }
             WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
             emitSnackbarBuilder {
                 AppSnackbarVisuals(
@@ -60,8 +59,4 @@ class WidgetConfigScreenViewModel @Inject constructor(
             }
         }
     )
-
-    fun saveChanges() {
-        viewModelScope.launch { reversibleConfig.sync() }
-    }
 }

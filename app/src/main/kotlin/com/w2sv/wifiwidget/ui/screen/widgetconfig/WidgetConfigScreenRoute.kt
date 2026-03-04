@@ -32,13 +32,13 @@ fun WidgetConfigScreenRoute(
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack: () -> Unit = rememberOnBack(
-        configHasChanged = { viewModel.reversibleConfig.statesDissimilar.value },
+        configIsDirty = { viewModel.reversibleConfig.isDirty.value },
         leaveScreen = navigator::leaveWidgetConfiguration,
         scope = rememberCoroutineScope()
     )
 
     val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
-    val configHasChanged by viewModel.reversibleConfig.statesDissimilar.collectAsStateWithLifecycle()
+    val configIsDirty by viewModel.reversibleConfig.isDirty.collectAsStateWithLifecycle()
 
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
 
@@ -67,9 +67,9 @@ fun WidgetConfigScreenRoute(
     WidgetConfigScreen(
         config = config,
         updateConfig = viewModel.reversibleConfig::update,
-        configHasChanged = configHasChanged,
-        resetConfig = viewModel.reversibleConfig::reset,
-        saveChanges = viewModel::saveChanges,
+        configIsDirty = configIsDirty,
+        revertConfig = viewModel.reversibleConfig::revert,
+        commitChanges = viewModel.reversibleConfig::launchCommit,
         showDialog = { dialog = it },
         onBackButtonClick = onBack,
         snackbarBuilderFlow = viewModel.snackbarBuilderFlow
@@ -78,7 +78,7 @@ fun WidgetConfigScreenRoute(
 
 @Composable
 private fun rememberOnBack(
-    configHasChanged: () -> Boolean,
+    configIsDirty: () -> Boolean,
     leaveScreen: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
     scopedSnackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope)
@@ -93,7 +93,7 @@ private fun rememberOnBack(
     return remember(scopedSnackbarEmitter) {
         {
             onBack(
-                configHasChanged = configHasChanged,
+                configHasChanged = configIsDirty,
                 backPressHandler = backPressHandler,
                 scopedSnackbarEmitter = scopedSnackbarEmitter,
                 leaveScreen = leaveScreen

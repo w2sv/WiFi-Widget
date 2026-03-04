@@ -35,7 +35,7 @@ w2sv-androidutils = "0.5.0"
 w2sv-composed = "0.1.1"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.2.2"
-w2sv-reversiblestate = "0.0.6-rc2"
+w2sv-reversiblestate = "0.1.0"
 
 [libraries]
 # @keep
