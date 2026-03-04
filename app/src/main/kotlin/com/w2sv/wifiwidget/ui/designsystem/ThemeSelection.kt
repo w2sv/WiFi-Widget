@@ -161,7 +161,7 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.overshoot
+                        easing = Easing.Overshoot
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)
@@ -179,7 +179,7 @@ private fun ThemeButton(
                 if (targetState) {
                     tween(
                         durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.overshoot
+                        easing = Easing.Overshoot
                     )
                 } else {
                     tween(durationMillis = BORDER_ANIMATION_DURATION)

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.util
+package com.w2sv.wifiwidget.ui.util.snackbar
 
 import android.content.Context
 import androidx.compose.material3.SnackbarVisuals

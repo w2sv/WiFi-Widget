@@ -46,12 +46,13 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.util.rememberSnackbarEmitter
 import com.w2sv.wifiwidget.ui.util.resourceIdTestTag
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 private val horizontalPadding = 8.dp
 private const val LABEL_VALUE_COLUMN_SPLIT = 0.4f
@@ -171,22 +172,24 @@ private typealias OnPropertyRowClick = (WifiPropertyViewData, CharSequence, Coro
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     val clipboardManager = LocalClipboardManager.current
-    val snackbarEmitter = rememberSnackbarEmitter()
+    val snackbarController = rememberSnackbarController()
 
     return remember {
         { viewData, label, scope ->
             clipboardManager.setText(AnnotatedString(viewData.value))
-            snackbarEmitter.dismissCurrentAndShow(scope) {
-                AppSnackbarVisuals(
-                    msg = buildAnnotatedString {
-                        append("${getString(R.string.copied)} ")
-                        withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                            append(label)
-                        }
-                        append(" ${getString(R.string.to_clipboard)}.")
-                    },
-                    kind = SnackbarKind.Success
-                )
+            scope.launch {
+                snackbarController.showReplacing {
+                    AppSnackbarVisuals(
+                        msg = buildAnnotatedString {
+                            append("${getString(R.string.copied)} ")
+                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                                append(label)
+                            }
+                            append(" ${getString(R.string.to_clipboard)}.")
+                        },
+                        kind = SnackbarKind.Success
+                    )
+                }
             }
         }
     }

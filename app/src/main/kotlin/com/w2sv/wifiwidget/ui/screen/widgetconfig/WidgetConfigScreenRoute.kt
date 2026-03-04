@@ -20,8 +20,8 @@ import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.util.ScopedSnackbarEmitter
-import com.w2sv.wifiwidget.ui.util.rememberScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 
@@ -38,7 +38,7 @@ fun WidgetConfigScreenRoute(
     )
 
     val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
-    val configIsDirty by viewModel.reversibleConfig.isDirty.collectAsStateWithLifecycle()
+    val configEditState = rememberConfigEditState(viewModel)
 
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
 
@@ -67,12 +67,9 @@ fun WidgetConfigScreenRoute(
     WidgetConfigScreen(
         config = config,
         updateConfig = viewModel.reversibleConfig::update,
-        configIsDirty = configIsDirty,
-        revertConfig = viewModel.reversibleConfig::revert,
-        commitChanges = viewModel.reversibleConfig::launchCommit,
+        configEditState = configEditState,
         showDialog = { dialog = it },
-        onBackButtonClick = onBack,
-        snackbarBuilderFlow = viewModel.snackbarBuilderFlow
+        onBackButtonClick = onBack
     )
 }
 
@@ -81,7 +78,7 @@ private fun rememberOnBack(
     configIsDirty: () -> Boolean,
     leaveScreen: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
-    scopedSnackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter(scope = scope)
+    snackbarController: ScopedSnackbarController = rememberScopedSnackbarController(scope = scope)
 ): () -> Unit {
     val backPressHandler = remember {
         BackPressHandler(
@@ -90,12 +87,12 @@ private fun rememberOnBack(
         )
     }
 
-    return remember(scopedSnackbarEmitter) {
+    return remember(snackbarController) {
         {
             onBack(
                 configHasChanged = configIsDirty,
                 backPressHandler = backPressHandler,
-                scopedSnackbarEmitter = scopedSnackbarEmitter,
+                snackbarController = snackbarController,
                 leaveScreen = leaveScreen
             )
         }
@@ -105,13 +102,13 @@ private fun rememberOnBack(
 private fun onBack(
     configHasChanged: () -> Boolean,
     backPressHandler: BackPressHandler,
-    scopedSnackbarEmitter: ScopedSnackbarEmitter,
+    snackbarController: ScopedSnackbarController,
     leaveScreen: () -> Unit
 ) {
     if (configHasChanged()) {
         backPressHandler(
             onFirstPress = {
-                scopedSnackbarEmitter.dismissCurrentAndShow {
+                snackbarController.showReplacing {
                     AppSnackbarVisuals(
                         msg = getString(R.string.go_back_on_unsaved_changes_warning),
                         kind = SnackbarKind.Warning
@@ -119,12 +116,12 @@ private fun onBack(
                 }
             },
             onSecondPress = {
-                scopedSnackbarEmitter.dismissCurrent()
+                snackbarController.dismissCurrent()
                 leaveScreen()
             }
         )
     } else {
-        scopedSnackbarEmitter.dismissCurrent()
+        snackbarController.dismissCurrent()
         leaveScreen()
     }
 }

@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.di
 
-import com.w2sv.wifiwidget.ui.util.EmitSnackbarBuilder
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.EmitSnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

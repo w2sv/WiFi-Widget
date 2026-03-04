@@ -10,15 +10,11 @@ import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.WifiWidgetRefreshManager
-import com.w2sv.wifiwidget.R
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.util.EmitSnackbarBuilder
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
@@ -29,9 +25,7 @@ import javax.inject.Inject
 class WidgetConfigScreenViewModel @Inject constructor(
     dataSource: WidgetConfigDataSource,
     private val widgetRefreshManager: WifiWidgetRefreshManager,
-    private val emitSnackbarBuilder: EmitSnackbarBuilder,
-    @ApplicationContext context: Context,
-    val snackbarBuilderFlow: SharedFlow<@JvmSuppressWildcards SnackbarBuilder>
+    @ApplicationContext context: Context
 ) : ViewModel() {
 
     init {
@@ -40,6 +34,9 @@ class WidgetConfigScreenViewModel @Inject constructor(
             widgetRefreshManager.applyRefreshingSettings(refreshing)
         }
     }
+
+    private val _changesHaveBeenCommitted = MutableSharedFlow<Unit>()
+    val changesHaveBeenCommitted = _changesHaveBeenCommitted.asSharedFlow()
 
     val reversibleConfig = ReversibleStateFlow(
         scope = viewModelScope,
@@ -50,13 +47,8 @@ class WidgetConfigScreenViewModel @Inject constructor(
         ),
         commitState = { state ->
             dataSource.update { state }
+            _changesHaveBeenCommitted.emit(Unit)
             WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
-            emitSnackbarBuilder {
-                AppSnackbarVisuals(
-                    msg = getString(R.string.updated_widget_configuration),
-                    kind = SnackbarKind.Success
-                )
-            }
         }
     )
 }

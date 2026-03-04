@@ -18,7 +18,7 @@ import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedstate.theme.rememberThemeController
-import com.w2sv.wifiwidget.ui.util.rememberSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.coroutines.flow.Flow
 import slimber.log.i
 
@@ -66,11 +66,11 @@ private fun ShowSnackbarOnWidgetPin(
     newWidgetPinned: Flow<Unit>,
     anyLocationAccessRequiringPropertyEnabled: () -> Boolean
 ) {
-    val snackbarEmitter = rememberSnackbarEmitter()
+    val snackbarController = rememberSnackbarController()
     val locationAccess = LocalLocationAccessCapability.current
 
     CollectLatestFromFlow(newWidgetPinned) {
-        snackbarEmitter.dismissCurrentAndShowSuspending {
+        snackbarController.showReplacing {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
                 anyLocationAccessRequiringPropertyEnabled() && !locationAccess.isGpsEnabled -> AppSnackbarVisuals(

@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,12 +34,12 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.infoDialogData
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.ShakeController
-import com.w2sv.wifiwidget.ui.util.SnackbarEmitter
 import com.w2sv.wifiwidget.ui.util.WithLocalContentColor
-import com.w2sv.wifiwidget.ui.util.rememberSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
@@ -75,7 +74,7 @@ fun WifiPropertiesConfigCard(
     ) {
         PropertyReorderingDisclaimer(
             modifier = Modifier
-                .fillMaxWidth()
+                .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 14.dp)
                 .padding(bottom = 8.dp)
         )
@@ -86,7 +85,7 @@ fun WifiPropertiesConfigCard(
                 showDialog = showDialog,
                 locationAccess = LocalLocationAccessCapability.current,
                 scope = rememberCoroutineScope(),
-                snackbarEmitter = rememberSnackbarEmitter()
+                snackbarController = rememberSnackbarController()
             ),
             onDrop = { fromIndex: Int, toIndex: Int ->
                 updateConfig { withModifiedPropertyPosition(fromIndex, toIndex) }
@@ -115,7 +114,7 @@ private fun wifiPropertyCheckRowData(
     showDialog: (WidgetConfigDialog) -> Unit,
     locationAccess: LocationAccessCapability,
     scope: CoroutineScope,
-    snackbarEmitter: SnackbarEmitter
+    snackbarController: SnackbarController
 ): ImmutableList<ConfigListElement.CheckRow<WifiProperty>> =
     config.orderedProperties
         .map { property ->
@@ -125,7 +124,7 @@ private fun wifiPropertyCheckRowData(
                 locationAccess = locationAccess,
                 isMoreThanOnePropertyEnabled = { config.orderedProperties.count { config.isEnabled(it) } > 1 },
                 showDialog = showDialog,
-                showSnackbar = { snackbarEmitter.dismissCurrentAndShow(scope) { it(this) } },
+                showSnackbar = { builder -> scope.launch { snackbarController.showReplacing { builder() } } },
                 scope = scope
             )
         }

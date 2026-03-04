@@ -12,12 +12,14 @@ import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +27,15 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.CollectLatestFromFlow
+import com.w2sv.composed.core.OnDispose
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.theme.AppColor
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilderFlow
-import com.w2sv.wifiwidget.ui.util.SnackbarEmitter
-import com.w2sv.wifiwidget.ui.util.rememberSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
+import kotlinx.coroutines.flow.emptyFlow
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
@@ -75,14 +82,30 @@ sealed interface SnackbarKind {
 }
 
 @Composable
-fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow, snackbarEmitter: SnackbarEmitter = rememberSnackbarEmitter()) {
-    // Show Snackbars collected from sharedSnackbarVisuals
+fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow(), controller: SnackbarController = rememberSnackbarController()) {
+    // Show Snackbars collected from snackbarBuilderFlow
     CollectLatestFromFlow(snackbarBuilderFlow) { builder ->
-        snackbarEmitter.dismissCurrentAndShowSuspending { builder() }
+        controller.showReplacing { builder() }
     }
 
-    SnackbarHost(snackbarEmitter.snackbarHostState) { snackbarData ->
+    SnackbarHost(controller.snackbarHostState) { snackbarData ->
+        UpdateSnackbarVisibility(snackbarHostState = controller.snackbarHostState)
         AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
+    }
+}
+
+@Composable
+private fun UpdateSnackbarVisibility(
+    snackbarVisibility: SnackbarVisibility = LocalSnackbarVisibility.current,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
+) {
+    SideEffect { snackbarVisibility.set(true) }
+    OnDispose {
+        // Checking whether currentSnackbarData is necessary in cases where snackbar a is immediately replaced by snackbar b, where we don't
+        // want a sequence of true -> false -> true, but just true.
+        if (snackbarHostState.currentSnackbarData == null) {
+            snackbarVisibility.set(false)
+        }
     }
 }
 

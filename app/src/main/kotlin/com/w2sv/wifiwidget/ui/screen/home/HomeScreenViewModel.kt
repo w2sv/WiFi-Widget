@@ -16,8 +16,8 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.home.wifistatus.model.WifiState
-import com.w2sv.wifiwidget.ui.util.EmitSnackbarBuilder
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.EmitSnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow

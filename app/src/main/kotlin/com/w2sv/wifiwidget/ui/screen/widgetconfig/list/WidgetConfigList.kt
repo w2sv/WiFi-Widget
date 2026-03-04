@@ -1,9 +1,11 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -16,26 +18,37 @@ import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConfigCard
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConfigCard
 import kotlinx.collections.immutable.toPersistentList
 
-private val verticalCardSpacing = 16.dp
 private val checkRowColumnBottomPadding = 8.dp
-private val innerWidgetConfigurationCardPadding = PaddingValues(vertical = 18.dp)
+private val verticalCardSpacing = 16.dp
+private val widgetConfigCardInnerPadding = PaddingValues(vertical = 18.dp)
+
+private val listContentPadding: PaddingValues
+    @Composable
+    get() = PaddingValues(
+        bottom = if (isPortraitModeActive) 140.dp else 90.dp,  // for FABs
+        top = verticalCardSpacing
+    )
 
 typealias UpdateWidgetConfig = (WifiWidgetConfig.() -> WifiWidgetConfig) -> Unit
 
 @Composable
 fun WidgetConfigList(
+    state: LazyListState,
     config: WifiWidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
+        state = state,
         modifier = modifier.padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(verticalCardSpacing),
+        contentPadding = listContentPadding
     ) {
         item {
             AppearanceConfigCard(
@@ -111,7 +124,7 @@ private fun BottomBarConfigCard(
 fun WidgetConfigSectionCard(header: IconHeader, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     ElevatedIconHeaderCard(
         iconHeader = header,
-        innerPadding = innerWidgetConfigurationCardPadding,
+        innerPadding = widgetConfigCardInnerPadding,
         modifier = modifier,
         content = content
     )

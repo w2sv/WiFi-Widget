@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -15,14 +14,14 @@ import com.w2sv.androidutils.content.openAppSettings
 import com.w2sv.composed.core.OnChange
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.AppViewModel
-import com.w2sv.wifiwidget.ui.util.ScopedSnackbarEmitter
 import com.w2sv.wifiwidget.ui.util.activityViewModel
-import com.w2sv.wifiwidget.ui.util.rememberScopedSnackbarEmitter
+import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
+import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
 
 @Composable
 fun rememberLocationPermissionCapability(
     appVM: AppViewModel = activityViewModel(),
-    snackbarEmitter: ScopedSnackbarEmitter = rememberScopedSnackbarEmitter()
+    snackbarEmitter: ScopedSnackbarController = rememberScopedSnackbarController()
 ): LocationPermissionCapability {
     val context = LocalContext.current
     val permissionsState = rememberMultiplePermissionsState(
@@ -47,7 +46,7 @@ fun rememberLocationPermissionCapability(
             saveRequestLaunchedBefore = appVM::saveLocationAccessPermissionRequested,
             rationalAlreadyShown = rationalShown,
             saveRationalShown = appVM::saveLocationAccessRationalShown,
-            showSnackbar = { snackbarEmitter.dismissCurrentAndShow { it() } },
+            showSnackbar = { snackbarEmitter.showReplacing { it() } },
             openAppSettings = { context.openAppSettings() }
         )
     }

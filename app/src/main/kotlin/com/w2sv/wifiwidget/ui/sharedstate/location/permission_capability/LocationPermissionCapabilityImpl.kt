@@ -13,7 +13,7 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.util.SnackbarBuilder
+import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
