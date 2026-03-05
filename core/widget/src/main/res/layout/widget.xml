@@ -8,7 +8,7 @@
     android:theme="@style/Theme.Material3.DynamicColors.DayNight"
     android:weightSum="1">
 
-    <!-- Theme.Material3.DynamicColors.DayNight adds ripple effect on property list item click -->
+    <!-- Theme.Material3.DynamicColors.DayNight adds ripple effect on property item click -->
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -20,12 +20,12 @@
             android:id="@+id/wifi_property_list_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clipToPadding="false"
             android:divider="@null"
             android:gravity="center"
             android:orientation="vertical"
-            android:scrollbars="none"
             android:paddingVertical="6dp"
-            android:clipToPadding="false" />
+            android:scrollbars="none" />
 
         <LinearLayout
             android:id="@+id/no_connection_available_layout"
@@ -33,7 +33,15 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            tools:ignore="UseCompoundDrawables">
+
+            <ImageView
+                android:id="@+id/wifi_status_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:contentDescription="@null" />
 
             <TextView
                 android:id="@+id/wifi_status_tv"
@@ -49,9 +57,9 @@
         android:id="@+id/bottom_row"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:paddingTop="2dp"
         android:paddingBottom="4dp"
-        android:gravity="center_vertical"
         android:weightSum="1">
 
         <TextView

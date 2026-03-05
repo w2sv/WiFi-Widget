@@ -1,4 +1,4 @@
-package com.w2sv.widget.layout
+package com.w2sv.widget.ui
 
 import android.content.Context
 import android.widget.RemoteViews
@@ -50,7 +50,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         )
             .log { "Set propertyViewData=$it" }
 
-        widgetColors = widgetConfig.appearance.resolvedWidgetColors(context)
+        widgetColors = widgetConfig.appearance.resolveColors(context)
         fontSize = widgetConfig.appearance.fontSize
         propertyLayout = when (widgetConfig.appearance.propertyValueAlignment) {
             Alignment.Left -> R.layout.wifi_property_left_aligned

@@ -7,10 +7,7 @@ import com.w2sv.androidutils.content.componentName
 import com.w2sv.widget.WidgetPinSuccessBroadcastReceiver
 import com.w2sv.widget.WifiWidgetProvider
 
-fun AppWidgetManager.getWifiWidgetIds(context: Context): IntArray =
-    getWifiWidgetIds(context.packageName)
-
-fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
+internal fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
     getAppWidgetIds(packageName, WifiWidgetProvider::class.java)
 
 /**

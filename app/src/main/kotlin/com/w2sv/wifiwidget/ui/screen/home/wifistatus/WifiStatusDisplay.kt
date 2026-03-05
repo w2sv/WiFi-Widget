@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.widget.utils.goToWifiSettingsIntent
+import com.w2sv.common.utils.openWifiSettingsIntent
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.util.contentDescription
@@ -38,11 +38,7 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-            .clickable {
-                context.startActivity(
-                    goToWifiSettingsIntent
-                )
-            }
+            .clickable { context.startActivity(openWifiSettingsIntent) }
             .contentDescription(context.getString(R.string.go_to_wifi_settings_cd))
     ) {
         Icon(

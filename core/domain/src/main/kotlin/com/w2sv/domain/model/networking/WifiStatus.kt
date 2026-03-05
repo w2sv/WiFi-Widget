@@ -8,5 +8,8 @@ enum class WifiStatus(@StringRes val labelRes: Int, @DrawableRes val iconRes: In
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),
     Disconnected(R.string.disconnected, R.drawable.ic_wifi_find_24),
     Connected(R.string.connected, R.drawable.ic_wifi_24),
-    ConnectedInactive(R.string.connected_inactive, R.drawable.ic_wifi_connected_inactive_24)
+    ConnectedInactive(R.string.connected_inactive, R.drawable.ic_wifi_connected_inactive_24);
+
+    val isConnected: Boolean
+        get() = this in listOf(Connected, ConnectedInactive)
 }

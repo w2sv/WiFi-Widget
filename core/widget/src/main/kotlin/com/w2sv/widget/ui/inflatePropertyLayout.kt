@@ -1,4 +1,4 @@
-package com.w2sv.widget.layout
+package com.w2sv.widget.ui
 
 import android.content.res.ColorStateList
 import android.os.Build

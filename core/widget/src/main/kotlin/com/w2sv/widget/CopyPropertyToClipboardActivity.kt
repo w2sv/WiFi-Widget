@@ -1,16 +1,20 @@
 package com.w2sv.widget
 
+import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.w2sv.androidutils.content.getParcelableCompat
+import com.w2sv.androidutils.content.intent
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.common.utils.ToastManager
+import com.w2sv.common.utils.activityPendingIntent
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.parcelize.Parcelize
@@ -73,5 +77,14 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
             private const val EXTRA =
                 "com.w2sv.wifiwidget.extra.CopyPropertyToClipboardBroadcastReceiverArgs"
         }
+    }
+
+    companion object {
+        fun pendingIntent(context: Context): PendingIntent =
+            activityPendingIntent(
+                context,
+                intent<CopyPropertyToClipboardActivity>(context),
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
     }
 }
