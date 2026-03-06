@@ -18,8 +18,8 @@ import com.w2sv.wifiwidget.ui.util.contentDescription
 @Composable
 fun ArrowRightLabelContentRow(
     label: String,
-    content: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,

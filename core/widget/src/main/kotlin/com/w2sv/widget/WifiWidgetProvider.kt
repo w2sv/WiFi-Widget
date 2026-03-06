@@ -9,7 +9,7 @@ import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.ui.WidgetRenderer
-import com.w2sv.widget.ui.resolveColors
+import com.w2sv.widget.ui.resolve
 import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import com.w2sv.widget.utils.remoteViews
@@ -80,7 +80,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
         val config = runBlocking { widgetConfigFlow.first() }
-        val colors = config.appearance.resolveColors(context)
+        val colors = config.appearance.coloring.resolve(context)
 
         appWidgetIds.forEach { id ->
             i { "updateWidget | appWidgetId=$id" }

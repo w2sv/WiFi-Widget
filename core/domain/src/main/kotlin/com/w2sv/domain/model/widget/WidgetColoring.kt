@@ -1,31 +1,13 @@
 package com.w2sv.domain.model.widget
 
-import androidx.annotation.ColorInt
-import androidx.annotation.StringRes
-import com.w2sv.androidutils.os.dynamicColorsSupported
-import com.w2sv.core.domain.R
-import com.w2sv.domain.model.Theme
+data class WidgetColoring(
+    val preset: WidgetColoringStrategy.Preset = WidgetColoringStrategy.Preset(),
+    val custom: WidgetColoringStrategy.Custom = WidgetColoringStrategy.Custom(),
+    val useCustom: Boolean = false
+) {
+    val strategies: List<WidgetColoringStrategy>
+        get() = listOf(preset, custom)
 
-sealed interface WidgetColoring {
-
-    val asPresetOrNull: Preset?
-        get() = this as? Preset
-
-    data class Preset(
-        val theme: Theme = Theme.Default,
-        val useDynamicColors: Boolean = dynamicColorsSupported
-    ) : WidgetColoring
-
-    data class Custom(
-        @ColorInt val background: Int = -7859146,
-        @ColorInt val primary: Int = -5898336,
-        @ColorInt val secondary: Int = -1
-    ) : WidgetColoring
-
-    @get:StringRes
-    val labelRes: Int
-        get() = when (this) {
-            is Preset -> R.string.preset
-            is Custom -> R.string.custom
-        }
+    val appliedStrategy: WidgetColoringStrategy
+        get() = if (useCustom) custom else preset
 }

@@ -9,7 +9,7 @@ import com.w2sv.domain.model.widget.WidgetAppearance
 
 internal fun WidgetAppearance.toProto(): WidgetAppearanceProto =
     WidgetAppearanceProto.newBuilder().also { builder ->
-        builder.coloring = coloringConfig.toProto()
+        builder.coloring = coloring.toProto()
         builder.backgroundOpacity = backgroundOpacity
         builder.fontSize = fontSize.toProto()
         builder.propertyValueAlignment = propertyValueAlignment.toProto()
@@ -17,7 +17,7 @@ internal fun WidgetAppearance.toProto(): WidgetAppearanceProto =
 
 internal fun WidgetAppearanceProto.toExternal(): WidgetAppearance =
     WidgetAppearance(
-        coloringConfig = coloring.toExternal(),
+        coloring = coloring.toExternal(),
         backgroundOpacity = backgroundOpacity,
         fontSize = fontSize.toExternal(),
         propertyValueAlignment = propertyValueAlignment.toExternal()

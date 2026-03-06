@@ -7,6 +7,7 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.widget.FontSize
+import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.utils.setTextView
@@ -65,12 +66,12 @@ private fun RemoteViews.displayIpSubValues(values: List<String>, fontSize: FontS
             setColorStateList(
                 viewId,
                 "setBackgroundTintList",
-                ColorStateList.valueOf(widgetColors.ipSubPropertyBackgroundColor)
+                ColorStateList.valueOf(widgetColors.subPropertyBackground)
             )
         } else {
             setBackgroundColor(
                 viewId,
-                widgetColors.ipSubPropertyBackgroundColor
+                widgetColors.subPropertyBackground
             )
         }
     }

@@ -31,7 +31,7 @@ import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.infoDialogData
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha

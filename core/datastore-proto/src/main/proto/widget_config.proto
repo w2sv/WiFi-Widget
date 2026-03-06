@@ -36,7 +36,7 @@ message WidgetAppearanceProto {
 message WidgetColoringProto {
     Preset preset = 1;
     Custom custom = 2;
-    bool is_custom_selected = 3;
+    bool use_custom = 3;
 
     message Preset {
         Theme theme = 1;

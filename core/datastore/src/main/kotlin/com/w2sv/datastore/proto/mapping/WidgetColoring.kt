@@ -2,34 +2,35 @@ package com.w2sv.datastore.proto.mapping
 
 import com.w2sv.datastore.WidgetColoringProto
 import com.w2sv.domain.model.Theme
+import com.w2sv.domain.model.widget.WidgetColoringStrategy
 import com.w2sv.domain.model.widget.WidgetColoring
-import com.w2sv.domain.model.widget.WidgetColoringConfig
+import com.w2sv.domain.model.widget.WidgetColors
 
 /* -------------------------
  * WidgetColoringConfig
  * ------------------------- */
 
-internal fun WidgetColoringConfig.toProto(): WidgetColoringProto =
+internal fun WidgetColoring.toProto(): WidgetColoringProto =
     WidgetColoringProto.newBuilder()
         .also { builder ->
             builder.preset = preset.toProto()
             builder.custom = custom.toProto()
-            builder.isCustomSelected = isCustomSelected
+            builder.useCustom = useCustom
         }
         .build()
 
-internal fun WidgetColoringProto.toExternal(): WidgetColoringConfig =
-    WidgetColoringConfig(
+internal fun WidgetColoringProto.toExternal(): WidgetColoring =
+    WidgetColoring(
         preset = preset.toExternal(),
         custom = custom.toExternal(),
-        isCustomSelected = isCustomSelected
+        useCustom = useCustom
     )
 
 /* -------------------------
  * Preset coloring
  * ------------------------- */
 
-private fun WidgetColoring.Preset.toProto(): WidgetColoringProto.Preset =
+private fun WidgetColoringStrategy.Preset.toProto(): WidgetColoringProto.Preset =
     WidgetColoringProto.Preset.newBuilder()
         .also { builder ->
             builder.theme = theme.toProto()
@@ -37,8 +38,8 @@ private fun WidgetColoring.Preset.toProto(): WidgetColoringProto.Preset =
         }
         .build()
 
-private fun WidgetColoringProto.Preset.toExternal(): WidgetColoring.Preset =
-    WidgetColoring.Preset(
+private fun WidgetColoringProto.Preset.toExternal(): WidgetColoringStrategy.Preset =
+    WidgetColoringStrategy.Preset(
         theme = theme.toExternal(),
         useDynamicColors = useDynamicColors
     )
@@ -66,18 +67,20 @@ private fun WidgetColoringProto.Preset.Theme.toExternal(): Theme =
  * Custom coloring
  * ------------------------- */
 
-private fun WidgetColoring.Custom.toProto(): WidgetColoringProto.Custom =
+private fun WidgetColoringStrategy.Custom.toProto(): WidgetColoringProto.Custom =
     WidgetColoringProto.Custom.newBuilder()
         .also { builder ->
-            builder.background = background
-            builder.primary = primary
-            builder.secondary = secondary
+            builder.background = colors.background
+            builder.primary = colors.primary
+            builder.secondary = colors.secondary
         }
         .build()
 
-private fun WidgetColoringProto.Custom.toExternal(): WidgetColoring.Custom =
-    WidgetColoring.Custom(
-        background = background,
-        primary = primary,
-        secondary = secondary
+private fun WidgetColoringProto.Custom.toExternal(): WidgetColoringStrategy.Custom =
+    WidgetColoringStrategy.Custom(
+        WidgetColors(
+            background = background,
+            primary = primary,
+            secondary = secondary
+        )
     )

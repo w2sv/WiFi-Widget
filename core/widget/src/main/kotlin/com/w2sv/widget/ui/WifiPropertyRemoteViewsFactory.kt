@@ -6,6 +6,7 @@ import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.widget.Alignment
 import com.w2sv.domain.model.widget.FontSize
+import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
@@ -50,7 +51,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         )
             .log { "Set propertyViewData=$it" }
 
-        widgetColors = widgetConfig.appearance.resolveColors(context)
+        widgetColors = widgetConfig.appearance.coloring.resolve(context)
         fontSize = widgetConfig.appearance.fontSize
         propertyLayout = when (widgetConfig.appearance.propertyValueAlignment) {
             Alignment.Left -> R.layout.wifi_property_left_aligned
@@ -77,10 +78,9 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     }
 
     override fun getLoadingView(): RemoteViews =
-        remoteViews(context, R.layout.loading)
-            .apply {
-                setTextColor(R.id.loading_tv, widgetColors.secondary)
-            }
+        remoteViews(context, R.layout.loading).apply {
+            setTextColor(R.id.loading_tv, widgetColors.secondary)
+        }
 
     override fun getViewTypeCount(): Int =
         2

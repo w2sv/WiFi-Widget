@@ -16,7 +16,6 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.domain.model.widget.WidgetColoring
-import com.w2sv.domain.model.widget.WidgetColoringConfig
+import com.w2sv.domain.model.widget.WidgetColoringStrategy
 import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
@@ -35,17 +34,16 @@ import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor.Background
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor.Primary
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor.Secondary
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.contentDescription
 
 @Composable
-fun ColoringConfiguration(
-    coloringConfig: WidgetColoringConfig,
-    setColoringConfig: (WidgetColoringConfig) -> Unit,
+fun ConfigureColoring(
+    config: WidgetColoring,
+    update: (WidgetColoring) -> Unit,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,27 +52,26 @@ fun ColoringConfiguration(
             modifier = Modifier.padding(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ColoringStyleSelectionButtons(
-                coloringConfig = coloringConfig,
-                setColoringConfig = setColoringConfig,
-                modifier = Modifier
-                    .padding(bottom = AppearanceConfigurationDefaults.verticalPadding)
+            SelectColoringStrategyButtonRow(
+                config = config,
+                update = update,
+                modifier = Modifier.padding(bottom = AppearanceConfigTokens.featureSpacing)
             )
 
-            AnimatedContent(targetState = coloringConfig.isCustomSelected) { isCustomStyleSelected ->
+            AnimatedContent(targetState = config.appliedStrategy) { strategy ->
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    when (isCustomStyleSelected) {
-                        false -> {
+                    when (strategy) {
+                        is WidgetColoringStrategy.Preset -> {
                             PresetColoringConfiguration(
-                                data = coloringConfig.preset,
-                                setData = { setColoringConfig(coloringConfig.copy(preset = it)) },
+                                data = strategy,
+                                update = { update(config.copy(preset = it)) },
                                 modifier = Modifier.fillMaxWidth(0.82f)
                             )
                         }
 
-                        true -> {
+                        is WidgetColoringStrategy.Custom -> {
                             CustomColorConfiguration(
-                                data = coloringConfig.custom,
+                                data = strategy,
                                 showDialog = showDialog,
                                 modifier = Modifier.fillMaxWidth(0.6f)
                             )
@@ -90,8 +87,8 @@ fun ColoringConfiguration(
 @Composable
 private fun PresetColoringPrev() {
     AppTheme(useDarkTheme = false) {
-        ColoringConfiguration(
-            WidgetColoringConfig(),
+        ConfigureColoring(
+            WidgetColoring(),
             {},
             {}
         )
@@ -102,8 +99,8 @@ private fun PresetColoringPrev() {
 @Composable
 private fun CustomColoringPrev() {
     AppTheme(useDarkTheme = false) {
-        ColoringConfiguration(
-            WidgetColoringConfig(isCustomSelected = true),
+        ConfigureColoring(
+            WidgetColoring(useCustom = true),
             {},
             {}
         )
@@ -111,29 +108,22 @@ private fun CustomColoringPrev() {
 }
 
 @Composable
-private fun ColoringStyleSelectionButtons(
-    coloringConfig: WidgetColoringConfig,
-    setColoringConfig: (WidgetColoringConfig) -> Unit,
+private fun SelectColoringStrategyButtonRow(
+    config: WidgetColoring,
+    update: (WidgetColoring) -> Unit,
     modifier: Modifier = Modifier
 ) {
     SingleChoiceSegmentedButtonRow(modifier) {
-        coloringConfig.styles.forEachIndexed { i, style ->
-            val isSelected = remember(coloringConfig.isCustomSelected) {
-                style::class == coloringConfig.appliedStyle::class
-            }
+        config.strategies.forEachIndexed { i, strategy ->
             SegmentedButton(
-                selected = isSelected,
-                onClick = {
-                    if (!isSelected) {
-                        setColoringConfig(coloringConfig.copy(isCustomSelected = style is WidgetColoring.Custom))
-                    }
-                },
+                selected = config.useCustom == strategy.isCustom,
+                onClick = { update(config.copy(useCustom = strategy.isCustom)) },
                 shape = SegmentedButtonDefaults.itemShape(
                     index = i,
                     count = 2
                 )
             ) {
-                Text(text = stringResource(id = style.labelRes))
+                Text(text = stringResource(id = strategy.labelRes))
             }
         }
     }
@@ -141,22 +131,22 @@ private fun ColoringStyleSelectionButtons(
 
 @Composable
 private fun PresetColoringConfiguration(
-    data: WidgetColoring.Preset,
-    setData: (WidgetColoring.Preset) -> Unit,
+    data: WidgetColoringStrategy.Preset,
+    update: (WidgetColoringStrategy.Preset) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
             selected = data.theme,
-            onSelected = { setData(data.copy(theme = it)) },
+            onSelected = { update(data.copy(theme = it)) },
             horizontalArrangement = Arrangement.SpaceEvenly
         )
         if (dynamicColorsSupported) {
             UseDynamicColorsRow(
                 useDynamicColors = data.useDynamicColors,
-                toggleDynamicColors = { setData(data.copy(useDynamicColors = it)) },
-                modifier = Modifier.padding(top = AppearanceConfigurationDefaults.verticalPadding),
+                toggleDynamicColors = { update(data.copy(useDynamicColors = it)) },
+                modifier = Modifier.padding(top = AppearanceConfigTokens.featureSpacing),
                 leadingIcon = { KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp)) }
             )
             Text(
@@ -171,13 +161,13 @@ private fun PresetColoringConfiguration(
 
 @Composable
 private fun CustomColorConfiguration(
-    data: WidgetColoring.Custom,
+    data: WidgetColoringStrategy.Custom,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         WidgetColor.entries.forEach { widgetColor ->
-            val value = data.colorValueFor(widgetColor)
+            val value = data[widgetColor]
             SectionCustomizationRow(
                 label = stringResource(id = widgetColor.labelRes),
                 color = Color(value),
@@ -194,13 +184,6 @@ private fun CustomColorConfiguration(
         }
     }
 }
-
-private fun WidgetColoring.Custom.colorValueFor(color: WidgetColor): Int =
-    when (color) {
-        Background -> background
-        Primary -> primary
-        Secondary -> secondary
-    }
 
 @Composable
 private fun SectionCustomizationRow(

@@ -22,12 +22,12 @@ import com.w2sv.wifiwidget.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigSectionCard
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigSectionCard
 import kotlin.math.roundToInt
 
-object AppearanceConfigurationDefaults {
-    val verticalPadding = 12.dp
+object AppearanceConfigTokens {
+    val featureSpacing = 12.dp
 }
 
 @Composable
@@ -43,32 +43,32 @@ fun AppearanceConfigCard(
         )
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            ColoringConfiguration(
-                coloringConfig = appearance.coloringConfig,
-                setColoringConfig = { updateAppearance { copy(coloringConfig = it) } },
+            ConfigureColoring(
+                config = appearance.coloring,
+                update = { updateAppearance { copy(coloring = it) } },
                 showDialog = showDialog,
-                modifier = Modifier.padding(bottom = AppearanceConfigurationDefaults.verticalPadding)
+                modifier = Modifier.padding(bottom = AppearanceConfigTokens.featureSpacing)
             )
             BackgroundOpacitySliderRow(
                 opacity = appearance.backgroundOpacity,
                 setOpacity = { updateAppearance { copy(backgroundOpacity = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AppearanceConfigurationDefaults.verticalPadding)
+                    .padding(top = AppearanceConfigTokens.featureSpacing)
             )
             FontSizeSliderRow(
                 fontSize = appearance.fontSize,
                 setFontSize = { updateAppearance { copy(fontSize = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AppearanceConfigurationDefaults.verticalPadding)
+                    .padding(top = AppearanceConfigTokens.featureSpacing)
             )
             ConfigurePropertyValueAlignment(
                 alignment = appearance.propertyValueAlignment,
                 update = { updateAppearance { copy(propertyValueAlignment = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = AppearanceConfigurationDefaults.verticalPadding)
+                    .padding(vertical = AppearanceConfigTokens.featureSpacing)
             )
         }
     }
@@ -77,25 +77,24 @@ fun AppearanceConfigCard(
 @Composable
 private fun ConfigurePropertyValueAlignment(alignment: Alignment, update: (Alignment) -> Unit, modifier: Modifier = Modifier) {
     ArrowRightLabelContentRow(
-        stringResource(R.string.value_alignment),
-        content = {
-            SingleChoiceSegmentedButtonRow {
-                Alignment.entries.forEach {
-                    SegmentedButton(
-                        selected = it == alignment,
-                        onClick = { update(it) },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = it.ordinal,
-                            count = 2
-                        )
-                    ) {
-                        Text(it.name)
-                    }
+        label = stringResource(R.string.value_alignment),
+        modifier = modifier
+    ) {
+        SingleChoiceSegmentedButtonRow {
+            Alignment.entries.forEach {
+                SegmentedButton(
+                    selected = it == alignment,
+                    onClick = { update(it) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = it.ordinal,
+                        count = 2
+                    )
+                ) {
+                    Text(it.name)
                 }
             }
-        },
-        modifier = modifier
-    )
+        }
+    }
 }
 
 @Composable
@@ -104,21 +103,20 @@ private fun FontSizeSliderRow(
     setFontSize: (FontSize) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context: Context = LocalContext.current
     ArrowRightLabelContentRow(
         label = stringResource(id = R.string.font_size),
-        content = {
-            SliderWithLabel(
-                value = fontSize.ordinal.toFloat(),
-                steps = FontSize.entries.size - 2,
-                makeLabel = { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) },
-                onValueChanged = { setFontSize(enumEntryByOrdinal(it.roundToInt())) },
-                contentDescription = stringResource(id = R.string.font_size_slider_cd),
-                valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
-            )
-        },
         modifier = modifier
-    )
+    ) {
+        val context: Context = LocalContext.current
+        SliderWithLabel(
+            value = fontSize.ordinal.toFloat(),
+            steps = FontSize.entries.size - 2,
+            makeLabel = { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) },
+            onValueChanged = { setFontSize(enumEntryByOrdinal(it.roundToInt())) },
+            contentDescription = stringResource(id = R.string.font_size_slider_cd),
+            valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
+        )
+    }
 }
 
 @Composable
@@ -129,15 +127,14 @@ private fun BackgroundOpacitySliderRow(
 ) {
     ArrowRightLabelContentRow(
         label = stringResource(R.string.background_opacity),
-        content = {
-            SliderWithLabel(
-                value = opacity,
-                steps = 9,
-                makeLabel = { "${(it * 100).roundToInt()}%" },
-                onValueChanged = setOpacity,
-                contentDescription = stringResource(id = R.string.opacity_slider_cd)
-            )
-        },
         modifier = modifier
-    )
+    ) {
+        SliderWithLabel(
+            value = opacity,
+            steps = 9,
+            makeLabel = { "${(it * 100).roundToInt()}%" },
+            onValueChanged = setOpacity,
+            contentDescription = stringResource(id = R.string.opacity_slider_cd)
+        )
+    }
 }

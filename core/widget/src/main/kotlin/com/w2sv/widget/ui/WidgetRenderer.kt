@@ -9,6 +9,7 @@ import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.widget.FontSize
+import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.networking.wifistatus.WifiStatusGetter
