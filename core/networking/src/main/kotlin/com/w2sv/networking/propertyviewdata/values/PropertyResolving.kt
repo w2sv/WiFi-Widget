@@ -17,127 +17,127 @@ import java.nio.ByteOrder
 internal fun WifiProperty.resolve(
     snapshot: WifiSnapshot,
     enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>
-): List<WifiPropertyValue> = buildList {
-    val connectionInfo = snapshot.connectionInfo
-    val dhcpInfo = snapshot.dhcpInfo
-    val linkProperties = snapshot.linkProperties
-    val ipApiData = snapshot.ipApiData
+): List<WifiPropertyValue> =
+    buildList {
+        val connectionInfo = snapshot.connectionInfo
+        val dhcpInfo = snapshot.dhcpInfo
+        val linkProperties = snapshot.linkProperties
+        val ipApiData = snapshot.ipApiData
 
-    when (this@resolve) {
-        WifiProperty.SSID -> add(
-            WifiPropertyValue(
-                connectionInfo.ssid
-                    .replace("\"", "")
-                    .takeIf { it != "<unknown ssid>" }
-                    ?.txt
-                    ?: R.string.no_location_access.txt
-            )
-        )
-
-        WifiProperty.BSSID -> add(
-            WifiPropertyValue(
-                connectionInfo.bssid
-                    .takeIf { it != "02:00:00:00:00:00" }
-                    ?.txt
-                    ?: R.string.no_location_access.txt
-            )
-        )
-
-        WifiProperty.Frequency -> add(WifiPropertyValue("${connectionInfo.frequency} MHz".txt))
-        WifiProperty.Channel -> add(WifiPropertyValue(frequencyToChannel(connectionInfo.frequency).toString().txt))
-        WifiProperty.LinkSpeed -> add(WifiPropertyValue("${connectionInfo.linkSpeed} Mbps".txt))
-        WifiProperty.RSSI -> add(WifiPropertyValue("${connectionInfo.rssi} dBm".txt))
-
-        WifiProperty.SignalStrength -> {
-            val rssi = connectionInfo.rssi
-            add(
+        when (this@resolve) {
+            WifiProperty.SSID -> add(
                 WifiPropertyValue(
-                    when {
-                        rssi >= -60 -> R.string.excellent
-                        rssi >= -70 -> R.string.good
-                        rssi >= -80 -> R.string.fair
-                        rssi >= -90 -> R.string.weak
-                        else -> R.string.poor
-                    }.txt
+                    connectionInfo.ssid
+                        .replace("\"", "")
+                        .takeIf { it != "<unknown ssid>" }
+                        ?.txt
+                        ?: R.string.no_location_access.txt
+                )
+            )
+
+            WifiProperty.BSSID -> add(
+                WifiPropertyValue(
+                    connectionInfo.bssid
+                        .takeIf { it != "02:00:00:00:00:00" }
+                        ?.txt
+                        ?: R.string.no_location_access.txt
+                )
+            )
+
+            WifiProperty.Frequency -> add(WifiPropertyValue("${connectionInfo.frequency} MHz".txt))
+            WifiProperty.Channel -> add(WifiPropertyValue(frequencyToChannel(connectionInfo.frequency).toString().txt))
+            WifiProperty.LinkSpeed -> add(WifiPropertyValue("${connectionInfo.linkSpeed} Mbps".txt))
+            WifiProperty.RSSI -> add(WifiPropertyValue("${connectionInfo.rssi} dBm".txt))
+
+            WifiProperty.SignalStrength -> {
+                val rssi = connectionInfo.rssi
+                add(
+                    WifiPropertyValue(
+                        when {
+                            rssi >= -60 -> R.string.excellent
+                            rssi >= -70 -> R.string.good
+                            rssi >= -80 -> R.string.fair
+                            rssi >= -90 -> R.string.weak
+                            else -> R.string.poor
+                        }.txt
+                    )
+                )
+            }
+
+            WifiProperty.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                add(
+                    WifiPropertyValue(
+                        when (connectionInfo.wifiStandard) {
+                            ScanResult.WIFI_STANDARD_11AC -> "802.11ac".txt
+                            ScanResult.WIFI_STANDARD_11AD -> "802.11ad".txt
+                            ScanResult.WIFI_STANDARD_11AX -> "802.11ax".txt
+                            ScanResult.WIFI_STANDARD_11BE -> "802.11be".txt
+                            ScanResult.WIFI_STANDARD_11N -> "802.11n".txt
+                            ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g".txt
+                            else -> R.string.unknown.txt
+                        }
+                    )
+                )
+            }
+
+            WifiProperty.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                add(
+                    WifiPropertyValue(
+                        when (connectionInfo.wifiStandard) {
+                            ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5".txt
+                            ScanResult.WIFI_STANDARD_11AD -> "WiGig".txt
+                            ScanResult.WIFI_STANDARD_11AX -> "Wi-Fi 6".txt
+                            ScanResult.WIFI_STANDARD_11BE -> "Wi-Fi 7".txt
+                            ScanResult.WIFI_STANDARD_11N -> "Wi-Fi 4".txt
+                            ScanResult.WIFI_STANDARD_LEGACY -> "Legacy".txt
+                            else -> R.string.unknown.txt
+                        }
+                    )
+                )
+            }
+
+            WifiProperty.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                add(
+                    WifiPropertyValue(
+                        when (connectionInfo.currentSecurityType) {
+                            WifiInfo.SECURITY_TYPE_OPEN -> "Open".txt
+                            WifiInfo.SECURITY_TYPE_WEP -> "WEP".txt
+                            WifiInfo.SECURITY_TYPE_PSK -> "PSK (WPA/WPA2)".txt
+                            WifiInfo.SECURITY_TYPE_EAP -> "EAP (WPA/WPA2)".txt
+                            WifiInfo.SECURITY_TYPE_SAE -> "SAE (WPA3)".txt
+                            WifiInfo.SECURITY_TYPE_OWE -> "OWE (WPA3)".txt
+                            else -> R.string.unknown.txt
+                        }
+                    )
+                )
+            }
+
+            WifiProperty.DNS -> listOf(dhcpInfo.dns1, dhcpInfo.dns2).forEach { dns ->
+                addIfNotNull(textualIPv4Representation(dns))
+            }
+
+            WifiProperty.Gateway -> addIfNotNull(textualIPv4Representation(dhcpInfo.gateway))
+            WifiProperty.DHCP -> addIfNotNull(textualIPv4Representation(dhcpInfo.serverAddress))
+            WifiProperty.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                addIfNotNull(linkProperties?.nat64Prefix?.address?.hostAddress)
+            }
+
+            WifiProperty.Location -> addIfNotNull(ipApiData?.location)
+            WifiProperty.IpGpsLocation -> addIfNotNull(ipApiData?.gpsCoordinates)
+            WifiProperty.ISP -> addIfNotNull(ipApiData?.isp)
+            WifiProperty.ASN -> addIfNotNull(ipApiData?.asn)
+            is WifiProperty.IpProperty -> addAll(
+                resolve(
+                    publicIps = snapshot.publicIps,
+                    systemIps = snapshot.systemIps,
+                    enabledIpSettings = enabledIpSettings
                 )
             )
         }
-
-        WifiProperty.Standard -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            add(
-                WifiPropertyValue(
-                    when (connectionInfo.wifiStandard) {
-                        ScanResult.WIFI_STANDARD_11AC -> "802.11ac".txt
-                        ScanResult.WIFI_STANDARD_11AD -> "802.11ad".txt
-                        ScanResult.WIFI_STANDARD_11AX -> "802.11ax".txt
-                        ScanResult.WIFI_STANDARD_11BE -> "802.11be".txt
-                        ScanResult.WIFI_STANDARD_11N -> "802.11n".txt
-                        ScanResult.WIFI_STANDARD_LEGACY -> "802.11a/b/g".txt
-                        else -> R.string.unknown.txt
-                    }
-                )
-            )
-        }
-
-        WifiProperty.Generation -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            add(
-                WifiPropertyValue(
-                    when (connectionInfo.wifiStandard) {
-                        ScanResult.WIFI_STANDARD_11AC -> "Wi-Fi 5".txt
-                        ScanResult.WIFI_STANDARD_11AD -> "WiGig".txt
-                        ScanResult.WIFI_STANDARD_11AX -> "Wi-Fi 6".txt
-                        ScanResult.WIFI_STANDARD_11BE -> "Wi-Fi 7".txt
-                        ScanResult.WIFI_STANDARD_11N -> "Wi-Fi 4".txt
-                        ScanResult.WIFI_STANDARD_LEGACY -> "Legacy".txt
-                        else -> R.string.unknown.txt
-                    }
-                )
-            )
-        }
-
-        WifiProperty.Security -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            add(
-                WifiPropertyValue(
-                    when (connectionInfo.currentSecurityType) {
-                        WifiInfo.SECURITY_TYPE_OPEN -> "Open".txt
-                        WifiInfo.SECURITY_TYPE_WEP -> "WEP".txt
-                        WifiInfo.SECURITY_TYPE_PSK -> "PSK (WPA/WPA2)".txt
-                        WifiInfo.SECURITY_TYPE_EAP -> "EAP (WPA/WPA2)".txt
-                        WifiInfo.SECURITY_TYPE_SAE -> "SAE (WPA3)".txt
-                        WifiInfo.SECURITY_TYPE_OWE -> "OWE (WPA3)".txt
-                        else -> R.string.unknown.txt
-                    }
-                )
-            )
-        }
-
-        WifiProperty.DNS -> listOf(dhcpInfo.dns1, dhcpInfo.dns2).forEach { dns ->
-            textualIPv4Representation(dns)?.add()
-        }
-
-        WifiProperty.Gateway -> textualIPv4Representation(dhcpInfo.gateway)?.add()
-        WifiProperty.DHCP -> textualIPv4Representation(dhcpInfo.serverAddress)?.add()
-        WifiProperty.NAT64Prefix -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            linkProperties?.nat64Prefix?.address?.hostAddress?.add()
-        }
-
-        WifiProperty.Location -> ipApiData?.location?.add()
-        WifiProperty.IpGpsLocation -> ipApiData?.gpsCoordinates?.add()
-        WifiProperty.ISP -> ipApiData?.isp?.add()
-        WifiProperty.ASN -> ipApiData?.asn?.add()
-        is WifiProperty.IpProperty -> addAll(
-            resolve(
-                publicIps = snapshot.publicIps,
-                systemIps = snapshot.systemIps,
-                enabledIpSettings = enabledIpSettings
-            )
-        )
     }
-}
 
-context(listBuilder: MutableList<WifiPropertyValue>)
-private fun String.add() {
-    listBuilder.add(WifiPropertyValue(txt))
+private fun MutableList<WifiPropertyValue>.addIfNotNull(value: String?) {
+    value?.run { add(WifiPropertyValue(txt)) }
 }
 
 /**

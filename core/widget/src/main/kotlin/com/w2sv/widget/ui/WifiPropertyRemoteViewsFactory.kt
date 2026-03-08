@@ -14,10 +14,10 @@ import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.utils.logging.LoggingRemoteViewsFactory
 import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import kotlin.properties.Delegates
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,

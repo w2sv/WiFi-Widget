@@ -4,10 +4,7 @@ import androidx.compose.runtime.Stable
 import com.w2sv.wifiwidget.ui.sharedstate.location.permission_capability.LocationPermissionCapability
 
 @Stable
-class LocationAccessCapabilityImpl(
-    private val isGpsEnabledProvider: () -> Boolean,
-    permissionCapability: LocationPermissionCapability
-) :
+class LocationAccessCapabilityImpl(private val isGpsEnabledProvider: () -> Boolean, permissionCapability: LocationPermissionCapability) :
     LocationAccessCapability,
     LocationPermissionCapability by permissionCapability {
 

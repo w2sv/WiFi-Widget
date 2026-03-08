@@ -15,7 +15,8 @@ sealed class WifiProperty(
     val isEnabledDefault: Boolean = true,
     val requiresLocationAccess: Boolean = false,
     private val minSdk: Int = Build.VERSION_CODES.BASE
-) : WithProtoId, Labelled {
+) : WithProtoId,
+    Labelled {
 
     val isSupported: Boolean
         @SuppressLint("AnnotateVersionCheck", "ObsoleteSdkInt")

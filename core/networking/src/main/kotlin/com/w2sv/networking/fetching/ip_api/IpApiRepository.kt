@@ -7,14 +7,14 @@ import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.fetching.fetchFromUrl
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 internal class IpApiRepository @Inject constructor(

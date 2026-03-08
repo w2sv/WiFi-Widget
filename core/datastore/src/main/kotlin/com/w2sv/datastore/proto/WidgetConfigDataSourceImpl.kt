@@ -6,9 +6,9 @@ import com.w2sv.datastore.proto.mapping.toExternal
 import com.w2sv.datastore.proto.mapping.toProto
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.domain.repository.WidgetConfigDataSource
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.map
 
 @Singleton
 internal class WidgetConfigDataSourceImpl @Inject constructor(private val dataStore: DataStore<WifiWidgetConfigProto>) :

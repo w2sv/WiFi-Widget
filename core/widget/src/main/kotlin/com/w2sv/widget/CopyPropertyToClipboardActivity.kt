@@ -17,9 +17,9 @@ import com.w2sv.common.utils.ToastManager
 import com.w2sv.common.utils.activityPendingIntent
 import com.w2sv.core.widget.R
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
 import slimber.log.i
-import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {

@@ -7,25 +7,17 @@ import androidx.compose.ui.graphics.toArgb
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.set
-import kotlinx.parcelize.Parcelize
 import kotlin.time.Duration
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 sealed interface WidgetConfigDialog : Parcelable {
 
     @Parcelize
-    data class Info(
-        @StringRes val titleRes: Int,
-        @StringRes val descriptionRes: Int,
-        val learnMoreUrl: String? = null
-    ) : WidgetConfigDialog
+    data class Info(@StringRes val titleRes: Int, @StringRes val descriptionRes: Int, val learnMoreUrl: String? = null) : WidgetConfigDialog
 
     @Parcelize
-    data class ColorPicker(
-        val widgetColor: WidgetColor,
-        val color: Int,
-        private val initialColor: Int
-    ) : WidgetConfigDialog {
+    data class ColorPicker(val widgetColor: WidgetColor, val color: Int, private val initialColor: Int) : WidgetConfigDialog {
         val hasBeenConfigured: Boolean
             get() = initialColor != color
     }
@@ -56,11 +48,14 @@ fun WidgetConfigDialog(
                 updateColor = { updateDialog(dialog.copy(color = it.toArgb())) },
                 applyColor = { color ->
                     updateConfig {
-                        copy(appearance = appearance.run {
-                            copy(coloring = coloring.run {
-                                copy(custom = custom.set(dialog.widgetColor, color))
-                            })
-                        }
+                        copy(
+                            appearance = appearance.run {
+                                copy(
+                                    coloring = coloring.run {
+                                        copy(custom = custom.set(dialog.widgetColor, color))
+                                    }
+                                )
+                            }
                         )
                     }
                 },
@@ -77,4 +72,3 @@ fun WidgetConfigDialog(
         }
     }
 }
-

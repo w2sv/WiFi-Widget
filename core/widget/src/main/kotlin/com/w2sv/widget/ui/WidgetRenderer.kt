@@ -31,7 +31,12 @@ internal class WidgetRenderer @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     private val getWifiStatus: WifiStatusGetter
 ) {
-    operator fun invoke(widget: RemoteViews, widgetId: Int, config: WifiWidgetConfig, colors: WidgetColors): RemoteViews =
+    operator fun invoke(
+        widget: RemoteViews,
+        widgetId: Int,
+        config: WifiWidgetConfig,
+        colors: WidgetColors
+    ): RemoteViews =
         widget.apply {
             val status = getWifiStatus()
             when (status.isConnected) {
@@ -76,7 +81,11 @@ internal class WidgetRenderer @Inject constructor(
         appWidgetManager.notifyAppWidgetViewDataChanged(widgetId, R.id.wifi_property_list_view)
     }
 
-    private fun RemoteViews.setUnconnectedContentLayout(status: WifiStatus, colors: WidgetColors, fontSize: FontSize) {
+    private fun RemoteViews.setUnconnectedContentLayout(
+        status: WifiStatus,
+        colors: WidgetColors,
+        fontSize: FontSize
+    ) {
         crossVisualize(
             R.id.wifi_property_list_view,
             R.id.no_connection_available_layout

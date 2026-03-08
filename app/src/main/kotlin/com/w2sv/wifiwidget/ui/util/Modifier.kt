@@ -6,7 +6,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.semantics.testTagsAsResourceId
 
-//TODO: composed
+// TODO: composed
 fun Modifier.resourceIdTestTag(tag: String): Modifier =
     semantics {
         testTagsAsResourceId = true

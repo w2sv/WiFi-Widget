@@ -25,7 +25,7 @@ private val widgetConfigCardInnerPadding = PaddingValues(vertical = 18.dp)
 private val listContentPadding: PaddingValues
     @Composable
     get() = PaddingValues(
-        bottom = if (isPortraitModeActive) 140.dp else 90.dp,  // for FABs
+        bottom = if (isPortraitModeActive) 140.dp else 90.dp, // for FABs
         top = verticalItemSpacing
     )
 
@@ -81,7 +81,11 @@ fun WidgetConfigList(
 }
 
 @Composable
-fun WidgetConfigSectionCard(header: IconHeader, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+fun WidgetConfigSectionCard(
+    header: IconHeader,
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
     ElevatedIconHeaderCard(
         iconHeader = header,
         innerPadding = widgetConfigCardInnerPadding,

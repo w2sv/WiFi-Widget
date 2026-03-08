@@ -130,15 +130,17 @@ private fun wifiPropertyCheckRowData(
         }
         .toPersistentList()
 
-private fun Context.leaveAtLeastOnePropertyEnabledSnackbar() = AppSnackbarVisuals(
-    msg = getString(R.string.leave_at_least_one_property_enabled),
-    kind = SnackbarKind.Warning
-)
+private fun Context.leaveAtLeastOnePropertyEnabledSnackbar() =
+    AppSnackbarVisuals(
+        msg = getString(R.string.leave_at_least_one_property_enabled),
+        kind = SnackbarKind.Warning
+    )
 
-private fun Context.leaveAtLeastOneAddressVersionEnabledSnackbar() = AppSnackbarVisuals(
-    msg = getString(R.string.leave_at_least_one_address_version_enabled),
-    kind = SnackbarKind.Warning
-)
+private fun Context.leaveAtLeastOneAddressVersionEnabledSnackbar() =
+    AppSnackbarVisuals(
+        msg = getString(R.string.leave_at_least_one_address_version_enabled),
+        kind = SnackbarKind.Warning
+    )
 
 private fun WifiProperty.checkRow(
     config: () -> WifiPropertyConfig<WifiPropertySetting>,
@@ -256,7 +258,7 @@ private val IpSetting.isVersionSetting: Boolean
 private fun allowIpSettingUpdate(
     setting: IpSetting,
     newValue: Boolean,
-    isSettingEnabled: (IpSetting) -> Boolean,
+    isSettingEnabled: (IpSetting) -> Boolean
 ): Boolean =
     when {
         newValue -> true
@@ -271,23 +273,24 @@ private fun locationSettingConfigEntries(
     updateSetting: (LocationParameter, Boolean) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
-): ImmutableList<ConfigListElement> = LocationParameter.entries.map { param ->
-    val shakeController = ShakeController()
-    ConfigListElement.CheckRow(
-        property = param,
-        isChecked = { isSettingEnabled(param) },
-        onCheckedChange = makeOnCheckedChange(
-            allowCheckChange = { newValue ->
-                (newValue || isMoreThanOnePropertyEnabled()).also {
-                    if (!it) {
-                        scope.launch { shakeController.shake() }
-                        showLeaveAtLeastOnePropertyEnabledSnackbar()
+): ImmutableList<ConfigListElement> =
+    LocationParameter.entries.map { param ->
+        val shakeController = ShakeController()
+        ConfigListElement.CheckRow(
+            property = param,
+            isChecked = { isSettingEnabled(param) },
+            onCheckedChange = makeOnCheckedChange(
+                allowCheckChange = { newValue ->
+                    (newValue || isMoreThanOnePropertyEnabled()).also {
+                        if (!it) {
+                            scope.launch { shakeController.shake() }
+                            showLeaveAtLeastOnePropertyEnabledSnackbar()
+                        }
                     }
-                }
-            },
-            update = { updateSetting(param, it) }
-        ),
-        shakeController = shakeController
-    )
-}
-    .toPersistentList()
+                },
+                update = { updateSetting(param, it) }
+            ),
+            shakeController = shakeController
+        )
+    }
+        .toPersistentList()

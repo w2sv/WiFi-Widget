@@ -14,10 +14,10 @@ import com.w2sv.widget.utils.getWifiWidgetIds
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class WifiWidgetProvider : LoggingAppWidgetProvider() {

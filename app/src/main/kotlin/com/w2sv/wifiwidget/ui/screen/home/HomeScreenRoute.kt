@@ -62,10 +62,7 @@ fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
  * Shows Snackbar on collection from [newWidgetPinned].
  */
 @Composable
-private fun ShowSnackbarOnWidgetPin(
-    newWidgetPinned: Flow<Unit>,
-    anyLocationAccessRequiringPropertyEnabled: () -> Boolean
-) {
+private fun ShowSnackbarOnWidgetPin(newWidgetPinned: Flow<Unit>, anyLocationAccessRequiringPropertyEnabled: () -> Boolean) {
     val snackbarController = rememberSnackbarController()
     val locationAccess = LocalLocationAccessCapability.current
 

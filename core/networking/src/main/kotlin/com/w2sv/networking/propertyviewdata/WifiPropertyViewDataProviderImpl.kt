@@ -45,10 +45,7 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
     }
 }
 
-private fun WifiProperty.viewData(
-    values: List<WifiPropertyValue>,
-    resources: Resources
-): List<WifiPropertyViewData> =
+private fun WifiProperty.viewData(values: List<WifiPropertyValue>, resources: Resources): List<WifiPropertyViewData> =
     if (values.size == 1) {
         listOf(viewData(values.first(), resources, null))
     } else {
@@ -57,7 +54,11 @@ private fun WifiProperty.viewData(
         }
     }
 
-private fun WifiProperty.viewData(value: WifiPropertyValue, resources: Resources, enumeration: Int?): WifiPropertyViewData =
+private fun WifiProperty.viewData(
+    value: WifiPropertyValue,
+    resources: Resources,
+    enumeration: Int?
+): WifiPropertyViewData =
     WifiPropertyViewData(
         label = resolvedLabel(resources::getString, enumeration),
         value = value.value.resolve(resources),

@@ -8,4 +8,3 @@ data class WidgetAppearance(
     val fontSize: FontSize = FontSize.Medium,
     val propertyValueAlignment: Alignment = Alignment.Left
 )
-

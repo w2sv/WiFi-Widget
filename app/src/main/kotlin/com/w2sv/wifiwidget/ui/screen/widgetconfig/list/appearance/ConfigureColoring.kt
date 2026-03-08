@@ -203,11 +203,10 @@ private fun SectionCustomizationRow(
             fontSize = 14.sp,
             modifier = Modifier.weight(1f)
         )
-        val colorPickerButtonCD =
-            stringResource(
-                id = R.string.color_picker_button_cd,
-                label
-            )
+        val colorPickerButtonCD = stringResource(
+            id = R.string.color_picker_button_cd,
+            label
+        )
         Button(
             modifier = Modifier
                 .colorButton()

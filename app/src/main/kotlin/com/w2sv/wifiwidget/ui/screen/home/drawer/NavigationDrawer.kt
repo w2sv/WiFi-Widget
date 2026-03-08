@@ -51,7 +51,11 @@ fun NavigationDrawer(
 }
 
 @Composable
-private fun NavigationDrawerSheet(drawerState: DrawerState, themeController: ThemeController, modifier: Modifier = Modifier) {
+private fun NavigationDrawerSheet(
+    drawerState: DrawerState,
+    themeController: ThemeController,
+    modifier: Modifier = Modifier
+) {
     ModalDrawerSheet(
         drawerState = drawerState,
         modifier = modifier,

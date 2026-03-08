@@ -6,9 +6,9 @@ import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(

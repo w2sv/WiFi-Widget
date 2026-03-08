@@ -20,7 +20,8 @@ object SnackbarVisualsModule {
         MutableSharedFlow(extraBufferCapacity = 16)
 
     @Provides
-    fun provideSnackbarSharedFlow(flow: MutableSharedFlow<SnackbarBuilder>): SharedFlow<SnackbarBuilder> = flow
+    fun provideSnackbarSharedFlow(flow: MutableSharedFlow<SnackbarBuilder>): SharedFlow<SnackbarBuilder> =
+        flow
 
     @Provides
     fun provideEmitSnackbarVisuals(flow: MutableSharedFlow<SnackbarBuilder>): EmitSnackbarBuilder =

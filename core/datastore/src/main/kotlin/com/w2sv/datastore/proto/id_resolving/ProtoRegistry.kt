@@ -22,4 +22,3 @@ internal abstract class ProtoRegistry<T : WithProtoId>(private val entries: List
             .also { check(it.size == entries.size) { "Duplicate protoId detected in ${this::class.java.simpleName}" } }
     }
 }
-

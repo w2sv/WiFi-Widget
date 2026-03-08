@@ -44,10 +44,11 @@ fun makeOnCheckedChange(
     allowCheckChange: (Boolean) -> Boolean = { true },
     onCheckedChangedDisallowed: () -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit = {
-    if (allowCheckChange(it)) {
-        update(it)
-    } else {
-        onCheckedChangedDisallowed()
+): (Boolean) -> Unit =
+    {
+        if (allowCheckChange(it)) {
+            update(it)
+        } else {
+            onCheckedChangedDisallowed()
+        }
     }
-}

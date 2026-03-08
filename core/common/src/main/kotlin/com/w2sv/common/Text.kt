@@ -18,8 +18,10 @@ sealed interface Text {
     value class Resource(@StringRes val value: Int) : Text
 
     companion object {
-        operator fun invoke(value: String) = Raw(value)
-        operator fun invoke(@StringRes value: Int) = Resource(value)
+        operator fun invoke(value: String) =
+            Raw(value)
+        operator fun invoke(@StringRes value: Int) =
+            Resource(value)
     }
 }
 

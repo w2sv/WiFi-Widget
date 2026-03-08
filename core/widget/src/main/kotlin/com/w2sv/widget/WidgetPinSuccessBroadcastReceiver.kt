@@ -8,9 +8,9 @@ import com.w2sv.androidutils.content.intent
 import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.widget.di.EmitWidgetPinSuccess
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Invoked on successful widget pins triggered from within the app. Emits via [EmitWidgetPinSuccess].

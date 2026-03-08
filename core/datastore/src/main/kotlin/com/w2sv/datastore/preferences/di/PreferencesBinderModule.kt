@@ -19,4 +19,3 @@ internal interface PreferencesBinderModule {
     @Binds
     fun permissionRepository(impl: PermissionRepositoryImpl): PermissionRepository
 }
-

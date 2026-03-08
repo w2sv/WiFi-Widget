@@ -37,15 +37,16 @@ private fun WifiProperty.IpProperty.getAddresses(
     systemIps: List<IpAddress>,
     publicIps: Map<IpAddress.Version, IpAddress?>,
     enabledVersions: Collection<IpAddress.Version>
-): List<IpAddress> = when (this) {
-    WifiProperty.ULA -> systemIps.filter { it.asV6OrNull?.isUniqueLocal == true }
-    WifiProperty.GUA -> systemIps.filter { it.asV6OrNull?.isGlobalUnicast == true }
-    WifiProperty.LoopbackIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLoopback }
-    WifiProperty.SiteLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isSiteLocal }
-    WifiProperty.LinkLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLinkLocal }
-    WifiProperty.MulticastIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isMulticast }
-    WifiProperty.PublicIp -> enabledVersions.mapNotNull { version -> publicIps[version] }
-}
+): List<IpAddress> =
+    when (this) {
+        WifiProperty.ULA -> systemIps.filter { it.asV6OrNull?.isUniqueLocal == true }
+        WifiProperty.GUA -> systemIps.filter { it.asV6OrNull?.isGlobalUnicast == true }
+        WifiProperty.LoopbackIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLoopback }
+        WifiProperty.SiteLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isSiteLocal }
+        WifiProperty.LinkLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLinkLocal }
+        WifiProperty.MulticastIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isMulticast }
+        WifiProperty.PublicIp -> enabledVersions.mapNotNull { version -> publicIps[version] }
+    }
 
 private inline fun List<IpAddress>.filterByVersionAndPredicate(
     versionsToBeIncluded: Collection<IpAddress.Version>,

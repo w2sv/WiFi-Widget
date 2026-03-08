@@ -4,10 +4,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,14 +21,10 @@ internal object WidgetPinSuccessModule {
 
     @WidgetPinSuccessFlow
     @Provides
-    fun provideWidgetPinSuccessFlow(
-        @MutableWidgetPinSuccessFlow flow: MutableSharedFlow<Unit>
-    ): SharedFlow<Unit> =
+    fun provideWidgetPinSuccessFlow(@MutableWidgetPinSuccessFlow flow: MutableSharedFlow<Unit>): SharedFlow<Unit> =
         flow.asSharedFlow()
 
     @Provides
-    fun provideEmitWidgetPinSuccess(
-        @MutableWidgetPinSuccessFlow flow: MutableSharedFlow<Unit>
-    ): EmitWidgetPinSuccess =
+    fun provideEmitWidgetPinSuccess(@MutableWidgetPinSuccessFlow flow: MutableSharedFlow<Unit>): EmitWidgetPinSuccess =
         EmitWidgetPinSuccess { flow.emit(Unit) }
 }

@@ -50,7 +50,11 @@ internal fun RemoteViews.inflatePropertyLayout(
     }
 }
 
-private fun RemoteViews.displayIpSubValues(values: List<String>, fontSize: FontSize, widgetColors: WidgetColors) {
+private fun RemoteViews.displayIpSubValues(
+    values: List<String>,
+    fontSize: FontSize,
+    widgetColors: WidgetColors
+) {
     setViewVisibility(R.id.ip_sub_property_row, View.VISIBLE)
 
     val subPropertyViewIterator = sequenceOf(R.id.ip_sub_property_tv_2, R.id.ip_sub_property_tv_1).iterator()

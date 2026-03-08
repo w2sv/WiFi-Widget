@@ -20,6 +20,7 @@ import com.w2sv.wifiwidget.ui.util.snackbar.EmitSnackbarBuilder
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,7 +33,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(

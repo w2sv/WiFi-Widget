@@ -5,10 +5,10 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.w2sv.domain.model.widget.WidgetRefreshing
-import slimber.log.i
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.toJavaDuration
+import slimber.log.i
 
 @Singleton
 class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {

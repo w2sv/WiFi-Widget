@@ -20,8 +20,8 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.time.Duration
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RefreshingConfigCard(
@@ -52,7 +52,7 @@ fun RefreshingConfigCard(
 private fun refreshingCheckRow(
     refreshing: WidgetRefreshing,
     updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
-    showDialog: (WidgetConfigDialog) -> Unit,
+    showDialog: (WidgetConfigDialog) -> Unit
 ): ConfigListElement.CheckRow =
     ConfigListElement.CheckRow(
         property = WidgetRefreshingParameter.RefreshPeriodically,
@@ -79,7 +79,7 @@ private fun refreshingCheckRow(
             ConfigListElement.CheckRow(
                 property = WidgetRefreshingParameter.RefreshOnLowBattery,
                 isChecked = { refreshing.refreshOnLowBattery },
-                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } },
+                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
             )
         )
     )

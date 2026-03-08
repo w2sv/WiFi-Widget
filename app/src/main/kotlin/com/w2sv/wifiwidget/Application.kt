@@ -4,11 +4,13 @@ import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import dagger.hilt.android.HiltAndroidApp
-import timber.log.Timber
 import javax.inject.Inject
+import timber.log.Timber
 
 @HiltAndroidApp
-class Application : Application(), Configuration.Provider {
+class Application :
+    Application(),
+    Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory

@@ -75,7 +75,11 @@ fun AppearanceConfigCard(
 }
 
 @Composable
-private fun ConfigurePropertyValueAlignment(alignment: Alignment, update: (Alignment) -> Unit, modifier: Modifier = Modifier) {
+private fun ConfigurePropertyValueAlignment(
+    alignment: Alignment,
+    update: (Alignment) -> Unit,
+    modifier: Modifier = Modifier
+) {
     ArrowRightLabelContentRow(
         label = stringResource(R.string.value_alignment),
         modifier = modifier
