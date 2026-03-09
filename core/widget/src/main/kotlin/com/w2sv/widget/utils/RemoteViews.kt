@@ -57,5 +57,9 @@ internal fun RemoteViews.setImageView(
     setColorFilter(viewId, color)
 }
 
-internal fun remoteViews(context: Context, @LayoutRes layout: Int): RemoteViews =
-    RemoteViews(context.packageName, layout)
+internal fun remoteViews(
+    context: Context,
+    @LayoutRes layout: Int,
+    configure: RemoteViews.() -> Unit = {}
+): RemoteViews =
+    RemoteViews(context.packageName, layout).apply(configure)

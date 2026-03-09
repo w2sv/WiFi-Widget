@@ -15,6 +15,7 @@ import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.networking.wifistatus.WifiStatusGetter
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WidgetAction
+import com.w2sv.widget.ui.properties.WifiPropertyViewsService
 import com.w2sv.widget.utils.setButton
 import com.w2sv.widget.utils.setImageView
 import com.w2sv.widget.utils.setTextView

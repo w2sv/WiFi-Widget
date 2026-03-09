@@ -24,7 +24,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         } else {
             remoteNetworkInfoRepository.refresh()
             WifiWidgetProvider.triggerDataRefresh(applicationContext)
-            i { "Refreshed Widget Data" }
+            i { "Triggered data refresh" }
         }
         return Result.success()
     }

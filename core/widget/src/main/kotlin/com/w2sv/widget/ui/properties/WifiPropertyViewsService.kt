@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.properties
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
