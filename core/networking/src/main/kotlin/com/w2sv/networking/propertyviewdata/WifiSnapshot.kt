@@ -12,5 +12,6 @@ internal data class WifiSnapshot(
     val linkProperties: LinkProperties?,
     val publicIps: Map<IpAddress.Version, IpAddress?>,
     val systemIps: List<IpAddress>,
-    val ipApiData: IpApiData?
+    val ipApiData: IpApiData?,
+    val isGpsEnabled: Boolean
 )
