@@ -59,7 +59,7 @@
     <string name="background">Background</string>
     <string name="primary">Primary</string>
     <string name="secondary">Secondary</string>
-    <string name="preset">Preset</string>
+    <string name="theme">Theme</string>
     <string name="custom">Custom</string>
     <string name="loopback_ip">Loopback IP</string>
     <string name="rssi">RSSI</string>

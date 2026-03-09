@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.isPortraitModeActive
 import com.w2sv.domain.model.widget.WifiWidgetConfig
@@ -17,6 +19,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConfigCard
+import com.w2sv.wifiwidget.ui.util.PreviewOf
 
 private val checkRowColumnBottomPadding = 8.dp
 private val verticalItemSpacing = 16.dp
@@ -77,6 +80,19 @@ fun WidgetConfigList(
                 modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun Prev() {
+    PreviewOf {
+        WidgetConfigList(
+            rememberLazyListState(),
+            WifiWidgetConfig.default,
+            {},
+            {}
+        )
     }
 }
 

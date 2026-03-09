@@ -23,6 +23,6 @@ fun WidgetColoringStrategy.Custom.set(color: WidgetColor, @ColorInt value: Int):
 @get:StringRes
 val WidgetColoringStrategy.labelRes: Int
     get() = when (this) {
-        is Preset -> com.w2sv.core.domain.R.string.preset
+        is Preset -> com.w2sv.core.domain.R.string.theme
         is Custom -> com.w2sv.core.domain.R.string.custom
     }

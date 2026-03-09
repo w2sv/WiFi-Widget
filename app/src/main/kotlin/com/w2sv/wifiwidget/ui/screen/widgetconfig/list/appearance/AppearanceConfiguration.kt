@@ -43,6 +43,7 @@ fun AppearanceConfigCard(
         )
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            ArrowRightLabelContentRow("Coloring", modifier = Modifier.padding(bottom = 12.dp)) { }
             ConfigureColoring(
                 config = appearance.coloring,
                 update = { updateAppearance { copy(coloring = it) } },
