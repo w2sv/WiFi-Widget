@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.core.extensions.thenIf
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.WifiPropertyConfig
@@ -22,7 +23,6 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
 import com.w2sv.kotlinutils.copy
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties

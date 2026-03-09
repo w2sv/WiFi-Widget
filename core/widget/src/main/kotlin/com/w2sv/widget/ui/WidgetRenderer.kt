@@ -6,8 +6,8 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.graphics.getAlphaSetColor
-import com.w2sv.core.widget.R
 import com.w2sv.core.common.R as CommonR
+import com.w2sv.core.widget.R
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetColors

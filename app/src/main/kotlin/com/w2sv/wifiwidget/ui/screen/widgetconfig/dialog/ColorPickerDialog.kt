@@ -29,8 +29,7 @@ fun ColorPickerDialog(
             onDismissRequest()
         },
         modifier = modifier,
-        columnModifier = Modifier
-            .verticalScroll(rememberScrollState()),
+        columnModifier = Modifier.verticalScroll(rememberScrollState()),
         title = stringResource(id = data.widgetColor.labelRes),
         applyButtonEnabled = data.hasBeenConfigured
     ) {

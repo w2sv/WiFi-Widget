@@ -14,8 +14,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.minutes
-import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.core.common.R
+import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog

@@ -28,10 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.w2sv.common.utils.minutes
+import com.w2sv.core.common.R
 import com.w2sv.wheelpicker.WheelPicker
 import com.w2sv.wheelpicker.WheelPickerState
 import com.w2sv.wheelpicker.rememberWheelPickerState
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
@@ -54,11 +54,9 @@ fun RefreshIntervalConfigurationDialog(
 
     ConfigurationDialog(
         onDismissRequest = onDismissRequest,
-        onApplyButtonPress = remember {
-            {
-                setInterval(configuredInterval)
-                onDismissRequest()
-            }
+        onApplyButtonPress = {
+            setInterval(configuredInterval)
+            onDismissRequest()
         },
         applyButtonEnabled = !isInvalidSelection && configuredInterval != interval,
         title = stringResource(R.string.refresh_interval),

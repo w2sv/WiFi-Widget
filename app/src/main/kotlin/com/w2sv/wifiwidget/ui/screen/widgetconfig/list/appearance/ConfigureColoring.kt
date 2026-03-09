@@ -152,7 +152,13 @@ private fun PresetColoringConfiguration(
             )
             AnimatedContent(data.useDynamicColors) { useDynamicColors ->
                 Text(
-                    text = stringResource(if (useDynamicColors) R.string.use_colors_derived_from_your_wallpaper else R.string.use_static_app_colors),
+                    text = stringResource(
+                        if (useDynamicColors) {
+                            R.string.use_colors_derived_from_your_wallpaper
+                        } else {
+                            R.string.use_static_app_colors
+                        }
+                    ),
                     color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                     fontSize = 13.sp,
                     modifier = Modifier

@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
@@ -12,7 +13,6 @@ import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.networking.wifistatus.WifiStatusMonitor
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.home.wifistatus.model.WifiState
