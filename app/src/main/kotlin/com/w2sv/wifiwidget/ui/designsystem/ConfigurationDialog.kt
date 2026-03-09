@@ -88,12 +88,8 @@ private fun CancelApplyButtonRow(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        DialogButton(onClick = onCancel) {
-            Text(text = stringResource(R.string.cancel))
-        }
+        DialogButton(text = stringResource(R.string.cancel), onClick = onCancel)
         Spacer(modifier = Modifier.width(16.dp))
-        DialogButton(onClick = onApply, enabled = applyButtonEnabled) {
-            Text(text = stringResource(R.string.apply))
-        }
+        HighlightedDialogButton(text = stringResource(R.string.apply), onClick = onApply, enabled = applyButtonEnabled)
     }
 }

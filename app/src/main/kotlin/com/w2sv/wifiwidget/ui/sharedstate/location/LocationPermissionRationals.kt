@@ -11,6 +11,7 @@ import com.w2sv.composed.core.rememberStyledTextResource
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
+import com.w2sv.wifiwidget.ui.designsystem.HighlightedDialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 
 @Composable
@@ -42,9 +43,10 @@ private fun LocationAccessPermissionRational(onProceed: () -> Unit, modifier: Mo
         },
         confirmButton = {
             DialogButton(
+                text = stringResource(R.string.understood),
                 onClick = onProceed,
                 modifier = Modifier.fillMaxWidth()
-            ) { Text(text = stringResource(R.string.understood)) }
+            )
         },
         onDismissRequest = onProceed
     )
@@ -55,20 +57,15 @@ private fun BackgroundLocationAccessRational(launchPermissionRequest: () -> Unit
     AlertDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
-            DialogButton(
+            HighlightedDialogButton(
+                text = stringResource(id = R.string.grant),
                 onClick = {
                     launchPermissionRequest()
                     onDismissRequest()
                 }
-            ) {
-                Text(text = stringResource(id = R.string.grant))
-            }
+            )
         },
-        dismissButton = {
-            DialogButton(onClick = onDismissRequest) {
-                Text(text = stringResource(id = R.string.maybe_later))
-            }
-        },
+        dismissButton = { DialogButton(text = stringResource(id = R.string.maybe_later), onClick = onDismissRequest) },
         icon = { InfoIcon() },
         text = { Text(text = rememberStyledTextResource(id = R.string.background_location_access_rational)) }
     )

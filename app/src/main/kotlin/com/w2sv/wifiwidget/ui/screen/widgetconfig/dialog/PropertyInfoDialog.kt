@@ -65,11 +65,7 @@ private fun InfoDialog(
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
-        confirmButton = {
-            DialogButton(onClick = onDismissRequest) {
-                Text(text = stringResource(R.string.close))
-            }
-        },
+        confirmButton = { DialogButton(text = stringResource(R.string.close), onClick = onDismissRequest) },
         icon = { InfoIcon() },
         title = {
             Text(
