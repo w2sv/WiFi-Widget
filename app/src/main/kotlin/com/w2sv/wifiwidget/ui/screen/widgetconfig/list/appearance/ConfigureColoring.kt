@@ -1,6 +1,9 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,9 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -19,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,14 +35,12 @@ import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
-import com.w2sv.wifiwidget.ui.designsystem.colorButton
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
-import com.w2sv.wifiwidget.ui.util.contentDescription
 
 @Composable
 fun ConfigureColoring(
@@ -176,31 +177,38 @@ private fun CustomColorConfiguration(
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         WidgetColor.entries.forEach { widgetColor ->
             val value = data[widgetColor]
-            SectionCustomizationRow(
-                label = stringResource(id = widgetColor.labelRes),
+            val label = stringResource(id = widgetColor.labelRes)
+            CustomizationRow(
+                label = label,
                 color = Color(value),
-                onClick = {
-                    showDialog(
-                        WidgetConfigDialog.ColorPicker(
-                            widgetColor = widgetColor,
-                            color = value,
-                            initialColor = value
-                        )
+                modifier = Modifier
+                    .clickable(
+                        onClickLabel = stringResource(
+                            id = R.string.color_picker_button_cd,
+                            label
+                        ),
+                        onClick = {
+                            showDialog(
+                                WidgetConfigDialog.ColorPicker(
+                                    widgetColor = widgetColor,
+                                    color = value,
+                                    initialColor = value
+                                )
+                            )
+                        }
                     )
-                }
             )
         }
     }
 }
 
 @Composable
-private fun SectionCustomizationRow(
+private fun CustomizationRow(
     label: String,
     color: Color,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -214,18 +222,12 @@ private fun SectionCustomizationRow(
             fontSize = 14.sp,
             modifier = Modifier.weight(1f)
         )
-        val colorPickerButtonCD = stringResource(
-            id = R.string.color_picker_button_cd,
-            label
-        )
-        Button(
+        Box(
             modifier = Modifier
-                .colorButton()
-                .contentDescription(colorPickerButtonCD),
-            colors = ButtonDefaults.buttonColors(containerColor = color),
-            onClick = onClick,
-            shape = CircleShape,
-            content = {}
+                .size(42.dp)
+                .clip(CircleShape)
+                .background(color)
+                .border(0.5.dp, MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
         )
     }
 }

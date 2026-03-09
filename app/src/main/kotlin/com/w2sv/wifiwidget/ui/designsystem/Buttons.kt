@@ -1,16 +1,11 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
@@ -57,15 +52,3 @@ fun HighlightedDialogButton(
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer
     )
 }
-
-@SuppressLint("ComposeComposableModifier")
-@ReadOnlyComposable
-@Composable
-fun Modifier.colorButton(): Modifier =
-    this then Modifier
-        .border(
-            width = 0.5.dp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            shape = CircleShape
-        )
-        .size(42.dp)

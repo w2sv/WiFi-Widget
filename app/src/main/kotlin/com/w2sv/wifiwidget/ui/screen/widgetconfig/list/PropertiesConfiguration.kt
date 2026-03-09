@@ -1,11 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import android.content.Context
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -13,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WifiWidgetConfig
@@ -25,18 +20,16 @@ import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
 import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
+import com.w2sv.wifiwidget.ui.designsystem.DisclaimerRow
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.ShakeController
-import com.w2sv.wifiwidget.ui.util.WithLocalContentColor
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
@@ -72,7 +65,8 @@ fun WifiPropertiesConfigCard(
             }
         )
     ) {
-        PropertyReorderingDisclaimer(
+        DisclaimerRow(
+            text = stringResource(R.string.wifi_property_reordering_information),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 14.dp)
@@ -91,20 +85,6 @@ fun WifiPropertiesConfigCard(
                 updateConfig { withModifiedPropertyPosition(fromIndex, toIndex) }
             }
         )
-    }
-}
-
-@Composable
-private fun PropertyReorderingDisclaimer(modifier: Modifier = Modifier) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        WithLocalContentColor(MaterialTheme.colorScheme.onSurfaceVariantLowAlpha) {
-            InfoIcon()
-            Text(stringResource(R.string.wifi_property_reordering_information), fontSize = 13.sp)
-        }
     }
 }
 
