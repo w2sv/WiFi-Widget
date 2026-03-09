@@ -137,7 +137,7 @@ private fun WifiProperty.checkRow(
         property = this,
         isChecked = { config().isEnabled },
         onCheckedChange = makeOnCheckedChange(
-            allowCheckChange = { isCheckedNew ->
+            allow = { isCheckedNew ->
                 when {
                     requiresLocationAccess && isCheckedNew -> locationAccess.foregroundPermissionsGranted.also {
                         if (!it) {
@@ -152,7 +152,7 @@ private fun WifiProperty.checkRow(
                     }
                 }
             },
-            onCheckedChangedDisallowed = { scope.launch { shakeController.shake() } },
+            onDisallowed = { scope.launch { shakeController.shake() } },
             update = { update(config().copy(isEnabled = it)) }
         ),
         shakeController = shakeController,
@@ -205,8 +205,8 @@ private fun ipSettingConfigEntries(
                 property = setting,
                 isChecked = { isSettingEnabled(setting) },
                 onCheckedChange = makeOnCheckedChange(
-                    allowCheckChange = { newValue -> allowIpSettingUpdate(setting, newValue, isSettingEnabled) },
-                    onCheckedChangedDisallowed = {
+                    allow = { newValue -> allowIpSettingUpdate(setting, newValue, isSettingEnabled) },
+                    onDisallowed = {
                         scope.launch { shakeController.shake() }
                         showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                     },
@@ -260,7 +260,7 @@ private fun locationSettingConfigEntries(
             property = param,
             isChecked = { isSettingEnabled(param) },
             onCheckedChange = makeOnCheckedChange(
-                allowCheckChange = { newValue ->
+                allow = { newValue ->
                     (newValue || isMoreThanOnePropertyEnabled()).also {
                         if (!it) {
                             scope.launch { shakeController.shake() }

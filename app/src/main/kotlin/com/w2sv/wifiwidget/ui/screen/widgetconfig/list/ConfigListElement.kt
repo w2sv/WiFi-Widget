@@ -41,14 +41,14 @@ sealed interface ConfigListElement {
 }
 
 fun makeOnCheckedChange(
-    allowCheckChange: (Boolean) -> Boolean = { true },
-    onCheckedChangedDisallowed: () -> Unit = {},
+    allow: (Boolean) -> Boolean = { true },
+    onDisallowed: () -> Unit = {},
     update: (Boolean) -> Unit
 ): (Boolean) -> Unit =
     {
-        if (allowCheckChange(it)) {
+        if (allow(it)) {
             update(it)
         } else {
-            onCheckedChangedDisallowed()
+            onDisallowed()
         }
     }

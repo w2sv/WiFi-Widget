@@ -43,7 +43,7 @@ fun WidgetConfigScreenRoute(
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
 
     CollectFromFlow(locationAccessCapability.grantEvents) { event ->
-        event.asEnabledPropertyOrNull?.run {
+        event.asEnablePropertyOrNull?.run {
             viewModel.reversibleConfig.update {
                 it.withConfiguredPropertyEnablement(
                     property = property,

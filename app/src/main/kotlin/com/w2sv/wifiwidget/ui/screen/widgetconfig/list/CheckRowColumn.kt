@@ -86,20 +86,19 @@ private val primaryCheckRowModifier = Modifier.padding(end = 16.dp)
 @Composable
 fun CheckRowColumn(elements: ImmutableList<ConfigListElement.CheckRow>, modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
-        elements
-            .forEach { data ->
-                when (data.hasSubProperties) {
-                    false -> {
-                        CheckRow(data = data, modifier = primaryCheckRowModifier)
-                    }
+        elements.forEach { data ->
+            when (data.hasSubProperties) {
+                false -> {
+                    CheckRow(data = data, modifier = primaryCheckRowModifier)
+                }
 
-                    true -> {
-                        CheckRowWithSubProperties(
-                            data = data
-                        )
-                    }
+                true -> {
+                    CheckRowWithSubProperties(
+                        data = data
+                    )
                 }
             }
+        }
     }
 }
 

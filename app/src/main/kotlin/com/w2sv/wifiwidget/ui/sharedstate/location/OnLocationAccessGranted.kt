@@ -6,7 +6,7 @@ import com.w2sv.domain.model.wifiproperty.WifiProperty
 @Immutable
 sealed interface OnLocationAccessGranted {
 
-    val asEnabledPropertyOrNull: EnableProperty?
+    val asEnablePropertyOrNull: EnableProperty?
         get() = this as? EnableProperty
 
     @Immutable
