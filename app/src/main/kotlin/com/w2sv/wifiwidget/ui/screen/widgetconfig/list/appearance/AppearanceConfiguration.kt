@@ -14,11 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.Alignment
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetAppearance
 import com.w2sv.kotlinutils.enumEntryByOrdinal
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
@@ -43,7 +43,6 @@ fun AppearanceConfigCard(
         )
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            ArrowRightLabelContentRow("Coloring", modifier = Modifier.padding(bottom = 12.dp)) { }
             ConfigureColoring(
                 config = appearance.coloring,
                 update = { updateAppearance { copy(coloring = it) } },

@@ -70,6 +70,7 @@
     <string name="amoled_black">AMOLED Black</string>
     <string name="amoled_black_explanation">Use a higher contrast theme</string>
     <string name="use_colors_derived_from_your_wallpaper">Use colors derived from your wallpaper</string>
+    <string name="use_static_app_colors">Use static app colors</string>
     <string name="support_development">Support the development</string>
     <string name="buy_me_a_coffee_as_a_sign_of_gratitude">Buy me a coffee as a sign of gratitude ♥</string>
     <string name="check_out_my_other_apps">Check out my other apps</string>
@@ -83,8 +84,6 @@
     <string name="value_alignment">Value alignment</string>
     <string name="configure">Configure</string>
     <string name="wifi_property_reordering_information">Click and hold a property to change the order in which they appear on the widget</string>
-
-    <!-- From domain module -->
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="link_local_short">LinkLocal</string>
@@ -181,8 +180,6 @@
     <string name="refresh_button_explanation">Trigger a data refresh</string>
     <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
     <string name="go_to_widget_settings_button_explanation">Open this screen</string>
-
-    <!-- From networking module -->
     <string name="no_location_access">&lt;No location access&gt;</string>
     <string name="gps_disabled">&lt;Gps disabled&gt;</string>
     <string name="unknown">Unknown</string>
@@ -192,12 +189,11 @@
     <string name="weak">Weak</string>
     <string name="poor">Poor</string>
     <string name="none">None</string>
-
-    <!-- From widget module -->
     <string name="widget_description">Monitor your WiFi connection details</string>
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
     <string name="loading">Loading…</string>
     <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
+    <string name="coloring">Coloring</string>
 </resources>

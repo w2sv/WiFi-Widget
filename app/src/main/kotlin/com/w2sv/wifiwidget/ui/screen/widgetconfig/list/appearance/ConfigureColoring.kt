@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -24,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.os.dynamicColorsSupported
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.domain.model.widget.WidgetColoringStrategy
-import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
@@ -58,20 +59,20 @@ fun ConfigureColoring(
                 modifier = Modifier.padding(bottom = AppearanceConfigTokens.featureSpacing)
             )
 
-            AnimatedContent(targetState = config.appliedStrategy) { strategy ->
+            AnimatedContent(targetState = config.useCustom) { useCustomStrategy ->
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    when (strategy) {
-                        is WidgetColoringStrategy.Preset -> {
+                    when (useCustomStrategy) {
+                        false -> {
                             PresetColoringConfiguration(
-                                data = strategy,
+                                data = config.preset,
                                 update = { update(config.copy(preset = it)) },
                                 modifier = Modifier.fillMaxWidth(0.82f)
                             )
                         }
 
-                        is WidgetColoringStrategy.Custom -> {
+                        true -> {
                             CustomColorConfiguration(
-                                data = strategy,
+                                data = config.custom,
                                 showDialog = showDialog,
                                 modifier = Modifier.fillMaxWidth(0.6f)
                             )
@@ -149,12 +150,16 @@ private fun PresetColoringConfiguration(
                 modifier = Modifier.padding(top = AppearanceConfigTokens.featureSpacing),
                 leadingIcon = { KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp)) }
             )
-            Text(
-                stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
-                fontSize = 13.sp,
-                modifier = Modifier.padding(start = 32.dp)
-            )
+            AnimatedContent(data.useDynamicColors) { useDynamicColors ->
+                Text(
+                    text = stringResource(if (useDynamicColors) R.string.use_colors_derived_from_your_wallpaper else R.string.use_static_app_colors),
+                    color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
+                    fontSize = 13.sp,
+                    modifier = Modifier
+                        .padding(start = 32.dp, end = 52.dp) // Align with start of dynamic colors label and start of the switch
+                        .offset(y = (-8).dp) // Move up as a workaround for the stupid built-in switch bottom padding
+                )
+            }
         }
     }
 }
