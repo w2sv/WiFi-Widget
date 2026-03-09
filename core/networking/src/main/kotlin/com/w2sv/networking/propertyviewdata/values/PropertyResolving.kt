@@ -5,7 +5,7 @@ import android.net.wifi.WifiInfo
 import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.txt
-import com.w2sv.core.networking.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.networking.propertyviewdata.WifiSnapshot

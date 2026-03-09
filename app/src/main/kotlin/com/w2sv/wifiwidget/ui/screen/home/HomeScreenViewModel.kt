@@ -12,7 +12,7 @@ import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.networking.wifistatus.WifiStatusMonitor
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.screen.home.wifistatus.model.WifiState

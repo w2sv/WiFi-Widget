@@ -15,7 +15,7 @@ import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.common.utils.ToastManager
 import com.w2sv.common.utils.activityPendingIntent
-import com.w2sv.core.widget.R
+import com.w2sv.core.common.R
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.parcelize.Parcelize

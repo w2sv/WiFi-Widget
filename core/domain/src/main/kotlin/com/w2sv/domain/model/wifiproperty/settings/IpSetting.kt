@@ -1,7 +1,7 @@
 package com.w2sv.domain.model.wifiproperty.settings
 
 import androidx.annotation.StringRes
-import com.w2sv.core.domain.R
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.networking.IpAddress
 
 enum class IpSetting(override val protoId: Int, @StringRes override val labelRes: Int) : WifiPropertySetting {

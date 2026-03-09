@@ -41,7 +41,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard

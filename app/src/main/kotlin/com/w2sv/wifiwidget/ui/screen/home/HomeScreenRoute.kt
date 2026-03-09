@@ -9,7 +9,7 @@ import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.composed.core.CollectLatestFromFlow
 import com.w2sv.composed.core.OnChange
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction

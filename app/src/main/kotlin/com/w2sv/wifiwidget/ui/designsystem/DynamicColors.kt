@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 
 @Composable
 fun UseDynamicColorsRow(

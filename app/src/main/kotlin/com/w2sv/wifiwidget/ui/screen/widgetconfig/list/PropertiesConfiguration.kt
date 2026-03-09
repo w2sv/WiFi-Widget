@@ -22,7 +22,7 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
 import com.w2sv.kotlinutils.copy
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
@@ -54,7 +54,7 @@ fun WifiPropertiesConfigCard(
 ) {
     WidgetConfigSectionCard(
         IconHeader(
-            iconRes = com.w2sv.core.domain.R.drawable.ic_wifi_24,
+            iconRes = R.drawable.ic_wifi_24,
             stringRes = R.string.wifi_properties,
             trailingIcon = {
                 MoreIconButtonWithDropdownMenu(

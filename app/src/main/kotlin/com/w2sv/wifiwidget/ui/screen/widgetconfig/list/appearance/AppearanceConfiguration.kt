@@ -18,7 +18,7 @@ import com.w2sv.domain.model.widget.Alignment
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetAppearance
 import com.w2sv.kotlinutils.enumEntryByOrdinal
-import com.w2sv.wifiwidget.R
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel

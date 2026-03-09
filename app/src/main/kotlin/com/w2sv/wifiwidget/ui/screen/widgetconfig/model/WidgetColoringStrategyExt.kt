@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoringStrategy
 
 operator fun WidgetColoringStrategy.Custom.get(color: WidgetColor): Int =
@@ -23,6 +24,6 @@ fun WidgetColoringStrategy.Custom.set(color: WidgetColor, @ColorInt value: Int):
 @get:StringRes
 val WidgetColoringStrategy.labelRes: Int
     get() = when (this) {
-        is Preset -> com.w2sv.core.domain.R.string.theme
-        is Custom -> com.w2sv.core.domain.R.string.custom
+        is Preset -> R.string.theme
+        is Custom -> R.string.custom
     }
