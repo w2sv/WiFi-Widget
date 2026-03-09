@@ -109,4 +109,4 @@ private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorSchem
 
 @Composable
 private fun Color.animate(animationSpec: AnimationSpec<Color>): Color =
-    animateColorAsState(this, animationSpec, label = "").value
+    animateColorAsState(this, animationSpec).value

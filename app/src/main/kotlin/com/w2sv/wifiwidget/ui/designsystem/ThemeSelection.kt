@@ -167,8 +167,7 @@ private fun ThemeButton(
                     tween(durationMillis = BORDER_ANIMATION_DURATION)
                 }
             }
-        },
-        label = ""
+        }
     ) { state ->
         if (state) 3.dp else 0.5.dp
     }
@@ -185,8 +184,7 @@ private fun ThemeButton(
                     tween(durationMillis = BORDER_ANIMATION_DURATION)
                 }
             }
-        },
-        label = ""
+        }
     ) { state ->
         if (state) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     }

@@ -82,7 +82,7 @@ class HomeScreenViewModel @Inject constructor(
             val remoteNetworkInfo = remoteNetworkInfoRepository.data.first()
             emit(
                 WifiState.Connected(
-                    wifiPropertyViewData = wifiPropertyViewDataProvider(
+                    propertyViewData = wifiPropertyViewDataProvider(
                         enabledProperties = config.orderedEnabledProperties(),
                         enabledIpSettings = config::enabledIpSettings,
                         remoteNetworkInfo = remoteNetworkInfo

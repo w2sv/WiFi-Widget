@@ -134,13 +134,15 @@ private fun locationAccessDependentValue(
     value: String,
     errorPlaceholder: String,
     isGpsEnabled: Boolean
-): WifiPropertyValue =
-    WifiPropertyValue(
-        value
-            .takeUnless { it == errorPlaceholder }
-            ?.txt
-            ?: if (isGpsEnabled) R.string.no_location_access.txt else R.string.gps_disabled.txt
+): WifiPropertyValue {
+    val isError = value == errorPlaceholder
+    return WifiPropertyValue(
+        value = value.txt
+            .takeUnless { isError }
+            ?: if (isGpsEnabled) R.string.no_location_access.txt else R.string.gps_disabled.txt,
+        isError = isError
     )
+}
 
 private fun MutableList<WifiPropertyValue>.addIfNotNull(value: String?) {
     value?.run { add(WifiPropertyValue(txt)) }

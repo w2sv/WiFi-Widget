@@ -180,8 +180,8 @@
     <string name="refresh_button_explanation">Trigger a data refresh</string>
     <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
     <string name="go_to_widget_settings_button_explanation">Open this screen</string>
-    <string name="no_location_access">&lt;No location access&gt;</string>
-    <string name="gps_disabled">&lt;Gps disabled&gt;</string>
+    <string name="no_location_access">No location access</string>
+    <string name="gps_disabled">Gps disabled</string>
     <string name="unknown">Unknown</string>
     <string name="excellent">Excellent</string>
     <string name="good">Good</string>
