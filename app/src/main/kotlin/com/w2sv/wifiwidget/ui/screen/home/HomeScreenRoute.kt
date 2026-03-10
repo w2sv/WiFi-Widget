@@ -54,7 +54,7 @@ fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
         themeController = themeController,
         wifiState = wifiState,
         pinWidget = viewModel::pinWidget,
-        snackbarBuilderFlow = viewModel.snackbarBuilderFlow
+        snackbarBuilderFlow = viewModel.snackbarBuilder
     )
 }
 

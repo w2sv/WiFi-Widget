@@ -6,7 +6,3 @@ import kotlinx.coroutines.flow.Flow
 
 typealias SnackbarBuilder = Context.() -> SnackbarVisuals
 typealias SnackbarBuilderFlow = Flow<SnackbarBuilder>
-
-fun interface EmitSnackbarBuilder {
-    suspend operator fun invoke(value: SnackbarBuilder)
-}
