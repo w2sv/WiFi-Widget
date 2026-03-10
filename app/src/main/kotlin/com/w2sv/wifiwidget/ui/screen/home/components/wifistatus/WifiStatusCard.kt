@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.wifistatus
+package com.w2sv.wifiwidget.ui.screen.home.components.wifistatus
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -17,7 +17,7 @@ import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.screen.home.wifistatus.model.WifiState
+import com.w2sv.wifiwidget.ui.screen.home.model.WifiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 

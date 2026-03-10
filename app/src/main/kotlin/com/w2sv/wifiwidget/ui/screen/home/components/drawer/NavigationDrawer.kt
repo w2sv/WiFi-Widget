@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.drawer
+package com.w2sv.wifiwidget.ui.screen.home.components.drawer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

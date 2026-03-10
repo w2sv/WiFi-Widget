@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.wifistatus
+package com.w2sv.wifiwidget.ui.screen.home.components.wifistatus
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
