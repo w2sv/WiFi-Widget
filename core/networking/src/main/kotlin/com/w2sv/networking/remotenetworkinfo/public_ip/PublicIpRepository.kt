@@ -1,10 +1,10 @@
-package com.w2sv.networking.fetching.public_ip
+package com.w2sv.networking.remotenetworkinfo.public_ip
 
 import com.w2sv.domain.model.networking.IpAddress
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.enabledVersions
 import com.w2sv.domain.repository.WidgetConfigFlow
-import com.w2sv.networking.fetching.fetchFromUrl
+import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import com.w2sv.networking.toDomain
 import java.io.IOException
 import java.net.InetAddress

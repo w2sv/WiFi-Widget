@@ -13,7 +13,7 @@ import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.domain.model.widget.WifiWidgetConfig
-import com.w2sv.networking.wifistatus.WifiStatusGetter
+import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WidgetAction
 import com.w2sv.widget.ui.properties.WifiPropertyViewsService
@@ -31,7 +31,7 @@ import javax.inject.Inject
 internal class WidgetRenderer @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val getWifiStatus: WifiStatusGetter
+    private val provideWifiStatus: WifiStatusProvider
 ) {
     operator fun invoke(
         widget: RemoteViews,
@@ -40,7 +40,7 @@ internal class WidgetRenderer @Inject constructor(
         colors: WidgetColors
     ): RemoteViews =
         widget.apply {
-            val status = getWifiStatus()
+            val status = provideWifiStatus()
             when (status.isConnected) {
                 true -> setConnectedContentLayout(widgetId)
                 false -> setUnconnectedContentLayout(status = status, colors = colors, fontSize = config.appearance.fontSize)

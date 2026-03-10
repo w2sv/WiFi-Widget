@@ -1,9 +1,9 @@
-package com.w2sv.networking.fetching.remote_network_info
+package com.w2sv.networking.remotenetworkinfo
 
 import com.w2sv.domain.model.networking.RemoteNetworkInfo
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
-import com.w2sv.networking.fetching.ip_api.IpApiRepository
-import com.w2sv.networking.fetching.public_ip.PublicIpRepository
+import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiRepository
+import com.w2sv.networking.remotenetworkinfo.public_ip.PublicIpRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.async

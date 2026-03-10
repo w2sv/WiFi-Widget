@@ -6,6 +6,7 @@ import androidx.annotation.IntRange
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.networking.IpAddress
+import com.w2sv.networking.extensions.linkProperties
 import java.net.Inet4Address
 import java.net.Inet6Address
 import java.net.InetAddress

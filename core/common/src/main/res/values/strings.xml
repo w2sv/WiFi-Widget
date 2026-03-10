@@ -196,4 +196,5 @@
     <string name="loading">Loading…</string>
     <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
     <string name="coloring">Coloring</string>
+    <string name="connected_no_internet">Connected, no Internet</string>
 </resources>

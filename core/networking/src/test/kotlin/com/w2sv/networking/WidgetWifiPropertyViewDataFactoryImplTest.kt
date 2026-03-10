@@ -1,6 +1,6 @@
 package com.w2sv.networking
 
-import com.w2sv.networking.propertyviewdata.values.textualIPv4Representation
+import com.w2sv.networking.propertyviewdata.textualIPv4Representation
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

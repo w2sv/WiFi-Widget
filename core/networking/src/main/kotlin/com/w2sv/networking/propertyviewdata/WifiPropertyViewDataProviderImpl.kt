@@ -10,9 +10,7 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.networking.linkProperties
-import com.w2sv.networking.propertyviewdata.values.WifiPropertyValue
-import com.w2sv.networking.propertyviewdata.values.resolve
+import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.systemIpAddresses
 import javax.inject.Inject
 

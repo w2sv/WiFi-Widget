@@ -13,7 +13,7 @@ import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
-import com.w2sv.networking.wifistatus.WifiStatusMonitor
+import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -50,26 +49,18 @@ class WifiStateProviderImpl @Inject constructor(
 
     private val locationAccessChanged = MutableSharedFlow<Unit>(replay = 1)
 
-    private val propertyRefreshTrigger = MutableSharedFlow<Unit>(replay = 1)
-
     private val locationAccessChangedWhileDependentPropertiesEnabled: Flow<Unit> =
         combine(locationAccessChanged, sharedConfigFlow) { _, config -> config }
             .filter { it.isAnyLocationAccessRequiringPropertyEnabled }
             .map { }
-
-    private val combinedPropertyRefreshTrigger: Flow<Unit> =
-        merge(
-            propertyRefreshTrigger,
-            locationAccessChangedWhileDependentPropertiesEnabled
-        )
-            .onStart { emit(Unit) } // Ensures initial computation
+            .onStart { emit(Unit) }
 
     override val wifiState: StateFlow<WifiState> = wifiStatusMonitor.wifiStatus
         .flatMapLatest { wifiStatus ->
             when (wifiStatus) {
                 WifiStatus.Disabled -> flowOf(WifiState.Disabled)
                 WifiStatus.Disconnected -> flowOf(WifiState.Disconnected)
-                WifiStatus.Connected, WifiStatus.ConnectedInactive -> connectedWifiState
+                else -> connectedWifiState
             }
                 .log { "Set wifiState=$it" }
         }
@@ -78,7 +69,7 @@ class WifiStateProviderImpl @Inject constructor(
     private val connectedWifiState: Flow<WifiState.Connected> = combine(
         sharedConfigFlow,
         remoteNetworkInfoRepository.data,
-        combinedPropertyRefreshTrigger
+        locationAccessChangedWhileDependentPropertiesEnabled
     ) { config, remoteNetworkInfo, _ ->
         WifiState.Connected(
             propertyViewData = wifiPropertyViewDataProvider(
@@ -88,15 +79,10 @@ class WifiStateProviderImpl @Inject constructor(
             )
         )
     }
-        .shareIn(
-            scope,
-            SharingStarted.WhileSubscribed(),
-            replay = 1
-        ) // Avoids recomputation on toggles between WifiStatus.Connected & WifiStatus.ConnectedInactive
 
     init {
         // Refresh RemoteNetworkInfo on config change or property refresh
-        merge(sharedConfigFlow, propertyRefreshTrigger).collectOn(scope) {
+        sharedConfigFlow.collectOn(scope) {
             remoteNetworkInfoRepository.refresh()
         }
 
@@ -109,10 +95,6 @@ class WifiStateProviderImpl @Inject constructor(
 
     override fun onLocationAccessChanged() {
         scope.launch { locationAccessChanged.emit(Unit) }
-    }
-
-    override fun refreshProperties() {
-        scope.launch { propertyRefreshTrigger.emit(Unit) }
     }
 }
 

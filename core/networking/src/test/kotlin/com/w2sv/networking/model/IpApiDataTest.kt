@@ -1,7 +1,7 @@
 package com.w2sv.networking.model
 
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
-import com.w2sv.networking.fetching.ip_api.IpApiResponse
+import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiResponse
 import kotlin.test.assertNotNull
 import kotlinx.coroutines.test.runTest
 import okhttp3.OkHttpClient

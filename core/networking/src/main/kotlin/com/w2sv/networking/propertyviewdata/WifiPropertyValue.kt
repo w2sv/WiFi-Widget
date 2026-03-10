@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyviewdata.values
+package com.w2sv.networking.propertyviewdata
 
 import com.w2sv.common.Text
 

@@ -1,4 +1,4 @@
-package com.w2sv.networking.fetching
+package com.w2sv.networking.remotenetworkinfo
 
 import java.io.IOException
 import java.net.SocketTimeoutException

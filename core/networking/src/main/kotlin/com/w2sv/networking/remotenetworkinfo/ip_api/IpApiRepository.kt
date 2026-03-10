@@ -1,4 +1,4 @@
-package com.w2sv.networking.fetching.ip_api
+package com.w2sv.networking.remotenetworkinfo.ip_api
 
 import com.w2sv.common.utils.log
 import com.w2sv.domain.model.networking.IpApiData
@@ -6,7 +6,7 @@ import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.repository.WidgetConfigFlow
-import com.w2sv.networking.fetching.fetchFromUrl
+import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton

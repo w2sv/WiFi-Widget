@@ -1,4 +1,4 @@
-package com.w2sv.networking
+package com.w2sv.networking.extensions
 
 import android.net.ConnectivityManager
 import android.net.LinkProperties
@@ -22,8 +22,14 @@ internal val ConnectivityManager.linkProperties: LinkProperties?
  *
  * @see ConnectivityManager.getActiveNetwork
  */
-internal val ConnectivityManager.isActiveNetworkWifi: Boolean
+internal val ConnectivityManager.activeNetworkIsWifi: Boolean
     get() = activeNetwork?.let(::isWifiConnection) ?: false
+
+internal val ConnectivityManager.activeNetworkCapabilities: NetworkCapabilities?
+    get() = getNetworkCapabilities(activeNetwork)
+
+internal val ConnectivityManager.activeNetworkHasInternet: Boolean
+    get() = activeNetworkCapabilities?.hasInternet == true
 
 /**
  * @return `true` if any connected network uses Wi-Fi transport, regardless of
@@ -37,4 +43,4 @@ internal val ConnectivityManager.isAnyWifiConnected: Boolean
  * @return `true` if [network] uses Wi-Fi transport.
  */
 private fun ConnectivityManager.isWifiConnection(network: Network): Boolean =
-    getNetworkCapabilities(network)?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+    getNetworkCapabilities(network)?.hasWifiTransport == true

@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyviewdata.values
+package com.w2sv.networking.propertyviewdata
 
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
@@ -8,7 +8,6 @@ import com.w2sv.common.txt
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
-import com.w2sv.networking.propertyviewdata.WifiSnapshot
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
