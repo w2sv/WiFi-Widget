@@ -59,10 +59,11 @@ class WifiStateProviderImpl @Inject constructor(
     private val connectedWifiState: Flow<WifiState.Connected> = combine(
         sharedConfig.distinctUntilChangedBy { it.properties to it.orderedEnabledProperties },
         remoteNetworkInfoRepository.data,
-        locationAccessChangedWhileDependentPropertiesEnabled,
-        sharedWifiStatus.filter { it.isConnected }
-    ) { config, remoteNetworkInfo, _, _ ->
+        sharedWifiStatus.filter { it.isConnected },
+        locationAccessChangedWhileDependentPropertiesEnabled
+    ) { config, remoteNetworkInfo, connectedStatus, _ ->
         WifiState.Connected(
+            status = connectedStatus,
             propertyViewData = wifiPropertyViewDataProvider(
                 enabledProperties = config.orderedEnabledProperties,
                 enabledIpSettings = config::enabledIpSettings,

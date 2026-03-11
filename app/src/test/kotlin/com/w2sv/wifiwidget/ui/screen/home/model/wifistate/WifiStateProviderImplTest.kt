@@ -67,10 +67,10 @@ class WifiStateProviderImplTest {
                 assertEquals(WifiState.Disabled, awaitItem())
 
                 emitWifiStatus(WifiStatus.Connected)
-                assertEquals(WifiState.Connected(emptyList()), awaitItem())
+                assertEquals(WifiState.Connected(WifiStatus.Connected, emptyList()), awaitItem())
 
                 emitWifiStatus(WifiStatus.ConnectedInactive)
-                expectNoEvents()
+                assertEquals(WifiState.Connected(WifiStatus.ConnectedInactive, emptyList()), awaitItem())
             }
         }
 

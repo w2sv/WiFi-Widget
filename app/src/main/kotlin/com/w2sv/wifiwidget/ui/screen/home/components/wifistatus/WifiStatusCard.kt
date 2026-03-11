@@ -58,6 +58,7 @@ private fun Prev() {
     PreviewOf {
         WifiStatusCard(
             wifiState = WifiState.Connected(
+                WifiStatus.Connected,
                 listOf(
                     WifiPropertyViewData(SubscriptableText("Property1"), value = "Value1"),
                     WifiPropertyViewData(SubscriptableText("Property2"), value = "Value2")

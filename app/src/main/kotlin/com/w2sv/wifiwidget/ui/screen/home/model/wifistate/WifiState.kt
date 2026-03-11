@@ -5,11 +5,11 @@ import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 
 @Immutable
-sealed class WifiState(val status: WifiStatus) {
+sealed class WifiState(open val status: WifiStatus) {
     val asConnectedOrNull
         get() = this as? Connected
 
     data object Disabled : WifiState(WifiStatus.Disabled)
     data object Disconnected : WifiState(WifiStatus.Disconnected)
-    data class Connected(val propertyViewData: List<WifiPropertyViewData>) : WifiState(WifiStatus.Connected)
+    data class Connected(override val status: WifiStatus, val propertyViewData: List<WifiPropertyViewData>) : WifiState(status)
 }
