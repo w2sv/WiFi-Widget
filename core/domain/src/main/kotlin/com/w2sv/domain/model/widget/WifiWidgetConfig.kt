@@ -21,8 +21,9 @@ data class WifiWidgetConfig(
         properties.getValue(property).isEnabled
 
     // TODO exclude unsupported properties
-    fun orderedEnabledProperties(): List<WifiProperty> =
+    val orderedEnabledProperties: List<WifiProperty> by lazy {
         orderedProperties.filter { isEnabled(it) }
+    }
 
     val propertiesInDefaultOrder: Boolean
         get() = orderedProperties == WifiProperty.entries

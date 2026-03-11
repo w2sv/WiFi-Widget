@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.model
+package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import kotlinx.coroutines.flow.StateFlow
 

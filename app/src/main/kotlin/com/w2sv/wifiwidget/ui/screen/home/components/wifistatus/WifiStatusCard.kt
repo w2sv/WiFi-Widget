@@ -32,7 +32,7 @@ import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.screen.home.model.WifiState
+import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList

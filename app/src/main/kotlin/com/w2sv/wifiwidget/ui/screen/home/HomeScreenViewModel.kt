@@ -10,7 +10,7 @@ import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.utils.attemptWifiWidgetPin
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.screen.home.model.WifiStateProvider
+import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext

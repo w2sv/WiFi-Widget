@@ -28,7 +28,7 @@ import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
 import com.w2sv.wifiwidget.ui.screen.home.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiStatusCard
-import com.w2sv.wifiwidget.ui.screen.home.model.WifiState
+import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.util.ModifierReceivingComposable
 import com.w2sv.wifiwidget.ui.util.PreviewOf

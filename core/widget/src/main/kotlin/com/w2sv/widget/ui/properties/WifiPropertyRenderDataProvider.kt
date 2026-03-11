@@ -23,7 +23,7 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
 
         return WifiPropertyRenderData(
             viewData = wifiPropertyViewDataProvider(
-                enabledProperties = config.orderedEnabledProperties(),
+                enabledProperties = config.orderedEnabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
                 remoteNetworkInfo = remoteNetworkInfoRepository.data.value
             )

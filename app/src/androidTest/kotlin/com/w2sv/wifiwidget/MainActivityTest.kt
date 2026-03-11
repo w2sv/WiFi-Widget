@@ -13,14 +13,15 @@ class MainActivityTest {
     @get:Rule
     val composeContentTestRule: ComposeContentTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val context by lazy { InstrumentationRegistry.getInstrumentation().targetContext }
+    private val context
+        get() = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
     fun homeScreenAndLocationAccessPermissionRationalShown() {
         with(composeContentTestRule) {
             waitForIdle()
 
-            onNodeWithText(context.getString(R.string.location_access_permission_rational))
+            onNodeWithText(context.getString(com.w2sv.core.common.R.string.location_access_permission_rational))
                 .assertIsDisplayed()
         }
     }

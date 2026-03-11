@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.model
+package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.networking.WifiStatus

@@ -19,7 +19,7 @@ internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(
     private val publicIpRepository: PublicIpRepository
 ) : RemoteNetworkInfoRepository {
 
-    private val _data = MutableStateFlow(RemoteNetworkInfo(null, emptyMap()))
+    private val _data = MutableStateFlow(RemoteNetworkInfo.empty)
     override val data: StateFlow<RemoteNetworkInfo> = _data
 
     /**
