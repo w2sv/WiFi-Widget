@@ -13,11 +13,10 @@ import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.HighlightedDialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
+import com.w2sv.wifiwidget.ui.sharedstate.location.permission_capability.LocationPermissionCapability
 
 @Composable
-fun LocationAccessRationals() {
-    val capability = LocalLocationAccessCapability.current
-
+fun OptionalLocationAccessRationals(capability: LocationPermissionCapability = LocalLocationAccessCapability.current) {
     when {
         capability.showForegroundRational -> LocationAccessPermissionRational(
             onProceed = capability::onForegroundRationalProceed

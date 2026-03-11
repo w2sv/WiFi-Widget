@@ -14,7 +14,6 @@ import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationals
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedstate.theme.rememberThemeController
@@ -42,8 +41,6 @@ fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
             else -> Unit
         }
     }
-
-    LocationAccessRationals()
 
     ShowSnackbarOnWidgetPin(
         newWidgetPinned = viewModel.widgetPinSuccessFlow,

@@ -10,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.navigation.Screen
+import com.w2sv.wifiwidget.ui.sharedstate.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.util.activityViewModel
@@ -35,6 +36,7 @@ fun AppUI(
             setSystemBarStyles = setSystemBarStyles
         ) {
             NavGraph(initialScreen = initialScreen)
+            OptionalLocationAccessRationals()
         }
     }
 }

@@ -6,17 +6,21 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.w2sv.androidutils.content.openAppSettings
-import com.w2sv.composed.core.OnChange
+import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.AppViewModel
 import com.w2sv.wifiwidget.ui.util.activityViewModel
 import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 @Composable
 fun rememberLocationPermissionCapability(
@@ -51,11 +55,11 @@ fun rememberLocationPermissionCapability(
         )
     }
 
-    OnChange(permissionsState.allPermissionsGranted) { permissionsGranted ->
-        if (permissionsGranted) {
-            capability.onPermissionGranted()
-        }
+    // Call capability.onPermissionGranted on new allPermissionsGranted status
+    val allPermissionsNewlyGrantedFlow = remember(permissionsState) {
+        snapshotFlow { permissionsState.allPermissionsGranted }.drop(1).filter { it }.map { }
     }
+    CollectFromFlow(allPermissionsNewlyGrantedFlow) { capability.onPermissionGranted() }
 
     return capability
 }

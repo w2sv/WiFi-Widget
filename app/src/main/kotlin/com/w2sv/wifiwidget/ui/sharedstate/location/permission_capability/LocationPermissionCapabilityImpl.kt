@@ -59,8 +59,8 @@ class LocationPermissionCapabilityImpl(
     }
 
     override fun launchBackgroundPermission() {
+        dismissBackgroundRational()
         backgroundPermissionState?.launchPermissionRequest()
-        showBackgroundRational = false
     }
 
     override fun dismissBackgroundRational() {
