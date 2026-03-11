@@ -32,14 +32,12 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
         DrawerElement.Action(
             iconRes = R.drawable.ic_nightlight_24,
             labelRes = R.string.theme,
-            type = DrawerElement.Action.Custom {
+            type = DrawerElement.Action.Custom { modifier ->
                 ThemeSelectionRow(
                     selected = themeController.theme(),
                     onSelected = themeController.setTheme,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 22.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    modifier = modifier,
+                    horizontalArrangement = Arrangement.spacedBy(22.dp)
                 )
             }
         ),
@@ -172,7 +170,7 @@ sealed interface DrawerElement {
         @Immutable
         sealed interface Type {
 
-            val clickableOrNull
+            val asClickableOrNull
                 get() = this as? Clickable
         }
 
@@ -183,6 +181,6 @@ sealed interface DrawerElement {
         data class Switch(val checked: DrawerActionScope.() -> Boolean, val onCheckedChange: DrawerActionScope.(Boolean) -> Unit) : Type
 
         @Immutable
-        data class Custom(val content: @Composable DrawerActionScope.() -> Unit) : Type
+        data class Custom(val content: @Composable DrawerActionScope.(Modifier) -> Unit) : Type
     }
 }

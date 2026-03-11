@@ -132,6 +132,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.google.accompanist.permissions)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.constraintlayout.compose)
 
     // Other libraries
     lintChecks(libs.compose.lint.checks)
