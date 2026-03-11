@@ -20,6 +20,15 @@
         android:theme="@style/Theme.App.SplashScreen"
         tools:targetApi="tiramisu">
 
+        <!-- Remove the default WorkManager initializer to prevent double initialization.
+             Required as the Application implements Configuration.Provider
+             (used for HiltWorkerFactory). -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="remove" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
