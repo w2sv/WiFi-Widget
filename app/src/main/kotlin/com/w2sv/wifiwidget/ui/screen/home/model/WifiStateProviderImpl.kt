@@ -12,6 +12,7 @@ import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
+import com.w2sv.kotlinutils.coroutines.flow.collectLatestOn
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -45,17 +47,40 @@ class WifiStateProviderImpl @Inject constructor(
     private val scope: CoroutineScope
 ) : WifiStateProvider {
 
-    private val sharedConfigFlow = widgetConfigFlow.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
+    // Shared flows to avoid multiple subscriptions
+    private val sharedWifiStatus = wifiStatusMonitor.wifiStatus.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
+    private val sharedConfig = widgetConfigFlow.shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
 
     private val locationAccessChanged = MutableSharedFlow<Unit>(replay = 1)
 
+    // Emits whenever location-dependent properties might need recomputation
     private val locationAccessChangedWhileDependentPropertiesEnabled: Flow<Unit> =
-        combine(locationAccessChanged, sharedConfigFlow) { _, config -> config }
+        combine(locationAccessChanged, sharedConfig) { _, config -> config }
             .filter { it.isAnyLocationAccessRequiringPropertyEnabled }
             .map { }
             .onStart { emit(Unit) }
 
-    override val wifiState: StateFlow<WifiState> = wifiStatusMonitor.wifiStatus
+    // Connected Wi-Fi state recomputation triggers:
+    // - config changes
+    // - remote network info changes
+    // - location access changes while location dependent properties are enabled
+    // - wifiStatus emits Connected
+    private val connectedWifiState: Flow<WifiState.Connected> = combine(
+        sharedConfig,
+        remoteNetworkInfoRepository.data,
+        locationAccessChangedWhileDependentPropertiesEnabled,
+        sharedWifiStatus.filter { it.isConnected }
+    ) { config, remoteNetworkInfo, _, _ ->
+        WifiState.Connected(
+            propertyViewData = wifiPropertyViewDataProvider(
+                enabledProperties = config.orderedEnabledProperties(),
+                enabledIpSettings = config::enabledIpSettings,
+                remoteNetworkInfo = remoteNetworkInfo
+            )
+        )
+    }
+
+    override val wifiState: StateFlow<WifiState> = sharedWifiStatus
         .flatMapLatest { wifiStatus ->
             when (wifiStatus) {
                 WifiStatus.Disabled -> flowOf(WifiState.Disabled)
@@ -66,27 +91,13 @@ class WifiStateProviderImpl @Inject constructor(
         }
         .stateIn(scope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
 
-    private val connectedWifiState: Flow<WifiState.Connected> = combine(
-        sharedConfigFlow,
-        remoteNetworkInfoRepository.data,
-        locationAccessChangedWhileDependentPropertiesEnabled
-    ) { config, remoteNetworkInfo, _ ->
-        WifiState.Connected(
-            propertyViewData = wifiPropertyViewDataProvider(
-                enabledProperties = config.orderedEnabledProperties(),
-                enabledIpSettings = config::enabledIpSettings,
-                remoteNetworkInfo = remoteNetworkInfo
-            )
-        )
-    }
-
     init {
         // Refresh RemoteNetworkInfo on config change or property refresh
-        sharedConfigFlow.collectOn(scope) {
+        merge(sharedWifiStatus, sharedConfig).collectLatestOn(scope) {
             remoteNetworkInfoRepository.refresh()
         }
 
-        // Emit on locationAccessChanged on change of gps enablement
+        // React to GPS enablement changes
         context
             .isGpsEnabledFlow()
             .distinctUntilChanged()
