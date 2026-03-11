@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,10 +19,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -38,41 +36,33 @@ import com.w2sv.androidutils.content.startActivity
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.AppUrl
-import com.w2sv.composed.core.OnChange
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.designsystem.RightAligned
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
-import com.w2sv.wifiwidget.ui.util.OptionalAnimatedVisibility
+import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
 internal fun NavigationDrawerSheetItemColumn(
     themeController: ThemeController,
     modifier: Modifier = Modifier,
-    useDarkTheme: Boolean = LocalUseDarkTheme.current,
     context: Context = LocalContext.current
 ) {
-    var useDarkThemeLocal by remember {
-        mutableStateOf(useDarkTheme)
-    }
-    OnChange(value = useDarkTheme) {
-        useDarkThemeLocal = useDarkTheme
-    }
+    val useDarkTheme = useDarkTheme(themeController.theme())
 
     Column(modifier = modifier) {
         remember {
             listOf(
-                NavigationDrawerSheetElement.Header(
+                DrawerElement.Header(
                     titleRes = R.string.appearance,
                     modifier = Modifier
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_nightlight_24,
                     labelRes = R.string.theme,
-                    type = NavigationDrawerSheetElement.Item.Custom {
+                    type = DrawerElement.Action.Custom {
                         ThemeSelectionRow(
                             selected = themeController.theme(),
                             onSelected = themeController.setTheme,
@@ -83,53 +73,51 @@ internal fun NavigationDrawerSheetItemColumn(
                         )
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_contrast_24,
                     labelRes = R.string.amoled_black,
                     explanationRes = R.string.amoled_black_explanation,
-                    visible = { useDarkThemeLocal },
-                    type = NavigationDrawerSheetElement.Item.Switch(
+                    isVisible = { useDarkTheme },
+                    type = DrawerElement.Action.Switch(
                         checked = themeController.useAmoledBlackTheme,
                         onCheckedChange = themeController.setUseAmoledBlackTheme
                     )
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_palette_24,
                     labelRes = R.string.dynamic_colors,
                     explanationRes = R.string.use_colors_derived_from_your_wallpaper,
-                    visible = {
-                        dynamicColorsSupported
-                    },
-                    type = NavigationDrawerSheetElement.Item.Switch(
+                    isVisible = { dynamicColorsSupported },
+                    type = DrawerElement.Action.Switch(
                         checked = themeController.useDynamicColors,
                         onCheckedChange = themeController.setUseDynamicColors
                     )
                 ),
-                NavigationDrawerSheetElement.Header(
+                DrawerElement.Header(
                     titleRes = R.string.legal
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_policy_24,
                     labelRes = R.string.privacy_policy,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.PRIVACY_POLICY)
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_copyright_24,
                     labelRes = R.string.license,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.LICENSE)
                     }
                 ),
-                NavigationDrawerSheetElement.Header(
+                DrawerElement.Header(
                     titleRes = R.string.support_the_app
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_star_rate_24,
                     labelRes = R.string.rate,
                     explanationRes = R.string.rate_the_app_in_the_playstore,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.startActivity(
                             intent = Intent(
                                 Intent.ACTION_VIEW,
@@ -142,49 +130,49 @@ internal fun NavigationDrawerSheetItemColumn(
                         )
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_share_24,
                     labelRes = R.string.share,
                     explanationRes = R.string.share_explanation,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         ShareCompat.IntentBuilder(context)
                             .setType("text/plain")
                             .setText(context.getString(R.string.share_action_text, AppUrl.PLAY_STORE_ENTRY))
                             .startChooser()
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_bug_report_24,
                     labelRes = R.string.report_a_bug_request_a_feature,
                     explanationRes = R.string.report_a_bug_explanation,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.CREATE_ISSUE)
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_donate_24,
                     labelRes = R.string.support_development,
                     explanationRes = R.string.buy_me_a_coffee_as_a_sign_of_gratitude,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.DONATE)
                     }
                 ),
-                NavigationDrawerSheetElement.Header(
+                DrawerElement.Header(
                     titleRes = R.string.more
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_developer_24,
                     labelRes = R.string.developer,
                     explanationRes = R.string.check_out_my_other_apps,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.GOOGLE_PLAY_DEVELOPER_PAGE)
                     }
                 ),
-                NavigationDrawerSheetElement.Item(
+                DrawerElement.Action(
                     iconRes = R.drawable.ic_github_24,
                     labelRes = R.string.source,
                     explanationRes = R.string.examine_the_app_s_source_code_on_github,
-                    type = NavigationDrawerSheetElement.Item.Clickable {
+                    type = DrawerElement.Action.Clickable {
                         context.openUrl(AppUrl.GITHUB_REPOSITORY)
                     }
                 )
@@ -192,16 +180,16 @@ internal fun NavigationDrawerSheetItemColumn(
         }
             .forEach { element ->
                 when (element) {
-                    is NavigationDrawerSheetElement.Item -> {
-                        OptionalAnimatedVisibility(visible = element.visible) {
+                    is DrawerElement.Action -> {
+                        AnimatedVisibility(visible = element.isVisible()) {
                             Item(
-                                item = element,
+                                action = element,
                                 modifier = element.modifier
                             )
                         }
                     }
 
-                    is NavigationDrawerSheetElement.Header -> {
+                    is DrawerElement.Header -> {
                         SubHeader(
                             titleRes = element.titleRes,
                             modifier = element.modifier
@@ -213,7 +201,7 @@ internal fun NavigationDrawerSheetItemColumn(
 }
 
 @Immutable
-private sealed interface NavigationDrawerSheetElement {
+private sealed interface DrawerElement {
     val modifier: Modifier
 
     @Immutable
@@ -221,19 +209,19 @@ private sealed interface NavigationDrawerSheetElement {
         @StringRes val titleRes: Int,
         override val modifier: Modifier = Modifier
             .padding(top = 20.dp, bottom = 4.dp)
-    ) : NavigationDrawerSheetElement
+    ) : DrawerElement
 
     @Immutable
-    data class Item(
+    data class Action(
         @DrawableRes val iconRes: Int,
         @StringRes val labelRes: Int,
         @StringRes val explanationRes: Int? = null,
-        val visible: (() -> Boolean)? = null,
+        val isVisible: () -> Boolean = { true },
         override val modifier: Modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp),
         val type: Type
-    ) : NavigationDrawerSheetElement {
+    ) : DrawerElement {
 
         @Immutable
         sealed interface Type {
@@ -264,17 +252,17 @@ private fun SubHeader(@StringRes titleRes: Int, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Item(item: NavigationDrawerSheetElement.Item, modifier: Modifier = Modifier) {
+private fun Item(action: DrawerElement.Action, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
-            .thenIfNotNull(item.type.clickableOrNull) {
+            .thenIfNotNull(action.type.clickableOrNull) {
                 clickable {
                     it.onClick()
                 }
             }
     ) {
-        MainItemRow(item = item, modifier = Modifier.fillMaxWidth())
-        item.explanationRes?.let {
+        MainItemRow(action = action, modifier = Modifier.fillMaxWidth())
+        action.explanationRes?.let {
             Text(
                 text = stringResource(id = it),
                 color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
@@ -289,32 +277,32 @@ private val iconSize = 28.dp
 private val labelStartPadding = 16.dp
 
 @Composable
-private fun MainItemRow(item: NavigationDrawerSheetElement.Item, modifier: Modifier = Modifier) {
+private fun MainItemRow(action: DrawerElement.Action, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             modifier = Modifier.size(size = iconSize),
-            painter = painterResource(id = item.iconRes),
+            painter = painterResource(id = action.iconRes),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary
         )
 
         Text(
-            text = stringResource(id = item.labelRes),
+            text = stringResource(id = action.labelRes),
             modifier = Modifier.padding(start = labelStartPadding),
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             maxLines = 1
         )
 
-        when (val type = item.type) {
-            is NavigationDrawerSheetElement.Item.Custom -> {
+        when (val type = action.type) {
+            is DrawerElement.Action.Custom -> {
                 type.content(this)
             }
 
-            is NavigationDrawerSheetElement.Item.Switch -> {
+            is DrawerElement.Action.Switch -> {
                 RightAligned {
                     Switch(checked = type.checked(), onCheckedChange = type.onCheckedChange)
                 }

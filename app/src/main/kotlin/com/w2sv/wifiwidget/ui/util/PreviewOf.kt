@@ -7,7 +7,6 @@ import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Devices.TABLET
 import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
-import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.PreviewNavigator
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.PreviewLocationAccessCapability
@@ -30,7 +29,6 @@ fun PreviewOf(
         CompositionLocalProvider(
             LocalNavigator provides PreviewNavigator(),
             LocalLocationAccessCapability provides PreviewLocationAccessCapability(),
-            LocalUseDarkTheme provides false,
             content = content
         )
     }

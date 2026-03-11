@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.theme
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.activity.SystemBarStyle
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
@@ -12,18 +13,17 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.w2sv.wifiwidget.ui.LocalUseDarkTheme
 
 @SuppressLint("NewApi")
 @Composable
 fun AppTheme(
-    useDarkTheme: Boolean = LocalUseDarkTheme.current,
+    useDarkTheme: Boolean = false,
     useAmoledBlackTheme: Boolean = false,
     useDynamicColors: Boolean = false,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit = { _, _ -> },
+    context: Context = LocalContext.current,
     content: @Composable () -> Unit
 ) {
     // Reset system bar style on useDarkTheme change
@@ -43,28 +43,24 @@ fun AppTheme(
         )
     }
 
-    val context = LocalContext.current
+    val colorScheme = when {
+        useDynamicColors && useDarkTheme && useAmoledBlackTheme -> dynamicDarkColorScheme(context).amoledBlack()
+        useDynamicColors && useDarkTheme -> dynamicDarkColorScheme(context)
+        useDynamicColors && !useDarkTheme -> dynamicLightColorScheme(context)
+        useDarkTheme && useAmoledBlackTheme -> darkColors.amoledBlack()
+        useDarkTheme -> darkColors
+        else -> lightColors
+    }
 
     MaterialTheme(
-        colorScheme = when {
-            useDynamicColors && useDarkTheme -> dynamicDarkColorScheme(context)
-            useDynamicColors && !useDarkTheme -> dynamicLightColorScheme(context)
-            !useDynamicColors && useDarkTheme -> darkColors
-            else -> lightColors
-        }
-            .run {
-                if (useAmoledBlackTheme && useDarkTheme) {
-                    copy(background = Color.Black, surface = Color.Black)
-                } else {
-                    this
-                }
-            }
-            .animate(animationSpec = remember { spring(stiffness = Spring.StiffnessMedium) }),
-        typography = typography
-    ) {
-        content()
-    }
+        colorScheme = colorScheme.animate(animationSpec = spring(stiffness = Spring.StiffnessMedium)),
+        typography = typography,
+        content = content
+    )
 }
+
+private fun ColorScheme.amoledBlack(): ColorScheme =
+    copy(background = Color.Black, surface = Color.Black, onBackground = Color.White, onSurface = Color.White)
 
 @Composable
 private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorScheme =
