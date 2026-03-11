@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -23,34 +22,26 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.wifiwidget.ui.designsystem.RightAligned
-import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 
 @Composable
-fun NavigationDrawerSheetItemColumn(themeController: ThemeController, modifier: Modifier = Modifier) {
-    val actionScope = rememberDrawerActionScope(themeController)
-    val elements = remember { navigationDrawerElements() }
-
-    Column(modifier = modifier) {
-        elements.forEach { element ->
-            when (element) {
-                is DrawerElement.Action -> {
-                    AnimatedVisibility(visible = element.isVisible(actionScope)) {
-                        Action(
-                            action = element,
-                            scope = actionScope,
-                            modifier = element.modifier
-                        )
-                    }
-                }
-
-                is DrawerElement.Header -> {
-                    GroupHeader(
-                        titleRes = element.titleRes,
-                        modifier = element.modifier
-                    )
-                }
+fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerActionScope) {
+    when (element) {
+        is DrawerElement.Action -> {
+            AnimatedVisibility(visible = element.isVisible(actionScope)) {
+                Action(
+                    action = element,
+                    scope = actionScope,
+                    modifier = element.modifier
+                )
             }
+        }
+
+        is DrawerElement.Header -> {
+            GroupHeader(
+                titleRes = element.titleRes,
+                modifier = element.modifier
+            )
         }
     }
 }

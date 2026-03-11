@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.core.isLandscapeModeActive
-import com.w2sv.domain.model.Theme
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
 import com.w2sv.wifiwidget.ui.screen.home.components.drawer.NavigationDrawer
@@ -30,6 +29,7 @@ import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
+import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.util.ModifierReceivingComposable
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.ScreenPreviews
@@ -83,14 +83,7 @@ fun HomeScreen(
 private fun Prev() {
     PreviewOf {
         HomeScreen(
-            themeController = ThemeController(
-                theme = { Theme.Default },
-                setTheme = {},
-                useAmoledBlackTheme = { true },
-                setUseAmoledBlackTheme = {},
-                useDynamicColors = { true },
-                setUseDynamicColors = {}
-            ),
+            themeController = previewThemeController(),
             wifiState = WifiState.Disabled,
             pinWidget = {},
             snackbarBuilderFlow = emptyFlow()

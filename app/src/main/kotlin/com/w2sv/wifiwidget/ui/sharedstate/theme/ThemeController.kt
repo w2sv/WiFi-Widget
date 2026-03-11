@@ -12,3 +12,13 @@ data class ThemeController(
     val useDynamicColors: () -> Boolean,
     val setUseDynamicColors: (Boolean) -> Unit
 )
+
+fun previewThemeController() =
+    ThemeController(
+        theme = { Theme.Default },
+        setTheme = {},
+        useAmoledBlackTheme = { true },
+        setUseAmoledBlackTheme = {},
+        useDynamicColors = { true },
+        setUseDynamicColors = {}
+    )

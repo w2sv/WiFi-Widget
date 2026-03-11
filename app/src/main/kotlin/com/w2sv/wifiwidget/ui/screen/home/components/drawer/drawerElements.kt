@@ -20,9 +20,11 @@ import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.AppUrl
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
-fun navigationDrawerElements(): List<DrawerElement> =
-    listOf(
+fun navigationDrawerElements(): ImmutableList<DrawerElement> =
+    persistentListOf(
         DrawerElement.Header(
             titleRes = R.string.appearance,
             modifier = Modifier
