@@ -94,8 +94,6 @@ private fun Header(modifier: Modifier = Modifier) {
                 .background(MaterialTheme.colorScheme.primary)
         )
         Spacer(modifier = Modifier.height(22.dp))
-        Text(
-            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME)
-        )
+        Text(text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME))
     }
 }
