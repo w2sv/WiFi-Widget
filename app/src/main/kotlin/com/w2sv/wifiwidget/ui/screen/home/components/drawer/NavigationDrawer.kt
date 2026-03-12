@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,8 +98,8 @@ private fun NavigationDrawerSheet(
             item {
                 HorizontalDivider(
                     modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally)
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
                 )
             }
             items(elements, key = { it.hashCode() }, contentType = { it::class }) { element ->
@@ -108,11 +109,14 @@ private fun NavigationDrawerSheet(
     }
 }
 
-@Preview
+@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 private fun Prev() {
     PreviewOf {
-        NavigationDrawerSheet(drawerState = rememberDrawerState(DrawerValue.Open), themeController = previewThemeController())
+        NavigationDrawerSheet(
+            drawerState = rememberDrawerState(DrawerValue.Open),
+            themeController = previewThemeController()
+        )
     }
 }
 
@@ -139,7 +143,11 @@ private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerA
                 Action(
                     action = element,
                     scope = actionScope,
-                    modifier = element.modifier
+                    modifier = element.configureModifier(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp)
+                    )
                 )
             }
         }
@@ -147,7 +155,7 @@ private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerA
         is DrawerElement.Header -> {
             GroupHeader(
                 titleRes = element.titleRes,
-                modifier = element.modifier
+                modifier = Modifier.padding(top = 20.dp)
             )
         }
     }

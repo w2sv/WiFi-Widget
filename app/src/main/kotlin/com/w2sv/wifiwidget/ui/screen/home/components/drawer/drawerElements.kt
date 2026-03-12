@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -25,13 +24,11 @@ import kotlinx.collections.immutable.persistentListOf
 
 fun navigationDrawerElements(): ImmutableList<DrawerElement> =
     persistentListOf(
-        DrawerElement.Header(
-            titleRes = R.string.appearance,
-            modifier = Modifier
-        ),
+        DrawerElement.Header(titleRes = R.string.appearance),
         DrawerElement.Action(
             iconRes = R.drawable.ic_nightlight_24,
             labelRes = R.string.theme,
+            configureModifier = { padding(bottom = 12.dp, top = 16.dp) },
             type = DrawerElement.Action.Custom { modifier ->
                 ThemeSelectionRow(
                     selected = themeController.theme(),
@@ -61,12 +58,11 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
                 onCheckedChange = { themeController.setUseDynamicColors(it) }
             )
         ),
-        DrawerElement.Header(
-            titleRes = R.string.legal
-        ),
+        DrawerElement.Header(titleRes = R.string.legal),
         DrawerElement.Action(
             iconRes = R.drawable.ic_policy_24,
             labelRes = R.string.privacy_policy,
+            configureModifier = { padding(bottom = 4.dp) },
             type = DrawerElement.Action.Clickable {
                 context.openUrl(AppUrl.PRIVACY_POLICY)
             }
@@ -123,9 +119,7 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
                 context.openUrl(AppUrl.DONATE)
             }
         ),
-        DrawerElement.Header(
-            titleRes = R.string.more
-        ),
+        DrawerElement.Header(titleRes = R.string.more),
         DrawerElement.Action(
             iconRes = R.drawable.ic_developer_24,
             labelRes = R.string.developer,
@@ -146,14 +140,10 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
 
 @Immutable
 sealed interface DrawerElement {
-    val modifier: Modifier
 
     @Immutable
-    data class Header(
-        @StringRes val titleRes: Int,
-        override val modifier: Modifier = Modifier
-            .padding(top = 20.dp, bottom = 4.dp)
-    ) : DrawerElement
+    @JvmInline
+    value class Header(@StringRes val titleRes: Int) : DrawerElement
 
     @Immutable
     data class Action(
@@ -161,21 +151,19 @@ sealed interface DrawerElement {
         @StringRes val labelRes: Int,
         @StringRes val explanationRes: Int? = null,
         val isVisible: DrawerActionScope.() -> Boolean = { true },
-        override val modifier: Modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp),
+        val configureModifier: Modifier.() -> Modifier = { this },
         val type: Type
     ) : DrawerElement {
 
         @Immutable
         sealed interface Type {
-
             val asClickableOrNull
                 get() = this as? Clickable
         }
 
         @Immutable
-        data class Clickable(val onClick: DrawerActionScope.() -> Unit) : Type
+        @JvmInline
+        value class Clickable(val onClick: DrawerActionScope.() -> Unit) : Type
 
         @Immutable
         data class Switch(val checked: DrawerActionScope.() -> Boolean, val onCheckedChange: DrawerActionScope.(Boolean) -> Unit) : Type
