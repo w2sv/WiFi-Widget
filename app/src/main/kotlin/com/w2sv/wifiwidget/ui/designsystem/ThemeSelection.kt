@@ -2,12 +2,17 @@ package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Transition
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +21,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -27,10 +30,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -38,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.Theme
-import com.w2sv.wifiwidget.ui.util.contentDescription
+import com.w2sv.wifiwidget.ui.util.then
 
 @Preview
 @Composable
@@ -58,66 +60,65 @@ fun ThemeSelectionRow(
     buttonSize: Dp = 44.dp,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center
 ) {
+    val indicators = remember { themeIndicators() }
     Row(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        themeIndicatorProperties
-            .forEach { properties ->
-                ThemeIndicator(
-                    properties = properties,
-                    isSelected = { properties.theme == selected },
-                    onClick = { onSelected(properties.theme) },
-                    buttonModifier = Modifier.size(buttonSize)
-                )
-            }
+        indicators.forEach { properties ->
+            ThemeIndicator(
+                properties = properties,
+                isSelected = { properties.theme == selected },
+                onClick = { onSelected(properties.theme) },
+                buttonModifier = Modifier.size(buttonSize)
+            )
+        }
     }
 }
 
-private val themeIndicatorProperties =
+private fun themeIndicators(): List<ThemeIndicator> =
     listOf(
-        ThemeIndicatorProperties(
+        ThemeIndicator(
             theme = Theme.Light,
             labelRes = R.string.light,
-            buttonColoring = ButtonColor.Uniform(Color.White)
+            color = ButtonColor.Uniform(Color.White)
         ),
-        ThemeIndicatorProperties(
+        ThemeIndicator(
             theme = Theme.Default,
             labelRes = R.string.default_,
-            buttonColoring = ButtonColor.Gradient(
+            color = ButtonColor.Gradient(
                 Brush.linearGradient(
                     0.5f to Color.White,
                     0.5f to Color.Black
                 )
             )
         ),
-        ThemeIndicatorProperties(
+        ThemeIndicator(
             theme = Theme.Dark,
             labelRes = R.string.dark,
-            buttonColoring = ButtonColor.Uniform(Color.Black)
+            color = ButtonColor.Uniform(Color.Black)
         )
     )
 
 @Immutable
-private data class ThemeIndicatorProperties(val theme: Theme, @StringRes val labelRes: Int, val buttonColoring: ButtonColor)
+private data class ThemeIndicator(val theme: Theme, @StringRes val labelRes: Int, val color: ButtonColor)
 
 @Immutable
 private sealed interface ButtonColor {
-    val containerColor: Color
 
     @Immutable
-    data class Uniform(override val containerColor: Color) : ButtonColor
+    @JvmInline
+    value class Uniform(val containerColor: Color) : ButtonColor
 
     @Immutable
-    data class Gradient(val brush: Brush) : ButtonColor {
-        override val containerColor: Color = Color.Transparent
-    }
+    @JvmInline
+    value class Gradient(val brush: Brush) : ButtonColor
 }
 
 @Composable
 private fun ThemeIndicator(
-    properties: ThemeIndicatorProperties,
+    properties: ThemeIndicator,
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
     buttonModifier: Modifier = Modifier,
@@ -134,7 +135,7 @@ private fun ThemeIndicator(
         )
         Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
-            buttonColor = properties.buttonColoring,
+            buttonColor = properties.color,
             contentDescription = stringResource(id = R.string.theme_button_cd).format(
                 stringResource(id = properties.labelRes)
             ),
@@ -151,64 +152,60 @@ private fun ThemeButton(
     contentDescription: String,
     onClick: () -> Unit,
     isSelected: () -> Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    size: Dp = 48.dp
 ) {
-    val transition = updateTransition(targetState = isSelected(), label = "")
+    val border = animatedThemeButtonBorder(isSelected())
+
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(CircleShape)
+            .then {
+                when (buttonColor) {
+                    is ButtonColor.Gradient -> background(buttonColor.brush)
+                    is ButtonColor.Uniform -> background(buttonColor.containerColor)
+                }
+            }
+            .border(border, CircleShape)
+            .clickable(onClick = onClick, onClickLabel = contentDescription)
+    )
+}
+
+@Composable
+private fun animatedThemeButtonBorder(isSelected: Boolean): BorderStroke {
+    val transition = updateTransition(
+        targetState = isSelected,
+        label = "ThemeButtonBorder"
+    )
 
     val borderWidth by transition.animateDp(
-        transitionSpec = remember {
-            {
-                if (targetState) {
-                    tween(
-                        durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.Overshoot
-                    )
-                } else {
-                    tween(durationMillis = BORDER_ANIMATION_DURATION)
-                }
-            }
-        }
-    ) { state ->
-        if (state) 3.dp else 0.5.dp
-    }
+        transitionSpec = { selectionSpec() },
+        label = "borderWidth"
+    ) { if (it) 3.dp else 0.5.dp }
 
     val borderColor by transition.animateColor(
-        transitionSpec = {
-            remember {
-                if (targetState) {
-                    tween(
-                        durationMillis = BORDER_ANIMATION_DURATION,
-                        easing = Easing.Overshoot
-                    )
-                } else {
-                    tween(durationMillis = BORDER_ANIMATION_DURATION)
-                }
-            }
+        transitionSpec = { selectionSpec() },
+        label = "borderColor"
+    ) {
+        if (it) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.onSurfaceVariant
         }
-    ) { state ->
-        if (state) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
     }
 
-    BoxWithConstraints(contentAlignment = Alignment.Center, modifier = modifier) {
-        val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
-        Button(
-            modifier = Modifier
-                .contentDescription(contentDescription)
-                .size(size)
-                .drawBehind {
-                    if (buttonColor is ButtonColor.Gradient) {
-                        drawCircle(
-                            brush = buttonColor.brush,
-                            radius = (constraints.maxWidth / 2).toFloat()
-                        )
-                    }
-                },
-            colors = ButtonDefaults.buttonColors(containerColor = buttonColor.containerColor),
-            onClick = onClick,
-            shape = CircleShape,
-            border = BorderStroke(borderWidth, borderColor)
-        ) {}
-    }
+    return BorderStroke(borderWidth, borderColor)
 }
+
+private fun <T> Transition.Segment<Boolean>.selectionSpec(): FiniteAnimationSpec<T> =
+    if (targetState) {
+        tween(
+            durationMillis = BORDER_ANIMATION_DURATION,
+            easing = Easing.Overshoot
+        )
+    } else {
+        tween(durationMillis = BORDER_ANIMATION_DURATION)
+    }
 
 private const val BORDER_ANIMATION_DURATION = 500
