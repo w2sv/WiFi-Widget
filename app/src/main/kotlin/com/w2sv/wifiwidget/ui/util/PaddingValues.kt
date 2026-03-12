@@ -17,12 +17,10 @@ fun PaddingValues.add(
     bottom: Dp = 0.dp
 ): PaddingValues {
     val layoutDirection = LocalLayoutDirection.current
-    return remember(this, start, top, end, bottom, layoutDirection) {
-        PaddingValues(
-            start = calculateStartPadding(layoutDirection) + start,
-            top = calculateTopPadding() + top,
-            end = calculateEndPadding(layoutDirection) + end,
-            bottom = calculateBottomPadding() + bottom
-        )
-    }
+    return PaddingValues(
+        start = calculateStartPadding(layoutDirection) + start,
+        top = calculateTopPadding() + top,
+        end = calculateEndPadding(layoutDirection) + end,
+        bottom = calculateBottomPadding() + bottom
+    )
 }
