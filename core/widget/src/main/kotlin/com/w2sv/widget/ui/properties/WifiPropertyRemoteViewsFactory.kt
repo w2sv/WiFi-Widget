@@ -49,7 +49,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         }
 
     override fun getViewTypeCount(): Int =
-        1
+        2 // Because of the 2 property layouts; If set to 1, switching to the other layout does not work
 
     override fun getItemId(position: Int): Long =
         data.viewData.getOrNull(position)?.hashCode()?.toLong() ?: -1L
