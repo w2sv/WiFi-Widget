@@ -64,7 +64,7 @@ private fun WifiProperty.viewData(
         label = resolvedLabel(resources::getString, enumeration),
         value = value.value.resolve(resources),
         subValues = value.subValues,
-        isError = value.isError
+        resolutionError = value.resolutionError
     )
 
 private fun WifiProperty.resolvedLabel(resolveRes: (Int) -> String, enumeration: Int?): SubscriptableText =

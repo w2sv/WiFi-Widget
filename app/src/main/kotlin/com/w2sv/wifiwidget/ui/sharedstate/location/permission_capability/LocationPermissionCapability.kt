@@ -23,6 +23,6 @@ interface LocationPermissionCapability {
 
     // ========= Grant Actions =========
     val grantEvents: Flow<OnLocationAccessGranted>
-    fun requestPermission(onGrant: OnLocationAccessGranted?)
+    fun requestPermission(onGrant: OnLocationAccessGranted? = null)
     suspend fun onPermissionGranted()
 }

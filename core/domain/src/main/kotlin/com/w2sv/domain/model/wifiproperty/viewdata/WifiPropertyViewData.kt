@@ -4,5 +4,5 @@ data class WifiPropertyViewData(
     val label: SubscriptableText,
     val value: String,
     val subValues: List<String> = emptyList(),
-    val isError: Boolean = false
+    val resolutionError: WifiPropertyResolutionError? = null
 )

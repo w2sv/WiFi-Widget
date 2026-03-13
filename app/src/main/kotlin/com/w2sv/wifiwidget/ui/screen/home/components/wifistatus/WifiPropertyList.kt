@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -29,8 +30,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.common.utils.openLocationSettingsIntent
 import com.w2sv.core.common.R
+import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
@@ -66,7 +70,7 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 26.dp)
-                        .clickable(enabled = !viewData.isError) { onPropertyRowClick(renderedLabel, viewData.value, scope) }
+                        .clickable { onPropertyRowClick(renderedLabel, viewData.value, viewData.resolutionError, scope) }
                         .padding(horizontal = horizontalPadding)
                 )
                 if (i != lastIndex) {
@@ -82,29 +86,38 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
     }
 }
 
-private typealias OnPropertyRowClick = (CharSequence, String, CoroutineScope) -> Unit
+private typealias OnPropertyRowClick = (CharSequence, String, WifiPropertyResolutionError?, CoroutineScope) -> Unit
 
 @Composable
 private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
     val clipboardManager = LocalClipboardManager.current
     val snackbarController = rememberSnackbarController()
+    val locationAccessCapability = LocalLocationAccessCapability.current
+    val context = LocalContext.current
 
     return remember {
-        { label, value, scope ->
-            clipboardManager.setText(AnnotatedString(value))
-            scope.launch {
-                snackbarController.showReplacing {
-                    AppSnackbarVisuals(
-                        msg = buildAnnotatedString {
-                            append("${getString(R.string.copied)} ")
-                            withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                                append(label)
-                            }
-                            append(" ${getString(R.string.to_clipboard)}.")
-                        },
-                        kind = SnackbarKind.Success
-                    )
+        { label, value, error, scope ->
+            when (error) {
+                null -> {
+                    clipboardManager.setText(AnnotatedString(value))
+                    scope.launch {
+                        snackbarController.showReplacing {
+                            AppSnackbarVisuals(
+                                msg = buildAnnotatedString {
+                                    append("${getString(R.string.copied)} ")
+                                    withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
+                                        append(label)
+                                    }
+                                    append(" ${getString(R.string.to_clipboard)}.")
+                                },
+                                kind = SnackbarKind.Success
+                            )
+                        }
+                    }
                 }
+
+                WifiPropertyResolutionError.NoLocationAccessPermission -> locationAccessCapability.requestPermission()
+                WifiPropertyResolutionError.GpsDisabled -> context.startActivity(openLocationSettingsIntent)
             }
         }
     }
@@ -124,7 +137,7 @@ private fun PropertyDisplay(
             )
         }
         Column {
-            Text(text = viewData.value, color = Color.Unspecified.takeUnless { viewData.isError } ?: MaterialTheme.colorScheme.error)
+            Text(text = viewData.value, color = Color.Unspecified.takeUnless { viewData.resolutionError != null } ?: MaterialTheme.colorScheme.error)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
                 viewData.subValues.forEach {
                     Text(

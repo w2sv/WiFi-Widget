@@ -8,6 +8,7 @@ import com.w2sv.common.txt
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
+import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -139,7 +140,11 @@ private fun locationAccessDependentValue(
         value = value.txt
             .takeUnless { isError }
             ?: if (isGpsEnabled) R.string.no_location_access.txt else R.string.gps_disabled.txt,
-        isError = isError
+        resolutionError = when {
+            !isError -> null
+            isGpsEnabled -> WifiPropertyResolutionError.NoLocationAccessPermission
+            else -> WifiPropertyResolutionError.GpsDisabled
+        }
     )
 }
 
