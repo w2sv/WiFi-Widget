@@ -12,6 +12,7 @@ class PreviewLocationAccessCapability : LocationAccessCapability {
     override val grantEvents: Flow<OnLocationAccessGranted> = emptyFlow()
 
     override val isGpsEnabled: Boolean = true
+    override fun openLocationSettings() {}
 
     override fun onForegroundRationalProceed() {}
     override fun launchBackgroundPermission() {}

@@ -42,6 +42,7 @@
     <string name="appearance">Appearance</string>
     <string name="utilities">Utilities</string>
     <string name="grant">Grant</string>
+    <string name="enable">Enable</string>
     <string name="maybe_later">Maybe later</string>
     <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. Since Android forbids the retrieval of any WiFi-related data while the device is dormant, this trigger will only go through when emitted while your phone is not dormant.\nThe refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>

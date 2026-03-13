@@ -7,12 +7,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import com.w2sv.common.utils.openLocationSettingsIntent
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
@@ -27,8 +25,7 @@ import kotlinx.coroutines.launch
 data class PropertyOnClickScope(
     val clipboard: Clipboard,
     val snackbarController: SnackbarController,
-    val locationAccessCapability: LocationAccessCapability,
-    val context: Context
+    val locationAccessCapability: LocationAccessCapability
 )
 
 @Composable
@@ -36,14 +33,12 @@ fun rememberPropertyOnClickScope(): PropertyOnClickScope {
     val clipboard = LocalClipboard.current
     val snackbarController = rememberSnackbarController()
     val locationAccessCapability = LocalLocationAccessCapability.current
-    val context = LocalContext.current
 
-    return remember(clipboard, snackbarController, locationAccessCapability, context) {
+    return remember(clipboard, snackbarController, locationAccessCapability) {
         PropertyOnClickScope(
             clipboard = clipboard,
             snackbarController = snackbarController,
-            locationAccessCapability = locationAccessCapability,
-            context = context
+            locationAccessCapability = locationAccessCapability
         )
     }
 }
@@ -61,7 +56,7 @@ fun PropertyOnClickScope.onPropertyClick(
         }
 
         WifiPropertyResolutionError.NoLocationAccessPermission -> locationAccessCapability.requestPermission()
-        WifiPropertyResolutionError.GpsDisabled -> context.startActivity(openLocationSettingsIntent)
+        WifiPropertyResolutionError.GpsDisabled -> locationAccessCapability.openLocationSettings()
     }
 }
 
