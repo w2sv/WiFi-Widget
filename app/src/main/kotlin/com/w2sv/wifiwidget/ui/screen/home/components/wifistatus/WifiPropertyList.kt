@@ -21,36 +21,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.common.utils.openLocationSettingsIntent
-import com.w2sv.core.common.R
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
-import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
-import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
-import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.util.resourceIdTestTag
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-
-private val horizontalPadding = 8.dp
 
 @Composable
 fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
-    val onPropertyRowClick = rememberOnPropertyRowClick()
+    val onClickScope = rememberPropertyOnClickScope()
     val lastIndex = viewData.lastIndex
 
     SecondLevelElevatedCard(modifier = modifier) {
@@ -70,8 +53,17 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = 26.dp)
-                        .clickable { onPropertyRowClick(renderedLabel, viewData.value, viewData.resolutionError, scope) }
-                        .padding(horizontal = horizontalPadding)
+                        .clickable {
+                            onClickScope.run {
+                                onPropertyClick(
+                                    scope = scope,
+                                    label = renderedLabel,
+                                    value = viewData.value,
+                                    resolutionError = viewData.resolutionError
+                                )
+                            }
+                        }
+                        .padding(horizontal = 8.dp)
                 )
                 if (i != lastIndex) {
                     HorizontalDivider(
@@ -81,43 +73,6 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
                         color = CardContainerColor
                     )
                 }
-            }
-        }
-    }
-}
-
-private typealias OnPropertyRowClick = (CharSequence, String, WifiPropertyResolutionError?, CoroutineScope) -> Unit
-
-@Composable
-private fun rememberOnPropertyRowClick(): OnPropertyRowClick {
-    val clipboardManager = LocalClipboardManager.current
-    val snackbarController = rememberSnackbarController()
-    val locationAccessCapability = LocalLocationAccessCapability.current
-    val context = LocalContext.current
-
-    return remember {
-        { label, value, error, scope ->
-            when (error) {
-                null -> {
-                    clipboardManager.setText(AnnotatedString(value))
-                    scope.launch {
-                        snackbarController.showReplacing {
-                            AppSnackbarVisuals(
-                                msg = buildAnnotatedString {
-                                    append("${getString(R.string.copied)} ")
-                                    withStyle(SpanStyle(fontWeight = FontWeight.SemiBold)) {
-                                        append(label)
-                                    }
-                                    append(" ${getString(R.string.to_clipboard)}.")
-                                },
-                                kind = SnackbarKind.Success
-                            )
-                        }
-                    }
-                }
-
-                WifiPropertyResolutionError.NoLocationAccessPermission -> locationAccessCapability.requestPermission()
-                WifiPropertyResolutionError.GpsDisabled -> context.startActivity(openLocationSettingsIntent)
             }
         }
     }
@@ -137,7 +92,10 @@ private fun PropertyDisplay(
             )
         }
         Column {
-            Text(text = viewData.value, color = Color.Unspecified.takeUnless { viewData.resolutionError != null } ?: MaterialTheme.colorScheme.error)
+            Text(
+                text = viewData.value,
+                color = Color.Unspecified.takeUnless { viewData.resolutionError != null } ?: MaterialTheme.colorScheme.error
+            )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
                 viewData.subValues.forEach {
                     Text(
