@@ -198,4 +198,5 @@
     <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
     <string name="coloring">Coloring</string>
     <string name="connected_no_internet">Connected, no Internet</string>
+    <string name="open_release_overview_cd">Open the app\'s release overview.</string>
 </resources>
