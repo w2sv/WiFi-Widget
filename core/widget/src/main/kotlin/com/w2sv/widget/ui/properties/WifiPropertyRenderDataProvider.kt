@@ -3,7 +3,7 @@ package com.w2sv.widget.ui.properties
 import android.content.Context
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
-import com.w2sv.domain.model.widget.Alignment
+import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.widget.WidgetAppearance
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
@@ -37,6 +37,6 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
 
 private val WidgetAppearance.propertyLayout: Int
     get() = when (propertyValueAlignment) {
-        Alignment.Left -> R.layout.wifi_property_left_aligned
-        Alignment.Right -> R.layout.wifi_property_right_aligned
+        WifiPropertyValueAlignment.Left -> R.layout.wifi_property_left_aligned
+        WifiPropertyValueAlignment.Right -> R.layout.wifi_property_right_aligned
     }

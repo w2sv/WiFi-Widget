@@ -55,6 +55,7 @@ import com.w2sv.common.AppUrl
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
+import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
@@ -240,7 +241,7 @@ private fun Action(
 
         Icon(
             modifier = Modifier
-                .size(size = 28.dp)
+                .size(size = IconDefaults.SizeBig)
                 .constrainAs(iconRef) {
                     start.linkTo(parent.start)
                     top.linkTo(parent.top)

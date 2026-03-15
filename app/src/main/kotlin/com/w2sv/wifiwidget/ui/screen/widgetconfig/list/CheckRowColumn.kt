@@ -2,16 +2,13 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,10 +17,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,8 +42,6 @@ import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
-import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
-import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.ShakeController
@@ -62,15 +54,8 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 object CheckRowDefaults {
-    /**
-     * The padding in between the leading icon (keyboard right arrow) and the property label.
-     */
-    val leadingIconLabelGap = 4.dp
 
-    /**
-     * To create a small gap in between the sub property toggle icon button background and the left card edge.
-     */
-    val startPadding = 4.dp
+    val subPropertyLessStartPadding = 48.dp
 }
 
 object SubPropertyColumnDefaults {
@@ -88,15 +73,8 @@ fun CheckRowColumn(elements: ImmutableList<ConfigListElement.CheckRow>, modifier
     Column(modifier = modifier) {
         elements.forEach { data ->
             when (data.hasSubProperties) {
-                false -> {
-                    CheckRow(data = data, modifier = primaryCheckRowModifier)
-                }
-
-                true -> {
-                    CheckRowWithSubProperties(
-                        data = data
-                    )
-                }
+                false -> CheckRow(data = data, modifier = primaryCheckRowModifier)
+                true -> CheckRowWithSubProperties(data = data)
             }
         }
     }
@@ -163,15 +141,7 @@ fun DragAndDroppableCheckRowColumn(
 private fun CheckRow(data: ConfigListElement.CheckRow, modifier: Modifier = Modifier) {
     CheckRowBase(
         data = data,
-        leadingIcon = {
-            Box(
-                modifier = Modifier.size(48.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                KeyboardArrowRightIcon(tint = data.leadingIconAndLabelColor)
-            }
-        },
-        modifier = modifier,
+        modifier = modifier.padding(start = CheckRowDefaults.subPropertyLessStartPadding),
         labelColor = data.leadingIconAndLabelColor
     )
 }
@@ -179,12 +149,13 @@ private fun CheckRow(data: ConfigListElement.CheckRow, modifier: Modifier = Modi
 @Composable
 private fun CheckRowWithSubProperties(data: ConfigListElement.CheckRow, modifier: Modifier = Modifier) {
     var expandSubProperties by rememberSaveable {
-        mutableStateOf(false)
+        mutableStateOf(!data.allowSubPropertyCollapsing)
     }
     // Collapse subProperties on unchecking
     LaunchedEffect(data, data.isChecked()) {
-        if (!data.isChecked()) {
-            expandSubProperties = false
+        when {
+            !data.isChecked() -> expandSubProperties = false
+            !data.allowSubPropertyCollapsing -> expandSubProperties = true
         }
     }
 
@@ -192,13 +163,11 @@ private fun CheckRowWithSubProperties(data: ConfigListElement.CheckRow, modifier
         CheckRowBase(
             data = data,
             leadingIcon = {
-                FilledTonalIconButton(
+                if (!data.allowSubPropertyCollapsing) return@CheckRowBase
+
+                IconButton(
                     onClick = { expandSubProperties = !expandSubProperties },
-                    enabled = data.isChecked(),
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.7f),
-                        disabledContainerColor = Color.Transparent
-                    )
+                    enabled = data.isChecked()
                 ) {
                     Icon(
                         imageVector = if (expandSubProperties) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
@@ -206,12 +175,12 @@ private fun CheckRowWithSubProperties(data: ConfigListElement.CheckRow, modifier
                     )
                 }
             },
-            modifier = primaryCheckRowModifier,
+            modifier = primaryCheckRowModifier.thenIf(!data.allowSubPropertyCollapsing) { padding(start = CheckRowDefaults.subPropertyLessStartPadding) },
             labelColor = data.leadingIconAndLabelColor
         )
 
         AnimatedVisibility(visible = expandSubProperties) {
-            SubPropertyColumn(elements = data.subPropertyColumnElements!!)
+            SubPropertyColumn(elements = requireNotNull(data.subPropertyColumnElements))
         }
     }
 }
@@ -231,8 +200,7 @@ private fun SubPropertyColumn(elements: ImmutableList<ConfigListElement>, modifi
                     if (element.show()) {
                         CheckRowBase(
                             data = element,
-                            fontSize = SubPropertyColumnDefaults.fontSize,
-                            leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
+                            fontSize = SubPropertyColumnDefaults.fontSize
                         )
                     }
                 }
@@ -242,18 +210,6 @@ private fun SubPropertyColumn(elements: ImmutableList<ConfigListElement>, modifi
                 }
             }
         }
-    }
-}
-
-@Composable
-fun VersionsHeader(modifier: Modifier = Modifier) {
-    Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        SubPropertyKeyboardArrowRightIcon(modifier = Modifier.padding(end = CheckRowDefaults.leadingIconLabelGap))
-        Text(
-            text = stringResource(R.string.versions),
-            fontSize = SubPropertyColumnDefaults.fontSize,
-            fontWeight = FontWeight.SemiBold
-        )
     }
 }
 
@@ -303,17 +259,13 @@ fun PropertyConfigurationRow(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = CheckRowDefaults.startPadding)
             .thenIfNotNull(shakeController) { shake(it) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            leadingIcon?.run {
-                invoke()
-                Spacer(Modifier.width(CheckRowDefaults.leadingIconLabelGap))
-            }
+            leadingIcon?.invoke()
             Text(
                 text = stringResource(id = labelRes),
                 modifier = Modifier.weight(1.0f),
@@ -324,11 +276,11 @@ fun PropertyConfigurationRow(
         }
         explanationRes?.let {
             Text(
-                stringResource(it),
+                text = stringResource(it),
                 color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                 fontSize = 13.sp,
                 modifier = Modifier
-                    .padding(start = 52.dp) // Align with label above
+                    .padding(end = 32.dp)
                     .offsetClip(dy = (-10).dp) // Shift explanation up a bit to increase its visual coherence with the main row
             )
         }

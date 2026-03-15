@@ -2,12 +2,15 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import android.content.Context
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.core.common.R
@@ -18,6 +21,7 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
 import com.w2sv.kotlinutils.copy
+import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.DisclaimerRow
@@ -29,6 +33,7 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.ShakeController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
@@ -84,6 +89,18 @@ fun WifiPropertiesConfigCard(
             onDrop = { fromIndex: Int, toIndex: Int ->
                 updateConfig { withModifiedPropertyPosition(fromIndex, toIndex) }
             }
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun Prev() {
+    PreviewOf {
+        WifiPropertiesConfigCard(
+            WifiWidgetConfig.default,
+            {},
+            {}
         )
     }
 }
@@ -191,7 +208,6 @@ private fun ipSettingConfigEntries(
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
 ): ImmutableList<ConfigListElement> {
-    val shakeController = ShakeController()
     return buildList {
         if (settings.any { it.isVersionSetting }) {
             add(
@@ -201,13 +217,14 @@ private fun ipSettingConfigEntries(
             )
         }
         settings.map { setting ->
+            val shakeController = makeIf(setting.isVersionSetting) { ShakeController() }
             val checkRow = ConfigListElement.CheckRow(
                 property = setting,
                 isChecked = { isSettingEnabled(setting) },
                 onCheckedChange = makeOnCheckedChange(
                     allow = { newValue -> allowIpSettingUpdate(setting, newValue, isSettingEnabled) },
                     onDisallowed = {
-                        scope.launch { shakeController.shake() }
+                        scope.launch { shakeController?.shake() }
                         showLeaveAtLeastOneAddressVersionEnabledSnackbar()
                     },
                     update = { updateSetting(setting, it) }
@@ -223,13 +240,23 @@ private fun ipSettingConfigEntries(
                 modifier = Modifier
                     .thenIf(
                         condition = setting.isVersionSetting,
-                        onTrue = { padding(start = 16.dp) }
+                        onTrue = { padding(start = 24.dp) }
                     )
             )
             add(checkRow)
         }
     }
         .toPersistentList()
+}
+
+@Composable
+private fun VersionsHeader(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(R.string.displayed_versions),
+        fontSize = SubPropertyColumnDefaults.fontSize,
+        fontWeight = FontWeight.Bold,
+        modifier = modifier
+    )
 }
 
 private val IpSetting.isVersionSetting: Boolean

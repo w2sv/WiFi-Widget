@@ -129,7 +129,7 @@ internal class WidgetRenderer @Inject constructor(
 
         setTextView(
             viewId = R.id.last_updated_tv,
-            isVisible = isUtilityEnabled(WidgetUtility.LastRefreshTimeDisplay),
+            isVisible = isUtilityEnabled(WidgetUtility.RefreshTimeDisplay),
             text = formattedDateTime(),
             size = fontSize.value
         )

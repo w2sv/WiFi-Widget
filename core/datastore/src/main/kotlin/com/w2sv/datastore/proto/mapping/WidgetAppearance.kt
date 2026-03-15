@@ -3,7 +3,7 @@ package com.w2sv.datastore.proto.mapping
 import com.w2sv.datastore.AlignmentProto
 import com.w2sv.datastore.FontSizeProto
 import com.w2sv.datastore.WidgetAppearanceProto
-import com.w2sv.domain.model.widget.Alignment
+import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetAppearance
 
@@ -49,14 +49,14 @@ private fun FontSizeProto.toExternal(): FontSize =
  * Alignment
  * ------------------------- */
 
-private fun Alignment.toProto(): AlignmentProto =
+private fun WifiPropertyValueAlignment.toProto(): AlignmentProto =
     when (this) {
-        Alignment.Left -> AlignmentProto.LEFT
-        Alignment.Right -> AlignmentProto.RIGHT
+        WifiPropertyValueAlignment.Left -> AlignmentProto.LEFT
+        WifiPropertyValueAlignment.Right -> AlignmentProto.RIGHT
     }
 
-private fun AlignmentProto.toExternal(): Alignment =
+private fun AlignmentProto.toExternal(): WifiPropertyValueAlignment =
     when (this) {
-        AlignmentProto.LEFT, AlignmentProto.UNRECOGNIZED -> Alignment.Left
-        AlignmentProto.RIGHT -> Alignment.Right
+        AlignmentProto.LEFT, AlignmentProto.UNRECOGNIZED -> WifiPropertyValueAlignment.Left
+        AlignmentProto.RIGHT -> WifiPropertyValueAlignment.Right
     }

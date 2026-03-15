@@ -56,7 +56,7 @@
     <string name="retrieving_properties">Retrieving properties…</string>
     <string name="copied">"Copied"</string>
     <string name="to_clipboard">to clipboard</string>
-    <string name="versions">Versions</string>
+    <string name="displayed_versions">Displayed Versions</string>
     <string name="background_opacity">Background\nopacity</string>
     <string name="font_size">Font size</string>
     <string name="widget_pinning_failed">In-app widget pinning is not supported by your device. You\'ll need to do it from your device\'s home screen.</string>
@@ -82,7 +82,7 @@
     <string name="go_back_on_unsaved_changes_warning">Going back now will lead to all your unsaved changes being lost.</string>
     <string name="restore_default_order">Restore default order</string>
     <string name="show_dropdown_menu">Show dropdown menu</string>
-    <string name="value_alignment">Value alignment</string>
+    <string name="value_alignment">Property value alignment</string>
     <string name="configure">Configure</string>
     <string name="wifi_property_reordering_information">Click and hold a property to change the order in which they appear on the widget</string>
     <string name="ssid">SSID</string>
@@ -125,7 +125,7 @@
     <string name="open_widget_settings_button">Widget configuration button</string>
     <string name="refresh_periodically">Refresh periodically</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
-    <string name="last_refresh_time_display">Last refresh time display</string>
+    <string name="refresh_time_display">Refresh time display</string>
     <string name="loopback_description">A loopback IP address, commonly represented as 127.0.0.1 in IPv4, is a reserved address that allows a device to communicate with itself. When data is sent to the loopback address, it is internally routed back to the same device, enabling local testing of networking functionality. This address, often referred to as "localhost", is widely used for diagnostic and development purposes to ensure the proper functioning of network-related components on a device without the need for external connections. In IPv6, the loopback address is typically represented as ::1.</string>
     <string name="unique_local_description">Unique Local Addresses (ULAs) in IPv6 are a reserved set of addresses designed for local communication within an organization or site. Introduced as the successor to site-local addresses, as per RFC 4193, ULAs enable devices within a specific network to communicate locally without the need for global uniqueness. They serve as a practical solution for private, internal use in IPv6 networks, ensuring local connectivity while addressing the limitations of the deprecated site-local addressing concept.</string>
     <string name="link_local_description">Link-local addresses are a type of address assigned to network interfaces for communication within the scope of a single network link. In IPv6, link-local addresses are automatically configured with the address range starting with FE80::, facilitating communication on the local network segment. In IPv4, link-local addresses fall within the range of 169.254.0.1 to 169.254.255.254 and are commonly used in scenarios where a DHCP server is unavailable, allowing devices on the same network link to communicate locally.</string>
@@ -178,6 +178,7 @@
     <string name="continent">Continent</string>
     <string name="left">Left</string>
     <string name="right">Right</string>
+    <string name="refresh_time_display_explanation">Display the time of the last data refresh</string>
     <string name="refresh_button_explanation">Trigger a data refresh</string>
     <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
     <string name="go_to_widget_settings_button_explanation">Open this screen</string>

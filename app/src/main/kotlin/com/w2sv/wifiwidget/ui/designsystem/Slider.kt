@@ -1,10 +1,7 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.annotation.IntRange
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -12,26 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.w2sv.wifiwidget.ui.util.contentDescription
-
-@Composable
-fun ArrowRightLabelContentRow(
-    label: String,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit = {}
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
-    ) {
-        KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp))
-        Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
-        Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
-            content()
-        }
-    }
-}
 
 @Composable
 fun SliderWithLabel(
@@ -45,9 +23,7 @@ fun SliderWithLabel(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = remember(value, makeLabel) {
-                makeLabel(value)
-            },
+            text = remember(value, makeLabel) { makeLabel(value) },
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )

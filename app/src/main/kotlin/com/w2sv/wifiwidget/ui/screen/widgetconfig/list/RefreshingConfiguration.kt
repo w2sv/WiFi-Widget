@@ -17,11 +17,10 @@ import com.w2sv.common.utils.minutes
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.designsystem.SubPropertyKeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
-import kotlin.time.Duration
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.time.Duration
 
 @Composable
 fun RefreshingConfigCard(
@@ -66,6 +65,7 @@ private fun refreshingCheckRow(
                 )
             )
         },
+        allowSubPropertyCollapsing = false,
         subPropertyColumnElements = persistentListOf(
             ConfigListElement.Custom {
                 RefreshIntervalConfigurationRow(
@@ -91,10 +91,9 @@ private fun RefreshIntervalConfigurationRow(
     modifier: Modifier = Modifier
 ) {
     PropertyConfigurationRow(
-        R.string.interval,
+        labelRes = R.string.interval,
         modifier = modifier,
-        fontSize = SubPropertyColumnDefaults.fontSize,
-        leadingIcon = { SubPropertyKeyboardArrowRightIcon() }
+        fontSize = SubPropertyColumnDefaults.fontSize
     ) {
         Text(text = remember(interval) { interval.toReadableString() })
         FilledTonalIconButton(

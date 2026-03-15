@@ -1,7 +1,9 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance
 
 import android.content.Context
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SegmentedButton
@@ -10,20 +12,23 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.widget.Alignment
+import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetAppearance
+import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.kotlinutils.enumEntryByOrdinal
-import com.w2sv.wifiwidget.ui.designsystem.ArrowRightLabelContentRow
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigSectionCard
+import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlin.math.roundToInt
 
 object AppearanceConfigTokens {
@@ -74,18 +79,26 @@ fun AppearanceConfigCard(
     }
 }
 
+@Preview
+@Composable
+private fun Prev() {
+    PreviewOf {
+        AppearanceConfigCard(WifiWidgetConfig.default.appearance, {}, {})
+    }
+}
+
 @Composable
 private fun ConfigurePropertyValueAlignment(
-    alignment: Alignment,
-    update: (Alignment) -> Unit,
+    alignment: WifiPropertyValueAlignment,
+    update: (WifiPropertyValueAlignment) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ArrowRightLabelContentRow(
+    LabelContentRow(
         label = stringResource(R.string.value_alignment),
         modifier = modifier
     ) {
         SingleChoiceSegmentedButtonRow {
-            Alignment.entries.forEach {
+            WifiPropertyValueAlignment.entries.forEach {
                 SegmentedButton(
                     selected = it == alignment,
                     onClick = { update(it) },
@@ -107,7 +120,7 @@ private fun FontSizeSliderRow(
     setFontSize: (FontSize) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ArrowRightLabelContentRow(
+    LabelContentRow(
         label = stringResource(id = R.string.font_size),
         modifier = modifier
     ) {
@@ -129,7 +142,7 @@ private fun BackgroundOpacitySliderRow(
     setOpacity: (Float) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ArrowRightLabelContentRow(
+    LabelContentRow(
         label = stringResource(R.string.background_opacity),
         modifier = modifier
     ) {
@@ -140,5 +153,22 @@ private fun BackgroundOpacitySliderRow(
             onValueChanged = setOpacity,
             contentDescription = stringResource(id = R.string.opacity_slider_cd)
         )
+    }
+}
+
+@Composable
+private fun LabelContentRow(
+    label: String,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit = {}
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier.padding(start = 12.dp)
+    ) {
+        Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
+        Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
+            content()
+        }
     }
 }

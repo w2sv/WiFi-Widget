@@ -27,6 +27,7 @@ sealed interface ConfigListElement {
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
         val subPropertyColumnElements: ImmutableList<ConfigListElement>? = null,
+        val allowSubPropertyCollapsing: Boolean = true,
         val modifier: Modifier = Modifier
     ) : ConfigListElement {
 

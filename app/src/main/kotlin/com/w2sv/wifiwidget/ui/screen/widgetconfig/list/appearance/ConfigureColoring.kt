@@ -31,7 +31,6 @@ import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.domain.model.widget.WidgetColoringStrategy
-import com.w2sv.wifiwidget.ui.designsystem.KeyboardArrowRightIcon
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
@@ -145,11 +144,11 @@ private fun PresetColoringConfiguration(
             horizontalArrangement = Arrangement.SpaceEvenly
         )
         if (dynamicColorsSupported) {
+            val startPadding = 20.dp
             UseDynamicColorsRow(
                 useDynamicColors = data.useDynamicColors,
                 toggleDynamicColors = { update(data.copy(useDynamicColors = it)) },
-                modifier = Modifier.padding(top = AppearanceConfigTokens.featureSpacing),
-                leadingIcon = { KeyboardArrowRightIcon(modifier = Modifier.padding(end = 8.dp)) }
+                modifier = Modifier.padding(top = AppearanceConfigTokens.featureSpacing, start = startPadding)
             )
             AnimatedContent(data.useDynamicColors) { useDynamicColors ->
                 Text(
@@ -163,7 +162,7 @@ private fun PresetColoringConfiguration(
                     color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
                     fontSize = 13.sp,
                     modifier = Modifier
-                        .padding(start = 32.dp, end = 52.dp) // Align with start of dynamic colors label and start of the switch
+                        .padding(start = startPadding, end = 52.dp) // Align with start of dynamic colors label and start of the switch
                         .offset(y = (-8).dp) // Move up as a workaround for the stupid built-in switch bottom padding
                 )
             }
@@ -216,7 +215,6 @@ private fun CustomizationRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = modifier
     ) {
-        KeyboardArrowRightIcon()
         Text(
             text = label,
             fontSize = 14.sp,
