@@ -8,11 +8,12 @@ import android.net.NetworkRequest
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.networking.extensions.hasWifiTransport
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import slimber.log.d
+import javax.inject.Inject
 
 internal class WifiStatusMonitorImpl @Inject constructor(
     private val provideWifiStatus: WifiStatusProvider,
@@ -28,7 +29,8 @@ internal class WifiStatusMonitorImpl @Inject constructor(
         trySend(provideWifiStatus())
 
         val callback = networkCallback(
-            computeAndEmitStatus = { trySend(provideWifiStatus()) },
+            computeStatus = provideWifiStatus::invoke,
+            emit = ::trySend,
             activeNetwork = { connectivityManager.activeNetwork }
         )
 
@@ -39,29 +41,37 @@ internal class WifiStatusMonitorImpl @Inject constructor(
         .conflate()
 }
 
-private fun networkCallback(computeAndEmitStatus: () -> Unit, activeNetwork: () -> Network?): ConnectivityManager.NetworkCallback =
+private fun networkCallback(
+    computeStatus: () -> WifiStatus,
+    emit: (WifiStatus) -> Unit,
+    activeNetwork: () -> Network?
+): ConnectivityManager.NetworkCallback =
     object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
             // A Wi-Fi network became available
-            computeAndEmitStatus()
+            d { "onAvailable" }
+            emit(computeStatus())
         }
 
         override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
             // Only react if this is actually Wi-Fi
             if (capabilities.hasWifiTransport) {
-                computeAndEmitStatus()
+                d { "onCapabilitiesChanged" }
+                emit(computeStatus())
             }
         }
 
         override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
             // Only relevant if this network is currently active
             if (network == activeNetwork()) {
-                computeAndEmitStatus()
+                d { "onLinkPropertiesChanged" }
+                emit(computeStatus())
             }
         }
 
         override fun onLost(network: Network) {
             // A Wi-Fi network disappeared
-            computeAndEmitStatus()
+            d { "onLost" }
+            emit(WifiStatus.Disconnected)
         }
     }

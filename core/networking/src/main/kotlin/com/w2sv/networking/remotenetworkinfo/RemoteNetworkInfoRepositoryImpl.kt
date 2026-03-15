@@ -28,8 +28,6 @@ internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(
      */
     override suspend fun refresh() =
         coroutineScope {
-            i { "Refreshing RemoteNetworkInfo" }
-
             val ipApiDeferred = async {
                 ipApiRepository.refresh()
                 ipApiRepository.data.first()

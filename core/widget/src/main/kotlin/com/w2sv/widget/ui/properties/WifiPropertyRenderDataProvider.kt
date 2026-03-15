@@ -9,9 +9,9 @@ import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.ui.resolve
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 internal class WifiPropertyRenderDataProvider @Inject constructor(
     private val widgetConfigFlow: WidgetConfigFlow,
@@ -22,12 +22,14 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
         val config = runBlocking { widgetConfigFlow.first() }
 
         return WifiPropertyRenderData(
-            viewData = wifiPropertyViewDataProvider(
-                enabledProperties = config.orderedEnabledProperties,
-                enabledIpSettings = config::enabledIpSettings,
-                remoteNetworkInfo = remoteNetworkInfoRepository.data.value
-            )
-                .log { "propertyViewData=$it" },
+            viewData = runBlocking {
+                wifiPropertyViewDataProvider(
+                    enabledProperties = config.orderedEnabledProperties,
+                    enabledIpSettings = config::enabledIpSettings,
+                    remoteNetworkInfo = remoteNetworkInfoRepository.data.value
+                )
+                    .log { "propertyViewData=$it" }
+            },
             colors = config.appearance.coloring.resolve(context),
             fontSize = config.appearance.fontSize,
             layout = config.appearance.propertyLayout

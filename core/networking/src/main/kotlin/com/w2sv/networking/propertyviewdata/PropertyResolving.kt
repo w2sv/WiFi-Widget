@@ -13,6 +13,9 @@ import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
+private const val ERROR_BSSID = "02:00:00:00:00:00"
+private const val UNKNOWN_SSID = "<unknown ssid>"
+
 @Suppress("DEPRECATION")
 internal fun WifiProperty.resolve(
     snapshot: WifiSnapshot,
@@ -24,15 +27,15 @@ internal fun WifiProperty.resolve(
                 WifiProperty.SSID -> add(
                     locationAccessDependentValue(
                         value = connectionInfo.ssid.replace("\"", ""),
-                        errorPlaceholder = "<unknown ssid>",
+                        errorPlaceholder = UNKNOWN_SSID,
                         isGpsEnabled = isGpsEnabled
                     )
                 )
 
                 WifiProperty.BSSID -> add(
                     locationAccessDependentValue(
-                        value = connectionInfo.bssid,
-                        errorPlaceholder = "02:00:00:00:00:00",
+                        value = connectionInfo.bssid ?: error("No network connected"),
+                        errorPlaceholder = ERROR_BSSID,
                         isGpsEnabled = isGpsEnabled
                     )
                 )

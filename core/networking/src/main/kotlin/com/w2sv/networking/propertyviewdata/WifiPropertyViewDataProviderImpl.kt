@@ -12,6 +12,11 @@ import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.systemIpAddresses
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
+import slimber.log.e
 import javax.inject.Inject
 
 internal class WifiPropertyViewDataProviderImpl @Inject constructor(
@@ -22,11 +27,11 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
 ) : WifiPropertyViewDataProvider {
 
     @Suppress("DEPRECATION")
-    override fun invoke(
+    override suspend fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
         remoteNetworkInfo: RemoteNetworkInfo
-    ): List<WifiPropertyViewData> {
+    ): List<WifiPropertyViewData> = withContext(Dispatchers.Default) {
         val wifiSnapshot = WifiSnapshot(
             connectionInfo = wifiManager.connectionInfo,
             dhcpInfo = wifiManager.dhcpInfo,
@@ -37,9 +42,18 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
             isGpsEnabled = isGpsEnabled()
         )
 
-        return enabledProperties.flatMap { property ->
+        enabledProperties.flatMap { property ->
+            ensureActive()
+
+            val values = try {
+                property.resolve(wifiSnapshot, enabledIpSettings)
+            } catch (t: Throwable) {
+                e { "Failed resolving property $property; $t" }
+                throw CancellationException("Failed resolving property", t)
+            }
+
             property.viewData(
-                values = property.resolve(wifiSnapshot, enabledIpSettings),
+                values = values,
                 resources = resources
             )
         }

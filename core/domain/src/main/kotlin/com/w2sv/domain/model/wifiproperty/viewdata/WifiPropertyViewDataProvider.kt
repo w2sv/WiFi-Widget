@@ -9,7 +9,7 @@ fun interface WifiPropertyViewDataProvider {
      * @return List of [WifiPropertyViewData], the element-order of which corresponds to the one of the [enabledProperties].
      * One [WifiProperty] may result in the the creation of multiple [WifiPropertyViewData] elements.
      */
-    operator fun invoke(
+    suspend operator fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
         remoteNetworkInfo: RemoteNetworkInfo
