@@ -31,7 +31,7 @@ fun RefreshingConfigCard(
 ) {
     WidgetConfigSectionCard(
         header = IconHeader(
-            iconRes = com.w2sv.core.common.R.drawable.ic_refresh_24,
+            iconRes = R.drawable.ic_refresh_24,
             stringRes = R.string.refreshing
         )
     ) {
@@ -65,8 +65,8 @@ private fun refreshingCheckRow(
                 )
             )
         },
-        allowSubPropertyCollapsing = false,
-        subPropertyColumnElements = persistentListOf(
+        allowSubSettingCollapsing = false,
+        subSettings = persistentListOf(
             ConfigListElement.Custom {
                 RefreshIntervalConfigurationRow(
                     interval = refreshing.interval,
@@ -90,10 +90,10 @@ private fun RefreshIntervalConfigurationRow(
     showConfigurationDialog: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    PropertyConfigurationRow(
+    ConfigRow(
         labelRes = R.string.interval,
         modifier = modifier,
-        fontSize = SubPropertyColumnDefaults.fontSize
+        fontSize = SubSettingsColumnDefaults.fontSize
     ) {
         Text(text = remember(interval) { interval.toReadableString() })
         FilledTonalIconButton(

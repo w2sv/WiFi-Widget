@@ -173,7 +173,7 @@ private fun WifiProperty.checkRow(
             update = { update(config().copy(isEnabled = it)) }
         ),
         shakeController = shakeController,
-        subPropertyColumnElements = when (this) {
+        subSettings = when (this) {
             is WifiProperty.IpProperty -> {
                 ipSettingConfigEntries(
                     settings = settings,
@@ -212,7 +212,7 @@ private fun ipSettingConfigEntries(
         if (settings.any { it.isVersionSetting }) {
             add(
                 ConfigListElement.Custom {
-                    VersionsHeader(modifier = Modifier.padding(top = SubPropertyColumnDefaults.startPadding))
+                    VersionsHeader(modifier = Modifier.padding(top = SubSettingsColumnDefaults.startPadding))
                 }
             )
         }
@@ -253,7 +253,7 @@ private fun ipSettingConfigEntries(
 private fun VersionsHeader(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.displayed_versions),
-        fontSize = SubPropertyColumnDefaults.fontSize,
+        fontSize = SubSettingsColumnDefaults.fontSize,
         fontWeight = FontWeight.Bold,
         modifier = modifier
     )

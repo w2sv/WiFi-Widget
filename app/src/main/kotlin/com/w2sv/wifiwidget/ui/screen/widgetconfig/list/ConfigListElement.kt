@@ -26,8 +26,8 @@ sealed interface ConfigListElement {
         val show: () -> Boolean = { true },
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
-        val subPropertyColumnElements: ImmutableList<ConfigListElement>? = null,
-        val allowSubPropertyCollapsing: Boolean = true,
+        val subSettings: ImmutableList<ConfigListElement>? = null,
+        val allowSubSettingCollapsing: Boolean = true,
         val modifier: Modifier = Modifier
     ) : ConfigListElement {
 
@@ -36,8 +36,8 @@ sealed interface ConfigListElement {
             @ReadOnlyComposable
             get() = MaterialTheme.colorScheme.onBackground.orAlphaDecreasedIf(!isChecked())
 
-        val hasSubProperties: Boolean
-            get() = subPropertyColumnElements != null
+        val hasSubSettings: Boolean
+            get() = subSettings != null
     }
 }
 
