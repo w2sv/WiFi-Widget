@@ -1,43 +1,40 @@
 package com.w2sv.wifiwidget.ui.designsystem.configlist
 
 import androidx.annotation.StringRes
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import com.w2sv.domain.model.Labelled
 import com.w2sv.wifiwidget.ui.util.ShakeController
-import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
 import kotlinx.collections.immutable.ImmutableList
 
-sealed interface ConfigListElement {
+sealed interface ConfigItem {
 
     @Immutable
-    data class Custom(val content: @Composable () -> Unit) : ConfigListElement
+    data class Custom(val content: @Composable () -> Unit) : ConfigItem
 
     @Immutable
-    data class CheckRow(
+    data class Checkable(
         val property: Labelled,
-        @StringRes val explanation: Int? = null,
         val isChecked: () -> Boolean,
         val onCheckedChange: (Boolean) -> Unit,
+
         val show: () -> Boolean = { true },
         val showInfoDialog: (() -> Unit)? = null,
         val shakeController: ShakeController? = null,
-        val subSettings: ImmutableList<ConfigListElement>? = null,
-        val allowSubSettingCollapsing: Boolean = true,
+
+        val contentBeneath: Beneath? = null,
+
         val modifier: Modifier = Modifier
-    ) : ConfigListElement {
+    ) : ConfigItem
 
-        val leadingIconAndLabelColor: Color
-            @Composable
-            @ReadOnlyComposable
-            get() = MaterialTheme.colorScheme.onBackground.orAlphaDecreasedIf(!isChecked())
+    sealed interface Beneath {
 
-        val hasSubSettings: Boolean
-            get() = subSettings != null
+        val asSubSettingsOrNull get() = this as? SubSettings
+
+        @JvmInline
+        value class Explanation(@StringRes val stringRes: Int) : Beneath
+        data class SubSettings(val elements: ImmutableList<ConfigItem>, val allowCollapsing: Boolean = true) : Beneath
     }
 }
 

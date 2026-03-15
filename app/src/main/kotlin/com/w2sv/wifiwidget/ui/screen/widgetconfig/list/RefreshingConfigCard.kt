@@ -2,9 +2,8 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,9 +17,9 @@ import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckRowColumn
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListElement
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigRow
-import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsColumnDefaults
+import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsDefaults
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
 import kotlin.time.Duration
@@ -41,7 +40,7 @@ fun RefreshingConfigCard(
     ) {
         CheckRowColumn(
             elements = persistentListOf(
-                refreshingCheckRow(
+                refreshingConfig(
                     refreshing = refreshing,
                     updateRefreshing = updateRefreshing,
                     showDialog = showDialog
@@ -52,12 +51,12 @@ fun RefreshingConfigCard(
     }
 }
 
-private fun refreshingCheckRow(
+private fun refreshingConfig(
     refreshing: WidgetRefreshing,
     updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
     showDialog: (WidgetConfigDialog) -> Unit
-): ConfigListElement.CheckRow =
-    ConfigListElement.CheckRow(
+): ConfigItem.Checkable =
+    ConfigItem.Checkable(
         property = WidgetRefreshingParameter.RefreshPeriodically,
         isChecked = { refreshing.refreshPeriodically },
         onCheckedChange = { updateRefreshing { copy(refreshPeriodically = it) } },
@@ -69,22 +68,22 @@ private fun refreshingCheckRow(
                 )
             )
         },
-        allowSubSettingCollapsing = false,
-        subSettings = persistentListOf(
-            ConfigListElement.Custom {
-                RefreshIntervalConfigurationRow(
-                    interval = refreshing.interval,
-                    showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
+        contentBeneath = ConfigItem.Beneath.SubSettings(
+            elements = persistentListOf(
+                ConfigItem.Custom {
+                    RefreshIntervalConfigurationRow(
+                        interval = refreshing.interval,
+                        showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                },
+                ConfigItem.Checkable(
+                    property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                    isChecked = { refreshing.refreshOnLowBattery },
+                    onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
                 )
-            },
-            ConfigListElement.CheckRow(
-                property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                isChecked = { refreshing.refreshOnLowBattery },
-                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
-            )
+            ),
+            allowCollapsing = false
         )
     )
 
@@ -97,14 +96,12 @@ private fun RefreshIntervalConfigurationRow(
     ConfigRow(
         labelRes = R.string.interval,
         modifier = modifier,
-        fontSize = SubSettingsColumnDefaults.fontSize
+        fontSize = SubSettingsDefaults.fontSize
     ) {
         Text(text = remember(interval) { interval.toReadableString() })
-        FilledTonalIconButton(
+        IconButton(
             onClick = showConfigurationDialog,
-            modifier = Modifier
-                .padding(start = 8.dp, end = 4.dp)
-                .size(38.dp)
+            modifier = Modifier.padding(start = 8.dp)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_edit_24),

@@ -29,9 +29,9 @@ import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListElement
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.DragAndDroppableCheckRowColumn
-import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsColumnDefaults
+import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsDefaults
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
@@ -116,7 +116,7 @@ private fun wifiPropertyCheckRowData(
     locationAccess: LocationAccessCapability,
     scope: CoroutineScope,
     snackbarController: SnackbarController
-): ImmutableList<ConfigListElement.CheckRow> =
+): ImmutableList<ConfigItem.Checkable> =
     config.orderedProperties
         .map { property ->
             property.checkRow(
@@ -151,10 +151,10 @@ private fun WifiProperty.checkRow(
     showDialog: (WidgetConfigDialog) -> Unit,
     showSnackbar: (SnackbarBuilder) -> Unit,
     scope: CoroutineScope
-): ConfigListElement.CheckRow {
+): ConfigItem.Checkable {
     val shakeController = ShakeController()
 
-    return ConfigListElement.CheckRow(
+    return ConfigItem.Checkable(
         property = this,
         isChecked = { config().isEnabled },
         onCheckedChange = makeOnCheckedChange(
@@ -177,23 +177,38 @@ private fun WifiProperty.checkRow(
             update = { update(config().copy(isEnabled = it)) }
         ),
         shakeController = shakeController,
-        subSettings = when (this) {
-            is WifiProperty.IpProperty -> {
-                ipSettingConfigEntries(
+        contentBeneath = when (this) {
+            is WifiProperty.IpProperty -> ConfigItem.Beneath.SubSettings(
+                elements = ipSettingElements(
                     settings = settings,
                     isSettingEnabled = { config().settings.getValue(it) },
-                    updateSetting = { setting, value -> update(config().copy(settings = config().settings.copy { put(setting, value) })) },
-                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = { showSnackbar { leaveAtLeastOneAddressVersionEnabledSnackbar() } },
+                    updateSetting = { setting, value ->
+                        update(
+                            config().copy(
+                                settings = config().settings.copy {
+                                    put(
+                                        setting,
+                                        value
+                                    )
+                                }
+                            )
+                        )
+                    },
+                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = {
+                        showSnackbar { leaveAtLeastOneAddressVersionEnabledSnackbar() }
+                    },
                     scope = scope
                 )
-            }
+            )
 
-            is WifiProperty.Location -> locationSettingConfigEntries(
-                isSettingEnabled = { config().settings.getValue(it) },
-                isMoreThanOnePropertyEnabled = { config().settings.moreThanOnePropertyEnabled() },
-                updateSetting = { setting, value -> update(config().copy(settings = config().settings.copy { put(setting, value) })) },
-                showLeaveAtLeastOnePropertyEnabledSnackbar = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
-                scope = scope
+            is WifiProperty.Location -> ConfigItem.Beneath.SubSettings(
+                elements = locationSettingElements(
+                    isSettingEnabled = { config().settings.getValue(it) },
+                    isMoreThanOnePropertyEnabled = { config().settings.moreThanOnePropertyEnabled() },
+                    updateSetting = { setting, value -> update(config().copy(settings = config().settings.copy { put(setting, value) })) },
+                    showLeaveAtLeastOnePropertyEnabledSnackbar = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
+                    scope = scope
+                )
             )
 
             else -> null
@@ -205,24 +220,22 @@ private fun WifiProperty.checkRow(
 private fun Map<*, Boolean>.moreThanOnePropertyEnabled(): Boolean =
     values.count { it } > 1
 
-private fun ipSettingConfigEntries(
+private fun ipSettingElements(
     settings: List<IpSetting>,
     isSettingEnabled: (IpSetting) -> Boolean,
     updateSetting: (IpSetting, Boolean) -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
-): ImmutableList<ConfigListElement> =
+): ImmutableList<ConfigItem> =
     buildList {
         if (settings.any { it.isVersionSetting }) {
             add(
-                ConfigListElement.Custom {
-                    VersionsHeader(modifier = Modifier.padding(top = SubSettingsColumnDefaults.startPadding))
-                }
+                ConfigItem.Custom { VersionsHeader(Modifier.padding(top = 12.dp)) }
             )
         }
         settings.map { setting ->
             val shakeController = makeIf(setting.isVersionSetting) { ShakeController() }
-            val checkRow = ConfigListElement.CheckRow(
+            val checkable = ConfigItem.Checkable(
                 property = setting,
                 isChecked = { isSettingEnabled(setting) },
                 onCheckedChange = makeOnCheckedChange(
@@ -247,7 +260,7 @@ private fun ipSettingConfigEntries(
                         onTrue = { padding(start = 24.dp) }
                     )
             )
-            add(checkRow)
+            add(checkable)
         }
     }
         .toPersistentList()
@@ -256,7 +269,7 @@ private fun ipSettingConfigEntries(
 private fun VersionsHeader(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.displayed_versions),
-        fontSize = SubSettingsColumnDefaults.fontSize,
+        fontSize = SubSettingsDefaults.fontSize,
         fontWeight = FontWeight.Bold,
         modifier = modifier
     )
@@ -277,16 +290,16 @@ private fun allowIpSettingUpdate(
         else -> true
     }
 
-private fun locationSettingConfigEntries(
+private fun locationSettingElements(
     isSettingEnabled: (LocationParameter) -> Boolean,
     isMoreThanOnePropertyEnabled: () -> Boolean,
     updateSetting: (LocationParameter, Boolean) -> Unit,
     showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
-): ImmutableList<ConfigListElement> =
+): ImmutableList<ConfigItem> =
     LocationParameter.entries.map { param ->
         val shakeController = ShakeController()
-        ConfigListElement.CheckRow(
+        ConfigItem.Checkable(
             property = param,
             isChecked = { isSettingEnabled(param) },
             onCheckedChange = makeOnCheckedChange(

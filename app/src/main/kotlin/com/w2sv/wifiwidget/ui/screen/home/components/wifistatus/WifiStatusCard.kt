@@ -1,11 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.home.components.wifistatus
 
 import android.content.Context
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -34,6 +29,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.util.PreviewOf
+import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -94,11 +90,9 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
 
 @Composable
 private fun OptionalWifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
-    AnimatedVisibility(
+    VerticallyAnimatedVisibility(
         visible = viewData.isNotEmpty(),
-        modifier = modifier,
-        enter = fadeIn() + expandVertically(),
-        exit = fadeOut() + shrinkVertically()
+        modifier = modifier
     ) {
         WifiPropertyList(
             viewData = viewData,

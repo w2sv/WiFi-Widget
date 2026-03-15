@@ -1,26 +1,37 @@
 package com.w2sv.wifiwidget.ui.designsystem.configlist
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.w2sv.composed.core.extensions.thenIfNotNull
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
-import com.w2sv.wifiwidget.ui.util.ShakeController
-import com.w2sv.wifiwidget.ui.util.offsetClip
-import com.w2sv.wifiwidget.ui.util.shake
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.constraintlayout.compose.Dimension
+import com.w2sv.core.common.R
+import com.w2sv.wifiwidget.ui.util.PreviewOf
+
+@Stable
+data class ConfigRowScope(
+    val constraintLayoutScope: ConstraintLayoutScope,
+    val beneathRef: ConstrainedLayoutReference,
+    val labelRef: ConstrainedLayoutReference
+)
 
 @Composable
 fun ConfigRow(
@@ -28,37 +39,93 @@ fun ConfigRow(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     labelColor: Color = MaterialTheme.colorScheme.onBackground,
-    shakeController: ShakeController? = null,
-    @StringRes explanationRes: Int? = null,
-    leadingIcon: (@Composable () -> Unit)? = null,
-    endContent: @Composable RowScope.() -> Unit
+    leading: @Composable BoxScope.() -> Unit = {},
+    beneath: (@Composable ConfigRowScope.() -> Unit)? = null,
+    trailing: @Composable RowScope.() -> Unit
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .thenIfNotNull(shakeController) { shake(it) }
-    ) {
+    ConstraintLayout(modifier = modifier.fillMaxWidth()) {
+        val (leadingRef, labelRef, trailingRef, beneathRef) = createRefs()
+
+        Box(
+            modifier = Modifier.constrainAs(leadingRef) {
+                start.linkTo(parent.start)
+                centerVerticallyTo(labelRef)
+            },
+            content = leading
+        )
+
+        Text(
+            text = stringResource(id = labelRes),
+            fontSize = fontSize,
+            color = labelColor,
+            modifier = Modifier.constrainAs(labelRef) {
+                linkTo(leadingRef.end, trailingRef.start)
+                linkTo(parent.top, if (beneath == null) parent.bottom else beneathRef.top)
+                width = Dimension.fillToConstraints
+            }
+        )
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            leadingIcon?.invoke()
-            Text(
-                text = stringResource(id = labelRes),
-                modifier = Modifier.weight(1.0f),
-                fontSize = fontSize,
-                color = labelColor
-            )
-            endContent()
+            modifier = Modifier.constrainAs(trailingRef) {
+                linkTo(labelRef.end, parent.end)
+                centerVerticallyTo(labelRef)
+            },
+            content = trailing
+        )
+
+        beneath?.let {
+            val scope = remember(this) {
+                ConfigRowScope(
+                    constraintLayoutScope = this,
+                    beneathRef = beneathRef,
+                    labelRef = labelRef
+                )
+            }
+            it.invoke(scope)
         }
-        explanationRes?.let {
-            Text(
-                text = stringResource(it),
-                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
-                fontSize = 13.sp,
-                modifier = Modifier
-                    .padding(end = 32.dp)
-                    .offsetClip(dy = (-10).dp) // Shift explanation up a bit to increase its visual coherence with the main row
+    }
+}
+
+@Preview
+@Composable
+private fun WithExpl() {
+    PreviewOf {
+        Surface {
+            ConfigRow(
+                labelRes = R.string.interval,
+                leading = { SubSettingsToggleButton(expand = false, onClick = {}) },
+                trailing = { Checkbox(checked = true, onCheckedChange = {}) },
+                beneath = {
+                    ExplanationOrSubSettings(ConfigItem.Beneath.Explanation(R.string.interval), { true })
+                }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun WithLeading() {
+    PreviewOf {
+        Surface {
+            ConfigRow(
+                labelRes = R.string.interval,
+                leading = { SubSettingsToggleButton(expand = false, onClick = {}) },
+                trailing = { Checkbox(checked = true, onCheckedChange = {}) }
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun Base() {
+    PreviewOf {
+        Surface {
+            ConfigRow(
+                labelRes = R.string.interval,
+                trailing = { Checkbox(checked = true, onCheckedChange = {}) }
             )
         }
     }

@@ -1,12 +1,14 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckRowColumn
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListElement
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import kotlinx.collections.immutable.toPersistentList
 
 @Composable
@@ -23,15 +25,16 @@ fun UtilitiesConfigCard(
     ) {
         CheckRowColumn(
             elements = WidgetUtility.entries.map { element ->
-                ConfigListElement.CheckRow(
+                ConfigItem.Checkable(
                     property = element,
                     isChecked = { isEnabled(element) },
                     onCheckedChange = { update(element, it) },
-                    explanation = element.explanation
+                    contentBeneath = ConfigItem.Beneath.Explanation(element.explanation)
                 )
             }
                 .toPersistentList(),
-            modifier = modifier
+            modifier = modifier,
+            arrangement = Arrangement.spacedBy(12.dp)
         )
     }
 }
