@@ -3,9 +3,9 @@ package com.w2sv.datastore.proto.mapping
 import com.w2sv.datastore.AlignmentProto
 import com.w2sv.datastore.FontSizeProto
 import com.w2sv.datastore.WidgetAppearanceProto
-import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetAppearance
+import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 
 internal fun WidgetAppearance.toProto(): WidgetAppearanceProto =
     WidgetAppearanceProto.newBuilder().also { builder ->

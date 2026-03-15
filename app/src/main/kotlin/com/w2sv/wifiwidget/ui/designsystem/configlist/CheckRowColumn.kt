@@ -95,7 +95,11 @@ private fun Modifier.dragShadow(): Modifier {
 }
 
 @Composable
-private fun PropertyCheckRow(data: ConfigListElement.CheckRow, startPaddingIfToggleButtonAbsent: Dp, modifier: Modifier = Modifier) {
+private fun PropertyCheckRow(
+    data: ConfigListElement.CheckRow,
+    startPaddingIfToggleButtonAbsent: Dp,
+    modifier: Modifier = Modifier
+) {
     when (data.hasSubSettings) {
         false -> {
             CheckRow(

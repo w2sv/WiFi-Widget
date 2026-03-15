@@ -211,8 +211,8 @@ private fun ipSettingConfigEntries(
     updateSetting: (IpSetting, Boolean) -> Unit,
     showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
     scope: CoroutineScope
-): ImmutableList<ConfigListElement> {
-    return buildList {
+): ImmutableList<ConfigListElement> =
+    buildList {
         if (settings.any { it.isVersionSetting }) {
             add(
                 ConfigListElement.Custom {
@@ -251,7 +251,6 @@ private fun ipSettingConfigEntries(
         }
     }
         .toPersistentList()
-}
 
 @Composable
 private fun VersionsHeader(modifier: Modifier = Modifier) {

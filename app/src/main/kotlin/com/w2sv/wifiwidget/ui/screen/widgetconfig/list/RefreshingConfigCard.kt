@@ -23,8 +23,8 @@ import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigRow
 import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsColumnDefaults
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.time.Duration
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RefreshingConfigCard(

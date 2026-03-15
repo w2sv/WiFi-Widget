@@ -54,16 +54,14 @@ fun CheckRowWithSubProperties(
         AnimatedVisibility(visible = state.isExpanded) {
             SubSettings(
                 elements = requireNotNull(data.subSettings),
-                modifier = Modifier.thenIf(showToggleButton) { padding(start = 42.dp) })
+                modifier = Modifier.thenIf(showToggleButton) { padding(start = 42.dp) }
+            )
         }
     }
 }
 
 @Stable
-private class ExpandableListState(
-    initialExpanded: Boolean,
-    private val allowCollapse: Boolean
-) {
+private class ExpandableListState(initialExpanded: Boolean, private val allowCollapse: Boolean) {
     var isExpanded by mutableStateOf(initialExpanded)
         private set
 
@@ -107,7 +105,11 @@ private fun rememberExpandableListState(data: ConfigListElement.CheckRow): Expan
 }
 
 @Composable
-private fun SubSettingsToggleButton(expand: Boolean, onClick: () -> Unit, isEnabled: Boolean) {
+private fun SubSettingsToggleButton(
+    expand: Boolean,
+    onClick: () -> Unit,
+    isEnabled: Boolean
+) {
     IconButton(
         onClick = onClick,
         enabled = isEnabled

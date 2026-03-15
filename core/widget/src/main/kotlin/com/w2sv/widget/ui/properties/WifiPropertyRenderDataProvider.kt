@@ -3,8 +3,8 @@ package com.w2sv.widget.ui.properties
 import android.content.Context
 import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
-import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.widget.WidgetAppearance
+import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
