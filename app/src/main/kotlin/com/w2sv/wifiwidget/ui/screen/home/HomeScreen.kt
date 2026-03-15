@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,8 +20,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.w2sv.androidutils.content.openUrl
+import com.w2sv.common.AppUrl
 import com.w2sv.composed.core.isLandscapeModeActive
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
@@ -135,10 +139,11 @@ private fun PortraitMode(
 
 @Composable
 private fun CopyrightText(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Text(
         text = remember { "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV" },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         fontSize = 16.sp,
-        modifier = modifier
+        modifier = modifier.clickable { context.openUrl(AppUrl.LICENSE) }
     )
 }
