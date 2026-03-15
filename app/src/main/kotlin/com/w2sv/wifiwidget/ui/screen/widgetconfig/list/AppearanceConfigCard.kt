@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance
+package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import android.content.Context
 import androidx.compose.foundation.layout.Box
@@ -27,7 +27,6 @@ import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigSectionCard
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlin.math.roundToInt
 

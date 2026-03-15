@@ -18,7 +18,6 @@ import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.appearance.AppearanceConfigCard
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 
 private val checkRowColumnBottomPadding = 8.dp

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
+package com.w2sv.wifiwidget.ui.designsystem.configlist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.heightIn
