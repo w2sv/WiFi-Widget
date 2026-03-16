@@ -9,12 +9,16 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.toFontFamily
+import com.w2sv.wifiwidget.R
 
 @SuppressLint("NewApi")
 @Composable
@@ -106,3 +110,28 @@ private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorSchem
 @Composable
 private fun Color.animate(animationSpec: AnimationSpec<Color>): Color =
     animateColorAsState(this, animationSpec).value
+
+private val defaultTypography = Typography()
+private val jost = Font(R.font.jost).toFontFamily()
+
+private val typography = Typography(
+    displayLarge = defaultTypography.displayLarge.copy(fontFamily = jost),
+    displayMedium = defaultTypography.displayMedium.copy(fontFamily = jost),
+    displaySmall = defaultTypography.displaySmall.copy(fontFamily = jost),
+
+    headlineLarge = defaultTypography.headlineLarge.copy(fontFamily = jost),
+    headlineMedium = defaultTypography.headlineMedium.copy(fontFamily = jost),
+    headlineSmall = defaultTypography.headlineSmall.copy(fontFamily = jost),
+
+    titleLarge = defaultTypography.titleLarge.copy(fontFamily = jost),
+    titleMedium = defaultTypography.titleMedium.copy(fontFamily = jost),
+    titleSmall = defaultTypography.titleSmall.copy(fontFamily = jost),
+
+    bodyLarge = defaultTypography.bodyLarge.copy(fontFamily = jost),
+    bodyMedium = defaultTypography.bodyMedium.copy(fontFamily = jost),
+    bodySmall = defaultTypography.bodySmall.copy(fontFamily = jost),
+
+    labelLarge = defaultTypography.labelLarge.copy(fontFamily = jost),
+    labelMedium = defaultTypography.labelMedium.copy(fontFamily = jost),
+    labelSmall = defaultTypography.labelSmall.copy(fontFamily = jost)
+)

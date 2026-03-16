@@ -38,6 +38,7 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.theme.explanation
 
 @Composable
 fun ConfigureColoring(
@@ -61,7 +62,7 @@ fun ConfigureColoring(
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     when (useCustomStrategy) {
                         false -> {
-                            PresetColoringConfiguration(
+                            ConfigurePresetColoring(
                                 data = config.preset,
                                 update = { update(config.copy(preset = it)) },
                                 modifier = Modifier.fillMaxWidth(0.82f)
@@ -69,7 +70,7 @@ fun ConfigureColoring(
                         }
 
                         true -> {
-                            CustomColorConfiguration(
+                            ConfigureCustomColoring(
                                 data = config.custom,
                                 showDialog = showDialog,
                                 modifier = Modifier.fillMaxWidth(0.6f)
@@ -129,7 +130,7 @@ private fun SelectColoringStrategyButtonRow(
 }
 
 @Composable
-private fun PresetColoringConfiguration(
+private fun ConfigurePresetColoring(
     data: WidgetColoringStrategy.Preset,
     update: (WidgetColoringStrategy.Preset) -> Unit,
     modifier: Modifier = Modifier
@@ -158,7 +159,7 @@ private fun PresetColoringConfiguration(
                                     R.string.use_static_app_colors
                                 }
                             ),
-                            style = ConfigListToken.TextStyle.explanation
+                            style = MaterialTheme.typography.explanation
                         )
                     }
                 }
@@ -168,7 +169,7 @@ private fun PresetColoringConfiguration(
 }
 
 @Composable
-private fun CustomColorConfiguration(
+private fun ConfigureCustomColoring(
     data: WidgetColoringStrategy.Custom,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier

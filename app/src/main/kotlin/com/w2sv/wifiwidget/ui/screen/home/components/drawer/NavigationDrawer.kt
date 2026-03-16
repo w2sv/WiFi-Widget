@@ -55,9 +55,9 @@ import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
+import com.w2sv.wifiwidget.ui.theme.explanation
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.coroutines.launch
@@ -256,7 +256,7 @@ private fun Action(
             {
                 Text(
                     text = stringResource(res),
-                    style = ConfigListToken.TextStyle.explanation
+                    style = MaterialTheme.typography.explanation
                 )
             }
         },

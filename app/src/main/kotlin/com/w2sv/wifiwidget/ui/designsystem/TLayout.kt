@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.theme.explanation
 
 typealias BoxScopeComposable = @Composable BoxScope.() -> Unit
 
@@ -142,7 +142,7 @@ private fun Complete() {
                 below = {
                     Text(
                         text = stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                        style = ConfigListToken.TextStyle.explanation
+                        style = MaterialTheme.typography.explanation
                     )
                 }
             )
@@ -173,7 +173,7 @@ private fun BelowEndAnchoredToParent() {
                 below = {
                     Text(
                         text = stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                        style = ConfigListToken.TextStyle.explanation,
+                        style = MaterialTheme.typography.explanation,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(Color.Red)
@@ -202,7 +202,7 @@ private fun WithoutTrailing() {
                 below = {
                     Text(
                         text = stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                        style = ConfigListToken.TextStyle.explanation
+                        style = MaterialTheme.typography.explanation
                     )
                 }
             )
@@ -232,7 +232,7 @@ private fun WithoutLeading() {
                 below = {
                     Text(
                         text = stringResource(R.string.use_colors_derived_from_your_wallpaper),
-                        style = ConfigListToken.TextStyle.explanation
+                        style = MaterialTheme.typography.explanation
                     )
                 }
             )

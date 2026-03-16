@@ -30,7 +30,6 @@ import com.w2sv.composed.core.CollectLatestFromFlow
 import com.w2sv.composed.core.OnDispose
 import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
-import com.w2sv.wifiwidget.ui.theme.AppColor
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
@@ -77,7 +76,7 @@ sealed interface SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color
             @ReadOnlyComposable
-            @Composable get() = AppColor.success
+            @Composable get() = MaterialTheme.colorScheme.primary
     }
 }
 

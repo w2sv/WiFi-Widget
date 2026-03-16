@@ -38,7 +38,7 @@ fun BackButtonHeaderWithBottomDivider(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Padding.horizontalDefault),
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = onBackButtonClick, modifier = Modifier.size(38.dp)) {

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.Margins
+import com.w2sv.wifiwidget.ui.theme.explanation
 import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
 import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
@@ -113,7 +115,7 @@ private fun ExplanationOrSubSettings(content: ConfigItem.Beneath, expandSubSetti
 private fun ExplanationText(@StringRes stringRes: Int, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(stringRes),
-        style = ConfigListToken.TextStyle.explanation,
+        style = MaterialTheme.typography.explanation,
         modifier = modifier
     )
 }
