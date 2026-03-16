@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
+import androidx.annotation.FloatRange
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -18,7 +19,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstrainScope
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.Dimension
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.theme.AppTheme
@@ -37,64 +40,67 @@ data class Margins(val start: Dp = 0.dp, val top: Dp = 0.dp, val end: Dp = 0.dp,
  * End-anchoring applied to the below slot.
  */
 enum class BelowEndAnchoring {
-    LabelEnd,
+    CentralEnd,
     ParentEnd;
 
     companion object {
-        val Default get() = LabelEnd
+        val Default get() = CentralEnd
     }
 }
 
 @Composable
 fun TLayout(
-    label: BoxScopeComposable,
+    central: BoxScopeComposable,
     modifier: Modifier = Modifier,
     leading: BoxScopeComposable? = null,
     trailing: BoxScopeComposable? = null,
     below: BoxScopeComposable? = null,
-    labelMargins: Margins = Margins(start = 16.dp),
-    belowMargins: Margins = Margins(top = 2.dp),
+    centralMargins: Margins = Margins.empty,
+    belowMargins: Margins = Margins.empty,
     belowEndAnchoring: BelowEndAnchoring = BelowEndAnchoring.Default
 ) {
     ConstraintLayout(modifier = modifier) {
-        val (leadingRef, labelRef, belowRef, trailingRef) = createRefs()
+        val (leadingRef, centralRef, belowRef, trailingRef) = createRefs()
 
         val hasLeading = leading != null
         val hasTrailing = trailing != null
-        val hasBelow = below != null
+
+        val topRowTop = createTopBarrier(leadingRef, centralRef, trailingRef)
+        val topRowBottom = createBottomBarrier(leadingRef, centralRef, trailingRef)
 
         leading?.let {
             Box(
                 modifier = Modifier.constrainAs(leadingRef) {
                     start.linkTo(parent.start)
-                    centerVerticallyTo(labelRef)
+                    linkTo(top = topRowTop, bottom = topRowBottom)
                 },
                 content = it
             )
         }
 
         Box(
-            modifier = Modifier.constrainAs(labelRef) {
+            modifier = Modifier.constrainAs(centralRef) {
                 linkTo(
-                    top = parent.top,
-                    bottom = if (hasBelow) belowRef.top else parent.bottom
-                )
-                linkTo(
+                    top = topRowTop,
+                    bottom = topRowBottom,
                     start = if (hasLeading) leadingRef.end else parent.start,
                     end = if (hasTrailing) trailingRef.start else parent.end,
-                    startMargin = labelMargins.start
+                    margins = centralMargins
                 )
                 width = Dimension.fillToConstraints
             },
-            content = label
+            content = central
         )
 
         trailing?.let {
             Box(
                 modifier = Modifier.constrainAs(trailingRef) {
-                    start.linkTo(labelRef.end)
-                    end.linkTo(parent.end)
-                    centerVerticallyTo(labelRef)
+                    linkTo(
+                        top = topRowTop,
+                        bottom = topRowBottom,
+                        start = centralRef.end,
+                        end = parent.end
+                    )
                 },
                 content = it
             )
@@ -103,13 +109,15 @@ fun TLayout(
         below?.let {
             Box(
                 modifier = Modifier.constrainAs(belowRef) {
-                    top.linkTo(labelRef.bottom, margin = belowMargins.top)
                     linkTo(
-                        start = labelRef.start,
+                        start = centralRef.start,
                         end = when (belowEndAnchoring) {
-                            BelowEndAnchoring.LabelEnd -> labelRef.end
+                            BelowEndAnchoring.CentralEnd -> centralRef.end
                             BelowEndAnchoring.ParentEnd -> parent.end
-                        }
+                        },
+                        top = centralRef.bottom,
+                        bottom = parent.bottom,
+                        margins = belowMargins
                     )
                     width = Dimension.fillToConstraints
                 },
@@ -119,6 +127,36 @@ fun TLayout(
     }
 }
 
+private fun ConstrainScope.linkTo(
+    start: ConstraintLayoutBaseScope.VerticalAnchor,
+    top: ConstraintLayoutBaseScope.HorizontalAnchor,
+    end: ConstraintLayoutBaseScope.VerticalAnchor,
+    bottom: ConstraintLayoutBaseScope.HorizontalAnchor,
+    margins: Margins,
+    goneMargins: Margins = Margins.empty,
+    @FloatRange(from = 0.0, to = 1.0) horizontalBias: Float = 0.5f,
+    @FloatRange(from = 0.0, to = 1.0) verticalBias: Float = 0.5f
+) {
+    linkTo(
+        start = start,
+        end = end,
+        startMargin = margins.start,
+        endMargin = margins.end,
+        startGoneMargin = goneMargins.start,
+        endGoneMargin = goneMargins.end,
+        bias = horizontalBias
+    )
+    linkTo(
+        top = top,
+        bottom = bottom,
+        topMargin = margins.top,
+        bottomMargin = margins.bottom,
+        topGoneMargin = goneMargins.top,
+        bottomGoneMargin = goneMargins.bottom,
+        bias = verticalBias
+    )
+}
+
 @Preview
 @Composable
 private fun Complete() {
@@ -126,7 +164,7 @@ private fun Complete() {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
-                label = {
+                central = {
                     Text(
                         text = stringResource(R.string.dynamic_colors),
                         color = MaterialTheme.colorScheme.onSurface
@@ -157,7 +195,7 @@ private fun BelowEndAnchoredToParent() {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
-                label = {
+                central = {
                     Text(
                         text = stringResource(R.string.dynamic_colors),
                         color = MaterialTheme.colorScheme.onSurface
@@ -192,7 +230,7 @@ private fun WithoutTrailing() {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
-                label = {
+                central = {
                     Text(
                         text = stringResource(R.string.dynamic_colors),
                         color = MaterialTheme.colorScheme.onSurface
@@ -217,7 +255,7 @@ private fun WithoutLeading() {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
-                label = {
+                central = {
                     Text(
                         text = stringResource(R.string.dynamic_colors),
                         color = MaterialTheme.colorScheme.onSurface
@@ -247,7 +285,7 @@ private fun WithoutLeadingAndBelow() {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
-                label = {
+                central = {
                     Text(
                         text = stringResource(R.string.dynamic_colors),
                         color = MaterialTheme.colorScheme.onSurface

@@ -22,15 +22,15 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
-fun CheckRowColumn(
+fun CheckableList(
     elements: ImmutableList<ConfigItem.Checkable>,
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Vertical = Arrangement.Top
 ) {
     Column(modifier = modifier.then(Modifier.padding(end = ConfigListToken.checkRowEndPadding)), verticalArrangement = arrangement) {
         elements.forEach { data ->
-            CheckableItem(
-                checkable = data,
+            ActionableConfigItem(
+                item = data,
                 modifier = Modifier.padding(start = ConfigListToken.startPaddingIfNoToggleButton)
             )
         }
@@ -38,7 +38,7 @@ fun CheckRowColumn(
 }
 
 @Composable
-fun DragAndDroppableCheckRowColumn(
+fun ReorderableCheckableList(
     elements: ImmutableList<ConfigItem.Checkable>,
     modifier: Modifier = Modifier,
     onDrop: (fromIndex: Int, toIndex: Int) -> Unit
@@ -60,8 +60,8 @@ fun DragAndDroppableCheckRowColumn(
     ) {
         items(elements, key = { it.property.labelRes }) { data ->
             ReorderableItem(reorderableLazyListState, key = data.property.labelRes) { isDragging ->
-                CheckableItem(
-                    checkable = data,
+                ActionableConfigItem(
+                    item = data,
                     modifier = Modifier
                         .longPressDraggableHandle(
                             onDragStarted = { localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress) }

@@ -54,6 +54,7 @@ import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
+import com.w2sv.wifiwidget.ui.designsystem.Margins
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
@@ -244,7 +245,7 @@ private fun Action(
                 modifier = Modifier.size(IconDefaults.SizeBig)
             )
         },
-        label = {
+        central = {
             Text(
                 text = stringResource(action.labelRes),
                 fontSize = 16.sp,
@@ -270,6 +271,8 @@ private fun Action(
 
                 else -> Unit
             }
-        }
+        },
+        centralMargins = Margins(start = 16.dp),
+        belowMargins = Margins(top = 2.dp)
     )
 }

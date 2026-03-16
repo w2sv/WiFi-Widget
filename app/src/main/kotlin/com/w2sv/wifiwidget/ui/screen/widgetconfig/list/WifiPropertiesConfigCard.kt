@@ -24,14 +24,14 @@ import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.DisclaimerRow
+import com.w2sv.wifiwidget.ui.designsystem.Disclaimer
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
-import com.w2sv.wifiwidget.ui.designsystem.configlist.DragAndDroppableCheckRowColumn
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ReorderableCheckableList
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
@@ -74,14 +74,14 @@ fun WifiPropertiesConfigCard(
             }
         )
     ) {
-        DisclaimerRow(
+        Disclaimer(
             text = stringResource(R.string.wifi_property_reordering_information),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 14.dp)
                 .padding(bottom = 8.dp)
         )
-        DragAndDroppableCheckRowColumn(
+        ReorderableCheckableList(
             elements = wifiPropertyCheckRowData(
                 config = config,
                 updateConfig = updateConfig,
@@ -178,7 +178,7 @@ private fun WifiProperty.checkRow(
         ),
         shakeController = shakeController,
         contentBeneath = when (this) {
-            is WifiProperty.IpProperty -> ConfigItem.Beneath.SubSettings(
+            is WifiProperty.IpProperty -> ConfigItem.SubSettings(
                 elements = ipSettingElements(
                     settings = settings,
                     isSettingEnabled = { config().settings.getValue(it) },
@@ -201,7 +201,7 @@ private fun WifiProperty.checkRow(
                 )
             )
 
-            is WifiProperty.Location -> ConfigItem.Beneath.SubSettings(
+            is WifiProperty.Location -> ConfigItem.SubSettings(
                 elements = locationSettingElements(
                     isSettingEnabled = { config().settings.getValue(it) },
                     isMoreThanOnePropertyEnabled = { config().settings.moreThanOnePropertyEnabled() },

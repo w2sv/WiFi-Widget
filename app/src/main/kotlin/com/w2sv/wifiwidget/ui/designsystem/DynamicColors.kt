@@ -16,7 +16,7 @@ fun ConfigureUseDynamicColors(
     below: BoxScopeComposable? = null
 ) {
     TLayout(
-        label = {
+        central = {
             Text(
                 text = stringResource(R.string.dynamic_colors),
                 color = MaterialTheme.colorScheme.onSurface

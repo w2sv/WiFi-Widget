@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,10 +16,8 @@ import com.w2sv.common.utils.minutes
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckRowColumn
+import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckableList
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigLayout
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
 import kotlin.time.Duration
@@ -38,7 +36,7 @@ fun RefreshingConfigCard(
             stringRes = R.string.refreshing
         )
     ) {
-        CheckRowColumn(
+        CheckableList(
             elements = persistentListOf(
                 refreshingConfig(
                     refreshing = refreshing,
@@ -68,47 +66,47 @@ private fun refreshingConfig(
                 )
             )
         },
-        contentBeneath = ConfigItem.Beneath.SubSettings(
-            elements = persistentListOf(
-                ConfigItem.Custom {
-                    RefreshIntervalConfigurationRow(
-                        interval = refreshing.interval,
-                        showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                },
-                ConfigItem.Checkable(
-                    property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                    isChecked = { refreshing.refreshOnLowBattery },
-                    onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
-                )
-            ),
-            allowCollapsing = false
+        contentBeneath = subSettings(
+            refreshing = refreshing,
+            updateRefreshing = updateRefreshing,
+            showDialog = showDialog
         )
     )
 
-@Composable
-private fun RefreshIntervalConfigurationRow(
-    interval: Duration,
-    showConfigurationDialog: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    ConfigLayout(
-        labelRes = R.string.interval,
-        modifier = modifier,
-        fontSize = ConfigListToken.FontSize.subSetting
-    ) {
-        Text(text = remember(interval) { interval.toReadableString() })
-        IconButton(
-            onClick = showConfigurationDialog,
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_edit_24),
-                contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
-                tint = MaterialTheme.colorScheme.primary
+private fun subSettings(
+    refreshing: WidgetRefreshing,
+    updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
+    showDialog: (WidgetConfigDialog) -> Unit
+) =
+    ConfigItem.SubSettings(
+        elements = persistentListOf(
+            ConfigItem.WithCustomTrailing(property = WidgetRefreshingParameter.Interval) {
+                ConfigureIntervalRow(
+                    interval = refreshing.interval,
+                    showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) }
+                )
+            },
+            ConfigItem.Checkable(
+                property = WidgetRefreshingParameter.RefreshOnLowBattery,
+                isChecked = { refreshing.refreshOnLowBattery },
+                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
             )
-        }
+        ),
+        allowCollapsing = false
+    )
+
+@Composable
+private fun RowScope.ConfigureIntervalRow(interval: Duration, showConfigurationDialog: () -> Unit) {
+    Text(text = remember(interval) { interval.toReadableString() })
+    IconButton(
+        onClick = showConfigurationDialog,
+        modifier = Modifier.padding(start = 8.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_edit_24),
+            contentDescription = stringResource(R.string.open_the_refresh_interval_configuration_dialog),
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
 

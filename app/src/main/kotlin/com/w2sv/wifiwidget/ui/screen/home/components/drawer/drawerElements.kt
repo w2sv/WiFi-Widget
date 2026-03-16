@@ -28,7 +28,6 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
         DrawerElement.Action(
             iconRes = R.drawable.ic_nightlight_24,
             labelRes = R.string.theme,
-            configureModifier = { padding(bottom = 12.dp, top = 16.dp) },
             type = DrawerElement.Action.Custom {
                 ThemeSelectionRow(
                     selected = themeController.theme(),

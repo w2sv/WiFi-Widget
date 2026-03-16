@@ -14,7 +14,7 @@ import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.WithLocalContentColor
 
 @Composable
-fun DisclaimerRow(text: String, modifier: Modifier = Modifier) {
+fun Disclaimer(text: String, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
@@ -22,7 +22,16 @@ fun DisclaimerRow(text: String, modifier: Modifier = Modifier) {
     ) {
         WithLocalContentColor(colorScheme.onSurfaceVariantLowAlpha) {
             InfoIcon()
-            Text(text = text, style = typography.explanation)
+            ExplanationText(text)
         }
     }
+}
+
+@Composable
+fun ExplanationText(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text = text,
+        style = typography.explanation,
+        modifier = modifier
+    )
 }

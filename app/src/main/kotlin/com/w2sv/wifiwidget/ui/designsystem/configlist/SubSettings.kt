@@ -38,10 +38,10 @@ fun SubSettings(elements: ImmutableList<ConfigItem>, modifier: Modifier = Modifi
     ) {
         elements.forEach { element ->
             when (element) {
-                is ConfigItem.Checkable -> {
+                is ConfigItem.Actionable -> {
                     if (element.show()) {
-                        CheckableItem(
-                            checkable = element,
+                        ActionableConfigItem(
+                            item = element,
                             fontSize = ConfigListToken.FontSize.subSetting
                         )
                     }
