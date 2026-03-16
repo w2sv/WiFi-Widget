@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoring
@@ -34,12 +33,12 @@ import com.w2sv.domain.model.widget.WidgetColoringStrategy
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
 import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 
 @Composable
 fun ConfigureColoring(
@@ -56,7 +55,7 @@ fun ConfigureColoring(
             SelectColoringStrategyButtonRow(
                 config = config,
                 update = update,
-                modifier = Modifier.padding(bottom = AppearanceConfigTokens.featureSpacing)
+                modifier = Modifier.padding(bottom = ConfigListToken.itemSpacing)
             )
 
             AnimatedContent(targetState = config.useCustom) { useCustomStrategy ->
@@ -148,7 +147,7 @@ private fun PresetColoringConfiguration(
             UseDynamicColorsRow(
                 useDynamicColors = data.useDynamicColors,
                 toggleDynamicColors = { update(data.copy(useDynamicColors = it)) },
-                modifier = Modifier.padding(top = AppearanceConfigTokens.featureSpacing, start = startPadding)
+                modifier = Modifier.padding(top = ConfigListToken.itemSpacing, start = startPadding)
             )
             AnimatedContent(data.useDynamicColors) { useDynamicColors ->
                 Text(
@@ -159,8 +158,7 @@ private fun PresetColoringConfiguration(
                             R.string.use_static_app_colors
                         }
                     ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
-                    fontSize = 13.sp,
+                    style = ConfigListToken.TextStyle.explanation,
                     modifier = Modifier
                         .padding(start = startPadding, end = 52.dp) // Align with start of dynamic colors label and start of the switch
                         .offset(y = (-8).dp) // Move up as a workaround for the stupid built-in switch bottom padding
@@ -217,7 +215,7 @@ private fun CustomizationRow(
     ) {
         Text(
             text = label,
-            fontSize = 14.sp,
+            fontSize = ConfigListToken.FontSize.subSetting,
             modifier = Modifier.weight(1f)
         )
         Box(

@@ -18,8 +18,8 @@ import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckRowColumn
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigRow
-import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsDefaults
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
 import kotlin.time.Duration
@@ -96,7 +96,7 @@ private fun RefreshIntervalConfigurationRow(
     ConfigRow(
         labelRes = R.string.interval,
         modifier = modifier,
-        fontSize = SubSettingsDefaults.fontSize
+        fontSize = ConfigListToken.FontSize.subSetting
     ) {
         Text(text = remember(interval) { interval.toReadableString() })
         IconButton(

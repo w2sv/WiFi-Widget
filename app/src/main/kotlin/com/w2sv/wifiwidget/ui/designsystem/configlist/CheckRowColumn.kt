@@ -21,19 +21,17 @@ import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
-private val sharedModifier = Modifier.padding(end = 8.dp)
-
 @Composable
 fun CheckRowColumn(
     elements: ImmutableList<ConfigItem.Checkable>,
     modifier: Modifier = Modifier,
     arrangement: Arrangement.Vertical = Arrangement.Top
 ) {
-    Column(modifier = modifier.then(sharedModifier), verticalArrangement = arrangement) {
+    Column(modifier = modifier.then(Modifier.padding(end = ConfigListToken.checkRowEndPadding)), verticalArrangement = arrangement) {
         elements.forEach { data ->
             CheckRow(
                 checkable = data,
-                modifier = Modifier.padding(start = 28.dp)
+                modifier = Modifier.padding(start = ConfigListToken.startPaddingIfNoToggleButton)
             )
         }
     }
@@ -54,7 +52,7 @@ fun DragAndDroppableCheckRowColumn(
     LazyColumn(
         state = lazyListState,
         modifier = modifier
-            .then(sharedModifier)
+            .then(Modifier.padding(end = ConfigListToken.checkRowEndPadding))
             .heightIn(
                 max = 2_000.dp // Necessary due to nesting inside scrollable column. Chosen arbitrarily.
             ),

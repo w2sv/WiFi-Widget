@@ -13,14 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
 import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
@@ -46,7 +44,7 @@ fun CheckRow(
         labelRes = checkable.property.labelRes,
         modifier = modifier
             .then(checkable.modifier)
-            .thenIf(padStartIfNoToggleButton && !showToggleButton) { padding(start = 48.dp) }
+            .thenIf(padStartIfNoToggleButton && !showToggleButton) { padding(start = ConfigListToken.expandCollapseButtonWidth) }
             .thenIfNotNull(checkable.shakeController) { shake(it) },
         fontSize = fontSize,
         labelColor = colorScheme.onBackground.orAlphaDecreasedIf(!checkable.isChecked()),
@@ -105,13 +103,17 @@ fun ConfigRowScope.ExplanationOrSubSettings(content: ConfigItem.Beneath, expandS
 
             is ConfigItem.Beneath.SubSettings -> Box(
                 modifier = Modifier.constrainAs(beneathRef) {
-                    top.linkTo(labelRef.bottom, margin = 8.dp)
-                    linkTo(labelRef.start, parent.end, startMargin = (-8).dp)
+                    top.linkTo(labelRef.bottom, margin = ConfigListToken.subSettingsTopMargin)
+                    linkTo(
+                        labelRef.start,
+                        parent.end,
+                        startMargin = (-8).dp // related to ConfigListToken.subSettingsStartPadding, but slightly smaller on purpose
+                    )
                     width = Dimension.fillToConstraints
                 }
             ) {
                 VerticallyAnimatedVisibility(visible = expandSubSettings()) {
-                    SubSettings(elements = content.elements, modifier = Modifier.padding(bottom = 4.dp))
+                    SubSettings(elements = content.elements, modifier = Modifier.padding(bottom = ConfigListToken.subSettingsBottomMargin))
                 }
             }
         }
@@ -122,8 +124,7 @@ fun ConfigRowScope.ExplanationOrSubSettings(content: ConfigItem.Beneath, expandS
 private fun ExplanationText(@StringRes stringRes: Int, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(stringRes),
-        color = colorScheme.onSurfaceVariantLowAlpha,
-        fontSize = 13.sp,
+        style = ConfigListToken.TextStyle.explanation,
         modifier = modifier
     )
 }

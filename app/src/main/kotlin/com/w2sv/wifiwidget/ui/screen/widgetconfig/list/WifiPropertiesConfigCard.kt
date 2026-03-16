@@ -30,8 +30,8 @@ import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.designsystem.configlist.DragAndDroppableCheckRowColumn
-import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettingsDefaults
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.infoDialogData
@@ -230,7 +230,7 @@ private fun ipSettingElements(
     buildList {
         if (settings.any { it.isVersionSetting }) {
             add(
-                ConfigItem.Custom { VersionsHeader(Modifier.padding(top = 12.dp)) }
+                ConfigItem.Custom { VersionsHeader(Modifier.padding(top = ConfigListToken.itemSpacing)) }
             )
         }
         settings.map { setting ->
@@ -257,7 +257,7 @@ private fun ipSettingElements(
                 modifier = Modifier
                     .thenIf(
                         condition = setting.isVersionSetting,
-                        onTrue = { padding(start = 24.dp) }
+                        onTrue = { padding(start = ConfigListToken.startPaddingSecondLevelSubSettings) }
                     )
             )
             add(checkable)
@@ -269,7 +269,7 @@ private fun ipSettingElements(
 private fun VersionsHeader(modifier: Modifier = Modifier) {
     Text(
         text = stringResource(R.string.displayed_versions),
-        fontSize = SubSettingsDefaults.fontSize,
+        fontSize = ConfigListToken.FontSize.subSetting,
         fontWeight = FontWeight.Bold,
         modifier = modifier
     )

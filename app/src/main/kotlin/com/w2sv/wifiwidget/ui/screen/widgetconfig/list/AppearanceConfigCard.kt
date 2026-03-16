@@ -26,12 +26,14 @@ import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.kotlinutils.enumEntryByOrdinal
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlin.math.roundToInt
 
-object AppearanceConfigTokens {
-    val featureSpacing = 12.dp
+private object AppearanceConfigCardToken {
+    val paddingHorizontal = 16.dp
+    val labelStartPadding = 12.dp
 }
 
 @Composable
@@ -46,33 +48,33 @@ fun AppearanceConfigCard(
             stringRes = R.string.appearance
         )
     ) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Column(modifier = Modifier.padding(horizontal = AppearanceConfigCardToken.paddingHorizontal)) {
             ConfigureColoring(
                 config = appearance.coloring,
                 update = { updateAppearance { copy(coloring = it) } },
                 showDialog = showDialog,
-                modifier = Modifier.padding(bottom = AppearanceConfigTokens.featureSpacing)
+                modifier = Modifier.padding(bottom = ConfigListToken.itemSpacing)
             )
             BackgroundOpacitySliderRow(
                 opacity = appearance.backgroundOpacity,
                 setOpacity = { updateAppearance { copy(backgroundOpacity = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AppearanceConfigTokens.featureSpacing)
+                    .padding(top = ConfigListToken.itemSpacing)
             )
             FontSizeSliderRow(
                 fontSize = appearance.fontSize,
                 setFontSize = { updateAppearance { copy(fontSize = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = AppearanceConfigTokens.featureSpacing)
+                    .padding(top = ConfigListToken.itemSpacing)
             )
             ConfigurePropertyValueAlignment(
                 alignment = appearance.propertyValueAlignment,
                 update = { updateAppearance { copy(propertyValueAlignment = it) } },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = AppearanceConfigTokens.featureSpacing)
+                    .padding(vertical = ConfigListToken.itemSpacing)
             )
         }
     }
@@ -103,7 +105,7 @@ private fun ConfigurePropertyValueAlignment(
                     onClick = { update(it) },
                     shape = SegmentedButtonDefaults.itemShape(
                         index = it.ordinal,
-                        count = 2
+                        count = WifiPropertyValueAlignment.entries.size
                     )
                 ) {
                     Text(it.name)
@@ -163,9 +165,9 @@ private fun LabelContentRow(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = 12.dp)
+        modifier = modifier.padding(start = AppearanceConfigCardToken.labelStartPadding)
     ) {
-        Text(label, modifier = Modifier.weight(0.4f), maxLines = 2)
+        Text(label, modifier = Modifier.weight(0.4f))
         Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
             content()
         }

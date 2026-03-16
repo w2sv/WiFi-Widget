@@ -9,15 +9,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import kotlinx.collections.immutable.ImmutableList
-
-object SubSettingsDefaults {
-    val fontSize = 14.sp
-    val startPadding = 10.dp
-}
 
 @Composable
 fun SubSettingsToggleButton(
@@ -41,7 +34,7 @@ fun SubSettings(elements: ImmutableList<ConfigItem>, modifier: Modifier = Modifi
     Column(
         modifier = modifier
             .nestedContentBackground()
-            .padding(start = SubSettingsDefaults.startPadding)
+            .padding(start = ConfigListToken.subSettingsStartPadding)
     ) {
         elements.forEach { element ->
             when (element) {
@@ -49,7 +42,7 @@ fun SubSettings(elements: ImmutableList<ConfigItem>, modifier: Modifier = Modifi
                     if (element.show()) {
                         CheckRow(
                             checkable = element,
-                            fontSize = SubSettingsDefaults.fontSize
+                            fontSize = ConfigListToken.FontSize.subSetting
                         )
                     }
                 }

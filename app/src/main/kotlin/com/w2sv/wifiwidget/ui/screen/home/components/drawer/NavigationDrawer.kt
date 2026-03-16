@@ -56,9 +56,9 @@ import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
-import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.coroutines.launch
@@ -267,8 +267,7 @@ private fun Action(
         action.explanationRes?.let {
             Text(
                 text = stringResource(id = it),
-                color = MaterialTheme.colorScheme.onSurfaceVariantLowAlpha,
-                fontSize = 14.sp,
+                style = ConfigListToken.TextStyle.explanation,
                 modifier = Modifier.constrainAs(explanationRef) {
                     top.linkTo(labelRef.bottom, margin = 2.dp)
                     centerHorizontallyTo(labelRef)
