@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.designsystem.configlist
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
@@ -13,12 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.Dimension
 import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
+import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
+import com.w2sv.wifiwidget.ui.designsystem.Margins
 import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
 import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
@@ -48,7 +48,7 @@ fun CheckableItem(
             .thenIfNotNull(checkable.shakeController) { shake(it) },
         fontSize = fontSize,
         labelColor = colorScheme.onBackground.orAlphaDecreasedIf(!checkable.isChecked()),
-        beneath = checkable.contentBeneath?.let { content ->
+        below = checkable.contentBeneath?.let { content ->
             {
                 ExplanationOrSubSettings(
                     content = content,
@@ -56,6 +56,14 @@ fun CheckableItem(
                 )
             }
         },
+        belowEndAnchoring = checkable.contentBeneath?.asSubSettingsOrNull?.let { BelowEndAnchoring.ParentEnd }
+            ?: BelowEndAnchoring.LabelEnd,
+        belowMargins = checkable.contentBeneath?.asSubSettingsOrNull?.let {
+            Margins(
+                top = ConfigListToken.subSettingsTopMargin,
+                start = (-8).dp // related to ConfigListToken.subSettingsStartPadding, but slightly smaller on purpose
+            )
+        } ?: Margins.empty,
         leading = {
             expandableListState?.run {
                 if (allowCollapsing) {
@@ -89,33 +97,14 @@ fun CheckableItem(
 }
 
 @Composable
-fun ConfigLayoutScope.ExplanationOrSubSettings(content: ConfigItem.Beneath, expandSubSettings: () -> Boolean) {
-    with(constraintLayoutScope) {
-        when (content) {
-            is ConfigItem.Beneath.Explanation -> ExplanationText(
-                stringRes = content.stringRes,
-                modifier = Modifier.constrainAs(beneathRef) {
-                    top.linkTo(labelRef.bottom)
-                    centerHorizontallyTo(labelRef)
-                    width = Dimension.fillToConstraints
-                }
-            )
+private fun ExplanationOrSubSettings(content: ConfigItem.Beneath, expandSubSettings: () -> Boolean) {
+    when (content) {
+        is ConfigItem.Beneath.Explanation -> ExplanationText(
+            stringRes = content.stringRes
+        )
 
-            is ConfigItem.Beneath.SubSettings -> Box(
-                modifier = Modifier.constrainAs(beneathRef) {
-                    top.linkTo(labelRef.bottom, margin = ConfigListToken.subSettingsTopMargin)
-                    linkTo(
-                        labelRef.start,
-                        parent.end,
-                        startMargin = (-8).dp // related to ConfigListToken.subSettingsStartPadding, but slightly smaller on purpose
-                    )
-                    width = Dimension.fillToConstraints
-                }
-            ) {
-                VerticallyAnimatedVisibility(visible = expandSubSettings()) {
-                    SubSettings(elements = content.elements, modifier = Modifier.padding(bottom = ConfigListToken.subSettingsBottomMargin))
-                }
-            }
+        is ConfigItem.Beneath.SubSettings -> VerticallyAnimatedVisibility(visible = expandSubSettings()) {
+            SubSettings(elements = content.elements, modifier = Modifier.padding(bottom = ConfigListToken.subSettingsBottomMargin))
         }
     }
 }
