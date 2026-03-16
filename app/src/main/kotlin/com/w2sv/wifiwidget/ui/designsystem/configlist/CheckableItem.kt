@@ -25,7 +25,7 @@ import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
 import com.w2sv.wifiwidget.ui.util.shake
 
 @Composable
-fun CheckRow(
+fun CheckableItem(
     checkable: ConfigItem.Checkable,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
@@ -40,7 +40,7 @@ fun CheckRow(
     }
     val showToggleButton = expandableListState?.allowCollapsing == true
 
-    ConfigRow(
+    ConfigLayout(
         labelRes = checkable.property.labelRes,
         modifier = modifier
             .then(checkable.modifier)
@@ -59,7 +59,7 @@ fun CheckRow(
         leading = {
             expandableListState?.run {
                 if (allowCollapsing) {
-                    SubSettingsToggleButton(
+                    ExpandCollapseButton(
                         expand = isExpanded,
                         onClick = ::toggle,
                         isEnabled = checkable.isChecked()
@@ -89,7 +89,7 @@ fun CheckRow(
 }
 
 @Composable
-fun ConfigRowScope.ExplanationOrSubSettings(content: ConfigItem.Beneath, expandSubSettings: () -> Boolean) {
+fun ConfigLayoutScope.ExplanationOrSubSettings(content: ConfigItem.Beneath, expandSubSettings: () -> Boolean) {
     with(constraintLayoutScope) {
         when (content) {
             is ConfigItem.Beneath.Explanation -> ExplanationText(

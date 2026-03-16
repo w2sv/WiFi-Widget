@@ -27,20 +27,20 @@ import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 
 @Stable
-data class ConfigRowScope(
+data class ConfigLayoutScope(
     val constraintLayoutScope: ConstraintLayoutScope,
     val beneathRef: ConstrainedLayoutReference,
     val labelRef: ConstrainedLayoutReference
 )
 
 @Composable
-fun ConfigRow(
+fun ConfigLayout(
     @StringRes labelRes: Int,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
     labelColor: Color = MaterialTheme.colorScheme.onBackground,
     leading: @Composable BoxScope.() -> Unit = {},
-    beneath: (@Composable ConfigRowScope.() -> Unit)? = null,
+    beneath: (@Composable ConfigLayoutScope.() -> Unit)? = null,
     trailing: @Composable RowScope.() -> Unit
 ) {
     ConstraintLayout(modifier = modifier.fillMaxWidth()) {
@@ -76,7 +76,7 @@ fun ConfigRow(
 
         beneath?.let {
             val scope = remember(this) {
-                ConfigRowScope(
+                ConfigLayoutScope(
                     constraintLayoutScope = this,
                     beneathRef = beneathRef,
                     labelRef = labelRef
@@ -92,9 +92,9 @@ fun ConfigRow(
 private fun WithExpl() {
     PreviewOf {
         Surface {
-            ConfigRow(
+            ConfigLayout(
                 labelRes = R.string.interval,
-                leading = { SubSettingsToggleButton(expand = false, onClick = {}) },
+                leading = { ExpandCollapseButton(expand = false, onClick = {}) },
                 trailing = { Checkbox(checked = true, onCheckedChange = {}) },
                 beneath = {
                     ExplanationOrSubSettings(ConfigItem.Beneath.Explanation(R.string.interval), { true })
@@ -109,9 +109,9 @@ private fun WithExpl() {
 private fun WithLeading() {
     PreviewOf {
         Surface {
-            ConfigRow(
+            ConfigLayout(
                 labelRes = R.string.interval,
-                leading = { SubSettingsToggleButton(expand = false, onClick = {}) },
+                leading = { ExpandCollapseButton(expand = false, onClick = {}) },
                 trailing = { Checkbox(checked = true, onCheckedChange = {}) }
             )
         }
@@ -123,7 +123,7 @@ private fun WithLeading() {
 private fun Base() {
     PreviewOf {
         Surface {
-            ConfigRow(
+            ConfigLayout(
                 labelRes = R.string.interval,
                 trailing = { Checkbox(checked = true, onCheckedChange = {}) }
             )

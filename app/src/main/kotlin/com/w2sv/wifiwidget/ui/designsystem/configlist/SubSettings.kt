@@ -13,7 +13,7 @@ import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun SubSettingsToggleButton(
+fun ExpandCollapseButton(
     expand: Boolean,
     onClick: () -> Unit,
     isEnabled: Boolean = true
@@ -40,7 +40,7 @@ fun SubSettings(elements: ImmutableList<ConfigItem>, modifier: Modifier = Modifi
             when (element) {
                 is ConfigItem.Checkable -> {
                     if (element.show()) {
-                        CheckRow(
+                        CheckableItem(
                             checkable = element,
                             fontSize = ConfigListToken.FontSize.subSetting
                         )

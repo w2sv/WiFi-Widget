@@ -29,7 +29,7 @@ fun CheckRowColumn(
 ) {
     Column(modifier = modifier.then(Modifier.padding(end = ConfigListToken.checkRowEndPadding)), verticalArrangement = arrangement) {
         elements.forEach { data ->
-            CheckRow(
+            CheckableItem(
                 checkable = data,
                 modifier = Modifier.padding(start = ConfigListToken.startPaddingIfNoToggleButton)
             )
@@ -60,7 +60,7 @@ fun DragAndDroppableCheckRowColumn(
     ) {
         items(elements, key = { it.property.labelRes }) { data ->
             ReorderableItem(reorderableLazyListState, key = data.property.labelRes) { isDragging ->
-                CheckRow(
+                CheckableItem(
                     checkable = data,
                     modifier = Modifier
                         .longPressDraggableHandle(
