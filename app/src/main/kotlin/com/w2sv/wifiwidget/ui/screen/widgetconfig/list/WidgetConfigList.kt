@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -19,17 +18,10 @@ import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.util.PreviewOf
+import com.w2sv.wifiwidget.ui.util.paddingValues
 
-private val checkRowColumnBottomPadding = 8.dp
-private val verticalItemSpacing = 16.dp
-private val widgetConfigCardInnerPadding = PaddingValues(vertical = 18.dp)
-
-private val listContentPadding: PaddingValues
-    @Composable
-    get() = PaddingValues(
-        bottom = if (isPortraitModeActive) 140.dp else 90.dp, // for FABs
-        top = verticalItemSpacing
-    )
+private val sectionCardSpacing = 16.dp
+private val sectionCardInnerPadding = PaddingValues(vertical = 18.dp)
 
 typealias UpdateWidgetConfig = (WifiWidgetConfig.() -> WifiWidgetConfig) -> Unit
 
@@ -43,10 +35,14 @@ fun WidgetConfigList(
 ) {
     LazyColumn(
         state = state,
-        modifier = modifier.padding(horizontal = if (isPortraitModeActive) 26.dp else 126.dp),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(verticalItemSpacing),
-        contentPadding = listContentPadding
+        verticalArrangement = Arrangement.spacedBy(sectionCardSpacing),
+        contentPadding = paddingValues(
+            bottom = if (isPortraitModeActive) 140.dp else 90.dp, // for FABs
+            top = sectionCardSpacing,
+            horizontal = if (isPortraitModeActive) 26.dp else 126.dp
+        )
     ) {
         item {
             AppearanceConfigCard(
@@ -67,16 +63,14 @@ fun WidgetConfigList(
                 isEnabled = { config.utilities.getValue(it) },
                 update = { property, isEnabled ->
                     updateConfig { copy(utilities = utilities.copy { put(property, isEnabled) }) }
-                },
-                modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
+                }
             )
         }
         item {
             RefreshingConfigCard(
                 refreshing = config.refreshing,
                 updateRefreshing = { updateRefreshing -> updateConfig { copy(refreshing = updateRefreshing(refreshing)) } },
-                showDialog = showDialog,
-                modifier = Modifier.padding(bottom = checkRowColumnBottomPadding)
+                showDialog = showDialog
             )
         }
     }
@@ -103,7 +97,7 @@ fun WidgetConfigSectionCard(
 ) {
     ElevatedIconHeaderCard(
         iconHeader = header,
-        innerPadding = widgetConfigCardInnerPadding,
+        innerPadding = sectionCardInnerPadding,
         modifier = modifier,
         content = content
     )
