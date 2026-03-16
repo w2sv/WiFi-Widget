@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -30,9 +29,9 @@ import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.domain.model.widget.WidgetColoringStrategy
+import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.designsystem.UseDynamicColorsRow
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
@@ -143,27 +142,27 @@ private fun PresetColoringConfiguration(
             horizontalArrangement = Arrangement.SpaceEvenly
         )
         if (dynamicColorsSupported) {
-            val startPadding = 20.dp
-            UseDynamicColorsRow(
+            ConfigureUseDynamicColors(
                 useDynamicColors = data.useDynamicColors,
                 toggleDynamicColors = { update(data.copy(useDynamicColors = it)) },
-                modifier = Modifier.padding(top = ConfigListToken.itemSpacing, start = startPadding)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = ConfigListToken.itemSpacing, start = 20.dp),
+                below = {
+                    AnimatedContent(data.useDynamicColors) { useDynamicColors ->
+                        Text(
+                            text = stringResource(
+                                if (useDynamicColors) {
+                                    R.string.use_colors_derived_from_your_wallpaper
+                                } else {
+                                    R.string.use_static_app_colors
+                                }
+                            ),
+                            style = ConfigListToken.TextStyle.explanation
+                        )
+                    }
+                }
             )
-            AnimatedContent(data.useDynamicColors) { useDynamicColors ->
-                Text(
-                    text = stringResource(
-                        if (useDynamicColors) {
-                            R.string.use_colors_derived_from_your_wallpaper
-                        } else {
-                            R.string.use_static_app_colors
-                        }
-                    ),
-                    style = ConfigListToken.TextStyle.explanation,
-                    modifier = Modifier
-                        .padding(start = startPadding, end = 52.dp) // Align with start of dynamic colors label and start of the switch
-                        .offset(y = (-8).dp) // Move up as a workaround for the stupid built-in switch bottom padding
-                )
-            }
         }
     }
 }
@@ -174,7 +173,11 @@ private fun CustomColorConfiguration(
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ConfigListToken.itemSpacing),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         WidgetColor.entries.forEach { widgetColor ->
             val value = data[widgetColor]
             val label = stringResource(id = widgetColor.labelRes)

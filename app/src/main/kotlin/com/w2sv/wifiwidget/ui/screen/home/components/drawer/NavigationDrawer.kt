@@ -48,14 +48,13 @@ import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.w2sv.androidutils.content.openUrl
 import com.w2sv.common.AppUrl
 import com.w2sv.composed.core.extensions.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
+import com.w2sv.wifiwidget.ui.designsystem.TLayout
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
@@ -229,73 +228,48 @@ private fun Action(
     scope: DrawerActionScope,
     modifier: Modifier = Modifier
 ) {
-    ConstraintLayout(
+    val clickable = action.type.asClickableOrNull
+
+    TLayout(
         modifier = modifier
             .fillMaxWidth()
-            .thenIfNotNull(action.type.asClickableOrNull) { clickable ->
-                clickable(onClick = { clickable.onClick(scope) })
-            }
-    ) {
-        val (iconRef, labelRef, explanationRef, actionRef) = createRefs()
-        val hasAction = action.type.asClickableOrNull == null
-
-        Icon(
-            modifier = Modifier
-                .size(size = IconDefaults.SizeBig)
-                .constrainAs(iconRef) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                },
-            painter = painterResource(id = action.iconRes),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
-        )
-
-        Text(
-            text = stringResource(id = action.labelRes),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            maxLines = 1,
-            modifier = Modifier.constrainAs(labelRef) {
-                start.linkTo(iconRef.end, margin = 16.dp)
-                end.linkTo(if (hasAction) actionRef.start else parent.end)
-                width = Dimension.fillToConstraints
-                centerVerticallyTo(iconRef)
-            }
-        )
-
-        action.explanationRes?.let {
-            Text(
-                text = stringResource(id = it),
-                style = ConfigListToken.TextStyle.explanation,
-                modifier = Modifier.constrainAs(explanationRef) {
-                    top.linkTo(labelRef.bottom, margin = 2.dp)
-                    centerHorizontallyTo(labelRef)
-                    width = Dimension.fillToConstraints
-                }
+            .thenIfNotNull(clickable) {
+                clickable(onClick = { it.onClick(scope) })
+            },
+        leading = {
+            Icon(
+                painter = painterResource(action.iconRes),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(IconDefaults.SizeBig)
             )
-        }
-
-        val actionModifier = Modifier.constrainAs(actionRef) {
-            start.linkTo(labelRef.end)
-            end.linkTo(parent.end)
-            centerVerticallyTo(labelRef)
-        }
-
-        when (val type = action.type) {
-            is DrawerElement.Action.Custom -> {
-                type.content(scope, actionModifier)
-            }
-
-            is DrawerElement.Action.Switch -> {
-                Switch(
-                    checked = type.checked(scope),
-                    onCheckedChange = { type.onCheckedChange(scope, it) },
-                    modifier = actionModifier
+        },
+        label = {
+            Text(
+                text = stringResource(action.labelRes),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1
+            )
+        },
+        below = action.explanationRes?.let { res ->
+            {
+                Text(
+                    text = stringResource(res),
+                    style = ConfigListToken.TextStyle.explanation
                 )
             }
+        },
+        trailing = {
+            when (val type = action.type) {
+                is DrawerElement.Action.Custom -> type.content(scope)
+                is DrawerElement.Action.Switch -> Switch(
+                    checked = type.checked(scope),
+                    onCheckedChange = { type.onCheckedChange(scope, it) }
+                )
 
-            else -> Unit
+                else -> Unit
+            }
         }
-    }
+    )
 }
