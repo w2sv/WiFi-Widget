@@ -4,4 +4,9 @@ import com.w2sv.domain.model.networking.WifiStatus
 
 interface WifiStatusProvider {
     operator fun invoke(): WifiStatus
+
+    /**
+     * @return Either [WifiStatus.Disconnected] or [WifiStatus.Disabled].
+     */
+    fun onConnectionLost(): WifiStatus
 }

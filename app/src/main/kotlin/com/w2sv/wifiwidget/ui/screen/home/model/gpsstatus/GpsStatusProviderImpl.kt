@@ -1,12 +1,11 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
 import android.content.IntentFilter
 import android.location.LocationManager
 import com.w2sv.androidutils.location.isLocationEnabledCompat
 import com.w2sv.androidutils.service.systemService
+import com.w2sv.common.utils.broadcastReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
@@ -22,12 +21,7 @@ class GpsStatusProviderImpl @Inject constructor(@ApplicationContext context: Con
 private fun Context.isGpsEnabledFlow(): Flow<Boolean> =
     callbackFlow {
         val locationManager = systemService<LocationManager>().also { trySend(it.isLocationEnabledCompat()) }
-
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                trySend(locationManager.isLocationEnabledCompat())
-            }
-        }
+        val receiver = broadcastReceiver { _, _ -> trySend(locationManager.isLocationEnabledCompat()) }
 
         registerReceiver(receiver, IntentFilter(LocationManager.MODE_CHANGED_ACTION))
         awaitClose { unregisterReceiver(receiver) }

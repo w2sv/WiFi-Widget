@@ -11,7 +11,6 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import slimber.log.i
 
 @Singleton
 internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(

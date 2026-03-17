@@ -9,9 +9,9 @@ import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.ui.resolve
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import javax.inject.Inject
 
 internal class WifiPropertyRenderDataProvider @Inject constructor(
     private val widgetConfigFlow: WidgetConfigFlow,

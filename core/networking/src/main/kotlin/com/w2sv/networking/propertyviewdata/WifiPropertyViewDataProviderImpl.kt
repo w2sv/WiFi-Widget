@@ -12,12 +12,12 @@ import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.systemIpAddresses
+import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import slimber.log.e
-import javax.inject.Inject
 
 internal class WifiPropertyViewDataProviderImpl @Inject constructor(
     private val wifiManager: WifiManager,
@@ -31,33 +31,34 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
         remoteNetworkInfo: RemoteNetworkInfo
-    ): List<WifiPropertyViewData> = withContext(Dispatchers.Default) {
-        val wifiSnapshot = WifiSnapshot(
-            connectionInfo = wifiManager.connectionInfo,
-            dhcpInfo = wifiManager.dhcpInfo,
-            linkProperties = connectivityManager.linkProperties,
-            publicIps = remoteNetworkInfo.publicIps,
-            systemIps = connectivityManager.systemIpAddresses(),
-            ipApiData = remoteNetworkInfo.ipApiData,
-            isGpsEnabled = isGpsEnabled()
-        )
-
-        enabledProperties.flatMap { property ->
-            ensureActive()
-
-            val values = try {
-                property.resolve(wifiSnapshot, enabledIpSettings)
-            } catch (t: Throwable) {
-                e { "Failed resolving property $property; $t" }
-                throw CancellationException("Failed resolving property", t)
-            }
-
-            property.viewData(
-                values = values,
-                resources = resources
+    ): List<WifiPropertyViewData> =
+        withContext(Dispatchers.Default) {
+            val wifiSnapshot = WifiSnapshot(
+                connectionInfo = wifiManager.connectionInfo,
+                dhcpInfo = wifiManager.dhcpInfo,
+                linkProperties = connectivityManager.linkProperties,
+                publicIps = remoteNetworkInfo.publicIps,
+                systemIps = connectivityManager.systemIpAddresses(),
+                ipApiData = remoteNetworkInfo.ipApiData,
+                isGpsEnabled = isGpsEnabled()
             )
+
+            enabledProperties.flatMap { property ->
+                ensureActive()
+
+                val values = try {
+                    property.resolve(wifiSnapshot, enabledIpSettings)
+                } catch (t: Throwable) {
+                    e { "Failed resolving property $property; $t" }
+                    throw CancellationException("Failed resolving property", t)
+                }
+
+                property.viewData(
+                    values = values,
+                    resources = resources
+                )
+            }
         }
-    }
 }
 
 private fun WifiProperty.viewData(values: List<WifiPropertyValue>, resources: Resources): List<WifiPropertyViewData> =
