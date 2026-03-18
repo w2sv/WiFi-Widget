@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -63,6 +64,12 @@ import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.coroutines.launch
 
+private object NavigationDrawerToken {
+    val topPadding = 16.dp
+    val actionPadding = PaddingValues(top = 12.dp)
+    val groupHeaderPadding = PaddingValues(top = 20.dp)
+}
+
 @Composable
 fun NavigationDrawer(
     state: DrawerState,
@@ -99,7 +106,7 @@ private fun NavigationDrawerSheet(
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 24.dp),
-            contentPadding = WindowInsets.systemBarsIgnoringVisibility.asPaddingValues().add(top = 16.dp)
+            contentPadding = WindowInsets.systemBarsIgnoringVisibility.asPaddingValues().add(top = NavigationDrawerToken.topPadding)
         ) {
             item {
                 Header(
@@ -112,7 +119,7 @@ private fun NavigationDrawerSheet(
                 HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 16.dp)
+                        .padding(top = NavigationDrawerToken.topPadding)
                 )
             }
             items(elements, key = { it.hashCode() }, contentType = { it::class }) { element ->
@@ -195,11 +202,7 @@ private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerA
                 Action(
                     action = element,
                     scope = actionScope,
-                    modifier = element.configureModifier(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                    )
+                    modifier = Modifier.padding(element.configurePadding(NavigationDrawerToken.actionPadding))
                 )
             }
         }
@@ -207,7 +210,7 @@ private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerA
         is DrawerElement.Header -> {
             GroupHeader(
                 titleRes = element.titleRes,
-                modifier = Modifier.padding(top = 20.dp)
+                modifier = Modifier.padding(NavigationDrawerToken.groupHeaderPadding)
             )
         }
     }

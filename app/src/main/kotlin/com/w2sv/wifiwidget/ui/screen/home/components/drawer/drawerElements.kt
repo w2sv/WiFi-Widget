@@ -4,10 +4,9 @@ import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ShareCompat
 import androidx.core.net.toUri
@@ -19,6 +18,7 @@ import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.AppUrl
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
+import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -28,6 +28,7 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
         DrawerElement.Action(
             iconRes = R.drawable.ic_nightlight_24,
             labelRes = R.string.theme,
+            configurePadding = { PaddingValues.Zero },
             type = DrawerElement.Action.Custom {
                 ThemeSelectionRow(
                     selected = themeController.theme(),
@@ -60,7 +61,7 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
         DrawerElement.Action(
             iconRes = R.drawable.ic_policy_24,
             labelRes = R.string.privacy_policy,
-            configureModifier = { padding(bottom = 4.dp) },
+            configurePadding = { add(bottom = 8.dp) },
             type = DrawerElement.Action.Clickable {
                 context.openUrl(AppUrl.PRIVACY_POLICY)
             }
@@ -149,7 +150,7 @@ sealed interface DrawerElement {
         @StringRes val labelRes: Int,
         @StringRes val explanationRes: Int? = null,
         val isVisible: DrawerActionScope.() -> Boolean = { true },
-        val configureModifier: Modifier.() -> Modifier = { this },
+        val configurePadding: PaddingValues.() -> PaddingValues = { this },
         val type: Type
     ) : DrawerElement {
 
