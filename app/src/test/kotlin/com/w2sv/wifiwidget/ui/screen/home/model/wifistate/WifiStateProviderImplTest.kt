@@ -11,7 +11,7 @@ import com.w2sv.domain.repository.RemoteNetworkInfoRepository
 import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.update
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.GpsStatusProvider
+import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -40,7 +40,7 @@ class WifiStateProviderImplTest {
     private val remoteNetworkInfoRepository = mockk<RemoteNetworkInfoRepository>(relaxed = true) {
         every { data } returns remoteNetworkFlow
     }
-    private val gpsStateProvider = mockk<GpsStatusProvider> {
+    private val gpsStateProvider = mockk<LocationEnabledProvider> {
         every { isEnabled } returns gpsIsEnabledFlow
     }
 
@@ -49,7 +49,7 @@ class WifiStateProviderImplTest {
         widgetConfigFlow = widgetConfigFlow,
         wifiPropertyViewDataProvider = wifiPropertyViewDataProvider,
         remoteNetworkInfoRepository = remoteNetworkInfoRepository,
-        gpsStatusProvider = gpsStateProvider,
+        locationEnabledProvider = gpsStateProvider,
         scope = CoroutineScope(UnconfinedTestDispatcher())
     )
 

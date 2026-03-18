@@ -11,7 +11,7 @@ import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.kotlinutils.coroutines.flow.collectLatestOn
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.GpsStatusProvider
+import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,7 @@ class WifiStateProviderImpl @Inject constructor(
     widgetConfigFlow: WidgetConfigFlow,
     wifiPropertyViewDataProvider: WifiPropertyViewDataProvider,
     remoteNetworkInfoRepository: RemoteNetworkInfoRepository,
-    gpsStatusProvider: GpsStatusProvider,
+    locationEnabledProvider: LocationEnabledProvider,
     private val scope: CoroutineScope
 ) : WifiStateProvider {
 
@@ -106,7 +106,7 @@ class WifiStateProviderImpl @Inject constructor(
             }
 
         // React to GPS enablement changes
-        gpsStatusProvider
+        locationEnabledProvider
             .isEnabled
             .distinctUntilChanged()
             .collectOn(scope) { locationAccessChanged.emit(Unit) }

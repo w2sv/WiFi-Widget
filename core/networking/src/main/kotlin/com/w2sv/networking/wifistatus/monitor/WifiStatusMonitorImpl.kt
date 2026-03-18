@@ -13,12 +13,12 @@ import com.w2sv.networking.extensions.hasWifiTransport
 import com.w2sv.networking.extensions.isAnyWifiConnected
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import slimber.log.d
+import javax.inject.Inject
 
 internal class WifiStatusMonitorImpl @Inject constructor(
     private val provideWifiStatus: WifiStatusProvider,
@@ -39,15 +39,12 @@ internal class WifiStatusMonitorImpl @Inject constructor(
             emit = ::trySend,
             activeNetwork = { connectivityManager.activeNetwork }
         )
-
-        val wifiStateReceiver = wifiStateReceiver { state ->
+        val platformWifiStateReceiver = platformWifiStateReceiver { state ->
             when (state) {
                 PlatformWifiState.Disabling, PlatformWifiState.Disabled -> trySend(WifiStatus.Disabled)
                 PlatformWifiState.Enabling, PlatformWifiState.Enabled -> {
                     if (!connectivityManager.isAnyWifiConnected) {
-                        trySend(
-                            WifiStatus.NotConnected
-                        )
+                        trySend(WifiStatus.NotConnected)
                     }
                 }
 
@@ -57,11 +54,11 @@ internal class WifiStatusMonitorImpl @Inject constructor(
 
         // Register callbacks
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-        context.registerReceiver(wifiStateReceiver, IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION))
+        context.registerReceiver(platformWifiStateReceiver, IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION))
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(networkCallback)
-            context.unregisterReceiver(wifiStateReceiver)
+            context.unregisterReceiver(platformWifiStateReceiver)
         }
     }
         .conflate()
