@@ -1,6 +1,5 @@
 package com.w2sv.networking.wifistatus.monitor
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -9,9 +8,9 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
-import com.w2sv.common.utils.broadcastReceiver
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.networking.extensions.hasWifiTransport
+import com.w2sv.networking.extensions.isAnyWifiConnected
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
@@ -40,7 +39,19 @@ internal class WifiStatusMonitorImpl @Inject constructor(
             emit = ::trySend,
             activeNetwork = { connectivityManager.activeNetwork }
         )
-        val wifiStateReceiver = wifiStateReceiver(::trySend)
+
+        val wifiStateReceiver = wifiStateReceiver { state ->
+            when (state) {
+                PlatformWifiState.Disabling, PlatformWifiState.Disabled -> trySend(WifiStatus.Disabled)
+                PlatformWifiState.Enabling, PlatformWifiState.Enabled -> {
+                    if (!connectivityManager.isAnyWifiConnected) trySend(
+                        WifiStatus.Disconnected
+                    )
+                }
+
+                else -> Unit
+            }
+        }
 
         // Register callbacks
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
@@ -86,20 +97,5 @@ private fun networkCallback(
             // A Wi-Fi network disappeared
             d { "onLost" }
             emit(statusProvider.onConnectionLost())
-        }
-    }
-
-private fun wifiStateReceiver(emit: (WifiStatus) -> Unit): BroadcastReceiver =
-    broadcastReceiver { _, intent ->
-        if (intent.action != WifiManager.WIFI_STATE_CHANGED_ACTION) return@broadcastReceiver
-
-        val state = intent.getIntExtra(
-            WifiManager.EXTRA_WIFI_STATE,
-            WifiManager.WIFI_STATE_UNKNOWN
-        )
-
-        if (state in listOf(WifiManager.WIFI_STATE_DISABLED, WifiManager.WIFI_STATE_DISABLING)) {
-            d { "Received Wifi disabled broadcast" }
-            emit(WifiStatus.Disabled)
         }
     }
