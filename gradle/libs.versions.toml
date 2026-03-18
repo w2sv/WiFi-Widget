@@ -70,6 +70,7 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "runner" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-workmanager = "androidx.work:work-runtime-ktx:2.11.1"
 compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
+flowExt = "io.github.hoc081098:FlowExt:1.0.0"
 google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.3"
 google-hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 google-hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }

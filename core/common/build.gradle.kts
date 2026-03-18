@@ -9,4 +9,5 @@ dependencies {
     implementation(libs.androidx.annotation)
     implementation(libs.w2sv.androidutils)
     implementation(libs.w2sv.datastoreutils.preferences)
+    api(libs.flowExt)
 }

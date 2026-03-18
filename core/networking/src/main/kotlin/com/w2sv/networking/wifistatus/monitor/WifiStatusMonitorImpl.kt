@@ -14,12 +14,12 @@ import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.networking.extensions.hasWifiTransport
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import slimber.log.d
+import javax.inject.Inject
 
 internal class WifiStatusMonitorImpl @Inject constructor(
     private val provideWifiStatus: WifiStatusProvider,
@@ -68,7 +68,7 @@ private fun networkCallback(
 
         override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
             // Only react if this is actually Wi-Fi
-            if (capabilities.hasWifiTransport) {
+            if (network == activeNetwork() && capabilities.hasWifiTransport) {
                 d { "onCapabilitiesChanged" }
                 emit(statusProvider())
             }

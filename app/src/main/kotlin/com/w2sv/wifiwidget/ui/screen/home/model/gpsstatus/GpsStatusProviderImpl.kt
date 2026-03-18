@@ -20,7 +20,7 @@ class GpsStatusProviderImpl @Inject constructor(@ApplicationContext context: Con
 
 private fun Context.isGpsEnabledFlow(): Flow<Boolean> =
     callbackFlow {
-        val locationManager = systemService<LocationManager>().also { trySend(it.isLocationEnabledCompat()) }
+        val locationManager = systemService<LocationManager>()
         val receiver = broadcastReceiver { _, _ -> trySend(locationManager.isLocationEnabledCompat()) }
 
         registerReceiver(receiver, IntentFilter(LocationManager.MODE_CHANGED_ACTION))
