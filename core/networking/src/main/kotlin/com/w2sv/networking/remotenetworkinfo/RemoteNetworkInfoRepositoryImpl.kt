@@ -25,20 +25,21 @@ internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(
      * Refreshes all network info **on-demand**.
      * Parallelizes the fetches and respects user settings.
      */
-    override suspend fun refresh() = coroutineScope {
-        val ipApiDeferred = async {
-            ipApiRepository.refresh()
-            ipApiRepository.data.first()
-        }
+    override suspend fun refresh() =
+        coroutineScope {
+            val ipApiDeferred = async {
+                ipApiRepository.refresh()
+                ipApiRepository.data.first()
+            }
 
-        val publicIpDeferred = async {
-            publicIpRepository.refresh()
-            publicIpRepository.data.first()
-        }
+            val publicIpDeferred = async {
+                publicIpRepository.refresh()
+                publicIpRepository.data.first()
+            }
 
-        _data.value = RemoteNetworkInfo(
-            ipApiData = ipApiDeferred.await(),
-            publicIps = publicIpDeferred.await()
-        )
-    }
+            _data.value = RemoteNetworkInfo(
+                ipApiData = ipApiDeferred.await(),
+                publicIps = publicIpDeferred.await()
+            )
+        }
 }

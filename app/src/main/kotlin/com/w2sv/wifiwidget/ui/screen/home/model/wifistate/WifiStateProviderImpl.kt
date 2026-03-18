@@ -13,6 +13,7 @@ import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
 import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.GpsStatusProvider
 import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,7 +31,6 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import slimber.log.i
-import javax.inject.Inject
 
 @ViewModelScoped
 class WifiStateProviderImpl @Inject constructor(

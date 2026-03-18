@@ -13,12 +13,12 @@ import com.w2sv.networking.extensions.hasWifiTransport
 import com.w2sv.networking.extensions.isAnyWifiConnected
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
 import slimber.log.d
-import javax.inject.Inject
 
 internal class WifiStatusMonitorImpl @Inject constructor(
     private val provideWifiStatus: WifiStatusProvider,
@@ -44,9 +44,11 @@ internal class WifiStatusMonitorImpl @Inject constructor(
             when (state) {
                 PlatformWifiState.Disabling, PlatformWifiState.Disabled -> trySend(WifiStatus.Disabled)
                 PlatformWifiState.Enabling, PlatformWifiState.Enabled -> {
-                    if (!connectivityManager.isAnyWifiConnected) trySend(
-                        WifiStatus.Disconnected
-                    )
+                    if (!connectivityManager.isAnyWifiConnected) {
+                        trySend(
+                            WifiStatus.Disconnected
+                        )
+                    }
                 }
 
                 else -> Unit

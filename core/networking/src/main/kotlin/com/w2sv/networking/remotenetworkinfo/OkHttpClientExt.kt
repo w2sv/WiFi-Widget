@@ -31,7 +31,9 @@ internal suspend fun <T> OkHttpClient.fetchFromUrl(
             }
         } catch (e: Exception) {
             when (e) {
-                is SocketTimeoutException, is TimeoutCancellationException -> e { "Timed out with ${e.message} trying to fetch data from $url" }
+                is SocketTimeoutException, is TimeoutCancellationException -> e {
+                    "Timed out with ${e.message} trying to fetch data from $url"
+                }
                 else -> e { "Received $e when trying to fetch data from $url" }
             }
             Result.failure(e)
