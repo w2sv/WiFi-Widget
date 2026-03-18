@@ -10,6 +10,6 @@ sealed class WifiState(open val status: WifiStatus) {
         get() = this as? Connected
 
     data object Disabled : WifiState(WifiStatus.Disabled)
-    data object Disconnected : WifiState(WifiStatus.Disconnected)
+    data object Disconnected : WifiState(WifiStatus.NotConnected)
     data class Connected(override val status: WifiStatus, val propertyViewData: List<WifiPropertyViewData>) : WifiState(status)
 }

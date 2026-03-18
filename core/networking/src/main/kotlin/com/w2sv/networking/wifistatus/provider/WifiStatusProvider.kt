@@ -6,7 +6,7 @@ interface WifiStatusProvider {
     operator fun invoke(): WifiStatus
 
     /**
-     * @return Either [WifiStatus.Disconnected] or [WifiStatus.Disabled].
+     * @return Either [WifiStatus.NotConnected] or [WifiStatus.Disabled].
      */
     fun onConnectionLost(): WifiStatus
 }

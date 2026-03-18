@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @ExperimentalCoroutinesApi
 class WifiStateProviderImplTest {
 
-    private val wifiStatusFlow = MutableSharedFlow<WifiStatus>(replay = 1).apply { tryEmit(WifiStatus.Disconnected) }
+    private val wifiStatusFlow = MutableSharedFlow<WifiStatus>(replay = 1).apply { tryEmit(WifiStatus.NotConnected) }
     private val widgetConfigFlow = MutableStateFlow(WifiWidgetConfig.default)
     private val remoteNetworkFlow = MutableStateFlow(RemoteNetworkInfo.empty)
     private val gpsIsEnabledFlow = MutableStateFlow(true)

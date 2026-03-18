@@ -46,7 +46,7 @@ internal class WifiStatusMonitorImpl @Inject constructor(
                 PlatformWifiState.Enabling, PlatformWifiState.Enabled -> {
                     if (!connectivityManager.isAnyWifiConnected) {
                         trySend(
-                            WifiStatus.Disconnected
+                            WifiStatus.NotConnected
                         )
                     }
                 }

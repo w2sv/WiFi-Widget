@@ -86,7 +86,7 @@ class WifiStateProviderImpl @Inject constructor(
             i { "Received wifiStatus=$wifiStatus" }
             when (wifiStatus) {
                 WifiStatus.Disabled -> flowOf(WifiState.Disabled)
-                WifiStatus.Disconnected -> flowOf(WifiState.Disconnected)
+                WifiStatus.NotConnected -> flowOf(WifiState.Disconnected)
                 else -> connectedWifiState
             }
         }

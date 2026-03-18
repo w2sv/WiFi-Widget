@@ -108,7 +108,7 @@
     <string name="dns_description"><b>Domain Name System</b>. Associates domain names with various types of information, acting as a database. Most notably, it translates domain names to their underlying IP addresses, needed for locating and communicating with them.</string>
     <string name="dhcp_description"><b>Dynamic Host Configuration Protocol</b>. A service which automatically assigns IP addresses and other network parameters to devices connected to a network.</string>
     <string name="disabled">Disabled</string>
-    <string name="disconnected">Disconnected</string>
+    <string name="not_connected">Not Connected</string>
     <string name="connected">Connected</string>
     <string name="connected_inactive">Connected, inactive</string>
     <string name="loopback">Loopback</string>

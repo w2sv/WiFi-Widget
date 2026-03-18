@@ -9,7 +9,7 @@ enum class WifiStatus(@StringRes val labelRes: Int, @DrawableRes val iconRes: In
     Disabled(R.string.disabled, R.drawable.ic_wifi_off_24),
 
     /** Wi-Fi is on but not connected to any network. */
-    Disconnected(R.string.disconnected, R.drawable.ic_wifi_find_24),
+    NotConnected(R.string.not_connected, R.drawable.ic_wifi_find_24),
 
     /** Connected to a Wi-Fi network and active. */
     Connected(R.string.connected, R.drawable.ic_wifi_24),

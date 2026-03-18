@@ -19,7 +19,7 @@ internal class WifiStatusProviderImpl @Inject constructor(
         wifiStatus(wifiManager.isWifiEnabled, connectivityManager)
 
     override fun onConnectionLost(): WifiStatus =
-        if (isWifiEnabled) WifiStatus.Disconnected else WifiStatus.Disabled
+        if (isWifiEnabled) WifiStatus.NotConnected else WifiStatus.Disabled
 
     private val isWifiEnabled get() = wifiManager.isWifiEnabled
 }
@@ -42,7 +42,7 @@ private fun wifiStatus(isWifiEnabled: Boolean, connectivityManager: Connectivity
             }
 
         connectivityManager.isAnyWifiConnected -> WifiStatus.ConnectedInactive
-        else -> WifiStatus.Disconnected
+        else -> WifiStatus.NotConnected
     }
         .log { "Computed WifiStatus.$it" }
 }
