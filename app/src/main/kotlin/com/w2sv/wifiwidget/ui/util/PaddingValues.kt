@@ -15,12 +15,13 @@ fun PaddingValues.add(
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp
-): PaddingValues = PaddingValues(
-    start = calculateStartPadding(LayoutDirection.Ltr) + start,
-    top = calculateTopPadding() + top,
-    end = calculateEndPadding(LayoutDirection.Ltr) + end,
-    bottom = calculateBottomPadding() + bottom
-)
+): PaddingValues =
+    PaddingValues(
+        start = calculateStartPadding(LayoutDirection.Ltr) + start,
+        top = calculateTopPadding() + top,
+        end = calculateEndPadding(LayoutDirection.Ltr) + end,
+        bottom = calculateBottomPadding() + bottom
+    )
 
 @Stable
 fun paddingValues(
