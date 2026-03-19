@@ -62,16 +62,18 @@ fun <T> makeOnCheckedChange(
     updateVetoReason: (Boolean) -> T? = { null },
     onVeto: (T) -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit = { isCheckedNew ->
-    updateVetoReason(isCheckedNew)?.let(onVeto) ?: update(isCheckedNew)
-}
+): (Boolean) -> Unit =
+    { isCheckedNew ->
+        updateVetoReason(isCheckedNew)?.let(onVeto) ?: update(isCheckedNew)
+    }
 
 fun makeOnCheckedChange(
     allowUpdate: (Boolean) -> Boolean,
     onUpdateDisallowed: () -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit = makeOnCheckedChange(
-    updateVetoReason = { isCheckedNew -> if (allowUpdate(isCheckedNew)) null else Unit },
-    onVeto = { onUpdateDisallowed() },
-    update = update
-)
+): (Boolean) -> Unit =
+    makeOnCheckedChange(
+        updateVetoReason = { isCheckedNew -> if (allowUpdate(isCheckedNew)) null else Unit },
+        onVeto = { onUpdateDisallowed() },
+        update = update
+    )

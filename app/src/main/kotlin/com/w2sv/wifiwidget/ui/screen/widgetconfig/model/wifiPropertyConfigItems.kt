@@ -113,23 +113,26 @@ private fun WifiProperty.makeOnCheckedChange(
     isMoreThanOnePropertyEnabled: () -> Boolean,
     onUncheckingLastEnabledProperty: () -> Unit,
     shake: () -> Unit
-) = makeOnCheckedChange(
-    updateVetoReason = { isCheckedNew ->
-        when {
-            requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted -> WifiPropertyCheckError.LocationAccessMissing
-            !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
-            else -> null
-        }
-    },
-    onVeto = { checkError ->
-        shake()
-        when (checkError) {
-            WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(OnLocationAccessGranted.EnableProperty(this))
-            WifiPropertyCheckError.UncheckingLastEnabledProperty -> onUncheckingLastEnabledProperty()
-        }
-    },
-    update = updateIsEnabled
-)
+) =
+    makeOnCheckedChange(
+        updateVetoReason = { isCheckedNew ->
+            when {
+                requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted -> WifiPropertyCheckError.LocationAccessMissing
+                !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
+                else -> null
+            }
+        },
+        onVeto = { checkError ->
+            shake()
+            when (checkError) {
+                WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(
+                    OnLocationAccessGranted.EnableProperty(this)
+                )
+                WifiPropertyCheckError.UncheckingLastEnabledProperty -> onUncheckingLastEnabledProperty()
+            }
+        },
+        update = updateIsEnabled
+    )
 
 private fun Context.leaveAtLeastOnePropertyEnabledSnackbar() =
     AppSnackbarVisuals(

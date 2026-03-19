@@ -8,4 +8,5 @@ dependencies {
     api(libs.w2sv.datastoreutils.preferences)
     implementation(libs.androidx.core)
     implementation(libs.w2sv.androidutils)
+    testImplementation(libs.bundles.unitTest)
 }

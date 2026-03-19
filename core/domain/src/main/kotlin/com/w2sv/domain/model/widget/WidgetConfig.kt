@@ -10,7 +10,6 @@ import com.w2sv.kotlinutils.threadUnsafeLazy
 import com.w2sv.kotlinutils.trueKeys
 import com.w2sv.kotlinutils.update
 
-// TODO test
 data class WidgetConfig(
     val propertyConfigMap: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
     val propertyOrder: List<WifiProperty>,
@@ -82,7 +81,6 @@ data class WidgetConfig(
     // ================
     // WidgetUtility
     // ================
-
     fun enabledUtilities(): List<WidgetUtility> =
         utilities.trueKeys()
 
