@@ -45,7 +45,7 @@ fun WidgetConfigScreenRoute(
     CollectFromFlow(locationAccessCapability.grantEvents) { event ->
         event.asEnablePropertyOrNull?.run {
             viewModel.reversibleConfig.update {
-                it.withConfiguredPropertyEnablement(
+                it.withUpdatedPropertyEnablement(
                     property = property,
                     isEnabled = true
                 )

@@ -91,7 +91,7 @@ class WifiStateProviderImplTest {
                 verify(exactly = 2) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Recomputes on property enablement change
-                widgetConfigFlow.update { it.withConfiguredPropertyEnablement(WifiProperty.SSID, true) }
+                widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, true) }
                 verify(exactly = 3) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Does recompute on location access changed while location dependent property enabled
@@ -109,7 +109,7 @@ class WifiStateProviderImplTest {
             coVerify(exactly = 0) { remoteNetworkInfoRepository.refresh() }
 
             // No refreshing on property change during WifiStatus.Disconnected
-            widgetConfigFlow.update { it.withConfiguredPropertyEnablement(WifiProperty.SSID, true) }
+            widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, true) }
             coVerify(exactly = 0) { remoteNetworkInfoRepository.refresh() }
 
             // Refreshing on WifiStatus.Connected
@@ -117,7 +117,7 @@ class WifiStateProviderImplTest {
             coVerify(exactly = 1) { remoteNetworkInfoRepository.refresh() }
 
             // Refreshing on property change during WifiStatus.Connected
-            widgetConfigFlow.update { it.withConfiguredPropertyEnablement(WifiProperty.SSID, false) }
+            widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, false) }
             coVerify(exactly = 2) { remoteNetworkInfoRepository.refresh() }
 
             // No refreshing on irrelevant config change
@@ -127,7 +127,7 @@ class WifiStateProviderImplTest {
             // Refreshing on IP setting change
             widgetConfigFlow.update { config ->
                 config.copy(
-                    properties = config.properties.copy {
+                    propertyConfigMap = config.propertyConfigMap.copy {
                         update(WifiProperty.PublicIp) {
                             it.copy(settings = it.settings.copy { put(IpSetting.V4Enabled, false) })
                         }

@@ -8,13 +8,13 @@ import com.w2sv.domain.model.widget.WidgetUtility
 internal fun WidgetConfig.toProto(): WidgetConfigProto =
     WidgetConfigProto.newBuilder()
         .also { proto ->
-            properties.forEach { (property, config) ->
+            propertyConfigMap.forEach { (property, config) ->
                 proto.putProperties(
                     property.protoId,
                     config.toProto()
                 )
             }
-            proto.addAllOrder(orderedProperties.map { it.protoId })
+            proto.addAllOrder(propertyOrder.map { it.protoId })
             proto.appearance = appearance.toProto()
             proto.refreshing = refreshing.toProto()
             utilities.forEach { (element, enabled) ->
@@ -25,10 +25,10 @@ internal fun WidgetConfig.toProto(): WidgetConfigProto =
 
 internal fun WidgetConfigProto.toExternal(): WidgetConfig =
     WidgetConfig(
-        properties = propertiesMap.entries.associate { (id, protoConfig) ->
+        propertyConfigMap = propertiesMap.entries.associate { (id, protoConfig) ->
             WifiPropertyProtoRegistry(id) to protoConfig.toExternal()
         },
-        orderedProperties = orderList.map(WifiPropertyProtoRegistry::invoke),
+        propertyOrder = orderList.map(WifiPropertyProtoRegistry::invoke),
         appearance = appearance.toExternal(),
         refreshing = refreshing.toExternal(),
         utilities = utilitiesMap.mapKeys { (id, _) ->

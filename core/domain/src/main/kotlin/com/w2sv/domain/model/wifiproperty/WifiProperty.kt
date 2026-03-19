@@ -12,7 +12,7 @@ sealed class WifiProperty(
     @StringRes override val labelRes: Int,
     @StringRes val descriptionRes: Int,
     val learnMoreUrl: String?,
-    val isEnabledDefault: Boolean = true,
+    val isEnabledByDefault: Boolean = true,
     val requiresLocationAccess: Boolean = false,
     private val minSdk: Int = Build.VERSION_CODES.BASE
 ) : WithProtoId,
@@ -44,7 +44,7 @@ sealed class WifiProperty(
         labelRes = R.string.ssid,
         descriptionRes = R.string.ssid_description,
         learnMoreUrl = "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#SSID",
-        isEnabledDefault = false,
+        isEnabledByDefault = false,
         requiresLocationAccess = true
     )
 
@@ -53,7 +53,7 @@ sealed class WifiProperty(
         labelRes = R.string.bssid,
         descriptionRes = R.string.bssid_description,
         learnMoreUrl = "https://en.wikipedia.org/wiki/Service_set_(802.11_network)#BSSID",
-        isEnabledDefault = false,
+        isEnabledByDefault = false,
         requiresLocationAccess = true
     )
 

@@ -64,7 +64,7 @@ class WifiStateProviderImpl @Inject constructor(
     // - location access changes while location dependent properties are enabled
     // - wifiStatus emits Connected
     private val connectedWifiState: Flow<WifiState.Connected> = combine(
-        widgetConfigFlow.distinctUntilChangedBy { it.properties to it.orderedEnabledProperties }.logOnEach("sharedConfig"),
+        widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap to it.enabledProperties }.logOnEach("sharedConfig"),
         remoteNetworkInfoRepository.data.logOnEach("remoteNetworkInfoData"),
         connectedWifiStatus,
         locationAccessChangedWhileDependentPropertiesEnabled
@@ -73,7 +73,7 @@ class WifiStateProviderImpl @Inject constructor(
         WifiState.Connected(
             status = connectedStatus,
             propertyViewData = wifiPropertyViewDataProvider(
-                enabledProperties = config.orderedEnabledProperties,
+                enabledProperties = config.enabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
                 remoteNetworkInfo = remoteNetworkInfo
             )
@@ -99,7 +99,7 @@ class WifiStateProviderImpl @Inject constructor(
     init {
         // Refresh RemoteNetworkInfo on config change or property refresh
         connectedWifiStatus
-            .refreshOn(widgetConfigFlow.distinctUntilChangedBy { it.properties })
+            .refreshOn(widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap })
             .collectLatestOn(scope) {
                 i { "Refreshing RemoteNetworkInfo" }
                 remoteNetworkInfoRepository.refresh()

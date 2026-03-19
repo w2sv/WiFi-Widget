@@ -58,15 +58,20 @@ sealed interface ConfigItem {
     data class SubSettings(val elements: ImmutableList<ConfigItem>, val allowCollapsing: Boolean = true) : ContentBeneath
 }
 
-fun makeOnCheckedChange(
-    allow: (Boolean) -> Boolean = { true },
-    onDisallowed: () -> Unit = {},
+fun <T> makeOnCheckedChange(
+    updateVetoReason: (Boolean) -> T? = { null },
+    onVeto: (T) -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit =
-    {
-        if (allow(it)) {
-            update(it)
-        } else {
-            onDisallowed()
-        }
-    }
+): (Boolean) -> Unit = { isCheckedNew ->
+    updateVetoReason(isCheckedNew)?.let(onVeto) ?: update(isCheckedNew)
+}
+
+fun makeOnCheckedChange(
+    allowUpdate: (Boolean) -> Boolean,
+    onUpdateDisallowed: () -> Unit = {},
+    update: (Boolean) -> Unit
+): (Boolean) -> Unit = makeOnCheckedChange(
+    updateVetoReason = { isCheckedNew -> if (allowUpdate(isCheckedNew)) null else Unit },
+    onVeto = { onUpdateDisallowed() },
+    update = update
+)

@@ -7,14 +7,14 @@ import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
-import java.io.IOException
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 internal class IpApiRepository @Inject constructor(
@@ -53,7 +53,7 @@ internal class IpApiRepository @Inject constructor(
 }
 
 private val WidgetConfig.isIpApiDataRequired: Boolean
-    get() = ipApiRequiringProperties.any { properties.getValue(it).isEnabled }
+    get() = ipApiRequiringProperties.any { isEnabled(it) }
 
 private val ipApiRequiringProperties =
     setOf(

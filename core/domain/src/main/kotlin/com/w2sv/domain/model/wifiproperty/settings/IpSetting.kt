@@ -10,6 +10,9 @@ enum class IpSetting(override val protoId: Int, @StringRes override val labelRes
     V4Enabled(3, R.string.ipv4),
     V6Enabled(4, R.string.ipv6);
 
+    val isVersionSetting: Boolean
+        get() = this in listOf(V4Enabled, V6Enabled)
+
     internal companion object {
         val forV6Only: List<IpSetting> = listOf(ShowPrefixLength)
         fun forV64(includePrefixLength: Boolean): List<IpSetting> =
