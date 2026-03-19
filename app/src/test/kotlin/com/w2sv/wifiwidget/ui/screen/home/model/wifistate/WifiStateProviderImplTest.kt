@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 import app.cash.turbine.test
 import com.w2sv.domain.model.networking.RemoteNetworkInfo
 import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.widget.WifiWidgetConfig
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 class WifiStateProviderImplTest {
 
     private val wifiStatusFlow = MutableSharedFlow<WifiStatus>(replay = 1).apply { tryEmit(WifiStatus.NotConnected) }
-    private val widgetConfigFlow = MutableStateFlow(WifiWidgetConfig.default)
+    private val widgetConfigFlow = MutableStateFlow(WidgetConfig.default)
     private val remoteNetworkFlow = MutableStateFlow(RemoteNetworkInfo.empty)
     private val gpsIsEnabledFlow = MutableStateFlow(true)
     private val wifiStatusMonitor = mockk<WifiStatusMonitor> {

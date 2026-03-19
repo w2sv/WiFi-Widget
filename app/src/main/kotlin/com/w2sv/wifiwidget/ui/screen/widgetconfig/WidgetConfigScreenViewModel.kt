@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.common.utils.log
-import com.w2sv.domain.model.widget.WifiWidgetConfig
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.reversiblestate.ReversibleStateFlow
@@ -43,7 +43,7 @@ class WidgetConfigScreenViewModel @Inject constructor(
         appliedState = dataSource.config.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = WifiWidgetConfig.default
+            initialValue = WidgetConfig.default
         ),
         commitState = { state ->
             dataSource.update { state }

@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.extensions.thenIf
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.widget.WifiWidgetConfig
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
@@ -50,7 +50,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun WifiPropertiesConfigCard(
-    config: WifiWidgetConfig,
+    config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit
 ) {
@@ -102,7 +102,7 @@ fun WifiPropertiesConfigCard(
 private fun Prev() {
     PreviewOf {
         WifiPropertiesConfigCard(
-            WifiWidgetConfig.default,
+            WidgetConfig.default,
             {},
             {}
         )
@@ -110,7 +110,7 @@ private fun Prev() {
 }
 
 private fun wifiPropertyCheckRowData(
-    config: WifiWidgetConfig,
+    config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
     locationAccess: LocationAccessCapability,

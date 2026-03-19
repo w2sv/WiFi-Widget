@@ -3,7 +3,7 @@ syntax = "proto3";
 option java_package = "com.w2sv.datastore";
 option java_multiple_files = true;
 
-message WifiWidgetConfigProto {
+message WidgetConfigProto {
     map<int32, WifiPropertyConfigProto> properties = 1;
     repeated int32 order = 2;
     WidgetAppearanceProto appearance = 3;

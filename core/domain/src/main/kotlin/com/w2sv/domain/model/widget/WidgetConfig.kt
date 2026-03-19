@@ -10,7 +10,7 @@ import com.w2sv.kotlinutils.trueKeys
 import com.w2sv.kotlinutils.update
 
 // TODO test
-data class WifiWidgetConfig(
+data class WidgetConfig(
     val properties: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
     val orderedProperties: List<WifiProperty>,
     val appearance: WidgetAppearance,
@@ -31,16 +31,16 @@ data class WifiWidgetConfig(
     val isAnyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WifiProperty.locationAccessRequiring.any { property -> isEnabled(property) }
 
-    fun withModifiedPropertyPosition(from: Int, to: Int): WifiWidgetConfig =
+    fun withModifiedPropertyPosition(from: Int, to: Int): WidgetConfig =
         copy(orderedProperties = orderedProperties.copy { add(to, removeAt(from)) })
 
-    fun withDefaultPropertyOrder(): WifiWidgetConfig =
+    fun withDefaultPropertyOrder(): WidgetConfig =
         copy(orderedProperties = WifiProperty.entries)
 
-    fun withConfiguredPropertyEnablement(property: WifiProperty, isEnabled: Boolean): WifiWidgetConfig =
+    fun withConfiguredPropertyEnablement(property: WifiProperty, isEnabled: Boolean): WidgetConfig =
         copy(properties = properties.copy { update(property) { it.copy(isEnabled = isEnabled) } })
 
-    fun withEnabledLocationAccessRequiringProperties(): WifiWidgetConfig =
+    fun withEnabledLocationAccessRequiringProperties(): WidgetConfig =
         copy(
             properties = properties.copy {
                 WifiProperty.locationAccessRequiring.forEach { property ->
@@ -77,7 +77,7 @@ data class WifiWidgetConfig(
         utilities.trueKeys()
 
     companion object {
-        val default = WifiWidgetConfig(
+        val default = WidgetConfig(
             properties = WifiProperty.entries.associateWith { property ->
                 WifiPropertyConfig(
                     isEnabled = property.isEnabledDefault,

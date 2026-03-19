@@ -11,8 +11,8 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetColors
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.widget.WidgetUtility
-import com.w2sv.domain.model.widget.WifiWidgetConfig
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
 import com.w2sv.widget.CopyPropertyToClipboardActivity
 import com.w2sv.widget.WidgetAction
@@ -36,7 +36,7 @@ internal class WidgetRenderer @Inject constructor(
     operator fun invoke(
         widget: RemoteViews,
         widgetId: Int,
-        config: WifiWidgetConfig,
+        config: WidgetConfig,
         colors: WidgetColors
     ): RemoteViews =
         widget.apply {

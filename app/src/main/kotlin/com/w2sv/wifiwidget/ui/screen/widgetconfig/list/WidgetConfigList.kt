@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.core.isPortraitModeActive
-import com.w2sv.domain.model.widget.WifiWidgetConfig
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
@@ -23,12 +23,12 @@ import com.w2sv.wifiwidget.ui.util.paddingValues
 private val sectionCardSpacing = 16.dp
 private val sectionCardInnerPadding = PaddingValues(vertical = 18.dp)
 
-typealias UpdateWidgetConfig = (WifiWidgetConfig.() -> WifiWidgetConfig) -> Unit
+typealias UpdateWidgetConfig = (WidgetConfig.() -> WidgetConfig) -> Unit
 
 @Composable
 fun WidgetConfigList(
     state: LazyListState,
-    config: WifiWidgetConfig,
+    config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
@@ -82,7 +82,7 @@ private fun Prev() {
     PreviewOf {
         WidgetConfigList(
             rememberLazyListState(),
-            WifiWidgetConfig.default,
+            WidgetConfig.default,
             {},
             {}
         )
