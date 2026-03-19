@@ -20,7 +20,6 @@ import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
 
 @Composable
 fun rememberLocationPermissionCapability(
@@ -57,7 +56,7 @@ fun rememberLocationPermissionCapability(
 
     // Call capability.onPermissionGranted on new allPermissionsGranted status
     val allPermissionsNewlyGrantedFlow = remember(permissionsState) {
-        snapshotFlow { permissionsState.allPermissionsGranted }.drop(1).filter { it }.map { }
+        snapshotFlow { permissionsState.allPermissionsGranted }.drop(1).filter { it }
     }
     CollectFromFlow(allPermissionsNewlyGrantedFlow) { capability.onPermissionGranted() }
 
