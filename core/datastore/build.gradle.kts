@@ -19,5 +19,6 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.datastore)
+    testImplementation(libs.androidx.datastore.preferences.core)
     testImplementation(libs.bundles.unitTest)
 }

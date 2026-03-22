@@ -1,6 +1,7 @@
 package com.w2sv.datastore.proto.migration
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -28,7 +29,8 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.first
 import slimber.log.i
 
-private val MIGRATION_DONE_PREFERENCES_KEY = booleanPreferencesKey("widget_config_migrated")
+@VisibleForTesting
+internal val MIGRATION_DONE_PREFERENCES_KEY = booleanPreferencesKey("widget_config_migrated")
 
 internal class WidgetConfigMigration @Inject constructor(
     @ApplicationContext private val context: Context,

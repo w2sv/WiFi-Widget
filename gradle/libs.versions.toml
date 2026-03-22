@@ -36,6 +36,7 @@ w2sv-composed = "0.1.1"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.2.2"
 w2sv-reversiblestate = "0.1.0"
+datastorePreferencesCore = "1.2.1"
 
 [libraries]
 # @keep
@@ -103,6 +104,7 @@ w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:pre
 w2sv-kotlinutils-core = { module = "com.github.w2sv.KotlinUtils:core", version.ref = "w2sv-kotlinutils" }
 w2sv-kotlinutils-coroutines = { module = "com.github.w2sv.KotlinUtils:coroutines", version.ref = "w2sv-kotlinutils" }
 w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "w2sv-reversiblestate" }
+androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 
 [bundles]
 androidTest = [
