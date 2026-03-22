@@ -55,6 +55,8 @@ data class AppSnackbarVisuals(
         get() = action?.label
 }
 
+private val SuccessColor = Color(12, 173, 34, 200)
+
 @Immutable
 sealed interface SnackbarKind {
     val icon: ImageVector
@@ -68,7 +70,8 @@ sealed interface SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Warning
         override val iconTint: Color
             @ReadOnlyComposable
-            @Composable get() = MaterialTheme.colorScheme.error
+            @Composable
+            get() = MaterialTheme.colorScheme.error
     }
 
     @Immutable
@@ -76,7 +79,8 @@ sealed interface SnackbarKind {
         override val icon: ImageVector = Icons.Outlined.Check
         override val iconTint: Color
             @ReadOnlyComposable
-            @Composable get() = MaterialTheme.colorScheme.primary
+            @Composable
+            get() = SuccessColor
     }
 }
 
