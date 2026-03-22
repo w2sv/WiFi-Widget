@@ -6,5 +6,5 @@ data class WidgetAppearance(
     val coloring: WidgetColoring = WidgetColoring(),
     @FloatRange(0.0, 1.0) val backgroundOpacity: Float = 1f,
     val fontSize: FontSize = FontSize.Medium,
-    val propertyValueAlignment: WifiPropertyValueAlignment = WifiPropertyValueAlignment.Left
+    val propertyValueAlignment: WifiPropertyValueAlignment = WifiPropertyValueAlignment.Right
 )
