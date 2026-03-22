@@ -6,9 +6,9 @@ import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.copy
+import kotlin.time.Duration.Companion.minutes
 import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
-import kotlin.time.Duration.Companion.minutes
 
 class WidgetConfigMappingTest {
 

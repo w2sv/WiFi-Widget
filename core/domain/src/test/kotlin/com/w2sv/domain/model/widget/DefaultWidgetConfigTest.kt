@@ -7,8 +7,8 @@ import com.w2sv.domain.model.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.model.wifiproperty.settings.WifiPropertySetting
-import org.junit.Test
 import kotlin.test.assertEquals
+import org.junit.Test
 
 class DefaultWidgetConfigTest {
 

@@ -117,7 +117,8 @@ private fun WifiProperty.makeOnCheckedChange(
     makeOnCheckedChange(
         updateVetoReason = { isCheckedNew ->
             when {
-                requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted -> WifiPropertyCheckError.LocationAccessMissing
+                requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted ->
+                    WifiPropertyCheckError.LocationAccessMissing
                 !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
                 else -> null
             }
