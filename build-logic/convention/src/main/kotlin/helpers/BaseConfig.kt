@@ -34,9 +34,7 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll(
                 "-Xannotation-default-target=param-property",
-                "-Xwhen-guards",
                 "-Xexplicit-backing-fields",
-                "-Xnested-type-aliases",
                 "-Xcontext-sensitive-resolution",
                 "-Xcontext-parameters"
             )

@@ -1,31 +1,31 @@
 [versions]
 # @pin
 agp = "9.0.1"
-androidx-activity-compose = "1.12.4"
+androidx-activity-compose = "1.13.0"
 androidxTextExtJunit = "1.3.0"
-baselineprofile = "1.5.0-alpha03"
+baselineprofile = "1.5.0-alpha04"
 # @keep
 compileSdk = "36"
 compose-lint-checks = "1.4.2"
 compose-material3 = "1.4.0"
-compose-tooling = "1.10.4"
-datastore = "1.2.0"
+compose-tooling = "1.10.5"
+datastore = "1.2.1"
 hilt = "2.59.2"
 hiltNavigationCompose = "1.3.0"
 junit = "4.13.2"
-kotlin = "2.3.10"
+kotlin = "2.3.20"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxCoroutines = "1.10.2"
 ksp = "2.3.6"
-ktlint = "14.1.0"
+ktlint = "14.2.0"
 lifecycle = "2.10.0"
 # @keep
 minSdk = "26"
 moduleGraph = "2.9.0"
-nav3Core = "1.1.0-alpha05"
+nav3Core = "1.1.0-beta01"
 okhttp = "5.3.2"
 profileinstaller = "1.4.1"
-protobuf = "4.34.0"
+protobuf = "4.34.1"
 protobuf-plugin = "0.9.6"
 runner = "1.7.0"
 triplet-play = "4.0.0"
@@ -36,7 +36,6 @@ w2sv-composed = "0.1.1"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.2.2"
 w2sv-reversiblestate = "0.1.0"
-datastorePreferencesCore = "1.2.1"
 
 [libraries]
 # @keep
@@ -54,7 +53,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling", versi
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-tooling" }
 androidx-compose-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-constraintlayout-compose = "androidx.constraintlayout:constraintlayout-compose:1.1.1"
-androidx-core = "androidx.core:core-ktx:1.17.0"
+androidx-core = "androidx.core:core-ktx:1.18.0"
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastore" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
@@ -104,7 +103,6 @@ w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:pre
 w2sv-kotlinutils-core = { module = "com.github.w2sv.KotlinUtils:core", version.ref = "w2sv-kotlinutils" }
 w2sv-kotlinutils-coroutines = { module = "com.github.w2sv.KotlinUtils:coroutines", version.ref = "w2sv-kotlinutils" }
 w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "w2sv-reversiblestate" }
-androidx-datastore-preferences-core = { group = "androidx.datastore", name = "datastore-preferences-core", version.ref = "datastorePreferencesCore" }
 
 [bundles]
 androidTest = [
@@ -112,7 +110,7 @@ androidTest = [
     "androidx-compose-ui-test-manifest",
     "androidx-test-ext-junit",
     "androidx-test-rules",
-    "androidx-test-runner"
+    "androidx-test-runner",
 ]
 unitTest = [
     "androidx-test-ext-junit",
