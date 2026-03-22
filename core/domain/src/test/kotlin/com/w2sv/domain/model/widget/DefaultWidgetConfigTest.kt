@@ -47,7 +47,7 @@ private val defaultAppearance = WidgetAppearance(
     ),
     backgroundOpacity = 1f,
     fontSize = FontSize.Medium,
-    propertyValueAlignment = WifiPropertyValueAlignment.Left
+    propertyValueAlignment = WifiPropertyValueAlignment.Right
 )
 
 private val defaultPropertyConfig: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>> = mapOf(

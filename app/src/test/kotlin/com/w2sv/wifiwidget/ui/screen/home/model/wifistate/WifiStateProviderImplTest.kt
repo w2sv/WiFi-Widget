@@ -15,7 +15,6 @@ import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvide
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlin.test.Test
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 @ExperimentalCoroutinesApi
 class WifiStateProviderImplTest {
 
-    private val wifiStatusFlow = MutableSharedFlow<WifiStatus>(replay = 1).apply { tryEmit(WifiStatus.NotConnected) }
+    private val wifiStatusFlow = MutableSharedFlow<WifiStatus>().apply { tryEmit(WifiStatus.NotConnected) }
     private val widgetConfigFlow = MutableStateFlow(WidgetConfig.default)
     private val remoteNetworkFlow = MutableStateFlow(RemoteNetworkInfo.empty)
     private val gpsIsEnabledFlow = MutableStateFlow(true)
@@ -80,23 +79,23 @@ class WifiStateProviderImplTest {
             classUnderTest.wifiState.test {
                 // Recomputes on Connected
                 emitWifiStatus(WifiStatus.Connected)
-                verify(exactly = 1) { wifiPropertyViewDataProvider(any(), any(), any()) }
+                coVerify(exactly = 1) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Recomputes on re-emission of Connected
                 emitWifiStatus(WifiStatus.Connected)
-                verify(exactly = 2) { wifiPropertyViewDataProvider(any(), any(), any()) }
+                coVerify(exactly = 3) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Does not recompute on location access changed while no location dependent property enabled
                 gpsIsEnabledFlow.value = false
-                verify(exactly = 2) { wifiPropertyViewDataProvider(any(), any(), any()) }
+                coVerify(exactly = 3) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Recomputes on property enablement change
                 widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, true) }
-                verify(exactly = 3) { wifiPropertyViewDataProvider(any(), any(), any()) }
+                coVerify(exactly = 4) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 // Does recompute on location access changed while location dependent property enabled
                 gpsIsEnabledFlow.value = true
-                verify(exactly = 4) { wifiPropertyViewDataProvider(any(), any(), any()) }
+                coVerify(exactly = 5) { wifiPropertyViewDataProvider(any(), any(), any()) }
 
                 cancelAndIgnoreRemainingEvents()
             }

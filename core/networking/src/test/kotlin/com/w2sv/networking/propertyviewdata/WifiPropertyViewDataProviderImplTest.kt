@@ -1,13 +1,12 @@
-package com.w2sv.networking
+package com.w2sv.networking.propertyviewdata
 
-import com.w2sv.networking.propertyviewdata.textualIPv4Representation
-import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
 
-class WidgetWifiPropertyViewDataFactoryImplTest {
+class WifiPropertyViewDataProviderImplTest {
 
     @Test
-    fun `test textualIPv4Representation`() {
+    fun textualIPv4Representation() {
         assertEquals("127.0.0.1", textualIPv4Representation(0x0100007F))
         assertEquals("255.255.255.255", textualIPv4Representation(-1))
         assertEquals("192.168.1.1", textualIPv4Representation(0x0101A8C0))

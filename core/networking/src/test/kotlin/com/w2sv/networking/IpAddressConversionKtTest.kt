@@ -1,47 +1,30 @@
-package com.w2sv.networking.model
+package com.w2sv.networking
 
 import android.net.LinkAddress
-import com.w2sv.networking.isGlobalUnicast
+import com.w2sv.domain.model.networking.IpAddress
+import io.mockk.every
+import io.mockk.mockk
 import java.net.Inet4Address
-import java.net.Inet6Address
 import java.net.InetAddress
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
-import okhttp3.OkHttpClient
 import org.junit.Test
-import org.mockito.Mockito
 
-class IPAddressTest {
+class IpAddressConversionKtTest {
 
     @Test
-    fun `test fromLinkAddress`() {
-        val address = "255.0.0.0"
+    fun fromLinkAddress() {
+        val host = "255.0.0.0"
         val prefixLength = 16
 
-        val ipAddress = IPAddress.fromLinkAddress(linkAddressMock(address, prefixLength))
+        val address = linkAddressMock(host, prefixLength).toIpAddress()
 
-        assertEquals(IPAddress.Version.V4, ipAddress.version)
-        assertEquals(address, ipAddress.hostAddressRepresentation)
-        assertEquals(prefixLength, ipAddress.prefixLength)
+        assertEquals(IpAddress.Version.V4, address.version)
+        assertEquals(host, address.hostAddressRepresentation)
+        assertEquals(prefixLength, address.prefixLength)
     }
 
     @Test
-    fun `test fetchPublic`() {
-        val httpClient = OkHttpClient()
-        runTest {
-            val v4FetchResult = IPAddress.fetchPublic(httpClient, IPAddress.Version.V4)
-            val v6FetchResult = IPAddress.fetchPublic(httpClient, IPAddress.Version.V6)
-
-            assertTrue(
-                v4FetchResult.isSuccess || v6FetchResult.isSuccess,
-                "Fetching of both IP versions failed with ${v4FetchResult.exceptionOrNull()} and ${v6FetchResult.exceptionOrNull()}"
-            )
-        }
-    }
-
-    @Test
-    fun `test isSiteLocal`() {
+    fun isSiteLocal() {
         listOf(
             "192.168.1.1" to true,
             "10.0.0.1" to true,
@@ -55,7 +38,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `test isLinkLocal`() {
+    fun isLinkLocal() {
         listOf(
             "169.254.1.1" to true,
             "169.254.0.0" to true,
@@ -69,7 +52,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `test isAnyLocal`() {
+    fun isAnyLocal() {
         listOf(
             "::" to true, // Any Local
             "::1" to false, // Loopback
@@ -83,7 +66,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `test isMulticast`() {
+    fun isMulticast() {
         listOf(
             "ff00::1" to true, // Multicast
             "ff02::1" to true, // Multicast
@@ -97,7 +80,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `test isLoopback`() {
+    fun isLoopback() {
         listOf(
             "::1" to true, // Loopback
             "127.0.0.1" to true, // IPv4 Loopback
@@ -111,7 +94,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `subnetMask should return correct mask`() {
+    fun `subnetMask conversion from prefix lengths`() {
         listOf(
             // standard prefix lengths
             8 to "255.0.0.0",
@@ -131,7 +114,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `isUniqueLocal should return true for unique local addresses and false for non-unique local addresses`() {
+    fun isUniqueLocal() {
         listOf(
             "fc00::1" to true,
             "fd12:3456:789a:1::1" to true,
@@ -148,7 +131,7 @@ class IPAddressTest {
     }
 
     @Test
-    fun `isGlobalUnicast should correctly identify global unicast addresses`() {
+    fun isGlobalUnicast() {
         listOf(
             // True cases
             "2001:db8:85a3::8a2e:370:7334" to true,
@@ -171,32 +154,20 @@ class IPAddressTest {
     }
 }
 
-private fun testIPAddressFromInetAddress(address: String): IPAddress =
-    IPAddress.fromInetAddress(InetAddress.getByName(address), null)
+private fun testIPAddressFromInetAddress(address: String): IpAddress =
+    InetAddress.getByName(address).toDomain(null)
 
-private fun testIPAddressFromLinkAddress(address: String, prefixLength: Int): IPAddress =
-    IPAddress.fromLinkAddress(linkAddressMock(address, prefixLength))
+private fun testIPAddressFromLinkAddress(address: String, prefixLength: Int): IpAddress =
+    linkAddressMock(address, prefixLength).toIpAddress()
 
-private fun linkAddressMock(address: String, prefixLength: Int): LinkAddress {
-    val linkAddress = Mockito.mock(LinkAddress::class.java)
+private fun linkAddressMock(address: String, prefixLength: Int): LinkAddress =
+    mockk<LinkAddress>(relaxed = true) {
+        every { this@mockk.address } returns InetAddress.getByName(address)
+        every { this@mockk.prefixLength } returns prefixLength
+    }
 
-    // Stub methods to return desired values
-    Mockito.`when`(linkAddress.address).thenReturn(InetAddress.getByName(address))
-    Mockito.`when`(linkAddress.prefixLength).thenReturn(prefixLength)
+private fun testIPv4Address(hostAddress: String = "10.0.0.1", prefixLength: Int = 32): IpAddress.V4 =
+    Inet4Address.getByName(hostAddress).toDomain(prefixLength) as IpAddress.V4
 
-    return linkAddress
-}
-
-private fun testIPv4Address(hostAddress: String = "10.0.0.1", prefixLength: Int = 32): IPAddress.V4 =
-    IPAddress.V4(
-        hostAddress = hostAddress,
-        prefixLength = prefixLength,
-        inetAddress = Inet4Address.getByName(hostAddress) as Inet4Address
-    )
-
-private fun testIPv6Address(hostAddress: String, prefixLength: Int = 64): IPAddress.V6 =
-    IPAddress.V6(
-        hostAddress = hostAddress,
-        prefixLength = prefixLength,
-        inetAddress = Inet6Address.getByName(hostAddress) as Inet6Address
-    )
+private fun testIPv6Address(hostAddress: String, prefixLength: Int = 64): IpAddress.V6 =
+    Inet4Address.getByName(hostAddress).toDomain(prefixLength) as IpAddress.V6
