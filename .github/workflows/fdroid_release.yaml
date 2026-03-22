@@ -1,0 +1,82 @@
+name: FDroid Release
+
+on:
+    push:
+        tags:
+            - '*'
+
+jobs:
+    build-release:
+        name: Build & Publish Signed APK
+        runs-on: ubuntu-latest
+
+        steps:
+            # Checkout the repository
+            -   name: Checkout
+                uses: actions/checkout@v6
+
+            # Install JDK
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v5
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+                    cache: gradle
+
+            # Initialize env.BUILD_TOOL_VERSION
+            -   name: Setup build tool version variable
+                shell: bash
+                run: |
+                    BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
+                    echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
+                    echo Last build tool version is: $BUILD_TOOL_VERSION
+
+            # Build APK
+            -   name: Build APK
+                run: ./gradlew assembleRelease
+
+            # Sign APK
+            -   name: Sign APK
+                uses: r0adkll/sign-android-release@v1
+                # ID used to access action output
+                id: sign_apk
+                with:
+                    releaseDirectory: app/build/outputs/apk/release
+                    signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+                    alias: ${{ secrets.ALIAS }}
+                    keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+                    keyPassword: ${{ secrets.KEY_PASSWORD }}
+                env:
+                    BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+
+            # Build Changelog
+            -   name: Build Changelog
+                id: build_changelog
+                uses: ardalanamini/auto-changelog@v4
+                with:
+                    mention-authors: false
+                    mention-new-contributors: true
+                    include-compare: true
+                    semver: false
+
+            # Create GitHub Release
+            -   name: Create Release
+                id: create_release
+                uses: actions/create-release@v1
+                with:
+                    tag_name: ${{ github.ref }}
+                    release_name: ${{ github.ref }}
+                    body: ${{ steps.build_changelog.outputs.changelog }} &#x20;
+                env:
+                    GITHUB_TOKEN: ${{ github.token }}
+
+            # Upload APK
+            -   name: Upload APK
+                uses: actions/upload-release-asset@v1
+                env:
+                    GITHUB_TOKEN: ${{ github.token }}
+                with:
+                    upload_url: ${{ steps.create_release.outputs.upload_url }}
+                    asset_path: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+                    asset_name: ${{ github.ref }}.apk
+                    asset_content_type: application/zip
