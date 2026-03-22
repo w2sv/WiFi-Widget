@@ -39,10 +39,9 @@ internal object ProtoModule {
         widgetConfigDataSource.config
 
     @Provides
-    @Singleton
-    internal fun widgetColoringProtoDataStore(@ApplicationContext context: Context): DataStore<WidgetColoringProto> =
+    internal fun widgetColoringDataStore(@ApplicationContext context: Context): DataStore<WidgetColoringProto> =
         DataStoreFactory.create(
-            serializer = WidgetColoringProtoSerializer,
+            serializer = WidgetColoringProtoSerializer(),
             corruptionHandler = ReplaceFileCorruptionHandler { defaultWidgetColoringProto() },
             produceFile = { context.widgetColoringProtoFile() }
         )

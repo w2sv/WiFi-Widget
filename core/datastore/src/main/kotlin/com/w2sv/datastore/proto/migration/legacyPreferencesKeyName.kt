@@ -2,7 +2,7 @@ package com.w2sv.datastore.proto.migration
 
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 
-val WifiProperty.legacyPreferencesKeyName: String
+internal val WifiProperty.legacyPreferencesKeyName: String
     get() = when (this) {
         WifiProperty.SSID -> "SSID"
         WifiProperty.BSSID -> "BSSID"

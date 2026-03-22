@@ -7,7 +7,7 @@ import com.w2sv.datastore.WidgetColoringProto
 import java.io.InputStream
 import java.io.OutputStream
 
-internal object WidgetColoringProtoSerializer : Serializer<WidgetColoringProto> {
+internal class WidgetColoringProtoSerializer : Serializer<WidgetColoringProto> {
 
     override val defaultValue: WidgetColoringProto = defaultWidgetColoringProto()
 

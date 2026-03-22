@@ -23,10 +23,10 @@ import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
-import slimber.log.i
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.flow.first
+import slimber.log.i
 
 private val MIGRATION_DONE_PREFERENCES_KEY = booleanPreferencesKey("widget_config_migrated")
 
@@ -34,8 +34,7 @@ internal class WidgetConfigMigration @Inject constructor(
     @ApplicationContext private val context: Context,
     private val preferences: DataStore<Preferences>,
     private val coloringDataStore: DataStore<WidgetColoringProto>
-) :
-    DataMigration<WidgetConfigProto> {
+) : DataMigration<WidgetConfigProto> {
 
     override suspend fun shouldMigrate(currentData: WidgetConfigProto): Boolean =
         (preferences.data.first()[MIGRATION_DONE_PREFERENCES_KEY] != true).log { "shouldMigrate=$it" }
@@ -176,4 +175,3 @@ private fun WidgetConfig.migrateRefreshing(prefs: Preferences): WidgetConfig {
         )
     )
 }
-
