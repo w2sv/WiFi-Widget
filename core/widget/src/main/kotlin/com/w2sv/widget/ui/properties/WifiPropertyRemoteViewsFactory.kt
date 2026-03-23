@@ -2,7 +2,6 @@ package com.w2sv.widget.ui.properties
 
 import android.content.Context
 import android.widget.RemoteViews
-import com.w2sv.common.utils.log
 import com.w2sv.core.widget.R
 import com.w2sv.widget.utils.logging.LoggingRemoteViewsFactory
 import com.w2sv.widget.utils.remoteViews
@@ -37,7 +36,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         remoteViews(context, data.layout) {
             val viewData = data.viewData.getOrNull(position) ?: return@remoteViews
             inflatePropertyLayout(
-                viewData = viewData.log { "Inflating property layout for $it" },
+                viewData = viewData,
                 widgetColors = data.colors,
                 fontSize = data.fontSize
             )

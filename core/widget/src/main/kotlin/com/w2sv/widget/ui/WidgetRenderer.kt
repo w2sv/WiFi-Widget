@@ -52,7 +52,6 @@ internal class WidgetRenderer @Inject constructor(
             setBottomBar(
                 show = config.enabledUtilities().isNotEmpty(),
                 isUtilityEnabled = config.utilities::getValue,
-                widgetId = widgetId,
                 colors = colors,
                 fontSize = config.appearance.fontSize
             )
@@ -120,7 +119,6 @@ internal class WidgetRenderer @Inject constructor(
     private fun RemoteViews.setBottomBar(
         show: Boolean,
         isUtilityEnabled: (WidgetUtility) -> Boolean,
-        widgetId: Int,
         colors: WidgetColors,
         fontSize: FontSize
     ) {
@@ -137,7 +135,7 @@ internal class WidgetRenderer @Inject constructor(
             viewId = R.id.refresh_button,
             isVisible = isUtilityEnabled(WidgetUtility.RefreshButton),
             color = colors.primary,
-            pendingIntent = WidgetAction.refreshWidget(context, widgetId)
+            pendingIntent = WidgetAction.refreshWidget(context)
         )
         setButton(
             viewId = R.id.go_to_wifi_settings_button,

@@ -2,13 +2,9 @@ package com.w2sv.widget.utils
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import com.w2sv.androidutils.appwidget.getAppWidgetIds
 import com.w2sv.androidutils.content.componentName
 import com.w2sv.widget.WidgetPinSuccessBroadcastReceiver
 import com.w2sv.widget.WifiWidgetProvider
-
-internal fun AppWidgetManager.getWifiWidgetIds(packageName: String): IntArray =
-    getAppWidgetIds(packageName, WifiWidgetProvider::class.java)
 
 /**
  * Calls [AppWidgetManager.requestPinAppWidget] if [AppWidgetManager.isRequestPinAppWidgetSupported] returns true.

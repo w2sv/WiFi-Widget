@@ -19,11 +19,13 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
+        i { "doWork" }
+
         if (!powerManager.isInteractive) {
             i { "System not interactive; Skipping Widget Data refresh" }
         } else {
             remoteNetworkInfoRepository.refresh()
-            WifiWidgetProvider.triggerDataRefresh(applicationContext)
+            WifiWidgetProvider.render(applicationContext)
             i { "Triggered data refresh" }
         }
         return Result.success()

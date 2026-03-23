@@ -48,7 +48,7 @@ class WidgetConfigScreenViewModel @Inject constructor(
         commitState = { state ->
             dataSource.update { state }
             _changesHaveBeenCommitted.emit(Unit)
-            WifiWidgetProvider.triggerDataRefresh(context).log { "Triggered widget data refresh on configuration state sync" }
+            WifiWidgetProvider.refreshData(context).log { "Triggered widget data refresh on configuration state sync" }
         }
     )
 }

@@ -13,11 +13,11 @@ internal object WidgetAction {
     fun openWifiSettings(context: Context): PendingIntent =
         activityPendingIntent(context, openWifiSettingsIntent, PendingIntent.FLAG_IMMUTABLE)
 
-    fun refreshWidget(context: Context, widgetId: Int): PendingIntent =
+    fun refreshWidget(context: Context): PendingIntent =
         PendingIntent.getBroadcast(
             context,
-            widgetId,
-            WifiWidgetProvider.getRefreshDataIntent(context, widgetId),
+            1447,
+            WifiWidgetProvider.refreshDataIntent(context),
             PendingIntent.FLAG_IMMUTABLE
         )
 

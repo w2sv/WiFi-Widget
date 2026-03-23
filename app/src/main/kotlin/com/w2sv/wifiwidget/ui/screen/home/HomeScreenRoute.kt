@@ -61,7 +61,7 @@ private fun BindLocationAccessToViewModel(viewModel: HomeScreenViewModel = hiltV
     // Consume OnLocationAccessGranted events relevant for the screen
     CollectFromFlow(locationAccessCapability.grantEvents) { event ->
         when (event) {
-            TriggerWidgetDataRefresh -> WifiWidgetProvider.triggerDataRefresh(context)
+            TriggerWidgetDataRefresh -> WifiWidgetProvider.refreshData(context)
             EnableLocationAccessRequiringProperties -> viewModel.enableLocationAccessRequiringProperties()
             else -> Unit
         }
