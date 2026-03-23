@@ -10,7 +10,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.w2sv.androidutils)
+    implementation(libs.w2sv.androidutils.core)
     implementation(libs.squareup.okhttp3)
     testImplementation(libs.bundles.unitTest)
 }

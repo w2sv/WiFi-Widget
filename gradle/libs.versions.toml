@@ -29,7 +29,7 @@ protobuf = "4.34.1"
 protobuf-plugin = "0.9.6"
 triplet-play = "4.0.0"
 versionCatalogUpdate = "1.1.0"
-w2sv-androidutils = "0.5.0"
+w2sv-androidutils = "0.6.0"
 # @pin
 w2sv-composed = "0.1.1"
 w2sv-datastoreutils = "0.0.8"
@@ -92,7 +92,7 @@ slack-lint-compose-lint-checks = { module = "com.slack.lint.compose:compose-lint
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
 squareup-okhttp3 = "com.squareup.okhttp3:okhttp:5.3.2"
 turbine = "app.cash.turbine:turbine:1.2.1"
-w2sv-androidutils = { module = "com.github.w2sv:AndroidUtils", version.ref = "w2sv-androidutils" }
+w2sv-androidutils-core = { module = "com.github.w2sv.AndroidUtils:core", version.ref = "w2sv-androidutils" }
 w2sv-colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"
 w2sv-composeWheelPicker = "com.github.w2sv:compose-wheel-picker:0.0.2-rc1"
 w2sv-composed-core = { module = "com.github.w2sv.Composed:core", version.ref = "w2sv-composed" }

@@ -3,7 +3,7 @@ package com.w2sv.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import com.w2sv.androidutils.appwidget.getAppWidgetIds
+import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetConfigFlow
@@ -12,10 +12,10 @@ import com.w2sv.widget.ui.resolve
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class WifiWidgetProvider : LoggingAppWidgetProvider() {
@@ -62,10 +62,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
             ACTION_RENDER -> onUpdate(
                 context = context,
                 appWidgetManager = appWidgetManager,
-                appWidgetIds = appWidgetManager.getAppWidgetIds(
-                    context.packageName,
-                    WifiWidgetProvider::class.java
-                )
+                appWidgetIds = appWidgetManager.appWidgetIds<WifiWidgetProvider>(context)
             )
         }
     }

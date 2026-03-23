@@ -7,6 +7,6 @@ dependencies {
     api(libs.w2sv.datastoreutils.datastoreflow)
     api(libs.w2sv.datastoreutils.preferences)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.w2sv.androidutils)
+    implementation(libs.w2sv.androidutils.core)
     testImplementation(libs.bundles.unitTest)
 }

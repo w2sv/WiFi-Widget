@@ -102,7 +102,7 @@ dependencies {
     baselineProfile(projects.benchmarking)
 
     // Owned libraries
-    implementation(libs.w2sv.androidutils)
+    implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.colorpicker)
     implementation(libs.w2sv.composed.core)
     implementation(libs.w2sv.composed.material3)
