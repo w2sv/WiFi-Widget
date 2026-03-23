@@ -5,9 +5,10 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.wifiwidget.application)
     alias(libs.plugins.wifiwidget.hilt)
-    alias(libs.plugins.play)
-    alias(libs.plugins.baselineprofile)
-    alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.wifiwidget.hilt.work)
+    alias(libs.plugins.triplet.play)
+    alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.kotlin.plugin.compose)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -110,12 +111,10 @@ dependencies {
     implementation(libs.w2sv.reversiblestate)
 
     // AndroidX libraries
-    implementation(libs.androidx.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.splashscreen)
-    implementation(libs.androidx.hilt.work)
-    implementation(libs.androidx.workmanager)
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3.android)
@@ -128,14 +127,14 @@ dependencies {
     implementation(libs.androidx.profileinstaller)
     debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.activity)
-    implementation(libs.androidx.compose.viewmodel)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.google.accompanist.permissions)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraintlayout.compose)
 
     // Other libraries
-    lintChecks(libs.compose.lint.checks)
+    lintChecks(libs.slack.lint.compose.lint.checks)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.reorderable)
 

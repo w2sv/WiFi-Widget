@@ -4,7 +4,7 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.androidx.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
     implementation(libs.w2sv.androidutils)

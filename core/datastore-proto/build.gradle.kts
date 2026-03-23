@@ -1,11 +1,11 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.protobuf)
+    alias(libs.plugins.google.protobuf)
 }
 
 // Setup protobuf configuration, generating lite Java and Kotlin classes
 protobuf {
-    protoc { artifact = libs.protobuf.protoc.get().toString() }
+    protoc { artifact = libs.google.protobuf.protoc.get().toString() }
     generateProtoTasks {
         all().configureEach {
             builtins {
@@ -17,5 +17,5 @@ protobuf {
 }
 
 dependencies {
-    api(libs.protobuf.kotlin.lite)
+    api(libs.google.protobuf.kotlin.lite)
 }

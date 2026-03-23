@@ -8,11 +8,11 @@ import org.gradle.kotlin.dsl.dependencies
 class HiltConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
-            pluginManager.applyPlugins("ksp", "hilt", catalog = catalog)
+            pluginManager.applyPlugins("ksp", "google.dagger.hilt.android", catalog = catalog)
 
             dependencies {
-                "implementation"(library("google.hilt"))
-                "ksp"(library("google.hilt.compiler"))
+                "implementation"(library("google.dagger.hilt.android"))
+                "ksp"(library("google.dagger.hilt.android.compiler"))
             }
         }
     }

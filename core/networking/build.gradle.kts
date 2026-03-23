@@ -7,10 +7,10 @@ plugins {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.common)
-    implementation(libs.androidx.core)
+    implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.w2sv.androidutils)
-    implementation(libs.okhttp3)
+    implementation(libs.squareup.okhttp3)
     testImplementation(libs.bundles.unitTest)
 }

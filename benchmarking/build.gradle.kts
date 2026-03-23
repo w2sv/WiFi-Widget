@@ -3,7 +3,7 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.android.test)
-    alias(libs.plugins.baselineprofile)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 val mvdName = "Pixel 6 API 33"

@@ -8,12 +8,15 @@ import javax.inject.Inject
 import timber.log.Timber
 
 @HiltAndroidApp
-class Application :
-    Application(),
-    Configuration.Provider {
+class Application : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
+
+    override val workManagerConfiguration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
 
     override fun onCreate() {
         super.onCreate()
@@ -22,9 +25,4 @@ class Application :
             Timber.plant(Timber.DebugTree())
         }
     }
-
-    override val workManagerConfiguration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
 }

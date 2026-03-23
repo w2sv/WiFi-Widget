@@ -18,7 +18,7 @@ kotlin {
 
 dependencies {
     compileOnly(libs.android.gradlePlugin)
-    compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.ksp.gradlePlugin)
 }
 
@@ -42,6 +42,10 @@ gradlePlugin {
         register("hilt") {
             id = "wifiwidget.hilt"
             implementationClass = "HiltConventionPlugin"
+        }
+        register("hilt.work") {
+            id = "wifiwidget.hilt.work"
+            implementationClass = "HiltWorkConventionPlugin"
         }
     }
 }
