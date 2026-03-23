@@ -16,7 +16,7 @@ internal fun Project.applyBaseConfig(namespace: Namespace = Namespace.Auto) {
     pluginManager.applyPlugins("ktlint", catalog = catalog)
 
     dependencies {
-        "implementation"(bundle("w2sv-kotlinutils"))
+        "implementation"(library("w2sv-kotlinutils"))
         "implementation"(library("slimber"))
     }
 

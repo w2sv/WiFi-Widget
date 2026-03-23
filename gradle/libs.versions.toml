@@ -100,8 +100,7 @@ w2sv-composed-material3 = { module = "com.github.w2sv.Composed:material3", versi
 w2sv-composed-permissions = { module = "com.github.w2sv.Composed:permissions", version.ref = "w2sv-composed" }
 w2sv-datastoreutils-datastoreflow = { module = "com.github.w2sv.DataStoreUtils:datastoreflow", version.ref = "w2sv-datastoreutils" }
 w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:preferences", version.ref = "w2sv-datastoreutils" }
-w2sv-kotlinutils-core = { module = "com.github.w2sv.KotlinUtils:core", version.ref = "w2sv-kotlinutils" }
-w2sv-kotlinutils-coroutines = { module = "com.github.w2sv.KotlinUtils:coroutines", version.ref = "w2sv-kotlinutils" }
+w2sv-kotlinutils = { module = "com.github.w2sv:KotlinUtils", version.ref = "w2sv-kotlinutils" }
 w2sv-reversiblestate = { module = "com.github.w2sv:ReversibleStateKt", version.ref = "w2sv-reversiblestate" }
 
 [bundles]
@@ -120,10 +119,6 @@ unitTest = [
     "kotlinx-coroutines-test",
     "robolectric",
     "turbine",
-]
-w2sv-kotlinutils = [
-    "w2sv-kotlinutils-core",
-    "w2sv-kotlinutils-coroutines",
 ]
 
 [plugins]
