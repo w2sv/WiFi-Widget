@@ -129,7 +129,8 @@ internal class WidgetRenderer @Inject constructor(
             viewId = R.id.last_updated_tv,
             isVisible = isUtilityEnabled(WidgetUtility.RefreshTimeDisplay),
             text = formattedDateTime(),
-            size = fontSize.value
+            size = fontSize.value,
+            color = colors.secondary
         )
         setButton(
             viewId = R.id.refresh_button,
