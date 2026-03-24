@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.refreshing
 
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -8,15 +8,16 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.w2sv.domain.model.widget.WidgetRefreshing
+import java.time.Duration
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.time.toJavaDuration
 import slimber.log.i
 
 @Singleton
-class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {
+internal class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {
 
-    fun applyRefreshingSettings(settings: WidgetRefreshing) {
+    fun applyRefreshing(settings: WidgetRefreshing) {
         when (settings.refreshPeriodically) {
             true -> enableWorker(
                 refreshOnLowBattery = settings.refreshOnLowBattery,
@@ -27,7 +28,7 @@ class WifiWidgetRefreshManager @Inject constructor(private val workManager: Work
         }
     }
 
-    internal fun enqueueImmediateRefresh() {
+    fun enqueueImmediateRefresh() {
         i { "Enqueueing immediate refresh" }
 
         val request = OneTimeWorkRequestBuilder<WifiWidgetRefreshWorker>()
@@ -41,7 +42,7 @@ class WifiWidgetRefreshManager @Inject constructor(private val workManager: Work
         )
     }
 
-    private fun enableWorker(refreshOnLowBattery: Boolean, interval: java.time.Duration) {
+    private fun enableWorker(refreshOnLowBattery: Boolean, interval: Duration) {
         i { "Enqueuing ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
 
         val request = PeriodicWorkRequestBuilder<WifiWidgetRefreshWorker>(interval)
@@ -60,9 +61,8 @@ class WifiWidgetRefreshManager @Inject constructor(private val workManager: Work
         )
     }
 
-    internal fun cancelWorker() {
+    fun cancelWorker() {
         i { "Cancelling ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
-
         workManager.cancelUniqueWork(WifiWidgetRefreshWorker.UNIQUE_WORK_NAME)
     }
 }

@@ -7,47 +7,48 @@ import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetConfigFlow
-import com.w2sv.widget.ui.WidgetRenderer
+import com.w2sv.widget.refreshing.WifiWidgetRefreshManager
+import com.w2sv.widget.ui.container.WidgetRenderer
 import com.w2sv.widget.ui.resolve
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
 import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import slimber.log.i
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class WifiWidgetProvider : LoggingAppWidgetProvider() {
+internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
     @Inject
-    internal lateinit var refreshManager: WifiWidgetRefreshManager
+    lateinit var refreshManager: WifiWidgetRefreshManager
 
     @Inject
-    internal lateinit var widgetRenderer: WidgetRenderer
+    lateinit var widgetRenderer: WidgetRenderer
 
     @Inject
-    internal lateinit var appWidgetManager: AppWidgetManager
+    lateinit var appWidgetManager: AppWidgetManager
 
     @Inject
-    internal lateinit var widgetConfigFlow: WidgetConfigFlow
+    lateinit var widgetConfigFlow: WidgetConfigFlow
 
     /**
      * Called upon the first AppWidget instance being created.
      *
-     * Enqueues [WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
+     * Enqueues [com.w2sv.widget.refreshing.WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
      */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
         val refreshing = runBlocking { widgetConfigFlow.first().refreshing }
-        refreshManager.applyRefreshingSettings(refreshing)
+        refreshManager.applyRefreshing(refreshing)
     }
 
     /**
      * Called upon last AppWidget instance of provider being deleted.
      *
-     * Cancels [WifiWidgetRefreshWorker].
+     * Cancels [com.w2sv.widget.refreshing.WifiWidgetRefreshWorker].
      */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
@@ -58,7 +59,7 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
         super.onReceive(context, intent)
 
         when (intent.action) {
-            ACTION_REFRESH_DATA -> refreshManager.enqueueImmediateRefresh()
+            ACTION_REFRESH -> refreshManager.enqueueImmediateRefresh()
             ACTION_RENDER -> onUpdate(
                 context = context,
                 appWidgetManager = appWidgetManager,
@@ -93,21 +94,14 @@ class WifiWidgetProvider : LoggingAppWidgetProvider() {
     }
 
     companion object {
-        internal fun render(context: Context) {
-            context.sendBroadcast(renderIntent(context))
-        }
 
-        private fun renderIntent(context: Context) =
+        internal fun renderIntent(context: Context) =
             intent<WifiWidgetProvider>(context).setAction(ACTION_RENDER)
 
-        fun refreshData(context: Context) {
-            context.sendBroadcast(refreshDataIntent(context))
-        }
-
-        internal fun refreshDataIntent(context: Context): Intent =
-            intent<WifiWidgetProvider>(context).setAction(ACTION_REFRESH_DATA)
+        internal fun refreshIntent(context: Context): Intent =
+            intent<WifiWidgetProvider>(context).setAction(ACTION_REFRESH)
 
         private const val ACTION_RENDER = "com.w2sv.wifiwidget.action.RENDER"
-        private const val ACTION_REFRESH_DATA = "com.w2sv.wifiwidget.action.REFRESH_DATA"
+        private const val ACTION_REFRESH = "com.w2sv.wifiwidget.action.REFRESH_DATA"
     }
 }

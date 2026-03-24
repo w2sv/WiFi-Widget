@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.ui.properties
 
 import android.app.PendingIntent
 import android.content.ClipData

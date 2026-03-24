@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui.properties
+package com.w2sv.widget.ui.properties.renderdata
 
 import androidx.annotation.LayoutRes
 import com.w2sv.domain.model.widget.FontSize

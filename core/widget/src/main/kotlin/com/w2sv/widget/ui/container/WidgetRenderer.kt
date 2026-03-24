@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.container
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -14,8 +14,7 @@ import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
-import com.w2sv.widget.CopyPropertyToClipboardActivity
-import com.w2sv.widget.WidgetAction
+import com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity
 import com.w2sv.widget.ui.properties.WifiPropertyViewsService
 import com.w2sv.widget.utils.setButton
 import com.w2sv.widget.utils.setImageView
@@ -108,7 +107,7 @@ internal class WidgetRenderer @Inject constructor(
 
         setOnClickPendingIntent(
             R.id.no_connection_available_layout,
-            WidgetAction.openWifiSettings(context)
+            WidgetActionPendingIntent.openWifiSettings(context)
         )
     }
 
@@ -136,19 +135,19 @@ internal class WidgetRenderer @Inject constructor(
             viewId = R.id.refresh_button,
             isVisible = isUtilityEnabled(WidgetUtility.RefreshButton),
             color = colors.primary,
-            pendingIntent = WidgetAction.refreshWidget(context)
+            pendingIntent = WidgetActionPendingIntent.refreshWidget(context)
         )
         setButton(
             viewId = R.id.go_to_wifi_settings_button,
             isVisible = isUtilityEnabled(WidgetUtility.GoToWifiSettingsButton),
             color = colors.primary,
-            pendingIntent = WidgetAction.openWifiSettings(context)
+            pendingIntent = WidgetActionPendingIntent.openWifiSettings(context)
         )
         setButton(
             viewId = R.id.go_to_widget_settings_button,
             isVisible = isUtilityEnabled(WidgetUtility.GoToWidgetSettingsButton),
             color = colors.primary,
-            pendingIntent = WidgetAction.openWidgetConfigScreen(context)
+            pendingIntent = WidgetActionPendingIntent.openWidgetConfigScreen(context)
         )
     }
 }

@@ -4,18 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.core.CollectFromFlow
 import com.w2sv.composed.core.CollectLatestFromFlow
 import com.w2sv.core.common.R
-import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedstate.theme.rememberThemeController
 import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
@@ -45,7 +42,6 @@ fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
 
 @Composable
 private fun BindLocationAccessToViewModel(viewModel: HomeScreenViewModel = hiltViewModel()) {
-    val context = LocalContext.current
     val locationAccessCapability = LocalLocationAccessCapability.current
 
     val locationAccessStatusChanges = remember(locationAccessCapability) {
@@ -59,13 +55,7 @@ private fun BindLocationAccessToViewModel(viewModel: HomeScreenViewModel = hiltV
     }
 
     // Consume OnLocationAccessGranted events relevant for the screen
-    CollectFromFlow(locationAccessCapability.grantEvents) { event ->
-        when (event) {
-            TriggerWidgetDataRefresh -> WifiWidgetProvider.refreshData(context)
-            EnableLocationAccessRequiringProperties -> viewModel.enableLocationAccessRequiringProperties()
-            else -> Unit
-        }
-    }
+    CollectFromFlow(locationAccessCapability.grantEvents, collector = viewModel::onLocationAccessGranted)
 }
 
 @Composable

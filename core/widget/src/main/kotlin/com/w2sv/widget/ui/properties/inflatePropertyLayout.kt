@@ -9,7 +9,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.widget.FontSize
 import com.w2sv.domain.model.widget.WidgetColors
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
-import com.w2sv.widget.CopyPropertyToClipboardActivity
+import com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity
 import com.w2sv.widget.utils.setTextView
 
 internal fun RemoteViews.inflatePropertyLayout(

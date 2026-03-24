@@ -11,7 +11,7 @@ import slimber.log.i
 /**
  * An [android.appwidget.AppWidgetProvider] that logs upon invocation of its callbacks.
  */
-abstract class LoggingAppWidgetProvider : AppWidgetProvider() {
+internal abstract class LoggingAppWidgetProvider : AppWidgetProvider() {
 
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)

@@ -2,12 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission
-        android:name="android.permission.ACCESS_BACKGROUND_LOCATION"
-        tools:ignore="BackgroundLocationPolicy" />
-
     <application
         android:name=".Application"
         android:allowBackup="true"
@@ -37,36 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!--Receivers-->
-
-        <receiver
-            android:name="com.w2sv.widget.WifiWidgetProvider"
-            android:exported="false">
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
-        </receiver>
-
-        <receiver android:name="com.w2sv.widget.WidgetPinSuccessBroadcastReceiver" />
-
-        <activity
-            android:name="com.w2sv.widget.CopyPropertyToClipboardActivity"
-            android:excludeFromRecents="true"
-            android:noHistory="true"
-            android:taskAffinity="com.w2sv.wifiwidget.taskaffinity.CopyPropertyToClipboard"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-
-        <!--Services-->
-
-        <service
-            android:name="com.w2sv.widget.ui.properties.WifiPropertyViewsService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
 
     </application>
 </manifest>

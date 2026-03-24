@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.actions
 
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.di.AppDefaultScope
+import com.w2sv.common.utils.broadcastPendingIntent
 import com.w2sv.widget.di.EmitWidgetPinSuccess
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,9 +40,8 @@ internal class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
 
     companion object {
         fun pendingIntent(context: Context): PendingIntent =
-            PendingIntent.getBroadcast(
+            broadcastPendingIntent(
                 context,
-                1447,
                 intent<WidgetPinSuccessBroadcastReceiver>(context),
                 PendingIntent.FLAG_IMMUTABLE
             )

@@ -39,3 +39,11 @@ fun activityPendingIntent(
     requestCode: Int = -1
 ): PendingIntent =
     PendingIntent.getActivity(context, requestCode, intent, flags)
+
+fun broadcastPendingIntent(
+    context: Context,
+    intent: Intent,
+    @PendingIntentFlags flags: Int,
+    requestCode: Int = -1
+): PendingIntent =
+    PendingIntent.getBroadcast(context, requestCode, intent, flags)

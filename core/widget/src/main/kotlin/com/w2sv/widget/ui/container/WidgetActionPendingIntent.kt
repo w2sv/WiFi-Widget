@@ -1,4 +1,4 @@
-package com.w2sv.widget
+package com.w2sv.widget.ui.container
 
 import android.app.PendingIntent
 import android.content.ComponentName
@@ -6,18 +6,19 @@ import android.content.Context
 import android.content.Intent
 import com.w2sv.common.AppAction
 import com.w2sv.common.utils.activityPendingIntent
+import com.w2sv.common.utils.broadcastPendingIntent
 import com.w2sv.common.utils.openWifiSettingsIntent
+import com.w2sv.widget.WifiWidgetProvider
 
-internal object WidgetAction {
+internal object WidgetActionPendingIntent {
 
     fun openWifiSettings(context: Context): PendingIntent =
         activityPendingIntent(context, openWifiSettingsIntent, PendingIntent.FLAG_IMMUTABLE)
 
     fun refreshWidget(context: Context): PendingIntent =
-        PendingIntent.getBroadcast(
+        broadcastPendingIntent(
             context,
-            1447,
-            WifiWidgetProvider.refreshDataIntent(context),
+            WifiWidgetProvider.refreshIntent(context),
             PendingIntent.FLAG_IMMUTABLE
         )
 
