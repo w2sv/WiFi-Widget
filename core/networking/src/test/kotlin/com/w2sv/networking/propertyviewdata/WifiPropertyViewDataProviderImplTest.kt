@@ -1,7 +1,7 @@
 package com.w2sv.networking.propertyviewdata
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.jupiter.api.Assertions.assertEquals
 
 class WifiPropertyViewDataProviderImplTest {
 
