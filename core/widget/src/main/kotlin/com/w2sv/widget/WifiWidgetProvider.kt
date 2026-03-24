@@ -7,7 +7,7 @@ import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.core.widget.R
 import com.w2sv.domain.repository.WidgetConfigFlow
-import com.w2sv.widget.refreshing.WifiWidgetRefreshManager
+import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import com.w2sv.widget.ui.container.WidgetRenderer
 import com.w2sv.widget.ui.resolve
 import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
@@ -22,7 +22,7 @@ import slimber.log.i
 internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
     @Inject
-    lateinit var refreshManager: WifiWidgetRefreshManager
+    lateinit var refreshManager: WifiWidgetWorkScheduler
 
     @Inject
     lateinit var widgetRenderer: WidgetRenderer
@@ -35,24 +35,22 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
 
     /**
      * Called upon the first AppWidget instance being created.
-     *
-     * Enqueues [com.w2sv.widget.refreshing.WifiWidgetRefreshWorker] as UniquePeriodicWork if not already enqueued.
+     * Enqueues [com.w2sv.widget.refreshing.WifiWidgetRefreshWorker] if not already enqueued.
      */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
         val refreshing = runBlocking { widgetConfigFlow.first().refreshing }
-        refreshManager.applyRefreshing(refreshing)
+        refreshManager.applyRefreshingPolicy(refreshing)
     }
 
     /**
-     * Called upon last AppWidget instance of provider being deleted.
-     *
+     * Called upon last provider AppWidget instance being deleted.
      * Cancels [com.w2sv.widget.refreshing.WifiWidgetRefreshWorker].
      */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
-        refreshManager.cancelWorker()
+        refreshManager.cancelPeriodicWork()
     }
 
     override fun onReceive(context: Context, intent: Intent) {

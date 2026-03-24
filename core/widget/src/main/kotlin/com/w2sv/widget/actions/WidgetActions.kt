@@ -6,5 +6,5 @@ interface WidgetActions {
     fun pin(onFailure: () -> Unit)
     fun refresh()
     fun render()
-    fun applyRefreshing(refreshing: WidgetRefreshing)
+    fun applyRefreshingPolicy(refreshing: WidgetRefreshing)
 }

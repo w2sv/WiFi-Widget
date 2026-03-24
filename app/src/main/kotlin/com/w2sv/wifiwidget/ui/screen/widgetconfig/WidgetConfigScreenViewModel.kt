@@ -28,7 +28,7 @@ class WidgetConfigScreenViewModel @Inject constructor(dataSource: WidgetConfigDa
             .map { it.refreshing }
             .distinctUntilChanged()
             .drop(1)
-            .collectOn(viewModelScope) { widgetActions.applyRefreshing(it) }
+            .collectOn(viewModelScope) { widgetActions.applyRefreshingPolicy(it) }
     }
 
     private val _changesHaveBeenCommitted = MutableSharedFlow<Unit>()

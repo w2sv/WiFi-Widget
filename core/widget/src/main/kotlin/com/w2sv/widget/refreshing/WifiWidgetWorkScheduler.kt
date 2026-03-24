@@ -10,21 +10,19 @@ import androidx.work.WorkManager
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import java.time.Duration
 import javax.inject.Inject
-import javax.inject.Singleton
 import kotlin.time.toJavaDuration
 import slimber.log.i
 
-@Singleton
-internal class WifiWidgetRefreshManager @Inject constructor(private val workManager: WorkManager) {
+internal class WifiWidgetWorkScheduler @Inject constructor(private val workManager: WorkManager) {
 
-    fun applyRefreshing(settings: WidgetRefreshing) {
-        when (settings.refreshPeriodically) {
-            true -> enableWorker(
-                refreshOnLowBattery = settings.refreshOnLowBattery,
-                interval = settings.interval.toJavaDuration()
+    fun applyRefreshingPolicy(settings: WidgetRefreshing) {
+        if (settings.refreshPeriodically) {
+            enqueuePeriodicWork(
+                interval = settings.interval.toJavaDuration(),
+                refreshOnLowBattery = settings.refreshOnLowBattery
             )
-
-            false -> cancelWorker()
+        } else {
+            cancelPeriodicWork()
         }
     }
 
@@ -36,14 +34,14 @@ internal class WifiWidgetRefreshManager @Inject constructor(private val workMana
             .build()
 
         workManager.enqueueUniqueWork(
-            "manual_refresh",
+            IMMEDIATE_WORK_NAME,
             ExistingWorkPolicy.REPLACE,
             request
         )
     }
 
-    private fun enableWorker(refreshOnLowBattery: Boolean, interval: Duration) {
-        i { "Enqueuing ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
+    private fun enqueuePeriodicWork(interval: Duration, refreshOnLowBattery: Boolean) {
+        i { "Enqueuing periodic work with interval=$interval, refreshOnLowBattery=$refreshOnLowBattery" }
 
         val request = PeriodicWorkRequestBuilder<WifiWidgetRefreshWorker>(interval)
             .setConstraints(
@@ -55,14 +53,19 @@ internal class WifiWidgetRefreshManager @Inject constructor(private val workMana
             .build()
 
         workManager.enqueueUniquePeriodicWork(
-            WifiWidgetRefreshWorker.UNIQUE_WORK_NAME,
+            PERIODIC_WORK_NAME,
             ExistingPeriodicWorkPolicy.UPDATE,
             request
         )
     }
 
-    fun cancelWorker() {
-        i { "Cancelling ${WifiWidgetRefreshWorker.UNIQUE_WORK_NAME}" }
-        workManager.cancelUniqueWork(WifiWidgetRefreshWorker.UNIQUE_WORK_NAME)
+    fun cancelPeriodicWork() {
+        i { "Cancelling periodic work" }
+        workManager.cancelUniqueWork(PERIODIC_WORK_NAME)
+    }
+
+    private companion object {
+        const val PERIODIC_WORK_NAME = "periodic_widget_refreshing"
+        const val IMMEDIATE_WORK_NAME = "immediate_widget_refreshing"
     }
 }

@@ -5,14 +5,14 @@ import android.content.Context
 import com.w2sv.androidutils.content.componentName
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.refreshing.WifiWidgetRefreshManager
+import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 internal class WidgetActionsImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val refreshManager: WifiWidgetRefreshManager
+    private val refreshManager: WifiWidgetWorkScheduler
 ) : WidgetActions {
 
     override fun pin(onFailure: () -> Unit) {
@@ -30,8 +30,8 @@ internal class WidgetActionsImpl @Inject constructor(
         context.sendBroadcast(WifiWidgetProvider.renderIntent(context))
     }
 
-    override fun applyRefreshing(refreshing: WidgetRefreshing) {
-        refreshManager.applyRefreshing(refreshing)
+    override fun applyRefreshingPolicy(refreshing: WidgetRefreshing) {
+        refreshManager.applyRefreshingPolicy(refreshing)
     }
 }
 

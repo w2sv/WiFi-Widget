@@ -11,6 +11,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import slimber.log.i
 
+/**
+ * Performs [RemoteNetworkInfoRepository] data refreshing & triggers widget rendering.
+ * Invoked both on refresh button click & periodic refreshing by the [WifiWidgetWorkScheduler].
+ */
 @HiltWorker
 internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     @Assisted context: Context,
@@ -21,9 +25,8 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result {
-        i { "doWork" }
-
         if (!powerManager.isInteractive) {
+            // Wifi status can't be retrieved while device is in standby
             i { "System not interactive; Skipping Widget Data refresh" }
         } else {
             i { "Triggering data refresh" }
@@ -31,9 +34,5 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
             widgetActions.render()
         }
         return Result.success()
-    }
-
-    companion object {
-        internal const val UNIQUE_WORK_NAME = "WifiWidgetRefreshWorker"
     }
 }
