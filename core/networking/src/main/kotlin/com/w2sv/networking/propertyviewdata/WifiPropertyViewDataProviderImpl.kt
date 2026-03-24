@@ -10,6 +10,7 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
+import com.w2sv.kotlinutils.coroutines.runCatchingCancellable
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.systemIpAddresses
 import javax.inject.Inject
@@ -46,12 +47,16 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
             enabledProperties.flatMap { property ->
                 ensureActive()
 
-                val values = try {
-                    property.resolve(wifiSnapshot, enabledIpSettings)
-                } catch (t: Throwable) {
-                    e { "Failed resolving property $property; $t" }
-                    throw CancellationException("Failed resolving property", t)
+                val values = runCatchingCancellable {
+                    property.resolve(
+                        wifiSnapshot,
+                        enabledIpSettings
+                    )
                 }
+                    .getOrElse { throwable ->
+                        e { "Failed resolving property $property; $throwable" }
+                        throw CancellationException()
+                    }
 
                 property.viewData(
                     values = values,

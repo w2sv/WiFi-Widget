@@ -15,10 +15,13 @@ import kotlinx.coroutines.flow.StateFlow
  */
 interface RemoteNetworkInfoRepository {
 
+    /**
+     * The latest [RemoteNetworkInfo].
+     */
     val data: StateFlow<RemoteNetworkInfo>
 
     /**
-     * Refreshes all remote network info on demand.
+     * Refreshes [data] on demand.
      * It respects user settings and will skip network calls for disabled properties.
      */
     suspend fun refresh()

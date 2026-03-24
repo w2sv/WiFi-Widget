@@ -1,55 +1,33 @@
 package com.w2sv.networking.remotenetworkinfo.public_ip
 
 import com.w2sv.domain.model.networking.IpAddress
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.enabledVersions
-import com.w2sv.domain.repository.WidgetConfigFlow
+import com.w2sv.networking.remotenetworkinfo.ConditionalFetcher
 import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import com.w2sv.networking.toDomain
 import java.io.IOException
 import java.net.InetAddress
 import javax.inject.Inject
-import javax.inject.Singleton
-import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import okhttp3.OkHttpClient
-import slimber.log.e
 import slimber.log.i
 
-@Singleton
-internal class PublicIpRepository @Inject constructor(
-    private val httpClient: OkHttpClient,
-    private val widgetConfigFlow: WidgetConfigFlow
-) {
-    private val _data = MutableStateFlow<Map<IpAddress.Version, IpAddress?>>(emptyMap())
-    val data: StateFlow<Map<IpAddress.Version, IpAddress?>> get() = _data
+internal class PublicIpFetcher @Inject constructor(private val httpClient: OkHttpClient) : ConditionalFetcher<List<IpAddress>>() {
 
-    suspend fun refresh() =
+    override fun shouldFetch(config: WidgetConfig): Boolean =
+        config.isEnabled(WifiProperty.PublicIp)
+
+    override suspend fun performFetch(config: WidgetConfig) =
         coroutineScope {
-            val config = widgetConfigFlow.first()
-            if (!config.isEnabled(WifiProperty.PublicIp)) {
-                _data.value = emptyMap()
-                return@coroutineScope
-            }
-
             val enabledVersions = config.enabledIpSettings(WifiProperty.PublicIp).enabledVersions()
-            val results = enabledVersions.associateWith { version ->
-                async {
-                    fetchAndMapOnSuccess(version)
-                        .getOrElse { throwable ->
-                            if (throwable is CancellationException) throw throwable
-                            e { throwable.toString() }
-                            null
-                        }
-                }
-            }
-                .mapValues { it.value.await() }
-
-            _data.value = results
+            enabledVersions
+                .map { version -> async { fetchAndMapOnSuccess(version).getOrNull() } }
+                .awaitAll()
+                .filterNotNull()
         }
 
     /**
@@ -64,10 +42,12 @@ internal class PublicIpRepository @Inject constructor(
     private suspend fun fetchAndMapOnSuccess(version: IpAddress.Version): Result<IpAddress> =
         httpClient.fetchFromUrl(publicAddressFetchUrl(version)) { address ->
             i { "Got public $version address $address" }
-            InetAddress.getByName(address).toDomain(prefixLength = null)
+            InetAddress
+                .getByName(address)
+                .toDomain(prefixLength = null)
                 .also {
                     if (it.version != version) {
-                        throw IOException("Obtained $version address $address of incorrect format")
+                        error("Obtained $version address $address of incorrect format")
                     }
                 }
         }

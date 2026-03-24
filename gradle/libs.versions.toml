@@ -27,13 +27,14 @@ moduleGraph = "2.9.0"
 profileinstaller = "1.4.1"
 protobuf = "4.34.1"
 protobuf-plugin = "0.9.6"
+squareup-okhttp3 = "5.3.2"
 triplet-play = "4.0.0"
 versionCatalogUpdate = "1.1.0"
 w2sv-androidutils = "0.6.0"
 # @pin
 w2sv-composed = "0.1.1"
 w2sv-datastoreutils = "0.0.8"
-w2sv-kotlinutils = "0.2.2"
+w2sv-kotlinutils = "0.3.0"
 w2sv-reversiblestate = "0.1.0"
 
 [libraries]
@@ -90,7 +91,8 @@ reorderable = "sh.calvin.reorderable:reorderable:3.0.0"
 robolectric = "org.robolectric:robolectric:4.16.1"
 slack-lint-compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
-squareup-okhttp3 = "com.squareup.okhttp3:okhttp:5.3.2"
+squareup-okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "squareup-okhttp3" }
+squareup-okhttp3-coroutines = { module = "com.squareup.okhttp3:okhttp-coroutines", version.ref = "squareup-okhttp3" }
 turbine = "app.cash.turbine:turbine:1.2.1"
 w2sv-androidutils-core = { module = "com.github.w2sv.AndroidUtils:core", version.ref = "w2sv-androidutils" }
 w2sv-colorpicker = "com.github.w2sv:Compose-Color-Picker-Bundle:1.0.0-rc9"

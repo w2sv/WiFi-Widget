@@ -7,7 +7,7 @@ import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.settings.enabledVersions
 
 internal fun WifiProperty.IpProperty.resolve(
-    publicIps: Map<IpAddress.Version, IpAddress?>,
+    publicIps: List<IpAddress>,
     systemIps: List<IpAddress>,
     enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>
 ): List<WifiPropertyValue> {
@@ -35,7 +35,7 @@ internal fun WifiProperty.IpProperty.resolve(
 
 private fun WifiProperty.IpProperty.getAddresses(
     systemIps: List<IpAddress>,
-    publicIps: Map<IpAddress.Version, IpAddress?>,
+    publicIps: List<IpAddress>,
     enabledVersions: Collection<IpAddress.Version>
 ): List<IpAddress> =
     when (this) {
@@ -45,7 +45,7 @@ private fun WifiProperty.IpProperty.getAddresses(
         WifiProperty.SiteLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isSiteLocal }
         WifiProperty.LinkLocalIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isLinkLocal }
         WifiProperty.MulticastIp -> systemIps.filterByVersionAndPredicate(enabledVersions) { it.isMulticast }
-        WifiProperty.PublicIp -> enabledVersions.mapNotNull { version -> publicIps[version] }
+        WifiProperty.PublicIp -> publicIps
     }
 
 private inline fun List<IpAddress>.filterByVersionAndPredicate(
