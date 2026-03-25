@@ -1,6 +1,6 @@
 package com.w2sv.domain.model.wifiproperty.viewdata
 
-import com.w2sv.domain.model.networking.RemoteNetworkInfo
+import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 
@@ -12,6 +12,6 @@ fun interface WifiPropertyViewDataProvider {
     suspend operator fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteNetworkInfo: RemoteNetworkInfo
+        remoteWifiData: RemoteWifiData
     ): List<WifiPropertyViewData>
 }

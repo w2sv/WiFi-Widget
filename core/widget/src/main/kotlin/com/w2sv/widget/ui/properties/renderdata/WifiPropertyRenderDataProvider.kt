@@ -6,7 +6,7 @@ import com.w2sv.core.widget.R
 import com.w2sv.domain.model.widget.WidgetAppearance
 import com.w2sv.domain.model.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.widget.ui.resolve
 import javax.inject.Inject
@@ -15,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 
 internal class WifiPropertyRenderDataProvider @Inject constructor(
     private val widgetConfigFlow: WidgetConfigFlow,
-    private val remoteNetworkInfoRepository: RemoteNetworkInfoRepository,
+    private val remoteWifiDataRepository: RemoteWifiDataRepository,
     private val wifiPropertyViewDataProvider: WifiPropertyViewDataProvider
 ) {
     operator fun invoke(context: Context): WifiPropertyRenderData {
@@ -26,7 +26,7 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
                 wifiPropertyViewDataProvider(
                     enabledProperties = config.enabledProperties,
                     enabledIpSettings = config::enabledIpSettings,
-                    remoteNetworkInfo = remoteNetworkInfoRepository.data.value
+                    remoteWifiData = remoteWifiDataRepository.data.value
                 )
                     .log { "propertyViewData=$it" }
             },

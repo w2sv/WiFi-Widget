@@ -6,7 +6,7 @@ import com.w2sv.common.utils.logOnEach
 import com.w2sv.common.utils.refreshOn
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.kotlinutils.coroutines.flow.collectLatestOn
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
@@ -37,7 +37,7 @@ class WifiStateProviderImpl @Inject constructor(
     wifiStatusMonitor: WifiStatusMonitor,
     widgetConfigFlow: WidgetConfigFlow,
     wifiPropertyViewDataProvider: WifiPropertyViewDataProvider,
-    remoteNetworkInfoRepository: RemoteNetworkInfoRepository,
+    remoteWifiDataRepository: RemoteWifiDataRepository,
     locationEnabledProvider: LocationEnabledProvider,
     private val scope: CoroutineScope
 ) : WifiStateProvider {
@@ -65,17 +65,17 @@ class WifiStateProviderImpl @Inject constructor(
     // - wifiStatus emits Connected
     private val connectedWifiState: Flow<WifiState.Connected> = combine(
         widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap to it.enabledProperties }.logOnEach("sharedConfig"),
-        remoteNetworkInfoRepository.data.logOnEach("remoteNetworkInfoData"),
+        remoteWifiDataRepository.data.logOnEach("remoteNetworkInfoData"),
         connectedWifiStatus,
         locationAccessChangedWhileDependentPropertiesEnabled
-    ) { config, remoteNetworkInfo, connectedStatus, _ ->
-        i { "Computing connectedWifiState for $connectedStatus $remoteNetworkInfo $config" }
+    ) { config, remoteWifiData, connectedStatus, _ ->
+        i { "Computing connectedWifiState for $connectedStatus $remoteWifiData $config" }
         WifiState.Connected(
             status = connectedStatus,
             propertyViewData = wifiPropertyViewDataProvider(
                 enabledProperties = config.enabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
-                remoteNetworkInfo = remoteNetworkInfo
+                remoteWifiData = remoteWifiData
             )
         )
     }
@@ -102,7 +102,7 @@ class WifiStateProviderImpl @Inject constructor(
             .refreshOn(widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap })
             .collectLatestOn(scope) {
                 i { "Refreshing RemoteNetworkInfo" }
-                remoteNetworkInfoRepository.refresh()
+                remoteWifiDataRepository.refresh()
             }
 
         // React to GPS enablement changes

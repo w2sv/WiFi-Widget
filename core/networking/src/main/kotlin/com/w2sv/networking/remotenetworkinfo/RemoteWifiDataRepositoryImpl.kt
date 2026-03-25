@@ -1,7 +1,7 @@
 package com.w2sv.networking.remotenetworkinfo
 
-import com.w2sv.domain.model.networking.RemoteNetworkInfo
-import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.model.networking.RemoteWifiData
+import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiDataFetcher
 import com.w2sv.networking.remotenetworkinfo.public_ip.PublicIpFetcher
@@ -14,13 +14,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 
 @Singleton
-internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(
+internal class RemoteWifiDataRepositoryImpl @Inject constructor(
     private val ipApiDataFetcher: IpApiDataFetcher,
     private val publicIpFetcher: PublicIpFetcher,
     private val widgetConfigFlow: WidgetConfigFlow
-) : RemoteNetworkInfoRepository {
+) : RemoteWifiDataRepository {
 
-    private val _data = MutableStateFlow(RemoteNetworkInfo.empty)
+    private val _data = MutableStateFlow(RemoteWifiData.empty)
     override val data = _data.asStateFlow()
 
     override suspend fun refresh() =
@@ -30,7 +30,7 @@ internal class RemoteNetworkInfoRepositoryImpl @Inject constructor(
             val ipApiDeferred = async { ipApiDataFetcher.fetchIfNecessary(config) }
             val publicIpDeferred = async { publicIpFetcher.fetchIfNecessary(config) }
 
-            _data.value = RemoteNetworkInfo(
+            _data.value = RemoteWifiData(
                 ipApiData = ipApiDeferred.await(),
                 publicIps = publicIpDeferred.await().orEmpty()
             )

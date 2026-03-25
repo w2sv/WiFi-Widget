@@ -1,6 +1,6 @@
 package com.w2sv.domain.repository
 
-import com.w2sv.domain.model.networking.RemoteNetworkInfo
+import com.w2sv.domain.model.networking.RemoteWifiData
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.StateFlow
  * Implementations must respect user configuration (enabled properties) to avoid
  * unnecessary network requests.
  */
-interface RemoteNetworkInfoRepository {
+interface RemoteWifiDataRepository {
 
     /**
-     * The latest [RemoteNetworkInfo].
+     * The latest [RemoteWifiData].
      */
-    val data: StateFlow<RemoteNetworkInfo>
+    val data: StateFlow<RemoteWifiData>
 
     /**
      * Refreshes [data] on demand.

@@ -1,13 +1,13 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import app.cash.turbine.test
-import com.w2sv.domain.model.networking.RemoteNetworkInfo
+import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.networking.WifiStatus
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.kotlinutils.copy
 import com.w2sv.kotlinutils.update
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
@@ -30,13 +30,13 @@ class WifiStateProviderImplTest {
 
     private val wifiStatusFlow = MutableSharedFlow<WifiStatus>().apply { tryEmit(WifiStatus.NotConnected) }
     private val widgetConfigFlow = MutableStateFlow(WidgetConfig.default)
-    private val remoteNetworkFlow = MutableStateFlow(RemoteNetworkInfo.empty)
+    private val remoteNetworkFlow = MutableStateFlow(RemoteWifiData.empty)
     private val gpsIsEnabledFlow = MutableStateFlow(true)
     private val wifiStatusMonitor = mockk<WifiStatusMonitor> {
         every { wifiStatus } returns wifiStatusFlow
     }
     private val wifiPropertyViewDataProvider = mockk<WifiPropertyViewDataProvider>(relaxed = true)
-    private val remoteNetworkInfoRepository = mockk<RemoteNetworkInfoRepository>(relaxed = true) {
+    private val remoteWifiDataRepository = mockk<RemoteWifiDataRepository>(relaxed = true) {
         every { data } returns remoteNetworkFlow
     }
     private val gpsStateProvider = mockk<LocationEnabledProvider> {
@@ -47,7 +47,7 @@ class WifiStateProviderImplTest {
         wifiStatusMonitor = wifiStatusMonitor,
         widgetConfigFlow = widgetConfigFlow,
         wifiPropertyViewDataProvider = wifiPropertyViewDataProvider,
-        remoteNetworkInfoRepository = remoteNetworkInfoRepository,
+        remoteWifiDataRepository = remoteWifiDataRepository,
         locationEnabledProvider = gpsStateProvider,
         scope = CoroutineScope(UnconfinedTestDispatcher())
     )
@@ -105,23 +105,23 @@ class WifiStateProviderImplTest {
     fun `RemoteNetworkInfoRepository refreshes on relevant changes`() =
         runTest {
             // No refreshing on WifiStatus.Disconnected
-            coVerify(exactly = 0) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 0) { remoteWifiDataRepository.refresh() }
 
             // No refreshing on property change during WifiStatus.Disconnected
             widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, true) }
-            coVerify(exactly = 0) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 0) { remoteWifiDataRepository.refresh() }
 
             // Refreshing on WifiStatus.Connected
             emitWifiStatus(WifiStatus.Connected)
-            coVerify(exactly = 1) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 1) { remoteWifiDataRepository.refresh() }
 
             // Refreshing on property change during WifiStatus.Connected
             widgetConfigFlow.update { it.withUpdatedPropertyEnablement(WifiProperty.SSID, false) }
-            coVerify(exactly = 2) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 2) { remoteWifiDataRepository.refresh() }
 
             // No refreshing on irrelevant config change
             widgetConfigFlow.update { it.copy(refreshing = it.refreshing.copy(refreshPeriodically = false)) }
-            coVerify(exactly = 2) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 2) { remoteWifiDataRepository.refresh() }
 
             // Refreshing on IP setting change
             widgetConfigFlow.update { config ->
@@ -133,6 +133,6 @@ class WifiStateProviderImplTest {
                     }
                 )
             }
-            coVerify(exactly = 3) { remoteNetworkInfoRepository.refresh() }
+            coVerify(exactly = 3) { remoteWifiDataRepository.refresh() }
         }
 }

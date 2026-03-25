@@ -4,7 +4,7 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.IsGpsEnabled
-import com.w2sv.domain.model.networking.RemoteNetworkInfo
+import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
 import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
@@ -31,16 +31,16 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
     override suspend fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteNetworkInfo: RemoteNetworkInfo
+        remoteWifiData: RemoteWifiData
     ): List<WifiPropertyViewData> =
         withContext(Dispatchers.Default) {
             val wifiSnapshot = WifiSnapshot(
                 connectionInfo = wifiManager.connectionInfo,
                 dhcpInfo = wifiManager.dhcpInfo,
                 linkProperties = connectivityManager.linkProperties,
-                publicIps = remoteNetworkInfo.publicIps,
+                publicIps = remoteWifiData.publicIps,
                 systemIps = connectivityManager.systemIpAddresses(),
-                ipApiData = remoteNetworkInfo.ipApiData,
+                ipApiData = remoteWifiData.ipApiData,
                 isGpsEnabled = isGpsEnabled()
             )
 

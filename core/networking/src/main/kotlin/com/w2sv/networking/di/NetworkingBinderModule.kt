@@ -1,9 +1,9 @@
 package com.w2sv.networking.di
 
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteNetworkInfoRepository
+import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.networking.propertyviewdata.WifiPropertyViewDataProviderImpl
-import com.w2sv.networking.remotenetworkinfo.RemoteNetworkInfoRepositoryImpl
+import com.w2sv.networking.remotenetworkinfo.RemoteWifiDataRepositoryImpl
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
 import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitorImpl
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
@@ -27,5 +27,5 @@ internal interface NetworkingBinderModule {
     fun wifiStatusProvider(instance: WifiStatusProviderImpl): WifiStatusProvider
 
     @Binds
-    fun remoteNetworkInfoRepository(instance: RemoteNetworkInfoRepositoryImpl): RemoteNetworkInfoRepository
+    fun remoteWifiDataRepository(instance: RemoteWifiDataRepositoryImpl): RemoteWifiDataRepository
 }
