@@ -65,7 +65,7 @@ class WifiStateProviderImpl @Inject constructor(
     // - wifiStatus emits Connected
     private val connectedWifiState: Flow<WifiState.Connected> = combine(
         widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap to it.enabledProperties }.logOnEach("sharedConfig"),
-        remoteWifiDataRepository.data.logOnEach("remoteNetworkInfoData"),
+        remoteWifiDataRepository.data.logOnEach("remoteWifiData"),
         connectedWifiStatus,
         locationAccessChangedWhileDependentPropertiesEnabled
     ) { config, remoteWifiData, connectedStatus, _ ->

@@ -24,7 +24,7 @@ class LocationPermissionCapabilityImpl(
     private val backgroundPermissionState: PermissionState?,
     private val requestLaunchedBefore: () -> Boolean,
     private val saveRequestLaunchedBefore: () -> Unit,
-    rationalAlreadyShown: Boolean,
+    private val rationalShown: () -> Boolean,
     private val saveRationalShown: () -> Unit,
     private val showSnackbar: (SnackbarBuilder) -> Unit,
     private val openAppSettings: () -> Unit
@@ -38,12 +38,10 @@ class LocationPermissionCapabilityImpl(
 
     // ========= Foreground Rational =========
 
-    override var showForegroundRational by mutableStateOf(!rationalAlreadyShown)
-        private set
+    override val showForegroundRational get() = !rationalShown()
 
     override fun onForegroundRationalProceed() {
         saveRationalShown()
-        showForegroundRational = false
         requestPermission(OnLocationAccessGranted.EnableLocationAccessRequiringProperties)
     }
 
@@ -74,26 +72,26 @@ class LocationPermissionCapabilityImpl(
         pendingOnGrantAction = onGrant
 
         when {
-            foregroundPermissionsGranted -> return
             isLaunchingSuppressed -> showSettingsSnackbar()
-            else -> launchForegroundPermission()
+            else -> {
+                foregroundPermissionsState.launchMultiplePermissionRequest()
+
+                if (!requestLaunchedBefore()) {
+                    saveRequestLaunchedBefore()
+                }
+            }
         }
     }
 
     override suspend fun onPermissionGranted() {
-        pendingOnGrantAction?.let { _grantEvents.emit(it) }
+        pendingOnGrantAction?.let {
+            _grantEvents.emit(it)
+        }
         pendingOnGrantAction = null
         maybeShowBackgroundRational()
     }
 
     // ========= Internal Helpers =========
-
-    private fun launchForegroundPermission() {
-        if (!requestLaunchedBefore()) {
-            saveRequestLaunchedBefore()
-        }
-        foregroundPermissionsState.launchMultiplePermissionRequest()
-    }
 
     private val isLaunchingSuppressed: Boolean
         get() = foregroundPermissionsState.isLaunchingSuppressed(requestLaunchedBefore())

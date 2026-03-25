@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
@@ -20,6 +21,7 @@ import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
+import slimber.log.d
 
 @Composable
 fun rememberLocationPermissionCapability(
@@ -47,7 +49,7 @@ fun rememberLocationPermissionCapability(
             backgroundPermissionState = backgroundPermissionState,
             requestLaunchedBefore = { requestLaunchedBefore },
             saveRequestLaunchedBefore = appVM::saveLocationAccessPermissionRequested,
-            rationalAlreadyShown = rationalShown,
+            rationalShown = { rationalShown },
             saveRationalShown = appVM::saveLocationAccessRationalShown,
             showSnackbar = { snackbarEmitter.showReplacing { it() } },
             openAppSettings = { context.openAppSettings() }
@@ -59,6 +61,22 @@ fun rememberLocationPermissionCapability(
         snapshotFlow { permissionsState.allPermissionsGranted }.drop(1).filter { it }
     }
     CollectFromFlow(allPermissionsNewlyGrantedFlow) { capability.onPermissionGranted() }
+
+    LaunchedEffect(
+        capability.showBackgroundRational,
+        capability.showForegroundRational,
+        capability.foregroundPermissionsGranted,
+        capability.isBackgroundPermissionMissing
+    ) {
+        d {
+            """
+        capability.showBackgroundRational = ${capability.showBackgroundRational}
+        capability.showForegroundRational = ${capability.showForegroundRational}
+        capability.foregroundPermissionsGranted = ${capability.foregroundPermissionsGranted}
+        capability.isBackgroundPermissionMissing = ${capability.isBackgroundPermissionMissing}
+            """.trimIndent()
+        }
+    }
 
     return capability
 }
