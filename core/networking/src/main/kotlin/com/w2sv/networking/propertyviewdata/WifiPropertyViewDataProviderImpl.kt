@@ -4,6 +4,7 @@ import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.IsGpsEnabled
+import com.w2sv.core.common.R
 import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
@@ -90,7 +91,7 @@ private fun WifiProperty.viewData(
 private fun WifiProperty.resolvedLabel(resolveRes: (Int) -> String, enumeration: Int?): SubscriptableText =
     when (this) {
         is WifiProperty.IpProperty -> SubscriptableText(
-            text = "IP",
+            text = resolveRes(R.string.ip),
             subscript = enumeratedText(
                 text = resolveRes(subscriptResId),
                 enumeration = enumeration

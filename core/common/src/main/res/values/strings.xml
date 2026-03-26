@@ -54,7 +54,6 @@
     <string name="updated_widget_configuration">Updated widget configuration.</string>
     <string name="ip">IP</string>
     <string name="report_a_bug_request_a_feature">Report a bug / request a feature</string>
-    <string name="retrieving_properties">Retrieving properties…</string>
     <string name="copied">"Copied"</string>
     <string name="to_clipboard">to clipboard</string>
     <string name="displayed_versions">Displayed Versions</string>
@@ -191,14 +190,12 @@
     <string name="fair">Fair</string>
     <string name="weak">Weak</string>
     <string name="poor">Poor</string>
-    <string name="none">None</string>
     <string name="widget_description">Monitor your WiFi connection details</string>
     <string name="refresh_data">Refresh data</string>
     <string name="no_wifi_connection">No WiFi Connection</string>
     <string name="wifi_disabled">WiFi Disabled</string>
     <string name="loading">Loading…</string>
     <string name="copied_to_clipboard"><![CDATA[Copied <b>%1$s</b> to the clipboard]]></string>
-    <string name="coloring">Coloring</string>
     <string name="connected_no_internet">Connected, no Internet</string>
     <string name="open_release_overview_cd">Open the app\'s release overview.</string>
 </resources>
