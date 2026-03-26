@@ -32,7 +32,7 @@ triplet-play = "4.0.0"
 versionCatalogUpdate = "1.1.0"
 w2sv-androidutils = "0.6.0"
 # @pin
-w2sv-composed = "0.1.1"
+w2sv-composed = "0.2.0"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.3.0"
 w2sv-reversiblestate = "0.1.0"
