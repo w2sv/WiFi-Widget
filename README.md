@@ -36,7 +36,7 @@
 ------
 
 <p align="center">
-<b>Android app providing a fully configurable widget for the monitoring of your WiFi connection details.</b>
+<b>Android app providing a neat, fully configurable widget for the monitoring of your WiFi connection details.</b>
 </p>
 
 ------
@@ -92,13 +92,13 @@
         - Font size
         - Property value alignment (left | right)
     - Displayed properties:
-        - **Basic Info**: SSID, BSSID, Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security Protocol  
+        - **Basic Info**: SSID, BSSID, Frequency, Channel, Link Speed, RSSI, Signal Strength, Standard, WiFi Generation, Security Protocol
         - **IP Addresses**:
           - Types: Loopback, Site Local, Link Local, Unique Local, Multicast, Global Unicast, Public (via [api.ipify.org](https://api.ipify.org))
           - Options: IPv4, IPv6, or both; show prefix lengths (IPv4/IPv6) and subnet masks (IPv4)
-        - **Network Details**: Gateway, DNS, DHCP, NAT64 Prefix  
+        - **Network Details**: Gateway, DNS, DHCP, NAT64 Prefix
         - **Location Info** (via [ip-api.com](https://ip-api.com/)):
-          - Region: Zip Code, District, City, Region, Country, Continent  
+          - Region: Zip Code, District, City, Region, Country, Continent
         - **Other**: GPS Location, ASN, ISP
     - Property appearance order
     - Bottom bar elements:
@@ -108,7 +108,7 @@
             - Open WiFi settings
             - Open widget settings
     - Automatic data refreshing:
-        - Interval: between 15 min and 24h 
+        - Interval: between 15 min and 24h
         - Whether to refresh on low battery
 
 <div id="user-content-toc">
@@ -128,7 +128,7 @@
 - [Dagger-Hilt](https://dagger.dev/hilt/) for dependency injection
 - [OkHttp](https://square.github.io/okhttp/) for network requests, [kotlinx serialization](https://github.com/Kotlin/kotlinx.serialization) for JSON parsing
 - Proto & Preferences data storage
-- JUnit 4, [mockito](https://github.com/mockito/mockito), [robolectric](https://robolectric.org/) & [turbine](https://github.com/cashapp/turbine) for unit testing
+- JUnit 4, [mockk](https://github.com/mockk/mockk), [robolectric](https://robolectric.org/) & [turbine](https://github.com/cashapp/turbine) for unit testing
 - JUnit 4 Compose android (instrumented) testing
 - Androidx Macro benchmarking & baseline profile generation with app-specific usage journey, implemented with [UI Automator](https://developer.android.com/training/testing/other-components/ui-automator)
 
@@ -147,7 +147,7 @@
 - **Clean architecture** (or however you wanna call it), with the UI and data layers depending on the domain layer, which exposes the data model and repository interfaces:
 
 <p align="center">
-    <img src="docs/graphs/dependency_graph.svg" alt=""/>
+    <img src="docs/module-graph.svg" alt=""/>
 </p>
 
 <div id="user-content-toc">
