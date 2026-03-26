@@ -1,7 +1,3 @@
-- Fix: blank widget on Pixels with Android 16 build BP3A.250905.014
-- Show wifi details for inactive connected networks
-- Make bottom bar button larger
-- Enable edge-to-edge on widget
-- Set default font size to medium
+**Big app rework**
 
-Note: you will need to set up a new widget
+Lots of UI, stability & performance improvements 🚀
