@@ -23,7 +23,6 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigList
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.ScreenPreviews
-import com.w2sv.wifiwidget.ui.util.resourceIdTestTag
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -65,7 +64,6 @@ fun WidgetConfigScreen(
                 updateConfig = updateConfig,
                 showDialog = showDialog,
                 modifier = Modifier
-                    .resourceIdTestTag("widgetConfigurationColumn")
                     .align(Alignment.CenterHorizontally)
                     .widthIn(max = 800.dp)
             )

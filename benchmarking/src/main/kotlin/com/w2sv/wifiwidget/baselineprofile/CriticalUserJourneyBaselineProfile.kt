@@ -4,9 +4,7 @@ import androidx.benchmark.macro.junit4.BaselineProfileRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Direction
 import androidx.test.uiautomator.UiDevice
-import com.w2sv.wifiwidget.util.flingObject
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,12 +28,8 @@ class CriticalUserJourneyBaselineProfile {
 private fun UiDevice.criticalUserJourney() {
     closeLocationAccessPermissionRationalAndRequestDialogIfOpen()
 
-    flingObject(ResourceNames.WIFI_PROPERTY_COLUMN, Direction.DOWN)
-
     goToWidgetConfigurationScreen()
     waitForIdle()
-
-    flingObject(ResourceNames.WIDGET_CONFIGURATION_COLUMN, Direction.DOWN)
 
     pressBack()
 }
@@ -51,9 +45,4 @@ private fun UiDevice.closeLocationAccessPermissionRationalAndRequestDialogIfOpen
 
 private fun UiDevice.goToWidgetConfigurationScreen() {
     findObject(By.text("Configure")).click()
-}
-
-private object ResourceNames {
-    const val WIFI_PROPERTY_COLUMN = "wifiPropertyColumn"
-    const val WIDGET_CONFIGURATION_COLUMN = "widgetConfigurationColumn"
 }

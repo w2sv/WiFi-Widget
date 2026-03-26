@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
-import com.w2sv.wifiwidget.ui.util.resourceIdTestTag
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList
 
@@ -38,7 +37,6 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
 
     SecondLevelElevatedCard(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.resourceIdTestTag("wifiPropertyColumn"),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(vertical = 6.dp)
         ) {
