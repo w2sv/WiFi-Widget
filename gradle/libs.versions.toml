@@ -69,7 +69,7 @@ androidx-splashscreen = "androidx.core:core-splashscreen:1.2.0"
 androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-runner" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
-androidx-work-runtime-ktx = "androidx.work:work-runtime-ktx:2.11.1"
+androidx-work-runtime-ktx = "androidx.work:work-runtime-ktx:2.11.2"
 flowExt = "io.github.hoc081098:FlowExt:1.0.0"
 google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.3"
 google-android-material = "com.google.android.material:material:1.13.0"
