@@ -58,8 +58,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:paddingTop="2dp"
-        android:paddingBottom="4dp"
         android:weightSum="1">
 
         <TextView
@@ -77,21 +75,19 @@
 
         <ImageButton
             android:id="@+id/refresh_button"
-            style="@style/BottomBarButton"
-            android:layout_marginEnd="8dp"
+            style="@style/WidgetButton"
             android:contentDescription="@string/refresh_data"
             android:src="@drawable/ic_refresh_24" />
 
         <ImageButton
             android:id="@+id/go_to_wifi_settings_button"
-            style="@style/BottomBarButton"
-            android:layout_marginEnd="8dp"
+            style="@style/WidgetButton"
             android:contentDescription="@string/open_wifi_settings_button"
             android:src="@drawable/ic_wifi_settings_24" />
 
         <ImageButton
             android:id="@+id/go_to_widget_settings_button"
-            style="@style/BottomBarButton"
+            style="@style/WidgetButton"
             android:contentDescription="@string/open_widget_settings_button"
             android:src="@drawable/ic_settings_24" />
 
