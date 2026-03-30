@@ -55,8 +55,8 @@ jobs:
                 uses: ardalanamini/auto-changelog@v4
                 with:
                     mention-authors: false
-                    mention-new-contributors: true
-                    include-compare: true
+                    mention-new-contributors: false
+                    include-compare-link: true
                     semver: false
 
             # Create GitHub Release
