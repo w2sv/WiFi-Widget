@@ -1,18 +1,23 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog
 
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
-import com.smarttoolfactory.colorpicker.picker.HSVColorPickerCircularWithSliders
-import com.smarttoolfactory.colorpicker.widget.ColorComponentsDisplay
+import com.smarttoolfactory.colorpicker.picker.ColorPickerRingHSL
+import com.smarttoolfactory.colorpicker.selector.SelectorRingProperties
+import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
+import com.w2sv.wifiwidget.ui.util.PreviewOf
 
 @Composable
 fun ColorPickerDialog(
@@ -22,6 +27,7 @@ fun ColorPickerDialog(
     applyColor: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val color = Color(data.color)
     ConfigurationDialog(
         onDismissRequest = onDismissRequest,
         onApplyButtonPress = {
@@ -30,32 +36,37 @@ fun ColorPickerDialog(
         },
         modifier = modifier,
         columnModifier = Modifier.verticalScroll(rememberScrollState()),
+        icon = { ColorIndicator(color = color, size = 42.dp) },
         title = stringResource(id = data.widgetColor.labelRes),
         applyButtonEnabled = data.hasBeenConfigured
     ) {
-        val color = Color(data.color)
-        HSVColorPickerCircularWithSliders(
+        ColorPickerRingHSL(
             initialColor = color,
-            onColorChange = { changedColor, _ -> updateColor(changedColor) }
-        )
-        ColorComponentsDisplay(
-            color = color,
             colorModel = ColorModel.RGB,
-            textColor = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier.width(220.dp)
+            ringProperties = SelectorRingProperties(borderStrokeWidth = Dp.Hairline),
+            showAlphaSlider = false,
+            isColorModelSelectable = false,
+            onColorChange = updateColor,
+            sliderPanelModifier = Modifier
+                .padding(top = 10.dp)
+                .padding(horizontal = 10.dp)
         )
     }
 }
 
-// @Preview
-// @Composable
-// private fun Prev() {
-//    AppTheme {
-//        ColorPickerDialog(
-//            label = "Background",
-//            appliedColor = Color.Red,
-//            applyColor = {},
-//            onDismissRequest = {},
-//        )
-//    }
-// }
+@Preview
+@Composable
+private fun Prev() {
+    PreviewOf {
+        ColorPickerDialog(
+            data = WidgetConfigDialog.ColorPicker(
+                widgetColor = WidgetColor.Background,
+                color = Color.Red.toArgb(),
+                initialColor = Color.Red.toArgb()
+            ),
+            onDismissRequest = {},
+            updateColor = {},
+            applyColor = {}
+        )
+    }
+}

@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -11,13 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,7 +29,7 @@ fun ConfigurationDialog(
     onApplyButtonPress: () -> Unit,
     modifier: Modifier = Modifier,
     columnModifier: Modifier = Modifier,
-    @DrawableRes iconRes: Int? = null,
+    icon: (@Composable () -> Unit)? = null,
     title: String? = null,
     applyButtonEnabled: Boolean = true,
     content: @Composable ColumnScope.() -> Unit
@@ -46,21 +43,19 @@ fun ConfigurationDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = columnModifier.padding(vertical = 22.dp, horizontal = 14.dp)
             ) {
-                iconRes?.let {
-                    Icon(
-                        painter = painterResource(id = iconRes),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                }
-                title?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier.padding(bottom = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    title?.let {
+                        Text(
+                            text = it,
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    icon?.invoke()
                 }
                 content()
                 CancelApplyButtonRow(

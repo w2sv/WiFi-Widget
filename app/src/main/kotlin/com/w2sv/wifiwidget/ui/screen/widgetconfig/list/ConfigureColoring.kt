@@ -1,8 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,8 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -20,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +24,7 @@ import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetColoring
 import com.w2sv.domain.model.widget.WidgetColoringStrategy
+import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
 import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
@@ -222,12 +218,6 @@ private fun CustomizationRow(
             fontSize = ConfigListToken.FontSize.subSetting,
             modifier = Modifier.weight(1f)
         )
-        Box(
-            modifier = Modifier
-                .size(42.dp)
-                .clip(CircleShape)
-                .background(color)
-                .border(0.5.dp, MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
-        )
+        ColorIndicator(color)
     }
 }

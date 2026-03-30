@@ -182,7 +182,7 @@ private fun animatedThemeButtonBorder(isSelected: Boolean): BorderStroke {
     val borderWidth by transition.animateDp(
         transitionSpec = { selectionSpec() },
         label = "borderWidth"
-    ) { if (it) 3.dp else 0.5.dp }
+    ) { if (it) 3.dp else Dp.Hairline }
 
     val borderColor by transition.animateColor(
         transitionSpec = { selectionSpec() },
