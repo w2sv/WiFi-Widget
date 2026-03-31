@@ -131,25 +131,26 @@ update_property() {
 
 pre_push_check() {
   echo
-  echo "===== Release summary ====="
-  echo "Version: $new_version"
-  echo "Version code: $new_version_code"
-  echo
-  echo "Release notes:"
-  echo "----------------"
-  echo "$RELEASE_NOTES"
-  echo "----------------"
-  echo
+  echo "=========== Diff ==========="
 
   git --no-pager diff --cached
   echo
 
   echo "Proceed with commit, tag and push?"
-  read -r -p "Type 'y' to continue or anything else to abort:" response
+  echo
+
+  read -r -p "Type 'y' to continue or anything else to abort " response
   if [[ "$response" != "y" ]]; then
       echo "Aborting release."
       exit 1
   fi
+
+  echo
+}
+
+run() {
+  echo "+ $*"
+  "$@"
 }
 
 main() {
@@ -206,11 +207,11 @@ main() {
   pre_push_check
 
   # Create commit, tag, and push
-  git add "$GRADLE_PROPERTIES_FILE"
-  git commit -m "build: ${new_version}"
-  git tag "$new_version"
-  git push
-  git push origin "$new_version"
+  run git add .
+  run git commit -m "chore: prepare ${new_version}"
+  run git tag "$new_version"
+  run git push
+  run git push origin "$new_version"
 
   # Build & publish bundle
   make build-aab

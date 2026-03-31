@@ -1,3 +1,3 @@
-**Big app rework**
-
-Lots of UI, stability & performance improvements 🚀
+- Enable precise custom color picking by migrating to HSL picker with RGB sliders
+- Set widget button touch target size to 48 px for better accessibility
+- Change splash screen background color
