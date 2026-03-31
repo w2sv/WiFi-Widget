@@ -23,6 +23,7 @@ internal fun Project.applyBaseConfig(namespace: Namespace = Namespace.Auto) {
     extensions.configureKotlinAndroidProject()
     extensions.configureCommon(
         namespace = namespace.get(path),
+        isFDroidRelease = providers.environmentVariable("F_DROID_RELEASE").isPresent,
         catalog = catalog
     )
     enableTestParallelization()
@@ -48,6 +49,7 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
 
 private fun ExtensionContainer.configureCommon(
     namespace: String,
+    isFDroidRelease: Boolean,
     catalog: VersionCatalog
 ) {
     configure<CommonExtension> {
@@ -70,7 +72,13 @@ private fun ExtensionContainer.configureCommon(
             }
             animationsDisabled = true
         }
-        packaging.resources.excludes.add("/META-INF/*")
+
+        packaging.apply {
+            resources.excludes.add("/META-INF/*")
+            if (isFDroidRelease) {
+                jniLibs.keepDebugSymbols.add("**/*.so")
+            }
+        }
     }
 }
 

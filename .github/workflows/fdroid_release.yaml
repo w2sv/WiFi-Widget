@@ -33,6 +33,8 @@ jobs:
 
             # Build APK
             -   name: Build APK
+                env:
+                    F_DROID_RELEASE: "true"
                 run: ./gradlew assembleRelease
 
             # Sign APK
