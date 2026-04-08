@@ -39,7 +39,7 @@ w2sv-reversiblestate = "0.1.0"
 [libraries]
 # @keep
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-androidx-annotation = "androidx.annotation:annotation:1.9.1"
+androidx-annotation = "androidx.annotation:annotation:1.10.0"
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "androidx-baselineprofile" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
