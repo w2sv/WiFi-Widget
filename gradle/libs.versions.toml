@@ -86,7 +86,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
 # @keep
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "google-ksp" }
-reorderable = "sh.calvin.reorderable:reorderable:3.0.0"
+reorderable = "sh.calvin.reorderable:reorderable:3.1.0"
 robolectric = "org.robolectric:robolectric:4.16.1"
 slack-lint-compose-lint-checks = { module = "com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
