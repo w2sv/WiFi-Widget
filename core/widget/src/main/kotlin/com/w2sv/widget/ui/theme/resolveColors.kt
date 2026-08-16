@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.theme
 
 import android.content.Context
 import com.w2sv.domain.model.Theme

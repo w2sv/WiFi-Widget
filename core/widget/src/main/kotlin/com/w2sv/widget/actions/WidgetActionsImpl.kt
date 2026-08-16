@@ -29,7 +29,7 @@ internal class WidgetActionsImpl @Inject constructor(
     }
 
     override suspend fun render() {
-        WifiGlanceWidget.updateAll(context)
+        WifiGlanceWidget().updateAll(context)
     }
 
     override fun applyRefreshingPolicy(refreshing: WidgetRefreshing) {

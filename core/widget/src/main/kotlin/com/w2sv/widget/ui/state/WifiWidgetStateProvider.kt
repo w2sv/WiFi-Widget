@@ -1,13 +1,15 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.state
 
 import android.content.Context
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.domain.repository.WidgetConfigFlow
 import com.w2sv.networking.wifistatus.provider.WifiStatusProvider
-import kotlinx.coroutines.flow.first
+import com.w2sv.widget.ui.model.WifiWidgetState
+import com.w2sv.widget.ui.theme.resolve
 import java.time.Instant
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 internal class WifiWidgetStateProvider @Inject constructor(
     private val widgetConfigFlow: WidgetConfigFlow,

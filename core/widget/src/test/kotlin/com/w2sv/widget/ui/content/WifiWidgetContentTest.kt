@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.content
 
 import android.content.Context
 import androidx.compose.ui.unit.DpSize
@@ -9,7 +9,9 @@ import androidx.glance.testing.unit.hasContentDescriptionEqualTo
 import androidx.glance.testing.unit.hasTextEqualTo
 import androidx.test.core.app.ApplicationProvider
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.widget.ui.preview.connectedWifiWidgetPreviewState
+import com.w2sv.widget.ui.preview.disabledWifiWidgetPreviewState
+import com.w2sv.widget.ui.preview.notConnectedWifiWidgetPreviewState
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -17,7 +19,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
-class WifiGlanceWidgetTest {
+class WifiWidgetContentTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
 
     @Test
@@ -27,7 +29,7 @@ class WifiGlanceWidgetTest {
             setAppWidgetSize(DpSize(160.dp, 100.dp))
 
             provideComposable {
-                WifiWidget(previewWifiWidgetState())
+                WifiWidgetContent(connectedWifiWidgetPreviewState())
             }
 
             onNode(hasTextEqualTo("Coffee Shop WiFi")).assertExists()
@@ -43,7 +45,7 @@ class WifiGlanceWidgetTest {
             setAppWidgetSize(DpSize(320.dp, 220.dp))
 
             provideComposable {
-                WifiWidget(previewWifiWidgetState())
+                WifiWidgetContent(connectedWifiWidgetPreviewState())
             }
 
             onNode(hasTextEqualTo("Coffee Shop WiFi")).assertExists()
@@ -52,20 +54,28 @@ class WifiGlanceWidgetTest {
         }
 
     @Test
-    fun disconnectedWidget_displaysStatus() =
+    fun disabledWifiWidget_displaysDisabledStatus() =
         runGlanceAppWidgetUnitTest {
             setContext(context)
             setAppWidgetSize(DpSize(250.dp, 140.dp))
 
             provideComposable {
-                WifiWidget(
-                    previewWifiWidgetState().copy(
-                        status = WifiStatus.Disabled,
-                        properties = emptyList()
-                    )
-                )
+                WifiWidgetContent(disabledWifiWidgetPreviewState())
             }
 
             onNode(hasTextEqualTo(context.getString(R.string.wifi_disabled))).assertExists()
+        }
+
+    @Test
+    fun notConnectedWifiWidget_displaysNoConnectionStatus() =
+        runGlanceAppWidgetUnitTest {
+            setContext(context)
+            setAppWidgetSize(DpSize(250.dp, 140.dp))
+
+            provideComposable {
+                WifiWidgetContent(notConnectedWifiWidgetPreviewState())
+            }
+
+            onNode(hasTextEqualTo(context.getString(R.string.no_wifi_connection))).assertExists()
         }
 }

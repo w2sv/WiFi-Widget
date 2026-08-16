@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.actions
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -14,13 +14,12 @@ import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.common.utils.ToastManager
 import com.w2sv.core.common.R
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
 import slimber.log.i
-import javax.inject.Inject
 
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {
-
     @Inject
     lateinit var toastManager: ToastManager
 
@@ -31,19 +30,14 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         val args = Args.fromIntent(intent)
-
         i { "onCreate | $args" }
 
-        // Copy to clipboard
-        clipboardManager
-            .setPrimaryClip(
-                ClipData.newPlainText(
-                    args.propertyLabel,
-                    args.propertyValue
-                )
+        clipboardManager.setPrimaryClip(
+            ClipData.newPlainText(
+                args.propertyLabel,
+                args.propertyValue
             )
-
-        // Show toast
+        )
         toastManager.cancelPreviousAndShow(
             applicationContext.makeToast(
                 resources.getHtmlFormattedText(R.string.copied_to_clipboard, args.propertyLabel),
@@ -56,17 +50,15 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
 
     @Parcelize
     data class Args(val propertyLabel: String, val propertyValue: String) : Parcelable {
-
         companion object {
             fun getIntent(propertyLabel: String, propertyValue: String): Intent =
-                Intent()
-                    .putExtra(
-                        EXTRA,
-                        Args(
-                            propertyLabel = propertyLabel,
-                            propertyValue = propertyValue
-                        )
+                Intent().putExtra(
+                    EXTRA,
+                    Args(
+                        propertyLabel = propertyLabel,
+                        propertyValue = propertyValue
                     )
+                )
 
             fun fromIntent(intent: Intent): Args =
                 checkNotNull(intent.getParcelableCompat(EXTRA))

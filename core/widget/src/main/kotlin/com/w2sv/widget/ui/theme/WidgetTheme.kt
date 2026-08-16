@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui
+package com.w2sv.widget.ui.theme
 
 import android.annotation.SuppressLint
 import android.content.Context

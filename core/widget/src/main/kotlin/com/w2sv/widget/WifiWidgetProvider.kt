@@ -14,7 +14,7 @@ import slimber.log.i
 
 @AndroidEntryPoint
 internal class WifiWidgetProvider : GlanceAppWidgetReceiver() {
-    override val glanceAppWidget: GlanceAppWidget = WifiGlanceWidget
+    override val glanceAppWidget: GlanceAppWidget = WifiGlanceWidget()
 
     @Inject
     lateinit var refreshManager: WifiWidgetWorkScheduler
