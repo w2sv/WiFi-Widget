@@ -43,7 +43,7 @@ androidx-annotation = "androidx.annotation:annotation:1.9.1"
 androidx-appcompat = "androidx.appcompat:appcompat:1.7.1"
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "androidx-baselineprofile" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
-androidx-compose-material-icons = "androidx.compose.material:material-icons-core:1.7.8"
+androidx-compose-material-icons-core = "androidx.compose.material:material-icons-core:1.7.8"
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose-ui" }
 androidx-compose-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "androidx-compose-ui" }
