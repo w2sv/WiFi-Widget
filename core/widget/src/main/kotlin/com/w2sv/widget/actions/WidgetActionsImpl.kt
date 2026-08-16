@@ -2,10 +2,12 @@ package com.w2sv.widget.actions
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import androidx.glance.appwidget.updateAll
 import com.w2sv.androidutils.content.componentName
 import com.w2sv.domain.model.widget.WidgetRefreshing
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
+import com.w2sv.widget.ui.WifiGlanceWidget
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -23,11 +25,11 @@ internal class WidgetActionsImpl @Inject constructor(
     }
 
     override fun refresh() {
-        context.sendBroadcast(WifiWidgetProvider.refreshIntent(context))
+        refreshManager.enqueueImmediateRefresh()
     }
 
-    override fun render() {
-        context.sendBroadcast(WifiWidgetProvider.renderIntent(context))
+    override suspend fun render() {
+        WifiGlanceWidget.updateAll(context)
     }
 
     override fun applyRefreshingPolicy(refreshing: WidgetRefreshing) {

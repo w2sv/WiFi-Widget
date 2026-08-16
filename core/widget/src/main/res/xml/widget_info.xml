@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?><!--https://developer.android.com/develop/ui/views/appwidgets#AppWidgetProviderInfo-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_description"
-    android:initialLayout="@layout/widget"
+    android:initialLayout="@layout/glance_default_loading_layout"
     android:minWidth="@dimen/min_width"
     android:minHeight="@dimen/min_height"
     android:minResizeHeight="@dimen/min_resize_height"

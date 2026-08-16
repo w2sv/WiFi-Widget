@@ -5,6 +5,7 @@ androidx-baselineprofile = "1.5.0-rc01"
 androidx-compose-material3 = "1.4.0"
 androidx-compose-ui = "1.12.0"
 androidx-datastore = "1.2.1"
+androidx-glance = "1.2.0-rc01"
 androidx-hilt = "1.4.0"
 androidx-lifecycle = "2.11.0"
 androidx-navigation3 = "1.2.0-alpha07"
@@ -54,6 +55,11 @@ androidx-constraintlayout-compose = "androidx.constraintlayout:constraintlayout-
 androidx-core-ktx = "androidx.core:core-ktx:1.19.0"
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidx-glance" }
+androidx-glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "androidx-glance" }
+androidx-glance-preview = { module = "androidx.glance:glance-preview", version.ref = "androidx-glance" }
+androidx-glance-testing = { module = "androidx.glance:glance-testing", version.ref = "androidx-glance" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt" }

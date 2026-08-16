@@ -19,14 +19,9 @@
 
         <receiver android:name="com.w2sv.widget.actions.WidgetPinSuccessBroadcastReceiver" />
 
-        <!--Services-->
-        <service
-            android:name="com.w2sv.widget.ui.properties.WifiPropertyViewsService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
-
         <!--Activities-->
         <activity
-            android:name="com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity"
+            android:name="com.w2sv.widget.ui.CopyPropertyToClipboardActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="com.w2sv.wifiwidget.taskaffinity.CopyPropertyToClipboard"

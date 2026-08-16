@@ -5,6 +5,6 @@ import com.w2sv.domain.model.widget.WidgetRefreshing
 interface WidgetActions {
     fun pin(onFailure: () -> Unit)
     fun refresh()
-    fun render()
+    suspend fun render()
     fun applyRefreshingPolicy(refreshing: WidgetRefreshing)
 }
