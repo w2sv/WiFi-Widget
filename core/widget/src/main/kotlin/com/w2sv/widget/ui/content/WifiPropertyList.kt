@@ -31,11 +31,11 @@ import com.w2sv.widget.ui.theme.toColorProvider
 
 @Composable
 internal fun WifiPropertyList(
-    modifier: GlanceModifier,
     properties: List<WifiPropertyViewData>,
     alignment: WifiPropertyValueAlignment,
     colors: WidgetColors,
-    fontSize: FontSize
+    fontSize: FontSize,
+    modifier: GlanceModifier = GlanceModifier
 ) {
     LazyColumn(
         modifier = modifier
@@ -124,7 +124,7 @@ private fun WifiPropertyRow(
                         text = value,
                         modifier = GlanceModifier
                             .background(colors.subPropertyBackground.toColorProvider())
-                            .cornerRadius(4.dp)
+                            .cornerRadius(12.dp)
                             .padding(horizontal = 4.dp),
                         style = TextStyle(
                             color = colors.secondary.toColorProvider(),

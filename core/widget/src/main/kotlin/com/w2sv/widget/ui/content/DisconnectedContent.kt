@@ -29,10 +29,10 @@ import com.w2sv.widget.ui.theme.toColorProvider
 
 @Composable
 internal fun DisconnectedContent(
-    modifier: GlanceModifier,
     status: WifiStatus,
     colors: WidgetColors,
-    fontSize: FontSize
+    fontSize: FontSize,
+    modifier: GlanceModifier = GlanceModifier
 ) {
     val context = LocalContext.current
     Box(

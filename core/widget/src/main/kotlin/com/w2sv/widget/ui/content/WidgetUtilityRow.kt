@@ -3,24 +3,20 @@ package com.w2sv.widget.ui.content
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
-import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.Action
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.actionStartActivity
+import androidx.glance.appwidget.components.CircleIconButton
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.w2sv.core.common.R as CommonR
 import com.w2sv.domain.model.widget.WidgetUtility
 import com.w2sv.widget.actions.RefreshWidgetAction
 import com.w2sv.widget.actions.widgetSettingsIntent
@@ -32,13 +28,14 @@ import java.text.SimpleDateFormat
 import java.time.Instant
 import java.util.Date
 import java.util.Locale
+import com.w2sv.core.common.R as CommonR
+
+private val buttonSpacing = 8.dp
 
 @Composable
 internal fun WidgetUtilityRow(state: WifiWidgetState) {
+    val enabledUtilities = state.enabledUtilities
     val context = LocalContext.current
-    val config = state.config
-    val enabledUtilities = config.enabledUtilities()
-    if (enabledUtilities.isEmpty()) return
 
     Row(
         modifier = GlanceModifier.fillMaxWidth(),
@@ -49,36 +46,40 @@ internal fun WidgetUtilityRow(state: WifiWidgetState) {
                 text = formattedDateTime(state.renderedAt),
                 style = TextStyle(
                     color = state.colors.secondary.toColorProvider(),
-                    fontSize = config.appearance.fontSize.value.sp
+                    fontSize = state.fontSize.value.sp
                 )
             )
         }
 
         Spacer(GlanceModifier.defaultWeight())
 
-        if (WidgetUtility.RefreshButton in enabledUtilities) {
-            UtilityButton(
-                iconRes = CommonR.drawable.ic_refresh_24,
-                contentDescription = context.getString(CommonR.string.refresh_data),
-                tint = state.colors.primary,
-                action = actionRunCallback<RefreshWidgetAction>()
-            )
-        }
-        if (WidgetUtility.GoToWifiSettingsButton in enabledUtilities) {
-            UtilityButton(
-                iconRes = CommonR.drawable.ic_wifi_settings_24,
-                contentDescription = context.getString(CommonR.string.open_wifi_settings_button),
-                tint = state.colors.primary,
-                action = actionStartActivity(wifiSettingsIntent())
-            )
-        }
-        if (WidgetUtility.GoToWidgetSettingsButton in enabledUtilities) {
-            UtilityButton(
-                iconRes = CommonR.drawable.ic_settings_24,
-                contentDescription = context.getString(CommonR.string.open_widget_settings_button),
-                tint = state.colors.primary,
-                action = actionStartActivity(widgetSettingsIntent(context))
-            )
+        Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
+            if (WidgetUtility.RefreshButton in enabledUtilities) {
+                UtilityButton(
+                    iconRes = CommonR.drawable.ic_refresh_24,
+                    contentDescription = context.getString(CommonR.string.refresh_data),
+                    tint = state.colors.primary,
+                    action = actionRunCallback<RefreshWidgetAction>(),
+                    modifier = GlanceModifier.padding(horizontal = buttonSpacing)
+                )
+            }
+            if (WidgetUtility.GoToWifiSettingsButton in enabledUtilities) {
+                UtilityButton(
+                    iconRes = CommonR.drawable.ic_wifi_settings_24,
+                    contentDescription = context.getString(CommonR.string.open_wifi_settings_button),
+                    tint = state.colors.primary,
+                    action = actionStartActivity(wifiSettingsIntent()),
+                    modifier = GlanceModifier.padding(horizontal = buttonSpacing)
+                )
+            }
+            if (WidgetUtility.GoToWidgetSettingsButton in enabledUtilities) {
+                UtilityButton(
+                    iconRes = CommonR.drawable.ic_settings_24,
+                    contentDescription = context.getString(CommonR.string.open_widget_settings_button),
+                    tint = state.colors.primary,
+                    action = actionStartActivity(widgetSettingsIntent(context))
+                )
+            }
         }
     }
 }
@@ -88,16 +89,16 @@ private fun UtilityButton(
     iconRes: Int,
     contentDescription: String,
     tint: Int,
-    action: Action
+    action: Action,
+    modifier: GlanceModifier = GlanceModifier
 ) {
-    Image(
-        provider = ImageProvider(iconRes),
+    CircleIconButton(
+        imageProvider = ImageProvider(iconRes),
         contentDescription = contentDescription,
-        modifier = GlanceModifier
-            .size(48.dp)
-            .padding(8.dp)
-            .clickable(action),
-        colorFilter = ColorFilter.tint(tint.toColorProvider())
+        contentColor = tint.toColorProvider(),
+        backgroundColor = null,
+        onClick = action,
+        modifier = modifier
     )
 }
 

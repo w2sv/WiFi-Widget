@@ -13,6 +13,8 @@ android {
     }
 }
 
+kotlin { compilerOptions { optIn.add("androidx.glance.preview.ExperimentalGlancePreviewApi") } }
+
 val previewTestClass = "WifiGlancePaparazziPreviewTest"
 
 val exportGlancePreviews = tasks.register<Sync>("exportGlancePreviews") {

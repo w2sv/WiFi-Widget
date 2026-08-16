@@ -8,17 +8,14 @@ import androidx.glance.background
 import androidx.glance.layout.Column
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.padding
-import androidx.glance.unit.ColorProvider
 import com.w2sv.widget.ui.model.WifiWidgetState
 
 @Composable
 internal fun WifiWidgetContent(state: WifiWidgetState) {
-    val fontSize = state.config.appearance.fontSize
-
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ColorProvider(state.backgroundColor))
+            .background(state.backgroundColor)
             .cornerRadius(16.dp)
             .padding(horizontal = 10.dp)
     ) {
@@ -26,19 +23,21 @@ internal fun WifiWidgetContent(state: WifiWidgetState) {
             WifiPropertyList(
                 modifier = GlanceModifier.defaultWeight(),
                 properties = state.properties,
-                alignment = state.config.appearance.propertyValueAlignment,
+                alignment = state.propertyValueAlignment,
                 colors = state.colors,
-                fontSize = fontSize
+                fontSize = state.fontSize
             )
         } else {
             DisconnectedContent(
                 modifier = GlanceModifier.defaultWeight(),
                 status = state.status,
                 colors = state.colors,
-                fontSize = fontSize
+                fontSize = state.fontSize
             )
         }
 
-        WidgetUtilityRow(state)
+        if (state.enabledUtilities.isNotEmpty()) {
+            WidgetUtilityRow(state)
+        }
     }
 }
