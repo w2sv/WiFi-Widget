@@ -39,6 +39,9 @@ generate-dependency-graph:
 	@mv module-graph.svg docs/
 	@rm all_modules
 
+export-glance-previews:
+	@./gradlew :core:widget:exportGlancePreviews
+
 # ==============
 # Building
 # ==============

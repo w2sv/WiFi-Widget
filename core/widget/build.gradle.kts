@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.wifiwidget.hilt.work)
     alias(libs.plugins.kotlin.plugin.compose)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.paparazzi)
 }
 
 android {
@@ -11,6 +12,35 @@ android {
         compose = true
     }
 }
+
+val previewTestClass = "WifiGlancePaparazziPreviewTest"
+
+val exportGlancePreviews = tasks.register<Sync>("exportGlancePreviews") {
+    group = "verification"
+    description = "Renders Glance previews to PNG."
+
+    dependsOn("testDebugUnitTest")
+
+    // Paparazzi's normal test run writes its rendered report under build/reports/paparazzi.
+    from(layout.buildDirectory.dir("reports/paparazzi")) {
+        include("**/*.png")
+    }
+
+    into(layout.buildDirectory.dir("generated/glance-previews"))
+}
+
+gradle.taskGraph.whenReady {
+    tasks.named<Test>("testDebugUnitTest").configure {
+        if (hasTask(exportGlancePreviews.get())) {
+            // Export invocation: run ONLY the Glance preview test.
+            filter { includeTestsMatching("*/$previewTestClass") }
+        } else {
+            // Normal unit-test invocation: never run it.
+            exclude("**/$previewTestClass.class")
+        }
+    }
+}
+
 
 dependencies {
     implementation(projects.core.common)
@@ -25,5 +55,6 @@ dependencies {
 
     testImplementation(libs.androidx.glance.appwidget.testing)
     testImplementation(libs.androidx.glance.testing)
+    testImplementation(libs.paparazzi)
     testImplementation(libs.bundles.unitTest)
 }
