@@ -55,10 +55,6 @@ android {
     }
     lint {
         checkDependencies = true
-        xmlReport = false
-        htmlReport = true
-        textReport = false
-        htmlOutput = project.layout.buildDirectory.file("reports/lint-results-debug.html").get().asFile
     }
     dependenciesInfo {
         // Disable dependency metadata when building APKs for fdroid reproducibility
