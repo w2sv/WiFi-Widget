@@ -31,7 +31,7 @@ triplet-play = "4.1.1"
 versionCatalogUpdate = "1.1.1"
 w2sv-androidutils = "0.6.0"
 # @pin
-w2sv-composed = "0.1.1"
+w2sv-composed = "0.5.0"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.3.0"
 w2sv-reversiblestate = "0.1.0"
@@ -70,7 +70,6 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-work-runtime-ktx = "androidx.work:work-runtime-ktx:2.11.2"
 flowExt = "io.github.hoc081098:FlowExt:1.0.0"
-google-accompanist-permissions = "com.google.accompanist:accompanist-permissions:0.37.3"
 google-android-material = "com.google.android.material:material:1.14.0"
 google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "google-dagger-hilt" }
 google-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "google-dagger-hilt" }
@@ -94,11 +93,12 @@ squareup-okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "squa
 squareup-okhttp3-coroutines = { module = "com.squareup.okhttp3:okhttp-coroutines", version.ref = "squareup-okhttp3" }
 turbine = "app.cash.turbine:turbine:1.2.1"
 w2sv-androidutils-core = { module = "com.github.w2sv.AndroidUtils:core", version.ref = "w2sv-androidutils" }
-w2sv-colorpicker = "io.github.w2sv:compose-color-picker:1.0.2"
+w2sv-augmentedPermissions = "io.github.w2sv:augmented-permissions:0.1.0"
+w2sv-colorpicker = "io.github.w2sv:compose-color-picker:1.1.1 "
 w2sv-composeWheelPicker = "com.github.w2sv:compose-wheel-picker:0.0.2-rc1"
-w2sv-composed-core = { module = "com.github.w2sv.Composed:core", version.ref = "w2sv-composed" }
-w2sv-composed-material3 = { module = "com.github.w2sv.Composed:material3", version.ref = "w2sv-composed" }
-w2sv-composed-permissions = { module = "com.github.w2sv.Composed:permissions", version.ref = "w2sv-composed" }
+w2sv-composed-core = { module = "io.github.w2sv:composed-core", version.ref = "w2sv-composed" }
+w2sv-composed-core-android = { module = "io.github.w2sv:composed-core-android", version.ref = "w2sv-composed" }
+w2sv-composed-material3 = { module = "io.github.w2sv:composed-material3", version.ref = "w2sv-composed" }
 w2sv-datastoreutils-datastoreflow = { module = "com.github.w2sv.DataStoreUtils:datastoreflow", version.ref = "w2sv-datastoreutils" }
 w2sv-datastoreutils-preferences = { module = "com.github.w2sv.DataStoreUtils:preferences", version.ref = "w2sv-datastoreutils" }
 w2sv-kotlinutils = { module = "com.github.w2sv:KotlinUtils", version.ref = "w2sv-kotlinutils" }

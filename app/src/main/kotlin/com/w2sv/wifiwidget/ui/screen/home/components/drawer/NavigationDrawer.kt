@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.plus
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,7 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
 import com.w2sv.common.AppUrl
-import com.w2sv.composed.core.extensions.thenIfNotNull
+import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
@@ -61,7 +62,6 @@ import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
 import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.theme.explanation
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.coroutines.launch
 
 private object NavigationDrawerToken {
@@ -106,7 +106,8 @@ private fun NavigationDrawerSheet(
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 24.dp),
-            contentPadding = WindowInsets.systemBarsIgnoringVisibility.asPaddingValues().add(top = NavigationDrawerToken.topPadding)
+            contentPadding =
+            WindowInsets.systemBarsIgnoringVisibility.asPaddingValues() + PaddingValues(top = NavigationDrawerToken.topPadding)
         ) {
             item {
                 Header(

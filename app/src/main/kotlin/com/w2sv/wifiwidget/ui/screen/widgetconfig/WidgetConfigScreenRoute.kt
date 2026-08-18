@@ -8,20 +8,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
-import com.w2sv.composed.core.CollectFromFlow
+import com.w2sv.composed.material3.SnackbarLauncher
+import com.w2sv.composed.material3.rememberSnackbarLauncher
+import com.w2sv.composed.material3.replaceCurrentWith
+import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.util.snackbar.ScopedSnackbarController
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberScopedSnackbarController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 
@@ -78,7 +81,7 @@ private fun rememberOnBack(
     configIsDirty: () -> Boolean,
     leaveScreen: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarController: ScopedSnackbarController = rememberScopedSnackbarController(scope = scope)
+    snackbarLauncher: SnackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
 ): () -> Unit {
     val backPressHandler = remember {
         BackPressHandler(
@@ -87,12 +90,12 @@ private fun rememberOnBack(
         )
     }
 
-    return remember(snackbarController) {
+    return remember(snackbarLauncher) {
         {
             onBack(
                 configHasChanged = configIsDirty,
                 backPressHandler = backPressHandler,
-                snackbarController = snackbarController,
+                snackbarLauncher = snackbarLauncher,
                 leaveScreen = leaveScreen
             )
         }
@@ -102,13 +105,13 @@ private fun rememberOnBack(
 private fun onBack(
     configHasChanged: () -> Boolean,
     backPressHandler: BackPressHandler,
-    snackbarController: ScopedSnackbarController,
+    snackbarLauncher: SnackbarLauncher,
     leaveScreen: () -> Unit
 ) {
     if (configHasChanged()) {
         backPressHandler(
             onFirstPress = {
-                snackbarController.showReplacing {
+                snackbarLauncher.replaceCurrentWith {
                     AppSnackbarVisuals(
                         msg = getString(R.string.go_back_on_unsaved_changes_warning),
                         kind = SnackbarKind.Warning
@@ -116,12 +119,12 @@ private fun onBack(
                 }
             },
             onSecondPress = {
-                snackbarController.dismissCurrent()
+                snackbarLauncher.dismissCurrent()
                 leaveScreen()
             }
         )
     } else {
-        snackbarController.dismissCurrent()
+        snackbarLauncher.dismissCurrent()
         leaveScreen()
     }
 }

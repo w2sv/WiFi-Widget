@@ -9,9 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.w2sv.composed.material3.WithLocalContentColor
 import com.w2sv.wifiwidget.ui.theme.explanation
 import com.w2sv.wifiwidget.ui.theme.onSurfaceVariantLowAlpha
-import com.w2sv.wifiwidget.ui.util.WithLocalContentColor
 
 @Composable
 fun Disclaimer(text: String, modifier: Modifier = Modifier) {

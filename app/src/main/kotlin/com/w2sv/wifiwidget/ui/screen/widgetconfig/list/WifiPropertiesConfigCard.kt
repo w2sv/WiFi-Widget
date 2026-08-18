@@ -11,9 +11,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.Disclaimer
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
@@ -23,7 +25,6 @@ import com.w2sv.wifiwidget.ui.designsystem.configlist.ReorderableCheckableList
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.wifiPropertyConfigItems
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -66,7 +67,7 @@ fun WifiPropertiesConfigCard(
                 showDialog = showDialog,
                 locationAccess = LocalLocationAccessCapability.current,
                 scope = rememberCoroutineScope(),
-                snackbarController = rememberSnackbarController()
+                snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
             ),
             onDrop = { fromIndex: Int, toIndex: Int ->
                 updateConfig { withUpdatedPropertyPosition(fromIndex, toIndex) }

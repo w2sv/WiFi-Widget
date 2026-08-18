@@ -26,14 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.CollectLatestFromFlow
-import com.w2sv.composed.core.OnDispose
+import com.w2sv.composed.material3.rememberSnackbarController
+import com.w2sv.composed.runtime.CollectLatestFromFlow
+import com.w2sv.composed.runtime.OnDispose
 import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
-import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.coroutines.flow.emptyFlow
 
 @Immutable
@@ -85,14 +84,17 @@ sealed interface SnackbarKind {
 }
 
 @Composable
-fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow(), controller: SnackbarController = rememberSnackbarController()) {
+fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow()) {
+    val snackbarHostState = LocalSnackbarHostState.current
+    val controller = rememberSnackbarController(snackbarHostState)
+
     // Show Snackbars collected from snackbarBuilderFlow
     CollectLatestFromFlow(snackbarBuilderFlow) { builder ->
-        controller.showReplacing { builder() }
+        controller.replaceCurrentWith { builder() }
     }
 
-    SnackbarHost(controller.snackbarHostState) { snackbarData ->
-        UpdateSnackbarVisibility(snackbarHostState = controller.snackbarHostState)
+    SnackbarHost(snackbarHostState) { snackbarData ->
+        UpdateSnackbarVisibility(snackbarHostState = snackbarHostState)
         AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
     }
 }

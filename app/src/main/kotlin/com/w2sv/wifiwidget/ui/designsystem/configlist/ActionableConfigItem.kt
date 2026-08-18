@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.extensions.thenIfNotNull
+import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
 import com.w2sv.wifiwidget.ui.designsystem.ExplanationText

@@ -3,7 +3,8 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
-import com.w2sv.composed.core.extensions.thenIf
+import com.w2sv.composed.material3.SnackbarController
+import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
@@ -24,7 +25,6 @@ import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.ShakeController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
-import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +47,7 @@ fun wifiPropertyConfigItems(
                 locationAccess = locationAccess,
                 isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
                 showDialog = showDialog,
-                showSnackbar = { builder -> scope.launch { snackbarController.showReplacing { builder() } } },
+                showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } },
                 scope = scope
             )
         }
@@ -119,6 +119,7 @@ private fun WifiProperty.makeOnCheckedChange(
             when {
                 requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted ->
                     WifiPropertyCheckError.LocationAccessMissing
+
                 !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
                 else -> null
             }
@@ -129,6 +130,7 @@ private fun WifiProperty.makeOnCheckedChange(
                 WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(
                     OnLocationAccessGranted.EnableProperty(this)
                 )
+
                 WifiPropertyCheckError.UncheckingLastEnabledProperty -> onUncheckingLastEnabledProperty()
             }
         },

@@ -7,21 +7,36 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.isPortraitModeActive
+import com.w2sv.composed.ui.platform.isPortraitModeActive
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.paddingValues
 
-private val sectionCardSpacing = 16.dp
-private val sectionCardInnerPadding = PaddingValues(vertical = 18.dp)
+private object Dimens {
+    val verticalSpacing = 16.dp
+    val cardInnerPadding = PaddingValues(vertical = 18.dp)
+
+    val contentPadding: PaddingValues
+        @Composable
+        @ReadOnlyComposable
+        get() {
+            val horizontalPadding = if (isPortraitModeActive) 26.dp else 126.dp
+            return PaddingValues(
+                bottom = if (isPortraitModeActive) 140.dp else 90.dp, // for FABs
+                top = verticalSpacing,
+                start = horizontalPadding,
+                end = horizontalPadding
+            )
+        }
+}
 
 typealias UpdateWidgetConfig = (WidgetConfig.() -> WidgetConfig) -> Unit
 
@@ -37,12 +52,8 @@ fun WidgetConfigList(
         state = state,
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(sectionCardSpacing),
-        contentPadding = paddingValues(
-            bottom = if (isPortraitModeActive) 140.dp else 90.dp, // for FABs
-            top = sectionCardSpacing,
-            horizontal = if (isPortraitModeActive) 26.dp else 126.dp
-        )
+        verticalArrangement = Arrangement.spacedBy(Dimens.verticalSpacing),
+        contentPadding = Dimens.contentPadding
     ) {
         item {
             AppearanceConfigCard(
@@ -97,7 +108,7 @@ fun WidgetConfigSectionCard(
 ) {
     ElevatedIconHeaderCard(
         iconHeader = header,
-        innerPadding = sectionCardInnerPadding,
+        innerPadding = Dimens.cardInnerPadding,
         modifier = modifier,
         content = content
     )

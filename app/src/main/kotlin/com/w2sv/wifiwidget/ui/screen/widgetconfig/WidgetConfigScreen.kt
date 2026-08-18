@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.isLandscapeModeActive
+import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost

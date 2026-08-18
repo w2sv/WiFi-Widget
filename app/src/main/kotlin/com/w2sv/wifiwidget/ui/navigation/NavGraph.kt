@@ -12,7 +12,7 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.w2sv.composed.core.OnChange
+import com.w2sv.composed.runtime.OnChange
 import com.w2sv.wifiwidget.ui.screen.home.HomeScreenRoute
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigScreenRoute
 import slimber.log.i

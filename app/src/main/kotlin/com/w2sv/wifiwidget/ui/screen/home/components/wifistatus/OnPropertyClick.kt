@@ -11,14 +11,15 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import com.w2sv.composed.material3.SnackbarController
+import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarController
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -31,7 +32,7 @@ data class PropertyOnClickScope(
 @Composable
 fun rememberPropertyOnClickScope(): PropertyOnClickScope {
     val clipboard = LocalClipboard.current
-    val snackbarController = rememberSnackbarController()
+    val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
     val locationAccessCapability = LocalLocationAccessCapability.current
 
     return remember(clipboard, snackbarController, locationAccessCapability) {
@@ -52,7 +53,7 @@ fun PropertyOnClickScope.onPropertyClick(
     when (resolutionError) {
         null -> scope.launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
-            snackbarController.showReplacing { copiedToClipboardSnackbar(label) }
+            snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
         }
 
         WifiPropertyResolutionError.NoLocationAccessPermission -> locationAccessCapability.requestPermission()

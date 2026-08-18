@@ -65,7 +65,6 @@ android {
 kotlin {
     compilerOptions {
         optIn.addAll(
-            "com.google.accompanist.permissions.ExperimentalPermissionsApi",
             "androidx.compose.material3.ExperimentalMaterial3Api",
             "androidx.compose.foundation.ExperimentalFoundationApi",
             "androidx.compose.foundation.layout.ExperimentalLayoutApi"
@@ -101,8 +100,9 @@ dependencies {
     implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.colorpicker)
     implementation(libs.w2sv.composed.core)
+    implementation(libs.w2sv.composed.core.android)
     implementation(libs.w2sv.composed.material3)
-    implementation(libs.w2sv.composed.permissions)
+    implementation(libs.w2sv.augmentedPermissions)
     implementation(libs.w2sv.composeWheelPicker)
     implementation(libs.w2sv.reversiblestate)
 
@@ -125,7 +125,6 @@ dependencies {
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.compose)
-    implementation(libs.google.accompanist.permissions)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraintlayout.compose)
 

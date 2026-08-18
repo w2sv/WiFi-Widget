@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.plus
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.dp
@@ -18,7 +19,6 @@ import com.w2sv.androidutils.widget.showToast
 import com.w2sv.common.AppUrl
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.util.add
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -61,7 +61,7 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
         DrawerElement.Action(
             iconRes = R.drawable.ic_policy_24,
             labelRes = R.string.privacy_policy,
-            configurePadding = { add(bottom = 8.dp) },
+            configurePadding = { this + PaddingValues(bottom = 8.dp) },
             type = DrawerElement.Action.Clickable {
                 context.openUrl(AppUrl.PRIVACY_POLICY)
             }

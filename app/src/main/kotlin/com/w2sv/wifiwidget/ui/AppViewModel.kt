@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
@@ -53,11 +54,10 @@ class AppViewModel @Inject constructor(
     // Permissions
     // ===============
 
-    val locationAccessPermissionRequested by permissionRepository::locationAccessPermissionRequested
-
-    fun saveLocationAccessPermissionRequested() {
-        viewModelScope.launch { permissionRepository.locationAccessPermissionRequested.save(true) }
-    }
+    val locationAccessPermissionHistory = PermissionRequestHistory(
+        wasRequestLaunchedBefore = permissionRepository.locationAccessPermissionRequested,
+        recordRequestLaunched = { viewModelScope.launch { permissionRepository.locationAccessPermissionRequested.save(true) } }
+    )
 
     val locationAccessRationalShown by permissionRepository::locationAccessPermissionRationalShown
 

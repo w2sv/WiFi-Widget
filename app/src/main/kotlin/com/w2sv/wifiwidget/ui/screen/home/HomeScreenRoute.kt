@@ -6,16 +6,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.composed.core.CollectFromFlow
-import com.w2sv.composed.core.CollectLatestFromFlow
+import com.w2sv.composed.material3.rememberSnackbarController
+import com.w2sv.composed.runtime.CollectFromFlow
+import com.w2sv.composed.runtime.CollectLatestFromFlow
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.sharedstate.theme.rememberThemeController
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import slimber.log.i
@@ -60,11 +61,11 @@ private fun BindLocationAccessToViewModel(viewModel: HomeScreenViewModel = hiltV
 
 @Composable
 private fun ShowSnackbarOnWidgetPin(widgetPinSuccessFlow: Flow<Unit>, anyLocationAccessRequiringPropertyEnabled: () -> Boolean) {
-    val snackbarController = rememberSnackbarController()
+    val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
     val locationAccess = LocalLocationAccessCapability.current
 
     CollectLatestFromFlow(widgetPinSuccessFlow) {
-        snackbarController.showReplacing {
+        snackbarController.replaceCurrentWith {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
                 anyLocationAccessRequiringPropertyEnabled() && !locationAccess.isGpsEnabled -> AppSnackbarVisuals(

@@ -15,7 +15,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.extensions.thenIf
+import com.w2sv.composed.ui.thenIf
 import com.w2sv.wifiwidget.ui.util.alphaDecreased
 import kotlinx.collections.immutable.ImmutableList
 import sh.calvin.reorderable.ReorderableItem

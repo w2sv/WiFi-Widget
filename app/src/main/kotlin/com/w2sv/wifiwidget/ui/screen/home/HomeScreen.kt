@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
 import com.w2sv.common.AppUrl
-import com.w2sv.composed.core.isLandscapeModeActive
+import com.w2sv.composed.ui.platform.isLandscapeModeActive
+import com.w2sv.composed.ui.rememberMovableContentOf
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
 import com.w2sv.wifiwidget.ui.screen.home.components.drawer.NavigationDrawer
@@ -37,7 +38,6 @@ import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.util.ModifierReceivingComposable
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.ScreenPreviews
-import com.w2sv.wifiwidget.ui.util.rememberMovableContentOf
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
 import java.util.Calendar
 import kotlinx.coroutines.flow.emptyFlow
@@ -58,11 +58,11 @@ fun HomeScreen(
             topBar = { NavigationDrawerScreenTopAppBar { scope.launch { drawerState.open() } } },
             snackbarHost = { AppSnackbarHost(snackbarBuilderFlow) }
         ) { paddingValues ->
-            val wifiStatusCard: ModifierReceivingComposable = rememberMovableContentOf {
-                WifiStatusCard(wifiState = wifiState, modifier = it)
+            val wifiStatusCard = rememberMovableContentOf { modifier: Modifier ->
+                WifiStatusCard(wifiState = wifiState, modifier = modifier)
             }
-            val widgetCard: ModifierReceivingComposable = rememberMovableContentOf {
-                WidgetCard(pinWidget = pinWidget, modifier = it)
+            val widgetCard = rememberMovableContentOf { modifier: Modifier ->
+                WidgetCard(pinWidget = pinWidget, modifier = modifier)
             }
 
             if (isLandscapeModeActive) {

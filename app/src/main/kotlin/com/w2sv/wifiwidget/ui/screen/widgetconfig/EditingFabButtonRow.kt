@@ -31,15 +31,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.w2sv.composed.core.CollectLatestFromFlow
-import com.w2sv.composed.core.OnChange
+import com.w2sv.composed.material3.rememberSnackbarController
+import com.w2sv.composed.runtime.CollectLatestFromFlow
+import com.w2sv.composed.runtime.OnChange
 import com.w2sv.core.common.R
+import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.util.OnVisibilityStateChange
-import com.w2sv.wifiwidget.ui.util.snackbar.rememberSnackbarController
 import kotlinx.coroutines.flow.first
 
 private enum class EditingFabButton(@StringRes val labelRes: Int, val imageVector: ImageVector) {
@@ -109,7 +110,7 @@ private fun CoordinateFabsAndSnackbarVisibility(
     fabButtonsVisible: () -> Boolean
 ) {
     val snackbarVisibility = LocalSnackbarVisibility.current
-    val snackbarController = rememberSnackbarController()
+    val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
 
     // manipulate isEditing on changes of configEditState.isDirty
     OnChange(configEditState.isDirty()) { isDirty ->
