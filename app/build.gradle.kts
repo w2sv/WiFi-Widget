@@ -99,8 +99,8 @@ dependencies {
     // Owned libraries
     implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.colorpicker)
+    implementation(libs.w2sv.composed.animation)
     implementation(libs.w2sv.composed.core)
-    implementation(libs.w2sv.composed.core.android)
     implementation(libs.w2sv.composed.material3)
     implementation(libs.w2sv.augmentedPermissions)
     implementation(libs.w2sv.composeWheelPicker)

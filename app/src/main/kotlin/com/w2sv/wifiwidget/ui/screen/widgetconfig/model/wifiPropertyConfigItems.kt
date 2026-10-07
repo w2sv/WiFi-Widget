@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import com.w2sv.composed.animation.ShakeController
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.common.R
@@ -23,7 +24,6 @@ import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapabilit
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.IpVersionsHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
-import com.w2sv.wifiwidget.ui.util.ShakeController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
@@ -62,7 +62,7 @@ private fun WifiProperty.configItem(
     showSnackbar: (SnackbarBuilder) -> Unit,
     scope: CoroutineScope
 ): ConfigItem.Checkable {
-    val shakeController = ShakeController()
+    val shakeController = configuredShakeController()
 
     return ConfigItem.Checkable(
         property = this,
@@ -164,7 +164,7 @@ private fun ipSettingItems(
         }
         addAll(
             settings.map { setting ->
-                val shakeController = makeIf(setting.isVersionSetting) { ShakeController() }
+                val shakeController = makeIf(setting.isVersionSetting) { configuredShakeController() }
                 ConfigItem.Checkable(
                     property = setting,
                     isChecked = { isSettingEnabled(setting) },
@@ -209,7 +209,7 @@ private fun locationSettingItems(
     scope: CoroutineScope
 ): ImmutableList<ConfigItem> =
     LocationParameter.entries.map { param ->
-        val shakeController = ShakeController()
+        val shakeController = configuredShakeController()
         ConfigItem.Checkable(
             property = param,
             isChecked = { isSettingEnabled(param) },
@@ -232,3 +232,6 @@ private fun WifiProperty.infoDialogData(): WidgetConfigDialog.Info =
         descriptionRes = descriptionRes,
         learnMoreUrl = learnMoreUrl
     )
+
+private fun configuredShakeController(): ShakeController =
+    ShakeController(decay = 0f, frequencyHz = 4f)
