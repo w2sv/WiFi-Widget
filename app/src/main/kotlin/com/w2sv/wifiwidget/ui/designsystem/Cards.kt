@@ -10,29 +10,21 @@ import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-object AppDefaults {
-    val elevatedCardElevation
-        @Composable
-        get() = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
-}
-
-val CardContainerColor: Color
+// defaultElevation = 1.dp by default
+private val cardElevation
     @Composable
-    @ReadOnlyComposable
-    get() = MaterialTheme.colorScheme.surfaceContainer
+    get() = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
 
 @Composable
 fun ElevatedIconHeaderCard(
     iconHeader: IconHeader,
     modifier: Modifier = Modifier,
-    colors: CardColors = CardDefaults.elevatedCardColors(containerColor = CardContainerColor),
-    elevation: CardElevation = AppDefaults.elevatedCardElevation,
+    colors: CardColors = CardDefaults.elevatedCardColors(),
+    elevation: CardElevation = cardElevation,
     innerPadding: PaddingValues = PaddingValues(18.dp),
     headerPadding: PaddingValues = PaddingValues(bottom = 16.dp),
     content: @Composable ColumnScope.() -> Unit
@@ -58,7 +50,7 @@ fun ElevatedIconHeaderCard(
 @Composable
 fun SecondLevelElevatedCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     ElevatedCard(
-        elevation = AppDefaults.elevatedCardElevation,
+        elevation = cardElevation,
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
         modifier = modifier,
         content = content

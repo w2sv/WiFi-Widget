@@ -61,6 +61,7 @@
     <string name="font_size">Font size</string>
     <string name="widget_pinning_failed">In-app widget pinning is not supported by your device. You\'ll need to do it from your device\'s home screen.</string>
     <string name="widget_configuration">Widget Configuration</string>
+    <string name="navigate_back">Navigate back</string>
     <string name="open_the_refresh_interval_configuration_dialog">Open the refresh interval configuration dialog.</string>
     <string name="refresh_interval">Refresh Interval</string>
     <string name="interval">Interval</string>
