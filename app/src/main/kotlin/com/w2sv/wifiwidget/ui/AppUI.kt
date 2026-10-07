@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui
 
-import androidx.activity.SystemBarStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -19,24 +18,22 @@ import com.w2sv.wifiwidget.ui.util.useDarkTheme
 fun AppUI(
     initialScreen: Screen,
     isGpsEnabled: () -> Boolean,
-    setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
     activityVM: MainActivityViewModel = hiltViewModel()
 ) {
     val themeSettings by activityVM.themeSettings.collectAsStateWithLifecycle()
     val themeController = remember(themeSettings, activityVM) { ThemeController(themeSettings, activityVM::updateThemeSettings) }
 
-    CompositionLocalProvider(
-        LocalLocationAccessCapability provides rememberLocationAccessCapability(
-            isGpsEnabled = isGpsEnabled,
-            requestHistory = activityVM.locationAccessPermissionHistory,
-            rationalHistory = activityVM.locationAccessRationalHistory
-        )
-    ) {
+    val locationAccessCapability = rememberLocationAccessCapability(
+        isGpsEnabled = isGpsEnabled,
+        requestHistory = activityVM.locationAccessPermissionHistory,
+        rationalHistory = activityVM.locationAccessRationalHistory
+    )
+
+    CompositionLocalProvider(LocalLocationAccessCapability provides locationAccessCapability) {
         AppTheme(
             useDarkTheme = useDarkTheme(themeSettings.theme),
             useDynamicColors = themeSettings.useDynamicColors,
-            useAmoledBlackTheme = themeSettings.useAmoledBlackTheme,
-            setSystemBarStyles = setSystemBarStyles
+            useAmoledBlackTheme = themeSettings.useAmoledBlackTheme
         ) {
             NavGraph(initialScreen = initialScreen, themeController = themeController)
             OptionalLocationAccessRationals()

@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.designsystem.theme
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
@@ -13,11 +13,12 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
+import androidx.core.view.WindowCompat
 import com.w2sv.wifiwidget.R
 
 @SuppressLint("NewApi")
@@ -26,26 +27,10 @@ fun AppTheme(
     useDarkTheme: Boolean = false,
     useAmoledBlackTheme: Boolean = false,
     useDynamicColors: Boolean = false,
-    setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit = { _, _ -> },
     context: Context = LocalContext.current,
     content: @Composable () -> Unit
 ) {
-    // Reset system bar style on useDarkTheme change
-    LaunchedEffect(useDarkTheme) {
-        val systemBarStyle = if (useDarkTheme) {
-            SystemBarStyle.dark(android.graphics.Color.TRANSPARENT)
-        } else {
-            SystemBarStyle.light(
-                android.graphics.Color.TRANSPARENT,
-                android.graphics.Color.TRANSPARENT
-            )
-        }
-
-        setSystemBarStyles(
-            systemBarStyle,
-            systemBarStyle
-        )
-    }
+    SystemBarAppearance(useDarkTheme)
 
     val colorScheme = when {
         useDynamicColors && useDarkTheme && useAmoledBlackTheme -> dynamicDarkColorScheme(context).amoledBlack()
@@ -61,6 +46,17 @@ fun AppTheme(
         typography = typography,
         content = content
     )
+}
+
+@Composable
+private fun SystemBarAppearance(useDarkTheme: Boolean) {
+    val activity = LocalActivity.current ?: return
+
+    SideEffect {
+        val controller = WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+        controller.isAppearanceLightStatusBars = !useDarkTheme
+        controller.isAppearanceLightNavigationBars = !useDarkTheme
+    }
 }
 
 private fun ColorScheme.amoledBlack(): ColorScheme =

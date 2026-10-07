@@ -4,9 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import com.w2sv.common.AppAction
 import com.w2sv.common.utils.IsGpsEnabled
 import com.w2sv.wifiwidget.ui.navigation.Screen
@@ -21,16 +21,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        WindowCompat.enableEdgeToEdge(window)
 
         setContent {
             AppUI(
                 initialScreen = remember(intent) { intent.initialScreen() },
-                isGpsEnabled = isGpsEnabled::invoke,
-                setSystemBarStyles = { statusBarStyle, navigationBarStyle ->
-                    enableEdgeToEdge(statusBarStyle, navigationBarStyle)
-                }
+                isGpsEnabled = isGpsEnabled::invoke
             )
         }
     }
