@@ -15,14 +15,14 @@ import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
-import com.w2sv.wifiwidget.ui.theme.rememberThemeController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import slimber.log.i
 
 @Composable
-fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeScreenRoute(themeController: ThemeController, viewModel: HomeScreenViewModel = hiltViewModel()) {
     BindLocationAccessToViewModel()
 
     ShowSnackbarOnWidgetPin(
@@ -30,7 +30,6 @@ fun HomeScreenRoute(viewModel: HomeScreenViewModel = hiltViewModel()) {
         anyLocationAccessRequiringPropertyEnabled = { viewModel.isAnyLocationAccessRequiringPropertyEnabled }
     )
 
-    val themeController = rememberThemeController()
     val wifiState by viewModel.wifiState.collectAsStateWithLifecycle()
 
     HomeScreen(
