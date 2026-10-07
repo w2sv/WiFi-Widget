@@ -8,7 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.navigation.Screen
 import com.w2sv.wifiwidget.ui.sharedstate.location.OptionalLocationAccessRationals
-import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.rememberLocationAccessCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 import com.w2sv.wifiwidget.ui.util.activityViewModel
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
@@ -24,7 +24,13 @@ fun AppUI(
     val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
     val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
 
-    CompositionLocalProvider(LocalLocationAccessCapability provides rememberLocationAccessCapability(isGpsEnabled = isGpsEnabled)) {
+    CompositionLocalProvider(
+        LocalLocationAccessCapability provides rememberLocationAccessCapability(
+            isGpsEnabled = isGpsEnabled,
+            requestHistory = appVM.locationAccessPermissionHistory,
+            rationalHistory = appVM.locationAccessRationalHistory
+        )
+    ) {
         AppTheme(
             useDarkTheme = useDarkTheme(theme),
             useDynamicColors = useDynamicColors,

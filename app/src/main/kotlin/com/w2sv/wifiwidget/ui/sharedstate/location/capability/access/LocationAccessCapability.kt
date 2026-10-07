@@ -1,6 +1,6 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.access_capability
+package com.w2sv.wifiwidget.ui.sharedstate.location.capability.access
 
-import com.w2sv.wifiwidget.ui.sharedstate.location.permission_capability.LocationPermissionCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission.LocationPermissionCapability
 
 interface LocationAccessCapability : LocationPermissionCapability {
     val isGpsEnabled: Boolean

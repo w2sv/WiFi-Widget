@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.PreviewNavigator
-import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.PreviewLocationAccessCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.PreviewLocationAccessCapability
 import com.w2sv.wifiwidget.ui.theme.AppTheme
 
 @Composable

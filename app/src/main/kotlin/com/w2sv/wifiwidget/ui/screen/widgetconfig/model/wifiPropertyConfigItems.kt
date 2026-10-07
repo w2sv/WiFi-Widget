@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.IpVersionsHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.ShakeController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.collections.immutable.ImmutableList

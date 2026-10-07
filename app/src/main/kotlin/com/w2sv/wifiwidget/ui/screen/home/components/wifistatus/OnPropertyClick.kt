@@ -19,7 +19,7 @@ import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.LocationAccessCapability
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

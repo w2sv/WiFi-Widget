@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.permission_capability
+package com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -8,7 +8,6 @@ import com.w2sv.augmentedpermissions.PermissionState
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
-import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +36,7 @@ class LocationPermissionCapabilityImpl(
 
     override fun onForegroundRationalProceed() {
         saveRationalShown()
-        requestPermission(OnLocationAccessGranted.EnableLocationAccessRequiringProperties)
+        requestPermission(EnableLocationAccessRequiringProperties)
     }
 
     // ========= Background Rational =========
@@ -82,7 +81,7 @@ class LocationPermissionCapabilityImpl(
         showSnackbar {
             AppSnackbarVisuals(
                 msg = getString(R.string.you_need_to_go_to_the_app_settings_and_grant_location_access_permission),
-                kind = SnackbarKind.Warning,
+                kind = Warning,
                 action = SnackbarAction(
                     label = getString(R.string.go_to_app_settings),
                     callback = openAppSettings

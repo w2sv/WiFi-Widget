@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui
 
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.w2sv.wifiwidget.ui.sharedstate.location.access_capability.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 
 val LocalLocationAccessCapability =

@@ -6,6 +6,7 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
+import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationalHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -59,9 +60,8 @@ class AppViewModel @Inject constructor(
         recordRequestLaunched = { viewModelScope.launch { permissionRepository.locationAccessPermissionRequested.save(true) } }
     )
 
-    val locationAccessRationalShown by permissionRepository::locationAccessPermissionRationalShown
-
-    fun saveLocationAccessRationalShown() {
-        viewModelScope.launch { permissionRepository.locationAccessPermissionRationalShown.save(true) }
-    }
+    val locationAccessRationalHistory = LocationAccessRationalHistory(
+        wasShownBefore = permissionRepository.locationAccessPermissionRationalShown,
+        recordWasShown = { viewModelScope.launch { permissionRepository.locationAccessPermissionRationalShown.save(true) } }
+    )
 }
