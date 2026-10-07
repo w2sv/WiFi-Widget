@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.w2sv.kotlinutils.makeIf
 
 @Composable
 fun DialogButton(
@@ -24,11 +25,7 @@ fun DialogButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
-        border = if (enabled) {
-            BorderStroke(Dp.Hairline, contentColor)
-        } else {
-            null
-        },
+        border = makeIf(enabled) { BorderStroke(Dp.Hairline, contentColor) },
         elevation = ButtonDefaults.elevatedButtonElevation(8.dp),
         colors = ButtonDefaults.elevatedButtonColors(contentColor = contentColor, containerColor = containerColor)
     ) {
