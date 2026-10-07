@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.theme
+package com.w2sv.wifiwidget.ui.designsystem.theme
 
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Typography

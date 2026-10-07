@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
+import com.w2sv.wifiwidget.ui.theme.ThemeController
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Stable

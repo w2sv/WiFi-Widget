@@ -28,7 +28,7 @@ internal object WidgetActionPendingIntent {
             Intent.makeRestartActivityTask(
                 ComponentName(
                     context,
-                    "com.w2sv.wifiwidget.MainActivity"
+                    "com.w2sv.wifiwidget.ui.MainActivity"
                 )
             )
                 .setAction(AppAction.OPEN_WIDGET_CONFIGURATION_SCREEN),

@@ -1,7 +1,7 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.capability.access
+package com.w2sv.wifiwidget.ui.location.capability.access
 
 import androidx.compose.runtime.Stable
-import com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission.LocationPermissionCapability
+import com.w2sv.wifiwidget.ui.location.capability.permission.LocationPermissionCapability
 
 @Stable
 class LocationAccessCapabilityImpl(

@@ -18,11 +18,11 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
+import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
+import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.IpVersionsHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.ShakeController
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.collections.immutable.ImmutableList

@@ -15,8 +15,8 @@ import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
-import com.w2sv.wifiwidget.ui.sharedstate.theme.rememberThemeController
+import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
+import com.w2sv.wifiwidget.ui.theme.rememberThemeController
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import slimber.log.i

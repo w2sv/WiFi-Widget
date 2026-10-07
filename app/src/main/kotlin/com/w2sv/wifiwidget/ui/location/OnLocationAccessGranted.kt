@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location
+package com.w2sv.wifiwidget.ui.location
 
 import androidx.compose.runtime.Immutable
 import com.w2sv.domain.model.wifiproperty.WifiProperty

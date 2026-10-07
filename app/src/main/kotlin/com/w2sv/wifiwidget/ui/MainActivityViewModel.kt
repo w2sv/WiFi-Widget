@@ -6,14 +6,14 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.domain.model.Theme
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
-import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationalHistory
+import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class AppViewModel @Inject constructor(
+class MainActivityViewModel @Inject constructor(
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {

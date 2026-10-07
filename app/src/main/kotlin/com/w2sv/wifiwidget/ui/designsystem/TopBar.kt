@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
 
 @Composable
 fun NavigationDrawerScreenTopAppBar(modifier: Modifier = Modifier, onNavigationIconClick: () -> Unit) {

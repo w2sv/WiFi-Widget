@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location
+package com.w2sv.wifiwidget.ui.location
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
@@ -13,7 +13,7 @@ import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.DialogButton
 import com.w2sv.wifiwidget.ui.designsystem.HighlightedDialogButton
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
-import com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission.LocationPermissionCapability
+import com.w2sv.wifiwidget.ui.location.capability.permission.LocationPermissionCapability
 
 @Composable
 fun OptionalLocationAccessRationals(capability: LocationPermissionCapability = LocalLocationAccessCapability.current) {

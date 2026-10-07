@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.theme
+package com.w2sv.wifiwidget.ui.theme
 
 import androidx.compose.runtime.Stable
 import com.w2sv.domain.model.Theme
@@ -15,7 +15,7 @@ data class ThemeController(
 
 fun previewThemeController() =
     ThemeController(
-        theme = { Theme.Default },
+        theme = { Default },
         setTheme = {},
         useAmoledBlackTheme = { true },
         setUseAmoledBlackTheme = {},

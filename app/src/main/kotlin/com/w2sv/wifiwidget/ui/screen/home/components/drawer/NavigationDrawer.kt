@@ -58,9 +58,9 @@ import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.Margins
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
-import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
-import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
-import com.w2sv.wifiwidget.ui.theme.explanation
+import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
+import com.w2sv.wifiwidget.ui.theme.ThemeController
+import com.w2sv.wifiwidget.ui.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlinx.coroutines.launch
 

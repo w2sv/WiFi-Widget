@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget
+package com.w2sv.wifiwidget.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,6 @@ import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.w2sv.common.AppAction
 import com.w2sv.common.utils.IsGpsEnabled
-import com.w2sv.wifiwidget.ui.AppUI
 import com.w2sv.wifiwidget.ui.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -39,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
 private fun Intent.initialScreen(): Screen =
     if (action == AppAction.OPEN_WIDGET_CONFIGURATION_SCREEN) {
-        Screen.WidgetConfiguration
+        WidgetConfiguration
     } else {
-        Screen.Home
+        Home
     }

@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission
+package com.w2sv.wifiwidget.ui.location.capability.permission
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -8,7 +8,7 @@ import com.w2sv.augmentedpermissions.PermissionState
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
+import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -24,8 +24,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.Dimension
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.theme.explanation
+import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 
 typealias BoxScopeComposable = @Composable BoxScope.() -> Unit
 
@@ -217,7 +217,7 @@ private fun BelowEndAnchoredToParent() {
                             .background(Color.Red)
                     )
                 },
-                belowEndAnchoring = BelowEndAnchoring.ParentEnd
+                belowEndAnchoring = ParentEnd
             )
         }
     }

@@ -1,6 +1,6 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission
+package com.w2sv.wifiwidget.ui.location.capability.permission
 
-import com.w2sv.wifiwidget.ui.sharedstate.location.OnLocationAccessGranted
+import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import kotlinx.coroutines.flow.Flow
 
 interface LocationPermissionCapability {

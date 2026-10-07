@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission
+package com.w2sv.wifiwidget.ui.location.capability.permission
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -22,7 +22,7 @@ import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationalHistory
+import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import slimber.log.d

@@ -29,12 +29,12 @@ import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
+import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
-import com.w2sv.wifiwidget.ui.theme.AppTheme
-import com.w2sv.wifiwidget.ui.theme.explanation
 
 @Composable
 fun ConfigureColoring(

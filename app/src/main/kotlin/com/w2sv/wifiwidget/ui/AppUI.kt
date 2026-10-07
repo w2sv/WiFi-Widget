@@ -7,9 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.navigation.Screen
-import com.w2sv.wifiwidget.ui.sharedstate.location.OptionalLocationAccessRationals
-import com.w2sv.wifiwidget.ui.sharedstate.location.capability.access.rememberLocationAccessCapability
-import com.w2sv.wifiwidget.ui.theme.AppTheme
+import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
+import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
+import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
 import com.w2sv.wifiwidget.ui.util.activityViewModel
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
@@ -18,7 +18,7 @@ fun AppUI(
     initialScreen: Screen,
     isGpsEnabled: () -> Boolean,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
-    appVM: AppViewModel = activityViewModel()
+    appVM: MainActivityViewModel = activityViewModel()
 ) {
     val theme by appVM.theme.collectAsStateWithLifecycle()
     val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()

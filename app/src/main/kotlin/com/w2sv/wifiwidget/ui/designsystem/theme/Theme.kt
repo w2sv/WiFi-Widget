@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.theme
+package com.w2sv.wifiwidget.ui.designsystem.theme
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -64,7 +64,7 @@ fun AppTheme(
 }
 
 private fun ColorScheme.amoledBlack(): ColorScheme =
-    copy(background = Color.Black, surface = Color.Black, onBackground = Color.White, onSurface = Color.White)
+    copy(background = Black, surface = Black, onBackground = White, onSurface = White)
 
 @Composable
 private fun ColorScheme.animate(animationSpec: AnimationSpec<Color>): ColorScheme =

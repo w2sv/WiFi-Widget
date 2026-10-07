@@ -33,8 +33,8 @@ import com.w2sv.wifiwidget.ui.screen.home.components.drawer.NavigationDrawer
 import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
-import com.w2sv.wifiwidget.ui.sharedstate.theme.ThemeController
-import com.w2sv.wifiwidget.ui.sharedstate.theme.previewThemeController
+import com.w2sv.wifiwidget.ui.theme.ThemeController
+import com.w2sv.wifiwidget.ui.theme.previewThemeController
 import com.w2sv.wifiwidget.ui.util.ModifierReceivingComposable
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.ScreenPreviews

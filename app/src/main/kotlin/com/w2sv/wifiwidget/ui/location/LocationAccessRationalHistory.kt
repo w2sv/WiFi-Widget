@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location
+package com.w2sv.wifiwidget.ui.location
 
 import kotlinx.coroutines.flow.Flow
 

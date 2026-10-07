@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.sharedstate.location.capability.access
+package com.w2sv.wifiwidget.ui.location.capability.access
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -6,8 +6,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.common.utils.openLocationSettingsIntent
-import com.w2sv.wifiwidget.ui.sharedstate.location.LocationAccessRationalHistory
-import com.w2sv.wifiwidget.ui.sharedstate.location.capability.permission.rememberLocationPermissionCapability
+import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
+import com.w2sv.wifiwidget.ui.location.capability.permission.rememberLocationPermissionCapability
 
 @Composable
 fun rememberLocationAccessCapability(
