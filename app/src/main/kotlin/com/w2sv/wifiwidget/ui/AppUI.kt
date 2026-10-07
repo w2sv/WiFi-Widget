@@ -4,13 +4,15 @@ import androidx.activity.SystemBarStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.wifiwidget.ui.navigation.NavGraph
-import com.w2sv.wifiwidget.ui.navigation.Screen
+import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
-import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
-import com.w2sv.wifiwidget.ui.util.activityViewModel
+import com.w2sv.wifiwidget.ui.navigation.NavGraph
+import com.w2sv.wifiwidget.ui.navigation.Screen
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
@@ -18,26 +20,25 @@ fun AppUI(
     initialScreen: Screen,
     isGpsEnabled: () -> Boolean,
     setSystemBarStyles: (SystemBarStyle, SystemBarStyle) -> Unit,
-    appVM: MainActivityViewModel = activityViewModel()
+    activityVM: MainActivityViewModel = hiltViewModel()
 ) {
-    val theme by appVM.theme.collectAsStateWithLifecycle()
-    val useAmoledBlackTheme by appVM.useAmoledBlackTheme.collectAsStateWithLifecycle()
-    val useDynamicColors by appVM.useDynamicColors.collectAsStateWithLifecycle()
+    val themeSettings by activityVM.themeSettings.collectAsStateWithLifecycle()
+    val themeController = remember(themeSettings, activityVM) { ThemeController(themeSettings, activityVM::updateThemeSettings) }
 
     CompositionLocalProvider(
         LocalLocationAccessCapability provides rememberLocationAccessCapability(
             isGpsEnabled = isGpsEnabled,
-            requestHistory = appVM.locationAccessPermissionHistory,
-            rationalHistory = appVM.locationAccessRationalHistory
+            requestHistory = activityVM.locationAccessPermissionHistory,
+            rationalHistory = activityVM.locationAccessRationalHistory
         )
     ) {
         AppTheme(
-            useDarkTheme = useDarkTheme(theme),
-            useDynamicColors = useDynamicColors,
-            useAmoledBlackTheme = useAmoledBlackTheme,
+            useDarkTheme = useDarkTheme(themeSettings.theme),
+            useDynamicColors = themeSettings.useDynamicColors,
+            useAmoledBlackTheme = themeSettings.useAmoledBlackTheme,
             setSystemBarStyles = setSystemBarStyles
         ) {
-            NavGraph(initialScreen = initialScreen)
+            NavGraph(initialScreen = initialScreen, themeController = themeController)
             OptionalLocationAccessRationals()
         }
     }

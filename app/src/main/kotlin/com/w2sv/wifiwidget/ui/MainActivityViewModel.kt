@@ -3,13 +3,14 @@ package com.w2sv.wifiwidget.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.domain.model.Theme
+import com.w2sv.domain.model.ThemeSettings
 import com.w2sv.domain.repository.PermissionRepository
 import com.w2sv.domain.repository.PreferencesRepository
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -18,42 +19,17 @@ class MainActivityViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
 
-    val theme = preferencesRepository.inAppTheme.stateIn(
+    val themeSettings = preferencesRepository.themeSettings.stateIn(
         viewModelScope,
-        SharingStarted.Eagerly
+        SharingStarted.Eagerly,
+        ThemeSettings.Default
     )
 
-    fun saveTheme(theme: Theme) {
+    fun updateThemeSettings(transform: (ThemeSettings) -> ThemeSettings) {
         viewModelScope.launch {
-            preferencesRepository.inAppTheme.save(theme)
+            preferencesRepository.updateThemeSettings(transform)
         }
     }
-
-    val useDynamicColors = preferencesRepository.useDynamicTheme.stateIn(
-        viewModelScope,
-        SharingStarted.Eagerly
-    )
-
-    fun saveUseDynamicColors(value: Boolean) {
-        viewModelScope.launch {
-            preferencesRepository.useDynamicTheme.save(value)
-        }
-    }
-
-    val useAmoledBlackTheme = preferencesRepository.useAmoledBlackTheme.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed()
-    )
-
-    fun saveUseAmoledBlackTheme(value: Boolean) {
-        viewModelScope.launch {
-            preferencesRepository.useAmoledBlackTheme.save(value)
-        }
-    }
-
-    // ===============
-    // Permissions
-    // ===============
 
     val locationAccessPermissionHistory = PermissionRequestHistory(
         wasRequestLaunchedBefore = permissionRepository.locationAccessPermissionRequested,

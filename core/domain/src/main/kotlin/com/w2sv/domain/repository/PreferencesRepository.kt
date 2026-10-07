@@ -1,10 +1,9 @@
 package com.w2sv.domain.repository
 
-import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
-import com.w2sv.domain.model.Theme
+import com.w2sv.domain.model.ThemeSettings
+import kotlinx.coroutines.flow.Flow
 
 interface PreferencesRepository {
-    val inAppTheme: DataStoreFlow<Theme>
-    val useDynamicTheme: DataStoreFlow<Boolean>
-    val useAmoledBlackTheme: DataStoreFlow<Boolean>
+    val themeSettings: Flow<ThemeSettings>
+    suspend fun updateThemeSettings(transform: (ThemeSettings) -> ThemeSettings)
 }

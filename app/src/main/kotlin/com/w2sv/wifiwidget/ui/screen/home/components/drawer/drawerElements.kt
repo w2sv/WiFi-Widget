@@ -31,8 +31,8 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
             configurePadding = { PaddingValues.Zero },
             type = DrawerElement.Action.Custom {
                 ThemeSelectionRow(
-                    selected = themeController.theme(),
-                    onSelected = themeController.setTheme,
+                    selected = themeController.settings.theme,
+                    onSelected = { theme -> themeController.updateSettings { it.copy(theme = theme) } },
                     horizontalArrangement = Arrangement.spacedBy(22.dp)
                 )
             }
@@ -43,8 +43,8 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
             explanationRes = R.string.amoled_black_explanation,
             isVisible = { useDarkTheme },
             type = DrawerElement.Action.Switch(
-                checked = { themeController.useAmoledBlackTheme() },
-                onCheckedChange = { themeController.setUseAmoledBlackTheme(it) }
+                checked = { themeController.settings.useAmoledBlackTheme },
+                onCheckedChange = { enabled -> themeController.updateSettings { it.copy(useAmoledBlackTheme = enabled) } }
             )
         ),
         DrawerElement.Action(
@@ -53,8 +53,8 @@ fun navigationDrawerElements(): ImmutableList<DrawerElement> =
             explanationRes = R.string.use_colors_derived_from_your_wallpaper,
             isVisible = { dynamicColorsSupported },
             type = DrawerElement.Action.Switch(
-                checked = { themeController.useDynamicColors() },
-                onCheckedChange = { themeController.setUseDynamicColors(it) }
+                checked = { themeController.settings.useDynamicColors },
+                onCheckedChange = { enabled -> themeController.updateSettings { it.copy(useDynamicColors = enabled) } }
             )
         ),
         DrawerElement.Header(titleRes = R.string.legal),

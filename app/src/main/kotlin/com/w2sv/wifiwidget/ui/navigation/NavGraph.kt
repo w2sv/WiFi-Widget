@@ -13,12 +13,13 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.w2sv.composed.runtime.OnChange
+import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.HomeScreenRoute
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigScreenRoute
 import slimber.log.i
 
 @Composable
-fun NavGraph(initialScreen: Screen) {
+fun NavGraph(initialScreen: Screen, themeController: ThemeController) {
     val backStack = rememberNavBackStack(initialScreen)
     val navigator = remember(backStack) { NavigatorImpl(backStack) }
 
@@ -45,7 +46,7 @@ fun NavGraph(initialScreen: Screen) {
                 )
             },
             entryProvider = entryProvider {
-                entry<Screen.Home> { HomeScreenRoute() }
+                entry<Screen.Home> { HomeScreenRoute(themeController) }
                 entry<Screen.WidgetConfiguration> { WidgetConfigScreenRoute() }
             }
         )
