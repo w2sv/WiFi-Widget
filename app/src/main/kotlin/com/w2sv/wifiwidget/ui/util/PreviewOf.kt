@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Devices.TABLET
 import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
-import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.location.capability.access.PreviewLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
 import com.w2sv.wifiwidget.ui.navigation.PreviewNavigator
@@ -21,7 +21,7 @@ fun PreviewOf(
 ) {
     check(LocalInspectionMode.current) { "Calling preview composable outside of preview" }
 
-    AppTheme(
+    WifiWidgetTheme(
         useDarkTheme = useDarkTheme,
         useAmoledBlackTheme = useAmoledBlackTheme,
         useDynamicColors = useDynamicColors

@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
+import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
@@ -15,7 +15,7 @@ import com.w2sv.wifiwidget.ui.navigation.Screen
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
-fun AppUI(
+fun WifiWidgetUI(
     initialScreen: Screen,
     isGpsEnabled: () -> Boolean,
     activityVM: MainActivityViewModel = hiltViewModel()
@@ -30,7 +30,7 @@ fun AppUI(
     )
 
     CompositionLocalProvider(LocalLocationAccessCapability provides locationAccessCapability) {
-        AppTheme(
+        WifiWidgetTheme(
             useDarkTheme = useDarkTheme(themeSettings.theme),
             useDynamicColors = themeSettings.useDynamicColors,
             useAmoledBlackTheme = themeSettings.useAmoledBlackTheme

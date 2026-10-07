@@ -24,7 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.Dimension
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 
 typealias BoxScopeComposable = @Composable BoxScope.() -> Unit
@@ -160,7 +160,7 @@ private fun ConstrainScope.linkTo(
 @Preview
 @Composable
 private fun Complete() {
-    AppTheme {
+    WifiWidgetTheme {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
@@ -191,7 +191,7 @@ private fun Complete() {
 @Preview
 @Composable
 private fun BelowEndAnchoredToParent() {
-    AppTheme {
+    WifiWidgetTheme {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
@@ -226,7 +226,7 @@ private fun BelowEndAnchoredToParent() {
 @Preview
 @Composable
 private fun WithoutTrailing() {
-    AppTheme {
+    WifiWidgetTheme {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
@@ -251,7 +251,7 @@ private fun WithoutTrailing() {
 @Preview
 @Composable
 private fun WithoutLeading() {
-    AppTheme {
+    WifiWidgetTheme {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),
@@ -281,7 +281,7 @@ private fun WithoutLeading() {
 @Preview
 @Composable
 private fun WithoutLeadingAndBelow() {
-    AppTheme {
+    WifiWidgetTheme {
         Surface {
             TLayout(
                 modifier = Modifier.fillMaxWidth(),

@@ -21,16 +21,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
 import com.w2sv.common.AppUrl
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.composed.ui.rememberMovableContentOf
+import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
-import com.w2sv.wifiwidget.ui.designsystem.NavigationDrawerScreenTopAppBar
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
-import com.w2sv.wifiwidget.ui.screen.home.components.drawer.NavigationDrawer
+import com.w2sv.wifiwidget.ui.screen.home.components.navdrawer.NavDrawer
+import com.w2sv.wifiwidget.ui.screen.home.components.navdrawer.NavDrawerTopBar
 import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetCard
 import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiStatusCard
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
@@ -65,9 +67,19 @@ fun HomeScreen(
 ) {
     val scope = rememberCoroutineScope()
 
-    NavigationDrawer(state = drawerState, themeController = themeController) {
+    NavDrawer(state = drawerState, themeController = themeController) {
         Scaffold(
-            topBar = { NavigationDrawerScreenTopAppBar { scope.launch { drawerState.open() } } },
+            topBar = {
+                NavDrawerTopBar(
+                    title = {
+                        Text(
+                            text = stringResource(id = R.string.app_name),
+                            maxLines = 1
+                        )
+                    },
+                    onNavigationIconClick = { scope.launch { drawerState.open() } }
+                )
+            },
             snackbarHost = { AppSnackbarHost(snackbarBuilderFlow) }
         ) { paddingValues ->
             val wifiStatusCard = rememberMovableContentOf { modifier: Modifier ->

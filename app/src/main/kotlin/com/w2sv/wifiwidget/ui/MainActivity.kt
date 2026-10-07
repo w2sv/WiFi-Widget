@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.enableEdgeToEdge(window)
 
         setContent {
-            AppUI(
+            WifiWidgetUI(
                 initialScreen = remember(intent) { intent.initialScreen() },
                 isGpsEnabled = isGpsEnabled::invoke
             )

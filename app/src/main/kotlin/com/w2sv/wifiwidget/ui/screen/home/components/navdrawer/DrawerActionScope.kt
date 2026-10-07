@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.components.drawer
+package com.w2sv.wifiwidget.ui.screen.home.components.navdrawer
 
 import android.content.Context
 import androidx.compose.runtime.Composable

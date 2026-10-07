@@ -1,4 +1,4 @@
-package com.w2sv.wifiwidget.ui.screen.home.components.drawer
+package com.w2sv.wifiwidget.ui.screen.home.components.navdrawer
 
 import android.content.Intent
 import androidx.annotation.DrawableRes
@@ -22,7 +22,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-fun navigationDrawerElements(): ImmutableList<DrawerElement> =
+fun navDrawerElements(): ImmutableList<DrawerElement> =
     persistentListOf(
         DrawerElement.Header(titleRes = R.string.appearance),
         DrawerElement.Action(

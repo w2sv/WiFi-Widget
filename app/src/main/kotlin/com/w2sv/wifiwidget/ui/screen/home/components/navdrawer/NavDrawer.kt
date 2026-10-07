@@ -1,7 +1,6 @@
-package com.w2sv.wifiwidget.ui.screen.home.components.drawer
+package com.w2sv.wifiwidget.ui.screen.home.components.navdrawer
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.Spring
@@ -61,16 +60,17 @@ import com.w2sv.wifiwidget.ui.designsystem.TLayout
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 import com.w2sv.wifiwidget.ui.util.PreviewOf
+import com.w2sv.wifiwidget.ui.util.VerticalAnimatedVisibility
 import kotlinx.coroutines.launch
 
-private object NavigationDrawerToken {
+private object NavDrawerTokens {
     val topPadding = 16.dp
     val actionPadding = PaddingValues(top = 12.dp)
     val groupHeaderPadding = PaddingValues(top = 20.dp)
 }
 
 @Composable
-fun NavigationDrawer(
+fun NavDrawer(
     state: DrawerState,
     themeController: ThemeController,
     modifier: Modifier = Modifier,
@@ -79,7 +79,7 @@ fun NavigationDrawer(
     ModalNavigationDrawer(
         modifier = modifier,
         drawerContent = {
-            NavigationDrawerSheet(
+            NavDrawerSheet(
                 drawerState = state,
                 themeController = themeController
             )
@@ -90,7 +90,7 @@ fun NavigationDrawer(
 }
 
 @Composable
-private fun NavigationDrawerSheet(
+private fun NavDrawerSheet(
     drawerState: DrawerState,
     themeController: ThemeController,
     modifier: Modifier = Modifier
@@ -100,13 +100,13 @@ private fun NavigationDrawerSheet(
         modifier = modifier,
         windowInsets = WindowInsets()
     ) {
-        val elements = remember { navigationDrawerElements() }
+        val elements = remember { navDrawerElements() }
         val actionScope = rememberDrawerActionScope(themeController)
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 24.dp),
             contentPadding =
-            WindowInsets.systemBarsIgnoringVisibility.asPaddingValues() + PaddingValues(top = NavigationDrawerToken.topPadding)
+            WindowInsets.systemBarsIgnoringVisibility.asPaddingValues() + PaddingValues(top = NavDrawerTokens.topPadding)
         ) {
             item {
                 Header(
@@ -119,11 +119,11 @@ private fun NavigationDrawerSheet(
                 HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = NavigationDrawerToken.topPadding)
+                        .padding(top = NavDrawerTokens.topPadding)
                 )
             }
             items(elements, key = { it.hashCode() }, contentType = { it::class }) { element ->
-                NavigationDrawerElement(element, actionScope)
+                NavDrawerElement(element, actionScope)
             }
         }
     }
@@ -133,7 +133,7 @@ private fun NavigationDrawerSheet(
 @Composable
 private fun Prev() {
     PreviewOf {
-        NavigationDrawerSheet(
+        NavDrawerSheet(
             drawerState = rememberDrawerState(DrawerValue.Open),
             themeController = ThemeController.Default
         )
@@ -195,14 +195,14 @@ fun Modifier.bouncyClickable(
 }
 
 @Composable
-private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerActionScope) {
+private fun NavDrawerElement(element: DrawerElement, actionScope: DrawerActionScope) {
     when (element) {
         is DrawerElement.Action -> {
-            AnimatedVisibility(visible = element.isVisible(actionScope)) {
+            VerticalAnimatedVisibility(visible = element.isVisible(actionScope)) {
                 Action(
                     action = element,
                     scope = actionScope,
-                    modifier = Modifier.padding(element.configurePadding(NavigationDrawerToken.actionPadding))
+                    modifier = Modifier.padding(element.configurePadding(NavDrawerTokens.actionPadding))
                 )
             }
         }
@@ -210,7 +210,7 @@ private fun NavigationDrawerElement(element: DrawerElement, actionScope: DrawerA
         is DrawerElement.Header -> {
             GroupHeader(
                 titleRes = element.titleRes,
-                modifier = Modifier.padding(NavigationDrawerToken.groupHeaderPadding)
+                modifier = Modifier.padding(NavDrawerTokens.groupHeaderPadding)
             )
         }
     }

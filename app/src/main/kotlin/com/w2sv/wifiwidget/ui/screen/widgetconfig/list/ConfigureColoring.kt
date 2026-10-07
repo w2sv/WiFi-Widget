@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
-import com.w2sv.wifiwidget.ui.designsystem.theme.AppTheme
+import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
@@ -82,7 +82,7 @@ fun ConfigureColoring(
 @Preview
 @Composable
 private fun PresetColoringPrev() {
-    AppTheme(useDarkTheme = false) {
+    WifiWidgetTheme(useDarkTheme = false) {
         ConfigureColoring(
             WidgetColoring(),
             {},
@@ -94,7 +94,7 @@ private fun PresetColoringPrev() {
 @Preview
 @Composable
 private fun CustomColoringPrev() {
-    AppTheme(useDarkTheme = false) {
+    WifiWidgetTheme(useDarkTheme = false) {
         ConfigureColoring(
             WidgetColoring(useCustom = true),
             {},

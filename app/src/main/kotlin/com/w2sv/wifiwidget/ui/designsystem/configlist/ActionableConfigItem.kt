@@ -26,7 +26,7 @@ import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.InfoIcon
 import com.w2sv.wifiwidget.ui.designsystem.Margins
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
-import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
+import com.w2sv.wifiwidget.ui.util.VerticalAnimatedVisibility
 import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
 
@@ -130,7 +130,7 @@ private fun ContentBeneath(content: ConfigItem.ContentBeneath, expandSubSettings
     when (content) {
         is ConfigItem.Explanation -> ExplanationText(text = stringResource(content.stringRes))
 
-        is ConfigItem.SubSettings -> VerticallyAnimatedVisibility(visible = expandSubSettings()) {
+        is ConfigItem.SubSettings -> VerticalAnimatedVisibility(visible = expandSubSettings()) {
             SubSettings(elements = content.elements, modifier = Modifier.padding(bottom = ConfigListToken.subSettingsBottomMargin))
         }
     }

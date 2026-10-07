@@ -29,7 +29,7 @@ import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
+import com.w2sv.wifiwidget.ui.util.VerticalAnimatedVisibility
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -90,7 +90,7 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
 
 @Composable
 private fun OptionalWifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
-    VerticallyAnimatedVisibility(
+    VerticalAnimatedVisibility(
         visible = viewData.isNotEmpty(),
         modifier = modifier
     ) {
