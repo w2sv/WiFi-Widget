@@ -2,10 +2,11 @@
 <lint>
     <!--Allow CompositionLocal's-->
     <issue id="ComposeCompositionLocalUsage" severity="ignore" />
-    <issue id="NotificationPermission" severity="warning" />
-    <issue id="LintError" severity="warning" />
-    <issue id="MonochromeLauncherIcon" severity="ignore" />
     <issue id="ComposeModifierMissing" severity="ignore" />
+    <issue id="ComposeViewModelForwarding" severity="ignore" />
+    <issue id="LintError" severity="warning" />
     <issue id="LocalContextGetResourceValueCall" severity="ignore" />
     <issue id="ModifierParameter" severity="ignore" />
+    <issue id="MonochromeLauncherIcon" severity="ignore" />
+    <issue id="NotificationPermission" severity="warning" />
 </lint>
