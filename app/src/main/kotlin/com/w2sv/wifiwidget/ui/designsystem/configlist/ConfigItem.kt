@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import com.w2sv.composed.animation.ShakeController
 import com.w2sv.domain.model.Labelled
-import com.w2sv.wifiwidget.ui.util.ShakeController
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface ConfigItem {

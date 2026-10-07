@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.w2sv.composed.animation.shakenBy
 import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
@@ -28,7 +29,6 @@ import com.w2sv.wifiwidget.ui.designsystem.TLayout
 import com.w2sv.wifiwidget.ui.util.VerticallyAnimatedVisibility
 import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
-import com.w2sv.wifiwidget.ui.util.shake
 
 @Composable
 fun ActionableConfigItem(
@@ -56,7 +56,7 @@ fun ActionableConfigItem(
         modifier = modifier
             .fillMaxWidth()
             .then(item.modifier)
-            .thenIfNotNull(item.shakeController) { shake(it) },
+            .thenIfNotNull(item.shakeController) { shakenBy(it) },
         below = item.contentBeneath?.let { content ->
             {
                 ContentBeneath(
