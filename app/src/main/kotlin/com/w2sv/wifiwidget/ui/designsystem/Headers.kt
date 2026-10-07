@@ -3,18 +3,9 @@ package com.w2sv.wifiwidget.ui.designsystem
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,48 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-@Composable
-fun BackButtonHeaderWithBottomDivider(
-    title: String,
-    onBackButtonClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    trailingIcon: (@Composable () -> Unit)? = null
-) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(onClick = onBackButtonClick, modifier = Modifier.size(38.dp)) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.secondary
-                )
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = MaterialTheme.colorScheme.secondary,
-                maxLines = 1
-            )
-            trailingIcon?.let {
-                Spacer(Modifier.weight(1f))
-                it()
-            }
-        }
-        HorizontalDivider(modifier = Modifier.padding(top = 14.dp))
-    }
-}
-
-// ===============
-// IconHeader
-// ===============
 
 @Immutable
 data class IconHeader(@DrawableRes val iconRes: Int, @StringRes val stringRes: Int, val trailingIcon: (@Composable () -> Unit)? = null)

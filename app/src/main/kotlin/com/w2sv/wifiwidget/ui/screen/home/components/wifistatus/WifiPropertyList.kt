@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,7 +26,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
-import com.w2sv.wifiwidget.ui.designsystem.CardContainerColor
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList
@@ -68,7 +68,7 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 3.dp),
-                        color = CardContainerColor
+                        color = CardDefaults.elevatedCardColors().containerColor
                     )
                 }
             }

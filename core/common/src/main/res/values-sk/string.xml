@@ -61,6 +61,7 @@
     <string name="font_size">Veľkosť písma</string>
     <string name="widget_pinning_failed">Vaše zariadenie nepodporuje pripínanie widgetov v aplikáciách. Budete to musieť urobiť z domovskej obrazovky vášho zariadenia.</string>
     <string name="widget_configuration">Nastavenie widgetu</string>
+    <string name="navigate_back">Prejsť späť</string>
     <string name="open_the_refresh_interval_configuration_dialog">Otvoriť dialógové okno na nastavenie intervalu obnovovania.</string>
     <string name="refresh_interval">Interval obnovovania</string>
     <string name="interval">Interval</string>

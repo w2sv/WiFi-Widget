@@ -1,23 +1,28 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
-import com.w2sv.wifiwidget.ui.designsystem.BackButtonHeaderWithBottomDivider
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigList
@@ -34,7 +39,25 @@ fun WidgetConfigScreen(
     onBackButtonClick: () -> Unit,
     state: LazyListState = rememberLazyListState()
 ) {
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                title = { Text(stringResource(R.string.widget_configuration)) },
+                collapsedHeight = 56.dp,
+                navigationIcon = {
+                    IconButton(onClick = onBackButtonClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.navigate_back)
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        },
         snackbarHost = { AppSnackbarHost() },
         floatingActionButton = {
             EditingFabButtonRow(
@@ -46,28 +69,18 @@ fun WidgetConfigScreen(
                     )
                     .height(70.dp)
             )
-        }
+        },
+        contentWindowInsets = WindowInsets()
     ) { paddingValues ->
-        Column(
+        WidgetConfigList(
+            state = state,
+            config = config,
+            updateConfig = updateConfig,
+            showDialog = showDialog,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding() + 16.dp)
-        ) {
-            BackButtonHeaderWithBottomDivider(
-                title = stringResource(id = R.string.widget_configuration),
-                onBackButtonClick = onBackButtonClick
-            )
-
-            WidgetConfigList(
-                state = state,
-                config = config,
-                updateConfig = updateConfig,
-                showDialog = showDialog,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .widthIn(max = 800.dp)
-            )
-        }
+                .padding(paddingValues)
+        )
     }
 }
 
