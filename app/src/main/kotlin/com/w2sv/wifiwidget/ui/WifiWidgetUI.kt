@@ -19,7 +19,9 @@ import com.w2sv.wifiwidget.ui.util.useDarkTheme
 fun WifiWidgetUI(
     initialScreen: Screen,
     isGpsEnabled: () -> Boolean,
-    activityVM: MainActivityViewModel = hiltViewModel()
+    activityVM: MainActivityViewModel = hiltViewModel(),
+    // Lets tests exercise app-level UI without creating destination Hilt ViewModels.
+    navigationContent: @Composable (Screen, ThemeController) -> Unit = ::NavGraph
 ) {
     val themeSettings by activityVM.themeSettings.collectAsStateWithLifecycle()
     val themeController = remember(themeSettings, activityVM) { ThemeController(themeSettings, activityVM::updateThemeSettings) }
@@ -36,7 +38,7 @@ fun WifiWidgetUI(
             useDynamicColors = themeSettings.useDynamicColors,
             useAmoledBlackTheme = themeSettings.useAmoledBlackTheme
         ) {
-            NavGraph(initialScreen = initialScreen, themeController = themeController)
+            navigationContent(initialScreen, themeController)
             OptionalLocationAccessRationals()
         }
     }
