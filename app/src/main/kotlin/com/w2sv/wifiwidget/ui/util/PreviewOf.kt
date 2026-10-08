@@ -9,8 +9,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.location.capability.access.PreviewLocationAccessCapability
-import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
-import com.w2sv.wifiwidget.ui.navigation.PreviewNavigator
 
 @Composable
 fun PreviewOf(
@@ -27,7 +25,6 @@ fun PreviewOf(
         useDynamicColors = useDynamicColors
     ) {
         CompositionLocalProvider(
-            LocalNavigator provides PreviewNavigator(),
             LocalLocationAccessCapability provides PreviewLocationAccessCapability(),
             content = content
         )
