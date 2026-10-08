@@ -21,14 +21,12 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.core.common.R
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
-import com.w2sv.wifiwidget.ui.navigation.Navigator
 
 @Composable
 fun WidgetCard(
     pinWidget: () -> Unit,
-    modifier: Modifier = Modifier,
-    navigator: Navigator = LocalNavigator.current
+    toWidgetConfiguration: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ElevatedIconHeaderCard(
         iconHeader = IconHeader(
@@ -52,7 +50,7 @@ fun WidgetCard(
                         .height(buttonHeight)
                 )
                 WidgetConfigurationButton(
-                    onClick = { navigator.toWidgetConfiguration() },
+                    onClick = toWidgetConfiguration,
                     modifier = Modifier
                         .height(buttonHeight)
                         .weight(0.4f)

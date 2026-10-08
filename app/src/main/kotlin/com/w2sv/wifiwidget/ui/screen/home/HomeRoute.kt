@@ -22,7 +22,11 @@ import kotlinx.coroutines.flow.drop
 import slimber.log.i
 
 @Composable
-fun HomeScreenRoute(themeController: ThemeController, viewModel: HomeScreenViewModel = hiltViewModel()) {
+fun HomeRoute(
+    themeController: ThemeController,
+    toWidgetConfiguration: () -> Unit,
+    viewModel: HomeScreenViewModel = hiltViewModel()
+) {
     BindLocationAccessToViewModel()
 
     ShowSnackbarOnWidgetPin(
@@ -36,6 +40,7 @@ fun HomeScreenRoute(themeController: ThemeController, viewModel: HomeScreenViewM
         themeController = themeController,
         wifiState = wifiState,
         pinWidget = viewModel::pinWidget,
+        toWidgetConfiguration = toWidgetConfiguration,
         snackbarBuilderFlow = viewModel.snackbarBuilder
     )
 }

@@ -21,21 +21,19 @@ import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.navigation.LocalNavigator
-import com.w2sv.wifiwidget.ui.navigation.Navigator
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
 
 @Composable
-fun WidgetConfigScreenRoute(
-    navigator: Navigator = LocalNavigator.current,
+fun WidgetConfigRoute(
+    leaveScreen: () -> Unit,
     locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack: () -> Unit = rememberOnBack(
         configIsDirty = { viewModel.reversibleConfig.isDirty.value },
-        leaveScreen = navigator::leaveWidgetConfiguration,
+        leaveScreen = leaveScreen,
         scope = rememberCoroutineScope()
     )
 

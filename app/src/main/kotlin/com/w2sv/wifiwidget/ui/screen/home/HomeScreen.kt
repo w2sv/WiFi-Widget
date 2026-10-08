@@ -52,6 +52,7 @@ private fun Prev() {
             themeController = ThemeController.Default,
             wifiState = WifiState.Disabled,
             pinWidget = {},
+            toWidgetConfiguration = {},
             snackbarBuilderFlow = emptyFlow()
         )
     }
@@ -62,6 +63,7 @@ fun HomeScreen(
     themeController: ThemeController,
     wifiState: WifiState,
     pinWidget: () -> Unit,
+    toWidgetConfiguration: () -> Unit,
     snackbarBuilderFlow: SnackbarBuilderFlow,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
@@ -86,7 +88,11 @@ fun HomeScreen(
                 WifiStatusCard(wifiState = wifiState, modifier = modifier)
             }
             val widgetCard = rememberMovableContentOf { modifier: Modifier ->
-                WidgetCard(pinWidget = pinWidget, modifier = modifier)
+                WidgetCard(
+                    pinWidget = pinWidget,
+                    toWidgetConfiguration = toWidgetConfiguration,
+                    modifier = modifier
+                )
             }
 
             if (isLandscapeModeActive) {
