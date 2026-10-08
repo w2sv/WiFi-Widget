@@ -17,7 +17,7 @@ google-dagger-hilt = "2.60.1"
 google-ksp = "2.3.12"
 junit = "4.13.2"
 kotlin = "2.4.20"
-kotlinxCollectionsImmutable = "0.5.2"
+kotlinxCollectionsImmutable = "1.11.0"
 kotlinxCoroutines = "1.11.0"
 ktlint = "14.2.0"
 # @keep
