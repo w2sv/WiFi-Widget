@@ -8,7 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.w2sv.common.AppAction
-import com.w2sv.common.utils.IsGpsEnabled
+import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var isGpsEnabled: IsGpsEnabled
+    lateinit var isLocationEnabled: IsLocationEnabled
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -27,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WifiWidgetUI(
                 initialScreen = remember(intent) { intent.initialScreen() },
-                isGpsEnabled = isGpsEnabled::invoke
+                isLocationEnabled = isLocationEnabled
             )
         }
     }

@@ -72,7 +72,7 @@ private fun ShowSnackbarOnWidgetPin(widgetPinSuccessFlow: Flow<Unit>, anyLocatio
         snackbarController.replaceCurrentWith {
             when {
                 // Warn about (B)SSID not being displayed if device GPS is disabled
-                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.isGpsEnabled -> AppSnackbarVisuals(
+                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.isLocationEnabled -> AppSnackbarVisuals(
                     msg = getString(R.string.on_pin_widget_wo_gps_enabled),
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(

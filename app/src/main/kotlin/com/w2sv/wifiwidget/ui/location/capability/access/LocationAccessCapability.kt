@@ -8,7 +8,7 @@ val LocalLocationAccessCapability = staticCompositionLocalOf<LocationAccessCapab
 }
 
 interface LocationAccessCapability : LocationPermissionCapability {
-    val isGpsEnabled: Boolean
+    val isLocationEnabled: Boolean
 
     /**
      * Opens the systems Location settings screen where the user can enable or disable location services (GPS).

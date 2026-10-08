@@ -3,7 +3,7 @@ package com.w2sv.networking.propertyviewdata
 import android.content.res.Resources
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import com.w2sv.common.utils.IsGpsEnabled
+import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.wifiproperty.WifiProperty
@@ -25,7 +25,7 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
     private val resources: Resources,
-    private val isGpsEnabled: IsGpsEnabled
+    private val isLocationEnabled: IsLocationEnabled
 ) : WifiPropertyViewDataProvider {
 
     @Suppress("DEPRECATION")
@@ -42,7 +42,7 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
                 publicIps = remoteWifiData.publicIps,
                 systemIps = connectivityManager.systemIpAddresses(),
                 ipApiData = remoteWifiData.ipApiData,
-                isGpsEnabled = isGpsEnabled()
+                isLocationEnabled = isLocationEnabled()
             )
 
             enabledProperties.flatMap { property ->

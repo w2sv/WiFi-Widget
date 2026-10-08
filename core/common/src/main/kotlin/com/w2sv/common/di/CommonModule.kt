@@ -5,7 +5,7 @@ import android.content.res.Resources
 import android.location.LocationManager
 import com.w2sv.androidutils.location.isLocationEnabledCompat
 import com.w2sv.androidutils.service.systemService
-import com.w2sv.common.utils.IsGpsEnabled
+import com.w2sv.common.utils.IsLocationEnabled
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,8 +21,8 @@ internal object CommonModule {
         context.resources
 
     @Provides
-    fun isGpsEnabled(@ApplicationContext context: Context): IsGpsEnabled {
+    fun isLocationEnabled(@ApplicationContext context: Context): IsLocationEnabled {
         val locationManager = context.systemService<LocationManager>()
-        return IsGpsEnabled { locationManager.isLocationEnabledCompat() }
+        return IsLocationEnabled { locationManager.isLocationEnabledCompat() }
     }
 }
