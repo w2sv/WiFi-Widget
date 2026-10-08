@@ -6,11 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import com.w2sv.common.utils.IsLocationEnabled
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+class WidgetConfigActivity : ComponentActivity() {
 
     @Inject
     lateinit var isLocationEnabled: IsLocationEnabled
@@ -20,6 +21,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         WindowCompat.enableEdgeToEdge(window)
 
-        setContent { WifiWidgetUI(isLocationEnabled = isLocationEnabled) }
+        setContent {
+            WifiWidgetUI(isLocationEnabled = isLocationEnabled) {
+                WidgetConfigRoute(navigateBack = ::finish)
+            }
+        }
     }
 }

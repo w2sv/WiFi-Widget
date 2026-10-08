@@ -27,15 +27,18 @@ import kotlinx.coroutines.flow.update
 
 @Composable
 fun WidgetConfigRoute(
-    leaveScreen: () -> Unit,
+    navigateBack: () -> Unit,
     locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack: () -> Unit = rememberOnBack(
         configIsDirty = { viewModel.reversibleConfig.isDirty.value },
-        leaveScreen = leaveScreen,
+        navigateBack = navigateBack,
         scope = rememberCoroutineScope()
     )
+    val isDirty by viewModel.reversibleConfig.isDirty.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = isDirty, onBack = onBack)
 
     val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
     val configEditState = rememberConfigEditState(viewModel)
@@ -52,8 +55,6 @@ fun WidgetConfigRoute(
             }
         }
     }
-
-    BackHandler(onBack = onBack)
 
     dialog?.let {
         WidgetConfigDialog(
@@ -76,7 +77,7 @@ fun WidgetConfigRoute(
 @Composable
 private fun rememberOnBack(
     configIsDirty: () -> Boolean,
-    leaveScreen: () -> Unit,
+    navigateBack: () -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
     snackbarLauncher: SnackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
 ): () -> Unit {
@@ -93,7 +94,7 @@ private fun rememberOnBack(
                 configHasChanged = configIsDirty,
                 backPressHandler = backPressHandler,
                 snackbarLauncher = snackbarLauncher,
-                leaveScreen = leaveScreen
+                leaveScreen = navigateBack
             )
         }
     }

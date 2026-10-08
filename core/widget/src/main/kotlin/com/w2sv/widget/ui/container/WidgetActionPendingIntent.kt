@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import com.w2sv.common.AppAction
 import com.w2sv.common.utils.activityPendingIntent
 import com.w2sv.common.utils.broadcastPendingIntent
 import com.w2sv.common.utils.openWifiSettingsIntent
@@ -25,13 +24,12 @@ internal object WidgetActionPendingIntent {
     fun openWidgetConfigScreen(context: Context): PendingIntent =
         activityPendingIntent(
             context,
-            Intent.makeRestartActivityTask(
+            Intent().setComponent(
                 ComponentName(
                     context,
-                    "com.w2sv.wifiwidget.ui.MainActivity"
+                    "com.w2sv.wifiwidget.ui.WidgetConfigActivity"
                 )
-            )
-                .setAction(AppAction.OPEN_WIDGET_CONFIGURATION_SCREEN),
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK),
             PendingIntent.FLAG_IMMUTABLE
         )
 }

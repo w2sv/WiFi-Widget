@@ -16,8 +16,8 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 import slimber.log.i
 
 @Composable
-fun NavGraph(initialScreen: Screen, themeController: ThemeController) {
-    val backStack = rememberNavBackStack(initialScreen)
+fun NavGraph(themeController: ThemeController) {
+    val backStack = rememberNavBackStack<Screen>(Screen.Home)
     val navigator = remember(backStack) { Navigator(backStack) }
 
     OnChange(backStack.size) { i { "BackStack=${backStack.map { screen -> screen::class.java.simpleName }}" } }
@@ -45,7 +45,7 @@ fun NavGraph(initialScreen: Screen, themeController: ThemeController) {
                 )
             }
             entry<Screen.WidgetConfiguration> {
-                WidgetConfigRoute(leaveScreen = navigator::leaveWidgetConfiguration)
+                WidgetConfigRoute(navigateBack = navigator::popBackStack)
             }
         }
     )
