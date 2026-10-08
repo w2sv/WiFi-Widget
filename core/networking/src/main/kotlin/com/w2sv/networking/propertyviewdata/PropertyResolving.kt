@@ -28,7 +28,7 @@ internal fun WifiProperty.resolve(
                     locationAccessDependentValue(
                         value = connectionInfo.ssid.replace("\"", ""),
                         errorPlaceholder = UNKNOWN_SSID,
-                        isGpsEnabled = isGpsEnabled
+                        isLocationEnabled = isLocationEnabled
                     )
                 )
 
@@ -36,7 +36,7 @@ internal fun WifiProperty.resolve(
                     locationAccessDependentValue(
                         value = connectionInfo.bssid ?: error("No network connected"),
                         errorPlaceholder = ERROR_BSSID,
-                        isGpsEnabled = isGpsEnabled
+                        isLocationEnabled = isLocationEnabled
                     )
                 )
 
@@ -136,16 +136,16 @@ internal fun WifiProperty.resolve(
 private fun locationAccessDependentValue(
     value: String,
     errorPlaceholder: String,
-    isGpsEnabled: Boolean
+    isLocationEnabled: Boolean
 ): WifiPropertyValue {
     val isError = value == errorPlaceholder
     return WifiPropertyValue(
         value = value.txt
             .takeUnless { isError }
-            ?: if (isGpsEnabled) R.string.no_location_access.txt else R.string.gps_disabled.txt,
+            ?: if (isLocationEnabled) R.string.no_location_access.txt else R.string.gps_disabled.txt,
         resolutionError = when {
             !isError -> null
-            isGpsEnabled -> WifiPropertyResolutionError.NoLocationAccessPermission
+            isLocationEnabled -> WifiPropertyResolutionError.NoLocationAccessPermission
             else -> WifiPropertyResolutionError.GpsDisabled
         }
     )
