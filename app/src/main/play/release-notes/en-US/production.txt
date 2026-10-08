@@ -1,3 +1,6 @@
-- Enable precise custom color picking by migrating to HSL picker with RGB sliders
-- Set widget button touch target size to 48 px for better accessibility
-- Change splash screen background color
+- Added Slovak translations.
+- Widget settings now open in a dedicated screen when launched from a widget.
+- Smoother screen transitions, including predictive back, without the white flash.
+- Widget settings screen now has a collapsing top bar.
+- Improved theme transitions and AMOLED drawer animations.
+- Fixed the monochrome launcher icon.
