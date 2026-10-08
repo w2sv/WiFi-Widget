@@ -23,7 +23,8 @@ fun WifiWidgetUI(
     content: @Composable (ThemeController) -> Unit = ::NavGraph
 ) {
     val themeSettings by activityViewModel.themeSettings.collectAsStateWithLifecycle()
-    val themeController = remember(themeSettings, activityViewModel) { ThemeController(themeSettings, activityViewModel::updateThemeSettings) }
+    val themeController =
+        remember(themeSettings, activityViewModel) { ThemeController(themeSettings, activityViewModel::updateThemeSettings) }
 
     val locationAccessCapability = rememberLocationAccessCapability(
         isLocationEnabled = isLocationEnabled,
