@@ -1,10 +1,8 @@
 package com.w2sv.wifiwidget.ui.navigation
 
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -34,16 +32,12 @@ fun NavGraph(initialScreen: Screen, themeController: ThemeController) {
                 rememberViewModelStoreNavEntryDecorator()
             ),
             transitionSpec = {
-                ContentTransform(
-                    slideInHorizontally(initialOffsetX = { it / 2 }) + fadeIn(),
-                    slideOutHorizontally(targetOffsetX = { -it / 2 }) + fadeOut()
-                )
+                slideInHorizontally(initialOffsetX = { it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { -it })
             },
             popTransitionSpec = {
-                ContentTransform(
-                    slideInHorizontally(initialOffsetX = { -it / 2 }) + fadeIn(),
-                    slideOutHorizontally(targetOffsetX = { it / 2 }) + fadeOut()
-                )
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                    slideOutHorizontally(targetOffsetX = { it })
             },
             entryProvider = entryProvider {
                 entry<Screen.Home> { HomeScreenRoute(themeController) }
