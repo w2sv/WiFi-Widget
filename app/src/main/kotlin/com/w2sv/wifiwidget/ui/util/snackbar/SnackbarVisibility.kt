@@ -4,6 +4,9 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
+
+val LocalSnackbarVisibility = staticCompositionLocalOf { SnackbarVisibility() }
 
 /**
  * Tracks actual snackbar visibility in a Compose hierarchy. [set] should only be called from within the snackbar host.

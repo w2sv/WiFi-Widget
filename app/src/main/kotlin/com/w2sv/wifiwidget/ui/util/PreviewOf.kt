@@ -6,8 +6,8 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.tooling.preview.Devices.PHONE
 import androidx.compose.ui.tooling.preview.Devices.TABLET
 import androidx.compose.ui.tooling.preview.Preview
-import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.PreviewLocationAccessCapability
 
 @Composable

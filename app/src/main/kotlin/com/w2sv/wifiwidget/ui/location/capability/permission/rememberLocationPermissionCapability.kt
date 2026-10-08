@@ -21,7 +21,7 @@ import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.kotlinutils.makeIf
-import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
