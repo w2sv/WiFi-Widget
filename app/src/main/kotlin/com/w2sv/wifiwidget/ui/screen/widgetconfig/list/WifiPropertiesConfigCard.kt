@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.wifiwidget.ui.LocalLocationAccessCapability
-import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.Disclaimer
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.MoreIconButtonWithDropdownMenu
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ReorderableCheckableList
+import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.wifiPropertyConfigItems
 import com.w2sv.wifiwidget.ui.util.PreviewOf

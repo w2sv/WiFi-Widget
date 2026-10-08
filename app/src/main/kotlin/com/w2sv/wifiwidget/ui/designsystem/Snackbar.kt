@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,11 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectLatestFromFlow
 import com.w2sv.composed.runtime.OnDispose
-import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
+import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 import kotlinx.coroutines.flow.emptyFlow
+
+val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)

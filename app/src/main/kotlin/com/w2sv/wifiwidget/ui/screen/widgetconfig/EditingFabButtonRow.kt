@@ -35,12 +35,12 @@ import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectLatestFromFlow
 import com.w2sv.composed.runtime.OnChange
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.ui.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.Easing
+import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.util.OnVisibilityStateChange
+import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
 import kotlinx.coroutines.flow.first
 
 private enum class EditingFabButton(@StringRes val labelRes: Int, val imageVector: ImageVector) {
