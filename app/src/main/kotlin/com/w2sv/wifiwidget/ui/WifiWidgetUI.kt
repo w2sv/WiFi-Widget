@@ -13,24 +13,22 @@ import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
-import com.w2sv.wifiwidget.ui.navigation.Screen
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
 fun WifiWidgetUI(
-    initialScreen: Screen,
     isLocationEnabled: IsLocationEnabled,
-    activityVM: MainActivityViewModel = hiltViewModel(),
-    // Lets tests exercise app-level UI without creating destination Hilt ViewModels.
-    navigationContent: @Composable (Screen, ThemeController) -> Unit = ::NavGraph
+    activityViewModel: ActivityViewModel = hiltViewModel(),
+    // Lets both activities share app-level UI and tests omit destination Hilt ViewModels.
+    content: @Composable (ThemeController) -> Unit = ::NavGraph
 ) {
-    val themeSettings by activityVM.themeSettings.collectAsStateWithLifecycle()
-    val themeController = remember(themeSettings, activityVM) { ThemeController(themeSettings, activityVM::updateThemeSettings) }
+    val themeSettings by activityViewModel.themeSettings.collectAsStateWithLifecycle()
+    val themeController = remember(themeSettings, activityViewModel) { ThemeController(themeSettings, activityViewModel::updateThemeSettings) }
 
     val locationAccessCapability = rememberLocationAccessCapability(
         isLocationEnabled = isLocationEnabled,
-        requestHistory = activityVM.locationAccessPermissionHistory,
-        rationalHistory = activityVM.locationAccessRationalHistory
+        requestHistory = activityViewModel.locationAccessPermissionHistory,
+        rationalHistory = activityViewModel.locationAccessRationalHistory
     )
 
     CompositionLocalProvider(LocalLocationAccessCapability provides locationAccessCapability) {
@@ -39,7 +37,7 @@ fun WifiWidgetUI(
             useDynamicColors = themeSettings.useDynamicColors,
             useAmoledBlackTheme = themeSettings.useAmoledBlackTheme
         ) {
-            navigationContent(initialScreen, themeController)
+            content(themeController)
             OptionalLocationAccessRationals()
         }
     }

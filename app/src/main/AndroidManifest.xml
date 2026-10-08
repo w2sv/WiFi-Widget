@@ -32,5 +32,14 @@
             </intent-filter>
         </activity>
 
+        <!-- Keep widget-launched settings separate from the app task so Back returns to the
+             launcher without discarding an existing MainActivity session. -->
+        <activity
+            android:name=".ui.WidgetConfigActivity"
+            android:autoRemoveFromRecents="true"
+            android:exported="false"
+            android:taskAffinity="${applicationId}.widgetconfig"
+            android:theme="@style/Theme.App.SplashScreen" />
+
     </application>
 </manifest>

@@ -6,12 +6,4 @@ class Navigator(backStack: NavBackStack<Screen>) : Nav3Navigator<Screen>(backSta
 
     fun toWidgetConfiguration() =
         launchSingleTop(Screen.WidgetConfiguration)
-
-    fun leaveWidgetConfiguration() {
-        if (backStack.size == 1) {
-            clearAndLaunch(Screen.Home)
-        } else {
-            popBackStack()
-        }
-    }
 }

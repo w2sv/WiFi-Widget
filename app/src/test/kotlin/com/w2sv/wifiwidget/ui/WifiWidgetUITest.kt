@@ -9,7 +9,6 @@ import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.ThemeSettings
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
-import com.w2sv.wifiwidget.ui.navigation.Screen
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +45,7 @@ class WifiWidgetUITest {
     }
 
     private fun setContent(rationalShown: Boolean) {
-        val activityVM = mockk<MainActivityViewModel> {
+        val activityViewModel = mockk<ActivityViewModel> {
             every { themeSettings } returns MutableStateFlow(ThemeSettings.Default)
             every { locationAccessPermissionHistory } returns PermissionRequestHistory(flowOf(false)) {}
             every { locationAccessRationalHistory } returns LocationAccessRationalHistory(flowOf(rationalShown)) {}
@@ -54,10 +53,9 @@ class WifiWidgetUITest {
 
         composeRule.setContent {
             WifiWidgetUI(
-                initialScreen = Screen.Home,
                 isLocationEnabled = IsLocationEnabled { true },
-                activityVM = activityVM,
-                navigationContent = { _, _ -> }
+                activityViewModel = activityViewModel,
+                content = {}
             )
         }
     }

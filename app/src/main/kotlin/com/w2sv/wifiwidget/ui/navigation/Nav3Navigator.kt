@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
 
 /**
- * Generic navigator methods/properties that aren't specific to the Wifi Widget app navigation.
+ * Generic navigator methods/properties that aren't specific to the app navigation.
  */
 abstract class Nav3Navigator<T : NavKey>(protected val backStack: NavBackStack<T>) {
 
@@ -19,13 +19,5 @@ abstract class Nav3Navigator<T : NavKey>(protected val backStack: NavBackStack<T
         if (backStack.lastOrNull() != target) {
             backStack.add(target)
         }
-    }
-
-    /**
-     * Clears the [backStack] and launches [target].
-     */
-    protected fun clearAndLaunch(target: T) {
-        backStack.clear()
-        backStack.add(target)
     }
 }

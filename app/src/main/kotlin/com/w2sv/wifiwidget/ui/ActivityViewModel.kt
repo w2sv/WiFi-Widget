@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MainActivityViewModel @Inject constructor(
+class ActivityViewModel @Inject constructor(
     private val permissionRepository: PermissionRepository,
     private val preferencesRepository: PreferencesRepository
 ) : ViewModel() {
