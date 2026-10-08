@@ -134,5 +134,7 @@ dependencies {
     implementation(libs.reorderable)
 
     testImplementation(libs.bundles.unitTest)
+    testImplementation(libs.androidx.compose.ui.test.junit4.android)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.bundles.androidTest)
 }
