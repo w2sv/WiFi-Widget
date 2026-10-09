@@ -1,1 +1,1 @@
-Configurable widget for the monitoring of your WiFi connection details
+Monitor your Wi-Fi connection at a glance with a sleek, customizable widget.
