@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.androidutils.BackPressHandler
-import com.w2sv.composed.material3.SnackbarLauncher
 import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
@@ -22,8 +21,10 @@ import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+
+const val NAVIGATE_BACK_CONFIRMATION_WINDOW = 2500L
 
 @Composable
 fun WidgetConfigRoute(
@@ -31,20 +32,17 @@ fun WidgetConfigRoute(
     locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
-    val onBack: () -> Unit = rememberOnBack(
-        configIsDirty = { viewModel.reversibleConfig.isDirty.value },
-        navigateBack = navigateBack,
-        scope = rememberCoroutineScope()
+    val onBack = rememberWidgetConfigBackHandler(
+        configIsDirty = viewModel.reversibleConfig.isDirty,
+        navigateBack = navigateBack
     )
-    val isDirty by viewModel.reversibleConfig.isDirty.collectAsStateWithLifecycle()
-
-    BackHandler(enabled = isDirty, onBack = onBack)
 
     val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
     val configEditState = rememberConfigEditState(viewModel)
 
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
 
+    // Perform pending property update if required location access has been granted
     CollectFromFlow(locationAccessCapability.grantEvents) { event ->
         event.asEnablePropertyOrNull?.run {
             viewModel.reversibleConfig.update {
@@ -74,55 +72,46 @@ fun WidgetConfigRoute(
     )
 }
 
+/**
+ * Intercepts system back while the configuration is dirty and returns the same back action for the toolbar.
+ * A dirty configuration requires a second back action within [NAVIGATE_BACK_CONFIRMATION_WINDOW] before [navigateBack] is called.
+ */
 @Composable
-private fun rememberOnBack(
-    configIsDirty: () -> Boolean,
-    navigateBack: () -> Unit,
-    scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarLauncher: SnackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
-): () -> Unit {
-    val backPressHandler = remember {
+internal fun rememberWidgetConfigBackHandler(configIsDirty: StateFlow<Boolean>, navigateBack: () -> Unit): () -> Unit {
+    val isDirty by configIsDirty.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val snackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
+    val backPressHandler = remember(scope, isDirty) {
         BackPressHandler(
             coroutineScope = scope,
-            confirmationWindowDuration = 2500L
+            confirmationWindowDuration = NAVIGATE_BACK_CONFIRMATION_WINDOW
         )
     }
 
-    return remember(snackbarLauncher) {
-        {
-            onBack(
-                configHasChanged = configIsDirty,
-                backPressHandler = backPressHandler,
-                snackbarLauncher = snackbarLauncher,
-                leaveScreen = navigateBack
+    val leaveScreen = {
+        snackbarLauncher.dismissCurrent()
+        navigateBack()
+    }
+    val onBack: () -> Unit = {
+        if (configIsDirty.value) {
+            backPressHandler(
+                onFirstPress = {
+                    snackbarLauncher.replaceCurrentWith {
+                        AppSnackbarVisuals(
+                            msg = getString(R.string.go_back_on_unsaved_changes_warning),
+                            kind = SnackbarKind.Warning
+                        )
+                    }
+                },
+                onSecondPress = leaveScreen
             )
+        } else {
+            leaveScreen()
         }
     }
-}
 
-private fun onBack(
-    configHasChanged: () -> Boolean,
-    backPressHandler: BackPressHandler,
-    snackbarLauncher: SnackbarLauncher,
-    leaveScreen: () -> Unit
-) {
-    if (configHasChanged()) {
-        backPressHandler(
-            onFirstPress = {
-                snackbarLauncher.replaceCurrentWith {
-                    AppSnackbarVisuals(
-                        msg = getString(R.string.go_back_on_unsaved_changes_warning),
-                        kind = SnackbarKind.Warning
-                    )
-                }
-            },
-            onSecondPress = {
-                snackbarLauncher.dismissCurrent()
-                leaveScreen()
-            }
-        )
-    } else {
-        snackbarLauncher.dismissCurrent()
-        leaveScreen()
-    }
+    // Disable handler on clean config for predictive back gesture to work
+    BackHandler(enabled = isDirty, onBack = onBack)
+
+    return onBack
 }
