@@ -16,8 +16,7 @@ compose-lint-checks = "1.6.1"
 google-dagger-hilt = "2.60.1"
 google-ksp = "2.3.12"
 junit = "4.13.2"
-kotlin = "2.4.20"
-kotlinxCollectionsImmutable = "0.5.2"
+kotlin = "2.4.21"
 kotlinxCoroutines = "1.11.0"
 ktlint = "14.2.0"
 # @keep
@@ -31,7 +30,7 @@ triplet-play = "4.1.1"
 versionCatalogUpdate = "1.1.1"
 w2sv-androidutils = "0.6.0"
 # @pin
-w2sv-composed = "0.5.0"
+w2sv-composed = "0.6.0"
 w2sv-datastoreutils = "0.0.8"
 w2sv-kotlinutils = "0.3.0"
 w2sv-reversiblestate = "0.1.0"
@@ -80,9 +79,9 @@ junit = { module = "junit:junit", version.ref = "junit" }
 # @keep
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
+kotlinx-collections-immutable = "org.jetbrains.kotlinx:kotlinx-collections-immutable:0.5.2"
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxCollectionsImmutable" }
+kotlinx-serialization-json ="org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0"
 # @keep
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "google-ksp" }
 reorderable = "sh.calvin.reorderable:reorderable:3.1.0"

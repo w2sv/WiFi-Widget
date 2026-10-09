@@ -8,6 +8,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.w2sv.androidutils.os.dynamicColorsSupported
+import com.w2sv.composed.ui.systembar.SystemBarIconAppearance
 
 @Composable
 fun WifiWidgetTheme(
@@ -17,7 +18,7 @@ fun WifiWidgetTheme(
     context: Context = LocalContext.current,
     content: @Composable () -> Unit
 ) {
-    SystemBarAppearance(useDarkTheme)
+    SystemBarIconAppearance(useDarkTheme)
 
     val enableDynamicColors = useDynamicColors && dynamicColorsSupported
     val colorScheme = when {
