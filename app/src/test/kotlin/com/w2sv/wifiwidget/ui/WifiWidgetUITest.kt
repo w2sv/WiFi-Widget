@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.ThemeSettings
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
@@ -53,7 +52,7 @@ class WifiWidgetUITest {
 
         composeRule.setContent {
             WifiWidgetUI(
-                isLocationEnabled = IsLocationEnabled { true },
+                isLocationEnabled = { true },
                 activityViewModel = activityViewModel,
                 content = {}
             )

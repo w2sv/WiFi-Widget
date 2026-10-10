@@ -3,8 +3,8 @@ package com.w2sv.wifiwidget.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.rememberNavBackStack
+import com.w2sv.composed.navigation3.Nav3Navigator
+import com.w2sv.composed.navigation3.rememberTypedNavBackStack
 import com.w2sv.composed.runtime.OnChange
 import slimber.log.i
 
@@ -23,8 +23,3 @@ fun rememberNavigator(): Navigator {
 
     return navigator
 }
-
-@Composable
-@Suppress("UNCHECKED_CAST")
-private fun <T : NavKey> rememberTypedNavBackStack(vararg initialKeys: T): NavBackStack<T> =
-    rememberNavBackStack(*initialKeys) as NavBackStack<T>
