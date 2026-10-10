@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.w2sv.composed.animation)
     implementation(libs.w2sv.composed.core)
     implementation(libs.w2sv.composed.material3)
+    implementation(libs.w2sv.composed.navigation3)
     implementation(libs.w2sv.augmentedPermissions)
     implementation(libs.w2sv.composeWheelPicker)
     implementation(libs.w2sv.reversiblestate)

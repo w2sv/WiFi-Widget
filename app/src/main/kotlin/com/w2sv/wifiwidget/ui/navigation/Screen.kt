@@ -4,10 +4,10 @@ import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Screen : NavKey {
+sealed interface Screen : NavKey {
     @Serializable
-    object Home : Screen()
+    object Home : Screen
 
     @Serializable
-    object WidgetConfiguration : Screen()
+    object WidgetConfiguration : Screen
 }
