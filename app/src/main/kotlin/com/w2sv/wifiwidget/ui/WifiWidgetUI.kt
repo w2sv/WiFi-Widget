@@ -6,9 +6,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
+import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
@@ -17,7 +17,7 @@ import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
 fun WifiWidgetUI(
-    isLocationEnabled: IsLocationEnabled,
+    locationAccessDependencies: LocationAccessDependencies,
     activityViewModel: ActivityViewModel = hiltViewModel(),
     // Lets both activities share app-level UI and tests omit destination Hilt ViewModels.
     content: @Composable (ThemeController) -> Unit = ::NavGraph
@@ -27,9 +27,9 @@ fun WifiWidgetUI(
         remember(themeSettings, activityViewModel) { ThemeController(themeSettings, activityViewModel::updateThemeSettings) }
 
     val locationAccessCapability = rememberLocationAccessCapability(
-        isLocationEnabled = isLocationEnabled,
-        requestHistory = activityViewModel.locationAccessPermissionHistory,
-        rationalHistory = activityViewModel.locationAccessRationalHistory
+        isLocationEnabled = locationAccessDependencies.isLocationEnabled,
+        requestHistory = locationAccessDependencies.requestHistory,
+        rationalHistory = locationAccessDependencies.rationalHistory
     )
 
     CompositionLocalProvider(LocalLocationAccessCapability provides locationAccessCapability) {

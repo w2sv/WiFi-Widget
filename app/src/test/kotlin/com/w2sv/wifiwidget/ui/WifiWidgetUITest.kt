@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.core.common.R
 import com.w2sv.domain.model.ThemeSettings
+import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import io.mockk.every
 import io.mockk.mockk
@@ -46,13 +47,16 @@ class WifiWidgetUITest {
     private fun setContent(rationalShown: Boolean) {
         val activityViewModel = mockk<ActivityViewModel> {
             every { themeSettings } returns MutableStateFlow(ThemeSettings.Default)
-            every { locationAccessPermissionHistory } returns PermissionRequestHistory(flowOf(false)) {}
-            every { locationAccessRationalHistory } returns LocationAccessRationalHistory(flowOf(rationalShown)) {}
+        }
+        val locationAccessDependencies = mockk<LocationAccessDependencies> {
+            every { isLocationEnabled } returns { true }
+            every { requestHistory } returns PermissionRequestHistory(flowOf(false)) {}
+            every { rationalHistory } returns LocationAccessRationalHistory(flowOf(rationalShown)) {}
         }
 
         composeRule.setContent {
             WifiWidgetUI(
-                isLocationEnabled = { true },
+                locationAccessDependencies = locationAccessDependencies,
                 activityViewModel = activityViewModel,
                 content = {}
             )
