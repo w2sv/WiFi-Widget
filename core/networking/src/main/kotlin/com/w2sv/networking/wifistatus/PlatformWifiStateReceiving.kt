@@ -1,4 +1,4 @@
-package com.w2sv.networking.wifistatus.monitor
+package com.w2sv.networking.wifistatus
 
 import android.content.BroadcastReceiver
 import android.net.wifi.WifiManager

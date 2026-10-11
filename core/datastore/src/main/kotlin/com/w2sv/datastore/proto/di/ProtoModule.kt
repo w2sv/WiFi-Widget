@@ -11,8 +11,6 @@ import com.w2sv.datastore.proto.WidgetConfigProtoSerializer
 import com.w2sv.datastore.proto.migration.WidgetColoringProtoSerializer
 import com.w2sv.datastore.proto.migration.WidgetConfigMigration
 import com.w2sv.datastore.proto.migration.defaultWidgetColoringProto
-import com.w2sv.domain.repository.WidgetConfigDataSource
-import com.w2sv.domain.repository.WidgetConfigFlow
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,10 +31,6 @@ internal object ProtoModule {
             produceFile = { context.dataStoreFile("widget_config.pb") },
             migrations = listOf(migration)
         )
-
-    @Provides
-    fun widgetConfigFlow(widgetConfigDataSource: WidgetConfigDataSource): WidgetConfigFlow =
-        widgetConfigDataSource.config
 
     @Provides
     internal fun widgetColoringDataStore(@ApplicationContext context: Context): DataStore<WidgetColoringProto> =

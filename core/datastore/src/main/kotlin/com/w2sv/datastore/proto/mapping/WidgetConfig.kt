@@ -8,7 +8,7 @@ import com.w2sv.domain.model.widget.WidgetUtility
 internal fun WidgetConfig.toProto(): WidgetConfigProto =
     WidgetConfigProto.newBuilder()
         .also { builder ->
-            propertyConfigMap.forEach { (property, config) ->
+            propertyConfig.forEach { (property, config) ->
                 builder.putProperties(
                     property.protoId,
                     config.toProto()
@@ -25,7 +25,7 @@ internal fun WidgetConfig.toProto(): WidgetConfigProto =
 
 internal fun WidgetConfigProto.toExternal(): WidgetConfig =
     WidgetConfig(
-        propertyConfigMap = propertiesMap.entries.associate { (id, protoConfig) ->
+        propertyConfig = propertiesMap.entries.associate { (id, protoConfig) ->
             WifiPropertyProtoRegistry(id) to protoConfig.toExternal()
         },
         propertyOrder = orderList.map(WifiPropertyProtoRegistry::invoke),

@@ -21,7 +21,7 @@ class DefaultWidgetConfigTest {
 
     @Test
     fun propertyConfig() {
-        assertEquals(defaultPropertyConfig, defaultConfig.propertyConfigMap)
+        assertEquals(defaultPropertyConfig, defaultConfig.propertyConfig)
     }
 
     @Test

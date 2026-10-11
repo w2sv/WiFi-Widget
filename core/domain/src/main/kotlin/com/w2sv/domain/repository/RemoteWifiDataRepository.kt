@@ -1,28 +1,31 @@
 package com.w2sv.domain.repository
 
+import com.w2sv.domain.model.networking.RemoteDataConfig
+import com.w2sv.domain.model.networking.RemoteRefreshResult
 import com.w2sv.domain.model.networking.RemoteWifiData
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * Provides network-derived information that requires network calls.
- *
- * This includes:
- *  - Public IP addresses (IPv4 / IPv6)
- *  - Location & ISP data via IP APIs (e.g., ip-api.com)
- *
- * Implementations must respect user configuration (enabled properties) to avoid
- * unnecessary network requests.
+ * Owns fetching, network-keyed caching, and publication of displayable public-IP and IP-API
+ * data against [RemoteDataConfig] requirements. Requirement changes retain only applicable values; a known default-egress change
+ * invalidates values from the old network. When the route cannot be identified, cached values
+ * remain private until that same network is confirmed again. Synchronous validation shares the
+ * cache with concurrent refreshes; callers decide when to synchronize or render widgets.
  */
 interface RemoteWifiDataRepository {
 
-    /**
-     * The latest [RemoteWifiData].
-     */
+    /** Displayable data; validation may change it without making an HTTP request. */
     val data: StateFlow<RemoteWifiData>
 
     /**
-     * Refreshes [data] on demand.
-     * It respects user settings and will skip network calls for disabled properties.
+     * Refreshes enabled groups and reports whether recovery is satisfied for this egress context.
+     * With [onlyIfMissing], fetches only requirements still needing initialization.
      */
-    suspend fun refresh()
+    suspend fun refresh(onlyIfMissing: Boolean = false): RemoteRefreshResult
+
+    /** Validates the route and requirements, publishes the resulting [data], and returns it. */
+    fun reconciledSnapshot(config: RemoteDataConfig): RemoteWifiData
+
+    /** Validates and publishes [data], then checks whether an enabled group still needs a fetch. */
+    fun needsRecovery(config: RemoteDataConfig): Boolean
 }

@@ -28,8 +28,8 @@ internal val ConnectivityManager.activeNetworkIsWifi: Boolean
 internal val ConnectivityManager.activeNetworkCapabilities: NetworkCapabilities?
     get() = getNetworkCapabilities(activeNetwork)
 
-internal val ConnectivityManager.activeNetworkHasInternet: Boolean
-    get() = activeNetworkCapabilities?.hasInternet == true
+internal val ConnectivityManager.activeNetworkIsInternetValidated: Boolean
+    get() = activeNetworkCapabilities?.isInternetValidated == true
 
 /**
  * @return `true` if any connected network uses Wi-Fi transport, regardless of

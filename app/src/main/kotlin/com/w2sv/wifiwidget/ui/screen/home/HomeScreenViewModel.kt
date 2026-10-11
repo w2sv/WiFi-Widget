@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.core.common.R
 import com.w2sv.domain.repository.WidgetConfigDataSource
+import com.w2sv.networking.remotenetworkinfo.RemoteDataSynchronizer
 import com.w2sv.widget.actions.WidgetActions
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
@@ -28,6 +29,7 @@ class HomeScreenViewModel @Inject constructor(
     private val widgetConfigDataSource: WidgetConfigDataSource,
     private val widgetActions: WidgetActions,
     @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>,
+    private val remoteDataSynchronizer: RemoteDataSynchronizer,
     wifiStateProvider: WifiStateProvider
 ) : ViewModel(),
     WifiStateProvider by wifiStateProvider {
@@ -43,6 +45,10 @@ class HomeScreenViewModel @Inject constructor(
             false
         )
     val isAnyLocationAccessRequiringPropertyEnabled: Boolean get() = _isAnyLocationAccessRequiringPropertyEnabled.value
+
+    fun onForeground() {
+        viewModelScope.launch { remoteDataSynchronizer.recoverOnForeground() }
+    }
 
     fun pinWidget() {
         widgetActions.pin {

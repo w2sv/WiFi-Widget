@@ -1,5 +1,6 @@
 package com.w2sv.domain.model.widget
 
+import com.w2sv.domain.model.networking.RemoteDataConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.model.wifiproperty.settings.IpSetting
@@ -11,12 +12,15 @@ import com.w2sv.kotlinutils.trueKeys
 import com.w2sv.kotlinutils.update
 
 data class WidgetConfig(
-    val propertyConfigMap: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
+    val propertyConfig: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>>,
     val propertyOrder: List<WifiProperty>,
     val appearance: WidgetAppearance,
     val refreshing: WidgetRefreshing,
     val utilities: Map<WidgetUtility, Boolean>
 ) {
+    val remoteDataConfig: RemoteDataConfig
+        get() = RemoteDataConfig.from(this)
+
     val supportedProperties by threadUnsafeLazy { propertyOrder.filter { it.isSupported } }
 
     val enabledProperties by threadUnsafeLazy { supportedProperties.filter { isEnabled(it) } }
@@ -44,14 +48,14 @@ data class WidgetConfig(
         property: WifiProperty,
         transform: (WifiPropertyConfig<WifiPropertySetting>) -> WifiPropertyConfig<WifiPropertySetting>
     ): WidgetConfig =
-        copy(propertyConfigMap = propertyConfigMap.copy { update(property, transform) })
+        copy(propertyConfig = propertyConfig.copy { update(property, transform) })
 
     fun withUpdatedPropertyEnablement(property: WifiProperty, isEnabled: Boolean): WidgetConfig =
         withUpdatedPropertyConfig(property) { it.copy(isEnabled = isEnabled) }
 
     fun withEnabledLocationAccessRequiringProperties(): WidgetConfig =
         copy(
-            propertyConfigMap = propertyConfigMap.copy {
+            propertyConfig = propertyConfig.copy {
                 WifiProperty.locationAccessRequiring.forEach { property ->
                     update(property) { it.copy(isEnabled = true) }
                 }
@@ -63,7 +67,7 @@ data class WidgetConfig(
     // ================
 
     fun propertyConfig(property: WifiProperty): WifiPropertyConfig<WifiPropertySetting> =
-        propertyConfigMap.getValue(property)
+        propertyConfig.getValue(property)
 
     fun ipPropertyConfig(property: WifiProperty.IpProperty): WifiPropertyConfig<IpSetting> =
         typedConfig(property)
@@ -86,7 +90,7 @@ data class WidgetConfig(
 
     companion object {
         val default = WidgetConfig(
-            propertyConfigMap = WifiProperty.entries.associateWith { property ->
+            propertyConfig = WifiProperty.entries.associateWith { property ->
                 WifiPropertyConfig(
                     isEnabled = property.isEnabledByDefault,
                     settings = when (property) {

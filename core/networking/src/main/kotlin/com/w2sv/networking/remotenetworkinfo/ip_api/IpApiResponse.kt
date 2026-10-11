@@ -8,6 +8,7 @@ import kotlinx.serialization.Serializable
 /**
  * Data fetched from json retrieved from [ip-api](http://ip-api.com/json?fields=5828601).
  * [Field documentation](https://ip-api.com/docs/api:json)
+ * Missing latitude or longitude means the API did not provide a usable coordinate pair.
  *
  * @property status `success` or `fail`
  * @property message fail reason, if any
@@ -22,8 +23,8 @@ internal data class IpApiResponse(
     val city: String = "",
     val district: String = "",
     val zip: String = "",
-    val lat: Double = -1.0,
-    val lon: Double = -1.0,
+    val lat: Double? = null,
+    val lon: Double? = null,
     val timezone: String = "",
     val isp: String = "",
     @SerialName("as") val asNumberAndOrganization: String = ""
@@ -52,7 +53,7 @@ internal data class IpApiResponse(
             .ifBlank { null }
 
     private fun gpsCoordinates(): String? =
-        "$lat, $lon".takeIf { lat == -1.0 || lon == -1.0 }
+        if (lat != null && lon != null) "$lat, $lon" else null
 
     private fun asn(): String? =
         asNumberAndOrganization.run { substringBefore(" ").takeIf { isNotBlank() } }
