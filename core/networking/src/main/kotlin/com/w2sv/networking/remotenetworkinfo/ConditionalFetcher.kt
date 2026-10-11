@@ -2,29 +2,23 @@ package com.w2sv.networking.remotenetworkinfo
 
 import com.w2sv.domain.model.widget.WidgetConfig
 
-/**
- * Abstraction for conditionally executing a network fetch based on [WidgetConfig].
- */
+internal sealed interface FetchResult<out T> {
+    data class Success<T>(val value: T) : FetchResult<T>
+    data object Failed : FetchResult<Nothing>
+    data object Skipped : FetchResult<Nothing>
+}
+
+/** Executes a configured fetch, keeping a skip distinct from a network failure. */
 internal abstract class ConditionalFetcher<T> {
 
-    /**
-     * Executes [performFetch] if [shouldFetch] returns true, otherwise returns `null`.
-     */
-    suspend fun fetchIfNecessary(config: WidgetConfig): T? =
+    suspend fun fetchIfNecessary(config: WidgetConfig): FetchResult<T> =
         if (shouldFetch(config)) {
             performFetch(config)
         } else {
-            null
+            FetchResult.Skipped
         }
 
-    /**
-     * Determines whether a fetch should be performed for the given [config].
-     */
     protected abstract fun shouldFetch(config: WidgetConfig): Boolean
 
-    /**
-     * Performs the actual data fetch.
-     * @return `null` in the case of an error.
-     */
-    protected abstract suspend fun performFetch(config: WidgetConfig): T?
+    protected abstract suspend fun performFetch(config: WidgetConfig): FetchResult<T>
 }

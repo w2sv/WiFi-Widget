@@ -16,4 +16,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface WifiStatusMonitor {
     val wifiStatus: Flow<WifiStatus>
+
+    /** Emits confirmed default-route changes independently of repeated identical Wi-Fi status. */
+    val defaultEgressChanges: Flow<Unit>
 }

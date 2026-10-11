@@ -5,6 +5,7 @@ import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.domain.model.wifiproperty.settings.enabledVersions
 import com.w2sv.networking.remotenetworkinfo.ConditionalFetcher
+import com.w2sv.networking.remotenetworkinfo.FetchResult
 import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import com.w2sv.networking.toDomain
 import java.io.IOException
@@ -16,18 +17,28 @@ import kotlinx.coroutines.coroutineScope
 import okhttp3.OkHttpClient
 import slimber.log.i
 
-internal class PublicIpFetcher @Inject constructor(private val httpClient: OkHttpClient) : ConditionalFetcher<List<IpAddress>>() {
+internal class PublicIpFetcher @Inject constructor(private val httpClient: OkHttpClient) :
+    ConditionalFetcher<Map<IpAddress.Version, FetchResult<IpAddress>>>() {
 
     override fun shouldFetch(config: WidgetConfig): Boolean =
         config.isEnabled(WifiProperty.PublicIp)
 
-    override suspend fun performFetch(config: WidgetConfig) =
+    override suspend fun performFetch(config: WidgetConfig): FetchResult<Map<IpAddress.Version, FetchResult<IpAddress>>> =
         coroutineScope {
             val enabledVersions = config.enabledIpSettings(WifiProperty.PublicIp).enabledVersions()
-            enabledVersions
-                .map { version -> async { fetchAndMapOnSuccess(version).getOrNull() } }
-                .awaitAll()
-                .filterNotNull()
+            FetchResult.Success(
+                enabledVersions
+                    .map { version ->
+                        async {
+                            version to fetchAndMapOnSuccess(version).fold(
+                                onSuccess = { FetchResult.Success(it) },
+                                onFailure = { FetchResult.Failed }
+                            )
+                        }
+                    }
+                    .awaitAll()
+                    .toMap()
+            )
         }
 
     /**

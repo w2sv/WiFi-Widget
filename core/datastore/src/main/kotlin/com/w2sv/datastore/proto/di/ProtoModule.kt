@@ -11,14 +11,18 @@ import com.w2sv.datastore.proto.WidgetConfigProtoSerializer
 import com.w2sv.datastore.proto.migration.WidgetColoringProtoSerializer
 import com.w2sv.datastore.proto.migration.WidgetConfigMigration
 import com.w2sv.datastore.proto.migration.defaultWidgetColoringProto
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.repository.WidgetConfigDataSource
 import com.w2sv.domain.repository.WidgetConfigFlow
+import com.w2sv.domain.repository.WidgetConfigReader
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -37,6 +41,15 @@ internal object ProtoModule {
     @Provides
     fun widgetConfigFlow(widgetConfigDataSource: WidgetConfigDataSource): WidgetConfigFlow =
         widgetConfigDataSource.config
+
+    @Provides
+    fun widgetConfigProvider(widgetConfigDataSource: WidgetConfigDataSource): WidgetConfigReader =
+        object : WidgetConfigReader {
+            override suspend fun read(): WidgetConfig =
+                widgetConfigDataSource.config.first()
+            override fun readBlocking(): WidgetConfig =
+                runBlocking { read() }
+        }
 
     @Provides
     internal fun widgetColoringDataStore(@ApplicationContext context: Context): DataStore<WidgetColoringProto> =

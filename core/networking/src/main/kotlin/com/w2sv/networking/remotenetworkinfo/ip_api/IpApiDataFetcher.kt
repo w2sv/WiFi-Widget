@@ -5,6 +5,7 @@ import com.w2sv.domain.model.networking.IpApiData
 import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.WifiProperty
 import com.w2sv.networking.remotenetworkinfo.ConditionalFetcher
+import com.w2sv.networking.remotenetworkinfo.FetchResult
 import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import java.io.IOException
 import javax.inject.Inject
@@ -14,12 +15,12 @@ import okhttp3.OkHttpClient
 private const val IP_API_URL = "http://ip-api.com/json?fields=5828601"
 
 internal class IpApiDataFetcher @Inject constructor(private val client: OkHttpClient, private val json: Json) :
-    ConditionalFetcher<IpApiData?>() {
+    ConditionalFetcher<IpApiData>() {
 
     override fun shouldFetch(config: WidgetConfig): Boolean =
         ipApiRequiringProperties.any { config.isEnabled(it) }
 
-    override suspend fun performFetch(config: WidgetConfig): IpApiData? {
+    override suspend fun performFetch(config: WidgetConfig): FetchResult<IpApiData> {
         val enabledLocationParameters = config.enabledLocationParameters()
         val response = client.fetchFromUrl(IP_API_URL) { jsonString ->
             json
@@ -32,7 +33,10 @@ internal class IpApiDataFetcher @Inject constructor(private val client: OkHttpCl
                 }
         }
 
-        return response.getOrNull()?.toDomain(enabledLocationParameters)
+        return response.fold(
+            onSuccess = { FetchResult.Success(it.toDomain(enabledLocationParameters)) },
+            onFailure = { FetchResult.Failed }
+        )
     }
 }
 
