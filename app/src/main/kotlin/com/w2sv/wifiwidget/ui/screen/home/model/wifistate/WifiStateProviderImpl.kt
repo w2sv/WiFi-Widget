@@ -2,15 +2,15 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
 import com.w2sv.common.utils.logOnCancellation
-import com.w2sv.common.utils.logOnEach
-import com.w2sv.common.utils.refreshOn
+import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
 import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.domain.repository.WidgetConfigFlow
-import com.w2sv.kotlinutils.coroutines.flow.collectLatestOn
+import com.w2sv.domain.repository.WidgetConfigSource
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
-import com.w2sv.networking.wifistatus.monitor.WifiStatusMonitor
+import com.w2sv.kotlinutils.makeIf
+import com.w2sv.networking.remotenetworkinfo.RemoteDataSynchronizer
 import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
@@ -23,96 +23,78 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import slimber.log.i
+import slimber.log.d
 
+/**
+ * Combines reconciled remote requirements with independently observed presentation configuration,
+ * published remote data, and location access. A changed requirement holds the previous displayed
+ * state until synchronization catches up; local presentation changes need no repository work.
+ */
 @ViewModelScoped
 class WifiStateProviderImpl @Inject constructor(
-    wifiStatusMonitor: WifiStatusMonitor,
-    widgetConfigFlow: WidgetConfigFlow,
+    remoteDataSynchronizer: RemoteDataSynchronizer,
+    widgetConfigSource: WidgetConfigSource,
     wifiPropertyViewDataProvider: WifiPropertyViewDataProvider,
     remoteWifiDataRepository: RemoteWifiDataRepository,
     locationEnabledProvider: LocationEnabledProvider,
     private val scope: CoroutineScope
 ) : WifiStateProvider {
+    private val locationAccessChanged = MutableSharedFlow<Unit>().apply {
+        locationEnabledProvider.isEnabled
+            .distinctUntilChanged()
+            .collectOn(scope) { emit(Unit) }
+    }
 
-    // Shared flows to avoid multiple subscriptions
-    private val connectedWifiStatus = wifiStatusMonitor.wifiStatus
-        .filter { it.isConnected }
-        .shareIn(scope, SharingStarted.WhileSubscribed(), replay = 1)
-        .logOnEach("connectedWifiStatus")
+    private val presentationConfig = widgetConfigSource.flow
+        .distinctUntilChangedBy { it.propertyConfig to it.propertyOrder }
 
-    private val locationAccessChanged = MutableSharedFlow<Unit>()
-
-    // Emits whenever location-dependent properties might need recomputation
     private val locationAccessChangedWhileDependentPropertiesEnabled: Flow<Unit> = locationAccessChanged
-        .withLatestFrom(widgetConfigFlow) { _, config -> config }
+        .withLatestFrom(presentationConfig) { _, config -> config }
         .filter { it.isAnyLocationAccessRequiringPropertyEnabled }
         .map { }
         .onStart { emit(Unit) }
-        .logOnEach("locationAccessChangedWhileDependentPropertiesEnabled")
 
-    // Connected Wi-Fi state recomputation triggers:
-    // - config changes
-    // - remote network info changes
-    // - location access changes while location dependent properties are enabled
-    // - wifiStatus emits Connected
-    private val connectedWifiState: Flow<WifiState.Connected> = combine(
-        widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap to it.enabledProperties }.logOnEach("sharedConfig"),
-        remoteWifiDataRepository.data.logOnEach("remoteWifiData"),
-        connectedWifiStatus,
+    private val displayInputs = combine(
+        remoteDataSynchronizer.inputs,
+        presentationConfig,
+        remoteWifiDataRepository.data,
         locationAccessChangedWhileDependentPropertiesEnabled
-    ) { config, remoteWifiData, connectedStatus, _ ->
-        i { "Computing connectedWifiState for $connectedStatus $remoteWifiData $config" }
-        WifiState.Connected(
-            status = connectedStatus,
-            propertyViewData = wifiPropertyViewDataProvider(
-                enabledProperties = config.enabledProperties,
-                enabledIpSettings = config::enabledIpSettings,
-                remoteWifiData = remoteWifiData
-            )
-        )
-    }
-        .logOnCancellation("connectedWifiState")
+    ) { reconciled, config, remoteData, _ ->
+        makeIf(reconciled.remoteDataConfig == config.remoteDataConfig) {
+            DisplayInputs(status = reconciled.status, config = config, remoteData = remoteData)
+        }
+    }.filterNotNull()
 
-    override val wifiState: StateFlow<WifiState> = wifiStatusMonitor.wifiStatus
-        .flatMapLatest { wifiStatus ->
-            i { "Received wifiStatus=$wifiStatus" }
-            when (wifiStatus) {
-                WifiStatus.Disabled -> flowOf(WifiState.Disabled)
-                WifiStatus.NotConnected -> flowOf(WifiState.Disconnected)
-                else -> connectedWifiState
+    override val wifiState: StateFlow<WifiState> = displayInputs
+        .mapLatest { inputs ->
+            when (inputs.status) {
+                WifiStatus.Disabled -> WifiState.Disabled
+                WifiStatus.NotConnected -> WifiState.Disconnected
+                else -> {
+                    d { "Computing connected Wi-Fi state for ${inputs.status} ${inputs.remoteData} ${inputs.config}" }
+                    WifiState.Connected(
+                        status = inputs.status,
+                        propertyViewData = wifiPropertyViewDataProvider(
+                            enabledProperties = inputs.config.enabledProperties,
+                            enabledIpSettings = inputs.config::enabledIpSettings,
+                            remoteWifiData = inputs.remoteData
+                        )
+                    )
+                }
             }
         }
-        .stateIn(
-            scope,
-            SharingStarted.WhileSubscribed(),
-            WifiState.Disconnected
-        )
-
-    init {
-        // Refresh RemoteNetworkInfo on config change or property refresh
-        connectedWifiStatus
-            .refreshOn(widgetConfigFlow.distinctUntilChangedBy { it.propertyConfigMap })
-            .collectLatestOn(scope) {
-                i { "Refreshing RemoteNetworkInfo" }
-                remoteWifiDataRepository.refresh()
-            }
-
-        // React to GPS enablement changes
-        locationEnabledProvider
-            .isEnabled
-            .distinctUntilChanged()
-            .collectOn(scope) { locationAccessChanged.emit(Unit) }
-    }
+        .logOnCancellation("wifiState")
+        .stateIn(scope, SharingStarted.WhileSubscribed(), WifiState.Disconnected)
 
     override fun onLocationAccessChanged() {
         scope.launch { locationAccessChanged.emit(Unit) }
     }
 }
+
+private data class DisplayInputs(val status: WifiStatus, val config: WidgetConfig, val remoteData: RemoteWifiData)

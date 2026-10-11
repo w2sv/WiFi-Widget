@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectFromFlow
@@ -28,6 +30,7 @@ fun HomeRoute(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     BindLocationAccessToViewModel()
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onForeground() }
 
     ShowSnackbarOnWidgetPin(
         widgetPinSuccessFlow = viewModel.widgetPinSuccessFlow,

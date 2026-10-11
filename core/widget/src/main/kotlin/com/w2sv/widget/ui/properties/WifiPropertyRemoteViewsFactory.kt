@@ -3,6 +3,9 @@ package com.w2sv.widget.ui.properties
 import android.content.Context
 import android.widget.RemoteViews
 import com.w2sv.core.widget.R
+import com.w2sv.domain.repository.RemoteWifiDataRepository
+import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import com.w2sv.widget.ui.properties.renderdata.WifiPropertyRenderData
 import com.w2sv.widget.ui.properties.renderdata.WifiPropertyRenderDataProvider
 import com.w2sv.widget.utils.logging.LoggingRemoteViewsFactory
@@ -12,13 +15,21 @@ import javax.inject.Inject
 
 internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val renderDataProvider: WifiPropertyRenderDataProvider
+    private val renderDataProvider: WifiPropertyRenderDataProvider,
+    private val widgetConfigSource: WidgetConfigSource,
+    private val remoteWifiDataRepository: RemoteWifiDataRepository,
+    private val workScheduler: WifiWidgetWorkScheduler
 ) : LoggingRemoteViewsFactory() {
 
     private lateinit var data: WifiPropertyRenderData
 
     override fun onCreate() {
         super.onCreate()
+        // Android may recreate a collection service without an APPWIDGET_UPDATE broadcast.
+        // Only enqueue work here; RemoteViewsFactory callbacks must never perform HTTP.
+        if (remoteWifiDataRepository.needsRecovery(widgetConfigSource.blockingSnapshot().remoteDataConfig)) {
+            workScheduler.enqueueRecovery()
+        }
         updateData()
     }
 

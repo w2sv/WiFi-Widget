@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget
 import android.app.Application
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.w2sv.widget.RemoteDataWidgetObserver
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 import timber.log.Timber
@@ -15,6 +16,9 @@ class Application :
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
 
+    @Inject
+    lateinit var remoteDataWidgetObserver: RemoteDataWidgetObserver
+
     override val workManagerConfiguration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
@@ -22,6 +26,8 @@ class Application :
 
     override fun onCreate() {
         super.onCreate()
+
+        remoteDataWidgetObserver.initialize()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

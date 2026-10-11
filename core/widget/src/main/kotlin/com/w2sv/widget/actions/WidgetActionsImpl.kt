@@ -2,8 +2,9 @@ package com.w2sv.widget.actions
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.componentName
-import com.w2sv.domain.model.widget.WidgetRefreshing
+import com.w2sv.domain.model.widget.WidgetConfig
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -30,14 +31,23 @@ internal class WidgetActionsImpl @Inject constructor(
         context.sendBroadcast(WifiWidgetProvider.renderIntent(context))
     }
 
-    override fun applyRefreshingPolicy(refreshing: WidgetRefreshing) {
-        refreshManager.applyRefreshingPolicy(refreshing)
+    override fun applyConfigurationChange(previous: WidgetConfig, current: WidgetConfig) {
+        if (previous.refreshing != current.refreshing && appWidgetManager.appWidgetIds<WifiWidgetProvider>(context).isNotEmpty()) {
+            refreshManager.applyRefreshingPolicy(current.refreshing)
+        }
+
+        // Trigger an immediate render unblocked by remote data refresh
+        render()
+
+        if (previous.remoteDataConfig != current.remoteDataConfig) {
+            refresh()
+        }
     }
 }
 
 /**
  * Calls [AppWidgetManager.requestPinAppWidget] if [AppWidgetManager.isRequestPinAppWidgetSupported] returns true.
- * Otherwise invokes [onFailure].
+ * Otherwise, invokes [onFailure].
  */
 private fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: () -> Unit) {
     if (isRequestPinAppWidgetSupported) {

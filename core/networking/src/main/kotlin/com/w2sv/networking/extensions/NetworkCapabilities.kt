@@ -10,5 +10,8 @@ import android.net.NetworkCapabilities
 internal val NetworkCapabilities.hasWifiTransport: Boolean
     get() = hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
 
-internal val NetworkCapabilities.hasInternet: Boolean
+internal val NetworkCapabilities.isInternetValidated: Boolean
     get() = hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+
+internal val NetworkCapabilities.hasInternetCapability: Boolean
+    get() = hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
