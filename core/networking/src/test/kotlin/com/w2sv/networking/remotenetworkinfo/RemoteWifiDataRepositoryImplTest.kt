@@ -17,6 +17,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.io.IOException
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.async
@@ -28,6 +29,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class RemoteWifiDataRepositoryImplTest {
+    private val failed = Result.failure<Nothing>(IOException("unavailable"))
     private val api = mockk<IpApiDataFetcher>()
     private val ips = mockk<PublicIpFetcher>()
     private val connectivity = mockk<ConnectivityManager>()
@@ -48,9 +50,10 @@ class RemoteWifiDataRepositoryImplTest {
     private fun repository(configProvider: () -> WidgetConfig = { config }): RemoteWifiDataRepositoryImpl {
         every { connectivity.activeNetwork } returns networkA
         every { connectivity.getNetworkCapabilities(any()) } returns capabilities
-        coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Success(apiData)
-        coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-            mapOf(IpAddress.Version.V4 to FetchResult.Success(ipv4), IpAddress.Version.V6 to FetchResult.Success(ipv6))
+        coEvery { api.fetch(any()) } returns Result.success(apiData)
+        coEvery { ips.fetch(any()) } returns mapOf(
+            IpAddress.Version.V4 to Result.success(ipv4),
+            IpAddress.Version.V6 to Result.success(ipv6)
         )
         val configReader = mockk<WidgetConfigReader> {
             coEvery { read() } coAnswers { configProvider() }
@@ -62,9 +65,10 @@ class RemoteWifiDataRepositoryImplTest {
         runTest {
             val repository = repository()
             repository.refresh()
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Failed
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(IpAddress.Version.V4 to FetchResult.Failed, IpAddress.Version.V6 to FetchResult.Success(ipv6))
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to failed,
+                IpAddress.Version.V6 to Result.success(ipv6)
             )
             assertEquals(RemoteRefreshResult.Complete, repository.refresh())
             assertEquals(apiData.isp, repository.data.value.ipApiData?.isp)
@@ -77,53 +81,117 @@ class RemoteWifiDataRepositoryImplTest {
             val repository = repository()
             assertEquals(RemoteRefreshResult.Complete, repository.refresh())
             assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
-            coVerify(exactly = 1) { api.fetchIfNecessary(any()) }
-            coVerify(exactly = 1) { ips.fetchIfNecessary(any()) }
+            coVerify(exactly = 1) { api.fetch(any()) }
+            coVerify(exactly = 1) { ips.fetch(any()) }
         }
 
     @Test fun `recovery fetches only missing IP-API after public IP succeeds`() =
         runTest {
             val repository = repository()
-            coEvery { api.fetchIfNecessary(any()) } returnsMany listOf(FetchResult.Failed, FetchResult.Success(apiData))
+            coEvery { api.fetch(any()) } returnsMany listOf(failed, Result.success(apiData))
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
             assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
-            coVerify(exactly = 2) { api.fetchIfNecessary(any()) }
-            coVerify(exactly = 1) { ips.fetchIfNecessary(any()) }
+            coVerify(exactly = 2) { api.fetch(any()) }
+            coVerify(exactly = 1) { ips.fetch(any()) }
         }
 
     @Test fun `recovery fetches only missing public IP after IP-API succeeds`() =
         runTest {
             val repository = repository()
-            coEvery { ips.fetchIfNecessary(any()) } returnsMany listOf(
-                FetchResult.Success(mapOf(IpAddress.Version.V4 to FetchResult.Failed, IpAddress.Version.V6 to FetchResult.Failed)),
-                FetchResult.Success(mapOf(IpAddress.Version.V4 to FetchResult.Success(ipv4)))
+            coEvery { ips.fetch(any()) } returnsMany listOf(
+                mapOf(IpAddress.Version.V4 to failed, IpAddress.Version.V6 to failed),
+                mapOf(IpAddress.Version.V4 to Result.success(ipv4), IpAddress.Version.V6 to failed)
             )
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
             assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
-            coVerify(exactly = 1) { api.fetchIfNecessary(any()) }
-            coVerify(exactly = 2) { ips.fetchIfNecessary(any()) }
+            coVerify(exactly = 1) { api.fetch(any()) }
+            coVerify(exactly = 2) { ips.fetch(any()) }
         }
 
     @Test fun `unavailable IPv6 is attempted without repeated recovery`() =
         runTest {
             val repository = repository()
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(
-                    IpAddress.Version.V4 to FetchResult.Success(ipv4),
-                    IpAddress.Version.V6 to FetchResult.Failed
-                )
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to Result.success(ipv4),
+                IpAddress.Version.V6 to failed
             )
             assertEquals(RemoteRefreshResult.Complete, repository.refresh())
             assertEquals(listOf(ipv4), repository.data.value.publicIps)
             assertFalse(repository.needsRecovery(config))
         }
 
+    @Test fun `enabling IPv6 after IPv4 success attempts only the new version during recovery`() =
+        runTest {
+            val initial = config.withUpdatedPropertyConfig(WifiProperty.PublicIp) {
+                it.copy(settings = it.settings + (IpSetting.V6Enabled to false))
+            }
+            val configs = MutableStateFlow(initial)
+            val requested = mutableListOf<Set<IpAddress.Version>>()
+            val repository = repository { configs.value }
+            coEvery { ips.fetch(any()) } coAnswers {
+                val versions = firstArg<Set<IpAddress.Version>>()
+                requested += versions
+                versions.associateWith { version ->
+                    if (version == IpAddress.Version.V4) Result.success(ipv4) else failed
+                }
+            }
+
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            configs.value = config
+            assertTrue(repository.needsRecovery(config))
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            assertEquals(listOf(setOf(IpAddress.Version.V4), setOf(IpAddress.Version.V6)), requested)
+            assertEquals(listOf(ipv4), repository.data.value.publicIps)
+            assertFalse(repository.needsRecovery(config))
+        }
+
+    @Test fun `re-enabling a previously attempted IP version requires a new attempt`() =
+        runTest {
+            val configs = MutableStateFlow(config)
+            val requested = mutableListOf<Set<IpAddress.Version>>()
+            val repository = repository { configs.value }
+            coEvery { ips.fetch(any()) } coAnswers {
+                val versions = firstArg<Set<IpAddress.Version>>()
+                requested += versions
+                versions.associateWith { if (it == IpAddress.Version.V4) Result.success(ipv4) else failed }
+            }
+
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            configs.value = config.withUpdatedPropertyConfig(WifiProperty.PublicIp) {
+                it.copy(settings = it.settings + (IpSetting.V6Enabled to false))
+            }
+            assertFalse(repository.needsRecovery(configs.value))
+            configs.value = config
+            assertTrue(repository.needsRecovery(config))
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            assertEquals(
+                listOf(setOf(IpAddress.Version.V4, IpAddress.Version.V6), setOf(IpAddress.Version.V6)),
+                requested
+            )
+        }
+
+    @Test fun `disabled remote groups are excluded from HTTP execution`() =
+        runTest {
+            val localOnly = listOf(
+                WifiProperty.Location,
+                WifiProperty.IpGpsLocation,
+                WifiProperty.ISP,
+                WifiProperty.ASN,
+                WifiProperty.PublicIp
+            ).fold(config) { current, property -> current.withUpdatedPropertyEnablement(property, false) }
+            val repository = repository { localOnly }
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            coVerify(exactly = 0) { api.fetch(any()) }
+            coVerify(exactly = 0) { ips.fetch(any()) }
+        }
+
     @Test fun `all initial failures leave both groups uninitialized`() =
         runTest {
             val repository = repository()
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Failed
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(IpAddress.Version.V4 to FetchResult.Failed, IpAddress.Version.V6 to FetchResult.Failed)
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to failed,
+                IpAddress.Version.V6 to failed
             )
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
             assertTrue(repository.needsRecovery(config))
@@ -134,12 +202,14 @@ class RemoteWifiDataRepositoryImplTest {
     @Test fun `initial failures recover after later success`() =
         runTest {
             val repository = repository()
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Failed
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Failed
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns
+                mapOf(IpAddress.Version.V4 to failed, IpAddress.Version.V6 to failed)
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Success(apiData)
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(IpAddress.Version.V4 to FetchResult.Success(ipv4))
+            coEvery { api.fetch(any()) } returns Result.success(apiData)
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to Result.success(ipv4),
+                IpAddress.Version.V6 to failed
             )
             assertEquals(RemoteRefreshResult.Complete, repository.refresh())
             assertFalse(repository.needsRecovery(config))
@@ -148,9 +218,10 @@ class RemoteWifiDataRepositoryImplTest {
     @Test fun `public IPv4 success does not hide missing IP-API data`() =
         runTest {
             val repository = repository()
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Failed
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(IpAddress.Version.V4 to FetchResult.Success(ipv4), IpAddress.Version.V6 to FetchResult.Failed)
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to Result.success(ipv4),
+                IpAddress.Version.V6 to failed
             )
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
             assertEquals(listOf(ipv4), repository.data.value.publicIps)
@@ -165,9 +236,7 @@ class RemoteWifiDataRepositoryImplTest {
                     propertyConfig.copy(settings = propertyConfig.settings + (IpSetting.V4Enabled to false))
                 }
             val repository = repository { onlyV6 }
-            coEvery { ips.fetchIfNecessary(any()) } returns FetchResult.Success(
-                mapOf(IpAddress.Version.V6 to FetchResult.Failed)
-            )
+            coEvery { ips.fetch(any()) } returns mapOf(IpAddress.Version.V6 to failed)
             assertEquals(RemoteRefreshResult.Incomplete, repository.refresh())
             assertTrue(repository.needsRecovery(onlyV6))
         }
@@ -254,7 +323,7 @@ class RemoteWifiDataRepositoryImplTest {
             every { connectivity.getNetworkCapabilities(networkB) } returns vpn
             assertTrue(repository.snapshot(config).publicIps.isEmpty())
             assertTrue(repository.needsRecovery(config))
-            coEvery { api.fetchIfNecessary(any()) } returns FetchResult.Success(apiData.copy(isp = "VPN ISP"))
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "VPN ISP"))
             assertEquals(RemoteRefreshResult.Complete, repository.refresh())
             assertEquals("VPN ISP", repository.snapshot(config).ipApiData?.isp)
         }
@@ -278,9 +347,9 @@ class RemoteWifiDataRepositoryImplTest {
         runTest {
             val repository = repository()
             val release = CompletableDeferred<Unit>()
-            coEvery { api.fetchIfNecessary(any()) } coAnswers {
+            coEvery { api.fetch(any()) } coAnswers {
                 release.await()
-                FetchResult.Success(apiData)
+                Result.success(apiData)
             }
             val refresh = async { repository.refresh() }
             testScheduler.runCurrent()
@@ -296,9 +365,9 @@ class RemoteWifiDataRepositoryImplTest {
             val configs = MutableStateFlow(config)
             val repository = repository { configs.value }
             val release = CompletableDeferred<Unit>()
-            coEvery { api.fetchIfNecessary(any()) } coAnswers {
+            coEvery { api.fetch(any()) } coAnswers {
                 release.await()
-                FetchResult.Success(apiData)
+                Result.success(apiData)
             }
             val refresh = async { repository.refresh() }
             testScheduler.runCurrent()
@@ -309,15 +378,54 @@ class RemoteWifiDataRepositoryImplTest {
             assertTrue(repository.needsRecovery(configs.value))
         }
 
+    @Test fun `discarded configuration result does not record public IP attempts`() =
+        runTest {
+            val onlyV4 = config.withUpdatedPropertyConfig(WifiProperty.PublicIp) {
+                it.copy(settings = it.settings + (IpSetting.V6Enabled to false))
+            }
+            val configs = MutableStateFlow(onlyV4)
+            val release = CompletableDeferred<Unit>()
+            val requested = mutableListOf<Set<IpAddress.Version>>()
+            val repository = repository { configs.value }
+            coEvery { ips.fetch(any()) } coAnswers {
+                val versions = firstArg<Set<IpAddress.Version>>()
+                requested += versions
+                if (requested.size == 2) release.await()
+                versions.associateWith { if (it == IpAddress.Version.V4) Result.success(ipv4) else failed }
+            }
+
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            configs.value = config
+            assertTrue(repository.needsRecovery(config))
+            val inFlight = async { repository.refresh() }
+            testScheduler.runCurrent()
+            configs.value = onlyV4
+            assertFalse(repository.needsRecovery(onlyV4))
+            release.complete(Unit)
+            assertEquals(RemoteRefreshResult.Complete, inFlight.await())
+
+            configs.value = config
+            assertTrue(repository.needsRecovery(config))
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            assertEquals(
+                listOf(
+                    setOf(IpAddress.Version.V4),
+                    setOf(IpAddress.Version.V4, IpAddress.Version.V6),
+                    setOf(IpAddress.Version.V6)
+                ),
+                requested
+            )
+        }
+
     @Test fun `concurrent refreshes cannot publish older results`() =
         runTest {
             val repository = repository()
             val release = CompletableDeferred<Unit>()
             var calls = 0
-            coEvery { api.fetchIfNecessary(any()) } coAnswers {
+            coEvery { api.fetch(any()) } coAnswers {
                 calls++
                 if (calls == 1) release.await()
-                FetchResult.Success(apiData.copy(isp = "ISP $calls"))
+                Result.success(apiData.copy(isp = "ISP $calls"))
             }
             val first = async { repository.refresh() }
             testScheduler.runCurrent()
@@ -331,7 +439,7 @@ class RemoteWifiDataRepositoryImplTest {
     @Test fun `cancellation propagates`() =
         runTest {
             val repository = repository()
-            coEvery { api.fetchIfNecessary(any()) } throws CancellationException("cancelled")
+            coEvery { api.fetch(any()) } throws CancellationException("cancelled")
             val result = runCatching { repository.refresh() }
             assertTrue(result.exceptionOrNull() is CancellationException)
         }

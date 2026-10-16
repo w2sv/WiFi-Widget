@@ -23,11 +23,14 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.Test
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -57,16 +60,17 @@ class WifiStateProviderImplTest {
         every { it.invoke() } returns WifiStatus.Connected
     }
 
-    private val classUnderTest = WifiStateProviderImpl(
-        wifiStatusMonitor = wifiStatusMonitor,
-        widgetConfigFlow = widgetConfigFlow,
-        wifiPropertyViewDataProvider = wifiPropertyViewDataProvider,
-        remoteWifiDataRepository = remoteWifiDataRepository,
-        widgetActions = widgetActions,
-        wifiStatusProvider = wifiStatusProvider,
-        locationEnabledProvider = gpsStateProvider,
-        scope = CoroutineScope(UnconfinedTestDispatcher())
-    )
+    private fun TestScope.createProvider() =
+        WifiStateProviderImpl(
+            wifiStatusMonitor = wifiStatusMonitor,
+            widgetConfigFlow = widgetConfigFlow,
+            wifiPropertyViewDataProvider = wifiPropertyViewDataProvider,
+            remoteWifiDataRepository = remoteWifiDataRepository,
+            widgetActions = widgetActions,
+            wifiStatusProvider = wifiStatusProvider,
+            locationEnabledProvider = gpsStateProvider,
+            scope = CoroutineScope(backgroundScope.coroutineContext + UnconfinedTestDispatcher(testScheduler))
+        )
 
     private suspend fun emitWifiStatus(status: WifiStatus) {
         wifiStatusFlow.emit(status)
@@ -75,6 +79,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `foreground validation renders restored remote data without fetching`() =
         runTest {
+            val classUnderTest = createProvider()
             val restored = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
             every { remoteWifiDataRepository.needsRecovery(any()) } answers {
                 remoteNetworkFlow.value = restored
@@ -90,6 +95,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `emitted wifiState corresponds to received wifiStatus types`() =
         runTest {
+            val classUnderTest = createProvider()
             classUnderTest.wifiState.test {
                 assertEquals(WifiState.Disconnected, awaitItem())
 
@@ -107,6 +113,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `location access changes update local properties only when needed`() =
         runTest {
+            val classUnderTest = createProvider()
             coEvery { wifiPropertyViewDataProvider(any(), any(), any()) } coAnswers {
                 listOf(WifiPropertyViewData(SubscriptableText("location"), if (gpsIsEnabledFlow.value) "available" else "unavailable"))
             }
@@ -127,6 +134,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `RemoteNetworkInfoRepository refreshes on relevant changes`() =
         runTest {
+            val classUnderTest = createProvider()
             // No refreshing on WifiStatus.Disconnected
             coVerify(exactly = 0) { remoteWifiDataRepository.refresh() }
 
@@ -162,6 +170,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `same Wi-Fi status with a new default route refreshes and recomputes home state`() =
         runTest {
+            val classUnderTest = createProvider()
             classUnderTest.wifiState.test {
                 emitWifiStatus(WifiStatus.Connected)
                 awaitItem()
@@ -176,6 +185,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `default egress change while Wi-Fi is disconnected does not fetch remote data`() =
         runTest {
+            val classUnderTest = createProvider()
             classUnderTest.wifiState.test {
                 assertEquals(WifiState.Disconnected, awaitItem())
                 emitWifiStatus(WifiStatus.ConnectedInactive)
@@ -192,6 +202,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `initial Wi-Fi callback sequence refreshes remote data once`() =
         runTest {
+            val classUnderTest = createProvider()
             classUnderTest.wifiState.test {
                 assertEquals(1, wifiStatusFlow.subscriptionCount.value)
                 emitWifiStatus(WifiStatus.Connected) // initial evaluation
@@ -209,6 +220,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `reconnection with unchanged cellular egress refreshes remote data again`() =
         runTest {
+            val classUnderTest = createProvider()
             classUnderTest.wifiState.test {
                 assertEquals(WifiState.Disconnected, awaitItem())
                 emitWifiStatus(WifiStatus.ConnectedInactive)
@@ -225,6 +237,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `local property value updates on repeated connected callbacks`() =
         runTest {
+            val classUnderTest = createProvider()
             var ssid = "first"
             coEvery { wifiPropertyViewDataProvider(any(), any(), any()) } coAnswers {
                 listOf(WifiPropertyViewData(SubscriptableText("SSID"), ssid))
@@ -243,8 +256,143 @@ class WifiStateProviderImplTest {
         }
 
     @Test
+    fun `repeated connected callbacks recompute locally while HTTP is active`() =
+        runTest {
+            val classUnderTest = createProvider()
+            val started = CompletableDeferred<Unit>()
+            var ssid = "first"
+            coEvery { remoteWifiDataRepository.refresh() } coAnswers {
+                started.complete(Unit)
+                awaitCancellation()
+            }
+            coEvery { wifiPropertyViewDataProvider(any(), any(), any()) } coAnswers {
+                listOf(WifiPropertyViewData(SubscriptableText("SSID"), ssid))
+            }
+
+            classUnderTest.wifiState.test {
+                assertEquals(WifiState.Disconnected, awaitItem())
+                emitWifiStatus(WifiStatus.Connected)
+                assertEquals("first", awaitItem().asConnectedOrNull?.propertyViewData?.single()?.value)
+                started.await()
+                ssid = "second"
+                emitWifiStatus(WifiStatus.Connected)
+                assertEquals("second", awaitItem().asConnectedOrNull?.propertyViewData?.single()?.value)
+                coVerify(exactly = 1) { remoteWifiDataRepository.refresh() }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `default egress callback replaces an active refresh and publishes its result`() =
+        runTest {
+            val classUnderTest = createProvider()
+            val started = CompletableDeferred<Unit>()
+            val cancelled = CompletableDeferred<Unit>()
+            var calls = 0
+            coEvery { remoteWifiDataRepository.refresh() } coAnswers {
+                calls++
+                if (calls == 1) {
+                    started.complete(Unit)
+                    try {
+                        awaitCancellation()
+                    } finally {
+                        cancelled.complete(Unit)
+                    }
+                }
+                remoteNetworkFlow.value = RemoteWifiData(IpApiData(null, null, "UTC", "new ISP", null), emptyList())
+                Complete
+            }
+            coEvery { wifiPropertyViewDataProvider(any(), any(), any()) } coAnswers {
+                listOf(WifiPropertyViewData(SubscriptableText("ISP"), thirdArg<RemoteWifiData>().ipApiData?.isp.orEmpty()))
+            }
+
+            classUnderTest.wifiState.test {
+                assertEquals(WifiState.Disconnected, awaitItem())
+                emitWifiStatus(WifiStatus.Connected)
+                awaitItem()
+                started.await()
+                egressChanges.emit(Unit)
+                cancelled.await()
+                assertEquals("new ISP", awaitItem().asConnectedOrNull?.propertyViewData?.single()?.value)
+                coVerify(exactly = 2) { remoteWifiDataRepository.refresh() }
+                verify(exactly = 1) { widgetActions.render() }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `disconnection cancels an active refresh and reconnection starts another`() =
+        runTest {
+            val classUnderTest = createProvider()
+            val started = CompletableDeferred<Unit>()
+            val cancelled = CompletableDeferred<Unit>()
+            var calls = 0
+            coEvery { remoteWifiDataRepository.refresh() } coAnswers {
+                calls++
+                if (calls == 1) {
+                    started.complete(Unit)
+                    try {
+                        awaitCancellation()
+                    } finally {
+                        cancelled.complete(Unit)
+                    }
+                }
+                Complete
+            }
+
+            classUnderTest.wifiState.test {
+                assertEquals(WifiState.Disconnected, awaitItem())
+                emitWifiStatus(WifiStatus.Connected)
+                assertEquals(WifiStatus.Connected, awaitItem().status)
+                started.await()
+                emitWifiStatus(WifiStatus.NotConnected)
+                assertEquals(WifiState.Disconnected, awaitItem())
+                cancelled.await()
+                coVerify(exactly = 1) { remoteWifiDataRepository.refresh() }
+                emitWifiStatus(WifiStatus.ConnectedInactive)
+                assertEquals(WifiStatus.ConnectedInactive, awaitItem().status)
+                coVerify(exactly = 2) { remoteWifiDataRepository.refresh() }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `cancelled refresh renders invalidated remote data`() =
+        runTest {
+            remoteNetworkFlow.value = RemoteWifiData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
+            val started = CompletableDeferred<Unit>()
+            val cancelled = CompletableDeferred<Unit>()
+            val rendered = CompletableDeferred<Unit>()
+            every { widgetActions.render() } answers {
+                rendered.complete(Unit)
+                Unit
+            }
+            coEvery { remoteWifiDataRepository.refresh() } coAnswers {
+                remoteNetworkFlow.value = RemoteWifiData.empty
+                started.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    cancelled.complete(Unit)
+                }
+            }
+            createProvider()
+
+            emitWifiStatus(WifiStatus.Connected)
+            started.await()
+            verify(exactly = 0) { widgetActions.render() }
+
+            emitWifiStatus(WifiStatus.Disabled)
+            cancelled.await()
+            rendered.await()
+            verify(exactly = 1) { widgetActions.render() }
+            coVerify(exactly = 1) { remoteWifiDataRepository.refresh() }
+        }
+
+    @Test
     fun `successful home refresh updates the launcher widget`() =
         runTest {
+            val classUnderTest = createProvider()
             coEvery { remoteWifiDataRepository.refresh() } answers {
                 remoteNetworkFlow.value = RemoteWifiData(IpApiData(null, null, "UTC", "new ISP", null), emptyList())
                 Complete
@@ -256,6 +404,7 @@ class WifiStateProviderImplTest {
     @Test
     fun `route invalidation updates the launcher before a successful fetch`() =
         runTest {
+            val classUnderTest = createProvider()
             remoteNetworkFlow.value = RemoteWifiData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
             every { remoteWifiDataRepository.snapshot(any()) } answers {
                 remoteNetworkFlow.value = RemoteWifiData.empty
@@ -270,8 +419,40 @@ class WifiStateProviderImplTest {
         }
 
     @Test
+    fun `default egress validation clears stale home data before recomputation`() =
+        runTest {
+            val classUnderTest = createProvider()
+            var invalidate = false
+            remoteNetworkFlow.value = RemoteWifiData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
+            every { remoteWifiDataRepository.snapshot(any()) } answers {
+                if (invalidate) remoteNetworkFlow.value = RemoteWifiData.empty
+                remoteNetworkFlow.value
+            }
+            coEvery { wifiPropertyViewDataProvider(any(), any(), any()) } coAnswers {
+                listOf(
+                    WifiPropertyViewData(
+                        SubscriptableText("ISP"),
+                        thirdArg<RemoteWifiData>().ipApiData?.isp.orEmpty()
+                    )
+                )
+            }
+
+            classUnderTest.wifiState.test {
+                assertEquals(WifiState.Disconnected, awaitItem())
+                emitWifiStatus(WifiStatus.Connected)
+                assertEquals("old ISP", awaitItem().asConnectedOrNull?.propertyViewData?.single()?.value)
+                invalidate = true
+                egressChanges.emit(Unit)
+                assertEquals("", awaitItem().asConnectedOrNull?.propertyViewData?.single()?.value)
+                verify(exactly = 1) { widgetActions.render() }
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
     fun `foreground resume attempts missing recovery despite pending worker backoff`() =
         runTest {
+            val classUnderTest = createProvider()
             every { remoteWifiDataRepository.needsRecovery(any()) } returns true
             coEvery { remoteWifiDataRepository.refresh(onlyIfMissing = true) } returns
                 Incomplete

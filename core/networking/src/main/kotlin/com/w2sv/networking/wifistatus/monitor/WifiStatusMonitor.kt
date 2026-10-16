@@ -4,19 +4,28 @@ import com.w2sv.domain.model.networking.WifiStatus
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Provides a [Flow] of Wi-Fi connectivity status updates.
+ * Monitors Wi-Fi connectivity and changes to the application's default egress network.
  *
- * Emits a new [WifiStatus] on:
- * - initial evaluation on subscription
- * - Wi-Fi enablement or disablement
- * - changes to the active network or link properties
- * - availability or loss of Wi-Fi networks
- *
- * Internally driven by [android.net.ConnectivityManager.NetworkCallback] and the current [android.net.wifi.WifiManager] state.
+ * [wifiStatus] provides Wi-Fi connectivity updates, while [defaultEgressChanges]
+ * signals network changes that may affect remotely fetched data independently
+ * of Wi-Fi connectivity.
  */
 interface WifiStatusMonitor {
+
+    /**
+     * Emits the initial [WifiStatus] on collection and subsequent updates triggered by
+     * Wi-Fi state, network availability, capabilities, or link-property changes.
+     *
+     * Consecutive emissions may contain the same status.
+     */
     val wifiStatus: Flow<WifiStatus>
 
-    /** Emits confirmed default-route changes independently of repeated identical Wi-Fi status. */
+    /**
+     * Emits when the default network's identity or INTERNET capability changes,
+     * including transitions to or from having no default network.
+     *
+     * The initial network state serves as the baseline; unchanged initial callbacks
+     * do not produce emissions.
+     */
     val defaultEgressChanges: Flow<Unit>
 }

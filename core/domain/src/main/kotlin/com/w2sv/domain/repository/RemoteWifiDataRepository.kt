@@ -16,8 +16,8 @@ interface RemoteWifiDataRepository {
     val data: StateFlow<RemoteWifiData>
 
     /**
-     * Refreshes [data] on demand, skipping disabled properties and reporting whether every
-     * enabled remote-data group is initialized for the current egress context.
+     * Refreshes enabled groups and reports whether recovery is satisfied for this egress context.
+     * With [onlyIfMissing], fetches only requirements still needing initialization.
      */
     suspend fun refresh(onlyIfMissing: Boolean = false): RemoteRefreshResult
 

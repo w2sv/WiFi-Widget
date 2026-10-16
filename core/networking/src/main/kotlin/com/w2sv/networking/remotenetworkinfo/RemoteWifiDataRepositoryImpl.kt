@@ -8,9 +8,6 @@ import com.w2sv.domain.model.networking.IpApiData
 import com.w2sv.domain.model.networking.RemoteRefreshResult
 import com.w2sv.domain.model.networking.RemoteWifiData
 import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.wifiproperty.WifiProperty
-import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
-import com.w2sv.domain.model.wifiproperty.settings.enabledVersions
 import com.w2sv.domain.repository.RemoteWifiDataRepository
 import com.w2sv.domain.repository.WidgetConfigReader
 import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiDataFetcher
@@ -36,213 +33,192 @@ internal class RemoteWifiDataRepositoryImpl @Inject constructor(
     private val _data = MutableStateFlow(RemoteWifiData.empty)
     override val data = _data.asStateFlow()
 
-    // The mutex orders worker and home-screen refreshes. Synchronous snapshots use the same
-    // stateLock as refresh commits, but never hold it across suspended HTTP calls.
+    // Refreshes are ordered, while synchronous widget snapshots share only the short state
+    // sections. No state lock is held during HTTP or suspendable configuration reads.
     private val refreshMutex = Mutex()
     private val stateLock = Any()
-    private var network: Network? = null
-    private var cached = RemoteWifiData.empty
-    private var selection: Selection? = null
-    private var ipApiInitialized = false
-
-    private data class Selection(
-        val apiProperties: Set<WifiProperty>,
-        val versions: Set<IpAddress.Version>,
-        val locationParameters: Set<LocationParameter>
-    ) {
-        val requiresIpApi get() = apiProperties.isNotEmpty()
-        val requiresPublicIp get() = versions.isNotEmpty()
-    }
-
-    private fun configuration(config: WidgetConfig): Selection =
-        Selection(
-            apiProperties = setOf(WifiProperty.Location, WifiProperty.IpGpsLocation, WifiProperty.ISP, WifiProperty.ASN)
-                .filterTo(mutableSetOf(), config::isEnabled),
-            versions = buildSet {
-                if (config.isEnabled(WifiProperty.PublicIp)) {
-                    addAll(config.enabledIpSettings(WifiProperty.PublicIp).enabledVersions())
-                }
-            },
-            locationParameters = buildSet {
-                if (config.isEnabled(WifiProperty.Location)) {
-                    addAll(config.enabledLocationParameters())
-                }
-            }
-        )
-
-    private fun IpApiData.keepEnabled(selection: Selection) =
-        copy(
-            location = location.takeIf { WifiProperty.Location in selection.apiProperties },
-            gpsCoordinates = gpsCoordinates.takeIf { WifiProperty.IpGpsLocation in selection.apiProperties },
-            isp = isp.takeIf { WifiProperty.ISP in selection.apiProperties }.orEmpty(),
-            asn = asn.takeIf { WifiProperty.ASN in selection.apiProperties }
-        )
+    private var cache = RemoteDataCache()
 
     /**
-     * Ordinary HTTP follows the application's default egress network. SSID/BSSID identifies the
-     * Wi-Fi association, not that route; a VPN or cellular default may have a different public IP.
-     * VPN is therefore an eligible egress context, scoped by its own Network identity. A
-     * temporarily missing identity/capability withholds data without proving the route changed.
-     * Called only under [stateLock]. Missing identity hides but retains the last known cache.
+     * Values and initialization belong to one confirmed default-egress network and selection.
+     * Reconciliation can retain applicable values while resetting initialization for a changed
+     * IP-API selection or removing attempts for disabled public-IP versions.
      */
-    private fun validate(config: WidgetConfig): Network? {
+    private data class RemoteDataCache(
+        val network: Network? = null,
+        val selection: RemoteDataSelection? = null,
+        val data: RemoteWifiData = RemoteWifiData.empty,
+        val ipApiInitializedForSelection: Boolean = false,
+        val attemptedIpVersions: Set<IpAddress.Version> = emptySet()
+    ) {
+        // A public-IP value from any enabled family is useful once every enabled family has
+        // received an attempt. If every family fails, recovery remains possible.
+        private fun isPublicIpRecoverySatisfied(selection: RemoteDataSelection): Boolean =
+            !selection.requiresPublicIp ||
+                (
+                    data.publicIps.any { it.version in selection.publicIpVersions } &&
+                        attemptedIpVersions.containsAll(selection.publicIpVersions)
+                    )
+
+        fun isRecoverySatisfied(selection: RemoteDataSelection): Boolean =
+            (!selection.requiresIpApi || ipApiInitializedForSelection) &&
+                isPublicIpRecoverySatisfied(selection)
+
+        fun recoveryResult(selection: RemoteDataSelection): RemoteRefreshResult =
+            if (isRecoverySatisfied(selection)) RemoteRefreshResult.Complete else RemoteRefreshResult.Incomplete
+
+        private fun ipVersionsNeedingRecovery(selection: RemoteDataSelection): Set<IpAddress.Version> =
+            when {
+                isPublicIpRecoverySatisfied(selection) -> emptySet()
+                data.publicIps.none { it.version in selection.publicIpVersions } -> selection.publicIpVersions
+                else -> selection.publicIpVersions - attemptedIpVersions
+            }
+
+        fun fetchPlan(selection: RemoteDataSelection, onlyIfMissing: Boolean): RemoteFetchPlan =
+            if (!onlyIfMissing) {
+                RemoteFetchPlan(selection.requiresIpApi, selection.publicIpVersions)
+            } else {
+                RemoteFetchPlan(
+                    fetchIpApi = selection.requiresIpApi && !ipApiInitializedForSelection,
+                    publicIpVersions = ipVersionsNeedingRecovery(selection)
+                )
+            }
+    }
+
+    private data class RemoteFetchPlan(val fetchIpApi: Boolean, val publicIpVersions: Set<IpAddress.Version>) {
+        val isEmpty get() = !fetchIpApi && publicIpVersions.isEmpty()
+    }
+
+    private data class FetchResults(
+        val ipApi: Result<IpApiData>?,
+        val publicIps: Map<IpAddress.Version, Result<IpAddress>>,
+        val attemptedIpVersions: Set<IpAddress.Version>
+    )
+
+    /** A confirmed identity change clears cache; unavailable identity or capability only hides it. */
+    private fun reconcileNetwork(): Network? {
         val observed = connectivityManager.activeNetwork
-        if (observed == null) {
-            d { "Remote data validation: activeNetwork is missing; retaining cache for network=$network" }
+        if (observed == null) d { "Remote data validation: activeNetwork is missing; retaining cache for network=${cache.network}" }
+        if (observed != null && observed != cache.network) {
+            i { "Remote data validation: network changed from ${cache.network} to $observed; invalidating cache" }
+            cache = RemoteDataCache(network = observed)
         }
-        if (observed != null && observed != network) {
-            // The identity alone confirms a route change even if capabilities are temporarily
-            // unavailable. Only a wholly missing identity leaves the old cache intact.
-            i { "Remote data validation: network changed from $network to $observed; invalidating cache" }
-            network = observed
-            cached = RemoteWifiData.empty
-            selection = null
-            ipApiInitialized = false
-            _data.value = RemoteWifiData.empty
-        }
-        val capabilities = observed?.let { connectivityManager.getNetworkCapabilities(it) }
-        val current = when {
+        val capabilities = observed?.let(connectivityManager::getNetworkCapabilities)
+        return when {
             observed == null -> null
             capabilities == null -> {
                 d { "Remote data validation: capabilities missing for network=$observed" }
                 null
             }
-
             !capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> {
                 d { "Remote data validation: network=$observed lacks INTERNET capability" }
                 null
             }
-
             else -> observed
         }
-        if (current == null) {
-            // Unknown identity is not proof that the old cache is invalid. Retain it privately,
-            // but publish only displayable data so data.value and snapshot agree. A route-loss
-            // render may briefly show no remote fields; restoring the same identity restores them.
-            _data.value = RemoteWifiData.empty
-            return null
-        }
-        val enabled = configuration(config)
-        val previous = selection
-        if (previous?.apiProperties != enabled.apiProperties ||
-            previous.locationParameters != enabled.locationParameters
-        ) {
-            // Keep still-enabled values visible, but a new IP-API selection needs its own success.
-            ipApiInitialized = false
-        }
-        cached = cached.copy(
-            ipApiData = cached.ipApiData
-                ?.takeIf { enabled.requiresIpApi }
-                ?.keepEnabled(enabled)
-                ?.let { data ->
-                    if (previous?.locationParameters != enabled.locationParameters) data.copy(location = null) else data
-                },
-            publicIps = cached.publicIps.filter { it.version in enabled.versions }
+    }
+
+    private fun reconcileSelection(selection: RemoteDataSelection) {
+        val previous = cache.selection
+        cache = cache.copy(
+            selection = selection,
+            data = selection.retainApplicable(cache.data, previous),
+            ipApiInitializedForSelection = cache.ipApiInitializedForSelection &&
+                previous?.ipApiProperties == selection.ipApiProperties &&
+                previous.locationParameters == selection.locationParameters,
+            attemptedIpVersions = cache.attemptedIpVersions.intersect(selection.publicIpVersions)
         )
-        selection = enabled
-        _data.value = cached
-        return current
+    }
+
+    private fun publishDisplayableData(network: Network?) {
+        _data.value = if (network == null) RemoteWifiData.empty else cache.data
+    }
+
+    /** Called under [stateLock]; the published flow never contains data for an unconfirmed route. */
+    private fun reconcile(selection: RemoteDataSelection): Network? {
+        val network = reconcileNetwork()
+        if (network != null) reconcileSelection(selection)
+        publishDisplayableData(network)
+        return network
     }
 
     override fun snapshot(config: WidgetConfig): RemoteWifiData =
         synchronized(stateLock) {
-            validate(config)
+            reconcile(RemoteDataSelection.from(config))
             _data.value
         }
 
-    private fun isComplete(enabled: Selection): Boolean =
-        (!enabled.requiresIpApi || ipApiInitialized) &&
-            // One successful family initializes public IP; unsupported IPv6 must not cause
-            // endless recovery when IPv4 is already available. IP-API is independent.
-            (!enabled.requiresPublicIp || publicIpInitialized(enabled))
-
-    private fun publicIpInitialized(enabled: Selection): Boolean =
-        cached.publicIps.any { it.version in enabled.versions }
-
     override fun needsRecovery(config: WidgetConfig): Boolean =
         synchronized(stateLock) {
-            val current = validate(config)
-            val enabled = configuration(config)
-            (enabled.requiresIpApi || enabled.requiresPublicIp) &&
-                (current == null || !isComplete(enabled))
+            val selection = RemoteDataSelection.from(config)
+            val network = reconcile(selection)
+            (selection.requiresIpApi || selection.requiresPublicIp) &&
+                (network == null || !cache.isRecoverySatisfied(selection))
+        }
+
+    private suspend fun executeFetchPlan(plan: RemoteFetchPlan, selection: RemoteDataSelection): FetchResults =
+        coroutineScope {
+            val api = if (plan.fetchIpApi) async { ipApiDataFetcher.fetch(selection.locationParameters) } else null
+            val ips = if (plan.publicIpVersions.isNotEmpty()) async { publicIpFetcher.fetch(plan.publicIpVersions) } else null
+            FetchResults(api?.await(), ips?.await().orEmpty(), plan.publicIpVersions)
+        }
+
+    private fun applyFetchResults(
+        network: Network,
+        selection: RemoteDataSelection,
+        results: FetchResults,
+        latestSelection: RemoteDataSelection
+    ): RemoteRefreshResult =
+        synchronized(stateLock) {
+            // The system routes HTTP on its default egress. Rechecking here rejects observed
+            // changes, though it cannot identify an A -> B -> A transition between checks.
+            val current = reconcile(latestSelection)
+            if (current == null || current != network) {
+                d { "Remote data refresh discarded: network changed or became unavailable; start=$network, end=$current" }
+                return@synchronized RemoteRefreshResult.NetworkUnavailable
+            }
+            if (latestSelection != selection) {
+                d { "Remote data refresh discarded: enabled properties changed during fetch" }
+                return@synchronized cache.recoveryResult(latestSelection)
+            }
+
+            val updatedIps = cache.data.publicIps.associateBy { it.version }.toMutableMap()
+            results.publicIps.forEach { (version, result) ->
+                result.getOrNull()?.let { updatedIps[version] = it }
+            }
+            // Failed requests retain successful data from the same egress network. A completed
+            // attempt counts even when an IP family is unsupported, but success is tracked separately.
+            cache = cache.copy(
+                data = cache.data.copy(
+                    ipApiData = results.ipApi?.getOrNull()?.let(selection::retainApplicable) ?: cache.data.ipApiData,
+                    publicIps = selection.publicIpVersions.mapNotNull(updatedIps::get)
+                ),
+                ipApiInitializedForSelection = cache.ipApiInitializedForSelection || results.ipApi?.isSuccess == true,
+                attemptedIpVersions = cache.attemptedIpVersions + results.attemptedIpVersions
+            )
+            publishDisplayableData(current)
+            cache.recoveryResult(selection)
         }
 
     override suspend fun refresh(onlyIfMissing: Boolean): RemoteRefreshResult {
         d { "Remote data refresh started: onlyIfMissing=$onlyIfMissing" }
         val result = refreshMutex.withLock {
-            val config = widgetConfigReader.read()
-            val start = synchronized(stateLock) { validate(config) } ?: run {
+            val selection = RemoteDataSelection.from(widgetConfigReader.read())
+            val (network, plan) = synchronized(stateLock) {
+                val current = reconcile(selection)
+                current to current?.let { cache.fetchPlan(selection, onlyIfMissing) }
+            }
+            if (network == null) {
                 d { "Remote data refresh aborted: no usable default network" }
                 return@withLock RemoteRefreshResult.NetworkUnavailable
             }
-            // Recheck *inside* the mutex: a home/manual refresh may have completed while this
-            // recovery worker waited, so it must not make the same HTTP requests again.
-            if (onlyIfMissing && synchronized(stateLock) { isComplete(configuration(config)) }) {
-                d { "Remote data refresh skipped: enabled data already complete for network=$start" }
+            checkNotNull(plan)
+            if (plan.isEmpty) {
+                d { "Remote data refresh skipped: enabled data already complete for network=$network" }
                 return@withLock RemoteRefreshResult.Complete
             }
-
-            val (fetchApi, fetchPublicIp) = synchronized(stateLock) {
-                val enabled = configuration(config)
-                // Recovery fills missing groups independently. A successful public IP must not
-                // be fetched again while only IP-API is missing, and vice versa. Ordinary
-                // refreshes still update every enabled group.
-                (!onlyIfMissing || (enabled.requiresIpApi && !ipApiInitialized)) to
-                    (!onlyIfMissing || (enabled.requiresPublicIp && !publicIpInitialized(enabled)))
-            }
-
-            val (ipApi, publicIps) = coroutineScope {
-                val api = if (fetchApi) async { ipApiDataFetcher.fetchIfNecessary(config) } else null
-                val ips = if (fetchPublicIp) async { publicIpFetcher.fetchIfNecessary(config) } else null
-                api?.await() to ips?.await()
-            }
-            val latestConfig = widgetConfigReader.read()
-            synchronized(stateLock) {
-                val end = validate(latestConfig)
-                // Comparing before/after prevents known stale commits, although it cannot prove the
-                // route of every in-flight HTTP packet. Binding OkHttp to a Network would also alter
-                // VPN behavior and is intentionally outside this focused change.
-                if (end == null || end != start) {
-                    d { "Remote data refresh discarded: network changed or became unavailable; start=$start, end=$end" }
-                    return@synchronized RemoteRefreshResult.NetworkUnavailable
-                }
-                // Configuration can change during HTTP too; never publish an old selection.
-                if (configuration(latestConfig) != configuration(config)) {
-                    d { "Remote data refresh discarded: enabled properties changed during fetch" }
-                    return@synchronized if (isComplete(configuration(latestConfig))) {
-                        RemoteRefreshResult.Complete
-                    } else {
-                        RemoteRefreshResult.Incomplete
-                    }
-                }
-                val enabled = configuration(config)
-                // A failed request preserves successful values from this same egress context.
-                cached = cached.copy(
-                    ipApiData = when (ipApi) {
-                        is FetchResult.Success -> ipApi.value.keepEnabled(enabled)
-                        FetchResult.Failed -> cached.ipApiData
-                        FetchResult.Skipped -> null
-                        null -> cached.ipApiData
-                    },
-                    publicIps = when (publicIps) {
-                        is FetchResult.Success -> enabled.versions.mapNotNull { version ->
-                            when (val result = publicIps.value[version]) {
-                                is FetchResult.Success -> result.value
-                                else -> cached.publicIps.firstOrNull { it.version == version }
-                            }
-                        }
-
-                        FetchResult.Failed -> cached.publicIps
-                        FetchResult.Skipped -> emptyList()
-                        null -> cached.publicIps
-                    }
-                )
-                if (ipApi is FetchResult.Success) ipApiInitialized = true
-                _data.value = cached
-                // Completing HTTP calls is not initialization: failures can leave a required group
-                // missing even while the other group has useful data to render.
-                if (isComplete(enabled)) RemoteRefreshResult.Complete else RemoteRefreshResult.Incomplete
-            }
+            val results = executeFetchPlan(plan, selection)
+            applyFetchResults(network, selection, results, RemoteDataSelection.from(widgetConfigReader.read()))
         }
         i { "Remote data refresh finished: onlyIfMissing=$onlyIfMissing, result=$result" }
         return result
