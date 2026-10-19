@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="ComposeCompositionLocalUsage" severity="ignore" />
+    <issue id="ComposeModifierMissing" severity="ignore" />
+    <issue id="ComposeViewModelForwarding" severity="ignore" />
+    <issue id="LintError" severity="warning" />
+    <issue id="LocalContextGetResourceValueCall" severity="ignore" />
+    <issue id="ModifierParameter" severity="ignore" />
+</lint>

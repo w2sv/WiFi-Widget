@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +23,7 @@ class WidgetConfigActivity : ComponentActivity() {
         WindowCompat.enableEdgeToEdge(window)
 
         setContent {
-            WifiWidgetUI(locationAccessDependencies = locationAccessDependencies) {
+            WifiWidgetUI(versionName = BuildConfig.VERSION_NAME, locationAccessDependencies = locationAccessDependencies) {
                 WidgetConfigRoute(navigateBack = ::finish)
             }
         }

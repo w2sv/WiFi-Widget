@@ -7,7 +7,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.toFontFamily
 import androidx.compose.ui.unit.sp
-import com.w2sv.wifiwidget.R
+import com.w2sv.wifiwidget.ui.R
 
 private val defaultTypography = Typography()
 private val jost = Font(R.font.jost).toFontFamily()

@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 rootProject.name = "WiFi_Widget"
 
 include(":app")
+include(":ui")
 include(":benchmarking")
 include(":core:datastore")
 include(":core:datastore-proto")

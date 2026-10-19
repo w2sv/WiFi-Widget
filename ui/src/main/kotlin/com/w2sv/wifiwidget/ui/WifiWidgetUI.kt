@@ -17,6 +17,7 @@ import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Composable
 fun WifiWidgetUI(
+    versionName: String,
     locationAccessDependencies: LocationAccessDependencies,
     activityViewModel: ActivityViewModel = hiltViewModel(),
     // Lets both activities share app-level UI and tests omit destination Hilt ViewModels.
@@ -32,7 +33,10 @@ fun WifiWidgetUI(
         rationalHistory = locationAccessDependencies.rationalHistory
     )
 
-    CompositionLocalProvider(LocalLocationAccessCapability provides locationAccessCapability) {
+    CompositionLocalProvider(
+        LocalAppVersionName provides versionName,
+        LocalLocationAccessCapability provides locationAccessCapability
+    ) {
         WifiWidgetTheme(
             useDarkTheme = useDarkTheme(themeSettings.theme),
             useDynamicColors = themeSettings.useDynamicColors,

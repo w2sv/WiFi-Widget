@@ -53,7 +53,7 @@ import com.w2sv.androidutils.content.openUrl
 import com.w2sv.common.AppUrl
 import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
-import com.w2sv.wifiwidget.BuildConfig
+import com.w2sv.wifiwidget.ui.LocalAppVersionName
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.Margins
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
@@ -155,7 +155,7 @@ private fun Header(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.height(22.dp))
         Text(
-            text = stringResource(id = R.string.version).format(BuildConfig.VERSION_NAME),
+            text = stringResource(id = R.string.version).format(LocalAppVersionName.current),
             modifier = Modifier.clickable(
                 onClick = { context.openUrl(AppUrl.RELEASE_OVERVIEW) },
                 onClickLabel = stringResource(R.string.open_release_overview_cd)

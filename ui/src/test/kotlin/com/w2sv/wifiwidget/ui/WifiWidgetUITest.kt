@@ -56,6 +56,7 @@ class WifiWidgetUITest {
 
         composeRule.setContent {
             WifiWidgetUI(
+                versionName = "Test",
                 locationAccessDependencies = locationAccessDependencies,
                 activityViewModel = activityViewModel,
                 content = {}

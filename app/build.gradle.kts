@@ -9,8 +9,6 @@ plugins {
     alias(libs.plugins.triplet.play)
     alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.kotlin.plugin.compose)
-    alias(libs.plugins.kotlin.parcelize)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -62,24 +60,6 @@ android {
     }
 }
 
-kotlin {
-    compilerOptions {
-        optIn.addAll(
-            "androidx.compose.material3.ExperimentalMaterial3Api",
-            "androidx.compose.foundation.ExperimentalFoundationApi",
-            "androidx.compose.foundation.layout.ExperimentalLayoutApi"
-        )
-    }
-}
-
-// https://www.jetbrains.com/help/kotlin-multiplatform-dev/compose-compiler.html#compose-compiler-options-dsl
-composeCompiler {
-    includeSourceInformation = true
-    stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_compiler_config.conf"))
-    metricsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
-    reportsDestination.set(project.layout.buildDirectory.dir("compose_compiler"))
-}
-
 // https://github.com/Triple-T/gradle-play-publisher
 play {
     serviceAccountCredentials.set(file("service-account-key.json"))
@@ -89,53 +69,18 @@ play {
 
 dependencies {
     // Project modules
+    implementation(projects.ui)
     implementation(projects.core.widget)
-    implementation(projects.core.common)
     implementation(projects.core.domain)
     implementation(projects.core.datastore)
     implementation(projects.core.networking)
     baselineProfile(projects.benchmarking)
 
-    // Owned libraries
-    implementation(libs.w2sv.androidutils.core)
-    implementation(libs.w2sv.colorpicker)
-    implementation(libs.w2sv.composed.animation)
-    implementation(libs.w2sv.composed.core)
-    implementation(libs.w2sv.composed.material3)
-    implementation(libs.w2sv.composed.navigation3)
-    implementation(libs.w2sv.augmentedPermissions)
-    implementation(libs.w2sv.composeWheelPicker)
-    implementation(libs.w2sv.reversiblestate)
-
     // AndroidX libraries
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.splashscreen)
-    implementation(libs.androidx.navigation3.ui)
-    implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.lifecycle.viewmodel.navigation3.android)
-
-    // Compose libraries
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.material.icons.core)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.compose.activity)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
-    implementation(libs.androidx.constraintlayout.compose)
 
-    // Other libraries
-    lintChecks(libs.slack.lint.compose.lint.checks)
-    implementation(libs.kotlinx.collections.immutable)
-    implementation(libs.reorderable)
-
-    testImplementation(libs.bundles.unitTest)
-    testImplementation(libs.androidx.compose.ui.test.junit4.android)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
     androidTestImplementation(libs.bundles.androidTest)
 }
