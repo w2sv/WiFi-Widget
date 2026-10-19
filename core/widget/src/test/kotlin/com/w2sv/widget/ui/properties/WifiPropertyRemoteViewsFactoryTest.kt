@@ -1,7 +1,7 @@
 package com.w2sv.widget.ui.properties
 
 import android.content.Context
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
@@ -17,7 +17,7 @@ class WifiPropertyRemoteViewsFactoryTest {
     private val dataProvider = mockk<WifiPropertyRenderDataProvider> {
         every { this@mockk.invoke(any()) } returns mockk<WifiPropertyRenderData>()
     }
-    private val repository = mockk<RemoteWifiDataRepository>()
+    private val repository = mockk<RemoteNetworkDataRepository>()
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
     private val config = WidgetConfig.default
     private val configSource = mockk<WidgetConfigSource> {

@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import app.cash.turbine.test
 import com.w2sv.domain.networking.IpApiData
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -36,11 +36,11 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 class WifiStateProviderImplTest {
     private val inputs = MutableSharedFlow<ReconciledWifiInputs>(replay = 1)
-    private val remoteData = MutableStateFlow(RemoteWifiData.empty)
+    private val remoteData = MutableStateFlow(RemoteNetworkData.empty)
     private val config = MutableStateFlow(WidgetConfig.default)
     private val locationEnabled = MutableStateFlow(true)
     private val synchronizer = mockk<RemoteDataSynchronizer> { every { inputs } returns this@WifiStateProviderImplTest.inputs }
-    private val repository = mockk<RemoteWifiDataRepository> { every { data } returns remoteData }
+    private val repository = mockk<RemoteNetworkDataRepository> { every { data } returns remoteData }
     private val configSource = mockk<WidgetConfigSource> { every { flow } returns config }
     private val propertyProvider = mockk<WifiPropertyPresentationProvider>(relaxed = true)
     private val locationProvider = mockk<LocationEnabledProvider> { every { isEnabled } returns locationEnabled }
@@ -116,7 +116,7 @@ class WifiStateProviderImplTest {
                 awaitItem()
                 val changed = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
                 config.value = changed
-                remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+                remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 expectNoEvents()
                 val enabled = changed.enabledProperties
                 config.value = changed.withUpdatedPropertyPosition(
@@ -155,7 +155,7 @@ class WifiStateProviderImplTest {
                 listOf(
                     WifiPropertyPresentation(
                         SubscriptableText("value"),
-                        thirdArg<RemoteWifiData>().ipApiData?.isp.orEmpty() + firstArg<List<WifiProperty>>().size
+                        thirdArg<RemoteNetworkData>().ipApiData?.isp.orEmpty() + firstArg<List<WifiProperty>>().size
                     )
                 )
             }
@@ -164,7 +164,7 @@ class WifiStateProviderImplTest {
                 awaitItem()
                 inputs.emit(ReconciledWifiInputs(Connected, WidgetConfig.default.remoteDataConfig))
                 val initial = awaitItem().asConnectedOrNull!!.propertyPresentations.single().value
-                remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+                remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 assertEquals(
                     "ISP${WidgetConfig.default.enabledProperties.size}",
                     awaitItem().asConnectedOrNull!!.propertyPresentations.single().value

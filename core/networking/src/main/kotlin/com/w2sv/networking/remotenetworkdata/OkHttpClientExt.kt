@@ -1,4 +1,4 @@
-package com.w2sv.networking.remotenetworkinfo
+package com.w2sv.networking.remotenetworkdata
 
 import com.w2sv.kotlinutils.coroutines.runCatchingCancellable
 import java.io.IOException

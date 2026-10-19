@@ -5,8 +5,8 @@ import android.os.PowerManager
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
-import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -32,7 +32,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted params: WorkerParameters,
     private val powerManager: PowerManager,
-    private val remoteWifiDataRepository: RemoteWifiDataRepository,
+    private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
     private val widgetActions: WidgetActions,
     private val wifiStatusSource: WifiStatusSource,
     private val widgetConfigSource: WidgetConfigSource
@@ -56,14 +56,14 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
 
     private suspend fun recover(): Result {
         val config = widgetConfigSource.snapshot()
-        val before = remoteWifiDataRepository.data.value
+        val before = remoteNetworkDataRepository.data.value
 
         try {
             return when {
-                !remoteWifiDataRepository.needsRecovery(config.remoteDataConfig) -> Result.success()
+                !remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig) -> Result.success()
                 !wifiStatusSource.snapshot().isConnected -> Result.retry()
                 else -> {
-                    val refreshResult = remoteWifiDataRepository.refresh(onlyIfMissing = true)
+                    val refreshResult = remoteNetworkDataRepository.refresh(onlyIfMissing = true)
                     d { "Widget remote recovery finished: result=$refreshResult" }
 
                     if (refreshResult == RemoteRefreshResult.Complete) Result.success() else Result.retry()
@@ -72,7 +72,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         } finally {
             // Ensure recovery-triggered changes are rendered before the worker completes,
             // independently of the application-scoped observer.
-            if (remoteWifiDataRepository.data.value != before) {
+            if (remoteNetworkDataRepository.data.value != before) {
                 widgetActions.render()
             }
         }
@@ -82,7 +82,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         val wifiStatus = wifiStatusSource.snapshot()
         if (wifiStatus.isConnected) {
             d { "Widget remote refresh started: reason=$reason, wifiStatus=$wifiStatus" }
-            val refreshResult = remoteWifiDataRepository.refresh()
+            val refreshResult = remoteNetworkDataRepository.refresh()
             d { "Widget remote refresh finished: reason=$reason, result=$refreshResult" }
         } else {
             d { "Widget remote refresh skipped: wifiStatus=$wifiStatus" }

@@ -1,6 +1,6 @@
 package com.w2sv.domain.wifiproperty
 
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 
 fun interface WifiPropertyResolver {
@@ -8,6 +8,6 @@ fun interface WifiPropertyResolver {
     suspend operator fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteWifiData: RemoteWifiData
+        remoteNetworkData: RemoteNetworkData
     ): List<ResolvedWifiProperty>
 }

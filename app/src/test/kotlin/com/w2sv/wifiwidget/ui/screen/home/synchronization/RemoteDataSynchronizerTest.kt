@@ -2,9 +2,9 @@ package com.w2sv.wifiwidget.ui.screen.home.synchronization
 
 import app.cash.turbine.test
 import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult.Complete
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetConfig
@@ -36,7 +36,7 @@ class RemoteDataSynchronizerTest {
     private val status = MutableSharedFlow<WifiStatus>()
     private val egress = MutableSharedFlow<Unit>()
     private val config = MutableStateFlow(WidgetConfig.default)
-    private val data = MutableStateFlow(RemoteWifiData.empty)
+    private val data = MutableStateFlow(RemoteNetworkData.empty)
     private var snapshotStatus: WifiStatus = WifiStatus.Connected
     private val wifiStatusSource = mockk<WifiStatusSource> {
         every { this@mockk.status } returns this@RemoteDataSynchronizerTest.status
@@ -47,7 +47,7 @@ class RemoteDataSynchronizerTest {
         every { flow } returns config
         coEvery { snapshot() } answers { config.value }
     }
-    private val repository = mockk<RemoteWifiDataRepository>(relaxed = true) {
+    private val repository = mockk<RemoteNetworkDataRepository>(relaxed = true) {
         every { this@mockk.data } returns this@RemoteDataSynchronizerTest.data
         every { reconciledSnapshot(any()) } answers { data.value }
     }
@@ -284,7 +284,7 @@ class RemoteDataSynchronizerTest {
             var snapshots = 0
             every { repository.reconciledSnapshot(any()) } answers {
                 snapshots++
-                if (snapshots == 2) data.value = RemoteWifiData.empty
+                if (snapshots == 2) data.value = RemoteNetworkData.empty
                 data.value
             }
             val synchronizer = synchronizer()
@@ -292,11 +292,11 @@ class RemoteDataSynchronizerTest {
                 this@RemoteDataSynchronizerTest.status.emit(WifiStatus.Connected)
                 awaitItem()
                 assertEquals(1, snapshots)
-                data.value = RemoteWifiData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
+                data.value = RemoteNetworkData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
                 egress.emit(Unit)
                 awaitItem()
                 assertEquals(2, snapshots)
-                assertEquals(RemoteWifiData.empty, data.value)
+                assertEquals(RemoteNetworkData.empty, data.value)
             }
         }
 }

@@ -1,7 +1,7 @@
-package com.w2sv.networking.remotenetworkinfo
+package com.w2sv.networking.remotenetworkdata
 
 import com.w2sv.domain.networking.IpApiData
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.wifiproperty.WifiProperty
 import org.junit.Assert.assertEquals
@@ -25,7 +25,7 @@ class RemoteDataRetentionTest {
             .withUpdatedPropertyEnablement(WifiProperty.ISP, true)
             .remoteDataConfig
         val current = noRemoteProperties.withUpdatedPropertyEnablement(WifiProperty.ISP, true).remoteDataConfig
-        val data = RemoteWifiData(
+        val data = RemoteNetworkData(
             IpApiData("Berlin", null, "UTC", "ISP", "AS123"),
             emptyList()
         )

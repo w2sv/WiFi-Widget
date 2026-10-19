@@ -1,9 +1,9 @@
-package com.w2sv.networking.remotenetworkinfo.ip_api
+package com.w2sv.networking.remotenetworkdata.ip_api
 
 import com.w2sv.common.utils.log
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.wifiproperty.settings.LocationParameter
-import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
+import com.w2sv.networking.remotenetworkdata.fetchFromUrl
 import java.io.IOException
 import javax.inject.Inject
 import kotlinx.serialization.json.Json

@@ -3,7 +3,7 @@ package com.w2sv.networking.propertyresolution
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
@@ -28,16 +28,16 @@ internal class WifiPropertyResolverImpl @Inject constructor(
     override suspend fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteWifiData: RemoteWifiData
+        remoteNetworkData: RemoteNetworkData
     ): List<ResolvedWifiProperty> =
         withContext(Dispatchers.Default) {
             val wifiSnapshot = WifiSnapshot(
                 connectionInfo = wifiManager.connectionInfo,
                 dhcpInfo = wifiManager.dhcpInfo,
                 linkProperties = connectivityManager.linkProperties,
-                publicIps = remoteWifiData.publicIps,
+                publicIps = remoteNetworkData.publicIps,
                 systemIps = connectivityManager.systemIpAddresses(),
-                ipApiData = remoteWifiData.ipApiData,
+                ipApiData = remoteNetworkData.ipApiData,
                 isLocationEnabled = isLocationEnabled()
             )
 

@@ -1,18 +1,18 @@
-package com.w2sv.networking.remotenetworkinfo
+package com.w2sv.networking.remotenetworkdata
 
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteRefreshResult
-import com.w2sv.domain.networking.RemoteWifiData
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.settings.IpSetting
-import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiDataFetcher
-import com.w2sv.networking.remotenetworkinfo.public_ip.PublicIpFetcher
+import com.w2sv.networking.remotenetworkdata.ip_api.IpApiDataFetcher
+import com.w2sv.networking.remotenetworkdata.public_ip.PublicIpFetcher
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -28,7 +28,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-class RemoteWifiDataRepositoryImplTest {
+class RemoteNetworkDataRepositoryImplTest {
     private val failed = Result.failure<Nothing>(IOException("unavailable"))
     private val api = mockk<IpApiDataFetcher>()
     private val ips = mockk<PublicIpFetcher>()
@@ -47,7 +47,7 @@ class RemoteWifiDataRepositoryImplTest {
     private val ipv4 = mockk<IpAddress.V4> { every { version } returns IpAddress.Version.V4 }
     private val ipv6 = mockk<IpAddress.V6> { every { version } returns IpAddress.Version.V6 }
 
-    private fun repository(configProvider: () -> WidgetConfig = { config }): RemoteWifiDataRepositoryImpl {
+    private fun repository(configProvider: () -> WidgetConfig = { config }): RemoteNetworkDataRepositoryImpl {
         every { connectivity.activeNetwork } returns networkA
         every { connectivity.getNetworkCapabilities(any()) } returns capabilities
         coEvery { api.fetch(any()) } returns Result.success(apiData)
@@ -58,7 +58,7 @@ class RemoteWifiDataRepositoryImplTest {
         val configSource = mockk<WidgetConfigSource> {
             coEvery { snapshot() } coAnswers { configProvider() }
         }
-        return RemoteWifiDataRepositoryImpl(api, ips, configSource, connectivity)
+        return RemoteNetworkDataRepositoryImpl(api, ips, configSource, connectivity)
     }
 
     @Test fun `transient failures preserve each successful field`() =
@@ -279,8 +279,8 @@ class RemoteWifiDataRepositoryImplTest {
             val repository = repository()
             repository.refresh()
             every { connectivity.activeNetwork } returns null
-            assertEquals(RemoteWifiData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
-            assertEquals(RemoteWifiData.empty, repository.data.value)
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
             every { connectivity.activeNetwork } returns networkA
             assertFalse(repository.needsRecovery(config.remoteDataConfig))
             assertEquals(2, repository.data.value.publicIps.size)
@@ -291,8 +291,8 @@ class RemoteWifiDataRepositoryImplTest {
             val repository = repository()
             repository.refresh()
             every { connectivity.getNetworkCapabilities(networkA) } returns null
-            assertEquals(RemoteWifiData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
-            assertEquals(RemoteWifiData.empty, repository.data.value)
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
             every { connectivity.getNetworkCapabilities(networkA) } returns capabilities
             assertEquals(2, repository.reconciledSnapshot(config.remoteDataConfig).publicIps.size)
             assertFalse(repository.needsRecovery(config.remoteDataConfig))
@@ -304,9 +304,9 @@ class RemoteWifiDataRepositoryImplTest {
             repository.refresh()
             every { connectivity.activeNetwork } returns networkB
             every { connectivity.getNetworkCapabilities(networkB) } returns null
-            assertEquals(RemoteWifiData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
             every { connectivity.activeNetwork } returns networkA
-            assertEquals(RemoteWifiData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
             assertTrue(repository.needsRecovery(config.remoteDataConfig))
         }
 

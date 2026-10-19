@@ -2,7 +2,7 @@ package com.w2sv.domain.wifiproperty.presentation
 
 import android.content.res.Resources
 import com.w2sv.core.common.R
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
@@ -18,13 +18,13 @@ class WifiPropertyPresentationProvider(private val resolver: WifiPropertyResolve
     suspend operator fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteWifiData: RemoteWifiData
+        remoteNetworkData: RemoteNetworkData
     ): List<WifiPropertyPresentation> =
         withContext(Dispatchers.Default) {
             resolver(
                 enabledProperties = enabledProperties,
                 enabledIpSettings = enabledIpSettings,
-                remoteWifiData = remoteWifiData
+                remoteNetworkData = remoteNetworkData
             ).flatMap { resolution ->
                 resolution.property.toPresentations(
                     values = resolution.values,

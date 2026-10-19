@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
 import com.w2sv.common.utils.logOnCancellation
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -41,7 +41,7 @@ class WifiStateProviderImpl @Inject constructor(
     remoteDataSynchronizer: RemoteDataSynchronizer,
     widgetConfigSource: WidgetConfigSource,
     wifiPropertyPresentationProvider: WifiPropertyPresentationProvider,
-    remoteWifiDataRepository: RemoteWifiDataRepository,
+    remoteNetworkDataRepository: RemoteNetworkDataRepository,
     locationEnabledProvider: LocationEnabledProvider,
     private val scope: CoroutineScope
 ) : WifiStateProvider {
@@ -63,7 +63,7 @@ class WifiStateProviderImpl @Inject constructor(
     private val displayInputs = combine(
         remoteDataSynchronizer.inputs,
         presentationConfig,
-        remoteWifiDataRepository.data,
+        remoteNetworkDataRepository.data,
         locationAccessChangedWhileDependentPropertiesEnabled
     ) { reconciled, config, remoteData, _ ->
         makeIf(reconciled.remoteDataConfig == config.remoteDataConfig) {
@@ -83,7 +83,7 @@ class WifiStateProviderImpl @Inject constructor(
                         propertyPresentations = wifiPropertyPresentationProvider(
                             enabledProperties = inputs.config.enabledProperties,
                             enabledIpSettings = inputs.config::enabledIpSettings,
-                            remoteWifiData = inputs.remoteData
+                            remoteNetworkData = inputs.remoteData
                         )
                     )
                 }
@@ -97,4 +97,4 @@ class WifiStateProviderImpl @Inject constructor(
     }
 }
 
-private data class DisplayInputs(val status: WifiStatus, val config: WidgetConfig, val remoteData: RemoteWifiData)
+private data class DisplayInputs(val status: WifiStatus, val config: WidgetConfig, val remoteData: RemoteNetworkData)

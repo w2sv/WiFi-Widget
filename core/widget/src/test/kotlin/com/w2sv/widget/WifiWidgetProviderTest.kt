@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
 import androidx.test.core.app.ApplicationProvider
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
@@ -23,7 +23,7 @@ class WifiWidgetProviderTest {
     private val context = ApplicationProvider.getApplicationContext<Context>()
     private val manager = mockk<AppWidgetManager>(relaxed = true)
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
-    private val repository = mockk<RemoteWifiDataRepository>()
+    private val repository = mockk<RemoteNetworkDataRepository>()
     private val renderer = mockk<WidgetRenderer> {
         every { this@mockk.invoke(any(), any(), any(), any()) } returns mockk<RemoteViews>()
     }
@@ -33,7 +33,7 @@ class WifiWidgetProviderTest {
         WifiWidgetProvider().apply {
             appWidgetManager = manager
             refreshManager = scheduler
-            remoteWifiDataRepository = repository
+            remoteNetworkDataRepository = repository
             widgetRenderer = renderer
             widgetConfigSource = mockk<WidgetConfigSource> {
                 every { blockingSnapshot() } returns config

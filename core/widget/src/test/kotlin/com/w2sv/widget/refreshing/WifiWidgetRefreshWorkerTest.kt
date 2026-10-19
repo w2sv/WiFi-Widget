@@ -5,11 +5,11 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult.Complete
 import com.w2sv.domain.networking.RemoteRefreshResult.Incomplete
 import com.w2sv.domain.networking.RemoteRefreshResult.NetworkUnavailable
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetActions
@@ -34,8 +34,8 @@ import org.robolectric.annotation.Config
 @Config(sdk = [35])
 class WifiWidgetRefreshWorkerTest {
     private val power = mockk<PowerManager>()
-    private val repository = mockk<RemoteWifiDataRepository>(relaxed = true)
-    private val remoteData = MutableStateFlow(RemoteWifiData.empty)
+    private val repository = mockk<RemoteNetworkDataRepository>(relaxed = true)
+    private val remoteData = MutableStateFlow(RemoteNetworkData.empty)
     private val actions = mockk<WidgetActions>(relaxed = true)
     private val wifiStatus = mockk<WifiStatusSource>()
     private val configSource = mockk<WidgetConfigSource> {
@@ -86,7 +86,7 @@ class WifiWidgetRefreshWorkerTest {
     @Test fun `validation restores cached data and renders without HTTP`() =
         runTest {
             every { power.isInteractive } returns true
-            val restored = RemoteWifiData(IpApiData(null, null, "UTC", "restored ISP", null), emptyList())
+            val restored = RemoteNetworkData(IpApiData(null, null, "UTC", "restored ISP", null), emptyList())
             every { repository.needsRecovery(any()) } answers {
                 remoteData.value = restored
                 false
@@ -102,7 +102,7 @@ class WifiWidgetRefreshWorkerTest {
             every { repository.needsRecovery(any()) } returns true
             every { wifiStatus.snapshot() } returns WifiStatus.Connected
             coEvery { repository.refresh(onlyIfMissing = true) } answers {
-                remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+                remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 Complete
             }
             assertEquals(ListenableWorker.Result.success(), worker(Recovery).doWork())
@@ -126,7 +126,7 @@ class WifiWidgetRefreshWorkerTest {
             every { repository.needsRecovery(any()) } returns true
             every { wifiStatus.snapshot() } returns WifiStatus.Connected
             coEvery { repository.refresh(onlyIfMissing = true) } answers {
-                remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+                remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 Incomplete
             }
             assertEquals(ListenableWorker.Result.retry(), worker(Recovery, 20).doWork())
@@ -159,9 +159,9 @@ class WifiWidgetRefreshWorkerTest {
     @Test fun `known route invalidation renders even when recovery cannot fetch`() =
         runTest {
             every { power.isInteractive } returns true
-            remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
+            remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "old ISP", null), emptyList())
             every { repository.needsRecovery(any()) } answers {
-                remoteData.value = RemoteWifiData.empty
+                remoteData.value = RemoteNetworkData.empty
                 true
             }
             every { wifiStatus.snapshot() } returns WifiStatus.Connected
@@ -174,11 +174,11 @@ class WifiWidgetRefreshWorkerTest {
     @Test fun `cache loss and restoration each render on the same route`() =
         runTest {
             every { power.isInteractive } returns true
-            val saved = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+            val saved = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
             remoteData.value = saved
             var attempt = 0
             every { repository.needsRecovery(any()) } answers {
-                if (attempt++ == 0) remoteData.value = RemoteWifiData.empty
+                if (attempt++ == 0) remoteData.value = RemoteNetworkData.empty
                 true
             }
             every { wifiStatus.snapshot() } returns WifiStatus.Connected
@@ -224,7 +224,7 @@ class WifiWidgetRefreshWorkerTest {
             every { repository.needsRecovery(any()) } returns true
             every { wifiStatus.snapshot() } returns WifiStatus.Connected
             coEvery { repository.refresh(onlyIfMissing = true) } coAnswers {
-                remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
+                remoteData.value = RemoteNetworkData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 throw CancellationException("cancelled after publication")
             }
 

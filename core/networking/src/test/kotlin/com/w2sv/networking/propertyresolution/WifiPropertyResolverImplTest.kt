@@ -7,7 +7,7 @@ import android.net.wifi.WifiManager
 import com.w2sv.common.Text
 import com.w2sv.common.txt
 import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
@@ -63,7 +63,7 @@ class WifiPropertyResolverImplTest {
                 resolver()(
                     enabledProperties = listOf(WifiProperty.DNS, WifiProperty.Frequency),
                     enabledIpSettings = { emptyList() },
-                    remoteWifiData = RemoteWifiData.empty
+                    remoteNetworkData = RemoteNetworkData.empty
                 )
             )
         }
@@ -90,7 +90,7 @@ class WifiPropertyResolverImplTest {
                 resolver()(
                     enabledProperties = listOf(WifiProperty.PublicIp, WifiProperty.SSID),
                     enabledIpSettings = { emptyList() },
-                    remoteWifiData = RemoteWifiData.empty
+                    remoteNetworkData = RemoteNetworkData.empty
                 )
             )
         }
@@ -101,7 +101,7 @@ class WifiPropertyResolverImplTest {
 
         assertThrows(CancellationException::class.java) {
             kotlinx.coroutines.runBlocking {
-                resolver()(listOf(WifiProperty.SSID), { emptyList() }, RemoteWifiData.empty)
+                resolver()(listOf(WifiProperty.SSID), { emptyList() }, RemoteNetworkData.empty)
             }
         }
     }
@@ -112,7 +112,7 @@ class WifiPropertyResolverImplTest {
 
         assertThrows(CancellationException::class.java) {
             kotlinx.coroutines.runBlocking {
-                resolver()(listOf(WifiProperty.SSID), { emptyList() }, RemoteWifiData.empty)
+                resolver()(listOf(WifiProperty.SSID), { emptyList() }, RemoteNetworkData.empty)
             }
         }
     }

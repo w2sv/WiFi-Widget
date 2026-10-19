@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.home.synchronization
 
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -29,7 +29,7 @@ import slimber.log.d
 class RemoteDataSynchronizer @Inject constructor(
     private val wifiStatusSource: WifiStatusSource,
     private val widgetConfigSource: WidgetConfigSource,
-    private val remoteWifiDataRepository: RemoteWifiDataRepository,
+    private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
     private val scope: CoroutineScope
 ) {
 
@@ -60,7 +60,7 @@ class RemoteDataSynchronizer @Inject constructor(
     /** Reconciles the current config before publishing status, then updates the HTTP refresh job. */
     private suspend fun synchronize(event: SynchronizationEvent) {
         val remoteDataConfig = widgetConfigSource.snapshot().remoteDataConfig
-        remoteWifiDataRepository.reconciledSnapshot(remoteDataConfig)
+        remoteNetworkDataRepository.reconciledSnapshot(remoteDataConfig)
         val status = when (event) {
             is SynchronizationEvent.Status -> event.status
             SynchronizationEvent.DefaultEgress -> wifiStatusSource.snapshot()
@@ -88,7 +88,7 @@ class RemoteDataSynchronizer @Inject constructor(
             refreshJob?.cancel()
             refreshJob = scope.launch {
                 d { "Refreshing remote data after $event" }
-                remoteWifiDataRepository.refresh()
+                remoteNetworkDataRepository.refresh()
             }
         }
     }
@@ -96,10 +96,10 @@ class RemoteDataSynchronizer @Inject constructor(
     /** Bypasses worker backoff and fetches only requirements still missing after validation. */
     suspend fun recoverOnForeground() {
         val remoteDataConfig = widgetConfigSource.snapshot().remoteDataConfig
-        val needsRecovery = remoteWifiDataRepository.needsRecovery(remoteDataConfig)
+        val needsRecovery = remoteNetworkDataRepository.needsRecovery(remoteDataConfig)
         if (needsRecovery && wifiStatusSource.snapshot().isConnected) {
             // The repository rechecks under its mutex after any concurrent worker or home refresh.
-            remoteWifiDataRepository.refresh(onlyIfMissing = true)
+            remoteNetworkDataRepository.refresh(onlyIfMissing = true)
         }
     }
 }

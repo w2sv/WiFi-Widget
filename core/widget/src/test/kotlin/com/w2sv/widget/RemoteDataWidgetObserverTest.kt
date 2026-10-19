@@ -3,8 +3,8 @@ package com.w2sv.widget
 import android.appwidget.AppWidgetManager
 import androidx.test.core.app.ApplicationProvider
 import com.w2sv.domain.networking.IpApiData
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetActions
 import io.mockk.every
 import io.mockk.mockk
@@ -24,8 +24,8 @@ import org.robolectric.annotation.Config
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
 class RemoteDataWidgetObserverTest {
-    private val data = MutableStateFlow(RemoteWifiData.empty)
-    private val repository = mockk<RemoteWifiDataRepository> { every { data } returns this@RemoteDataWidgetObserverTest.data }
+    private val data = MutableStateFlow(RemoteNetworkData.empty)
+    private val repository = mockk<RemoteNetworkDataRepository> { every { data } returns this@RemoteDataWidgetObserverTest.data }
     private val actions = mockk<WidgetActions>(relaxed = true)
     private val manager = mockk<AppWidgetManager> {
         every { getAppWidgetIds(any()) } returns intArrayOf(1)
@@ -41,7 +41,7 @@ class RemoteDataWidgetObserverTest {
         )
 
     private fun published(isp: String) =
-        RemoteWifiData(IpApiData(null, null, "UTC", isp, null), emptyList())
+        RemoteNetworkData(IpApiData(null, null, "UTC", isp, null), emptyList())
 
     @Test fun `initial subscription skips current data`() =
         runTest {

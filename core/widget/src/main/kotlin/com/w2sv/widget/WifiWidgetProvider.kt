@@ -6,7 +6,7 @@ import android.content.Intent
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.core.widget.R
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
@@ -34,7 +34,7 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
     lateinit var widgetConfigSource: WidgetConfigSource
 
     @Inject
-    lateinit var remoteWifiDataRepository: RemoteWifiDataRepository
+    lateinit var remoteNetworkDataRepository: RemoteNetworkDataRepository
 
     /** Applies periodic refresh settings when the first widget is added. */
     override fun onEnabled(context: Context) {
@@ -85,7 +85,7 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
         val config = widgetConfigSource.blockingSnapshot()
-        if (remoteWifiDataRepository.needsRecovery(config.remoteDataConfig)) {
+        if (remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig)) {
             refreshManager.enqueueRecovery()
         }
         renderWidgets(context, appWidgetManager, appWidgetIds, config)

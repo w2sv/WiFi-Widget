@@ -1,4 +1,4 @@
-package com.w2sv.networking.remotenetworkinfo
+package com.w2sv.networking.remotenetworkdata
 
 import android.net.ConnectivityManager
 import android.net.Network
@@ -6,14 +6,14 @@ import com.w2sv.common.utils.log
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.networking.RemoteDataConfig
+import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
-import com.w2sv.domain.networking.RemoteWifiData
-import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.networking.extensions.hasInternetCapability
-import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiDataFetcher
-import com.w2sv.networking.remotenetworkinfo.public_ip.PublicIpFetcher
+import com.w2sv.networking.remotenetworkdata.ip_api.IpApiDataFetcher
+import com.w2sv.networking.remotenetworkdata.public_ip.PublicIpFetcher
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.async
@@ -26,15 +26,15 @@ import slimber.log.d
 import slimber.log.i
 
 @Singleton
-internal class RemoteWifiDataRepositoryImpl @Inject constructor(
+internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
     private val ipApiDataFetcher: IpApiDataFetcher,
     private val publicIpFetcher: PublicIpFetcher,
     private val widgetConfigSource: WidgetConfigSource,
     private val connectivityManager: ConnectivityManager
-) : RemoteWifiDataRepository {
+) : RemoteNetworkDataRepository {
 
-    override val data: StateFlow<RemoteWifiData>
-        field = MutableStateFlow(RemoteWifiData.empty)
+    override val data: StateFlow<RemoteNetworkData>
+        field = MutableStateFlow(RemoteNetworkData.empty)
 
     /** Serializes asynchronous [refresh] operations. */
     private val refreshMutex = Mutex()
@@ -43,7 +43,7 @@ internal class RemoteWifiDataRepositoryImpl @Inject constructor(
     private val stateLock = Any()
     private var cache = RemoteDataCache()
 
-    override fun reconciledSnapshot(config: RemoteDataConfig): RemoteWifiData =
+    override fun reconciledSnapshot(config: RemoteDataConfig): RemoteNetworkData =
         synchronized(stateLock) {
             reconcile(config)
             data.value
@@ -171,7 +171,7 @@ internal class RemoteWifiDataRepositoryImpl @Inject constructor(
         }
 
     private fun publishData(network: Network?) {
-        data.value = if (network == null) RemoteWifiData.empty else cache.data
+        data.value = if (network == null) RemoteNetworkData.empty else cache.data
     }
 }
 
@@ -183,7 +183,7 @@ internal class RemoteWifiDataRepositoryImpl @Inject constructor(
 private data class RemoteDataCache(
     val network: Network? = null,
     val config: RemoteDataConfig? = null,
-    val data: RemoteWifiData = RemoteWifiData.empty,
+    val data: RemoteNetworkData = RemoteNetworkData.empty,
     val ipApiInitializedForConfig: Boolean = false,
     val attemptedIpVersions: Set<IpAddress.Version> = emptySet()
 ) {

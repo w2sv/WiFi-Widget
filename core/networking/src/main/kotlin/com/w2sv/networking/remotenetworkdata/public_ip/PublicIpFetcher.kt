@@ -1,7 +1,7 @@
-package com.w2sv.networking.remotenetworkinfo.public_ip
+package com.w2sv.networking.remotenetworkdata.public_ip
 
 import com.w2sv.domain.networking.IpAddress
-import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
+import com.w2sv.networking.remotenetworkdata.fetchFromUrl
 import com.w2sv.networking.toDomain
 import java.net.InetAddress
 import javax.inject.Inject

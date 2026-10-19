@@ -3,7 +3,7 @@ package com.w2sv.domain.wifiproperty.presentation
 import android.content.res.Resources
 import com.w2sv.common.txt
 import com.w2sv.core.common.R
-import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
@@ -48,17 +48,17 @@ class WifiPropertyPresentationProviderTest {
                 )
             )
             var receivedProperties: List<WifiProperty>? = null
-            val resolver = WifiPropertyResolver { enabledProperties, enabledIpSettings, remoteWifiData ->
+            val resolver = WifiPropertyResolver { enabledProperties, enabledIpSettings, remoteNetworkData ->
                 receivedProperties = enabledProperties
                 assertEquals(emptyList<com.w2sv.domain.wifiproperty.settings.IpSetting>(), enabledIpSettings(WifiProperty.PublicIp))
-                assertEquals(RemoteWifiData.empty, remoteWifiData)
+                assertEquals(RemoteNetworkData.empty, remoteNetworkData)
                 resolutions
             }
 
             val actual = WifiPropertyPresentationProvider(resolver, resources)(
                 enabledProperties = requested,
                 enabledIpSettings = { emptyList() },
-                remoteWifiData = RemoteWifiData.empty
+                remoteNetworkData = RemoteNetworkData.empty
             )
 
             assertEquals(requested, receivedProperties)
@@ -88,7 +88,7 @@ class WifiPropertyPresentationProviderTest {
                 WifiPropertyPresentationProvider(resolver, resources)(
                     enabledProperties = listOf(WifiProperty.DNS),
                     enabledIpSettings = { emptyList() },
-                    remoteWifiData = RemoteWifiData.empty
+                    remoteNetworkData = RemoteNetworkData.empty
                 )
             )
         }

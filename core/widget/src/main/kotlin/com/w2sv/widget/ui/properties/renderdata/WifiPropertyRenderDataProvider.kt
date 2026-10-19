@@ -2,7 +2,7 @@ package com.w2sv.widget.ui.properties.renderdata
 
 import android.content.Context
 import com.w2sv.core.widget.R
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetAppearance
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.widget.WifiPropertyValueAlignment
@@ -14,7 +14,7 @@ import slimber.log.d
 
 internal class WifiPropertyRenderDataProvider @Inject constructor(
     private val widgetConfigSource: WidgetConfigSource,
-    private val remoteWifiDataRepository: RemoteWifiDataRepository,
+    private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
     private val wifiPropertyPresentationProvider: WifiPropertyPresentationProvider
 ) {
     operator fun invoke(context: Context): WifiPropertyRenderData {
@@ -23,7 +23,7 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
             wifiPropertyPresentationProvider(
                 enabledProperties = config.enabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
-                remoteWifiData = remoteWifiDataRepository.reconciledSnapshot(config.remoteDataConfig)
+                remoteNetworkData = remoteNetworkDataRepository.reconciledSnapshot(config.remoteDataConfig)
             )
         }
         d { "propertyPresentations=$propertyPresentations" }

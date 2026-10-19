@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.common.di.AppDefaultScope
-import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetActions
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -33,7 +33,7 @@ import slimber.log.e
  */
 @Singleton
 class RemoteDataWidgetObserver @Inject constructor(
-    private val remoteWifiDataRepository: RemoteWifiDataRepository,
+    private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
     private val widgetActions: WidgetActions,
     private val appWidgetManager: AppWidgetManager,
     @ApplicationContext private val context: Context,
@@ -48,7 +48,7 @@ class RemoteDataWidgetObserver @Inject constructor(
         initialized = true
         // UNDISPATCHED consumes StateFlow's baseline before callers can publish a new value.
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            remoteWifiDataRepository.data.drop(1).collect {
+            remoteNetworkDataRepository.data.drop(1).collect {
                 try {
                     if (appWidgetManager.appWidgetIds<WifiWidgetProvider>(context).isNotEmpty()) {
                         widgetActions.render()
