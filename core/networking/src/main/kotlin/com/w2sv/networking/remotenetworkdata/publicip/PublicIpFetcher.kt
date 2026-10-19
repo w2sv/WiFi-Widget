@@ -1,8 +1,8 @@
-package com.w2sv.networking.remotenetworkdata.public_ip
+package com.w2sv.networking.remotenetworkdata.publicip
 
 import com.w2sv.domain.networking.IpAddress
+import com.w2sv.networking.connectivity.toDomain
 import com.w2sv.networking.remotenetworkdata.fetchFromUrl
-import com.w2sv.networking.toDomain
 import java.net.InetAddress
 import javax.inject.Inject
 import kotlinx.coroutines.async
@@ -16,11 +16,7 @@ internal class PublicIpFetcher @Inject constructor(private val httpClient: OkHtt
     suspend fun fetch(versions: Set<IpAddress.Version>): Map<IpAddress.Version, Result<IpAddress>> =
         coroutineScope {
             versions
-                .map { version ->
-                    async {
-                        version to fetchAndMapOnSuccess(version)
-                    }
-                }
+                .map { version -> async { version to fetchAndMapOnSuccess(version) } }
                 .awaitAll()
                 .toMap()
         }

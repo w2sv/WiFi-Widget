@@ -1,4 +1,4 @@
-package com.w2sv.networking.remotenetworkdata.ip_api
+package com.w2sv.networking.remotenetworkdata.ipapi
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

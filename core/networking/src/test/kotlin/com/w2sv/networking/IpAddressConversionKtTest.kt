@@ -2,6 +2,8 @@ package com.w2sv.networking
 
 import android.net.LinkAddress
 import com.w2sv.domain.networking.IpAddress
+import com.w2sv.networking.connectivity.toDomain
+import com.w2sv.networking.connectivity.toIpAddress
 import io.mockk.every
 import io.mockk.mockk
 import java.net.Inet4Address

@@ -1,4 +1,4 @@
-package com.w2sv.networking.remotenetworkdata.ip_api
+package com.w2sv.networking.remotenetworkdata.ipapi
 
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.wifiproperty.settings.LocationParameter

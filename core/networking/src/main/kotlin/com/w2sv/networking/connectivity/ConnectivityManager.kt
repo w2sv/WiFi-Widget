@@ -1,4 +1,4 @@
-package com.w2sv.networking.extensions
+package com.w2sv.networking.connectivity
 
 import android.net.ConnectivityManager
 import android.net.LinkProperties

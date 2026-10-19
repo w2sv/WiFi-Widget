@@ -11,8 +11,8 @@ import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.settings.IpSetting
-import com.w2sv.networking.remotenetworkdata.ip_api.IpApiDataFetcher
-import com.w2sv.networking.remotenetworkdata.public_ip.PublicIpFetcher
+import com.w2sv.networking.remotenetworkdata.ipapi.IpApiDataFetcher
+import com.w2sv.networking.remotenetworkdata.publicip.PublicIpFetcher
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

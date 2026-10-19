@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyresolution
+package com.w2sv.networking.wifiproperty
 
 import com.w2sv.common.txt
 import com.w2sv.domain.networking.IpAddress

@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyresolution
+package com.w2sv.networking.wifiproperty
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
@@ -9,8 +9,8 @@ import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.coroutines.runCatchingCancellable
-import com.w2sv.networking.extensions.linkProperties
-import com.w2sv.networking.systemIpAddresses
+import com.w2sv.networking.connectivity.linkProperties
+import com.w2sv.networking.connectivity.systemIpAddresses
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers

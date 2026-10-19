@@ -11,9 +11,9 @@ import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.kotlinutils.makeIf
-import com.w2sv.networking.extensions.hasInternetCapability
-import com.w2sv.networking.remotenetworkdata.ip_api.IpApiDataFetcher
-import com.w2sv.networking.remotenetworkdata.public_ip.PublicIpFetcher
+import com.w2sv.networking.connectivity.hasInternetCapability
+import com.w2sv.networking.remotenetworkdata.ipapi.IpApiDataFetcher
+import com.w2sv.networking.remotenetworkdata.publicip.PublicIpFetcher
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.async

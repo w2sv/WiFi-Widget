@@ -1,8 +1,8 @@
 package com.w2sv.networking.remotenetworkdata
 
 import com.w2sv.domain.networking.IpAddress
-import com.w2sv.networking.remotenetworkdata.ip_api.IpApiDataFetcher
-import com.w2sv.networking.remotenetworkdata.public_ip.PublicIpFetcher
+import com.w2sv.networking.remotenetworkdata.ipapi.IpApiDataFetcher
+import com.w2sv.networking.remotenetworkdata.publicip.PublicIpFetcher
 import io.mockk.every
 import io.mockk.mockk
 import java.util.concurrent.CancellationException

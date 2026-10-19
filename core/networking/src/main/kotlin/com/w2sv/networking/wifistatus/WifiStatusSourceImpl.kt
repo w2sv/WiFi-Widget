@@ -11,10 +11,10 @@ import android.net.wifi.WifiManager
 import com.w2sv.common.utils.log
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
-import com.w2sv.networking.extensions.hasInternetCapability
-import com.w2sv.networking.extensions.hasWifiTransport
-import com.w2sv.networking.extensions.isAnyWifiConnected
-import com.w2sv.networking.extensions.isInternetValidated
+import com.w2sv.networking.connectivity.hasInternetCapability
+import com.w2sv.networking.connectivity.hasWifiTransport
+import com.w2sv.networking.connectivity.isAnyWifiConnected
+import com.w2sv.networking.connectivity.isInternetValidated
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
