@@ -1,7 +1,7 @@
 package com.w2sv.datastore.proto.mapping
 
 import com.w2sv.datastore.WidgetConfigProto
-import com.w2sv.datastore.proto.id_resolving.WifiPropertyProtoRegistry
+import com.w2sv.datastore.proto.registry.WifiPropertyProtoRegistry
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetUtility
 

@@ -1,7 +1,7 @@
 package com.w2sv.datastore.proto.mapping
 
 import com.w2sv.datastore.WifiPropertyConfigProto
-import com.w2sv.datastore.proto.id_resolving.WifiPropertySettingProtoRegistry
+import com.w2sv.datastore.proto.registry.WifiPropertySettingProtoRegistry
 import com.w2sv.domain.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.wifiproperty.settings.WifiPropertySetting
 

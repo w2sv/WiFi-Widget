@@ -1,4 +1,4 @@
-package com.w2sv.datastore.proto.id_resolving
+package com.w2sv.datastore.proto.registry
 
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.domain.wifiproperty.settings.LocationParameter
