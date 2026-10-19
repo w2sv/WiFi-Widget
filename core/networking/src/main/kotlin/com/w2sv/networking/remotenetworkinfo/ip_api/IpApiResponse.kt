@@ -1,7 +1,7 @@
 package com.w2sv.networking.remotenetworkinfo.ip_api
 
-import com.w2sv.domain.model.networking.IpApiData
-import com.w2sv.domain.model.wifiproperty.settings.LocationParameter
+import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.wifiproperty.settings.LocationParameter
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

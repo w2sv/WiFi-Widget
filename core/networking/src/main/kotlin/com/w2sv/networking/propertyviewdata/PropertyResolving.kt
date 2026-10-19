@@ -6,9 +6,9 @@ import android.os.Build
 import androidx.annotation.VisibleForTesting
 import com.w2sv.common.txt
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.wifiproperty.WifiProperty
-import com.w2sv.domain.model.wifiproperty.settings.IpSetting
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.settings.IpSetting
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyResolutionError
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

@@ -6,9 +6,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.w2sv.androidutils.os.dynamicColorsSupported
-import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.ThemeSettings
-import com.w2sv.domain.repository.PreferencesRepository
+import com.w2sv.domain.preferences.PreferencesRepository
+import com.w2sv.domain.preferences.Theme
+import com.w2sv.domain.preferences.ThemeSettings
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.map

@@ -14,7 +14,7 @@ import androidx.compose.ui.text.withStyle
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyResolutionError
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind

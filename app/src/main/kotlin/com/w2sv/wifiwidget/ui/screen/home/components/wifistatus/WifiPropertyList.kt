@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList

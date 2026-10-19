@@ -1,6 +1,6 @@
 package com.w2sv.networking.remotenetworkinfo.public_ip
 
-import com.w2sv.domain.model.networking.IpAddress
+import com.w2sv.domain.networking.IpAddress
 import com.w2sv.networking.remotenetworkinfo.fetchFromUrl
 import com.w2sv.networking.toDomain
 import java.net.InetAddress

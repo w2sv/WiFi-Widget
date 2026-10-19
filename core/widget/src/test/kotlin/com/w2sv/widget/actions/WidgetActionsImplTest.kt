@@ -2,8 +2,8 @@ package com.w2sv.widget.actions
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import io.mockk.every

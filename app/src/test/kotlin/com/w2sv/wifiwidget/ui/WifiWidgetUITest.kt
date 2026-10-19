@@ -6,7 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.ThemeSettings
+import com.w2sv.domain.preferences.ThemeSettings
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import io.mockk.every

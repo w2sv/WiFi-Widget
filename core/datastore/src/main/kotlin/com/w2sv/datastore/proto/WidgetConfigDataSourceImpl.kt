@@ -5,8 +5,8 @@ import com.w2sv.common.di.AppDefaultScope
 import com.w2sv.datastore.WidgetConfigProto
 import com.w2sv.datastore.proto.mapping.toExternal
 import com.w2sv.datastore.proto.mapping.toProto
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.repository.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope

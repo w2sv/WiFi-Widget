@@ -14,8 +14,8 @@ import androidx.test.core.app.ApplicationProvider
 import com.w2sv.datastore.WidgetColoringProto
 import com.w2sv.datastore.proto.mapping.toExternal
 import com.w2sv.datastore.proto.mapping.toProto
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.wifiproperty.WifiProperty
 import io.mockk.every
 import io.mockk.mockk
 import java.util.UUID

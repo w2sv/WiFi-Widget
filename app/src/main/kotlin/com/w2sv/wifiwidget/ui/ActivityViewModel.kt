@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.domain.model.ThemeSettings
-import com.w2sv.domain.repository.PreferencesRepository
+import com.w2sv.domain.preferences.PreferencesRepository
+import com.w2sv.domain.preferences.ThemeSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted

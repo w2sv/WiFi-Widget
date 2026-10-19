@@ -1,9 +1,9 @@
 package com.w2sv.networking.remotenetworkinfo
 
-import com.w2sv.domain.model.networking.IpApiData
-import com.w2sv.domain.model.networking.RemoteWifiData
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.wifiproperty.WifiProperty
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -2,16 +2,16 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
 import com.w2sv.common.utils.logOnCancellation
-import com.w2sv.domain.model.networking.RemoteWifiData
-import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.WifiStatus
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.kotlinutils.makeIf
-import com.w2sv.networking.remotenetworkinfo.RemoteDataSynchronizer
 import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
+import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope

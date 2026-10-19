@@ -2,11 +2,11 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.repository.WidgetConfigDataSource
-import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.reversiblestate.ReversibleStateFlow
-import com.w2sv.widget.actions.WidgetActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow

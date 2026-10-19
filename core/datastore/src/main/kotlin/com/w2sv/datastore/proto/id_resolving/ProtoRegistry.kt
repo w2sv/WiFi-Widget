@@ -1,6 +1,6 @@
 package com.w2sv.datastore.proto.id_resolving
 
-import com.w2sv.domain.model.wifiproperty.WithProtoId
+import com.w2sv.domain.wifiproperty.WithProtoId
 
 /**
  * Generic registry for resolving objects implementing [WithProtoId] from their proto IDs.

@@ -1,6 +1,6 @@
 package com.w2sv.datastore.proto.id_resolving
 
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiProperty
 
 /**
  * Central lookup for resolving [WifiProperty] instances from their proto IDs.

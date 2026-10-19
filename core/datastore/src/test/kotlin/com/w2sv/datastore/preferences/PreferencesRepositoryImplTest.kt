@@ -4,8 +4,8 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
-import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.ThemeSettings
+import com.w2sv.domain.preferences.Theme
+import com.w2sv.domain.preferences.ThemeSettings
 import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest

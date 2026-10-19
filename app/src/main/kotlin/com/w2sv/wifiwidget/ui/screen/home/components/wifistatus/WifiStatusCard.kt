@@ -22,9 +22,9 @@ import com.w2sv.common.utils.openWifiSettingsIntent
 import com.w2sv.composed.ui.platform.isPortraitModeActive
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.networking.WifiStatus
+import com.w2sv.domain.wifiproperty.viewdata.SubscriptableText
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState

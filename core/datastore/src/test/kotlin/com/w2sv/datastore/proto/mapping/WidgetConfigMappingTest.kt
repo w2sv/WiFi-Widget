@@ -1,10 +1,10 @@
 package com.w2sv.datastore.proto.mapping
 
-import com.w2sv.domain.model.widget.FontSize
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.widget.WidgetUtility
-import com.w2sv.domain.model.wifiproperty.WifiProperty
-import com.w2sv.domain.model.wifiproperty.settings.IpSetting
+import com.w2sv.domain.widget.FontSize
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetUtility
+import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.copy
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Assert.assertEquals

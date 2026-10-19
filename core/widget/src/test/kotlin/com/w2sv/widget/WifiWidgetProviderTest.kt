@@ -4,9 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
 import androidx.test.core.app.ApplicationProvider
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import com.w2sv.widget.ui.container.WidgetRenderer
 import io.mockk.every

@@ -7,7 +7,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.w2sv.domain.model.widget.WidgetRefreshing
+import com.w2sv.domain.widget.WidgetRefreshing
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

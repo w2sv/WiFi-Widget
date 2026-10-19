@@ -5,11 +5,11 @@ import android.os.PowerManager
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.w2sv.domain.model.networking.RemoteRefreshResult
-import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.domain.repository.WidgetConfigSource
-import com.w2sv.networking.wifistatus.WifiStatusSource
-import com.w2sv.widget.actions.WidgetActions
+import com.w2sv.domain.networking.RemoteRefreshResult
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.WifiStatusSource
+import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetConfigSource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import slimber.log.d

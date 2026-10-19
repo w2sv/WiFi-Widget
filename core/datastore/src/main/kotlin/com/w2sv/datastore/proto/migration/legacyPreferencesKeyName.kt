@@ -1,6 +1,6 @@
 package com.w2sv.datastore.proto.migration
 
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiProperty
 
 internal val WifiProperty.legacyPreferencesKeyName: String
     get() = when (this) {

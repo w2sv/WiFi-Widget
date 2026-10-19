@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 import androidx.annotation.ColorInt
 import androidx.annotation.StringRes
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.widget.WidgetColoringStrategy
+import com.w2sv.domain.widget.WidgetColoringStrategy
 
 operator fun WidgetColoringStrategy.Custom.get(color: WidgetColor): Int =
     when (color) {

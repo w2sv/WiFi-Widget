@@ -4,7 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.componentName
-import com.w2sv.domain.model.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext

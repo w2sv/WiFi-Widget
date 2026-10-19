@@ -1,8 +1,8 @@
 package com.w2sv.datastore.proto
 
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.repository.WidgetConfigDataSource
-import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetConfigSource
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking

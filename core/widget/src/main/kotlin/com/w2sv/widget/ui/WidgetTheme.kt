@@ -8,7 +8,7 @@ import androidx.core.content.res.use
 import com.google.android.material.R
 import com.google.android.material.color.DynamicColors
 import com.w2sv.androidutils.res.isNightModeActiveCompat
-import com.w2sv.domain.model.widget.WidgetColors
+import com.w2sv.domain.widget.WidgetColors
 
 internal enum class WidgetTheme(@StyleRes private val dynamicThemeRes: Int, private val makePresetColors: Context.() -> WidgetColors) {
     Light(

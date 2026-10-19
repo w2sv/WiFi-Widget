@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import com.w2sv.composed.animation.ShakeController
-import com.w2sv.domain.model.Labelled
+import com.w2sv.domain.WithLabel
 import kotlinx.collections.immutable.ImmutableList
 
 sealed interface ConfigItem {
@@ -15,7 +15,7 @@ sealed interface ConfigItem {
     data class Custom(val content: @Composable () -> Unit) : ConfigItem
 
     sealed interface Actionable : ConfigItem {
-        val property: Labelled
+        val property: WithLabel
         val show: () -> Boolean
         val shakeController: ShakeController?
         val contentBeneath: ContentBeneath?
@@ -29,7 +29,7 @@ sealed interface ConfigItem {
     }
 
     data class WithCustomTrailing(
-        override val property: Labelled,
+        override val property: WithLabel,
         override val show: () -> Boolean = { true },
         override val shakeController: ShakeController? = null,
         override val contentBeneath: ContentBeneath? = null,
@@ -39,7 +39,7 @@ sealed interface ConfigItem {
 
     @Immutable
     data class Checkable(
-        override val property: Labelled,
+        override val property: WithLabel,
         override val show: () -> Boolean = { true },
         override val shakeController: ShakeController? = null,
         override val contentBeneath: ContentBeneath? = null,

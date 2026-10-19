@@ -6,7 +6,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
-import com.w2sv.domain.model.wifiproperty.viewdata.SubscriptableText
+import com.w2sv.domain.wifiproperty.viewdata.SubscriptableText
 
 fun SubscriptableText.toAnnotatedString(subscriptFontSize: TextUnit): AnnotatedString =
     buildAnnotatedString {

@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.location
 
 import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
-import com.w2sv.domain.repository.PermissionRepository
+import com.w2sv.domain.permission.PermissionRepository
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.TestCase.assertTrue

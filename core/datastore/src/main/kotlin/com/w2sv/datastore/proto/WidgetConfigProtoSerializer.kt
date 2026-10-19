@@ -5,7 +5,7 @@ import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
 import com.w2sv.datastore.WidgetConfigProto
 import com.w2sv.datastore.proto.mapping.toProto
-import com.w2sv.domain.model.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfig
 import java.io.InputStream
 import java.io.OutputStream
 

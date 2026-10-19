@@ -1,9 +1,9 @@
 package com.w2sv.widget.ui.properties
 
 import android.content.Context
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.domain.repository.WidgetConfigSource
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import com.w2sv.widget.ui.properties.renderdata.WifiPropertyRenderData
 import com.w2sv.widget.ui.properties.renderdata.WifiPropertyRenderDataProvider

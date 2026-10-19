@@ -1,10 +1,10 @@
 package com.w2sv.networking.di
 
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewDataProvider
-import com.w2sv.domain.repository.RemoteWifiDataRepository
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.networking.WifiStatusSource
+import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
 import com.w2sv.networking.propertyviewdata.WifiPropertyViewDataProviderImpl
 import com.w2sv.networking.remotenetworkinfo.RemoteWifiDataRepositoryImpl
-import com.w2sv.networking.wifistatus.WifiStatusSource
 import com.w2sv.networking.wifistatus.WifiStatusSourceImpl
 import dagger.Binds
 import dagger.Module

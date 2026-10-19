@@ -2,10 +2,10 @@ package com.w2sv.widget
 
 import android.appwidget.AppWidgetManager
 import androidx.test.core.app.ApplicationProvider
-import com.w2sv.domain.model.networking.IpApiData
-import com.w2sv.domain.model.networking.RemoteWifiData
-import com.w2sv.domain.repository.RemoteWifiDataRepository
-import com.w2sv.widget.actions.WidgetActions
+import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.networking.RemoteWifiDataRepository
+import com.w2sv.domain.widget.WidgetActions
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

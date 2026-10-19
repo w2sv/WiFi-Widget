@@ -1,6 +1,6 @@
 package com.w2sv.networking.remotenetworkinfo
 
-import com.w2sv.domain.model.networking.IpAddress
+import com.w2sv.domain.networking.IpAddress
 import com.w2sv.networking.remotenetworkinfo.ip_api.IpApiDataFetcher
 import com.w2sv.networking.remotenetworkinfo.public_ip.PublicIpFetcher
 import io.mockk.every

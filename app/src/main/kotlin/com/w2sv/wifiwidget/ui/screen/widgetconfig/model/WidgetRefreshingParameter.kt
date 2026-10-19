@@ -2,9 +2,9 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 
 import androidx.annotation.StringRes
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.Labelled
+import com.w2sv.domain.WithLabel
 
-enum class WidgetRefreshingParameter(@StringRes override val labelRes: Int) : Labelled {
+enum class WidgetRefreshingParameter(@StringRes override val labelRes: Int) : WithLabel {
     RefreshPeriodically(R.string.refresh_periodically),
     Interval(R.string.interval),
     RefreshOnLowBattery(R.string.refresh_on_low_battery)

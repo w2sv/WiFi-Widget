@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import androidx.compose.runtime.Immutable
-import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.networking.WifiStatus
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
 
 @Immutable
 sealed class WifiState(open val status: WifiStatus) {

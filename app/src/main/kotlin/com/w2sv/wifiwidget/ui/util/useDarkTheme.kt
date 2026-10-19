@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.util
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import com.w2sv.domain.model.Theme
+import com.w2sv.domain.preferences.Theme
 
 @Composable
 @ReadOnlyComposable

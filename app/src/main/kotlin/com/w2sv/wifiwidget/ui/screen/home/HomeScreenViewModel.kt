@@ -3,9 +3,8 @@ package com.w2sv.wifiwidget.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.core.common.R
-import com.w2sv.domain.repository.WidgetConfigDataSource
-import com.w2sv.networking.remotenetworkinfo.RemoteDataSynchronizer
-import com.w2sv.widget.actions.WidgetActions
+import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
@@ -13,6 +12,7 @@ import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
+import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

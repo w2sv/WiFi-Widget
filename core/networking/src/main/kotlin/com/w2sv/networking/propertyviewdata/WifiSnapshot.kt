@@ -3,8 +3,8 @@ package com.w2sv.networking.propertyviewdata
 import android.net.DhcpInfo
 import android.net.LinkProperties
 import android.net.wifi.WifiInfo
-import com.w2sv.domain.model.networking.IpAddress
-import com.w2sv.domain.model.networking.IpApiData
+import com.w2sv.domain.networking.IpAddress
+import com.w2sv.domain.networking.IpApiData
 
 internal data class WifiSnapshot(
     val connectionInfo: WifiInfo,

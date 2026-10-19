@@ -8,12 +8,12 @@ import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.core.common.R as CommonR
 import com.w2sv.core.widget.R
-import com.w2sv.domain.model.networking.WifiStatus
-import com.w2sv.domain.model.widget.FontSize
-import com.w2sv.domain.model.widget.WidgetColors
-import com.w2sv.domain.model.widget.WidgetConfig
-import com.w2sv.domain.model.widget.WidgetUtility
-import com.w2sv.networking.wifistatus.WifiStatusSource
+import com.w2sv.domain.networking.WifiStatus
+import com.w2sv.domain.networking.WifiStatusSource
+import com.w2sv.domain.widget.FontSize
+import com.w2sv.domain.widget.WidgetColors
+import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.widget.WidgetUtility
 import com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity
 import com.w2sv.widget.ui.properties.WifiPropertyViewsService
 import com.w2sv.widget.utils.setButton

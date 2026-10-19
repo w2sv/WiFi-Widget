@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.location
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.domain.repository.PermissionRepository
+import com.w2sv.domain.permission.PermissionRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

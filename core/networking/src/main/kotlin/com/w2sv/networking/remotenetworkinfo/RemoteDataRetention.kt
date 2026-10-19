@@ -1,9 +1,9 @@
 package com.w2sv.networking.remotenetworkinfo
 
-import com.w2sv.domain.model.networking.IpApiData
-import com.w2sv.domain.model.networking.RemoteDataConfig
-import com.w2sv.domain.model.networking.RemoteWifiData
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.networking.IpApiData
+import com.w2sv.domain.networking.RemoteDataConfig
+import com.w2sv.domain.networking.RemoteWifiData
+import com.w2sv.domain.wifiproperty.WifiProperty
 
 /** Retains only values applicable to the current requirements on the same network. */
 internal fun RemoteDataConfig.retainApplicable(data: RemoteWifiData, previous: RemoteDataConfig?): RemoteWifiData =

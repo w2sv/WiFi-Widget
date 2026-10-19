@@ -1,6 +1,6 @@
 package com.w2sv.widget.di
 
-import com.w2sv.widget.actions.WidgetActions
+import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.widget.actions.WidgetActionsImpl
 import dagger.Binds
 import dagger.Module

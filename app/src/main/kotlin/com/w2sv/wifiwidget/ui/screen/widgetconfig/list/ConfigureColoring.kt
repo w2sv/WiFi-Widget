@@ -22,8 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.widget.WidgetColoring
-import com.w2sv.domain.model.widget.WidgetColoringStrategy
+import com.w2sv.domain.widget.WidgetColoring
+import com.w2sv.domain.widget.WidgetColoringStrategy
 import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
 import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard

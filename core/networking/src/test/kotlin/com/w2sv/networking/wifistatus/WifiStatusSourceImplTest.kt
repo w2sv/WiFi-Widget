@@ -10,7 +10,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import app.cash.turbine.test
-import com.w2sv.domain.model.networking.WifiStatus
+import com.w2sv.domain.networking.WifiStatus
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk

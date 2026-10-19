@@ -1,10 +1,10 @@
 package com.w2sv.widget.ui
 
 import android.content.Context
-import com.w2sv.domain.model.Theme
-import com.w2sv.domain.model.widget.WidgetColoring
-import com.w2sv.domain.model.widget.WidgetColoringStrategy
-import com.w2sv.domain.model.widget.WidgetColors
+import com.w2sv.domain.preferences.Theme
+import com.w2sv.domain.widget.WidgetColoring
+import com.w2sv.domain.widget.WidgetColoringStrategy
+import com.w2sv.domain.widget.WidgetColors
 
 internal fun WidgetColoring.resolve(context: Context): WidgetColors =
     when (val style = appliedStrategy) {

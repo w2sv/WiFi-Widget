@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.w2sv.core.common.R
-import com.w2sv.domain.model.widget.WidgetUtility
+import com.w2sv.domain.widget.WidgetUtility
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckableList
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem

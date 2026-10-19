@@ -12,7 +12,7 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.w2sv.domain.model.widget.WidgetRefreshing
+import com.w2sv.domain.widget.WidgetRefreshing
 import java.time.Duration
 import javax.inject.Inject
 import kotlin.time.toJavaDuration

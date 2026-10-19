@@ -6,9 +6,9 @@ import android.view.View
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
-import com.w2sv.domain.model.widget.FontSize
-import com.w2sv.domain.model.widget.WidgetColors
-import com.w2sv.domain.model.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.widget.FontSize
+import com.w2sv.domain.widget.WidgetColors
+import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity
 import com.w2sv.widget.utils.setTextView
 

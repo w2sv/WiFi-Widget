@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.location
 
 import androidx.compose.runtime.Immutable
-import com.w2sv.domain.model.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiProperty
 
 @Immutable
 sealed interface OnLocationAccessGranted {
