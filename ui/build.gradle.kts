@@ -33,7 +33,6 @@ composeCompiler {
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.domain)
-    implementation(projects.core.widget)
 
     implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.colorpicker)

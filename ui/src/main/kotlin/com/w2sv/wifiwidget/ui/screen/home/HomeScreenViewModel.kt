@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.core.common.R
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigDataSource
-import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
@@ -17,7 +16,6 @@ import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
@@ -28,7 +26,6 @@ import kotlinx.coroutines.launch
 class HomeScreenViewModel @Inject constructor(
     private val widgetConfigDataSource: WidgetConfigDataSource,
     private val widgetActions: WidgetActions,
-    @WidgetPinSuccessFlow val widgetPinSuccessFlow: SharedFlow<Unit>,
     private val remoteDataSynchronizer: RemoteDataSynchronizer,
     wifiStateProvider: WifiStateProvider
 ) : ViewModel(),
@@ -36,6 +33,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _snackbarBuilder = MutableSharedFlow<SnackbarBuilder>()
     val snackbarBuilder = _snackbarBuilder.asSharedFlow()
+    val widgetPinSuccessFlow = widgetActions.pinSuccesses
 
     private val _isAnyLocationAccessRequiringPropertyEnabled = widgetConfigDataSource.config
         .map { it.isAnyLocationAccessRequiringPropertyEnabled }

@@ -4,7 +4,7 @@ import javax.inject.Qualifier
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
-annotation class WidgetPinSuccessFlow
+internal annotation class WidgetPinSuccessFlow
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)

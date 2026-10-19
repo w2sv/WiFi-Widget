@@ -9,6 +9,7 @@ import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -24,7 +25,7 @@ class WidgetActionsImplTest {
         every { getAppWidgetIds(any()) } returns intArrayOf(1)
     }
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
-    private val actions = WidgetActionsImpl(context, manager, scheduler)
+    private val actions = WidgetActionsImpl(context, manager, scheduler, MutableSharedFlow())
     private val previous = WidgetConfig.default
 
     @Test fun `refresh setting changes apply periodic policy and render without refresh`() {

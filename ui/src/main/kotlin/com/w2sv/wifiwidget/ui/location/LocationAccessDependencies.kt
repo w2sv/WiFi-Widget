@@ -4,9 +4,9 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.domain.permission.PermissionRepository
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /** Provides location status and persisted permission histories to the UI. */
 class LocationAccessDependencies @Inject constructor(
