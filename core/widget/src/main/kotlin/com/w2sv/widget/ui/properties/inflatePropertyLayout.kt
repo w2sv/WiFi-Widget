@@ -8,19 +8,18 @@ import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.widget.FontSize
 import com.w2sv.domain.widget.WidgetColors
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
-import com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.widget.utils.setTextView
 
 internal fun RemoteViews.inflatePropertyLayout(
-    viewData: WifiPropertyViewData,
+    presentation: WifiPropertyPresentation,
     widgetColors: WidgetColors,
     fontSize: FontSize
 ) {
     // Label TextView
     setTextView(
         viewId = R.id.property_label_tv,
-        text = viewData.label.toSpannedString(0.8f),
+        text = presentation.label.toSpannedString(0.8f),
         size = fontSize.value,
         color = widgetColors.primary
     )
@@ -28,7 +27,7 @@ internal fun RemoteViews.inflatePropertyLayout(
     // Value TextView
     setTextView(
         viewId = R.id.property_value_tv,
-        text = viewData.value,
+        text = presentation.value,
         size = fontSize.value,
         color = widgetColors.secondary
     )
@@ -37,14 +36,14 @@ internal fun RemoteViews.inflatePropertyLayout(
     setOnClickFillInIntent(
         R.id.wifi_property_layout,
         CopyPropertyToClipboardActivity.Args.getIntent(
-            propertyLabel = viewData.label.text,
-            propertyValue = viewData.value
+            propertyLabel = presentation.label.text,
+            propertyValue = presentation.value
         )
     )
 
     // IP sub property row
-    if (viewData.subValues.isNotEmpty()) {
-        displayIpSubValues(viewData.subValues, fontSize, widgetColors)
+    if (presentation.subValues.isNotEmpty()) {
+        displayIpSubValues(presentation.subValues, fontSize, widgetColors)
     } else {
         setViewVisibility(R.id.ip_sub_property_row, View.GONE)
     }

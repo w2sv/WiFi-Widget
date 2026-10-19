@@ -6,7 +6,7 @@ import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.widget.WidgetAppearance
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.widget.WifiPropertyValueAlignment
-import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.widget.ui.resolve
 import javax.inject.Inject
 import kotlinx.coroutines.runBlocking
@@ -15,21 +15,21 @@ import slimber.log.d
 internal class WifiPropertyRenderDataProvider @Inject constructor(
     private val widgetConfigSource: WidgetConfigSource,
     private val remoteWifiDataRepository: RemoteWifiDataRepository,
-    private val wifiPropertyViewDataProvider: WifiPropertyViewDataProvider
+    private val wifiPropertyPresentationProvider: WifiPropertyPresentationProvider
 ) {
     operator fun invoke(context: Context): WifiPropertyRenderData {
         val config = widgetConfigSource.blockingSnapshot()
-        val viewData = runBlocking {
-            wifiPropertyViewDataProvider(
+        val propertyPresentations = runBlocking {
+            wifiPropertyPresentationProvider(
                 enabledProperties = config.enabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
                 remoteWifiData = remoteWifiDataRepository.reconciledSnapshot(config.remoteDataConfig)
             )
         }
-        d { "propertyViewData=$viewData" }
+        d { "propertyPresentations=$propertyPresentations" }
 
         return WifiPropertyRenderData(
-            viewData = viewData,
+            presentations = propertyPresentations,
             colors = config.appearance.coloring.resolve(context),
             fontSize = config.appearance.fontSize,
             layout = config.appearance.propertyLayout

@@ -23,8 +23,8 @@ import com.w2sv.composed.ui.platform.isPortraitModeActive
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.common.R
 import com.w2sv.domain.networking.WifiStatus
-import com.w2sv.domain.wifiproperty.viewdata.SubscriptableText
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.wifiwidget.ui.designsystem.ElevatedIconHeaderCard
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
@@ -43,7 +43,7 @@ fun WifiStatusCard(wifiState: WifiState, modifier: Modifier = Modifier) {
         modifier = modifier,
         content = {
             WifiStatusDisplay(wifiState.status)
-            OptionalWifiPropertyList(wifiState.asConnectedOrNull?.propertyViewData.orEmpty().toImmutableList())
+            OptionalWifiPropertyList(wifiState.asConnectedOrNull?.propertyPresentations.orEmpty().toImmutableList())
         }
     )
 }
@@ -56,8 +56,8 @@ private fun Prev() {
             wifiState = WifiState.Connected(
                 WifiStatus.Connected,
                 listOf(
-                    WifiPropertyViewData(SubscriptableText("Property1"), value = "Value1"),
-                    WifiPropertyViewData(SubscriptableText("Property2"), value = "Value2")
+                    WifiPropertyPresentation(SubscriptableText("Property1"), value = "Value1"),
+                    WifiPropertyPresentation(SubscriptableText("Property2"), value = "Value2")
                 )
             )
         )
@@ -89,13 +89,13 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun OptionalWifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
+private fun OptionalWifiPropertyList(presentations: ImmutableList<WifiPropertyPresentation>, modifier: Modifier = Modifier) {
     VerticalAnimatedVisibility(
-        visible = viewData.isNotEmpty(),
+        visible = presentations.isNotEmpty(),
         modifier = modifier
     ) {
         WifiPropertyList(
-            viewData = viewData,
+            presentations = presentations,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)

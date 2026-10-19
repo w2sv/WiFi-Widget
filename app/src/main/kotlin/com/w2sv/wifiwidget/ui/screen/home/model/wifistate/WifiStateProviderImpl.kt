@@ -7,7 +7,7 @@ import com.w2sv.domain.networking.RemoteWifiDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
-import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
@@ -40,7 +40,7 @@ import slimber.log.d
 class WifiStateProviderImpl @Inject constructor(
     remoteDataSynchronizer: RemoteDataSynchronizer,
     widgetConfigSource: WidgetConfigSource,
-    wifiPropertyViewDataProvider: WifiPropertyViewDataProvider,
+    wifiPropertyPresentationProvider: WifiPropertyPresentationProvider,
     remoteWifiDataRepository: RemoteWifiDataRepository,
     locationEnabledProvider: LocationEnabledProvider,
     private val scope: CoroutineScope
@@ -80,7 +80,7 @@ class WifiStateProviderImpl @Inject constructor(
                     d { "Computing connected Wi-Fi state for ${inputs.status} ${inputs.remoteData} ${inputs.config}" }
                     WifiState.Connected(
                         status = inputs.status,
-                        propertyViewData = wifiPropertyViewDataProvider(
+                        propertyPresentations = wifiPropertyPresentationProvider(
                             enabledProperties = inputs.config.enabledProperties,
                             enabledIpSettings = inputs.config::enabledIpSettings,
                             remoteWifiData = inputs.remoteData

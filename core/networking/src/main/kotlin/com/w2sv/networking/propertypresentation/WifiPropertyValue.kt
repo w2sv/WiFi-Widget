@@ -1,7 +1,7 @@
-package com.w2sv.networking.propertyviewdata
+package com.w2sv.networking.propertypresentation
 
 import com.w2sv.common.Text
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyResolutionError
 
 internal data class WifiPropertyValue(
     val value: Text,

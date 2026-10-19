@@ -25,28 +25,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
 import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
-fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Modifier = Modifier) {
+fun WifiPropertyList(presentations: ImmutableList<WifiPropertyPresentation>, modifier: Modifier = Modifier) {
     val onClickScope = rememberPropertyOnClickScope()
-    val lastIndex = viewData.lastIndex
+    val lastIndex = presentations.lastIndex
 
     SecondLevelElevatedCard(modifier = modifier) {
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(vertical = 6.dp)
         ) {
-            itemsIndexed(viewData) { i, viewData ->
+            itemsIndexed(presentations) { i, presentation ->
                 val scope = rememberCoroutineScope()
-                val renderedLabel = remember(viewData) {
-                    viewData.label.toAnnotatedString(12.sp)
+                val renderedLabel = remember(presentation) {
+                    presentation.label.toAnnotatedString(12.sp)
                 }
                 PropertyDisplay(
-                    viewData = viewData,
+                    presentation = presentation,
                     label = renderedLabel,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -56,8 +56,8 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
                                 onPropertyClick(
                                     scope = scope,
                                     label = renderedLabel,
-                                    value = viewData.value,
-                                    resolutionError = viewData.resolutionError
+                                    value = presentation.value,
+                                    resolutionError = presentation.resolutionError
                                 )
                             }
                         }
@@ -78,7 +78,7 @@ fun WifiPropertyList(viewData: ImmutableList<WifiPropertyViewData>, modifier: Mo
 
 @Composable
 private fun PropertyDisplay(
-    viewData: WifiPropertyViewData,
+    presentation: WifiPropertyPresentation,
     label: AnnotatedString,
     modifier: Modifier = Modifier
 ) {
@@ -91,11 +91,11 @@ private fun PropertyDisplay(
         }
         Column {
             Text(
-                text = viewData.value,
-                color = Color.Unspecified.takeUnless { viewData.resolutionError != null } ?: MaterialTheme.colorScheme.error
+                text = presentation.value,
+                color = Color.Unspecified.takeUnless { presentation.resolutionError != null } ?: MaterialTheme.colorScheme.error
             )
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
-                viewData.subValues.forEach {
+                presentation.subValues.forEach {
                     Text(
                         text = it,
                         fontSize = 13.sp,

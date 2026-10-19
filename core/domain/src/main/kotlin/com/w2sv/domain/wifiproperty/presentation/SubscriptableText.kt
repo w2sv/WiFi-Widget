@@ -1,4 +1,4 @@
-package com.w2sv.domain.wifiproperty.viewdata
+package com.w2sv.domain.wifiproperty.presentation
 
 import android.text.SpannedString
 import androidx.core.text.buildSpannedString

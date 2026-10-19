@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import androidx.compose.runtime.Immutable
 import com.w2sv.domain.networking.WifiStatus
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 
 @Immutable
 sealed class WifiState(open val status: WifiStatus) {
@@ -11,5 +11,5 @@ sealed class WifiState(open val status: WifiStatus) {
 
     data object Disabled : WifiState(WifiStatus.Disabled)
     data object Disconnected : WifiState(WifiStatus.NotConnected)
-    data class Connected(override val status: WifiStatus, val propertyViewData: List<WifiPropertyViewData>) : WifiState(status)
+    data class Connected(override val status: WifiStatus, val propertyPresentations: List<WifiPropertyPresentation>) : WifiState(status)
 }

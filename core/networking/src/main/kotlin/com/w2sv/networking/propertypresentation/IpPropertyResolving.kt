@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyviewdata
+package com.w2sv.networking.propertypresentation
 
 import com.w2sv.common.txt
 import com.w2sv.domain.networking.IpAddress

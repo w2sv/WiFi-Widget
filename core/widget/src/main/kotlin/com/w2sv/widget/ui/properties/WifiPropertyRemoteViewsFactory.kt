@@ -43,13 +43,13 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
     }
 
     override fun getCount(): Int =
-        data.viewData.size
+        data.presentations.size
 
     override fun getViewAt(position: Int): RemoteViews =
         remoteViews(context, data.layout) {
-            val viewData = data.viewData.getOrNull(position) ?: return@remoteViews
+            val presentation = data.presentations.getOrNull(position) ?: return@remoteViews
             inflatePropertyLayout(
-                viewData = viewData,
+                presentation = presentation,
                 widgetColors = data.colors,
                 fontSize = data.fontSize
             )
@@ -64,7 +64,7 @@ internal class WifiPropertyRemoteViewsFactory @Inject constructor(
         2 // Because of the 2 property layouts; If set to 1, switching to the other layout does not work
 
     override fun getItemId(position: Int): Long =
-        data.viewData.getOrNull(position)?.hashCode()?.toLong() ?: -1L
+        data.presentations.getOrNull(position)?.hashCode()?.toLong() ?: -1L
 
     override fun hasStableIds(): Boolean =
         true

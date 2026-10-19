@@ -1,9 +1,9 @@
-package com.w2sv.networking.propertyviewdata
+package com.w2sv.networking.propertypresentation
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class WifiPropertyViewDataProviderImplTest {
+class WifiPropertyPresentationProviderImplTest {
 
     @Test
     fun textualIPv4Representation() {

@@ -8,9 +8,9 @@ import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
-import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
-import com.w2sv.domain.wifiproperty.viewdata.SubscriptableText
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
+import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.ReconciledWifiInputs
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
@@ -42,7 +42,7 @@ class WifiStateProviderImplTest {
     private val synchronizer = mockk<RemoteDataSynchronizer> { every { inputs } returns this@WifiStateProviderImplTest.inputs }
     private val repository = mockk<RemoteWifiDataRepository> { every { data } returns remoteData }
     private val configSource = mockk<WidgetConfigSource> { every { flow } returns config }
-    private val propertyProvider = mockk<WifiPropertyViewDataProvider>(relaxed = true)
+    private val propertyProvider = mockk<WifiPropertyPresentationProvider>(relaxed = true)
     private val locationProvider = mockk<LocationEnabledProvider> { every { isEnabled } returns locationEnabled }
 
     private fun TestScope.provider() =
@@ -59,7 +59,7 @@ class WifiStateProviderImplTest {
         runTest {
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
                 firstArg<List<WifiProperty>>().map { property ->
-                    WifiPropertyViewData(SubscriptableText(property.toString()), property.toString())
+                    WifiPropertyPresentation(SubscriptableText(property.toString()), property.toString())
                 }
             }
             val provider = provider()
@@ -68,7 +68,7 @@ class WifiStateProviderImplTest {
                 inputs.emit(ReconciledWifiInputs(Connected, config.value.remoteDataConfig))
                 assertEquals(
                     config.value.enabledProperties.map(WifiProperty::toString),
-                    awaitItem().asConnectedOrNull!!.propertyViewData.map {
+                    awaitItem().asConnectedOrNull!!.propertyPresentations.map {
                         it.value
                     }
                 )
@@ -79,7 +79,7 @@ class WifiStateProviderImplTest {
                 )
                 assertEquals(
                     config.value.enabledProperties.map(WifiProperty::toString),
-                    awaitItem().asConnectedOrNull!!.propertyViewData.map {
+                    awaitItem().asConnectedOrNull!!.propertyPresentations.map {
                         it.value
                     }
                 )
@@ -89,7 +89,7 @@ class WifiStateProviderImplTest {
     @Test fun `local property change updates presentation without synchronized inputs`() =
         runTest {
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
-                listOf(WifiPropertyViewData(SubscriptableText("count"), firstArg<List<WifiProperty>>().size.toString()))
+                listOf(WifiPropertyPresentation(SubscriptableText("count"), firstArg<List<WifiProperty>>().size.toString()))
             }
             val provider = provider()
             provider.wifiState.test {
@@ -99,7 +99,7 @@ class WifiStateProviderImplTest {
                 config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.SSID, true)
                 assertEquals(
                     config.value.enabledProperties.size.toString(),
-                    awaitItem().asConnectedOrNull!!.propertyViewData.single().value
+                    awaitItem().asConnectedOrNull!!.propertyPresentations.single().value
                 )
             }
         }
@@ -107,7 +107,7 @@ class WifiStateProviderImplTest {
     @Test fun `remote requirements wait for reconciliation even when data changes`() =
         runTest {
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
-                listOf(WifiPropertyViewData(SubscriptableText("order"), firstArg<List<WifiProperty>>().joinToString()))
+                listOf(WifiPropertyPresentation(SubscriptableText("order"), firstArg<List<WifiProperty>>().joinToString()))
             }
             val provider = provider()
             provider.wifiState.test {
@@ -126,7 +126,10 @@ class WifiStateProviderImplTest {
                 assertNotEquals(enabled, config.value.enabledProperties)
                 expectNoEvents()
                 inputs.emit(ReconciledWifiInputs(Connected, changed.remoteDataConfig))
-                assertEquals(config.value.enabledProperties.joinToString(), awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals(
+                    config.value.enabledProperties.joinToString(),
+                    awaitItem().asConnectedOrNull!!.propertyPresentations.single().value
+                )
             }
         }
 
@@ -150,7 +153,7 @@ class WifiStateProviderImplTest {
         runTest {
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
                 listOf(
-                    WifiPropertyViewData(
+                    WifiPropertyPresentation(
                         SubscriptableText("value"),
                         thirdArg<RemoteWifiData>().ipApiData?.isp.orEmpty() + firstArg<List<WifiProperty>>().size
                     )
@@ -160,16 +163,16 @@ class WifiStateProviderImplTest {
             provider.wifiState.test {
                 awaitItem()
                 inputs.emit(ReconciledWifiInputs(Connected, WidgetConfig.default.remoteDataConfig))
-                val initial = awaitItem().asConnectedOrNull!!.propertyViewData.single().value
+                val initial = awaitItem().asConnectedOrNull!!.propertyPresentations.single().value
                 remoteData.value = RemoteWifiData(IpApiData(null, null, "UTC", "ISP", null), emptyList())
                 assertEquals(
                     "ISP${WidgetConfig.default.enabledProperties.size}",
-                    awaitItem().asConnectedOrNull!!.propertyViewData.single().value
+                    awaitItem().asConnectedOrNull!!.propertyPresentations.single().value
                 )
                 val changed = WidgetConfig.default.withUpdatedPropertyEnablement(WifiProperty.SSID, true)
                 config.value = changed
                 inputs.emit(ReconciledWifiInputs(Connected, changed.remoteDataConfig))
-                assertEquals("ISP${changed.enabledProperties.size}", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("ISP${changed.enabledProperties.size}", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
                 assertEquals(true, initial.isNotEmpty())
             }
         }
@@ -177,20 +180,20 @@ class WifiStateProviderImplTest {
     @Test fun `location access recomputes only when dependent properties are enabled`() =
         runTest {
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
-                listOf(WifiPropertyViewData(SubscriptableText("location"), if (locationEnabled.value) "available" else "unavailable"))
+                listOf(WifiPropertyPresentation(SubscriptableText("location"), if (locationEnabled.value) "available" else "unavailable"))
             }
             val provider = provider()
             provider.wifiState.test {
                 awaitItem()
                 inputs.emit(ReconciledWifiInputs(Connected, WidgetConfig.default.remoteDataConfig))
-                assertEquals("available", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("available", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
                 locationEnabled.value = false
                 val locationConfig = WidgetConfig.default.withUpdatedPropertyEnablement(WifiProperty.SSID, true)
                 config.value = locationConfig
                 inputs.emit(ReconciledWifiInputs(Connected, locationConfig.remoteDataConfig))
-                assertEquals("unavailable", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("unavailable", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
                 locationEnabled.value = true
-                assertEquals("available", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("available", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
             }
         }
 
@@ -198,16 +201,16 @@ class WifiStateProviderImplTest {
         runTest {
             var ssid = "first"
             coEvery { propertyProvider(any(), any(), any()) } coAnswers {
-                listOf(WifiPropertyViewData(SubscriptableText("SSID"), ssid))
+                listOf(WifiPropertyPresentation(SubscriptableText("SSID"), ssid))
             }
             val provider = provider()
             provider.wifiState.test {
                 awaitItem()
                 inputs.emit(ReconciledWifiInputs(Connected, WidgetConfig.default.remoteDataConfig))
-                assertEquals("first", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("first", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
                 ssid = "second"
                 inputs.emit(ReconciledWifiInputs(Connected, WidgetConfig.default.remoteDataConfig))
-                assertEquals("second", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("second", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
             }
         }
 
@@ -225,7 +228,7 @@ class WifiStateProviderImplTest {
                         cancelled.complete(Unit)
                     }
                 }
-                listOf(WifiPropertyViewData(SubscriptableText("SSID"), "latest"))
+                listOf(WifiPropertyPresentation(SubscriptableText("SSID"), "latest"))
             }
             val provider = provider()
             provider.wifiState.test {
@@ -234,7 +237,7 @@ class WifiStateProviderImplTest {
                 started.await()
                 inputs.emit(ReconciledWifiInputs(ConnectedInactive, WidgetConfig.default.remoteDataConfig))
                 cancelled.await()
-                assertEquals("latest", awaitItem().asConnectedOrNull!!.propertyViewData.single().value)
+                assertEquals("latest", awaitItem().asConnectedOrNull!!.propertyPresentations.single().value)
                 assertEquals(WifiStatus.ConnectedInactive, provider.wifiState.value.status)
             }
         }

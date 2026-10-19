@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertyviewdata
+package com.w2sv.networking.propertypresentation
 
 import android.content.res.Resources
 import android.net.ConnectivityManager
@@ -7,10 +7,10 @@ import com.w2sv.common.utils.IsLocationEnabled
 import com.w2sv.core.common.R
 import com.w2sv.domain.networking.RemoteWifiData
 import com.w2sv.domain.wifiproperty.WifiProperty
-import com.w2sv.domain.wifiproperty.WifiPropertyViewDataProvider
+import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
+import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.domain.wifiproperty.settings.IpSetting
-import com.w2sv.domain.wifiproperty.viewdata.SubscriptableText
-import com.w2sv.domain.wifiproperty.viewdata.WifiPropertyViewData
 import com.w2sv.kotlinutils.coroutines.runCatchingCancellable
 import com.w2sv.networking.extensions.linkProperties
 import com.w2sv.networking.systemIpAddresses
@@ -21,19 +21,19 @@ import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 import slimber.log.e
 
-internal class WifiPropertyViewDataProviderImpl @Inject constructor(
+internal class WifiPropertyPresentationProviderImpl @Inject constructor(
     private val wifiManager: WifiManager,
     private val connectivityManager: ConnectivityManager,
     private val resources: Resources,
     private val isLocationEnabled: IsLocationEnabled
-) : WifiPropertyViewDataProvider {
+) : WifiPropertyPresentationProvider {
 
     @Suppress("DEPRECATION")
     override suspend fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
         remoteWifiData: RemoteWifiData
-    ): List<WifiPropertyViewData> =
+    ): List<WifiPropertyPresentation> =
         withContext(Dispatchers.Default) {
             val wifiSnapshot = WifiSnapshot(
                 connectionInfo = wifiManager.connectionInfo,
@@ -59,7 +59,7 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
                         throw CancellationException()
                     }
 
-                property.viewData(
+                property.presentations(
                     values = values,
                     resources = resources
                 )
@@ -67,21 +67,21 @@ internal class WifiPropertyViewDataProviderImpl @Inject constructor(
         }
 }
 
-private fun WifiProperty.viewData(values: List<WifiPropertyValue>, resources: Resources): List<WifiPropertyViewData> =
+private fun WifiProperty.presentations(values: List<WifiPropertyValue>, resources: Resources): List<WifiPropertyPresentation> =
     if (values.size == 1) {
-        listOf(viewData(values.first(), resources, null))
+        listOf(presentations(values.first(), resources, null))
     } else {
         values.mapIndexed { index, value ->
-            viewData(value, resources, index + 1)
+            presentations(value, resources, index + 1)
         }
     }
 
-private fun WifiProperty.viewData(
+private fun WifiProperty.presentations(
     value: WifiPropertyValue,
     resources: Resources,
     enumeration: Int?
-): WifiPropertyViewData =
-    WifiPropertyViewData(
+): WifiPropertyPresentation =
+    WifiPropertyPresentation(
         label = resolvedLabel(resources::getString, enumeration),
         value = value.value.resolve(resources),
         subValues = value.subValues,
