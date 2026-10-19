@@ -23,6 +23,7 @@ import com.w2sv.widget.utils.setViewVisibility
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+import java.time.Clock
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -30,7 +31,8 @@ import javax.inject.Inject
 internal class WidgetRenderer @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val wifiStatusSource: WifiStatusSource
+    private val wifiStatusSource: WifiStatusSource,
+    private val clock: Clock
 ) {
     operator fun invoke(
         widget: RemoteViews,
@@ -127,7 +129,7 @@ internal class WidgetRenderer @Inject constructor(
         setTextView(
             viewId = R.id.last_updated_tv,
             isVisible = isUtilityEnabled(WidgetUtility.RefreshTimeDisplay),
-            text = formattedDateTime(),
+            text = formattedDateTime(clock),
             size = fontSize.value,
             color = colors.secondary
         )
@@ -152,8 +154,9 @@ internal class WidgetRenderer @Inject constructor(
     }
 }
 
-private fun formattedDateTime(date: Date = Date()): String {
-    val time = DateFormat.getTimeInstance(DateFormat.SHORT).format(date)
-    val date = SimpleDateFormat("EE", Locale.getDefault()).format(date)
-    return "$time $date"
+private fun formattedDateTime(clock: Clock): String {
+    val date = Date.from(clock.instant())
+    val time = DateFormat.getTimeInstance(DateFormat.SHORT).apply { timeZone = java.util.TimeZone.getTimeZone(clock.zone) }.format(date)
+    val weekday = SimpleDateFormat("EE", Locale.getDefault()).apply { timeZone = java.util.TimeZone.getTimeZone(clock.zone) }.format(date)
+    return "$time $weekday"
 }

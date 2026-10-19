@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.ui.platform.isPortraitModeActive
@@ -50,7 +51,7 @@ fun WidgetConfigList(
 ) {
     LazyColumn(
         state = state,
-        modifier = modifier,
+        modifier = modifier.testTag("widget_config_list"),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.verticalSpacing),
         contentPadding = Dimens.contentPadding

@@ -14,12 +14,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.animation.shakenBy
+import com.w2sv.composed.ui.thenIf
 import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
 import com.w2sv.wifiwidget.ui.designsystem.ExplanationText
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
@@ -80,7 +83,10 @@ fun ActionableConfigItem(
                     ExpandCollapseButton(
                         expand = isExpanded,
                         onClick = ::toggle,
-                        isEnabled = item.isEnabled()
+                        isEnabled = item.isEnabled(),
+                        modifier = Modifier.thenIf(item.property is WifiProperty.IpProperty) {
+                            testTag("expand_ip_settings_${item.property.labelRes}")
+                        }
                     )
                 }
             } ?: run {

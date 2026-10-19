@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +35,7 @@ fun WifiPropertiesConfigCard(
     showDialog: (WidgetConfigDialog) -> Unit
 ) {
     WidgetConfigSectionCard(
-        IconHeader(
+        header = IconHeader(
             iconRes = R.drawable.ic_wifi_24,
             stringRes = R.string.wifi_properties,
             trailingIcon = {
@@ -51,7 +52,8 @@ fun WifiPropertiesConfigCard(
                     }
                 )
             }
-        )
+        ),
+        modifier = Modifier.testTag("wifi_properties_section")
     ) {
         Disclaimer(
             text = stringResource(R.string.wifi_property_reordering_information),

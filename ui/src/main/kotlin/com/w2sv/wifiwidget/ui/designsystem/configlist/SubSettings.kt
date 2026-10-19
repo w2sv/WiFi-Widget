@@ -16,11 +16,13 @@ import kotlinx.collections.immutable.ImmutableList
 fun ExpandCollapseButton(
     expand: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isEnabled: Boolean = true
 ) {
     IconButton(
         onClick = onClick,
-        enabled = isEnabled
+        enabled = isEnabled,
+        modifier = modifier
     ) {
         Icon(
             imageVector = if (expand) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,

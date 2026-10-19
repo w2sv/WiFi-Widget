@@ -51,16 +51,17 @@ internal class WidgetActionsImpl @Inject constructor(
 
 /**
  * Calls [AppWidgetManager.requestPinAppWidget] if [AppWidgetManager.isRequestPinAppWidgetSupported] returns true.
- * Otherwise, invokes [onFailure].
+ * Requests widget pinning if supported, invoking [onFailure] if the request
+ * cannot be submitted.
  */
 private fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: () -> Unit) {
-    if (isRequestPinAppWidgetSupported) {
-        requestPinAppWidget(
+    if (!isRequestPinAppWidgetSupported ||
+        !requestPinAppWidget(
             componentName<WifiWidgetProvider>(context),
             null,
             WidgetPinSuccessBroadcastReceiver.pendingIntent(context)
         )
-    } else {
+    ) {
         onFailure()
     }
 }

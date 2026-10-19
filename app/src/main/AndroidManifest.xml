@@ -32,6 +32,11 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.WidgetPinActivity"
+            android:exported="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <!-- Keep widget-launched settings separate from the app task so Back returns to the
              launcher without discarding an existing MainActivity session. -->
         <activity

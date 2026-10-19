@@ -13,14 +13,14 @@ import dagger.hilt.components.SingletonComponent
 
 @InstallIn(SingletonComponent::class)
 @Module
-internal interface NetworkingBinderModule {
+abstract class NetworkingBinderModule {
 
     @Binds
-    fun wifiPropertyResolver(impl: WifiPropertyResolverImpl): WifiPropertyResolver
+    internal abstract fun wifiPropertyResolver(impl: WifiPropertyResolverImpl): WifiPropertyResolver
 
     @Binds
-    fun wifiStatusSource(instance: WifiStatusSourceImpl): WifiStatusSource
+    internal abstract fun wifiStatusSource(instance: WifiStatusSourceImpl): WifiStatusSource
 
     @Binds
-    fun remoteNetworkDataRepository(instance: RemoteNetworkDataRepositoryImpl): RemoteNetworkDataRepository
+    internal abstract fun remoteNetworkDataRepository(instance: RemoteNetworkDataRepositoryImpl): RemoteNetworkDataRepository
 }

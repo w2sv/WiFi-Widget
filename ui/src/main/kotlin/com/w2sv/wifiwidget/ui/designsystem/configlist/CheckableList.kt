@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.wifiwidget.ui.util.alphaDecreased
@@ -63,6 +64,7 @@ fun ReorderableCheckableList(
                 ActionableConfigItem(
                     item = data,
                     modifier = Modifier
+                        .testTag("wifi_property_${data.property.labelRes}")
                         .longPressDraggableHandle(
                             onDragStarted = { localHapticFeedback.performHapticFeedback(HapticFeedbackType.LongPress) }
                         )
