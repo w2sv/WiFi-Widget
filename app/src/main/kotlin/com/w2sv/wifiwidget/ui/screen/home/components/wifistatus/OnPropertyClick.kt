@@ -14,7 +14,7 @@ import androidx.compose.ui.text.withStyle
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.common.R
-import com.w2sv.domain.wifiproperty.presentation.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
@@ -56,8 +56,8 @@ fun PropertyOnClickScope.onPropertyClick(
             snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
         }
 
-        WifiPropertyResolutionError.NoLocationAccessPermission -> locationAccessCapability.requestPermission()
-        WifiPropertyResolutionError.GpsDisabled -> locationAccessCapability.openLocationSettings()
+        NoLocationAccessPermission -> locationAccessCapability.requestPermission()
+        GpsDisabled -> locationAccessCapability.openLocationSettings()
     }
 }
 

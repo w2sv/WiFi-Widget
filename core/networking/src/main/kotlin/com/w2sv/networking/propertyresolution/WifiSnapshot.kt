@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertypresentation
+package com.w2sv.networking.propertyresolution
 
 import android.net.DhcpInfo
 import android.net.LinkProperties

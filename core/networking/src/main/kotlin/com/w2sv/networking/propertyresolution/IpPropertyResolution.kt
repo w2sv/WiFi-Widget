@@ -1,8 +1,9 @@
-package com.w2sv.networking.propertypresentation
+package com.w2sv.networking.propertyresolution
 
 import com.w2sv.common.txt
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiPropertyValue
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.domain.wifiproperty.settings.enabledVersions
 

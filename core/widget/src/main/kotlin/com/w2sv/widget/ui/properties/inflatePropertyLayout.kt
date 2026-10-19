@@ -2,12 +2,17 @@ package com.w2sv.widget.ui.properties
 
 import android.content.res.ColorStateList
 import android.os.Build
+import android.text.SpannedString
 import android.view.View
 import android.widget.RemoteViews
+import androidx.core.text.buildSpannedString
+import androidx.core.text.scale
+import androidx.core.text.subscript
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.core.widget.R
 import com.w2sv.domain.widget.FontSize
 import com.w2sv.domain.widget.WidgetColors
+import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.widget.utils.setTextView
 
@@ -48,6 +53,12 @@ internal fun RemoteViews.inflatePropertyLayout(
         setViewVisibility(R.id.ip_sub_property_row, View.GONE)
     }
 }
+
+private fun SubscriptableText.toSpannedString(subscriptScale: Float): SpannedString =
+    buildSpannedString {
+        append(text)
+        subscript?.let { subscript { scale(subscriptScale) { append(it) } } }
+    }
 
 private fun RemoteViews.displayIpSubValues(
     values: List<String>,

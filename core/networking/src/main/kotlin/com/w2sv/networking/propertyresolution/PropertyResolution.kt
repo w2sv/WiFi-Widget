@@ -1,4 +1,4 @@
-package com.w2sv.networking.propertypresentation
+package com.w2sv.networking.propertyresolution
 
 import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
@@ -7,7 +7,8 @@ import androidx.annotation.VisibleForTesting
 import com.w2sv.common.txt
 import com.w2sv.core.common.R
 import com.w2sv.domain.wifiproperty.WifiProperty
-import com.w2sv.domain.wifiproperty.presentation.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
+import com.w2sv.domain.wifiproperty.WifiPropertyValue
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import java.net.InetAddress
 import java.nio.ByteBuffer
