@@ -35,6 +35,9 @@ dependencies {
     implementation(projects.core.domain)
 
     implementation(libs.w2sv.androidutils.core)
+    implementation(libs.w2sv.androidutils.backpress)
+    implementation(libs.w2sv.kotlinutils.core)
+    implementation(libs.w2sv.kotlinutils.coroutines)
     implementation(libs.w2sv.colorpicker)
     implementation(libs.w2sv.composed.animation)
     implementation(libs.w2sv.composed.core)

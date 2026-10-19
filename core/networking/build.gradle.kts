@@ -11,6 +11,8 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.w2sv.androidutils.core)
+    implementation(libs.w2sv.kotlinutils.core)
+    implementation(libs.w2sv.kotlinutils.coroutines)
 
     implementation(libs.kotlinx.serialization.json)
 

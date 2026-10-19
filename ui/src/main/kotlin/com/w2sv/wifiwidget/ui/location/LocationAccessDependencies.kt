@@ -15,12 +15,12 @@ class LocationAccessDependencies @Inject constructor(
     @AppIoScope scope: CoroutineScope
 ) {
     val requestHistory = PermissionRequestHistory(
-        wasRequestLaunchedBefore = permissionRepository.locationAccessPermissionRequested,
+        wasRequestLaunchedBefore = permissionRepository.locationAccessPermissionRequested.flow,
         recordRequestLaunched = { scope.launch { permissionRepository.locationAccessPermissionRequested.save(true) } }
     )
 
     val rationalHistory = LocationAccessRationalHistory(
-        wasShownBefore = permissionRepository.locationAccessPermissionRationalShown,
+        wasShownBefore = permissionRepository.locationAccessPermissionRationalShown.flow,
         recordWasShown = { scope.launch { permissionRepository.locationAccessPermissionRationalShown.save(true) } }
     )
 }

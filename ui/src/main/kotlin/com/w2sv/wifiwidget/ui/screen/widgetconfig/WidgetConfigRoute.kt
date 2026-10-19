@@ -10,7 +10,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.androidutils.BackPressHandler
+import com.w2sv.androidutils.backpress.BackPressHandler
 import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
@@ -83,8 +83,8 @@ internal fun rememberWidgetConfigBackHandler(configIsDirty: StateFlow<Boolean>, 
     val snackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
     val backPressHandler = remember(scope, isDirty) {
         BackPressHandler(
-            coroutineScope = scope,
-            confirmationWindowDuration = NAVIGATE_BACK_CONFIRMATION_WINDOW
+            scope = scope,
+            confirmationWindowMillis = NAVIGATE_BACK_CONFIRMATION_WINDOW
         )
     }
 
