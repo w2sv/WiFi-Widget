@@ -1,28 +1,28 @@
-<b>Introducing WiFi Widget – Your Ultimate Connection Companion!</b>
+Keep your Wi-Fi connection details right where you need them: on your home screen.
 
-🚀 Unleash the power of information at your fingertips with WiFi Widget, the open-source, ad-free app that elevates your connectivity experience. Say goodbye to the hassle of navigating through settings – this sleek and modern UI puts your WiFi details front and center in a fully customizable widget!
+WiFi Widget is a free, open-source Android app that displays detailed Wi-Fi information in a customizable home screen widget. Choose what to show, arrange it your way, and check or copy connection details directly in the app.
 
-<b>Key Features:</b>
-🎨 <b>Modern UI with Light and Dark Themes:</b> Tailor the app to your style by choosing between light and dark themes.
-🔧 <b>Fully Configurable Widget:</b> Craft the perfect widget for your needs by adjusting appearance, WiFi properties, button display, size, and data refresh parameters.
+<b>Wi-Fi and network details</b>
+• Connection: SSID, BSSID, frequency, channel, link speed, RSSI, signal strength, Wi-Fi standard, generation and security protocol
+• IP addresses: local and public addresses, IPv4 and IPv6, prefix lengths and IPv4 subnet masks
+• Network configuration: gateway, DNS servers, DHCP and NAT64 prefix
+• Internet details: ISP, ASN and approximate IP-based location
+• Optional GPS location information
 
-<b>WiFi Properties at a Glance:</b>
-📡 <b>SSID, BSSID:</b> Easily identify your network.
-🌐 <b>IP Addresses:</b> Explore detailed categories like loopback, site local, link local, ULA, multicast, global unicast, and public. Individually enable or disable them based on your preference.
-📶 <b>Frequency, Channel, Link Speed, RSSI, Signal Strength, Security Protocol, WiFi Standard & Generation:</b> Dive deep into your WiFi connection details.
-🌐 <b>Gateway, DNS, DHCP:</b> Understand the core elements of your network setup.
+<b>Customize your home screen widget</b>
+• Select the properties you want to display and reorder them
+• Choose light or dark themes, dynamic or custom colors, and background opacity
+• Adjust font size, text alignment and widget size
+• Add buttons to refresh data, open Wi-Fi settings or configure the widget
+• Set automatic refresh intervals from 15 minutes to 24 hours, including low-battery behavior
 
-<b>Widget Customization Galore:</b>
-🖌️ <b>Appearance Settings:</b> Choose between light and dark themes. Customize widget colors and background opacity. Select which buttons are to be displayed.
-📏 <b>Size Options:</b> Adjust the widget to seamlessly integrate into your home screen.
-🔄 <b>Data Refreshing:</b> Stay up-to-date with configurable data refresh intervals.
+<b>Useful beyond the home screen</b>
+• View your current Wi-Fi status and connection details in the app
+• Tap property values to copy them to the clipboard
+• Enjoy a Material 3 interface with light, dark and AMOLED black themes
+• No ads
 
-<b>No Ads, No Hassle:</b>
-🚫 Enjoy an uninterrupted experience – WiFi Widget is completely ad-free!
+Some information requires internet access or Android location permissions. Available properties may vary by device and Android version.
 
-<b>Simplify your connectivity and make a statement on your home screen. Download WiFi Widget now and take control of your WiFi experience!</b>
-
-Source code available under the GPL-3.0 license at https://github.com/w2sv/WiFi-Widget.
-
-<b>Credits:</b>
-Logo foreground by Hilmy Abiyyu Asad https://freeicons.io/profile/75801, licensed under Creative Commons(Attribution 3.0 unported) https://creativecommons.org/licenses/by/3.0/.
+WiFi Widget is open source under the GPL-3.0 license.
+Source code: https://github.com/w2sv/WiFi-Widget
