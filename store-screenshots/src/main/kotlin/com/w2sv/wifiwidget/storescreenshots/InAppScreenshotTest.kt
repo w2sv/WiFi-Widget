@@ -15,7 +15,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.w2sv.domain.permission.PermissionRepository
+import com.w2sv.domain.permission.LocationAccessRepository
 import com.w2sv.domain.preferences.PreferencesRepository
 import com.w2sv.domain.preferences.Theme
 import com.w2sv.domain.widget.WidgetConfigDataSource
@@ -66,7 +66,7 @@ class InAppScreenshotTest {
     lateinit var preferencesRepository: PreferencesRepository
 
     @Inject
-    lateinit var permissionRepository: PermissionRepository
+    lateinit var locationAccessRepository: LocationAccessRepository
 
     @Inject
     lateinit var activeScenario: ActiveScreenshotScenario
@@ -100,8 +100,8 @@ class InAppScreenshotTest {
             screenshotDevice.executeShellCommand("pm grant ${screenshotDevice.appPackage} $permission")
         }
         runBlocking {
-            permissionRepository.locationAccessPermissionRationalShown.save(true)
-            permissionRepository.locationAccessPermissionRationalShown.flow.first { it }
+            locationAccessRepository.recordRationalShown()
+            locationAccessRepository.rationalShown.first { it }
         }
     }
 

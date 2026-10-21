@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.location
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.common.di.AppIoScope
 import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.domain.permission.PermissionRepository
+import com.w2sv.domain.permission.LocationAccessRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -11,16 +11,16 @@ import kotlinx.coroutines.launch
 /** Provides location status and persisted permission histories to the UI. */
 class LocationAccessDependencies @Inject constructor(
     val isLocationEnabled: IsLocationEnabled,
-    permissionRepository: PermissionRepository,
+    locationAccessRepository: LocationAccessRepository,
     @AppIoScope scope: CoroutineScope
 ) {
     val requestHistory = PermissionRequestHistory(
-        wasRequestLaunchedBefore = permissionRepository.locationAccessPermissionRequested.flow,
-        recordRequestLaunched = { scope.launch { permissionRepository.locationAccessPermissionRequested.save(true) } }
+        wasRequestLaunchedBefore = locationAccessRepository.permissionRequested,
+        recordRequestLaunched = { scope.launch { locationAccessRepository.recordPermissionRequested() } }
     )
 
     val rationalHistory = LocationAccessRationalHistory(
-        wasShownBefore = permissionRepository.locationAccessPermissionRationalShown.flow,
-        recordWasShown = { scope.launch { permissionRepository.locationAccessPermissionRationalShown.save(true) } }
+        wasShownBefore = locationAccessRepository.rationalShown,
+        recordWasShown = { scope.launch { locationAccessRepository.recordRationalShown() } }
     )
 }

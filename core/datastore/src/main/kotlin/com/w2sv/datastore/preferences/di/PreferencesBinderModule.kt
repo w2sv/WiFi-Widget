@@ -1,8 +1,8 @@
 package com.w2sv.datastore.preferences.di
 
-import com.w2sv.datastore.preferences.PermissionRepositoryImpl
+import com.w2sv.datastore.preferences.LocationAccessRepositoryImpl
 import com.w2sv.datastore.preferences.PreferencesRepositoryImpl
-import com.w2sv.domain.permission.PermissionRepository
+import com.w2sv.domain.permission.LocationAccessRepository
 import com.w2sv.domain.preferences.PreferencesRepository
 import dagger.Binds
 import dagger.Module
@@ -17,5 +17,5 @@ internal interface PreferencesBinderModule {
     fun preferencesRepository(impl: PreferencesRepositoryImpl): PreferencesRepository
 
     @Binds
-    fun permissionRepository(impl: PermissionRepositoryImpl): PermissionRepository
+    fun permissionRepository(impl: LocationAccessRepositoryImpl): LocationAccessRepository
 }

@@ -1,12 +1,10 @@
 package com.w2sv.wifiwidget.ui.location
 
-import com.w2sv.datastoreutils.datastoreflow.DataStoreFlow
-import com.w2sv.domain.permission.PermissionRepository
-import io.mockk.every
-import io.mockk.mockk
+import com.w2sv.domain.permission.LocationAccessRepository
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -21,16 +19,22 @@ class LocationAccessDependenciesTest {
             val rationalShown = MutableStateFlow(false)
             val requestedWrites = mutableListOf<Boolean>()
             val rationalWrites = mutableListOf<Boolean>()
-            val requestedStore = DataStoreFlow(requested, { false }) { requestedWrites += it }
-            val rationalStore = DataStoreFlow(rationalShown, { false }) { rationalWrites += it }
-            val repository = mockk<PermissionRepository> {
-                every { locationAccessPermissionRequested } returns requestedStore
-                every { locationAccessPermissionRationalShown } returns rationalStore
+            val repository = object : LocationAccessRepository {
+                override val permissionRequested: Flow<Boolean> = requested
+                override val rationalShown: Flow<Boolean> = rationalShown
+
+                override suspend fun recordPermissionRequested() {
+                    requestedWrites += true
+                }
+
+                override suspend fun recordRationalShown() {
+                    rationalWrites += true
+                }
             }
             val dependencies = LocationAccessDependencies({ true }, repository, this)
 
-            assertSame(requestedStore, dependencies.requestHistory.wasRequestLaunchedBefore)
-            assertSame(rationalStore, dependencies.rationalHistory.wasShownBefore)
+            assertSame(requested, dependencies.requestHistory.wasRequestLaunchedBefore)
+            assertSame(rationalShown, dependencies.rationalHistory.wasShownBefore)
             assertTrue(dependencies.isLocationEnabled())
 
             dependencies.requestHistory.recordRequestLaunched()
