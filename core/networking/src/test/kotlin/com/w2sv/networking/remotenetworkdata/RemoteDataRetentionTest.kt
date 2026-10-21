@@ -11,7 +11,7 @@ class RemoteDataRetentionTest {
     private val defaultConfig = WidgetConfig.default
     private val noRemoteProperties = listOf(
         WifiProperty.Location,
-        WifiProperty.IpGpsLocation,
+        WifiProperty.IpCoordinates,
         WifiProperty.ISP,
         WifiProperty.ASN,
         WifiProperty.PublicIp

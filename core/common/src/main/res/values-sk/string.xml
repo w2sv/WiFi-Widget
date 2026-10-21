@@ -160,8 +160,8 @@
     <string name="nat64prefix_description">Predpona IPv6, zvyčajne 64:ff9b::/96, ktorú brány NAT64 používajú na preklad adries IPv6 na adresy IPv4 a naopak. Umožňuje klientom podporujúcim iba IPv6 komunikovať so servermi podporujúcimi iba IPv4 tým, že mapuje adresy IPv6 na zodpovedajúce adresy IPv4. Uľahčuje tak vzájomnú komunikáciu medzi sieťami IPv6 a IPv4 a prechod na IPv6.\nWiFi Widget zobrazí predponu NAT64 používanú v aktuálnom pripojení, ak existuje.</string>
     <string name="location">Poloha</string>
     <string name="location_description">Geografická poloha priradená k vašej verejnej IP adrese. Získaná zo služby ip-api.com.</string>
-    <string name="gps_location">Poloha podľa GPS</string>
-    <string name="gps_location_description">Súradnice GPS priradené k vašej verejnej IP adrese. Získané zo služby ip-api.com.</string>
+    <string name="ip_coordinates">IP súradnice</string>
+    <string name="ip_coordinates_description">Geografické súradnice priradené k vašej verejnej IP adrese. Získané zo služby ip-api.com.</string>
     <string name="as_number">ASN</string>
     <string name="as_number_description">Jedinečný číselný identifikátor pridelený <b>autonómnemu systému (AS)</b>, čo je rozsiahla sieť alebo skupina sietí pod správou jednej organizácie, ktorá riadi vlastné smerovacie politiky na internete. Čísla autonómnych systémov (ASN) umožňujú týmto systémom vymieňať si smerovacie informácie s inými sieťami a zabezpečujú efektívnu a nezávislú správu internetovej prevádzky. Sú nevyhnutné pre veľké subjekty, ako sú poskytovatelia internetových služieb (ISP), dátové centrá a nadnárodné spoločnosti, pretože umožňujú spoľahlivú komunikáciu a tok dát medzi rôznymi sieťami cez internet. Zdroj: ip-api.com.</string>
     <string name="isp">ISP</string>

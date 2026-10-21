@@ -19,7 +19,8 @@ internal val WifiProperty.legacyPreferencesKeyName: String
         WifiProperty.DHCP -> "DHCP"
         WifiProperty.NAT64Prefix -> "NAT64Prefix"
         WifiProperty.Location -> "Location"
-        WifiProperty.IpGpsLocation -> "IpGpsLocation"
+        // Existing preferences use the former property name as their key.
+        WifiProperty.IpCoordinates -> "IpGpsLocation"
         WifiProperty.ISP -> "ISP"
         WifiProperty.ASN -> "ASN"
         WifiProperty.ULA -> "ULA"

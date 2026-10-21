@@ -38,4 +38,4 @@ data class RemoteDataConfig private constructor(
 }
 
 private val ipApiRequiringProperties =
-    setOf(WifiProperty.Location, WifiProperty.IpGpsLocation, WifiProperty.ISP, WifiProperty.ASN)
+    setOf(WifiProperty.Location, WifiProperty.IpCoordinates, WifiProperty.ISP, WifiProperty.ASN)

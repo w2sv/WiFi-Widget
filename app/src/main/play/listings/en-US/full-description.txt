@@ -7,7 +7,7 @@ WiFi Widget is a free, open-source Android app that displays detailed Wi-Fi info
 • IP addresses: local and public addresses, IPv4 and IPv6, prefix lengths and IPv4 subnet masks
 • Network configuration: gateway, DNS servers, DHCP and NAT64 prefix
 • Internet details: ISP, ASN and approximate IP-based location
-• Optional GPS location information
+• IP coordinates associated with your public IP address
 
 <b>Customize your home screen widget</b>
 • Select the properties you want to display and reorder them

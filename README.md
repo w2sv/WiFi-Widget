@@ -99,7 +99,7 @@
         - **Network Details**: Gateway, DNS, DHCP, NAT64 Prefix
         - **Location Info** (via [ip-api.com](https://ip-api.com/)):
           - Region: Zip Code, District, City, Region, Country, Continent
-        - **Other**: GPS Location, ASN, ISP
+        - **Other**: IP Coordinates, ASN, ISP
     - Property appearance order
     - Bottom bar elements:
         - Last refresh date time

@@ -151,10 +151,10 @@ sealed class WifiProperty(
         learnMoreUrl = "https://en.wikipedia.org/wiki/Internet_geolocation"
     )
 
-    data object IpGpsLocation : WifiProperty(
+    data object IpCoordinates : WifiProperty(
         protoId = 24,
-        labelRes = R.string.gps_location,
-        descriptionRes = R.string.gps_location_description,
+        labelRes = R.string.ip_coordinates,
+        descriptionRes = R.string.ip_coordinates_description,
         learnMoreUrl = "https://en.wikipedia.org/wiki/Internet_geolocation"
     )
 
@@ -256,7 +256,7 @@ sealed class WifiProperty(
             DHCP,
             NAT64Prefix,
             Location,
-            IpGpsLocation,
+            IpCoordinates,
             ISP,
             ASN
         )

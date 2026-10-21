@@ -20,7 +20,7 @@ internal fun RemoteDataConfig.retainApplicable(data: RemoteNetworkData, previous
 internal fun RemoteDataConfig.retainApplicable(data: IpApiData): IpApiData =
     data.copy(
         location = data.location.takeIf { WifiProperty.Location in ipApiProperties },
-        gpsCoordinates = data.gpsCoordinates.takeIf { WifiProperty.IpGpsLocation in ipApiProperties },
+        ipCoordinates = data.ipCoordinates.takeIf { WifiProperty.IpCoordinates in ipApiProperties },
         isp = data.isp.takeIf { WifiProperty.ISP in ipApiProperties }.orEmpty(),
         asn = data.asn.takeIf { WifiProperty.ASN in ipApiProperties }
     )

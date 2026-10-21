@@ -8,6 +8,7 @@ import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.copy
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class WidgetConfigMappingTest {
@@ -15,6 +16,16 @@ class WidgetConfigMappingTest {
     @Test
     fun `default instance mapping`() {
         assertEqualityAfterBackAndForthMapping(WidgetConfig.default)
+    }
+
+    @Test
+    fun `existing proto ID maps to IP coordinates`() {
+        val configured = WidgetConfig.default.withUpdatedPropertyEnablement(WifiProperty.IpCoordinates, false)
+        val proto = configured.toProto()
+
+        assertEquals(24, WifiProperty.IpCoordinates.protoId)
+        assertFalse(proto.toExternal().isEnabled(WifiProperty.IpCoordinates))
+        assertEquals(configured, proto.toExternal())
     }
 
     @Test

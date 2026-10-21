@@ -32,7 +32,7 @@ internal data class IpApiResponse(
     fun toDomain(parameters: Collection<LocationParameter>): IpApiData =
         IpApiData(
             location = location(parameters),
-            gpsCoordinates = gpsCoordinates(),
+            ipCoordinates = ipCoordinates(),
             timezone = timezone,
             isp = isp,
             asn = asn()
@@ -52,7 +52,7 @@ internal data class IpApiResponse(
             .joinToString(", ")
             .ifBlank { null }
 
-    private fun gpsCoordinates(): String? =
+    private fun ipCoordinates(): String? =
         if (lat != null && lon != null) "$lat, $lon" else null
 
     private fun asn(): String? =

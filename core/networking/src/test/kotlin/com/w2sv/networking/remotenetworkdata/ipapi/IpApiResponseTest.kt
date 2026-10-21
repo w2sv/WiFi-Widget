@@ -10,13 +10,13 @@ class IpApiResponseTest {
     fun `missing coordinate does not produce a location`() {
         val response = Json.decodeFromString<IpApiResponse>("""{"lat":-1.0}""")
 
-        assertNull(response.toDomain(emptyList()).gpsCoordinates)
+        assertNull(response.toDomain(emptyList()).ipCoordinates)
     }
 
     @Test
     fun `negative one coordinate remains a valid location`() {
         val response = Json.decodeFromString<IpApiResponse>("""{"lat":-1.0,"lon":2.5}""")
 
-        assertEquals("-1.0, 2.5", response.toDomain(emptyList()).gpsCoordinates)
+        assertEquals("-1.0, 2.5", response.toDomain(emptyList()).ipCoordinates)
     }
 }

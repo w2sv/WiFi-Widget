@@ -34,7 +34,7 @@ class WidgetConfigSdk26Test {
                 WifiProperty.DNS,
                 WifiProperty.DHCP,
                 WifiProperty.Location,
-                WifiProperty.IpGpsLocation,
+                WifiProperty.IpCoordinates,
                 WifiProperty.ISP,
                 WifiProperty.ASN
             ),

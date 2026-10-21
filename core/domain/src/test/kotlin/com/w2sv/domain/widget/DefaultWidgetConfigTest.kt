@@ -132,7 +132,7 @@ private val defaultPropertyConfig: Map<WifiProperty, WifiPropertyConfig<WifiProp
         )
     ),
 
-    WifiProperty.IpGpsLocation to WifiPropertyConfig(true, emptyMap()),
+    WifiProperty.IpCoordinates to WifiPropertyConfig(true, emptyMap()),
     WifiProperty.ISP to WifiPropertyConfig(true, emptyMap()),
     WifiProperty.ASN to WifiPropertyConfig(true, emptyMap())
 )

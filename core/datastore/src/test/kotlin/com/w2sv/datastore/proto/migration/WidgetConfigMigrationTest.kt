@@ -78,6 +78,7 @@ internal class WidgetConfigMigrationTest {
                 preferencesOf(
                     // property enablement
                     booleanPreferencesKey("SSID") to false,
+                    booleanPreferencesKey("IpGpsLocation") to false,
 
                     // property order (swap first two)
                     stringPreferencesKey("wifiPropertyOrder") to "1,0",
@@ -112,6 +113,7 @@ internal class WidgetConfigMigrationTest {
 
             // property enablement
             assertFalse(external.isEnabled(WifiProperty.SSID))
+            assertFalse(external.isEnabled(WifiProperty.IpCoordinates))
 
             // property order
             assertEquals(

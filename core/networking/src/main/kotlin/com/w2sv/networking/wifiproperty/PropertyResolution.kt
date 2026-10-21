@@ -120,7 +120,7 @@ internal fun WifiProperty.resolve(
                 }
 
                 WifiProperty.Location -> addIfNotNull(ipApiData?.location)
-                WifiProperty.IpGpsLocation -> addIfNotNull(ipApiData?.gpsCoordinates)
+                WifiProperty.IpCoordinates -> addIfNotNull(ipApiData?.ipCoordinates)
                 WifiProperty.ISP -> addIfNotNull(ipApiData?.isp)
                 WifiProperty.ASN -> addIfNotNull(ipApiData?.asn)
                 is WifiProperty.IpProperty -> addAll(

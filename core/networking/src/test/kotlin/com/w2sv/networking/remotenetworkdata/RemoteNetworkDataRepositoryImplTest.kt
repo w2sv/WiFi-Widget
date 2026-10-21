@@ -174,7 +174,7 @@ class RemoteNetworkDataRepositoryImplTest {
         runTest {
             val localOnly = listOf(
                 WifiProperty.Location,
-                WifiProperty.IpGpsLocation,
+                WifiProperty.IpCoordinates,
                 WifiProperty.ISP,
                 WifiProperty.ASN,
                 WifiProperty.PublicIp
@@ -230,7 +230,7 @@ class RemoteNetworkDataRepositoryImplTest {
 
     @Test fun `only IPv6 failure remains recoverable`() =
         runTest {
-            val onlyV6 = listOf(WifiProperty.Location, WifiProperty.IpGpsLocation, WifiProperty.ISP, WifiProperty.ASN)
+            val onlyV6 = listOf(WifiProperty.Location, WifiProperty.IpCoordinates, WifiProperty.ISP, WifiProperty.ASN)
                 .fold(config) { current, property -> current.withUpdatedPropertyEnablement(property, false) }
                 .withUpdatedPropertyConfig(WifiProperty.PublicIp) { propertyConfig ->
                     propertyConfig.copy(settings = propertyConfig.settings + (IpSetting.V4Enabled to false))
@@ -258,7 +258,7 @@ class RemoteNetworkDataRepositoryImplTest {
             val disabled = listOf(
                 WifiProperty.PublicIp,
                 WifiProperty.Location,
-                WifiProperty.IpGpsLocation,
+                WifiProperty.IpCoordinates,
                 WifiProperty.ISP,
                 WifiProperty.ASN
             ).fold(config) { current, property -> current.withUpdatedPropertyEnablement(property, false) }
