@@ -15,11 +15,11 @@ import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDevice
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDeviceSetup
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotSystemUi
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotWallpaper
-import com.w2sv.wifiwidget.storescreenshots.launcher.LauncherWidgetController
-import com.w2sv.wifiwidget.storescreenshots.launcher.LauncherWorkspace
 import com.w2sv.wifiwidget.storescreenshots.scenario.ActiveScreenshotScenario
 import com.w2sv.wifiwidget.storescreenshots.scenario.ScreenshotScenario
 import com.w2sv.wifiwidget.storescreenshots.scenario.ScreenshotScenarios
+import com.w2sv.wifiwidget.testing.launcher.LauncherWidgetController
+import com.w2sv.wifiwidget.testing.launcher.LauncherWorkspace
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import javax.inject.Inject
@@ -53,9 +53,9 @@ class WidgetLauncherScreenshotTest {
     private val appPackage = screenshotDevice.appPackage
     private val widgetManager = AppWidgetManager.getInstance(screenshotDevice.targetContext)
     private val widgetProvider = ComponentName(appPackage, "com.w2sv.widget.WifiWidgetProvider")
-    private val launcher = LauncherWorkspace(screenshotDevice, widgetManager, widgetProvider)
+    private val launcher = LauncherWorkspace(screenshotDevice.launcher, screenshotDevice.category.launcherSizing.formFactor)
     private val wallpaper = ScreenshotWallpaper(screenshotDevice)
-    private val widgetController = LauncherWidgetController(screenshotDevice, widgetManager, widgetProvider)
+    private val widgetController = LauncherWidgetController(screenshotDevice.launcher, screenshotDevice.category.launcherSizing)
 
     @Test
     fun `capture widget screenshots for each scenario`() {

@@ -55,6 +55,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.testing.launcher)
     implementation(projects.core.common)
     implementation(projects.core.domain)
     implementation(projects.core.datastore)

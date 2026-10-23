@@ -1,6 +1,9 @@
 package com.w2sv.wifiwidget.storescreenshots.device
 
-data class GridCells(val columns: Int, val rows: Int)
+import com.w2sv.wifiwidget.testing.launcher.LauncherFormFactor
+import com.w2sv.wifiwidget.testing.launcher.LauncherSizing
+
+typealias GridCells = com.w2sv.wifiwidget.testing.launcher.GridCells
 
 enum class ScreenshotDeviceCategory(
     val screenshotDirectory: String,
@@ -25,5 +28,17 @@ enum class ScreenshotDeviceCategory(
         GridCells(6, 5),
         GridCells(2, 1),
         60
-    )
+    );
+
+    val launcherSizing: LauncherSizing
+        get() = LauncherSizing(
+            formFactor = when (this) {
+                Phone -> LauncherFormFactor.Phone
+                Tablet -> LauncherFormFactor.Tablet
+                LargeTablet -> LauncherFormFactor.LargeTablet
+            },
+            grid = launcherGrid,
+            initialWidgetSize = initialWidgetSize,
+            resizeTolerancePx = resizeTolerancePx
+        )
 }
