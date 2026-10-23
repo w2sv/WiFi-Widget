@@ -1,6 +1,2 @@
-- Added Slovak translations.
-- Widget settings now open in a dedicated screen when launched from a widget.
-- Smoother screen transitions, including predictive back, without the white flash.
-- Widget settings screen now has a collapsing top bar.
-- Improved theme transitions and AMOLED drawer animations.
-- Fixed the monochrome launcher icon.
+- Fixed missing or outdated public IP and other api-fetched internet details in widgets after app restarts and network changes.
+- Renamed GPS Location to IP Coordinates to clarify that the coordinates come from your public IP address.
