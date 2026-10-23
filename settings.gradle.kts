@@ -21,12 +21,14 @@ dependencyResolutionManagement {
 rootProject.name = "WiFi_Widget"
 
 include(":app")
-include(":ui")
 include(":benchmarking")
-include(":store-screenshots")
 include(":core:datastore")
 include(":core:datastore-proto")
 include(":core:domain")
 include(":core:common")
 include(":core:networking")
 include(":core:widget")
+include(":store-screenshots")
+include(":testing:launcher")
+include(":ui")
+include(":widget-integration-tests")

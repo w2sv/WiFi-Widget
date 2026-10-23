@@ -9,21 +9,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json
-import okhttp3.OkHttpClient
 
 @InstallIn(SingletonComponent::class)
 @Module
 internal object NetworkingModule {
-
-    @Provides
-    @Singleton
-    fun httpClient(): OkHttpClient =
-        OkHttpClient.Builder()
-            .callTimeout(5, TimeUnit.SECONDS)
-            .build()
 
     @Provides
     @Singleton

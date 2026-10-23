@@ -3,25 +3,22 @@ package com.w2sv.wifiwidget.storescreenshots.device
 import android.app.Instrumentation
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.ParcelFileDescriptor
-import android.os.SystemClock
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.platform.io.PlatformTestStorageRegistry
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.UiDevice
-import java.io.ByteArrayOutputStream
+import com.w2sv.wifiwidget.testing.launcher.LauncherDevice
 
-internal const val LAUNCHER_PACKAGE = "com.android.launcher3"
-internal const val SYSTEM_UI_PACKAGE = "com.android.systemui"
-internal const val SYSTEM_TIMEOUT_MS = 30_000L
-internal const val UI_TIMEOUT_MS = 20_000L
-internal const val POLL_INTERVAL_MS = 200L
+internal const val LAUNCHER_PACKAGE = com.w2sv.wifiwidget.testing.launcher.LAUNCHER_PACKAGE
+internal const val SYSTEM_UI_PACKAGE = com.w2sv.wifiwidget.testing.launcher.SYSTEM_UI_PACKAGE
+internal const val SYSTEM_TIMEOUT_MS = com.w2sv.wifiwidget.testing.launcher.SYSTEM_TIMEOUT_MS
+internal const val UI_TIMEOUT_MS = com.w2sv.wifiwidget.testing.launcher.UI_TIMEOUT_MS
+internal const val POLL_INTERVAL_MS = com.w2sv.wifiwidget.testing.launcher.POLL_INTERVAL_MS
 
 /** Shared access to the managed emulator and its launcher/System UI diagnostics. */
 internal class ScreenshotDevice {
     val instrumentation: Instrumentation = InstrumentationRegistry.getInstrumentation()
-    val ui = UiDevice.getInstance(instrumentation)
     val targetContext: Context = instrumentation.targetContext
+    val launcher = LauncherDevice(instrumentation, targetContext)
+    val ui = launcher.ui
     val appPackage: String = targetContext.packageName
     val smallestWidthDp = targetContext.resources.configuration.smallestScreenWidthDp
     val category = when {
@@ -45,67 +42,18 @@ internal class ScreenshotDevice {
     }
 
     fun executeShellCommand(command: String): String =
-        ParcelFileDescriptor.AutoCloseInputStream(instrumentation.uiAutomation.executeShellCommand(command)).use {
-            it.bufferedReader().readText().trim()
-        }
+        launcher.executeShellCommand(command)
 
     fun hierarchy(): String =
-        ByteArrayOutputStream().use { output ->
-            ui.dumpWindowHierarchy(output)
-            output.toString("UTF-8")
-        }
+        launcher.hierarchy()
 
-    fun waitForLauncherToSettle() {
-        val deadline = SystemClock.elapsedRealtime() + SYSTEM_TIMEOUT_MS
-        var stableProcessIds = ""
-        var stableSince = 0L
-        while (SystemClock.elapsedRealtime() < deadline) {
-            val processIds = listOf(
-                executeShellCommand("pidof $LAUNCHER_PACKAGE"),
-                executeShellCommand("pidof $SYSTEM_UI_PACKAGE")
-            )
-            val currentProcessIds = processIds.joinToString()
-            val now = SystemClock.elapsedRealtime()
-            if (
-                processIds.none(String::isBlank) &&
-                ui.hasObject(By.res(LAUNCHER_PACKAGE, "workspace")) &&
-                ui.hasObject(By.res(SYSTEM_UI_PACKAGE, "status_bar")) &&
-                !isAnrDialogVisible &&
-                isLauncherDockReady
-            ) {
-                if (currentProcessIds != stableProcessIds) {
-                    stableProcessIds = currentProcessIds
-                    stableSince = now
-                } else if (now - stableSince >= SYSTEM_QUIET_PERIOD_MS) {
-                    ui.waitForIdle()
-                    return
-                }
-            } else {
-                stableProcessIds = ""
-                stableSince = 0L
-            }
-            SystemClock.sleep(POLL_INTERVAL_MS)
-        }
-        error("Launcher3 and System UI did not settle during screenshot preparation. ${hierarchy()}")
-    }
-
-    private val isAnrDialogVisible: Boolean
-        get() = instrumentation.uiAutomation.rootInActiveWindow
-            ?.findAccessibilityNodeInfosByText("isn't responding")
-            .orEmpty()
-            .isNotEmpty()
-
-    private val isLauncherDockReady: Boolean
-        get() = when (category) {
-            ScreenshotDeviceCategory.Phone,
-            ScreenshotDeviceCategory.Tablet -> true
-            // This AOSP Pixel Tablet profile exposes an empty hotseat and no pinned-app labels.
-            ScreenshotDeviceCategory.LargeTablet -> ui.hasObject(By.res(LAUNCHER_PACKAGE, "hotseat"))
-        }
+    fun waitForLauncherToSettle() =
+        launcher.waitForLauncherToSettle(
+            requireHotseat = category == ScreenshotDeviceCategory.LargeTablet
+        )
 
     private companion object {
         const val TABLET_MIN_WIDTH_DP = 600
         const val LARGE_TABLET_MIN_WIDTH_DP = 720
-        const val SYSTEM_QUIET_PERIOD_MS = 5_000L
     }
 }

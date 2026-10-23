@@ -1,8 +1,9 @@
 name: Build
+
 on: [ push, pull_request ]
 
 jobs:
-    build:
+    build-and-check:
         runs-on: ubuntu-latest
         steps:
             -   uses: actions/checkout@v7
@@ -13,5 +14,51 @@ jobs:
                     java-version: 25
                     distribution: temurin
 
-            -   name: Check & assembleDebug
-                run: ./gradlew check assembleDebug
+            -   name: Setup Gradle
+                uses: gradle/actions/setup-gradle@v6
+
+            -   name: Check & assemble app
+                run: ./gradlew check :app:assembleDebug
+
+            -   name: Compile screenshot tests
+                run: ./gradlew :store-screenshots:assembleDebug
+
+    widget-integration-tests:
+        runs-on: ubuntu-latest
+        timeout-minutes: 60
+        steps:
+            -   uses: actions/checkout@v7
+
+            -   name: Setup JDK
+                uses: actions/setup-java@v6
+                with:
+                    java-version: 25
+                    distribution: temurin
+
+            -   name: Setup Android SDK
+                uses: android-actions/setup-android@v4
+
+            -   name: Setup Gradle
+                uses: gradle/actions/setup-gradle@v6
+
+            -   name: Enable KVM
+                run: |
+                    echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+                    sudo udevadm control --reload-rules
+                    sudo udevadm trigger --name-match=kvm
+
+            -   name: Run widget integration tests
+                run: |
+                    ./gradlew :widget-integration-tests:widgetPixel6Api35DebugAndroidTest \
+                        -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect \
+                        --stacktrace
+
+            -   name: Upload test reports
+                if: always()
+                uses: actions/upload-artifact@v7
+                with:
+                    name: widget-integration-test-results
+                    path: |
+                        widget-integration-tests/build/reports/androidTests/
+                        widget-integration-tests/build/outputs/androidTest-results/
+                    if-no-files-found: ignore
