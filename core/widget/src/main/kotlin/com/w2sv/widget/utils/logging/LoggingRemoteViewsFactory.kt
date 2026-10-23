@@ -7,7 +7,7 @@ import slimber.log.i
 /**
  * A [RemoteViewsService.RemoteViewsFactory] that logs upon invocation of its callbacks.
  */
-internal abstract class LoggingRemoteViewsFactory : RemoteViewsService.RemoteViewsFactory {
+abstract class LoggingRemoteViewsFactory : RemoteViewsService.RemoteViewsFactory {
 
     @CallSuper
     override fun onCreate() {

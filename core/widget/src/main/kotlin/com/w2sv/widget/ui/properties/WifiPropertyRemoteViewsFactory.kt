@@ -13,7 +13,7 @@ import com.w2sv.widget.utils.remoteViews
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-internal class WifiPropertyRemoteViewsFactory @Inject constructor(
+class WifiPropertyRemoteViewsFactory @Inject internal constructor(
     @ApplicationContext private val context: Context,
     private val renderDataProvider: WifiPropertyRenderDataProvider,
     private val widgetConfigSource: WidgetConfigSource,
