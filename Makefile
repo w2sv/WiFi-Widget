@@ -67,7 +67,7 @@ build-apk:
 # ==============
 
 publish-listing:
-	@./gradlew publishListing  --console verbose
+	@./gradlew :app:publishListing  --console verbose
 
 publish-to-test-track:
 	@echo -e "Retrieved Version: ${VERSION}\nHit enter to continue"
@@ -77,10 +77,10 @@ publish-to-test-track:
 	@$(MAKE) build-aab
 
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track internal
+	@./gradlew :app:publishBundle --track internal
 
 publish-bundle:
 	@echo "Publish Bundle"
-	@./gradlew publishBundle --track production --console verbose
+	@./gradlew :app:publishBundle --track production --console verbose
 
 # fdroid metadata: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.w2sv.wifiwidget.yml
