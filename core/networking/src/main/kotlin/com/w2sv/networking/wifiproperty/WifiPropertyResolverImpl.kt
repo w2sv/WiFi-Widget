@@ -9,8 +9,8 @@ import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.coroutines.runCatchingCancellable
-import com.w2sv.networking.connectivity.linkProperties
 import com.w2sv.networking.connectivity.systemIpAddresses
+import com.w2sv.networking.connectivity.wifiNetworkSnapshot
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
@@ -24,22 +24,13 @@ internal class WifiPropertyResolverImpl @Inject constructor(
     private val isLocationEnabled: IsLocationEnabled
 ) : WifiPropertyResolver {
 
-    @Suppress("DEPRECATION")
     override suspend fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
         remoteNetworkData: RemoteNetworkData
     ): List<ResolvedWifiProperty> =
         withContext(Dispatchers.Default) {
-            val wifiSnapshot = WifiSnapshot(
-                connectionInfo = wifiManager.connectionInfo,
-                dhcpInfo = wifiManager.dhcpInfo,
-                linkProperties = connectivityManager.linkProperties,
-                publicIps = remoteNetworkData.publicIps,
-                systemIps = connectivityManager.systemIpAddresses(),
-                ipApiData = remoteNetworkData.ipApiData,
-                isLocationEnabled = isLocationEnabled()
-            )
+            val wifiSnapshot = captureWifiSnapshot(remoteNetworkData)
 
             enabledProperties.map { property ->
                 ensureActive()
@@ -58,4 +49,26 @@ internal class WifiPropertyResolverImpl @Inject constructor(
                 ResolvedWifiProperty(property = property, values = values)
             }
         }
+
+    /** Collects the local link once so all IP properties in this pass use the same addresses. */
+    @Suppress("DEPRECATION")
+    private fun captureWifiSnapshot(remoteNetworkData: RemoteNetworkData): WifiSnapshot {
+        val defaultNetwork = connectivityManager.activeNetwork
+        val defaultCapabilities = defaultNetwork?.let(connectivityManager::getNetworkCapabilities)
+        // NAT64 and classified addresses must come from the same identified Wi-Fi link.
+        val linkProperties = connectivityManager.wifiNetworkSnapshot(
+            wifiEnabled = wifiManager.isWifiEnabled,
+            defaultNetwork = defaultNetwork,
+            defaultCapabilities = defaultCapabilities
+        ).linkProperties
+        return WifiSnapshot(
+            connectionInfo = wifiManager.connectionInfo,
+            dhcpInfo = wifiManager.dhcpInfo,
+            linkProperties = linkProperties,
+            publicIps = remoteNetworkData.publicIps,
+            systemIps = linkProperties.systemIpAddresses(),
+            ipApiData = remoteNetworkData.ipApiData,
+            isLocationEnabled = isLocationEnabled()
+        )
+    }
 }

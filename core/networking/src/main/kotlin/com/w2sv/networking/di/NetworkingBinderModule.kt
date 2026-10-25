@@ -1,8 +1,10 @@
 package com.w2sv.networking.di
 
+import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
+import com.w2sv.networking.connectivity.NetworkAvailabilitySourceImpl
 import com.w2sv.networking.remotenetworkdata.RemoteNetworkDataRepositoryImpl
 import com.w2sv.networking.wifiproperty.WifiPropertyResolverImpl
 import com.w2sv.networking.wifistatus.WifiStatusSourceImpl
@@ -20,6 +22,9 @@ abstract class NetworkingBinderModule {
 
     @Binds
     internal abstract fun wifiStatusSource(instance: WifiStatusSourceImpl): WifiStatusSource
+
+    @Binds
+    internal abstract fun networkAvailabilitySource(impl: NetworkAvailabilitySourceImpl): NetworkAvailabilitySource
 
     @Binds
     internal abstract fun remoteNetworkDataRepository(instance: RemoteNetworkDataRepositoryImpl): RemoteNetworkDataRepository

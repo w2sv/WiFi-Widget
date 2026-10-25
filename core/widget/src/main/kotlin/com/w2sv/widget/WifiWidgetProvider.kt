@@ -6,6 +6,7 @@ import android.content.Intent
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.core.widget.R
+import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -36,12 +37,19 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
     @Inject
     lateinit var remoteNetworkDataRepository: RemoteNetworkDataRepository
 
+    @Inject
+    lateinit var networkAvailabilitySource: NetworkAvailabilitySource
+
+    @Inject
+    lateinit var remoteDataWidgetObserver: RemoteDataWidgetObserver
+
     /** Applies periodic refresh settings when the first widget is added. */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
 
         val refreshing = widgetConfigSource.blockingSnapshot().refreshing
         refreshManager.applyRefreshingPolicy(refreshing)
+        remoteDataWidgetObserver.onWidgetsAvailable()
     }
 
     /** Cancels periodic and recovery work when the last widget is removed. */
@@ -49,6 +57,7 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
         super.onDisabled(context)
         refreshManager.cancelPeriodicWork()
         refreshManager.cancelRecoveryWork()
+        remoteDataWidgetObserver.onLastWidgetRemoved()
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -73,9 +82,10 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
      * Periodic system updates are disabled (`updatePeriodMillis = 0`);
      * Those are triggered via the WifiWidgetRefreshWorker, as are manual refresh actions.
      *
-     * Renders the affected widget instances and schedules recovery of missing remote data,
-     * including after process recreation when the application observer has no prior emission
-     * to trigger a render. Recovery publication later arrives through the observer's render path.
+     * Renders the affected widget instances. When a direct Wi-Fi or VPN default route is usable, it
+     * schedules recovery of missing remote data, including after process recreation when the
+     * application observer has no prior emission to trigger a render. Recovery publication later
+     * arrives through the observer's render path.
      */
     override fun onUpdate(
         context: Context,
@@ -84,8 +94,12 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
 
+        if (appWidgetIds.isNotEmpty()) remoteDataWidgetObserver.onWidgetsAvailable()
+
         val config = widgetConfigSource.blockingSnapshot()
-        if (remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig)) {
+        // Reconcile even on another transport so verified default-route publication stays current.
+        val needsRecovery = remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig)
+        if (needsRecovery && networkAvailabilitySource().canRefreshWidgetRemoteData) {
             refreshManager.enqueueRecovery()
         }
         renderWidgets(context, appWidgetManager, appWidgetIds, config)

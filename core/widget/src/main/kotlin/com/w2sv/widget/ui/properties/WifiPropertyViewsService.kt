@@ -8,15 +8,17 @@ import androidx.core.net.toUri
 import com.w2sv.androidutils.content.intent
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import javax.inject.Provider
 
+/** Supplies a fresh factory when Android registers a new adapter Intent; Android owns equivalent-Intent reuse. */
 @AndroidEntryPoint
 internal class WifiPropertyViewsService : RemoteViewsService() {
 
     @Inject
-    lateinit var wifiPropertyRemoteViewsFactory: WifiPropertyRemoteViewsFactory
+    lateinit var wifiPropertyRemoteViewsFactoryProvider: Provider<WifiPropertyRemoteViewsFactory>
 
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory =
-        wifiPropertyRemoteViewsFactory
+        wifiPropertyRemoteViewsFactoryProvider.get()
 
     companion object {
         fun intent(context: Context, widgetId: Int): Intent =

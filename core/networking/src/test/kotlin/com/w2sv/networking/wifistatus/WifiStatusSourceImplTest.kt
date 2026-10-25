@@ -94,6 +94,30 @@ class WifiStatusSourceImplTest {
         verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>()) }
     }
 
+    @Test fun `connected Wi-Fi identity changes while both connections are inactive`() {
+        val source = source()
+        active = second
+        secondCapabilities = mobileWithInternet
+        firstCapabilities = wifiWithInternet
+        every { first.networkHandle } returns 101L
+        networks = arrayOf(first, second)
+        assertEquals(WifiStatus.ConnectedInactive, source.snapshot())
+        assertEquals(101L, source.connectedWifiIdentity())
+
+        val replacement = mockk<Network> {
+            every { networkHandle } returns 303L
+        }
+        every { connectivity.getNetworkCapabilities(replacement) } returns wifiWithInternet
+        networks = arrayOf(replacement, second)
+        assertEquals(WifiStatus.ConnectedInactive, source.snapshot())
+        assertEquals(303L, source.connectedWifiIdentity())
+
+        networks = arrayOf(second)
+        assertEquals(WifiStatus.NotConnected, source.snapshot())
+        assertEquals(null, source.connectedWifiIdentity())
+        verify(exactly = 0) { connectivity.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) }
+    }
+
     @Test fun `Wi-Fi collection emits initial and repeated identical statuses and cleans up`() =
         runTest {
             val source = source()
@@ -221,6 +245,7 @@ class WifiStatusSourceImplTest {
     private fun capabilities(wifi: Boolean, internet: Boolean) =
         mockk<NetworkCapabilities> {
             every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns wifi
+            every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns false
             every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns internet
             every { hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns internet
         }

@@ -1,19 +1,17 @@
 package com.w2sv.widget.ui.properties
 
-import android.app.PendingIntent
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.annotation.VisibleForTesting
 import com.w2sv.androidutils.content.getParcelableCompat
-import com.w2sv.androidutils.content.intent
+import com.w2sv.androidutils.content.toDebugString
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
-import com.w2sv.common.android.activityPendingIntent
 import com.w2sv.core.resources.R
 import com.w2sv.widget.utils.ToastManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +19,7 @@ import javax.inject.Inject
 import kotlinx.parcelize.Parcelize
 import slimber.log.i
 
+/** Handles one collection-row fill-in intent per launch and exits even when its arguments are invalid. */
 @AndroidEntryPoint
 internal class CopyPropertyToClipboardActivity : ComponentActivity() {
 
@@ -33,58 +32,52 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val args = Args.fromIntent(intent)
+        i { "onCreate | intent=${intent.toDebugString()}" }
 
-        i { "onCreate | $args" }
-
-        // Copy to clipboard
-        clipboardManager
-            .setPrimaryClip(
-                ClipData.newPlainText(
-                    args.propertyLabel,
-                    args.propertyValue
+        copyPropertyFromIntent(intent, clipboardManager) { label ->
+            toastManager.cancelPreviousAndShow(
+                applicationContext.makeToast(
+                    resources.getHtmlFormattedText(R.string.copied_to_clipboard, label),
+                    Toast.LENGTH_SHORT
                 )
             )
-
-        // Show toast
-        toastManager.cancelPreviousAndShow(
-            applicationContext.makeToast(
-                resources.getHtmlFormattedText(R.string.copied_to_clipboard, args.propertyLabel),
-                Toast.LENGTH_SHORT
-            )
-        )
+        }
 
         finishAndRemoveTask()
     }
 
+    /** Row-specific fill-in payload; the shared PendingIntent template must never contain it. */
     @Parcelize
-    data class Args(val propertyLabel: String, val propertyValue: String) : Parcelable {
+    data class Property(val label: String, val value: String) : Parcelable {
 
         companion object {
-            fun getIntent(propertyLabel: String, propertyValue: String): Intent =
-                Intent()
-                    .putExtra(
-                        EXTRA,
-                        Args(
-                            propertyLabel = propertyLabel,
-                            propertyValue = propertyValue
-                        )
+            fun intent(propertyLabel: String, propertyValue: String): Intent =
+                Intent().putExtra(
+                    EXTRA,
+                    Property(
+                        label = propertyLabel,
+                        value = propertyValue
                     )
+                )
 
-            fun fromIntent(intent: Intent): Args =
-                checkNotNull(intent.getParcelableCompat(EXTRA))
+            fun fromIntent(intent: Intent): Property? =
+                intent.getParcelableCompat<Property>(EXTRA)
 
-            private const val EXTRA =
-                "com.w2sv.wifiwidget.extra.CopyPropertyToClipboardBroadcastReceiverArgs"
+            private const val EXTRA = "com.w2sv.wifiwidget.extra.CopyPropertyToClipboardBroadcastReceiverArgs"
         }
     }
+}
 
-    companion object {
-        fun pendingIntent(context: Context): PendingIntent =
-            activityPendingIntent(
-                context,
-                intent<CopyPropertyToClipboardActivity>(context),
-                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
-            )
-    }
+/** Copies the property supplied by the intent and reports its label on success. */
+@VisibleForTesting
+fun copyPropertyFromIntent(
+    intent: Intent,
+    clipboardManager: ClipboardManager,
+    onCopied: (String) -> Unit
+) {
+    val property = CopyPropertyToClipboardActivity.Property.fromIntent(intent) ?: return
+
+    @Suppress("UsePropertyAccessSyntax")
+    clipboardManager.setPrimaryClip(ClipData.newPlainText(property.label, property.value))
+    onCopied(property.label)
 }

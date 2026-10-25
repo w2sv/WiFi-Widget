@@ -14,11 +14,13 @@ class WifiPropertyPresentationProvider(private val resolver: WifiPropertyResolve
     /**
      * @return List of [WifiPropertyPresentation], the element-order of which corresponds to the one of the [enabledProperties].
      * One [WifiProperty] may result in the creation of multiple [WifiPropertyPresentation] elements.
+     * [onUnresolved] can supply a value for a property with no resolved values; by default such properties are omitted.
      */
     suspend operator fun invoke(
         enabledProperties: List<WifiProperty>,
         enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
-        remoteNetworkData: RemoteNetworkData
+        remoteNetworkData: RemoteNetworkData,
+        onUnresolved: (WifiProperty) -> WifiPropertyValue? = { null }
     ): List<WifiPropertyPresentation> =
         withContext(Dispatchers.Default) {
             resolver(
@@ -27,7 +29,7 @@ class WifiPropertyPresentationProvider(private val resolver: WifiPropertyResolve
                 remoteNetworkData = remoteNetworkData
             ).flatMap { resolution ->
                 resolution.property.toPresentations(
-                    values = resolution.values,
+                    values = resolution.values.ifEmpty { listOfNotNull(onUnresolved(resolution.property)) },
                     resources = resources
                 )
             }

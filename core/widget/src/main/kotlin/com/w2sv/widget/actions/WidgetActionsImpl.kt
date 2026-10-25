@@ -7,19 +7,15 @@ import com.w2sv.androidutils.content.componentName
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import kotlinx.coroutines.flow.SharedFlow
 
 internal class WidgetActionsImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val refreshManager: WifiWidgetWorkScheduler,
-    @WidgetPinSuccessFlow override val pinSuccesses: SharedFlow<Unit>
+    private val refreshManager: WifiWidgetWorkScheduler
 ) : WidgetActions {
-
     override fun pin(onFailure: () -> Unit) {
         appWidgetManager.attemptWifiWidgetPin(
             context = context,
