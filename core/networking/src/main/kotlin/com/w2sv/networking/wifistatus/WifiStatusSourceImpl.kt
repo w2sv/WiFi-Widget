@@ -15,6 +15,7 @@ import com.w2sv.networking.connectivity.hasInternetCapability
 import com.w2sv.networking.connectivity.hasWifiTransport
 import com.w2sv.networking.connectivity.isAnyWifiConnected
 import com.w2sv.networking.connectivity.isInternetValidated
+import com.w2sv.networking.connectivity.selectWifiNetwork
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -45,7 +46,7 @@ internal class WifiStatusSourceImpl @Inject constructor(
             when (state) {
                 Disabling, Disabled -> trySend(StatusEvent.Disabled)
                 Enabling, Enabled -> {
-                    if (!connectivityManager.isAnyWifiConnected) {
+                    if (!connectivityManager.isAnyWifiConnected()) {
                         trySend(StatusEvent.NotConnected)
                     }
                 }
@@ -92,17 +93,28 @@ internal class WifiStatusSourceImpl @Inject constructor(
         }
 
         val activeNetwork = connectivityManager.activeNetwork
-        val capabilities = activeNetwork?.let(connectivityManager::getNetworkCapabilities)
-        val hasWifiTransport = capabilities?.hasWifiTransport == true
+        val activeCapabilities = activeNetwork?.let(connectivityManager::getNetworkCapabilities)
+        val activeHasWifiTransport = activeCapabilities?.hasWifiTransport == true
 
         return when {
-            hasWifiTransport && capabilities.isInternetValidated -> WifiStatus.Connected
-            hasWifiTransport -> WifiStatus.ConnectedNoInternet
-            connectivityManager.isAnyWifiConnected -> WifiStatus.ConnectedInactive
+            activeHasWifiTransport && activeCapabilities.isInternetValidated -> WifiStatus.Connected
+            activeHasWifiTransport -> WifiStatus.ConnectedNoInternet
+            connectivityManager.isAnyWifiConnected(activeNetwork) -> WifiStatus.ConnectedInactive
             else -> WifiStatus.NotConnected
         }.log {
-            "WifiStatus=$it | activeNetwork=$activeNetwork | capabilities=$capabilities"
+            "WifiStatus=$it | activeNetwork=$activeNetwork | capabilities=$activeCapabilities"
         }
+    }
+
+    /** Uses the same direct Wi-Fi selection as local property resolution and widget cache reads. */
+    override fun connectedWifiIdentity(): Long? {
+        val defaultNetwork = connectivityManager.activeNetwork
+        val capabilities = defaultNetwork?.let(connectivityManager::getNetworkCapabilities)
+        return connectivityManager.selectWifiNetwork(
+            wifiManager.isWifiEnabled,
+            defaultNetwork,
+            capabilities
+        ).network?.networkHandle
     }
 }
 

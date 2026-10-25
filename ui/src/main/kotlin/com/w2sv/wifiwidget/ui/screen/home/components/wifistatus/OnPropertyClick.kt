@@ -58,6 +58,7 @@ fun PropertyOnClickScope.onPropertyClick(
 
         NoLocationAccessPermission -> locationAccessCapability.requestPermission()
         GpsDisabled -> locationAccessCapability.openLocationSettings()
+        BatterySaverRestricted -> Unit
     }
 }
 

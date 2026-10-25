@@ -3,6 +3,7 @@ package com.w2sv.networking.remotenetworkdata
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.networking.RemoteNetworkData
@@ -17,6 +18,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import java.io.IOException
 import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CompletableDeferred
@@ -28,16 +30,21 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@Suppress("DEPRECATION")
 class RemoteNetworkDataRepositoryImplTest {
     private val failed = Result.failure<Nothing>(IOException("unavailable"))
     private val api = mockk<IpApiDataFetcher>()
     private val ips = mockk<PublicIpFetcher>()
     private val connectivity = mockk<ConnectivityManager>()
+    private val wifiManager = mockk<WifiManager> {
+        every { isWifiEnabled } returns true
+    }
     private val networkA = mockk<Network>()
     private val networkB = mockk<Network>()
     private val capabilities = mockk<NetworkCapabilities> {
         every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns true
         every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns false
+        every { hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns false
         every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
     }
     private val config = WidgetConfig.default
@@ -49,6 +56,7 @@ class RemoteNetworkDataRepositoryImplTest {
 
     private fun repository(configProvider: () -> WidgetConfig = { config }): RemoteNetworkDataRepositoryImpl {
         every { connectivity.activeNetwork } returns networkA
+        every { connectivity.allNetworks } returns arrayOf(networkA)
         every { connectivity.getNetworkCapabilities(any()) } returns capabilities
         coEvery { api.fetch(any()) } returns Result.success(apiData)
         coEvery { ips.fetch(any()) } returns mapOf(
@@ -58,7 +66,7 @@ class RemoteNetworkDataRepositoryImplTest {
         val configSource = mockk<WidgetConfigSource> {
             coEvery { snapshot() } coAnswers { configProvider() }
         }
-        return RemoteNetworkDataRepositoryImpl(api, ips, configSource, connectivity)
+        return RemoteNetworkDataRepositoryImpl(api, ips, configSource, connectivity, wifiManager)
     }
 
     @Test fun `transient failures preserve each successful field`() =
@@ -281,9 +289,51 @@ class RemoteNetworkDataRepositoryImplTest {
             every { connectivity.activeNetwork } returns null
             assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
             assertEquals(RemoteNetworkData.empty, repository.data.value)
+            repeat(2) {
+                assertTrue(repository.needsRecovery(config.remoteDataConfig))
+                assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+            }
             every { connectivity.activeNetwork } returns networkA
             assertFalse(repository.needsRecovery(config.remoteDataConfig))
             assertEquals(2, repository.data.value.publicIps.size)
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            coVerify(exactly = 1) { api.fetch(any()) }
+            coVerify(exactly = 1) { ips.fetch(any()) }
+        }
+
+    @Test fun `visible cached network retains widget data without verifying the default egress`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            every { connectivity.allNetworks } returns arrayOf(networkA)
+
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
+            verify(exactly = 0) { connectivity.allNetworks }
+            assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
+
+            every { connectivity.activeNetwork } returns networkB
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            every { connectivity.activeNetwork } returns networkA
+            assertEquals(2, repository.reconciledSnapshot(config.remoteDataConfig).publicIps.size)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+        }
+
+    @Test fun `requirements changed while route is hidden are applied before cache reappears`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            val withoutPublicIp = config.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+            every { connectivity.activeNetwork } returns null
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(withoutPublicIp.remoteDataConfig))
+
+            every { connectivity.activeNetwork } returns networkA
+            val restored = repository.reconciledSnapshot(withoutPublicIp.remoteDataConfig)
+            assertTrue(restored.publicIps.isEmpty())
+            assertEquals(apiData.isp, restored.ipApiData?.isp)
         }
 
     @Test fun `temporarily unavailable capabilities withhold and restore same-network data`() =
@@ -298,7 +348,7 @@ class RemoteNetworkDataRepositoryImplTest {
             assertFalse(repository.needsRecovery(config.remoteDataConfig))
         }
 
-    @Test fun `known new identity invalidates cache even before its capabilities are known`() =
+    @Test fun `known new default hides egress data while the old Wi-Fi cache remains identifiable`() =
         runTest {
             val repository = repository()
             repository.refresh()
@@ -306,7 +356,102 @@ class RemoteNetworkDataRepositoryImplTest {
             every { connectivity.getNetworkCapabilities(networkB) } returns null
             assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
             every { connectivity.activeNetwork } returns networkA
+            assertEquals(2, repository.reconciledSnapshot(config.remoteDataConfig).publicIps.size)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+        }
+
+    @Test fun `confirmed route change restores Wi-Fi values but requires one new recovery refresh`() =
+        runTest {
+            val repository = repository()
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
             assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+
+            every { connectivity.activeNetwork } returns networkA
+            assertEquals(apiData.isp, repository.reconciledSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "Updated ISP"))
+
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            assertEquals("Updated ISP", repository.data.value.ipApiData?.isp)
+            assertEquals("Updated ISP", repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertFalse(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            coVerify(exactly = 2) { api.fetch(any()) }
+            coVerify(exactly = 2) { ips.fetch(any()) }
+        }
+
+    @Test fun `delayed Wi-Fi default capabilities restore cached values exactly once`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+
+            every { connectivity.activeNetwork } returns networkA
+            every { connectivity.getNetworkCapabilities(networkA) } returns null
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
+
+            every { connectivity.getNetworkCapabilities(networkA) } returns capabilities
+            assertEquals(apiData.isp, repository.reconciledSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "Refreshed ISP"))
+
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            repeat(2) {
+                assertEquals("Refreshed ISP", repository.reconciledSnapshot(config.remoteDataConfig).ipApiData?.isp)
+                assertFalse(repository.needsRecovery(config.remoteDataConfig))
+            }
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh(onlyIfMissing = true))
+            coVerify(exactly = 2) { api.fetch(any()) }
+            coVerify(exactly = 2) { ips.fetch(any()) }
+        }
+
+    @Test fun `missing INTERNET capability keeps Wi-Fi restoration pending`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+            repository.reconciledSnapshot(config.remoteDataConfig)
+
+            every { connectivity.activeNetwork } returns networkA
+            every { connectivity.getNetworkCapabilities(networkA) } returns mockk {
+                every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns false
+            }
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+
+            every { connectivity.getNetworkCapabilities(networkA) } returns capabilities
+            assertEquals(apiData.isp, repository.reconciledSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+        }
+
+    @Test fun `failed recovery retains restored Wi-Fi values and remains eligible`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+            repository.reconciledSnapshot(config.remoteDataConfig)
+            every { connectivity.activeNetwork } returns networkA
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to failed,
+                IpAddress.Version.V6 to failed
+            )
+
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertEquals(RemoteRefreshResult.Incomplete, repository.refresh(onlyIfMissing = true))
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertEquals(2, repository.data.value.publicIps.size)
             assertTrue(repository.needsRecovery(config.remoteDataConfig))
         }
 
@@ -328,12 +473,55 @@ class RemoteNetworkDataRepositoryImplTest {
             assertEquals("VPN ISP", repository.reconciledSnapshot(config.remoteDataConfig).ipApiData?.isp)
         }
 
+    @Test fun `widget HTTP fetches through direct Wi-Fi or VPN but not cellular`() =
+        runTest {
+            val repository = repository()
+            assertEquals(RemoteRefreshResult.Complete, repository.refreshForWidget())
+
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false, vpn = true)
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "VPN ISP"))
+            assertEquals(RemoteRefreshResult.Complete, repository.refreshForWidget())
+            assertEquals("VPN ISP", repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+            assertEquals(RemoteRefreshResult.NetworkUnavailable, repository.refreshForWidget())
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            coVerify(exactly = 2) { api.fetch(any()) }
+            coVerify(exactly = 2) { ips.fetch(any()) }
+        }
+
+    @Test fun `widget HTTP rejects missing route details and disconnected Wi-Fi`() =
+        runTest {
+            val repository = repository()
+            every { connectivity.activeNetwork } returns null
+            assertEquals(RemoteRefreshResult.NetworkUnavailable, repository.refreshForWidget())
+
+            every { connectivity.activeNetwork } returns networkA
+            every { connectivity.getNetworkCapabilities(networkA) } returns null
+            assertEquals(RemoteRefreshResult.NetworkUnavailable, repository.refreshForWidget())
+
+            every { connectivity.getNetworkCapabilities(networkA) } returns mockk {
+                every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns false
+            }
+            assertEquals(RemoteRefreshResult.NetworkUnavailable, repository.refreshForWidget())
+
+            every { connectivity.getNetworkCapabilities(networkA) } returns capabilities
+            every { wifiManager.isWifiEnabled } returns false
+            assertEquals(RemoteRefreshResult.NetworkUnavailable, repository.refreshForWidget())
+            coVerify(exactly = 0) { api.fetch(any()) }
+            coVerify(exactly = 0) { ips.fetch(any()) }
+        }
+
     @Test fun `default route changing to cellular cannot reuse Wi-Fi egress data`() =
         runTest {
             val repository = repository()
             repository.refresh()
             val cellular = mockk<NetworkCapabilities> {
                 every { hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
+                every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns false
+                every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns false
                 every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
             }
             every { connectivity.activeNetwork } returns networkB
@@ -343,7 +531,192 @@ class RemoteNetworkDataRepositoryImplTest {
             assertTrue(repository.needsRecovery(config.remoteDataConfig))
         }
 
-    @Test fun `route change during request discards its result`() =
+    @Test fun `connected Wi-Fi keeps its widget values when cellular becomes the default`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+
+            assertEquals(RemoteNetworkData.empty, repository.reconciledSnapshot(config.remoteDataConfig))
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+            assertEquals(RemoteNetworkData.empty, repository.data.value)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "Cellular ISP"))
+            repository.refresh()
+            assertEquals("Cellular ISP", repository.data.value.ipApiData?.isp)
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+        }
+
+    @Test fun `VPN values take precedence while its default route is verified`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = true, vpn = true)
+
+            // Before a VPN fetch, the widget can still use values from connected Wi-Fi A.
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "VPN ISP"))
+            repository.refresh()
+            assertEquals("VPN ISP", repository.data.value.ipApiData?.isp)
+            assertEquals("VPN ISP", repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+
+            every { wifiManager.isWifiEnabled } returns false
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+            every { wifiManager.isWifiEnabled } returns true
+
+            // The VPN fetch must not replace A's Wi-Fi association.
+            every { connectivity.activeNetwork } returns null
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+
+            every { connectivity.activeNetwork } returns networkA
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+        }
+
+    @Test fun `disconnected or replaced Wi-Fi never displays another network's cached data`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            every { connectivity.allNetworks } returns emptyArray()
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+
+            every { connectivity.allNetworks } returns arrayOf(networkB)
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+
+            every { connectivity.activeNetwork } returns networkB
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+            repository.refresh()
+            assertEquals(2, repository.widgetSnapshot(config.remoteDataConfig).publicIps.size)
+
+            every { wifiManager.isWifiEnabled } returns false
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+        }
+
+    @Test fun `ambiguous or unidentifiable Wi-Fi does not expose retained data`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+
+            every { connectivity.allNetworks } returns arrayOf(networkA)
+            every { connectivity.getNetworkCapabilities(networkA) } returns null
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+        }
+
+    @Test fun `cellular data is hidden and VPN data is visible only while its default remains verified`() =
+        runTest {
+            val repository = repository()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = false)
+            repository.refresh()
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+
+            every { connectivity.getNetworkCapabilities(networkB) } returns otherCapabilities(wifi = true, vpn = true)
+            // The same Network handle changing transport cannot make cellular values VPN data.
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+            coEvery { api.fetch(any()) } returns failed
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to failed,
+                IpAddress.Version.V6 to failed
+            )
+            repository.refresh()
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "VPN ISP"))
+            coEvery { ips.fetch(any()) } returns mapOf(
+                IpAddress.Version.V4 to Result.success(ipv4),
+                IpAddress.Version.V6 to Result.success(ipv6)
+            )
+            repository.refresh()
+            assertEquals("VPN ISP", repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+
+            every { connectivity.activeNetwork } returns null
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+        }
+
+    @Test fun `mixed Wi-Fi and cellular transport cannot establish a Wi-Fi HTTP origin`() =
+        runTest {
+            val repository = repository()
+            every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkA, networkB)
+            every { connectivity.getNetworkCapabilities(networkB) } returns mockk {
+                every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns true
+                every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns false
+                every { hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns true
+                every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+            }
+
+            repository.refresh()
+
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
+            assertEquals(apiData.isp, repository.data.value.ipApiData?.isp)
+        }
+
+    @Test fun `retained Wi-Fi values obey changed remote requirements`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            every { connectivity.allNetworks } returns arrayOf(networkA)
+            val withoutPublicIp = config.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+                .withUpdatedPropertyEnablement(WifiProperty.ISP, false)
+
+            val retained = repository.widgetSnapshot(withoutPublicIp.remoteDataConfig)
+            assertTrue(retained.publicIps.isEmpty())
+            assertEquals("", retained.ipApiData?.isp)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+            assertTrue(repository.widgetSnapshot(config.remoteDataConfig).publicIps.isEmpty())
+        }
+
+    @Test fun `returning to the same Wi-Fi refreshes retained values when HTTP becomes available`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            assertEquals(apiData.isp, repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+
+            every { connectivity.activeNetwork } returns networkA
+            coEvery { api.fetch(any()) } returns Result.success(apiData.copy(isp = "Updated ISP"))
+            assertEquals(RemoteRefreshResult.Complete, repository.refresh())
+            assertEquals("Updated ISP", repository.widgetSnapshot(config.remoteDataConfig).ipApiData?.isp)
+            assertEquals("Updated ISP", repository.data.value.ipApiData?.isp)
+            assertFalse(repository.needsRecovery(config.remoteDataConfig))
+        }
+
+    @Test fun `retained Wi-Fi public IP versions follow configuration changes`() =
+        runTest {
+            val repository = repository()
+            repository.refresh()
+            every { connectivity.activeNetwork } returns null
+            val onlyV4 = config.withUpdatedPropertyConfig(WifiProperty.PublicIp) {
+                it.copy(settings = it.settings + (IpSetting.V6Enabled to false))
+            }
+
+            assertEquals(listOf(ipv4), repository.widgetSnapshot(onlyV4.remoteDataConfig).publicIps)
+            assertEquals(listOf(ipv4), repository.widgetSnapshot(config.remoteDataConfig).publicIps)
+            assertTrue(repository.needsRecovery(config.remoteDataConfig))
+        }
+
+    private fun otherCapabilities(wifi: Boolean, vpn: Boolean = false) =
+        mockk<NetworkCapabilities> {
+            every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns wifi
+            every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns vpn
+            every { hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) } returns !wifi
+            every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns true
+        }
+
+    @Test fun `widget route change during request discards its result`() =
         runTest {
             val repository = repository()
             val release = CompletableDeferred<Unit>()
@@ -351,12 +724,14 @@ class RemoteNetworkDataRepositoryImplTest {
                 release.await()
                 Result.success(apiData)
             }
-            val refresh = async { repository.refresh() }
+            val refresh = async { repository.refreshForWidget() }
             testScheduler.runCurrent()
             every { connectivity.activeNetwork } returns networkB
+            every { connectivity.allNetworks } returns arrayOf(networkB)
             release.complete(Unit)
             assertEquals(RemoteRefreshResult.NetworkUnavailable, refresh.await())
             assertTrue(repository.data.value.publicIps.isEmpty())
+            assertEquals(RemoteNetworkData.empty, repository.widgetSnapshot(config.remoteDataConfig))
             assertTrue(repository.needsRecovery(config.remoteDataConfig))
         }
 

@@ -16,9 +16,15 @@ class ScreenshotRemoteNetworkDataRepository @Inject constructor() : RemoteNetwor
     override fun reconciledSnapshot(config: RemoteDataConfig): RemoteNetworkData =
         RemoteNetworkData.empty
 
+    override fun widgetSnapshot(config: RemoteDataConfig): RemoteNetworkData =
+        RemoteNetworkData.empty
+
     override fun needsRecovery(config: RemoteDataConfig): Boolean =
         false
 
     override suspend fun refresh(onlyIfMissing: Boolean): RemoteRefreshResult =
+        RemoteRefreshResult.Complete
+
+    override suspend fun refreshForWidget(onlyIfMissing: Boolean): RemoteRefreshResult =
         RemoteRefreshResult.Complete
 }

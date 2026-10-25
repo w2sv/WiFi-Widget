@@ -1,5 +1,6 @@
 package com.w2sv.widget.ui.properties
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Build
 import android.text.SpannedString
@@ -37,14 +38,8 @@ internal fun RemoteViews.inflatePropertyLayout(
         color = widgetColors.secondary
     )
 
-    // OnClickFillInIntent
-    setOnClickFillInIntent(
-        R.id.wifi_property_layout,
-        CopyPropertyToClipboardActivity.Args.getIntent(
-            propertyLabel = presentation.label.text,
-            propertyValue = presentation.value
-        )
-    )
+    // Reapplied RemoteViews can retain an earlier row's click tag unless it is explicitly cleared.
+    setOnClickFillInIntent(R.id.property_click_target, presentation.copyIntentOrNull())
 
     // IP sub property row
     if (presentation.subValues.isNotEmpty()) {
@@ -53,6 +48,19 @@ internal fun RemoteViews.inflatePropertyLayout(
         setViewVisibility(R.id.ip_sub_property_row, View.GONE)
     }
 }
+
+private fun WifiPropertyPresentation.copyIntentOrNull(): Intent? =
+    if (resolutionError != null) {
+        null
+    } else {
+        CopyPropertyToClipboardActivity.Property.intent(
+            propertyLabel = label.clipboardLabel(),
+            propertyValue = value
+        )
+    }
+
+private fun SubscriptableText.clipboardLabel(): String =
+    subscript?.let { "$text $it" } ?: text
 
 private fun SubscriptableText.toSpannedString(subscriptScale: Float): SpannedString =
     buildSpannedString {

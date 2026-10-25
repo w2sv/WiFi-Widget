@@ -10,7 +10,6 @@ import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -27,7 +26,7 @@ class WidgetActionsImplTest {
         every { getAppWidgetIds(any()) } returns intArrayOf(1)
     }
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
-    private val actions = WidgetActionsImpl(context, manager, scheduler, MutableSharedFlow())
+    private val actions = WidgetActionsImpl(context, manager, scheduler)
     private val previous = WidgetConfig.default
 
     @Test fun `unsupported pin request invokes failure callback`() {
@@ -43,7 +42,7 @@ class WidgetActionsImplTest {
     @Test fun `rejected pin request invokes failure callback`() {
         every { manager.isRequestPinAppWidgetSupported } returns true
         every { manager.requestPinAppWidget(any(), null, any()) } returns false
-        val actions = WidgetActionsImpl(ApplicationProvider.getApplicationContext(), manager, scheduler, MutableSharedFlow())
+        val actions = WidgetActionsImpl(ApplicationProvider.getApplicationContext(), manager, scheduler)
         var failures = 0
 
         actions.pin { failures++ }

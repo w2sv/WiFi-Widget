@@ -24,6 +24,7 @@ class WifiPropertyPresentationProviderTest {
                 R.string.ssid -> "SSID"
                 R.string.dns -> "DNS"
                 R.string.gps_disabled -> "GPS disabled"
+                R.string.battery_saver_restricted -> "Restricted by Battery Saver"
                 else -> error("Unexpected string resource")
             }
         }
@@ -90,6 +91,54 @@ class WifiPropertyPresentationProviderTest {
                     enabledIpSettings = { emptyList() },
                     remoteNetworkData = RemoteNetworkData.empty
                 )
+            )
+        }
+
+    @Test
+    fun `fallback replaces only empty resolutions without changing order or multiple values`() =
+        runTest {
+            val requested = listOf(WifiProperty.PublicIp, WifiProperty.SSID, WifiProperty.DNS)
+            val resolver = WifiPropertyResolver { _, _, _ ->
+                listOf(
+                    ResolvedWifiProperty(WifiProperty.PublicIp, emptyList()),
+                    ResolvedWifiProperty(
+                        WifiProperty.SSID,
+                        listOf(WifiPropertyValue("Home".txt), WifiPropertyValue("Guest".txt))
+                    ),
+                    ResolvedWifiProperty(WifiProperty.DNS, emptyList())
+                )
+            }
+            val unresolved = mutableListOf<WifiProperty>()
+
+            val actual = WifiPropertyPresentationProvider(resolver, resources)(
+                enabledProperties = requested,
+                enabledIpSettings = { emptyList() },
+                remoteNetworkData = RemoteNetworkData.empty,
+                onUnresolved = { property ->
+                    unresolved += property
+                    if (property == WifiProperty.PublicIp) {
+                        WifiPropertyValue(
+                            R.string.battery_saver_restricted.txt,
+                            resolutionError = WifiPropertyResolutionError.BatterySaverRestricted
+                        )
+                    } else {
+                        null
+                    }
+                }
+            )
+
+            assertEquals(listOf(WifiProperty.PublicIp, WifiProperty.DNS), unresolved)
+            assertEquals(
+                listOf(
+                    WifiPropertyPresentation(
+                        SubscriptableText("IP", "Public"),
+                        "Restricted by Battery Saver",
+                        resolutionError = WifiPropertyResolutionError.BatterySaverRestricted
+                    ),
+                    WifiPropertyPresentation(SubscriptableText("SSID 1"), "Home"),
+                    WifiPropertyPresentation(SubscriptableText("SSID 2"), "Guest")
+                ),
+                actual
             )
         }
 }

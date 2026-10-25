@@ -23,6 +23,7 @@
             android:clipToPadding="false"
             android:divider="@null"
             android:gravity="center"
+            android:listSelector="@android:color/transparent"
             android:orientation="vertical"
             android:paddingVertical="6dp"
             android:scrollbars="none" />

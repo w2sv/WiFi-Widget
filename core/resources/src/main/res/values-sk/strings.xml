@@ -126,6 +126,7 @@
     <string name="open_widget_settings_button">Tlačidlo nastavení widgetu</string>
     <string name="refresh_periodically">Pravidelne obnovovať</string>
     <string name="refresh_on_low_battery">Obnovovať pri nízkom stave batérie</string>
+    <string name="battery_saver_restricted">Obmedzené režimom šetrenia batérie</string>
     <string name="refresh_time_display">Zobrazenie času obnovenia</string>
     <string name="loopback_description">Loopbacková IP adresa, v protokole IPv4 bežne zapisovaná ako <b>127.0.0.1</b>, je vyhradená adresa, ktorá zariadeniu umožňuje komunikovať so sebou samým. Dáta odoslané na loopbackovú adresu sa interne smerujú späť do toho istého zariadenia, čo umožňuje lokálne testovanie sieťových funkcií. Táto adresa, často označovaná ako <b>localhost</b>, sa bežne používa na diagnostické a vývojové účely bez potreby externého pripojenia. V protokole IPv6 sa loopbacková adresa zvyčajne zapisuje ako <b>::1</b>.</string>
     <string name="unique_local_description">Jedinečné lokálne adresy (ULA) v protokole IPv6 predstavujú vyhradenú sadu adries určenú na lokálnu komunikáciu v rámci organizácie alebo lokality. ULA boli zavedené podľa RFC 4193 ako nástupca adries typu site-local a umožňujú zariadeniam v rámci konkrétnej siete komunikovať lokálne bez potreby globálnej jedinečnosti. Predstavujú praktické riešenie na súkromné interné použitie v sieťach IPv6, pričom zabezpečujú lokálnu konektivitu a riešia obmedzenia zastaraného konceptu adresovania typu site-local.</string>

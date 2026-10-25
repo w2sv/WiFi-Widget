@@ -1,7 +1,8 @@
 package com.w2sv.domain.networking
 
 /**
- * Network data fetched online for the connected Wi-Fi network.
+ * Data fetched through a verified default HTTP route. Its Wi-Fi association, when one is
+ * established, is tracked separately by the repository.
  */
 data class RemoteNetworkData(val ipApiData: IpApiData?, val publicIps: List<IpAddress>) {
     companion object {

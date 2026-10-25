@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
 import androidx.test.core.app.ApplicationProvider
+import com.w2sv.domain.networking.NetworkAvailabilitySnapshot
+import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
@@ -24,6 +26,12 @@ class WifiWidgetProviderTest {
     private val manager = mockk<AppWidgetManager>(relaxed = true)
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
     private val repository = mockk<RemoteNetworkDataRepository>()
+    private var directWifiDefault = true
+    private var vpnDefault = false
+    private val availabilitySource = NetworkAvailabilitySource {
+        NetworkAvailabilitySnapshot(false, true, true, true, 1L, directWifiDefault, vpnDefault)
+    }
+    private val observer = mockk<RemoteDataWidgetObserver>(relaxed = true)
     private val renderer = mockk<WidgetRenderer> {
         every { this@mockk.invoke(any(), any(), any(), any()) } returns mockk<RemoteViews>()
     }
@@ -34,6 +42,8 @@ class WifiWidgetProviderTest {
             appWidgetManager = manager
             refreshManager = scheduler
             remoteNetworkDataRepository = repository
+            networkAvailabilitySource = availabilitySource
+            remoteDataWidgetObserver = observer
             widgetRenderer = renderer
             widgetConfigSource = mockk<WidgetConfigSource> {
                 every { blockingSnapshot() } returns config
@@ -43,11 +53,23 @@ class WifiWidgetProviderTest {
     @Test fun `first widget applies persisted periodic refresh policy`() {
         provider().onEnabled(context)
         verify(exactly = 1) { scheduler.applyRefreshingPolicy(config.refreshing) }
+        verify(exactly = 1) { observer.onWidgetsAvailable() }
     }
 
     @Test fun `update schedules recovery for missing remote data`() {
         every { repository.needsRecovery(config.remoteDataConfig) } returns true
         provider().onUpdate(context, manager, intArrayOf(1))
+        verify(exactly = 1) { scheduler.enqueueRecovery() }
+        verify(exactly = 1) { observer.onWidgetsAvailable() }
+    }
+
+    @Test fun `update schedules recovery through VPN while Wi-Fi is connected`() {
+        every { repository.needsRecovery(config.remoteDataConfig) } returns true
+        directWifiDefault = false
+        vpnDefault = true
+
+        provider().onUpdate(context, manager, intArrayOf(1))
+
         verify(exactly = 1) { scheduler.enqueueRecovery() }
     }
 
@@ -56,6 +78,17 @@ class WifiWidgetProviderTest {
         val provider = provider()
         repeat(3) { provider.onUpdate(context, manager, intArrayOf(1)) }
         verify(exactly = 0) { scheduler.enqueueRecovery() }
+    }
+
+    @Test fun `update reconciles without scheduling recovery through cellular`() {
+        every { repository.needsRecovery(config.remoteDataConfig) } returns true
+        directWifiDefault = false
+
+        provider().onUpdate(context, manager, intArrayOf(1))
+
+        verify(exactly = 1) { repository.needsRecovery(config.remoteDataConfig) }
+        verify(exactly = 0) { scheduler.enqueueRecovery() }
+        verify(exactly = 1) { manager.updateAppWidget(1, any<RemoteViews>()) }
     }
 
     @Test fun `render path does not start another recovery`() {
@@ -69,5 +102,6 @@ class WifiWidgetProviderTest {
         provider().onDisabled(context)
         verify(exactly = 1) { scheduler.cancelPeriodicWork() }
         verify(exactly = 1) { scheduler.cancelRecoveryWork() }
+        verify(exactly = 1) { observer.onLastWidgetRemoved() }
     }
 }

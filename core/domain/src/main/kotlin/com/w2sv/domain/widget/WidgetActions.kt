@@ -1,11 +1,6 @@
 package com.w2sv.domain.widget
 
-import kotlinx.coroutines.flow.Flow
-
 interface WidgetActions {
-    /** Emits when a widget pin requested by the app succeeds. */
-    val pinSuccesses: Flow<Unit>
-
     fun pin(onFailure: () -> Unit)
     fun refresh()
     fun render()
