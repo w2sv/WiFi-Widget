@@ -11,10 +11,27 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
     repositories {
-        google()
+        google {
+            content {
+                includeGroupByRegex("androidx(\\..*)?")
+                includeGroupByRegex("com\\.android(\\..*)?")
+                includeGroupByRegex("com\\.google(\\..*)?")
+            }
+        }
+
         mavenCentral()
-        maven(url = "https://jitpack.io")
+
+        exclusiveContent {
+            forRepository { maven("https://jitpack.io") }
+            filter {
+                // Required by compose-color-picker
+                includeGroup("com.github.SmartToolFactory")
+                includeModule("com.github.PaulWoitaschek", "Slimber")
+                includeModule("com.github.w2sv", "compose-wheel-picker")
+            }
+        }
     }
 }
 
