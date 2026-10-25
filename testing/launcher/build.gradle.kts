@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.wifiwidget.library)
-    alias(libs.plugins.ktlint)
 }
 
 android {

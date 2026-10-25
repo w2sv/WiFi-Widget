@@ -67,6 +67,8 @@ dependencies {
     lintChecks(libs.slack.lint.compose.lint.checks)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.reorderable)
+    implementation(libs.slimber)
+    implementation(libs.flowExt)
 
     testImplementation(libs.bundles.unitTest)
     testImplementation(libs.androidx.compose.ui.test.junit4.android)

@@ -8,16 +8,11 @@ import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 internal fun Project.applyBaseConfig(namespace: Namespace = Namespace.Auto) {
     pluginManager.applyPlugins("ktlint", catalog = catalog)
-
-    dependencies {
-        "implementation"(library("slimber"))
-    }
 
     extensions.configureKotlinAndroidProject()
     extensions.configureCommon(
@@ -33,10 +28,6 @@ private fun ExtensionContainer.configureKotlinAndroidProject() {
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_17)
             freeCompilerArgs.addAll("-Xcontext-sensitive-resolution")
-            optIn.addAll(
-                "kotlinx.coroutines.ExperimentalForInheritanceCoroutinesApi",
-                "kotlinx.coroutines.ExperimentalCoroutinesApi"
-            )
         }
     }
 }

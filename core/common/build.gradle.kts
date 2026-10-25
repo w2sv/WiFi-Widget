@@ -8,5 +8,5 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
     implementation(libs.w2sv.androidutils.core)
-    api(libs.flowExt)
+    implementation(libs.slimber)
 }

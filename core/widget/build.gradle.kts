@@ -11,5 +11,7 @@ dependencies {
 
     implementation(libs.google.android.material)
     implementation(libs.w2sv.androidutils.core)
+    implementation(libs.slimber)
+
     testImplementation(libs.bundles.unitTest)
 }

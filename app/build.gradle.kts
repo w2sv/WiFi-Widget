@@ -29,7 +29,7 @@ android {
                 keyPassword = keystoreProperties["keyPassword"] as String
             }
         }
-        logger.warn("Couldn't create signing config; ${keystorePropertiesFile.path} does not exist")
+        logger.info("Couldn't create signing config; ${keystorePropertiesFile.path} does not exist")
         return null
     }
 
@@ -76,11 +76,11 @@ dependencies {
     implementation(projects.core.networking)
     baselineProfile(projects.benchmarking)
 
+    implementation(libs.slimber)
+
     // AndroidX libraries
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.splashscreen)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.compose.activity)
-
-    androidTestImplementation(libs.bundles.androidTest)
 }

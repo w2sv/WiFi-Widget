@@ -28,6 +28,9 @@ class TestRemoteHttpResponses @Inject constructor() : Interceptor {
     private val replies = ConcurrentHashMap<Endpoint, ConcurrentLinkedQueue<Reply>>()
     private val requests = CopyOnWriteArrayList<Endpoint>()
     private val gates = CopyOnWriteArrayList<CountDownLatch>()
+
+    // Java Object is required for wait()/notifyAll().
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     private val requestLock = Object()
     private var activeRequests = 0
 
