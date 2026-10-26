@@ -1,11 +1,11 @@
 package com.w2sv.networking.wifiproperty
 
-import com.w2sv.common.txt
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.domain.wifiproperty.settings.enabledVersions
+import com.w2sv.domain.wifiproperty.txt
 
 internal fun WifiProperty.IpProperty.resolve(
     publicIps: List<IpAddress>,

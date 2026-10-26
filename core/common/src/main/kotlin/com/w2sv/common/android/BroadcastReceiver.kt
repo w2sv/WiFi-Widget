@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.common.android
 
 import android.content.BroadcastReceiver
 import android.content.Context

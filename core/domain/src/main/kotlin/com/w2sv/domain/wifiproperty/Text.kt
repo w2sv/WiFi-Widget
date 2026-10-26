@@ -1,15 +1,8 @@
-package com.w2sv.common
+package com.w2sv.domain.wifiproperty
 
-import android.content.res.Resources
 import androidx.annotation.StringRes
 
 sealed interface Text {
-
-    fun resolve(resources: Resources): String =
-        when (this) {
-            is Raw -> value
-            is Resource -> resources.getString(value)
-        }
 
     @JvmInline
     value class Raw(val value: String) : Text

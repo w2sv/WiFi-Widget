@@ -1,9 +1,9 @@
 package com.w2sv.wifiwidget.ui.location
 
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.common.di.AppIoScope
-import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.domain.permission.LocationAccessRepository
+import com.w2sv.common.di.qualifier.AppIoScope
+import com.w2sv.domain.location.IsLocationEnabled
+import com.w2sv.domain.location.LocationAccessRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch

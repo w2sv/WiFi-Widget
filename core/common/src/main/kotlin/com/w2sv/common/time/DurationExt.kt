@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.common.time
 
 import kotlin.time.Duration
 

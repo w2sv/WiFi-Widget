@@ -4,12 +4,12 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
 import android.os.Build
 import androidx.annotation.VisibleForTesting
-import com.w2sv.common.txt
 import com.w2sv.core.common.R
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
 import com.w2sv.domain.wifiproperty.settings.IpSetting
+import com.w2sv.domain.wifiproperty.txt
 import java.net.InetAddress
 import java.nio.ByteBuffer
 import java.nio.ByteOrder

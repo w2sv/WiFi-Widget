@@ -3,7 +3,7 @@ package com.w2sv.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import com.w2sv.androidutils.appwidget.appWidgetIds
-import com.w2sv.common.di.AppDefaultScope
+import com.w2sv.common.di.qualifier.AppDefaultScope
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetActions
 import dagger.hilt.android.qualifiers.ApplicationContext

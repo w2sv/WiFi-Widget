@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
-import com.w2sv.common.utils.logOnCancellation
+import com.w2sv.common.logging.logOnCancellation
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus

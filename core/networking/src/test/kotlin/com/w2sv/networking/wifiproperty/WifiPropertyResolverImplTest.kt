@@ -4,13 +4,13 @@ import android.net.ConnectivityManager
 import android.net.DhcpInfo
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
-import com.w2sv.common.Text
-import com.w2sv.common.txt
-import com.w2sv.common.utils.IsLocationEnabled
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
+import com.w2sv.domain.wifiproperty.Text
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
+import com.w2sv.domain.wifiproperty.txt
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CancellationException

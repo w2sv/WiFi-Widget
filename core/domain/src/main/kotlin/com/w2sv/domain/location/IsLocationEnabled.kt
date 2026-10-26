@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.domain.location
 
 /** Reads whether system-wide location services are currently enabled. */
 fun interface IsLocationEnabled {

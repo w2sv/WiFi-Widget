@@ -1,7 +1,6 @@
 package com.w2sv.domain.wifiproperty.presentation
 
 import android.content.res.Resources
-import com.w2sv.common.txt
 import com.w2sv.core.common.R
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
@@ -9,6 +8,7 @@ import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.WifiPropertyResolver
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
+import com.w2sv.domain.wifiproperty.txt
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

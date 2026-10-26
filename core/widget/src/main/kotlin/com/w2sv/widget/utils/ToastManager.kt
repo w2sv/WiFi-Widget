@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.widget.utils
 
 import android.widget.Toast
 import androidx.annotation.UiThread

@@ -1,4 +1,4 @@
-package com.w2sv.common.utils
+package com.w2sv.common.android
 
 import android.app.PendingIntent
 import android.content.Context

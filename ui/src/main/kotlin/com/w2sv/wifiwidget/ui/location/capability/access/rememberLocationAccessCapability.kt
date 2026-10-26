@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.common.utils.IsLocationEnabled
-import com.w2sv.common.utils.openLocationSettingsIntent
+import com.w2sv.common.android.SettingsIntents
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import com.w2sv.wifiwidget.ui.location.capability.permission.rememberLocationPermissionCapability
 
@@ -24,7 +24,7 @@ fun rememberLocationAccessCapability(
     return remember(permissionCapability, context, isLocationEnabled) {
         LocationAccessCapabilityImpl(
             locationEnabledProvider = isLocationEnabled,
-            openSettings = { context.startActivity(openLocationSettingsIntent) },
+            openSettings = { context.startActivity(SettingsIntents.location) },
             permissionCapability = permissionCapability
         )
     }

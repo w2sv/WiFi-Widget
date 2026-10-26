@@ -1,4 +1,4 @@
-package com.w2sv.domain.permission
+package com.w2sv.domain.location
 
 import kotlinx.coroutines.flow.Flow
 

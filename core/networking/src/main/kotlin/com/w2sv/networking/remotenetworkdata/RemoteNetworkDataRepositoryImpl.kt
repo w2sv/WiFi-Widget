@@ -2,7 +2,7 @@ package com.w2sv.networking.remotenetworkdata
 
 import android.net.ConnectivityManager
 import android.net.Network
-import com.w2sv.common.utils.log
+import com.w2sv.common.logging.log
 import com.w2sv.domain.networking.IpAddress
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.networking.RemoteDataConfig

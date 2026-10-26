@@ -2,7 +2,7 @@ package com.w2sv.networking.wifiproperty
 
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import com.w2sv.common.utils.IsLocationEnabled
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty

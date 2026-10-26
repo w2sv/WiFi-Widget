@@ -8,7 +8,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
-import com.w2sv.common.utils.log
+import com.w2sv.common.logging.log
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.networking.connectivity.hasInternetCapability

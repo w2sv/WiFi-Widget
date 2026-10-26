@@ -1,22 +1,15 @@
-package com.w2sv.common.di
+package com.w2sv.wifiwidget.di
 
+import com.w2sv.common.di.qualifier.AppDefaultScope
+import com.w2sv.common.di.qualifier.AppIoScope
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AppDefaultScope
-
-@Qualifier
-@Retention(AnnotationRetention.BINARY)
-annotation class AppIoScope
 
 @InstallIn(SingletonComponent::class)
 @Module

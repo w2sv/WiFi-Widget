@@ -4,7 +4,7 @@ import android.net.ConnectivityManager
 import android.net.LinkAddress
 import androidx.annotation.IntRange
 import androidx.annotation.VisibleForTesting
-import com.w2sv.common.utils.log
+import com.w2sv.common.logging.log
 import com.w2sv.domain.networking.IpAddress
 import java.net.Inet4Address
 import java.net.Inet6Address

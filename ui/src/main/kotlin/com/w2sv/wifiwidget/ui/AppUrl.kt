@@ -1,6 +1,6 @@
-package com.w2sv.common
+package com.w2sv.wifiwidget.ui
 
-object AppUrl {
+internal object AppUrl {
     const val GITHUB_REPOSITORY = "https://github.com/w2sv/WiFi-Widget"
     const val LICENSE = "$GITHUB_REPOSITORY/blob/main/LICENSE"
     const val PRIVACY_POLICY = "$GITHUB_REPOSITORY/blob/main/PRIVACY-POLICY.md"

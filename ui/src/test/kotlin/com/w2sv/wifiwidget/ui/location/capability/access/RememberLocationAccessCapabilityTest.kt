@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.common.utils.IsLocationEnabled
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Assert.assertEquals

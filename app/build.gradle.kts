@@ -69,6 +69,7 @@ play {
 
 dependencies {
     // Project modules
+    implementation(projects.core.common)
     implementation(projects.ui)
     implementation(projects.core.widget)
     implementation(projects.core.domain)
@@ -77,6 +78,8 @@ dependencies {
     baselineProfile(projects.benchmarking)
 
     implementation(libs.slimber)
+    implementation(libs.w2sv.androidutils.core)
+    implementation(libs.kotlinx.coroutines.core)
 
     // AndroidX libraries
     implementation(libs.androidx.core.ktx)

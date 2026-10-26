@@ -5,8 +5,8 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import com.w2sv.androidutils.content.intent
-import com.w2sv.common.di.AppDefaultScope
-import com.w2sv.common.utils.broadcastPendingIntent
+import com.w2sv.common.android.broadcastPendingIntent
+import com.w2sv.common.di.qualifier.AppDefaultScope
 import com.w2sv.widget.di.EmitWidgetPinSuccess
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

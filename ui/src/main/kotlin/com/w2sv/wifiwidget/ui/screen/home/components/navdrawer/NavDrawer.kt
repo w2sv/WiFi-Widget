@@ -50,9 +50,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
-import com.w2sv.common.AppUrl
 import com.w2sv.composed.ui.thenIfNotNull
 import com.w2sv.core.common.R
+import com.w2sv.wifiwidget.ui.AppUrl
 import com.w2sv.wifiwidget.ui.LocalAppVersionName
 import com.w2sv.wifiwidget.ui.designsystem.IconDefaults
 import com.w2sv.wifiwidget.ui.designsystem.Margins
