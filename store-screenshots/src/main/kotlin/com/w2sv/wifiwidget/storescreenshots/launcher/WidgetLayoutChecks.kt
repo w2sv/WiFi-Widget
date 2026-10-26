@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.storescreenshots.launcher
 
 import androidx.test.uiautomator.By
-import com.w2sv.core.common.R as CommonR
+import com.w2sv.core.resources.R as ResourcesR
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDevice
 import com.w2sv.wifiwidget.storescreenshots.scenario.ScreenshotScenario
@@ -42,7 +42,7 @@ internal class WidgetLayoutChecks(private val screenshotDevice: ScreenshotDevice
             val property = resolution.property
             if (property is WifiProperty.IpProperty) {
                 val resources = screenshotDevice.targetContext.resources
-                val expectedLabel = resources.getString(CommonR.string.ip) + resources.getString(property.subscriptResId)
+                val expectedLabel = resources.getString(ResourcesR.string.ip) + resources.getString(property.subscriptResId)
                 check(labels[index].text == expectedLabel) {
                     "The IP label is incorrect for $property: expected=$expectedLabel, actual=${labels[index].text}. ${screenshotDevice.hierarchy()}"
                 }

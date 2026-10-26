@@ -70,6 +70,7 @@ play {
 dependencies {
     // Project modules
     implementation(projects.core.common)
+    implementation(projects.core.resources)
     implementation(projects.ui)
     implementation(projects.core.widget)
     implementation(projects.core.domain)

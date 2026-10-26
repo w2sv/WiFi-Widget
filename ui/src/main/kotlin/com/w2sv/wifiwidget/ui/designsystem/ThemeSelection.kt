@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.ui.then
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.preferences.Theme
 
 @Preview

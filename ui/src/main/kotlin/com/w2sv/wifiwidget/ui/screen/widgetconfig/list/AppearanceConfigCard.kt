@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.FontSize
 import com.w2sv.domain.widget.WidgetAppearance
 import com.w2sv.domain.widget.WidgetConfig

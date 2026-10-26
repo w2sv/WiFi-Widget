@@ -81,7 +81,7 @@ class WifiPropertyResolverImplTest {
                         WifiProperty.SSID,
                         listOf(
                             WifiPropertyValue(
-                                com.w2sv.core.common.R.string.gps_disabled.txt,
+                                com.w2sv.core.resources.R.string.gps_disabled.txt,
                                 resolutionError = GpsDisabled
                             )
                         )

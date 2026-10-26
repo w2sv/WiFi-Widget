@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.common.android.SettingsIntents
 import com.w2sv.composed.ui.platform.isPortraitModeActive
 import com.w2sv.composed.ui.thenIf
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation

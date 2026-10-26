@@ -2,7 +2,7 @@ package com.w2sv.domain.networking
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 
 enum class WifiStatus(@StringRes val labelRes: Int, @DrawableRes val iconRes: Int) {
     /** Wi-Fi is turned off. */

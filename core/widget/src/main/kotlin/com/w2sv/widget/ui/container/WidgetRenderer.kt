@@ -6,7 +6,7 @@ import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
 import com.w2sv.androidutils.graphics.getAlphaSetColor
-import com.w2sv.core.common.R as CommonR
+import com.w2sv.core.resources.R as ResourcesR
 import com.w2sv.core.widget.R
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
@@ -98,9 +98,9 @@ internal class WidgetRenderer @Inject constructor(
             viewId = R.id.wifi_status_tv,
             text = context.getString(
                 if (status == WifiStatus.Disabled) {
-                    CommonR.string.wifi_disabled
+                    ResourcesR.string.wifi_disabled
                 } else {
-                    CommonR.string.no_wifi_connection
+                    ResourcesR.string.no_wifi_connection
                 }
             ),
             color = colors.secondary,

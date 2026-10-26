@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.common)
+    implementation(projects.core.resources)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

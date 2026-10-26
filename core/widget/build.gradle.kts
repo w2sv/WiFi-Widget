@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.resources)
     implementation(projects.core.domain)
 
     implementation(libs.google.android.material)

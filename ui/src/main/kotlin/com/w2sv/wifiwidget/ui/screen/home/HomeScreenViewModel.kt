@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals

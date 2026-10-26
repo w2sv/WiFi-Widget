@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.composed.ui.rememberMovableContentOf
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.AppUrl
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController

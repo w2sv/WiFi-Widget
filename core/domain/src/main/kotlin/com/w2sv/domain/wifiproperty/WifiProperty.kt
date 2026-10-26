@@ -3,7 +3,7 @@ package com.w2sv.domain.wifiproperty
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.StringRes
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.WithLabel
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 

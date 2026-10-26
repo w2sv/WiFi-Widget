@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import com.w2sv.composed.animation.ShakeController
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.ui.thenIf
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyConfig

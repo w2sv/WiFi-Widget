@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectLatestFromFlow
 import com.w2sv.composed.runtime.OnChange
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState

@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.material3.rememberSnackbarController
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.wifiwidget.ui.designsystem.Disclaimer
 import com.w2sv.wifiwidget.ui.designsystem.DropdownMenuItemProperties

@@ -1,7 +1,7 @@
 package com.w2sv.domain.widget
 
 import androidx.annotation.StringRes
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.WithLabel
 
 enum class WidgetUtility(@StringRes override val labelRes: Int, @StringRes val explanation: Int) : WithLabel {

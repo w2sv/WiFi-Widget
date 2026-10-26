@@ -14,7 +14,7 @@ import com.w2sv.androidutils.backpress.BackPressHandler
 import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind

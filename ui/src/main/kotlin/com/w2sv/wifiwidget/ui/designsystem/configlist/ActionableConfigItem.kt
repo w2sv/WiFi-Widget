@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.animation.shakenBy
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.composed.ui.thenIfNotNull
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.BelowEndAnchoring
 import com.w2sv.wifiwidget.ui.designsystem.ExplanationText

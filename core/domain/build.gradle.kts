@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(projects.core.common)
+    implementation(projects.core.resources)
     implementation(libs.androidx.core.ktx)
     implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.kotlinutils.core)

@@ -4,7 +4,7 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiInfo
 import android.os.Build
 import androidx.annotation.VisibleForTesting
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.WifiPropertyValue

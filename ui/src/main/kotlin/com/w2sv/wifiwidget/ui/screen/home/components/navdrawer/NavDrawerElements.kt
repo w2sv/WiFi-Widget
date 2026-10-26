@@ -16,7 +16,7 @@ import com.w2sv.androidutils.content.packagePlayStoreUrl
 import com.w2sv.androidutils.content.startActivity
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.androidutils.widget.showToast
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.AppUrl
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
 import kotlinx.collections.immutable.ImmutableList

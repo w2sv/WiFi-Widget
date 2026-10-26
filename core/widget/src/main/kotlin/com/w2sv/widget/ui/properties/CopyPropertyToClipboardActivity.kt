@@ -14,7 +14,7 @@ import com.w2sv.androidutils.content.intent
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
 import com.w2sv.common.android.activityPendingIntent
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.widget.utils.ToastManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject

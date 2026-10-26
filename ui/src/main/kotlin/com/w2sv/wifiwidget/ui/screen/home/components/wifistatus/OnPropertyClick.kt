@@ -13,7 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.material3.rememberSnackbarController
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState

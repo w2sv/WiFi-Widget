@@ -1,7 +1,7 @@
 package com.w2sv.domain.widget
 
 import androidx.annotation.StringRes
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 
 enum class FontSize(@StringRes val labelRes: Int, val value: Float) {
     VerySmall(labelRes = R.string.very_small, value = 12f),
