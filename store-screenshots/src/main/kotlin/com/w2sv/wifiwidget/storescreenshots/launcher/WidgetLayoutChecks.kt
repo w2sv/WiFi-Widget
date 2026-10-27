@@ -54,7 +54,7 @@ internal class WidgetLayoutChecks(private val screenshotDevice: ScreenshotDevice
         val widgetBounds = checkNotNull(device.findObject(By.res(appPackage, "widget_layout"))) {
             "The resized widget is no longer visible. ${screenshotDevice.hierarchy()}"
         }.visibleBounds
-        val buttons = listOf("refresh_button", "go_to_wifi_settings_button", "go_to_widget_settings_button")
+        val buttons = listOf("refresh_button", "go_to_wifi_settings_button")
             .map { id ->
                 checkNotNull(device.findObject(By.res(appPackage, id))) {
                     "The widget's $id is missing after resize. ${screenshotDevice.hierarchy()}"

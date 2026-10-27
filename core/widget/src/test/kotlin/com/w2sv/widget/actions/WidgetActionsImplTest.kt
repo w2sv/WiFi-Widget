@@ -104,4 +104,19 @@ class WidgetActionsImplTest {
         verify(exactly = 0) { context.sendBroadcast(match { it.action == refreshAction }) }
         verify(exactly = 1) { context.sendBroadcast(match { it.action == renderAction }) }
     }
+
+    @Test fun `initial update targets the provider with the supplied widget ID`() {
+        actions.requestUpdate(42)
+
+        verify(exactly = 1) {
+            context.sendBroadcast(
+                match {
+                    it.action == AppWidgetManager.ACTION_APPWIDGET_UPDATE &&
+                        it.component?.className == WifiWidgetProvider::class.java.name &&
+                        it.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS)?.contentEquals(intArrayOf(42)) == true
+                }
+            )
+        }
+        verify(exactly = 0) { manager.getAppWidgetIds(any()) }
+    }
 }

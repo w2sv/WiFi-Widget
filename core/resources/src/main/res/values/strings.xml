@@ -80,7 +80,7 @@
     <string name="rate_the_app_in_the_playstore">Rate the app in the PlayStore</string>
     <string name="share_explanation">Share the app with someone who might appreciate it</string>
     <string name="report_a_bug_explanation">Help make the app better!</string>
-    <string name="go_back_on_unsaved_changes_warning">Going back now will lead to all your unsaved changes being lost.</string>
+    <string name="go_back_on_unsaved_changes_warning">Press Back again to discard your unsaved changes.</string>
     <string name="restore_default_order">Restore default order</string>
     <string name="show_dropdown_menu">Show dropdown menu</string>
     <string name="value_alignment">Property value alignment</string>
@@ -123,7 +123,6 @@
     <string name="ipv6">IPv6</string>
     <string name="refresh_button">Refresh button</string>
     <string name="open_wifi_settings_button">WiFi settings button</string>
-    <string name="open_widget_settings_button">Widget configuration button</string>
     <string name="refresh_periodically">Refresh periodically</string>
     <string name="refresh_on_low_battery">Refresh on low battery</string>
     <string name="battery_saver_restricted">Restricted by Battery Saver</string>
@@ -183,7 +182,6 @@
     <string name="refresh_time_display_explanation">Display the time of the last data refresh</string>
     <string name="refresh_button_explanation">Trigger a data refresh</string>
     <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
-    <string name="go_to_widget_settings_button_explanation">Open this screen</string>
     <string name="no_location_access">No location access</string>
     <string name="gps_disabled">Gps disabled</string>
     <string name="unknown">Unknown</string>

@@ -154,7 +154,6 @@ private fun WidgetConfig.migrateUtilities(prefs: Preferences): WidgetConfig {
                 WidgetUtility.RefreshTimeDisplay -> "ShowDateTime"
                 WidgetUtility.RefreshButton -> "WidgetButton.Refresh"
                 WidgetUtility.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
-                WidgetUtility.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
             }
         )
 

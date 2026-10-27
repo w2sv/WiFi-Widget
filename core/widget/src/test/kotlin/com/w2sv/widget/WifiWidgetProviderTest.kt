@@ -98,6 +98,18 @@ class WifiWidgetProviderTest {
         verify(exactly = 1) { manager.updateAppWidget(1, any<RemoteViews>()) }
     }
 
+    @Test fun `explicit initial update renders and schedules recovery before enumeration`() {
+        every { manager.getAppWidgetIds(any()) } returns intArrayOf()
+        every { repository.needsRecovery(config.remoteDataConfig) } returns true
+        val provider = provider()
+        provider.onUpdate(context, manager, intArrayOf(42))
+
+        verify(exactly = 1) { manager.updateAppWidget(42, any<RemoteViews>()) }
+        verify(exactly = 0) { manager.getAppWidgetIds(any()) }
+        verify(exactly = 1) { repository.needsRecovery(config.remoteDataConfig) }
+        verify(exactly = 1) { scheduler.enqueueRecovery() }
+    }
+
     @Test fun `removing the last widget cancels pending recovery`() {
         provider().onDisabled(context)
         verify(exactly = 1) { scheduler.cancelPeriodicWork() }

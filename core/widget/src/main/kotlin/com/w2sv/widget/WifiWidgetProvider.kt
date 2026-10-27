@@ -129,8 +129,9 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
     }
 
     companion object {
-        internal fun renderIntent(context: Context) =
-            intent<WifiWidgetProvider>(context).setAction(ACTION_RENDER)
+        internal fun renderIntent(context: Context): Intent =
+            intent<WifiWidgetProvider>(context)
+                .setAction(ACTION_RENDER)
 
         internal fun refreshIntent(context: Context): Intent =
             intent<WifiWidgetProvider>(context).setAction(ACTION_REFRESH)

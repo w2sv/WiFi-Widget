@@ -87,4 +87,6 @@ dependencies {
     implementation(libs.androidx.splashscreen)
     implementation(libs.androidx.profileinstaller)
     implementation(libs.androidx.compose.activity)
+
+    testImplementation(libs.bundles.unitTest)
 }

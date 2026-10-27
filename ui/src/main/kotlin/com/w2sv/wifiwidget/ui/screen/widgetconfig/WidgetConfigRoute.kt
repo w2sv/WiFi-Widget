@@ -29,12 +29,14 @@ const val NAVIGATE_BACK_CONFIRMATION_WINDOW = 2500L
 @Composable
 fun WidgetConfigRoute(
     navigateBack: () -> Unit,
+    completeConfiguration: (() -> Unit)? = null,
     locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack = rememberWidgetConfigBackHandler(
         configIsDirty = viewModel.reversibleConfig.isDirty,
-        navigateBack = navigateBack
+        navigateBack = completeConfiguration ?: navigateBack,
+        interceptCleanBack = completeConfiguration != null
     )
 
     val config by viewModel.reversibleConfig.collectAsStateWithLifecycle()
@@ -68,16 +70,22 @@ fun WidgetConfigRoute(
         updateConfig = viewModel.reversibleConfig::update,
         configEditState = configEditState,
         showDialog = { dialog = it },
-        onBackButtonClick = onBack
+        onBackButtonClick = onBack,
+        showCloseIcon = completeConfiguration != null
     )
 }
 
 /**
- * Intercepts system back while the configuration is dirty and returns the same back action for the toolbar.
+ * Intercepts system Back while dirty, and also while clean for launcher configuration.
  * A dirty configuration requires a second back action within [NAVIGATE_BACK_CONFIRMATION_WINDOW] before [navigateBack] is called.
+ * Returns the same action for the toolbar so both entry points share confirmation behavior.
  */
 @Composable
-internal fun rememberWidgetConfigBackHandler(configIsDirty: StateFlow<Boolean>, navigateBack: () -> Unit): () -> Unit {
+internal fun rememberWidgetConfigBackHandler(
+    configIsDirty: StateFlow<Boolean>,
+    navigateBack: () -> Unit,
+    interceptCleanBack: Boolean = false
+): () -> Unit {
     val isDirty by configIsDirty.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val snackbarLauncher = rememberSnackbarLauncher(scope = scope, snackbarHostState = LocalSnackbarHostState.current)
@@ -110,8 +118,8 @@ internal fun rememberWidgetConfigBackHandler(configIsDirty: StateFlow<Boolean>, 
         }
     }
 
-    // Disable handler on clean config for predictive back gesture to work
-    BackHandler(enabled = isDirty, onBack = onBack)
+    // Launcher Back must set RESULT_OK even when the configuration is clean.
+    BackHandler(enabled = isDirty || interceptCleanBack, onBack = onBack)
 
     return onBack
 }

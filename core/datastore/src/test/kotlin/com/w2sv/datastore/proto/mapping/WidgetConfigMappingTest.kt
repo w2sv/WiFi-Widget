@@ -19,6 +19,19 @@ class WidgetConfigMappingTest {
     }
 
     @Test
+    fun `retired widget settings utility ID is ignored without shifting existing IDs`() {
+        val proto = WidgetConfig.default.toProto().toBuilder()
+            .putUtilities(1, false)
+            .putUtilities(3, true)
+            .build()
+
+        val restored = proto.toExternal()
+        assertEquals(false, restored.utilities.getValue(WidgetUtility.RefreshButton))
+        assertFalse(WidgetUtility.entries.any { it.protoId == 3 })
+        assertFalse(restored.toProto().utilitiesMap.containsKey(3))
+    }
+
+    @Test
     fun `existing proto ID maps to IP coordinates`() {
         val configured = WidgetConfig.default.withUpdatedPropertyEnablement(WifiProperty.IpCoordinates, false)
         val proto = configured.toProto()

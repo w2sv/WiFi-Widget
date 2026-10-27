@@ -83,9 +83,26 @@ class WidgetConfigBackHandlerTest {
         composeRule.runOnIdle { assertEquals(0, navigateBackCount) }
     }
 
-    private fun assertDirtyBackRequiresConfirmation(pressBack: () -> Unit) {
+    @Test
+    fun `launcher clean system Back uses close action instead of preceding handler`() {
+        setContent(launcherConfiguration = true)
+
+        pressSystemBack()
+
+        composeRule.runOnIdle {
+            assertEquals(1, navigateBackCount)
+            assertEquals(0, fallbackBackCount)
+        }
+    }
+
+    @Test
+    fun `launcher dirty system Back warns before closing`() {
+        assertDirtyBackRequiresConfirmation(::pressSystemBack, launcherConfiguration = true)
+    }
+
+    private fun assertDirtyBackRequiresConfirmation(pressBack: () -> Unit, launcherConfiguration: Boolean = false) {
         isDirty.value = true
-        setContent()
+        setContent(launcherConfiguration)
 
         pressBack()
 
@@ -107,7 +124,7 @@ class WidgetConfigBackHandlerTest {
         }
     }
 
-    private fun setContent() {
+    private fun setContent(launcherConfiguration: Boolean = false) {
         composeRule.setContent {
             CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
                 val navigateBack: () -> Unit = { navigateBackCount++ }
@@ -115,7 +132,11 @@ class WidgetConfigBackHandlerTest {
                     fallbackBackCount++
                     navigateBack()
                 }
-                val onBack = rememberWidgetConfigBackHandler(isDirty, navigateBack = navigateBack)
+                val onBack = rememberWidgetConfigBackHandler(
+                    configIsDirty = isDirty,
+                    navigateBack = navigateBack,
+                    interceptCleanBack = launcherConfiguration
+                )
                 Button(onClick = onBack) { Text("Toolbar back") }
             }
         }

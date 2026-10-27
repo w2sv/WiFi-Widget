@@ -11,6 +11,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,27 +32,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectLatestFromFlow
-import com.w2sv.composed.runtime.OnChange
 import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
+import com.w2sv.wifiwidget.ui.designsystem.kind
 import com.w2sv.wifiwidget.ui.util.OnVisibilityStateChange
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.first
 
-private enum class EditingFabButton(@StringRes val labelRes: Int, val imageVector: ImageVector) {
+private enum class EditingFabButton(@StringRes val labelRes: Int, val imageVector: ImageVector, val diameter: Dp) {
     Reset(
         labelRes = R.string.reset,
-        imageVector = Icons.Default.Refresh
+        imageVector = Icons.Default.Refresh,
+        diameter = 64.dp
     ),
     Apply(
         labelRes = R.string.apply,
-        imageVector = Icons.Default.Check
+        imageVector = Icons.Default.Check,
+        diameter = 80.dp
     );
 
     @ReadOnlyComposable
@@ -64,22 +70,29 @@ private enum class EditingFabButton(@StringRes val labelRes: Int, val imageVecto
 
 @Composable
 fun EditingFabButtonRow(configEditState: ConfigEditState, modifier: Modifier = Modifier) {
-    var isEditing by remember { mutableStateOf(false) }
+    val isDirty = configEditState.isDirty()
+    val snackbarVisibility = LocalSnackbarVisibility.current
+    val snackbarHostState = LocalSnackbarHostState.current
+    val snackbarData = snackbarHostState.currentSnackbarData
+    val snackbarBlocksFabs = when {
+        snackbarData != null -> snackbarData.kind != SnackbarKind.Warning
+        snackbarVisibility.isVisible -> snackbarVisibility.kind != SnackbarKind.Warning
+        else -> false
+    }
     var fabButtonsVisible by remember { mutableStateOf(false) }
 
     CoordinateFabsAndSnackbarVisibility(
         configEditState = configEditState,
-        isEditing = isEditing,
-        setIsEditing = { isEditing = it },
         fabButtonsVisible = { fabButtonsVisible }
     )
 
     EditingFabVisibility(
-        visible = isEditing,
-        modifier = modifier,
+        visible = isDirty && !snackbarBlocksFabs,
         onVisibilityChanged = { fabButtonsVisible = it }
     ) {
         Row(
+            // Keep spacing inside AnimatedVisibility so an absent FAB leaves no Scaffold slot height.
+            modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -98,50 +111,26 @@ fun EditingFabButtonRow(configEditState: ConfigEditState, modifier: Modifier = M
 /**
  * Coordinates visibility between the FABs and snackbars.
  *
- * Ensures that FABs and snackbars never overlap by dismissing and waiting for
- * one to fully disappear before showing the other, while reacting to config
- * edits and apply confirmations.
+ * Dismisses a snackbar when editing starts and waits for the FAB exit animation
+ * before showing an Apply confirmation. FAB entrance follows actual snackbar visibility.
  */
 @Composable
-private fun CoordinateFabsAndSnackbarVisibility(
-    configEditState: ConfigEditState,
-    isEditing: Boolean,
-    setIsEditing: (Boolean) -> Unit,
-    fabButtonsVisible: () -> Boolean
-) {
-    val snackbarVisibility = LocalSnackbarVisibility.current
+private fun CoordinateFabsAndSnackbarVisibility(configEditState: ConfigEditState, fabButtonsVisible: () -> Boolean) {
     val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
 
-    // manipulate isEditing on changes of configEditState.isDirty
-    OnChange(configEditState.isDirty()) { isDirty ->
-        when {
-            !isEditing && isDirty -> {
-                // Dismiss any snackbar
-                snackbarController.dismissCurrent()
-
-                // Wait for snackbar to disappear
-                suspendUntil { !snackbarVisibility.isVisible }
-                setIsEditing(true)
-            }
-
-            isEditing && !isDirty -> setIsEditing(false)
-        }
+    // Dismiss snackbars on editable config changes
+    LaunchedEffect(configEditState) {
+        snapshotFlow { configEditState.editableConfig() }
+            .drop(1)
+            .collect { snackbarController.dismissCurrent() }
     }
 
-    // when changes have been applied:
-    // 1. set isEditing to false
-    // 2. dismiss any currently shown snackbar
-    // 3. show confirmation snackbar once fab buttons have disappeared
-    CollectLatestFromFlow(configEditState.changesHaveBeenCommitted) {
-        setIsEditing(false)
-
-        // Dismiss any snackbar
+    // The applied-state flow can still report dirty when this commit event arrives.
+    CollectLatestFromFlow(configEditState.changesHaveBeenCommitted) { committedConfig ->
+        if (configEditState.editableConfig() != committedConfig) return@CollectLatestFromFlow
         snackbarController.dismissCurrent()
-
-        // Wait for FABs to disappear
-        suspendUntil { !fabButtonsVisible() }
-
-        // Show confirmation snackbar
+        suspendUntil { !fabButtonsVisible() || configEditState.editableConfig() != committedConfig }
+        if (configEditState.editableConfig() != committedConfig) return@CollectLatestFromFlow
         snackbarController.show {
             AppSnackbarVisuals(
                 msg = getString(R.string.updated_widget_configuration),
@@ -159,7 +148,6 @@ private suspend fun suspendUntil(condition: () -> Boolean) {
 private fun EditingFabVisibility(
     visible: Boolean,
     onVisibilityChanged: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
     AnimatedVisibility(
@@ -171,8 +159,7 @@ private fun EditingFabVisibility(
         exit = slideOutHorizontally(
             targetOffsetX = { it / 2 },
             animationSpec = tween(easing = Easing.Anticipate)
-        ) + fadeOut(),
-        modifier = modifier
+        ) + fadeOut()
     ) {
         OnVisibilityStateChange(transition, onVisibilityChanged)
         content()
@@ -189,7 +176,7 @@ private fun EditingFabButton(
 
     FloatingActionButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.size(button.diameter),
         containerColor = containerColor,
         contentColor = contentColor
     ) {
