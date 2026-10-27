@@ -35,7 +35,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private val _snackbarBuilder = MutableSharedFlow<SnackbarBuilder>()
     val snackbarBuilder = _snackbarBuilder.asSharedFlow()
-    val widgetPinSuccessFlow = widgetStatus.pinSuccesses
+    val widgetPinSuccessFlow = widgetStatus.pinSuccess
 
     private val _isAnyLocationAccessRequiringPropertyEnabled = widgetConfigDataSource.config
         .map { it.isAnyLocationAccessRequiringPropertyEnabled }

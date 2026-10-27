@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
  */
 interface WidgetStatus {
     /** Emits when a widget pin requested by the app succeeds. */
-    val pinSuccesses: Flow<Unit>
+    val pinSuccess: Flow<Unit>
 
     /** IDs of currently installed Wi-Fi widgets, queried on each access. */
     val ids: IntArray

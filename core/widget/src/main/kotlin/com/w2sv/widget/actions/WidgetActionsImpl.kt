@@ -1,9 +1,12 @@
 package com.w2sv.widget.actions
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.componentName
+import com.w2sv.androidutils.content.intent
+import com.w2sv.common.android.broadcastPendingIntent
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.widget.WifiWidgetProvider
@@ -55,7 +58,11 @@ private fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: (
         !requestPinAppWidget(
             componentName<WifiWidgetProvider>(context),
             null,
-            WidgetPinSuccessBroadcastReceiver.pendingIntent(context)
+            broadcastPendingIntent(
+                context,
+                intent<WidgetPinSuccessBroadcastReceiver>(context),
+                PendingIntent.FLAG_IMMUTABLE
+            )
         )
     ) {
         onFailure()

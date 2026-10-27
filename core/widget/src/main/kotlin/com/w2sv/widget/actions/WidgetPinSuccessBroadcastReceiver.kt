@@ -1,26 +1,22 @@
 package com.w2sv.widget.actions
 
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.w2sv.androidutils.content.intent
-import com.w2sv.common.android.broadcastPendingIntent
 import com.w2sv.common.di.qualifier.AppDefaultScope
-import com.w2sv.widget.di.EmitWidgetPinSuccess
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 /**
- * Invoked on successful widget pins triggered from within the app. Emits via [EmitWidgetPinSuccess].
+ * Invoked on successful widget pins triggered from within the app. Emits via [WidgetPinSuccess].
  */
 @AndroidEntryPoint
 internal class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
 
     @Inject
-    lateinit var emitWidgetPinSuccess: EmitWidgetPinSuccess
+    lateinit var widgetPinSuccess: WidgetPinSuccess
 
     @Inject
     @AppDefaultScope
@@ -31,19 +27,10 @@ internal class WidgetPinSuccessBroadcastReceiver : BroadcastReceiver() {
 
         scope.launch {
             try {
-                emitWidgetPinSuccess()
+                widgetPinSuccess.emit()
             } finally {
                 pendingResult.finish()
             }
         }
-    }
-
-    companion object {
-        fun pendingIntent(context: Context): PendingIntent =
-            broadcastPendingIntent(
-                context,
-                intent<WidgetPinSuccessBroadcastReceiver>(context),
-                PendingIntent.FLAG_IMMUTABLE
-            )
     }
 }

@@ -6,7 +6,6 @@ import com.w2sv.widget.status.WidgetStatusImpl
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.flow.MutableSharedFlow
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
@@ -26,8 +25,8 @@ class WidgetStatusImplTest {
     private val manager = mockk<AppWidgetManager> {
         every { getAppWidgetIds(any()) } answers { installedIds }
     }
-    private val pinSuccesses = MutableSharedFlow<Unit>()
-    private val status = WidgetStatusImpl(manager, context, pinSuccesses)
+    private val widgetPinSuccess = WidgetPinSuccess()
+    private val status = WidgetStatusImpl(manager, context, widgetPinSuccess)
 
     @Test fun `installed widget state reflects host changes without caching IDs`() {
         assertFalse(status.hasInstalledWidgets)
@@ -41,7 +40,7 @@ class WidgetStatusImplTest {
         verify(exactly = 4) { manager.getAppWidgetIds(any()) }
     }
 
-    @Test fun `pin successes expose the supplied event stream`() {
-        assertSame(pinSuccesses, status.pinSuccesses)
+    @Test fun `pin success exposes the supplied event stream`() {
+        assertSame(widgetPinSuccess.flow, status.pinSuccess)
     }
 }
