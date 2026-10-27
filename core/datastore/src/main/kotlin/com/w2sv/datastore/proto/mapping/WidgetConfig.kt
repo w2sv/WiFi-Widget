@@ -18,7 +18,7 @@ internal fun WidgetConfig.toProto(): WidgetConfigProto =
             builder.appearance = appearance.toProto()
             builder.refreshing = refreshing.toProto()
             utilities.forEach { (element, enabled) ->
-                builder.putUtilities(element.ordinal, enabled)
+                builder.putUtilities(element.protoId, enabled)
             }
         }
         .build()
@@ -31,5 +31,7 @@ internal fun WidgetConfigProto.toExternal(): WidgetConfig =
         propertyOrder = orderList.map(WifiPropertyProtoRegistry::invoke),
         appearance = appearance.toExternal(),
         refreshing = refreshing.toExternal(),
-        utilities = utilitiesMap.mapKeys { (id, _) -> WidgetUtility.entries[id] }
+        utilities = utilitiesMap.mapNotNull { (id, enabled) ->
+            WidgetUtility.entries.find { it.protoId == id }?.let { it to enabled }
+        }.toMap()
     )

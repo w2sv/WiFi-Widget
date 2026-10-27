@@ -3,6 +3,7 @@ package com.w2sv.widget.actions
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.componentName
 import com.w2sv.androidutils.content.intent
@@ -32,6 +33,14 @@ internal class WidgetActionsImpl @Inject constructor(
 
     override fun render() {
         context.sendBroadcast(WifiWidgetProvider.renderIntent(context))
+    }
+
+    override fun requestUpdate(appWidgetId: Int) {
+        context.sendBroadcast(
+            Intent(context, WifiWidgetProvider::class.java)
+                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+        )
     }
 
     override fun applyConfigurationChange(previous: WidgetConfig, current: WidgetConfig) {

@@ -5,6 +5,9 @@ interface WidgetActions {
     fun refresh()
     fun render()
 
+    /** Requests the provider's full update lifecycle for a newly configured widget. */
+    fun requestUpdate(appWidgetId: Int)
+
     /**
      * Called after configuration persistence succeeds. Updates periodic scheduling only when
      * refresh settings change, and requests an immediate widget refresh for every commit,

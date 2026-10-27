@@ -9,6 +9,7 @@ import androidx.compose.material.icons.outlined.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
 import androidx.compose.material3.SnackbarDefaults
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -85,8 +86,11 @@ sealed interface SnackbarKind {
     }
 }
 
+val SnackbarData.kind: SnackbarKind?
+    get() = (visuals as? AppSnackbarVisuals)?.kind
+
 @Composable
-fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow()) {
+fun AppSnackbarHost(modifier: Modifier = Modifier, snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow()) {
     val snackbarHostState = LocalSnackbarHostState.current
     val controller = rememberSnackbarController(snackbarHostState)
 
@@ -95,23 +99,29 @@ fun AppSnackbarHost(snackbarBuilderFlow: SnackbarBuilderFlow = emptyFlow()) {
         controller.replaceCurrentWith { builder() }
     }
 
-    SnackbarHost(snackbarHostState) { snackbarData ->
-        UpdateSnackbarVisibility(snackbarHostState = snackbarHostState)
-        AppSnackbar(visuals = snackbarData.visuals as AppSnackbarVisuals)
+    SnackbarHost(snackbarHostState, modifier = modifier) { snackbarData ->
+        val visuals = snackbarData.visuals as AppSnackbarVisuals
+        UpdateSnackbarVisibility(kind = visuals.kind, snackbarHostState = snackbarHostState)
+        AppSnackbar(visuals = visuals)
     }
 }
 
 @Composable
 private fun UpdateSnackbarVisibility(
+    kind: SnackbarKind?,
     snackbarVisibility: SnackbarVisibility = LocalSnackbarVisibility.current,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current
 ) {
-    SideEffect { snackbarVisibility.set(true) }
+    SideEffect {
+        val activeSnackbar = snackbarHostState.currentSnackbarData
+        // During replacement, an outgoing snackbar must not overwrite the new active kind.
+        snackbarVisibility.setVisible(if (activeSnackbar != null) activeSnackbar.kind else kind)
+    }
     OnDispose {
-        // Checking whether currentSnackbarData is necessary in cases where snackbar a is immediately replaced by snackbar b, where we don't
+        // Checking whether currentSnackbarData is necessary in cases where snackbar A is immediately replaced by snackbar B, where we don't
         // want a sequence of true -> false -> true, but just true.
         if (snackbarHostState.currentSnackbarData == null) {
-            snackbarVisibility.set(false)
+            snackbarVisibility.setHidden()
         }
     }
 }
@@ -121,9 +131,7 @@ fun AppSnackbar(visuals: AppSnackbarVisuals, modifier: Modifier = Modifier) {
     Snackbar(
         action = {
             visuals.action?.let { action ->
-                TextButton(
-                    onClick = action.callback
-                ) {
+                TextButton(onClick = action.callback) {
                     Text(
                         text = action.label,
                         color = SnackbarDefaults.actionColor

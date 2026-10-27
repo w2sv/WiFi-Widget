@@ -1,13 +1,17 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig
 
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
@@ -37,6 +41,7 @@ fun WidgetConfigScreen(
     configEditState: ConfigEditState,
     showDialog: (WidgetConfigDialog) -> Unit,
     onBackButtonClick: () -> Unit,
+    showCloseIcon: Boolean = false,
     state: LazyListState = rememberLazyListState()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -50,24 +55,30 @@ fun WidgetConfigScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackButtonClick) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.navigate_back)
+                            imageVector = if (showCloseIcon) Icons.Default.Close else Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(if (showCloseIcon) R.string.close else R.string.navigate_back)
                         )
                     }
                 },
                 scrollBehavior = scrollBehavior
             )
         },
-        snackbarHost = { AppSnackbarHost() },
+        snackbarHost = {
+            AppSnackbarHost(
+                modifier = Modifier.windowInsetsPadding(
+                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+                )
+            )
+        },
         floatingActionButton = {
             EditingFabButtonRow(
                 configEditState = configEditState,
                 modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
                     .padding(
                         top = 8.dp, // Snackbar padding
                         end = if (isLandscapeModeActive) 38.dp else 0.dp
                     )
-                    .height(70.dp)
             )
         },
         contentWindowInsets = WindowInsets()
@@ -93,6 +104,7 @@ private fun Prev() {
             updateConfig = {},
             configEditState = ConfigEditState(
                 { true },
+                { WidgetConfig.default },
                 {},
                 {},
                 emptyFlow()

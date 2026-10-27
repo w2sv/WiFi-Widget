@@ -80,7 +80,7 @@
     <string name="rate_the_app_in_the_playstore">Ohodnotiť aplikáciu v Obchode Play</string>
     <string name="share_explanation">Zdieľajte túto aplikáciu s niekým, komu by sa mohla páčiť</string>
     <string name="report_a_bug_explanation">Pomôžte zlepšiť aplikáciu!</string>
-    <string name="go_back_on_unsaved_changes_warning">Ak sa teraz vrátite späť, všetky vaše neuložené zmeny sa stratia.</string>
+    <string name="go_back_on_unsaved_changes_warning">Opätovným stlačením Späť zahodíte neuložené zmeny.</string>
     <string name="restore_default_order">Obnoviť predvolené poradie</string>
     <string name="show_dropdown_menu">Zobraziť rozbaľovaciu ponuku</string>
     <string name="value_alignment">Zarovnanie hodnôt vlastností</string>
@@ -123,7 +123,6 @@
     <string name="ipv6">IPv6</string>
     <string name="refresh_button">Tlačidlo obnovenia</string>
     <string name="open_wifi_settings_button">Tlačidlo nastavení Wi-Fi</string>
-    <string name="open_widget_settings_button">Tlačidlo nastavení widgetu</string>
     <string name="refresh_periodically">Pravidelne obnovovať</string>
     <string name="refresh_on_low_battery">Obnovovať pri nízkom stave batérie</string>
     <string name="battery_saver_restricted">Obmedzené režimom šetrenia batérie</string>
@@ -178,7 +177,6 @@
     <string name="refresh_time_display_explanation">Zobraziť čas posledného obnovenia údajov</string>
     <string name="refresh_button_explanation">Spustiť obnovenie údajov</string>
     <string name="go_to_wifi_settings_button_explanation">Otvoriť nastavenia Wi-Fi vo vašom zariadení</string>
-    <string name="go_to_widget_settings_button_explanation">Otvoriť túto obrazovku</string>
     <string name="no_location_access">Bez prístupu k polohe</string>
     <string name="gps_disabled">GPS je vypnuté</string>
     <string name="unknown">Neznáme</string>

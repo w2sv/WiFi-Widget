@@ -152,12 +152,6 @@ internal class WidgetRenderer @Inject constructor(
             color = colors.primary,
             pendingIntent = WidgetActionPendingIntent.openWifiSettings(context)
         )
-        setButton(
-            viewId = R.id.go_to_widget_settings_button,
-            isVisible = isUtilityEnabled(WidgetUtility.GoToWidgetSettingsButton),
-            color = colors.primary,
-            pendingIntent = WidgetActionPendingIntent.openWidgetConfigScreen(context)
-        )
     }
 }
 

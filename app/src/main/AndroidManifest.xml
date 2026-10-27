@@ -42,9 +42,13 @@
         <activity
             android:name=".ui.WidgetConfigActivity"
             android:autoRemoveFromRecents="true"
-            android:exported="false"
+            android:exported="true"
             android:taskAffinity="${applicationId}.widgetconfig"
-            android:theme="@style/Theme.App.SplashScreen" />
+            android:theme="@style/Theme.App.SplashScreen">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
 
     </application>
 </manifest>

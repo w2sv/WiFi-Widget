@@ -82,7 +82,7 @@ fun HomeScreen(
                     onNavigationIconClick = { scope.launch { drawerState.open() } }
                 )
             },
-            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow) }
+            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) }
         ) { paddingValues ->
             val wifiStatusCard = rememberMovableContentOf { modifier: Modifier ->
                 WifiStatusCard(wifiState = wifiState, modifier = modifier)
