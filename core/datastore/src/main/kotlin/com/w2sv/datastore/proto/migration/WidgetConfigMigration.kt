@@ -165,13 +165,11 @@ private fun WidgetConfig.migrateUtilities(prefs: Preferences): WidgetConfig {
 
 private fun WidgetConfig.migrateRefreshing(prefs: Preferences): WidgetConfig {
     val refreshPeriodically = prefs[booleanPreferencesKey("RefreshPeriodically")]
-    val refreshOnLowBattery = prefs[booleanPreferencesKey("RefreshOnBatteryLow")]
     val intervalMinutes = prefs[intPreferencesKey("refreshInterval")]
 
     return copy(
         refreshing = refreshing.copy(
             refreshPeriodically = refreshPeriodically ?: refreshing.refreshPeriodically,
-            refreshOnLowBattery = refreshOnLowBattery ?: refreshing.refreshOnLowBattery,
             interval = intervalMinutes?.minutes ?: refreshing.interval
         )
     )

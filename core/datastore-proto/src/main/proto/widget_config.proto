@@ -78,6 +78,7 @@ enum AlignmentProto {
  */
 message WidgetRefreshingProto {
     bool refresh_periodically = 1;
-    bool refresh_on_low_battery = 2;
+    reserved 2;
+    reserved "refresh_on_low_battery";
     int64 refresh_interval_minutes = 3;
 }

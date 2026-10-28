@@ -124,7 +124,6 @@
     <string name="refresh_button">Refresh button</string>
     <string name="open_wifi_settings_button">WiFi settings button</string>
     <string name="refresh_periodically">Refresh periodically</string>
-    <string name="refresh_on_low_battery">Refresh on low battery</string>
     <string name="battery_saver_restricted">Restricted by Battery Saver</string>
     <string name="refresh_time_display">Refresh time display</string>
     <string name="loopback_description">A loopback IP address, commonly represented as 127.0.0.1 in IPv4, is a reserved address that allows a device to communicate with itself. When data is sent to the loopback address, it is internally routed back to the same device, enabling local testing of networking functionality. This address, often referred to as "localhost", is widely used for diagnostic and development purposes to ensure the proper functioning of network-related components on a device without the need for external connections. In IPv6, the loopback address is typically represented as ::1.</string>

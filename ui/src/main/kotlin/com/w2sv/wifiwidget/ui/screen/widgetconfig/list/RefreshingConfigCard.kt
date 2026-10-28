@@ -68,16 +68,11 @@ private fun refreshingConfig(
         },
         contentBeneath = subSettings(
             refreshing = refreshing,
-            updateRefreshing = updateRefreshing,
             showDialog = showDialog
         )
     )
 
-private fun subSettings(
-    refreshing: WidgetRefreshing,
-    updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
-    showDialog: (WidgetConfigDialog) -> Unit
-) =
+private fun subSettings(refreshing: WidgetRefreshing, showDialog: (WidgetConfigDialog) -> Unit) =
     ConfigItem.SubSettings(
         elements = persistentListOf(
             ConfigItem.WithCustomTrailing(property = WidgetRefreshingParameter.Interval) {
@@ -85,12 +80,7 @@ private fun subSettings(
                     interval = refreshing.interval,
                     showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) }
                 )
-            },
-            ConfigItem.Checkable(
-                property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                isChecked = { refreshing.refreshOnLowBattery },
-                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
-            )
+            }
         ),
         allowCollapsing = false
     )

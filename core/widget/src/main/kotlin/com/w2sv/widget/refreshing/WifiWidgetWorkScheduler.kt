@@ -22,10 +22,7 @@ internal class WifiWidgetWorkScheduler @Inject constructor(private val workManag
 
     fun applyRefreshingPolicy(settings: WidgetRefreshing) {
         if (settings.refreshPeriodically) {
-            enqueuePeriodicWork(
-                interval = settings.interval.toJavaDuration(),
-                refreshOnLowBattery = settings.refreshOnLowBattery
-            )
+            enqueuePeriodicWork(settings.interval.toJavaDuration())
         } else {
             cancelPeriodicWork()
         }
@@ -65,13 +62,12 @@ internal class WifiWidgetWorkScheduler @Inject constructor(private val workManag
         workManager.enqueueUniqueWork(RefreshWork.Recovery.uniqueWorkName, ExistingWorkPolicy.KEEP, request)
     }
 
-    private fun enqueuePeriodicWork(interval: Duration, refreshOnLowBattery: Boolean) {
-        i { "Enqueuing periodic work with interval=$interval, refreshOnLowBattery=$refreshOnLowBattery" }
+    private fun enqueuePeriodicWork(interval: Duration) {
+        i { "Enqueuing periodic work with interval=$interval" }
 
         val request = buildPeriodicWorkRequest<WifiWidgetRefreshWorker>(interval) { builder ->
             builder
                 .setInputData(RefreshWork.Periodic.toWorkData())
-                .setConstraints(Constraints(requiresBatteryNotLow = !refreshOnLowBattery))
                 .setInitialDelay(interval)
         }
         workManager.enqueueUniquePeriodicWork(

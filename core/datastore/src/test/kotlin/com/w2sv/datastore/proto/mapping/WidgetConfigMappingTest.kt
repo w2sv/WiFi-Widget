@@ -1,5 +1,6 @@
 package com.w2sv.datastore.proto.mapping
 
+import com.w2sv.datastore.WidgetRefreshingProto
 import com.w2sv.domain.widget.FontSize
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetUtility
@@ -16,6 +17,25 @@ class WidgetConfigMappingTest {
     @Test
     fun `default instance mapping`() {
         assertEqualityAfterBackAndForthMapping(WidgetConfig.default)
+    }
+
+    @Test
+    fun `refreshing mapping preserves enabled state and interval`() {
+        val refreshing = WidgetConfig.default.refreshing.copy(refreshPeriodically = false, interval = 30.minutes)
+
+        assertEquals(refreshing, refreshing.toProto().toExternal())
+    }
+
+    @Test
+    fun `legacy battery field is ignored while other refreshing settings survive`() {
+        val configured = WidgetConfig.default.refreshing.copy(refreshPeriodically = false, interval = 30.minutes)
+        // Field 2 was the old boolean setting; protobuf keeps it as an unknown field.
+        val persisted = configured.toProto().toByteArray() + byteArrayOf(0x10, 0x01)
+
+        val restored = WidgetRefreshingProto.parseFrom(persisted).toExternal()
+
+        assertEquals(configured, restored)
+        assertEquals(configured.toProto(), restored.toProto())
     }
 
     @Test

@@ -6,6 +6,5 @@ import com.w2sv.domain.WithLabel
 
 enum class WidgetRefreshingParameter(@StringRes override val labelRes: Int) : WithLabel {
     RefreshPeriodically(R.string.refresh_periodically),
-    Interval(R.string.interval),
-    RefreshOnLowBattery(R.string.refresh_on_low_battery)
+    Interval(R.string.interval)
 }

@@ -78,6 +78,7 @@ class WifiWidgetProviderTest {
         val provider = provider()
         repeat(3) { provider.onUpdate(context, manager, intArrayOf(1)) }
         verify(exactly = 0) { scheduler.enqueueRecovery() }
+        verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
     }
 
     @Test fun `update reconciles without scheduling recovery through cellular`() {

@@ -8,6 +8,8 @@ import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.domain.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.wifiproperty.settings.WifiPropertySetting
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
 import org.junit.Test
 
 class DefaultWidgetConfigTest {
@@ -27,6 +29,12 @@ class DefaultWidgetConfigTest {
     @Test
     fun appearance() {
         assertEquals(defaultAppearance, defaultConfig.appearance)
+    }
+
+    @Test
+    fun `refreshing defaults to enabled with a fifteen minute interval`() {
+        assertTrue(defaultConfig.refreshing.refreshPeriodically)
+        assertEquals(15.minutes, defaultConfig.refreshing.interval)
     }
 }
 
