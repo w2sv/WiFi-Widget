@@ -134,7 +134,7 @@ class WifiPropertyResolverImplTest {
                     WifiPropertyValue("192.168.1.7".txt, listOf("/24", "255.255.255.0")),
                     WifiPropertyValue("fd00:0:0:0:0:0:0:7".txt, listOf("/64")),
                     WifiPropertyValue("2001:db8:0:0:0:0:0:7".txt, listOf("/64")),
-                    WifiPropertyValue(nat64.address.hostAddress.txt)
+                    WifiPropertyValue(checkNotNull(nat64.address.hostAddress).txt)
                 ),
                 resolved.flatMap { it.values }
             )
@@ -187,7 +187,7 @@ class WifiPropertyResolverImplTest {
             )
 
             assertEquals(
-                listOf(WifiPropertyValue("192.168.5.9".txt), WifiPropertyValue(nat64.address.hostAddress.txt)),
+                listOf(WifiPropertyValue("192.168.5.9".txt), WifiPropertyValue(checkNotNull(nat64.address.hostAddress).txt)),
                 resolved.flatMap { it.values }
             )
             verify(exactly = 0) { connectivityManager.getLinkProperties(cellular) }
@@ -243,9 +243,9 @@ class WifiPropertyResolverImplTest {
 
     private fun localProperties(vararg addresses: Pair<String, Int>, nat64: IpPrefix? = null) =
         mockk<LinkProperties> {
-            every { linkAddresses } returns addresses.map { (address, prefix) ->
+            every { linkAddresses } returns addresses.map { (ipAddress, prefix) ->
                 mockk<LinkAddress> {
-                    every { this@mockk.address } returns InetAddress.getByName(address)
+                    every { address } returns InetAddress.getByName(ipAddress)
                     every { prefixLength } returns prefix
                 }
             }

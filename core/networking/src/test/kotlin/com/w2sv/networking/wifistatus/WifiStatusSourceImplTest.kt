@@ -1,5 +1,6 @@
 package com.w2sv.networking.wifistatus
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,8 +25,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@SuppressLint("UnspecifiedRegisterReceiverFlag")
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
+@Suppress("DEPRECATION")
 class WifiStatusSourceImplTest {
     private val context = mockk<Context>(relaxed = true)
     private val wifiManager = mockk<WifiManager>()
@@ -187,7 +190,7 @@ class WifiStatusSourceImplTest {
         runTest {
             val inCallback = ThreadLocal.withInitial { false }
             every { connectivity.activeNetwork } answers {
-                assertFalse(inCallback.get())
+                assertFalse(checkNotNull(inCallback.get()))
                 active
             }
             source().status.test {

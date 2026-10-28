@@ -13,6 +13,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@Suppress("DEPRECATION")
 class WifiNetworkSnapshotTest {
     private val connectivity = mockk<ConnectivityManager>()
 
