@@ -55,6 +55,7 @@ jobs:
                     sudo udevadm trigger --name-match=kvm
 
             -   name: Run widget integration tests
+                timeout-minutes: 20
                 run: |
                     ./gradlew :widget-integration-tests:widgetPixel6Api35DebugAndroidTest \
                         -Pandroid.testoptions.manageddevices.emulator.gpu=swiftshader_indirect \
