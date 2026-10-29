@@ -30,7 +30,6 @@ class WidgetLauncherEnvironment(
     private var pinnedWidgetId: Int? = null
 
     fun prepare() {
-        showLauncher()
         clearExistingWidgets()
     }
 
