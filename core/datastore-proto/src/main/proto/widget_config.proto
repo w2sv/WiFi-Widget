@@ -11,6 +11,7 @@ message WidgetConfigProto {
     // Utility map key 3 (GoToWidgetSettingsButton) is retired and must not be reused.
     // Protobuf reserved declarations cannot reserve individual map keys.
     map<int32, bool> utilities = 5;
+    map<string, string> access_point_names = 6; // normalized BSSID -> user-assigned name
 }
 
 /*

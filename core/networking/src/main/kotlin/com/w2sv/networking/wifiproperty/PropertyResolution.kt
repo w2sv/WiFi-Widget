@@ -33,7 +33,8 @@ internal fun WifiProperty.resolve(
                     )
                 )
 
-                WifiProperty.BSSID -> add(
+                // AccessPointName resolves to the BSSID; the user-assigned name is substituted during presentation.
+                WifiProperty.BSSID, WifiProperty.AccessPointName -> add(
                     locationAccessDependentValue(
                         value = connectionInfo.bssid ?: error("No network connected"),
                         errorPlaceholder = ERROR_BSSID,

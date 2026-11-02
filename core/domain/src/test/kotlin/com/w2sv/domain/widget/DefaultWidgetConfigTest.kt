@@ -2,6 +2,7 @@ package com.w2sv.domain.widget
 
 import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.domain.preferences.Theme
+import com.w2sv.domain.wifiproperty.AccessPointNames
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.wifiproperty.settings.IpSetting
@@ -36,6 +37,11 @@ class DefaultWidgetConfigTest {
         assertTrue(defaultConfig.refreshing.refreshPeriodically)
         assertEquals(15.minutes, defaultConfig.refreshing.interval)
     }
+
+    @Test
+    fun accessPointNames() {
+        assertEquals(AccessPointNames(), defaultConfig.accessPointNames)
+    }
 }
 
 private val defaultAppearance = WidgetAppearance(
@@ -61,6 +67,7 @@ private val defaultAppearance = WidgetAppearance(
 private val defaultPropertyConfig: Map<WifiProperty, WifiPropertyConfig<WifiPropertySetting>> = mapOf(
     WifiProperty.SSID to WifiPropertyConfig(false, emptyMap()),
     WifiProperty.BSSID to WifiPropertyConfig(false, emptyMap()),
+    WifiProperty.AccessPointName to WifiPropertyConfig(false, emptyMap()),
     WifiProperty.LoopbackIp to WifiPropertyConfig(
         true,
         mapOf(
