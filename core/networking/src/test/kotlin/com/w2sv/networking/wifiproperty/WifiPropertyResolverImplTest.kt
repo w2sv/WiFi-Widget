@@ -104,6 +104,28 @@ class WifiPropertyResolverImplTest {
         }
 
     @Test
+    fun `access point name resolves to the BSSID, or a location error when it is withheld`() =
+        runTest {
+            every { connectionInfo.bssid } returns "02:00:00:00:03:05"
+            assertEquals(
+                listOf(ResolvedWifiProperty(WifiProperty.AccessPointName, listOf(WifiPropertyValue("02:00:00:00:03:05".txt)))),
+                resolver()(listOf(WifiProperty.AccessPointName), { emptyList() }, RemoteNetworkData.empty)
+            )
+
+            locationEnabled = false
+            every { connectionInfo.bssid } returns "02:00:00:00:00:00"
+            assertEquals(
+                listOf(
+                    ResolvedWifiProperty(
+                        WifiProperty.AccessPointName,
+                        listOf(WifiPropertyValue(com.w2sv.core.resources.R.string.gps_disabled.txt, resolutionError = GpsDisabled))
+                    )
+                ),
+                resolver()(listOf(WifiProperty.AccessPointName), { emptyList() }, RemoteNetworkData.empty)
+            )
+        }
+
+    @Test
     fun `Wi-Fi default supplies classified addresses prefixes and NAT64 from one LinkProperties instance`() =
         runTest {
             val network = mockk<Network>()

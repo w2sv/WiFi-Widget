@@ -30,6 +30,7 @@ internal class WifiPropertyRenderDataProvider @Inject constructor(
                 enabledProperties = config.enabledProperties,
                 enabledIpSettings = config::enabledIpSettings,
                 remoteNetworkData = remoteNetworkDataRepository.widgetSnapshot(config.remoteDataConfig),
+                accessPointNames = config.accessPointNames,
                 onUnresolved = availability::batterySaverPlaceholderFor
             )
         }

@@ -82,6 +82,7 @@ class BatterySaverPropertyFallbackTest {
         val unaffected = listOf(
             WifiProperty.SSID,
             WifiProperty.BSSID,
+            WifiProperty.AccessPointName,
             WifiProperty.Frequency,
             WifiProperty.Channel,
             WifiProperty.SignalStrength,

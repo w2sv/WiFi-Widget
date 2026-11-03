@@ -25,6 +25,9 @@ sealed interface WidgetConfigDialog : Parcelable {
     @Parcelize
     @JvmInline
     value class RefreshIntervalPicker(val interval: Duration) : WidgetConfigDialog
+
+    @Parcelize
+    data class AccessPointNameEditing(val bssid: String, val name: String, val isBssidEditable: Boolean) : WidgetConfigDialog
 }
 
 @Composable
@@ -67,6 +70,14 @@ fun WidgetConfigDialog(
             RefreshIntervalConfigurationDialog(
                 interval = dialog.interval,
                 setInterval = { updateConfig { copy(refreshing = refreshing.copy(interval = it)) } },
+                onDismissRequest = onDismissRequest
+            )
+        }
+
+        is WidgetConfigDialog.AccessPointNameEditing -> {
+            AccessPointNameDialog(
+                data = dialog,
+                applyName = { bssid, name -> updateConfig { copy(accessPointNames = accessPointNames.with(bssid, name)) } },
                 onDismissRequest = onDismissRequest
             )
         }

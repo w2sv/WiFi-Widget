@@ -4,6 +4,7 @@ import com.w2sv.datastore.WidgetRefreshingProto
 import com.w2sv.domain.widget.FontSize
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetUtility
+import com.w2sv.domain.wifiproperty.AccessPointNames
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.kotlinutils.copy
@@ -80,9 +81,36 @@ class WidgetConfigMappingTest {
                             fontSize = FontSize.Small,
                             coloring = appearance.coloring.copy(useCustom = true)
                         ),
-                        refreshing = refreshing.copy(refreshPeriodically = false, interval = 20.minutes)
+                        refreshing = refreshing.copy(refreshPeriodically = false, interval = 20.minutes),
+                        accessPointNames = AccessPointNames()
+                            .with("02:00:00:00:03:05", "Kitchen 5G")
+                            .with("02:00:00:00:04:02", "Garage 2.4G")
                     )
             }
+        )
+    }
+
+    @Test
+    fun `properties missing from persisted config are added behind their predecessor`() {
+        val persistedOrder = WifiProperty.entries
+            .minus(WifiProperty.AccessPointName)
+            .reversed()
+        val proto = WidgetConfig.default.toProto()
+            .toBuilder()
+            .removeProperties(WifiProperty.AccessPointName.protoId)
+            .clearOrder()
+            .addAllOrder(persistedOrder.map { it.protoId })
+            .build()
+
+        val config = proto.toExternal()
+
+        assertEquals(
+            persistedOrder.toMutableList().apply { add(indexOf(WifiProperty.BSSID) + 1, WifiProperty.AccessPointName) },
+            config.propertyOrder
+        )
+        assertEquals(
+            WidgetConfig.default.propertyConfig(WifiProperty.AccessPointName),
+            config.propertyConfig(WifiProperty.AccessPointName)
         )
     }
 }

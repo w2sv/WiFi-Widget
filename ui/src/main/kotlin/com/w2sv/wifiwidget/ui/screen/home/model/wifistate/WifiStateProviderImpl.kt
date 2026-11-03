@@ -52,7 +52,7 @@ class WifiStateProviderImpl @Inject constructor(
     }
 
     private val presentationConfig = widgetConfigSource.flow
-        .distinctUntilChangedBy { it.propertyConfig to it.propertyOrder }
+        .distinctUntilChangedBy { Triple(it.propertyConfig, it.propertyOrder, it.accessPointNames) }
 
     private val locationAccessChangedWhileDependentPropertiesEnabled: Flow<Unit> = locationAccessChanged
         .withLatestFrom(presentationConfig) { _, config -> config }
@@ -83,7 +83,8 @@ class WifiStateProviderImpl @Inject constructor(
                         propertyPresentations = wifiPropertyPresentationProvider(
                             enabledProperties = inputs.config.enabledProperties,
                             enabledIpSettings = inputs.config::enabledIpSettings,
-                            remoteNetworkData = inputs.remoteData
+                            remoteNetworkData = inputs.remoteData,
+                            accessPointNames = inputs.config.accessPointNames
                         )
                     )
                 }

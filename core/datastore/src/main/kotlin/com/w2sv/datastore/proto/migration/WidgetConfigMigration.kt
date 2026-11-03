@@ -74,7 +74,7 @@ private fun WidgetConfig.migratePropertyOrder(prefs: Preferences): WidgetConfig 
     val parsed = prefs[key]
         ?.split(",")
         ?.mapNotNull { it.toIntOrNull() }
-        ?.mapNotNull { WifiProperty.entries.getOrNull(it) }
+        ?.mapNotNull { legacyWifiPropertyEntries.getOrNull(it) }
         ?.distinct()
         .orEmpty()
 

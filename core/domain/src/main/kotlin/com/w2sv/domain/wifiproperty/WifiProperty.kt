@@ -56,6 +56,14 @@ sealed class WifiProperty(
         requiresLocationAccess = true
     )
 
+    data object AccessPointName : WifiProperty(
+        protoId = 27,
+        labelRes = R.string.access_point_name,
+        descriptionRes = R.string.access_point_name_description,
+        learnMoreUrl = null,
+        requiresLocationAccess = true
+    )
+
     data object Frequency : WifiProperty(
         protoId = 11,
         labelRes = R.string.frequency,
@@ -236,6 +244,7 @@ sealed class WifiProperty(
         val entries = listOf(
             SSID,
             BSSID,
+            AccessPointName,
             LoopbackIp,
             SiteLocalIp,
             LinkLocalIp,

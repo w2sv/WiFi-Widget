@@ -1,6 +1,7 @@
 package com.w2sv.domain.widget
 
 import com.w2sv.domain.networking.RemoteDataConfig
+import com.w2sv.domain.wifiproperty.AccessPointNames
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.wifiproperty.settings.IpSetting
@@ -16,7 +17,8 @@ data class WidgetConfig(
     val propertyOrder: List<WifiProperty>,
     val appearance: WidgetAppearance,
     val refreshing: WidgetRefreshing,
-    val utilities: Map<WidgetUtility, Boolean>
+    val utilities: Map<WidgetUtility, Boolean>,
+    val accessPointNames: AccessPointNames = AccessPointNames()
 ) {
     val remoteDataConfig: RemoteDataConfig
         get() = RemoteDataConfig.from(this)

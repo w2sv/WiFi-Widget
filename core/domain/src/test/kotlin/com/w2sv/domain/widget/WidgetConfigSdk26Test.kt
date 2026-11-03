@@ -18,6 +18,7 @@ class WidgetConfigSdk26Test {
             listOf(
                 WifiProperty.SSID,
                 WifiProperty.BSSID,
+                WifiProperty.AccessPointName,
                 WifiProperty.LoopbackIp,
                 WifiProperty.SiteLocalIp,
                 WifiProperty.LinkLocalIp,

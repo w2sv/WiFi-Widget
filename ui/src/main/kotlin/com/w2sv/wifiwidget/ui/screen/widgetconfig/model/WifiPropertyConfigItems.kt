@@ -8,6 +8,7 @@ import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetConfig
+import com.w2sv.domain.wifiproperty.AccessPointNames
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.wifiproperty.settings.IpSetting
@@ -22,10 +23,12 @@ import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
+import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.AccessPointNamesEditor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.IpVersionsHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,7 +51,9 @@ fun wifiPropertyConfigItems(
                 isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
                 showDialog = showDialog,
                 showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } },
-                scope = scope
+                scope = scope,
+                accessPointNames = { config.accessPointNames },
+                updateAccessPointNames = { names -> updateConfig { copy(accessPointNames = names) } }
             )
         }
         .toPersistentList()
@@ -60,7 +65,9 @@ private fun WifiProperty.configItem(
     isMoreThanOnePropertyEnabled: () -> Boolean,
     showDialog: (WidgetConfigDialog) -> Unit,
     showSnackbar: (SnackbarBuilder) -> Unit,
-    scope: CoroutineScope
+    scope: CoroutineScope,
+    accessPointNames: () -> AccessPointNames,
+    updateAccessPointNames: (AccessPointNames) -> Unit
 ): ConfigItem.Checkable {
     val shakeController = configuredShakeController()
 
@@ -93,6 +100,18 @@ private fun WifiProperty.configItem(
                     updateSetting = { setting, value -> update(config().withUpdatedSetting(setting, value)) },
                     showLeaveAtLeastOnePropertyEnabledSnackbar = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
                     scope = scope
+                )
+            )
+
+            is WifiProperty.AccessPointName -> ConfigItem.SubSettings(
+                elements = persistentListOf(
+                    ConfigItem.Custom {
+                        AccessPointNamesEditor(
+                            names = accessPointNames(),
+                            updateNames = updateAccessPointNames,
+                            showDialog = showDialog
+                        )
+                    }
                 )
             )
 

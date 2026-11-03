@@ -3,6 +3,7 @@ package com.w2sv.domain.wifiproperty.presentation
 import android.content.res.Resources
 import com.w2sv.core.resources.R
 import com.w2sv.domain.networking.RemoteNetworkData
+import com.w2sv.domain.wifiproperty.AccessPointNames
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
@@ -22,6 +23,8 @@ class WifiPropertyPresentationProviderTest {
                 R.string.ip -> "IP"
                 R.string.public_ -> "Public"
                 R.string.ssid -> "SSID"
+                R.string.bssid -> "BSSID"
+                R.string.access_point_name -> "Access Point"
                 R.string.dns -> "DNS"
                 R.string.gps_disabled -> "GPS disabled"
                 R.string.battery_saver_restricted -> "Restricted by Battery Saver"
@@ -139,6 +142,34 @@ class WifiPropertyPresentationProviderTest {
                     WifiPropertyPresentation(SubscriptableText("SSID 2"), "Guest")
                 ),
                 actual
+            )
+        }
+
+    @Test
+    fun `access point name replaces assigned BSSIDs and keeps unassigned BSSIDs and errors`() =
+        runTest {
+            val accessPointNames = AccessPointNames().with("02:00:00:00:03:05", "Kitchen 5G")
+            suspend fun present(bssidValue: WifiPropertyValue): List<String> {
+                val resolver = WifiPropertyResolver { _, _, _ ->
+                    listOf(
+                        ResolvedWifiProperty(WifiProperty.AccessPointName, listOf(bssidValue)),
+                        ResolvedWifiProperty(WifiProperty.BSSID, listOf(bssidValue))
+                    )
+                }
+                return WifiPropertyPresentationProvider(resolver, resources)(
+                    enabledProperties = listOf(WifiProperty.AccessPointName, WifiProperty.BSSID),
+                    enabledIpSettings = { emptyList() },
+                    remoteNetworkData = RemoteNetworkData.empty,
+                    accessPointNames = accessPointNames
+                ).map { it.value }
+            }
+
+            // BSSID itself stays untouched
+            assertEquals(listOf("Kitchen 5G", "02:00:00:00:03:05"), present(WifiPropertyValue("02:00:00:00:03:05".txt)))
+            assertEquals(listOf("02:00:00:00:04:05", "02:00:00:00:04:05"), present(WifiPropertyValue("02:00:00:00:04:05".txt)))
+            assertEquals(
+                listOf("GPS disabled", "GPS disabled"),
+                present(WifiPropertyValue(R.string.gps_disabled.txt, resolutionError = WifiPropertyResolutionError.GpsDisabled))
             )
         }
 }
