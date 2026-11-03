@@ -1,5 +1,5 @@
 [versions]
-agp = "9.4.1"
+agp = "9.5.1"
 androidx-activity-compose = "1.13.0"
 androidx-baselineprofile = "1.5.0"
 androidx-compose-material3 = "1.5.0-rc01"
@@ -7,16 +7,17 @@ androidx-compose-ui = "1.12.1"
 androidx-datastore = "1.3.0"
 androidx-hilt = "1.4.0"
 androidx-lifecycle = "2.11.0"
-androidx-navigation3 = "1.2.0"
+androidx-navigation3 = "1.2.1"
 androidx-test-ext = "1.3.0"
 androidx-test-orchestrator = "1.6.1"
 androidx-test-runner = "1.7.0"
-androidx-test-uiautomator = "2.4.0"
+androidx-test-uiautomator = "2.4.1"
+androidx-work = "2.12.0"
 # @keep
 compileSdk = "37"
 compose-lint-checks = "1.6.1"
 google-dagger-hilt = "2.60.1"
-google-ksp = "2.3.12"
+google-ksp = "2.3.13"
 junit = "4.13.2"
 kotlin = "2.4.21"
 kotlinxCoroutines = "1.11.0"
@@ -26,10 +27,10 @@ minSdk = "26"
 moduleGraph = "2.9.1"
 profileinstaller = "1.4.1"
 protobuf = "4.36.2"
-protobuf-plugin = "0.10.0"
-squareup-okhttp3 = "5.5.0"
+protobuf-plugin = "0.10.1"
+squareup-okhttp3 = "5.5.1"
 triplet-play = "4.1.1"
-versionCatalogUpdate = "1.1.1"
+versionCatalogUpdate = "1.1.2"
 w2sv-androidutils = "1.0.0"
 w2sv-composed = "0.7.0"
 w2sv-kotlinutils = "1.1.0"
@@ -70,8 +71,8 @@ androidx-test-orchestrator = { module = "androidx.test:orchestrator", version.re
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-runner" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
-androidx-work-runtime-ktx = "androidx.work:work-runtime-ktx:2.12.0"
-androidx-work-testing = "androidx.work:work-testing:2.12.0"
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
 flowExt = "io.github.hoc081098:FlowExt:1.0.0"
 google-android-material = "com.google.android.material:material:1.14.0"
 google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "google-dagger-hilt" }
