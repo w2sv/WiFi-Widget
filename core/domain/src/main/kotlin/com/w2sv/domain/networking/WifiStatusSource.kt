@@ -18,6 +18,12 @@ interface WifiStatusSource {
     fun snapshot(): WifiStatus
 
     /**
+     * Returns the selected connected Wi-Fi network's process-local identity, or null when Wi-Fi
+     * is absent or ambiguous. Equal status values do not imply equal network identities.
+     */
+    fun connectedWifiIdentity(): Long?
+
+    /**
      * Emits the initial Wi-Fi status and subsequent connectivity updates.
      * Consecutive emissions may be identical because local Wi-Fi properties can change
      * without changing the connection state.

@@ -88,6 +88,7 @@ internal class WidgetConfigMigrationTest {
 
                     // refreshing
                     booleanPreferencesKey("RefreshPeriodically") to false,
+                    booleanPreferencesKey("RefreshOnBatteryLow") to false,
                     intPreferencesKey("refreshInterval") to 30
                 )
             )

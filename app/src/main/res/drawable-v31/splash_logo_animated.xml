@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/splash_logo_vector">
+    <target android:name="signal_inner" android:animation="@animator/splash_signal_inner" />
+    <target android:name="signal_middle" android:animation="@animator/splash_signal_middle" />
+    <target android:name="signal_outer" android:animation="@animator/splash_signal_outer" />
+</animated-vector>

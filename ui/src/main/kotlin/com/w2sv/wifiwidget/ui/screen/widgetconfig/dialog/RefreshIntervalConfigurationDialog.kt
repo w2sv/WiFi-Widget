@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.w2sv.common.utils.minutes
-import com.w2sv.core.common.R
+import com.w2sv.common.time.minutes
+import com.w2sv.core.resources.R
 import com.w2sv.wheelpicker.WheelPicker
 import com.w2sv.wheelpicker.WheelPickerState
 import com.w2sv.wheelpicker.rememberWheelPickerState

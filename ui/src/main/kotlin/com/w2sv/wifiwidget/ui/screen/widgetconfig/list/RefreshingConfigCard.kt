@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.w2sv.common.utils.minutes
-import com.w2sv.core.common.R
+import com.w2sv.common.time.minutes
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetRefreshing
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckableList
@@ -68,16 +68,11 @@ private fun refreshingConfig(
         },
         contentBeneath = subSettings(
             refreshing = refreshing,
-            updateRefreshing = updateRefreshing,
             showDialog = showDialog
         )
     )
 
-private fun subSettings(
-    refreshing: WidgetRefreshing,
-    updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
-    showDialog: (WidgetConfigDialog) -> Unit
-) =
+private fun subSettings(refreshing: WidgetRefreshing, showDialog: (WidgetConfigDialog) -> Unit) =
     ConfigItem.SubSettings(
         elements = persistentListOf(
             ConfigItem.WithCustomTrailing(property = WidgetRefreshingParameter.Interval) {
@@ -85,12 +80,7 @@ private fun subSettings(
                     interval = refreshing.interval,
                     showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) }
                 )
-            },
-            ConfigItem.Checkable(
-                property = WidgetRefreshingParameter.RefreshOnLowBattery,
-                isChecked = { refreshing.refreshOnLowBattery },
-                onCheckedChange = { updateRefreshing { copy(refreshOnLowBattery = it) } }
-            )
+            }
         ),
         allowCollapsing = false
     )

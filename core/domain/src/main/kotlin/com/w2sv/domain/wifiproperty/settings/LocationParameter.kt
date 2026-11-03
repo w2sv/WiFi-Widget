@@ -1,7 +1,7 @@
 package com.w2sv.domain.wifiproperty.settings
 
 import androidx.annotation.StringRes
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 
 enum class LocationParameter(override val protoId: Int, @StringRes override val labelRes: Int) : WifiPropertySetting {
     ZipCode(101, R.string.zip_code),

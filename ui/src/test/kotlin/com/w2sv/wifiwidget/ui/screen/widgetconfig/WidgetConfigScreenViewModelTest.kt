@@ -46,7 +46,7 @@ class WidgetConfigScreenViewModelTest {
             val edited = previous.withUpdatedPropertyPosition(0, 1)
 
             val notified = backgroundScope.launch(mainDispatcherRule.dispatcher) {
-                viewModel.changesHaveBeenCommitted.first()
+                assertEquals(edited, viewModel.changesHaveBeenCommitted.first())
                 assertTrue(configurationChangeHasBeenApplied)
             }
 
@@ -63,7 +63,7 @@ class WidgetConfigScreenViewModelTest {
         runTest {
             coEvery { dataSource.update(any()) } throws IllegalStateException("write failed")
             val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
-            val notifications = mutableListOf<Unit>()
+            val notifications = mutableListOf<WidgetConfig>()
             backgroundScope.launch(mainDispatcherRule.dispatcher) {
                 viewModel.changesHaveBeenCommitted.collect { notifications += it }
             }
@@ -74,5 +74,16 @@ class WidgetConfigScreenViewModelTest {
             assertEquals(WidgetConfig.default, persisted.value)
             assertTrue(notifications.isEmpty())
             verify(exactly = 0) { actions.applyConfigurationChange(any(), any()) }
+        }
+
+    @Test fun `external applied change updates a clean editor`() =
+        runTest {
+            val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
+            val externallyApplied = WidgetConfig.default.withUpdatedPropertyPosition(0, 1)
+
+            persisted.value = externallyApplied
+
+            assertEquals(externallyApplied, viewModel.reversibleConfig.value)
+            assertEquals(false, viewModel.reversibleConfig.isDirty.value)
         }
 }

@@ -15,12 +15,13 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.w2sv.domain.permission.LocationAccessRepository
+import com.w2sv.domain.location.LocationAccessRepository
 import com.w2sv.domain.preferences.PreferencesRepository
 import com.w2sv.domain.preferences.Theme
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.presentation.resolve
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDevice
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDeviceSetup
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotSystemUi
@@ -153,11 +154,11 @@ class InAppScreenshotTest {
     private fun showHome(scenario: ScreenshotScenario) {
         val firstPropertyValue = scenario.properties.first().values.first().value.resolve(context.resources)
         composeRule.onNodeWithText(firstPropertyValue).assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(com.w2sv.core.common.R.string.configure)).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(com.w2sv.core.resources.R.string.configure)).assertIsDisplayed()
     }
 
     private fun openConfiguration() {
-        composeRule.onNodeWithText(context.getString(com.w2sv.core.common.R.string.configure)).performClick()
+        composeRule.onNodeWithText(context.getString(com.w2sv.core.resources.R.string.configure)).performClick()
         composeRule.onNodeWithTag("widget_config_list").assertIsDisplayed()
     }
 
@@ -165,13 +166,13 @@ class InAppScreenshotTest {
         openConfiguration()
         composeRule.onNodeWithTag("widget_config_list").performScrollToIndex(0)
         composeRule.onNodeWithTag("appearance_section").assertIsDisplayed()
-        composeRule.onNodeWithText(context.getString(com.w2sv.core.common.R.string.custom)).assertIsSelected()
+        composeRule.onNodeWithText(context.getString(com.w2sv.core.resources.R.string.custom)).assertIsSelected()
     }
 
     private fun showProperties(scenario: ScreenshotScenario) {
         openConfiguration()
         composeRule.onNodeWithTag("widget_config_list").performScrollToIndex(1)
-        val title = composeRule.onNodeWithText(context.getString(com.w2sv.core.common.R.string.widget_configuration))
+        val title = composeRule.onNodeWithText(context.getString(com.w2sv.core.resources.R.string.widget_configuration))
         val expandedTitleTop = title.fetchSemanticsNode().boundsInRoot.top
         composeRule.onNodeWithTag("widget_config_list").performTouchInput {
             swipeUp(startY = height * 0.70f, endY = height * 0.64f)

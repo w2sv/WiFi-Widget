@@ -5,18 +5,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
+import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 
 val LocalSnackbarVisibility = staticCompositionLocalOf { SnackbarVisibility() }
 
 /**
- * Tracks actual snackbar visibility in a Compose hierarchy. [set] should only be called from within the snackbar host.
+ * Tracks actual snackbar visibility and kind through its exit animation. [set] belongs to the snackbar host.
  */
 @Stable
 class SnackbarVisibility {
-    var isVisible by mutableStateOf(false)
-        private set
+    private var state by mutableStateOf(State())
 
-    internal fun set(value: Boolean) {
-        isVisible = value
+    val isVisible: Boolean
+        get() = state.isVisible
+
+    val kind: SnackbarKind?
+        get() = state.kind
+
+    internal fun setVisible(kind: SnackbarKind? = null) {
+        state = State(
+            isVisible = true,
+            kind = kind
+        )
     }
+
+    internal fun setHidden() {
+        state = State()
+    }
+
+    private data class State(val isVisible: Boolean = false, val kind: SnackbarKind? = null)
 }

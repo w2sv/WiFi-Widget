@@ -56,7 +56,7 @@ android {
 
 dependencies {
     implementation(projects.testing.launcher)
-    implementation(projects.core.common)
+    implementation(projects.core.resources)
     implementation(projects.core.domain)
     implementation(projects.core.datastore)
     implementation(projects.core.networking)

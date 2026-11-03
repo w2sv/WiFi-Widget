@@ -161,10 +161,11 @@
 </div>
 
 <p align="center">
-Logo foreground by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a> taken
-from <a href="https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667#">here</a>,
-where it is licensed
-under <a href="https://creativecommons.org/licenses/by/3.0/">Creative Commons(Attribution 3.0 unported)</a>.
+Logo artwork based on the
+<a href="https://freeicons.io/computer-devices-3/router-wifi-internet-hotspot-icon-487667">Router WiFi Internet Hotspot icon</a>
+by <a href="https://freeicons.io/profile/75801">Hilmy Abiyyu Asad</a>,
+licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+Adapted and animated for WiFi Widget.
 </p>
 
 <div id="user-content-toc">

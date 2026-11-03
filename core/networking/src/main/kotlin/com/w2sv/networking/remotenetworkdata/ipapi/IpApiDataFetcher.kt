@@ -1,6 +1,6 @@
 package com.w2sv.networking.remotenetworkdata.ipapi
 
-import com.w2sv.common.utils.log
+import com.w2sv.common.logging.log
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.wifiproperty.settings.LocationParameter
 import com.w2sv.networking.remotenetworkdata.fetchFromUrl

@@ -2,7 +2,7 @@ package com.w2sv.networking.wifistatus
 
 import android.content.BroadcastReceiver
 import android.net.wifi.WifiManager
-import com.w2sv.common.utils.broadcastReceiver
+import com.w2sv.common.android.broadcastReceiver
 import slimber.log.d
 
 /**

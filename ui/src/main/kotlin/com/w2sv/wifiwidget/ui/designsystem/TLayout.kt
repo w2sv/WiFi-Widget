@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstrainScope
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintLayoutBaseScope
 import androidx.constraintlayout.compose.Dimension
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 

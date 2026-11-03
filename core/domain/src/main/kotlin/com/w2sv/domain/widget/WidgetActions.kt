@@ -1,14 +1,12 @@
 package com.w2sv.domain.widget
 
-import kotlinx.coroutines.flow.Flow
-
 interface WidgetActions {
-    /** Emits when a widget pin requested by the app succeeds. */
-    val pinSuccesses: Flow<Unit>
-
     fun pin(onFailure: () -> Unit)
     fun refresh()
     fun render()
+
+    /** Requests the provider's full update lifecycle for a newly configured widget. */
+    fun requestUpdate(appWidgetId: Int)
 
     /**
      * Called after configuration persistence succeeds. Updates periodic scheduling only when

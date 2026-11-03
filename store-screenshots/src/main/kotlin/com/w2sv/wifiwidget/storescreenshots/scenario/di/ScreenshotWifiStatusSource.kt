@@ -13,6 +13,9 @@ class ScreenshotWifiStatusSource @Inject constructor() : WifiStatusSource {
     override fun snapshot(): WifiStatus =
         WifiStatus.Connected
 
+    override fun connectedWifiIdentity(): Long =
+        1L
+
     override val status: Flow<WifiStatus> = flowOf(WifiStatus.Connected)
 
     override val defaultEgressChanges: Flow<Unit> = emptyFlow()

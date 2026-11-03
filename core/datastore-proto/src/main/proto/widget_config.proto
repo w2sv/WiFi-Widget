@@ -8,6 +8,8 @@ message WidgetConfigProto {
     repeated int32 order = 2;
     WidgetAppearanceProto appearance = 3;
     WidgetRefreshingProto refreshing = 4;
+    // Utility map key 3 (GoToWidgetSettingsButton) is retired and must not be reused.
+    // Protobuf reserved declarations cannot reserve individual map keys.
     map<int32, bool> utilities = 5;
 }
 
@@ -76,6 +78,7 @@ enum AlignmentProto {
  */
 message WidgetRefreshingProto {
     bool refresh_periodically = 1;
-    bool refresh_on_low_battery = 2;
+    reserved 2;
+    reserved "refresh_on_low_battery";
     int64 refresh_interval_minutes = 3;
 }

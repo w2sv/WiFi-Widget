@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.storescreenshots.scenario
 
 import android.graphics.Color
-import com.w2sv.common.txt
 import com.w2sv.domain.widget.WidgetAppearance
 import com.w2sv.domain.widget.WidgetColoring
 import com.w2sv.domain.widget.WidgetColoringStrategy
@@ -10,6 +9,7 @@ import com.w2sv.domain.widget.WidgetUtility
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
+import com.w2sv.domain.wifiproperty.txt
 import com.w2sv.wifiwidget.storescreenshots.R
 import com.w2sv.wifiwidget.storescreenshots.device.GridCells
 

@@ -25,10 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.androidutils.content.openUrl
-import com.w2sv.common.AppUrl
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.composed.ui.rememberMovableContentOf
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
+import com.w2sv.wifiwidget.ui.AppUrl
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.components.navdrawer.NavDrawer
@@ -82,7 +82,7 @@ fun HomeScreen(
                     onNavigationIconClick = { scope.launch { drawerState.open() } }
                 )
             },
-            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow) }
+            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) }
         ) { paddingValues ->
             val wifiStatusCard = rememberMovableContentOf { modifier: Modifier ->
                 WifiStatusCard(wifiState = wifiState, modifier = modifier)

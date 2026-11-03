@@ -11,7 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.composed.runtime.CollectLatestFromFlow
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction

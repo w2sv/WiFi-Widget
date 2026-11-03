@@ -1,7 +1,7 @@
 package com.w2sv.datastore.proto
 
 import androidx.datastore.core.DataStore
-import com.w2sv.common.di.AppDefaultScope
+import com.w2sv.common.di.qualifier.AppDefaultScope
 import com.w2sv.datastore.WidgetConfigProto
 import com.w2sv.datastore.proto.mapping.toExternal
 import com.w2sv.datastore.proto.mapping.toProto

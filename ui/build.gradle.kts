@@ -18,7 +18,8 @@ kotlin {
         optIn.addAll(
             "androidx.compose.material3.ExperimentalMaterial3Api",
             "androidx.compose.foundation.ExperimentalFoundationApi",
-            "androidx.compose.foundation.layout.ExperimentalLayoutApi"
+            "androidx.compose.foundation.layout.ExperimentalLayoutApi",
+            "kotlinx.coroutines.ExperimentalCoroutinesApi"
         )
     }
 }
@@ -32,6 +33,7 @@ composeCompiler {
 
 dependencies {
     implementation(projects.core.common)
+    implementation(projects.core.resources)
     implementation(projects.core.domain)
 
     implementation(libs.w2sv.androidutils.core)

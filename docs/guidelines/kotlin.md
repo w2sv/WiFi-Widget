@@ -19,7 +19,7 @@
 ## Packages and files
 
 - Place contracts and implementations in the narrow package and module that owns their responsibility; do not leave networking, persistence, widget, or similar infrastructure types in broad module-root packages.
-- Respect existing module boundaries between app, core:common, core:domain, core:networking, core:datastore, and core:widget. Avoid introducing dependencies that reverse their intended responsibilities.
+- Respect existing module boundaries between app, core:common, core:resources, core:domain, core:networking, core:datastore, and core:widget. Avoid introducing dependencies that reverse their intended responsibilities.
 - Keep Android framework interactions and implementation details separate from domain models and contracts where practical.
 - Give substantial contracts and implementations their own files named after the primary declaration. A small contract and its tightly coupled internal implementation may share a responsibility-named file.
 - Use UpperCamelCase Kotlin filenames that describe the primary declaration or concept. Do not copy lower-camel casing from a top-level function or property into the filename.

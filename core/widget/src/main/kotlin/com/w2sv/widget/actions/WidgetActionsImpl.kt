@@ -1,25 +1,25 @@
 package com.w2sv.widget.actions
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
+import android.content.Intent
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.componentName
+import com.w2sv.androidutils.content.intent
+import com.w2sv.common.android.broadcastPendingIntent
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.di.WidgetPinSuccessFlow
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-import kotlinx.coroutines.flow.SharedFlow
 
 internal class WidgetActionsImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
-    private val refreshManager: WifiWidgetWorkScheduler,
-    @WidgetPinSuccessFlow override val pinSuccesses: SharedFlow<Unit>
+    private val refreshManager: WifiWidgetWorkScheduler
 ) : WidgetActions {
-
     override fun pin(onFailure: () -> Unit) {
         appWidgetManager.attemptWifiWidgetPin(
             context = context,
@@ -33,6 +33,14 @@ internal class WidgetActionsImpl @Inject constructor(
 
     override fun render() {
         context.sendBroadcast(WifiWidgetProvider.renderIntent(context))
+    }
+
+    override fun requestUpdate(appWidgetId: Int) {
+        context.sendBroadcast(
+            Intent(context, WifiWidgetProvider::class.java)
+                .setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE)
+                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+        )
     }
 
     override fun applyConfigurationChange(previous: WidgetConfig, current: WidgetConfig) {
@@ -59,7 +67,11 @@ private fun AppWidgetManager.attemptWifiWidgetPin(context: Context, onFailure: (
         !requestPinAppWidget(
             componentName<WifiWidgetProvider>(context),
             null,
-            WidgetPinSuccessBroadcastReceiver.pendingIntent(context)
+            broadcastPendingIntent(
+                context,
+                intent<WidgetPinSuccessBroadcastReceiver>(context),
+                PendingIntent.FLAG_IMMUTABLE
+            )
         )
     ) {
         onFailure()

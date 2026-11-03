@@ -1,7 +1,11 @@
 package com.w2sv.wifiwidget.integration.environment
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.net.wifi.WifiManager
+import android.os.ParcelFileDescriptor
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.work.Operation
@@ -28,13 +32,17 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     val newRemoteViewsFactory get() = dependencies.wifiPropertyRemoteViewsFactory()
 
     fun start() {
+        grantLocationPermissions()
         dependencies = EntryPointAccessors.fromApplication(context, WidgetIntegrationDependencies::class.java)
         http.reset()
         setConfig(widgetConfig())
         work.initialize()
         work.reset()
         launcher.prepare()
+
+        prepareWifi()
         awaitUsableWifi()
+
         dependencies.remoteDataWidgetObserver().initialize()
         // Repeated initialization must leave the observer with one subscription.
         dependencies.remoteDataWidgetObserver().initialize()
@@ -51,6 +59,7 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
                 return false
             }
         }
+
         val cancellations = mutableListOf<Operation>()
         try {
             // A queued widget broadcast can enqueue work after cancellation if it has not run yet.
@@ -68,7 +77,6 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
             }
             // Cancellation signals the coroutine but does not wait for an interceptor blocked in HTTP.
             val httpIdle = attempt { http.awaitIdle() }
-            attempt { launcher.showLauncher() }
             attempt { launcher.clearExistingWidgets() }
             if (::dependencies.isInitialized) attempt { setConfig(widgetConfig()) }
             if (work.isInitialized) attempt { work.prune() }
@@ -114,6 +122,30 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     ) =
         launcher.await(description, timeoutMs, condition)
 
+    private fun prepareWifi() {
+        fun shell(command: String): String =
+            ParcelFileDescriptor.AutoCloseInputStream(
+                instrumentation.uiAutomation.executeShellCommand(command)
+            ).bufferedReader().use { it.readText().trim() }
+
+        // Disable Android's internet connectivity validation probes.
+        shell("settings put global captive_portal_mode 0")
+
+        check(shell("settings get global captive_portal_mode") == "0") {
+            "Failed to disable captive portal detection"
+        }
+
+        // Reconnect Wi-Fi so Android applies the setting to a new network.
+        shell("svc wifi disable")
+
+        val wifiManager = context.getSystemService(WifiManager::class.java)
+        await("Wi-Fi disabled", timeoutMs = 30_000) {
+            !wifiManager.isWifiEnabled
+        }
+
+        shell("svc wifi enable")
+    }
+
     private fun awaitUsableWifi() {
         val connectivity = context.getSystemService(ConnectivityManager::class.java)
         await("connected, validated Wi-Fi default route", timeoutMs = 60_000) {
@@ -126,8 +158,23 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
         }
     }
 
+    private fun grantLocationPermissions() {
+        // Android 12+ precise access requires both foreground location permissions.
+        listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION).forEach { permission ->
+            try {
+                instrumentation.uiAutomation.grantRuntimePermission(context.packageName, permission)
+            } catch (failure: Exception) {
+                throw AssertionError("Could not grant $permission to ${context.packageName} before integration-test UI setup.", failure)
+            }
+            check(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
+                "Integration-test setup could not verify $permission for ${context.packageName}; " +
+                    "check the merged app manifest and instrumentation permission grant."
+            }
+        }
+    }
+
     private fun diagnostics(): String {
-        val data = repository.data.value.takeIf { ::dependencies.isInitialized }
+        val data = if (::dependencies.isInitialized) repository.data.value else null
         val connectivity = context.getSystemService(ConnectivityManager::class.java)
         val network = connectivity.activeNetwork
         val capabilities = network?.let(connectivity::getNetworkCapabilities)

@@ -1,12 +1,15 @@
 package com.w2sv.widget.ui.container
 
+import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.widget.RemoteViews
 import com.w2sv.androidutils.appwidget.crossVisualize
 import com.w2sv.androidutils.appwidget.setBackgroundColor
+import com.w2sv.androidutils.content.intent
 import com.w2sv.androidutils.graphics.getAlphaSetColor
-import com.w2sv.core.common.R as CommonR
+import com.w2sv.common.android.activityPendingIntent
+import com.w2sv.core.resources.R as ResourcesR
 import com.w2sv.core.widget.R
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
@@ -76,7 +79,11 @@ internal class WidgetRenderer @Inject constructor(
 
         setPendingIntentTemplate(
             R.id.wifi_property_list_view,
-            CopyPropertyToClipboardActivity.pendingIntent(context)
+            activityPendingIntent(
+                context,
+                intent<CopyPropertyToClipboardActivity>(context),
+                PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
         )
 
         @Suppress("DEPRECATION")
@@ -98,9 +105,9 @@ internal class WidgetRenderer @Inject constructor(
             viewId = R.id.wifi_status_tv,
             text = context.getString(
                 if (status == WifiStatus.Disabled) {
-                    CommonR.string.wifi_disabled
+                    ResourcesR.string.wifi_disabled
                 } else {
-                    CommonR.string.no_wifi_connection
+                    ResourcesR.string.no_wifi_connection
                 }
             ),
             color = colors.secondary,
@@ -144,12 +151,6 @@ internal class WidgetRenderer @Inject constructor(
             isVisible = isUtilityEnabled(WidgetUtility.GoToWifiSettingsButton),
             color = colors.primary,
             pendingIntent = WidgetActionPendingIntent.openWifiSettings(context)
-        )
-        setButton(
-            viewId = R.id.go_to_widget_settings_button,
-            isVisible = isUtilityEnabled(WidgetUtility.GoToWidgetSettingsButton),
-            color = colors.primary,
-            pendingIntent = WidgetActionPendingIntent.openWidgetConfigScreen(context)
         )
     }
 }

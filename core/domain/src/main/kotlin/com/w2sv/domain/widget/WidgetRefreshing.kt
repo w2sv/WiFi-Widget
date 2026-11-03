@@ -3,8 +3,4 @@ package com.w2sv.domain.widget
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-data class WidgetRefreshing(
-    val refreshPeriodically: Boolean = true,
-    val refreshOnLowBattery: Boolean = true,
-    val interval: Duration = 15.minutes
-)
+data class WidgetRefreshing(val refreshPeriodically: Boolean = true, val interval: Duration = 15.minutes)

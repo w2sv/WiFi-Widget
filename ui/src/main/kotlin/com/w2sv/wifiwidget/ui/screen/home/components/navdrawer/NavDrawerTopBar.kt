@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 
 @Composable
 fun NavDrawerTopBar(

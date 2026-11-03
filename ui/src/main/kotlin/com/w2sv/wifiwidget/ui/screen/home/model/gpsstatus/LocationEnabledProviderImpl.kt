@@ -5,7 +5,7 @@ import android.content.IntentFilter
 import android.location.LocationManager
 import com.w2sv.androidutils.location.isLocationEnabledCompat
 import com.w2sv.androidutils.service.systemService
-import com.w2sv.common.utils.broadcastReceiver
+import com.w2sv.common.android.broadcastReceiver
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject

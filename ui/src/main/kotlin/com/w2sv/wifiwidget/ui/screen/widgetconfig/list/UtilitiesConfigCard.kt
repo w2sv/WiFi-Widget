@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetUtility
 import com.w2sv.wifiwidget.ui.designsystem.IconHeader
 import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckableList

@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.w2sv.augmentedpermissions.PermissionState
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted

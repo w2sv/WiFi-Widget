@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
-import com.w2sv.common.utils.logOnCancellation
+import com.w2sv.common.logging.logOnCancellation
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
@@ -15,7 +15,6 @@ import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -72,7 +71,6 @@ class WifiStateProviderImpl @Inject constructor(
         }
     }.filterNotNull()
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     override val wifiState: StateFlow<WifiState> = displayInputs
         .mapLatest { inputs ->
             when (inputs.status) {

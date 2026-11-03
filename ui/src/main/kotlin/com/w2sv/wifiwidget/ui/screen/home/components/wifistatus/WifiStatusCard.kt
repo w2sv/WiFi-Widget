@@ -18,10 +18,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.w2sv.common.utils.openWifiSettingsIntent
+import com.w2sv.common.android.SettingsIntents
 import com.w2sv.composed.ui.platform.isPortraitModeActive
 import com.w2sv.composed.ui.thenIf
-import com.w2sv.core.common.R
+import com.w2sv.core.resources.R
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
@@ -73,7 +73,7 @@ fun WifiStatusDisplay(wifiStatus: WifiStatus, modifier: Modifier = Modifier) {
         modifier = modifier
             .clickable(
                 onClickLabel = context.getString(R.string.go_to_wifi_settings_cd),
-                onClick = { context.startActivity(openWifiSettingsIntent) }
+                onClick = { context.startActivity(SettingsIntents.wifi) }
             )
     ) {
         Icon(

@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.location
 
-import com.w2sv.domain.permission.LocationAccessRepository
+import com.w2sv.domain.location.LocationAccessRepository
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertSame

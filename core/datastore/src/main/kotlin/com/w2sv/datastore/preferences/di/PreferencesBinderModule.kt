@@ -2,7 +2,7 @@ package com.w2sv.datastore.preferences.di
 
 import com.w2sv.datastore.preferences.LocationAccessRepositoryImpl
 import com.w2sv.datastore.preferences.PreferencesRepositoryImpl
-import com.w2sv.domain.permission.LocationAccessRepository
+import com.w2sv.domain.location.LocationAccessRepository
 import com.w2sv.domain.preferences.PreferencesRepository
 import dagger.Binds
 import dagger.Module

@@ -3,6 +3,7 @@ package com.w2sv.widget.ui.properties
 import android.content.Context
 import android.widget.RemoteViews
 import com.w2sv.core.widget.R
+import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
@@ -18,6 +19,7 @@ class WifiPropertyRemoteViewsFactory @Inject internal constructor(
     private val renderDataProvider: WifiPropertyRenderDataProvider,
     private val widgetConfigSource: WidgetConfigSource,
     private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
+    private val networkAvailabilitySource: NetworkAvailabilitySource,
     private val workScheduler: WifiWidgetWorkScheduler
 ) : LoggingRemoteViewsFactory() {
 
@@ -27,7 +29,9 @@ class WifiPropertyRemoteViewsFactory @Inject internal constructor(
         super.onCreate()
         // Android may recreate a collection service without an APPWIDGET_UPDATE broadcast.
         // Only enqueue work here; RemoteViewsFactory callbacks must never perform HTTP.
-        if (remoteNetworkDataRepository.needsRecovery(widgetConfigSource.blockingSnapshot().remoteDataConfig)) {
+        // Reconcile on every adapter creation; only a displayable egress can enqueue recovery.
+        val needsRecovery = remoteNetworkDataRepository.needsRecovery(widgetConfigSource.blockingSnapshot().remoteDataConfig)
+        if (needsRecovery && networkAvailabilitySource().canRefreshWidgetRemoteData) {
             workScheduler.enqueueRecovery()
         }
         updateData()
@@ -45,15 +49,18 @@ class WifiPropertyRemoteViewsFactory @Inject internal constructor(
     override fun getCount(): Int =
         data.presentations.size
 
-    override fun getViewAt(position: Int): RemoteViews =
-        remoteViews(context, data.layout) {
-            val presentation = data.presentations.getOrNull(position) ?: return@remoteViews
+    override fun getViewAt(position: Int): RemoteViews {
+        // Keep the displayed text and its fill-in intent bound to the same immutable dataset.
+        val snapshot = data
+        return remoteViews(context, snapshot.layout) {
+            val presentation = snapshot.presentations.getOrNull(position) ?: return@remoteViews
             inflatePropertyLayout(
                 presentation = presentation,
-                widgetColors = data.colors,
-                fontSize = data.fontSize
+                widgetColors = snapshot.colors,
+                fontSize = snapshot.fontSize
             )
         }
+    }
 
     override fun getLoadingView(): RemoteViews =
         remoteViews(context, R.layout.loading) {
@@ -64,8 +71,9 @@ class WifiPropertyRemoteViewsFactory @Inject internal constructor(
         2 // Because of the 2 property layouts; If set to 1, switching to the other layout does not work
 
     override fun getItemId(position: Int): Long =
-        data.presentations.getOrNull(position)?.hashCode()?.toLong() ?: -1L
+        if (position in data.presentations.indices) position.toLong() else -1L
 
+    // Rows can move or change value on refresh, so their positions are not stable identities.
     override fun hasStableIds(): Boolean =
-        true
+        false
 }

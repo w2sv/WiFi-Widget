@@ -10,7 +10,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.w2sv.common.utils.log
+import com.w2sv.common.logging.log
 import com.w2sv.datastore.WidgetColoringProto
 import com.w2sv.datastore.WidgetConfigProto
 import com.w2sv.datastore.proto.di.widgetColoringProtoFile
@@ -154,7 +154,6 @@ private fun WidgetConfig.migrateUtilities(prefs: Preferences): WidgetConfig {
                 WidgetUtility.RefreshTimeDisplay -> "ShowDateTime"
                 WidgetUtility.RefreshButton -> "WidgetButton.Refresh"
                 WidgetUtility.GoToWifiSettingsButton -> "WidgetButton.GoToWifiSettings"
-                WidgetUtility.GoToWidgetSettingsButton -> "WidgetButton.GoToWidgetSettings"
             }
         )
 
@@ -166,13 +165,11 @@ private fun WidgetConfig.migrateUtilities(prefs: Preferences): WidgetConfig {
 
 private fun WidgetConfig.migrateRefreshing(prefs: Preferences): WidgetConfig {
     val refreshPeriodically = prefs[booleanPreferencesKey("RefreshPeriodically")]
-    val refreshOnLowBattery = prefs[booleanPreferencesKey("RefreshOnBatteryLow")]
     val intervalMinutes = prefs[intPreferencesKey("refreshInterval")]
 
     return copy(
         refreshing = refreshing.copy(
             refreshPeriodically = refreshPeriodically ?: refreshing.refreshPeriodically,
-            refreshOnLowBattery = refreshOnLowBattery ?: refreshing.refreshOnLowBattery,
             interval = intervalMinutes?.minutes ?: refreshing.interval
         )
     )

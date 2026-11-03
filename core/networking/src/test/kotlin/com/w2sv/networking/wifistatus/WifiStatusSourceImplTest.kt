@@ -1,5 +1,6 @@
 package com.w2sv.networking.wifistatus
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -24,8 +25,10 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@SuppressLint("UnspecifiedRegisterReceiverFlag")
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
+@Suppress("DEPRECATION")
 class WifiStatusSourceImplTest {
     private val context = mockk<Context>(relaxed = true)
     private val wifiManager = mockk<WifiManager>()
@@ -92,6 +95,30 @@ class WifiStatusSourceImplTest {
         verify(exactly = 0) { connectivity.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) }
         verify(exactly = 0) { connectivity.registerDefaultNetworkCallback(any()) }
         verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>()) }
+    }
+
+    @Test fun `connected Wi-Fi identity changes while both connections are inactive`() {
+        val source = source()
+        active = second
+        secondCapabilities = mobileWithInternet
+        firstCapabilities = wifiWithInternet
+        every { first.networkHandle } returns 101L
+        networks = arrayOf(first, second)
+        assertEquals(WifiStatus.ConnectedInactive, source.snapshot())
+        assertEquals(101L, source.connectedWifiIdentity())
+
+        val replacement = mockk<Network> {
+            every { networkHandle } returns 303L
+        }
+        every { connectivity.getNetworkCapabilities(replacement) } returns wifiWithInternet
+        networks = arrayOf(replacement, second)
+        assertEquals(WifiStatus.ConnectedInactive, source.snapshot())
+        assertEquals(303L, source.connectedWifiIdentity())
+
+        networks = arrayOf(second)
+        assertEquals(WifiStatus.NotConnected, source.snapshot())
+        assertEquals(null, source.connectedWifiIdentity())
+        verify(exactly = 0) { connectivity.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) }
     }
 
     @Test fun `Wi-Fi collection emits initial and repeated identical statuses and cleans up`() =
@@ -163,7 +190,7 @@ class WifiStatusSourceImplTest {
         runTest {
             val inCallback = ThreadLocal.withInitial { false }
             every { connectivity.activeNetwork } answers {
-                assertFalse(inCallback.get())
+                assertFalse(checkNotNull(inCallback.get()))
                 active
             }
             source().status.test {
@@ -221,6 +248,7 @@ class WifiStatusSourceImplTest {
     private fun capabilities(wifi: Boolean, internet: Boolean) =
         mockk<NetworkCapabilities> {
             every { hasTransport(NetworkCapabilities.TRANSPORT_WIFI) } returns wifi
+            every { hasTransport(NetworkCapabilities.TRANSPORT_VPN) } returns false
             every { hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) } returns internet
             every { hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) } returns internet
         }

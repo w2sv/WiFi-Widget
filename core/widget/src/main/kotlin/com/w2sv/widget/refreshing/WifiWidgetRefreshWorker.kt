@@ -5,9 +5,9 @@ import android.os.PowerManager
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
-import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigSource
 import dagger.assisted.Assisted
@@ -24,6 +24,7 @@ import slimber.log.i
  * Recovery additionally renders when published remote data changes, ensuring
  * the render request is dispatched before work completes. The application-scoped
  * observer independently handles remote-data changes from other callers.
+ * Queued recovery retries if the default route is no longer eligible for widget HTTP.
  *
  * Interactive-state gating avoids unreliable dormant connectivity observations.
  */
@@ -33,8 +34,8 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     @Assisted params: WorkerParameters,
     private val powerManager: PowerManager,
     private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
+    private val networkAvailabilitySource: NetworkAvailabilitySource,
     private val widgetActions: WidgetActions,
-    private val wifiStatusSource: WifiStatusSource,
     private val widgetConfigSource: WidgetConfigSource
 ) : CoroutineWorker(context, params) {
 
@@ -61,9 +62,10 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         try {
             return when {
                 !remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig) -> Result.success()
-                !wifiStatusSource.snapshot().isConnected -> Result.retry()
+                // A queued recovery may run after Wi-Fi disconnects or cellular takes over.
+                !networkAvailabilitySource().canRefreshWidgetRemoteData -> Result.retry()
                 else -> {
-                    val refreshResult = remoteNetworkDataRepository.refresh(onlyIfMissing = true)
+                    val refreshResult = remoteNetworkDataRepository.refreshForWidget(onlyIfMissing = true)
                     d { "Widget remote recovery finished: result=$refreshResult" }
 
                     if (refreshResult == RemoteRefreshResult.Complete) Result.success() else Result.retry()
@@ -79,13 +81,13 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     }
 
     private suspend fun refreshWidget(reason: RefreshWork): Result {
-        val wifiStatus = wifiStatusSource.snapshot()
-        if (wifiStatus.isConnected) {
-            d { "Widget remote refresh started: reason=$reason, wifiStatus=$wifiStatus" }
-            val refreshResult = remoteNetworkDataRepository.refresh()
+        val availability = networkAvailabilitySource()
+        if (availability.canRefreshWidgetRemoteData) {
+            d { "Widget remote refresh started: reason=$reason" }
+            val refreshResult = remoteNetworkDataRepository.refreshForWidget()
             d { "Widget remote refresh finished: reason=$reason, result=$refreshResult" }
         } else {
-            d { "Widget remote refresh skipped: wifiStatus=$wifiStatus" }
+            d { "Widget remote refresh skipped: no eligible Wi-Fi or VPN default route" }
         }
         widgetActions.render()
         return Result.success()

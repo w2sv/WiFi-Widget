@@ -1,2 +1,4 @@
-- Fixed missing or outdated public IP and other api-fetched internet details in widgets after app restarts and network changes.
-- Renamed GPS Location to IP Coordinates to clarify that the coordinates come from your public IP address.
+- Wi-Fi details stay visible in widgets during Battery Saver when the connected Wi-Fi network can be identified. Unavailable values are shown clearly and refresh when the connection returns.
+- Configure widgets from your launcher when adding or reconfiguring them. The widget's redundant configuration button has been removed.
+- Removed the low-battery refresh setting; Android manages power restrictions.
+- Added an animated splash icon and updated screen transitions.

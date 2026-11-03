@@ -13,7 +13,7 @@ WiFi Widget is a free, open-source Android app that displays detailed Wi-Fi info
 • Select the properties you want to display and reorder them
 • Choose light or dark themes, dynamic or custom colors, and background opacity
 • Adjust font size, text alignment and widget size
-• Add buttons to refresh data, open Wi-Fi settings or configure the widget
+• Add buttons to refresh data or open Wi-Fi settings; configure the widget in the app or from your launcher
 • Set automatic refresh intervals from 15 minutes to 24 hours, including low-battery behavior
 
 <b>Useful beyond the home screen</b>
