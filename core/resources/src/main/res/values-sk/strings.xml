@@ -57,7 +57,7 @@
     <string name="copied">Skopírované</string>
     <string name="to_clipboard">do schránky</string>
     <string name="displayed_versions">Zobrazené verzie</string>
-    <string name="background_opacity">Pozadie\npriehľadnosť</string>
+    <string name="background_opacity">Priehľadnosť\npozadia</string>
     <string name="font_size">Veľkosť písma</string>
     <string name="widget_pinning_failed">Vaše zariadenie nepodporuje pripínanie widgetov v aplikáciách. Budete to musieť urobiť z domovskej obrazovky vášho zariadenia.</string>
     <string name="widget_configuration">Nastavenie widgetu</string>
@@ -82,7 +82,7 @@
     <string name="go_back_on_unsaved_changes_warning">Stlačte opäť tlačidlo Späť, aby ste zrušili neuložené zmeny.</string>
     <string name="restore_default_order">Obnoviť predvolené poradie</string>
     <string name="show_dropdown_menu">Zobraziť rozbaľovaciu ponuku</string>
-    <string name="value_alignment">Zarovnanie vlastností podľa hodnôt</string>
+    <string name="value_alignment">Zarovnanie hodnôt</string>
     <string name="configure">Nastaviť</string>
     <string name="wifi_property_reordering_information">Kliknutím a podržaním vlastnosti zmeníte poradie, v akom sa zobrazujú vo widgete</string>
     <string name="ssid">SSID</string>
@@ -159,8 +159,8 @@
     <string name="nat64prefix_description">Prefix IPv6, zvyčajne 64:ff9b::/96, ktorý používajú brány NAT64 na preklad adries IPv6 na adresy IPv4 a naopak. Umožňuje klientom podporujúcim iba IPv6 komunikovať so servermi podporujúcimi iba IPv4 prostredníctvom priradenia adries IPv6 k zodpovedajúcim adresám IPv4. To uľahčuje plynulú interakciu medzi sieťami IPv6 a IPv4 a napomáha prechodu na IPv6.\nWidget WiFi zobrazí predponu NAT64, ktorá sa používa na aktuálnom pripojení, ak nejaká existuje.</string>
     <string name="location">Poloha</string>
     <string name="location_description">Geografická poloha spojená s vašou verejnou IP adresou. Získané z ip-api.com.</string>
-    <string name="gps_location">Poloha podľa GPS</string>
-    <string name="gps_location_description">GPS súradnice priradené k vašej verejnej IP adrese. Získané z ip-api.com.</string>
+    <string name="ip_coordinates">Súradnice IP adresy</string>
+    <string name="ip_coordinates_description">Geografické súradnice spojené s vašou verejnou IP adresou. Získané z ip-api.com.</string>
     <string name="as_number">ASN</string>
     <string name="as_number_description">Jedinečný číselný identifikátor pridelený <b>autonómnemu systému (AS)</b>, čo je rozsiahla sieť alebo skupina sietí pod jednou organizáciou, ktorá spravuje svoje vlastné smerovacie politiky na internete. Čísla AS (ASN) umožňujú týmto systémom vymieňať si smerovacie informácie s inými sieťami, čím zabezpečujú efektívne a nezávislé riadenie internetového prevádzky. Sú nevyhnutné pre veľké subjekty, ako sú poskytovatelia internetových služieb (ISP), dátové centrá a nadnárodné spoločnosti, pretože umožňujú spoľahlivú komunikáciu a tok dát medzi rôznymi sieťami cez internet. Zdroj: ip-api.com.</string>
     <string name="isp">ISP</string>
@@ -190,7 +190,7 @@
     <string name="no_wifi_connection">Žiadne pripojenie k Wi-Fi</string>
     <string name="wifi_disabled">WiFi je vypnuté</string>
     <string name="loading">Načítava sa…</string>
-    <string name="copied_to_clipboard">Skopírovalo sa <b>%1$s</b> do schránky</string>
+    <string name="copied_to_clipboard">Skopírované <b>%1$s</b> do schránky</string>
     <string name="connected_no_internet">Pripojené, bez internetu</string>
     <string name="open_release_overview_cd">Otvoriť prehľad verzií aplikácie.</string>
 </resources>
