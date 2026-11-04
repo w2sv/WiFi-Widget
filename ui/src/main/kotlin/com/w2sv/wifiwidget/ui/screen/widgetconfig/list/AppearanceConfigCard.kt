@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
 import android.content.Context
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.core.resources.R
@@ -25,58 +27,53 @@ import com.w2sv.domain.widget.WidgetAppearance
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WifiPropertyValueAlignment
 import com.w2sv.kotlinutils.enumEntryByOrdinal
-import com.w2sv.wifiwidget.ui.designsystem.IconHeader
+import com.w2sv.wifiwidget.ui.designsystem.ElevatedCardWithHeader
 import com.w2sv.wifiwidget.ui.designsystem.SliderWithLabel
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListTokens
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import kotlin.math.roundToInt
 
 private object AppearanceConfigCardToken {
     val paddingHorizontal = 16.dp
-    val labelStartPadding = 12.dp
 }
 
 @Composable
 fun AppearanceConfigCard(
     appearance: WidgetAppearance,
     updateAppearance: (WidgetAppearance.() -> WidgetAppearance) -> Unit,
-    showDialog: (WidgetConfigDialog) -> Unit
+    showDialog: (WidgetConfigDialog) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    WidgetConfigSectionCard(
-        modifier = Modifier.testTag("appearance_section"),
-        header = IconHeader(
-            iconRes = R.drawable.ic_palette_24,
-            stringRes = R.string.appearance
-        )
+    ElevatedCardWithHeader(
+        modifier = modifier.testTag("appearance_section"),
+        iconRes = R.drawable.ic_palette_24,
+        stringRes = R.string.appearance,
+        innerPadding = WidgetConfigListDimens.sectionCardInnerPadding
     ) {
-        Column(modifier = Modifier.padding(horizontal = AppearanceConfigCardToken.paddingHorizontal)) {
+        Column(
+            modifier = Modifier.padding(horizontal = AppearanceConfigCardToken.paddingHorizontal),
+            verticalArrangement = Arrangement.spacedBy(ConfigListTokens.itemSpacing)
+        ) {
             ConfigureColoring(
                 config = appearance.coloring,
                 update = { updateAppearance { copy(coloring = it) } },
-                showDialog = showDialog,
-                modifier = Modifier.padding(bottom = ConfigListToken.itemSpacing)
+                showDialog = showDialog
             )
             BackgroundOpacitySliderRow(
                 opacity = appearance.backgroundOpacity,
                 setOpacity = { updateAppearance { copy(backgroundOpacity = it) } },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = ConfigListToken.itemSpacing)
+                modifier = Modifier.fillMaxWidth()
             )
             FontSizeSliderRow(
                 fontSize = appearance.fontSize,
                 setFontSize = { updateAppearance { copy(fontSize = it) } },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = ConfigListToken.itemSpacing)
+                modifier = Modifier.fillMaxWidth()
             )
             ConfigurePropertyValueAlignment(
                 alignment = appearance.propertyValueAlignment,
                 update = { updateAppearance { copy(propertyValueAlignment = it) } },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = ConfigListToken.itemSpacing)
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -100,7 +97,7 @@ private fun ConfigurePropertyValueAlignment(
         label = stringResource(R.string.value_alignment),
         modifier = modifier
     ) {
-        SingleChoiceSegmentedButtonRow {
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
             WifiPropertyValueAlignment.entries.forEach {
                 SegmentedButton(
                     selected = it == alignment,
@@ -160,16 +157,17 @@ private fun BackgroundOpacitySliderRow(
 }
 
 @Composable
-private fun LabelContentRow(
+fun LabelContentRow(
     label: String,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit = {}
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(start = AppearanceConfigCardToken.labelStartPadding)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
-        Text(label, modifier = Modifier.weight(0.4f))
+        Text(label, modifier = Modifier.weight(0.4f), fontWeight = FontWeight.Medium)
         Box(modifier = Modifier.weight(0.6f), contentAlignment = Alignment.Center) {
             content()
         }

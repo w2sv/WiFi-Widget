@@ -1,11 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.model
 
 import android.content.Context
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Modifier
-import com.w2sv.composed.animation.ShakeController
 import com.w2sv.composed.material3.SnackbarController
-import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.wifiproperty.WifiProperty
@@ -13,16 +9,13 @@ import com.w2sv.domain.wifiproperty.WifiPropertyConfig
 import com.w2sv.domain.wifiproperty.settings.IpSetting
 import com.w2sv.domain.wifiproperty.settings.LocationParameter
 import com.w2sv.domain.wifiproperty.settings.WifiPropertySetting
-import com.w2sv.kotlinutils.makeIf
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
-import com.w2sv.wifiwidget.ui.designsystem.configlist.makeOnCheckedChange
+import com.w2sv.wifiwidget.ui.designsystem.configlist.makeTrySetChecked
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.IpVersionsHeader
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import kotlinx.collections.immutable.ImmutableList
@@ -30,28 +23,23 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun wifiPropertyConfigItems(
+fun wifiPropertyConfigItem(
+    property: WifiProperty,
     config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
     locationAccess: LocationAccessCapability,
     scope: CoroutineScope,
     snackbarController: SnackbarController
-): ImmutableList<ConfigItem.Checkable> =
-    config
-        .supportedProperties
-        .map { property ->
-            property.configItem(
-                config = { config.propertyConfig(property) },
-                update = { propertyConfig -> updateConfig { withUpdatedPropertyConfig(property) { propertyConfig } } },
-                locationAccess = locationAccess,
-                isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
-                showDialog = showDialog,
-                showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } },
-                scope = scope
-            )
-        }
-        .toPersistentList()
+): ConfigItem =
+    property.configItem(
+        config = { config.propertyConfig(property) },
+        update = { propertyConfig -> updateConfig { withUpdatedPropertyConfig(property) { propertyConfig } } },
+        locationAccess = locationAccess,
+        isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
+        showDialog = showDialog,
+        showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } }
+    )
 
 private fun WifiProperty.configItem(
     config: () -> WifiPropertyConfig<WifiPropertySetting>,
@@ -59,47 +47,50 @@ private fun WifiProperty.configItem(
     locationAccess: LocationAccessCapability,
     isMoreThanOnePropertyEnabled: () -> Boolean,
     showDialog: (WidgetConfigDialog) -> Unit,
-    showSnackbar: (SnackbarBuilder) -> Unit,
-    scope: CoroutineScope
-): ConfigItem.Checkable {
-    val shakeController = configuredShakeController()
-
-    return ConfigItem.Checkable(
+    showSnackbar: (SnackbarBuilder) -> Unit
+): ConfigItem =
+    ConfigItem(
         property = this,
         isChecked = { config().isEnabled },
-        onCheckedChange = makeOnCheckedChange(
+        trySetChecked = makeTrySetChecked(
             updateIsEnabled = { update(config().copy(isEnabled = it)) },
             locationAccess = locationAccess,
             isMoreThanOnePropertyEnabled = isMoreThanOnePropertyEnabled,
-            onUncheckingLastEnabledProperty = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
-            shake = { scope.launch { shakeController.shake() } }
+            onUncheckingLastEnabledProperty = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } }
         ),
-        shakeController = shakeController,
-        contentBeneath = when (this) {
-            is WifiProperty.IpProperty -> ConfigItem.SubSettings(
-                elements = ipSettingItems(
-                    settings = settings,
-                    isSettingEnabled = { config().isSettingEnabled(it) },
-                    updateSetting = { setting, value -> update(config().withUpdatedSetting(setting, value)) },
-                    showLeaveAtLeastOneAddressVersionEnabledSnackbar = { showSnackbar { leaveAtLeastOneAddressVersionEnabledSnackbar() } },
-                    scope = scope
-                )
-            )
-
-            is WifiProperty.Location -> ConfigItem.SubSettings(
-                elements = locationSettingItems(
-                    isSettingEnabled = { config().isSettingEnabled(it) },
-                    isMoreThanOneParameterEnabled = { config().enabledSettings.size > 1 },
-                    updateSetting = { setting, value -> update(config().withUpdatedSetting(setting, value)) },
-                    showLeaveAtLeastOnePropertyEnabledSnackbar = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
-                    scope = scope
-                )
-            )
-
-            else -> null
-        },
         showInfoDialog = { showDialog(infoDialogData()) }
     )
+
+fun wifiPropertySubSettingItems(
+    property: WifiProperty,
+    config: WidgetConfig,
+    updateConfig: UpdateWidgetConfig,
+    scope: CoroutineScope,
+    snackbarController: SnackbarController
+): ImmutableList<ConfigItem>? {
+    val propertyConfig = { config.propertyConfig(property) }
+    val update: (WifiPropertyConfig<WifiPropertySetting>) -> Unit =
+        { updated -> updateConfig { withUpdatedPropertyConfig(property) { updated } } }
+    val showSnackbar: (SnackbarBuilder) -> Unit =
+        { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } }
+
+    return when (property) {
+        is WifiProperty.IpProperty -> ipSettingItems(
+            settings = property.settings,
+            isSettingEnabled = { propertyConfig().isSettingEnabled(it) },
+            updateSetting = { setting, value -> update(propertyConfig().withUpdatedSetting(setting, value)) },
+            showLeaveAtLeastOneAddressVersionEnabledSnackbar = { showSnackbar { leaveAtLeastOneAddressVersionEnabledSnackbar() } }
+        )
+
+        is WifiProperty.Location -> locationSettingItems(
+            isSettingEnabled = { propertyConfig().isSettingEnabled(it) },
+            isMoreThanOneParameterEnabled = { propertyConfig().enabledSettings.size > 1 },
+            updateSetting = { setting, value -> update(propertyConfig().withUpdatedSetting(setting, value)) },
+            showLeaveAtLeastOnePropertyEnabledSnackbar = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } }
+        )
+
+        else -> null
+    }
 }
 
 enum class WifiPropertyCheckError {
@@ -107,14 +98,13 @@ enum class WifiPropertyCheckError {
     UncheckingLastEnabledProperty
 }
 
-private fun WifiProperty.makeOnCheckedChange(
+private fun WifiProperty.makeTrySetChecked(
     updateIsEnabled: (Boolean) -> Unit,
     locationAccess: LocationAccessCapability,
     isMoreThanOnePropertyEnabled: () -> Boolean,
-    onUncheckingLastEnabledProperty: () -> Unit,
-    shake: () -> Unit
+    onUncheckingLastEnabledProperty: () -> Unit
 ) =
-    makeOnCheckedChange(
+    makeTrySetChecked(
         updateVetoReason = { isCheckedNew ->
             when {
                 requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted ->
@@ -125,7 +115,6 @@ private fun WifiProperty.makeOnCheckedChange(
             }
         },
         onVeto = { checkError ->
-            shake()
             when (checkError) {
                 WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(
                     OnLocationAccessGranted.EnableProperty(this)
@@ -153,41 +142,22 @@ private fun ipSettingItems(
     settings: List<IpSetting>,
     isSettingEnabled: (IpSetting) -> Boolean,
     updateSetting: (IpSetting, Boolean) -> Unit,
-    showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit,
-    scope: CoroutineScope
+    showLeaveAtLeastOneAddressVersionEnabledSnackbar: () -> Unit
 ): ImmutableList<ConfigItem> =
-    buildList {
-        if (settings.any { it.isVersionSetting }) {
-            add(
-                ConfigItem.Custom { IpVersionsHeader(Modifier.padding(top = ConfigListToken.itemSpacing)) }
-            )
-        }
-        addAll(
-            settings.map { setting ->
-                val shakeController = makeIf(setting.isVersionSetting) { configuredShakeController() }
-                ConfigItem.Checkable(
-                    property = setting,
-                    isChecked = { isSettingEnabled(setting) },
-                    onCheckedChange = makeOnCheckedChange(
-                        allowUpdate = { newValue -> allowIpSettingUpdate(setting, newValue, isSettingEnabled) },
-                        onUpdateDisallowed = {
-                            scope.launch { shakeController?.shake() }
-                            showLeaveAtLeastOneAddressVersionEnabledSnackbar()
-                        },
-                        update = { updateSetting(setting, it) }
-                    ),
-                    show = { setting != IpSetting.ShowSubnetMask || isSettingEnabled(IpSetting.V4Enabled) },
-                    shakeController = shakeController,
-                    modifier = Modifier
-                        .thenIf(
-                            condition = setting.isVersionSetting,
-                            onTrue = { padding(start = ConfigListToken.startPaddingSecondLevelSubSettings) }
-                        )
-                )
-            }
+    settings.map { setting ->
+        ConfigItem(
+            property = setting,
+            isChecked = { isSettingEnabled(setting) },
+            trySetChecked = makeTrySetChecked(
+                allowUpdate = { newValue -> allowIpSettingUpdate(setting, newValue, isSettingEnabled) },
+                onUpdateDisallowed = {
+                    showLeaveAtLeastOneAddressVersionEnabledSnackbar()
+                },
+                update = { updateSetting(setting, it) }
+            ),
+            show = { setting != IpSetting.ShowSubnetMask || isSettingEnabled(IpSetting.V4Enabled) }
         )
-    }
-        .toPersistentList()
+    }.toPersistentList()
 
 private fun allowIpSettingUpdate(
     setting: IpSetting,
@@ -205,26 +175,21 @@ private fun locationSettingItems(
     isSettingEnabled: (LocationParameter) -> Boolean,
     isMoreThanOneParameterEnabled: () -> Boolean,
     updateSetting: (LocationParameter, Boolean) -> Unit,
-    showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit,
-    scope: CoroutineScope
+    showLeaveAtLeastOnePropertyEnabledSnackbar: () -> Unit
 ): ImmutableList<ConfigItem> =
     LocationParameter.entries.map { param ->
-        val shakeController = configuredShakeController()
-        ConfigItem.Checkable(
+        ConfigItem(
             property = param,
             isChecked = { isSettingEnabled(param) },
-            onCheckedChange = makeOnCheckedChange(
+            trySetChecked = makeTrySetChecked(
                 allowUpdate = { newValue -> newValue || isMoreThanOneParameterEnabled() },
                 onUpdateDisallowed = {
-                    scope.launch { shakeController.shake() }
                     showLeaveAtLeastOnePropertyEnabledSnackbar()
                 },
                 update = { updateSetting(param, it) }
-            ),
-            shakeController = shakeController
+            )
         )
-    }
-        .toPersistentList()
+    }.toPersistentList()
 
 private fun WifiProperty.infoDialogData(): WidgetConfigDialog.Info =
     WidgetConfigDialog.Info(
@@ -232,6 +197,3 @@ private fun WifiProperty.infoDialogData(): WidgetConfigDialog.Info =
         descriptionRes = descriptionRes,
         learnMoreUrl = learnMoreUrl
     )
-
-private fun configuredShakeController(): ShakeController =
-    ShakeController(decay = 0f, frequencyHz = 4f)

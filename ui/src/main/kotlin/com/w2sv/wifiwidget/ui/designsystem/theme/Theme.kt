@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.designsystem.theme
 
 import android.content.Context
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
@@ -30,7 +30,7 @@ fun WifiWidgetTheme(
         else -> lightColors
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = WiFiWidgetTypography,
         content = content

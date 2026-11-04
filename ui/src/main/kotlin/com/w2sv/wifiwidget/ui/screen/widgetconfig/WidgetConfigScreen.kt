@@ -63,13 +63,7 @@ fun WidgetConfigScreen(
                 scrollBehavior = scrollBehavior
             )
         },
-        snackbarHost = {
-            AppSnackbarHost(
-                modifier = Modifier.windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
-                )
-            )
-        },
+        snackbarHost = { AppSnackbarHost() },
         floatingActionButton = {
             EditingFabButtonRow(
                 configEditState = configEditState,

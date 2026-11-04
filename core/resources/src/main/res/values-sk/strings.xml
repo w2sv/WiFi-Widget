@@ -49,7 +49,11 @@
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">V nastaveniach aplikácie musíte udeliť povolenie na prístup k polohe.</string>
     <string name="go_to_app_settings">Prejsť do nastavení aplikácie</string>
     <string name="go_to_wifi_settings_cd">Prejsť do nastavení Wi-Fi vo vašom zariadení.</string>
+    <string name="copy_value_to_clipboard_cd">Skopírovať hodnotu do schránky</string>
+    <string name="request_location_access_cd">Požiadať o prístup k polohe</string>
+    <string name="open_location_settings_cd">Otvoriť nastavenia polohy</string>
     <string name="wifi_status">Stav Wi-Fi</string>
+    <string name="live_wifi_connection_details">Aktuálne údaje o pripojení Wi-Fi</string>
     <string name="widget">Widget</string>
     <string name="updated_widget_configuration">Konfigurácia widgetu bola aktualizovaná.</string>
     <string name="ip">IP</string>
@@ -57,7 +61,7 @@
     <string name="copied">Skopírované</string>
     <string name="to_clipboard">do schránky</string>
     <string name="displayed_versions">Zobrazené verzie</string>
-    <string name="background_opacity">Nepriehľadnosť\npozadia</string>
+    <string name="background_opacity">Nepriehľadnosť pozadia</string>
     <string name="font_size">Veľkosť písma</string>
     <string name="widget_pinning_failed">Vaše zariadenie nepodporuje pripínanie widgetov v aplikáciách. Budete to musieť urobiť z domovskej obrazovky vášho zariadenia.</string>
     <string name="widget_configuration">Nastavenie widgetu</string>
@@ -83,7 +87,8 @@
     <string name="go_back_on_unsaved_changes_warning">Opätovným stlačením Späť zahodíte neuložené zmeny.</string>
     <string name="restore_default_order">Obnoviť predvolené poradie</string>
     <string name="show_dropdown_menu">Zobraziť rozbaľovaciu ponuku</string>
-    <string name="value_alignment">Zarovnanie hodnôt vlastností</string>
+    <string name="value_alignment">Zarovnanie hodnôt</string>
+    <string name="color_scheme">Farebná schéma</string>
     <string name="configure">Nastaviť</string>
     <string name="wifi_property_reordering_information">Stlačením a podržaním vlastnosti zmeníte poradie, v akom sa zobrazuje vo widgete</string>
     <string name="ssid">SSID</string>

@@ -41,6 +41,16 @@ data class WidgetConfig(
     fun withUpdatedPropertyPosition(from: Int, to: Int): WidgetConfig =
         copy(propertyOrder = propertyOrder.copy { add(to, removeAt(from)) })
 
+    /** Moves supported properties while keeping unsupported properties in their existing slots. */
+    fun withMovedSupportedProperty(from: WifiProperty, to: WifiProperty): WidgetConfig {
+        val supported = supportedProperties.toMutableList()
+        val fromIndex = supported.indexOf(from).also { check(it >= 0) }
+        val toIndex = supported.indexOf(to).also { check(it >= 0) }
+        supported.add(toIndex, supported.removeAt(fromIndex))
+        val reordered = supported.iterator()
+        return copy(propertyOrder = propertyOrder.map { if (it.isSupported) reordered.next() else it })
+    }
+
     fun withDefaultPropertyOrder(): WidgetConfig =
         copy(propertyOrder = WifiProperty.entries)
 

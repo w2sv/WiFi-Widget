@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WiFi Widget</string>
-    <string name="pin">Pin</string>
+    <string name="pin">Pin Widget</string>
     <string name="pinned_widget">Pinned Widget.</string>
     <string name="location_access_permission_rational">If you want your device\'s <b>SSID</b> or <b>BSSID</b> to be displayed amongst the WiFi properties, you\'ll have to grant <b>Location Access Permission</b>.</string>
     <string name="open_navigation_drawer">Open navigation drawer</string>
@@ -49,7 +49,11 @@
     <string name="you_need_to_go_to_the_app_settings_and_grant_location_access_permission">You need to go to the app settings and grant location access permission.</string>
     <string name="go_to_app_settings">Go to app settings</string>
     <string name="go_to_wifi_settings_cd">Go to your device\'s WiFi settings.</string>
+    <string name="copy_value_to_clipboard_cd">Copy value to clipboard</string>
+    <string name="request_location_access_cd">Request location access</string>
+    <string name="open_location_settings_cd">Open location settings</string>
     <string name="wifi_status">WiFi Status</string>
+    <string name="live_wifi_connection_details">Live Wi-Fi connection details</string>
     <string name="widget">Widget</string>
     <string name="updated_widget_configuration">Updated widget configuration.</string>
     <string name="ip">IP</string>
@@ -57,7 +61,7 @@
     <string name="copied">"Copied"</string>
     <string name="to_clipboard">to clipboard</string>
     <string name="displayed_versions">Displayed Versions</string>
-    <string name="background_opacity">Background\nopacity</string>
+    <string name="background_opacity">Background opacity</string>
     <string name="font_size">Font size</string>
     <string name="widget_pinning_failed">In-app widget pinning is not supported by your device. You\'ll need to do it from your device\'s home screen.</string>
     <string name="widget_configuration">Widget Configuration</string>
@@ -83,9 +87,10 @@
     <string name="go_back_on_unsaved_changes_warning">Press Back again to discard your unsaved changes.</string>
     <string name="restore_default_order">Restore default order</string>
     <string name="show_dropdown_menu">Show dropdown menu</string>
-    <string name="value_alignment">Property value alignment</string>
+    <string name="value_alignment">Value alignment</string>
+    <string name="color_scheme">Color scheme</string>
     <string name="configure">Configure</string>
-    <string name="wifi_property_reordering_information">Click and hold a property to change the order in which they appear on the widget</string>
+    <string name="wifi_property_reordering_information">Drag and drop properties to change the order in which they appear on the widget</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="link_local_short">LinkLocal</string>

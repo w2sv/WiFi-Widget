@@ -8,7 +8,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import kotlinx.collections.immutable.ImmutableList
 
@@ -32,25 +34,28 @@ fun ExpandCollapseButton(
 }
 
 @Composable
-fun SubSettings(elements: ImmutableList<ConfigItem>, modifier: Modifier = Modifier) {
+fun SubSettings(
+    elements: ImmutableList<ConfigItem>,
+    modifier: Modifier = Modifier,
+    header: (@Composable () -> Unit)? = null,
+    itemContent: @Composable (ConfigItem) -> Unit = { item ->
+        ConfigItemLayout(
+            item = item,
+            fontSize = NestedSettingsTokens.fontSize,
+            shakeOnRejectedChange = true
+        )
+    }
+) {
     Column(
         modifier = modifier
             .nestedContentBackground()
-            .padding(start = ConfigListToken.subSettingsStartPadding)
+            .padding(start = NestedSettingsTokens.startPadding)
     ) {
+        header?.invoke()
         elements.forEach { element ->
-            when (element) {
-                is ConfigItem.Actionable -> {
-                    if (element.show()) {
-                        ActionableConfigItem(
-                            item = element,
-                            fontSize = ConfigListToken.FontSize.subSetting
-                        )
-                    }
-                }
-
-                is ConfigItem.Custom -> {
-                    element.content()
+            if (element.show()) {
+                key(element.property.labelRes) {
+                    itemContent(element)
                 }
             }
         }

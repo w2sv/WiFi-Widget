@@ -1,78 +1,40 @@
 package com.w2sv.wifiwidget.ui.designsystem.configlist
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.Modifier
-import com.w2sv.composed.animation.ShakeController
 import com.w2sv.domain.WithLabel
-import kotlinx.collections.immutable.ImmutableList
 
-sealed interface ConfigItem {
+data class ConfigItem(
+    val property: WithLabel,
+    val isChecked: () -> Boolean,
+    /** Returns false when the change is rejected and the row should show shake feedback. */
+    val trySetChecked: (Boolean) -> Boolean,
+    @StringRes val supportingTextRes: Int? = null,
+    val showInfoDialog: (() -> Unit)? = null,
+    val show: () -> Boolean = { true }
+)
 
-    @Immutable
-    data class Custom(val content: @Composable () -> Unit) : ConfigItem
-
-    sealed interface Actionable : ConfigItem {
-        val property: WithLabel
-        val show: () -> Boolean
-        val shakeController: ShakeController?
-        val contentBeneath: ContentBeneath?
-        val modifier: Modifier
-
-        fun isEnabled(): Boolean =
-            when (this) {
-                is WithCustomTrailing -> true
-                is Checkable -> isChecked()
-            }
-    }
-
-    data class WithCustomTrailing(
-        override val property: WithLabel,
-        override val show: () -> Boolean = { true },
-        override val shakeController: ShakeController? = null,
-        override val contentBeneath: ContentBeneath? = null,
-        override val modifier: Modifier = Modifier,
-        val trailing: @Composable RowScope.() -> Unit
-    ) : Actionable
-
-    @Immutable
-    data class Checkable(
-        override val property: WithLabel,
-        override val show: () -> Boolean = { true },
-        override val shakeController: ShakeController? = null,
-        override val contentBeneath: ContentBeneath? = null,
-        override val modifier: Modifier = Modifier,
-        val isChecked: () -> Boolean,
-        val onCheckedChange: (Boolean) -> Unit,
-        val showInfoDialog: (() -> Unit)? = null
-    ) : Actionable
-
-    sealed interface ContentBeneath {
-        val asSubSettingsOrNull get() = this as? SubSettings
-    }
-
-    @JvmInline
-    value class Explanation(@StringRes val stringRes: Int) : ContentBeneath
-    data class SubSettings(val elements: ImmutableList<ConfigItem>, val allowCollapsing: Boolean = true) : ContentBeneath
-}
-
-fun <T> makeOnCheckedChange(
+fun <T> makeTrySetChecked(
     updateVetoReason: (Boolean) -> T? = { null },
     onVeto: (T) -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit =
+): (Boolean) -> Boolean =
     { isCheckedNew ->
-        updateVetoReason(isCheckedNew)?.let(onVeto) ?: update(isCheckedNew)
+        val vetoReason = updateVetoReason(isCheckedNew)
+        if (vetoReason != null) {
+            onVeto(vetoReason)
+            false
+        } else {
+            update(isCheckedNew)
+            true
+        }
     }
 
-fun makeOnCheckedChange(
+fun makeTrySetChecked(
     allowUpdate: (Boolean) -> Boolean,
     onUpdateDisallowed: () -> Unit = {},
     update: (Boolean) -> Unit
-): (Boolean) -> Unit =
-    makeOnCheckedChange(
+): (Boolean) -> Boolean =
+    makeTrySetChecked(
         updateVetoReason = { isCheckedNew -> if (allowUpdate(isCheckedNew)) null else Unit },
         onVeto = { onUpdateDisallowed() },
         update = update
