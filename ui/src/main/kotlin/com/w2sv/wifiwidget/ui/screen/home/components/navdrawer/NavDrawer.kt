@@ -61,6 +61,7 @@ import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 import com.w2sv.wifiwidget.ui.util.PreviewOf
 import com.w2sv.wifiwidget.ui.util.VerticalAnimatedVisibility
+import java.util.Calendar
 import kotlinx.coroutines.launch
 
 private object NavDrawerTokens {
@@ -122,7 +123,16 @@ private fun NavDrawerSheet(
                         .padding(top = NavDrawerTokens.topPadding)
                 )
             }
-            items(elements, key = { it.hashCode() }, contentType = { it::class }) { element ->
+            items(
+                items = elements,
+                key = { element ->
+                    when (element) {
+                        is DrawerElement.Header -> "header:${element.titleRes}"
+                        is DrawerElement.Action -> "action:${element.labelRes}"
+                    }
+                },
+                contentType = { it::class }
+            ) { element ->
                 NavDrawerElement(element, actionScope)
             }
         }
@@ -153,7 +163,7 @@ private fun Header(modifier: Modifier = Modifier) {
                 .background(MaterialTheme.colorScheme.primary)
                 .bouncyClickable()
         )
-        Spacer(modifier = Modifier.height(22.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = stringResource(id = R.string.version).format(LocalAppVersionName.current),
             modifier = Modifier.clickable(
@@ -161,7 +171,19 @@ private fun Header(modifier: Modifier = Modifier) {
                 onClickLabel = stringResource(R.string.open_release_overview_cd)
             )
         )
+        Spacer(modifier = Modifier.height(8.dp))
+        CopyrightText()
     }
+}
+
+@Composable
+private fun CopyrightText(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    Text(
+        text = remember { "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV" },
+        modifier = modifier.clickable { context.openUrl(AppUrl.LICENSE) },
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 @Composable

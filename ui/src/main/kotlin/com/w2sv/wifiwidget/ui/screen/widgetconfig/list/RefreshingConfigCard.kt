@@ -1,6 +1,9 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -8,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -15,13 +19,15 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.common.time.minutes
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetRefreshing
-import com.w2sv.wifiwidget.ui.designsystem.IconHeader
-import com.w2sv.wifiwidget.ui.designsystem.configlist.CheckableList
+import com.w2sv.wifiwidget.ui.designsystem.ElevatedCardWithHeader
+import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItemLayout
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListTokens
+import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetRefreshingParameter
 import kotlin.time.Duration
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun RefreshingConfigCard(
@@ -30,21 +36,17 @@ fun RefreshingConfigCard(
     showDialog: (WidgetConfigDialog) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    WidgetConfigSectionCard(
-        header = IconHeader(
-            iconRes = R.drawable.ic_refresh_24,
-            stringRes = R.string.refreshing
-        )
+    ElevatedCardWithHeader(
+        iconRes = R.drawable.ic_refresh_24,
+        stringRes = R.string.refreshing,
+        innerPadding = WidgetConfigListDimens.sectionCardInnerPadding,
+        modifier = modifier
     ) {
-        CheckableList(
-            elements = persistentListOf(
-                refreshingConfig(
-                    refreshing = refreshing,
-                    updateRefreshing = updateRefreshing,
-                    showDialog = showDialog
-                )
-            ),
-            modifier = modifier
+        ConfigItemLayout(
+            item = refreshingConfig(refreshing, updateRefreshing, showDialog),
+            modifier = Modifier.padding(start = ConfigListTokens.startPaddingIfNoToggleButton, end = ConfigListTokens.checkRowEndPadding),
+            allowCollapsing = false,
+            expandedContent = { RefreshIntervalSubSettings(refreshing, showDialog) }
         )
     }
 }
@@ -53,11 +55,14 @@ private fun refreshingConfig(
     refreshing: WidgetRefreshing,
     updateRefreshing: (WidgetRefreshing.() -> WidgetRefreshing) -> Unit,
     showDialog: (WidgetConfigDialog) -> Unit
-): ConfigItem.Checkable =
-    ConfigItem.Checkable(
+): ConfigItem =
+    ConfigItem(
         property = WidgetRefreshingParameter.RefreshPeriodically,
         isChecked = { refreshing.refreshPeriodically },
-        onCheckedChange = { updateRefreshing { copy(refreshPeriodically = it) } },
+        trySetChecked = {
+            updateRefreshing { copy(refreshPeriodically = it) }
+            true
+        },
         showInfoDialog = {
             showDialog(
                 WidgetConfigDialog.Info(
@@ -65,25 +70,30 @@ private fun refreshingConfig(
                     descriptionRes = R.string.refresh_periodically_info
                 )
             )
-        },
-        contentBeneath = subSettings(
-            refreshing = refreshing,
-            showDialog = showDialog
-        )
+        }
     )
 
-private fun subSettings(refreshing: WidgetRefreshing, showDialog: (WidgetConfigDialog) -> Unit) =
-    ConfigItem.SubSettings(
-        elements = persistentListOf(
-            ConfigItem.WithCustomTrailing(property = WidgetRefreshingParameter.Interval) {
-                ConfigureIntervalRow(
-                    interval = refreshing.interval,
-                    showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) }
-                )
-            }
-        ),
-        allowCollapsing = false
-    )
+@Composable
+private fun RefreshIntervalSubSettings(refreshing: WidgetRefreshing, showDialog: (WidgetConfigDialog) -> Unit) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = NestedSettingsTokens.bottomMargin)
+            .nestedContentBackground()
+            .padding(start = NestedSettingsTokens.startPadding)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(WidgetRefreshingParameter.Interval.labelRes),
+                fontSize = NestedSettingsTokens.fontSize,
+                modifier = Modifier.weight(1f)
+            )
+            ConfigureIntervalRow(
+                interval = refreshing.interval,
+                showConfigurationDialog = { showDialog(WidgetConfigDialog.RefreshIntervalPicker(refreshing.interval)) }
+            )
+        }
+    }
+}
 
 @Composable
 private fun RowScope.ConfigureIntervalRow(interval: Duration, showConfigurationDialog: () -> Unit) {

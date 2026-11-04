@@ -26,9 +26,10 @@ import com.w2sv.domain.widget.WidgetColoring
 import com.w2sv.domain.widget.WidgetColoringStrategy
 import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
 import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
-import com.w2sv.wifiwidget.ui.designsystem.SecondLevelElevatedCard
+import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
-import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListToken
+import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigListTokens
+import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.designsystem.theme.explanation
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
@@ -36,50 +37,7 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.get
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.labelRes
 
-@Composable
-fun ConfigureColoring(
-    config: WidgetColoring,
-    update: (WidgetColoring) -> Unit,
-    showDialog: (WidgetConfigDialog) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    SecondLevelElevatedCard(modifier = modifier) {
-        Column(
-            modifier = Modifier.padding(14.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            SelectColoringStrategyButtonRow(
-                config = config,
-                update = update,
-                modifier = Modifier.padding(bottom = ConfigListToken.itemSpacing)
-            )
-
-            AnimatedContent(targetState = config.useCustom) { useCustomStrategy ->
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    when (useCustomStrategy) {
-                        false -> {
-                            ConfigurePresetColoring(
-                                data = config.preset,
-                                update = { update(config.copy(preset = it)) },
-                                modifier = Modifier.fillMaxWidth(0.82f)
-                            )
-                        }
-
-                        true -> {
-                            ConfigureCustomColoring(
-                                data = config.custom,
-                                showDialog = showDialog,
-                                modifier = Modifier.fillMaxWidth(0.6f)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PresetColoringPrev() {
     WifiWidgetTheme(useDarkTheme = false) {
@@ -91,7 +49,7 @@ private fun PresetColoringPrev() {
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun CustomColoringPrev() {
     WifiWidgetTheme(useDarkTheme = false) {
@@ -100,6 +58,56 @@ private fun CustomColoringPrev() {
             {},
             {}
         )
+    }
+}
+
+@Composable
+fun ConfigureColoring(
+    config: WidgetColoring,
+    update: (WidgetColoring) -> Unit,
+    showDialog: (WidgetConfigDialog) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        LabelContentRow(
+            stringResource(R.string.color_scheme),
+            modifier = Modifier.padding(bottom = ConfigListTokens.itemSpacing)
+        ) {
+            SelectColoringStrategyButtonRow(
+                config = config,
+                update = update,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+
+        AnimatedContent(
+            targetState = config.useCustom,
+            modifier = Modifier
+                .fillMaxWidth()
+                .nestedContentBackground()
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+        ) { useCustomStrategy ->
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                when (useCustomStrategy) {
+                    false -> {
+                        ConfigurePresetColoring(
+                            data = config.preset,
+                            update = { update(config.copy(preset = it)) }
+                        )
+                    }
+
+                    true -> {
+                        ConfigureCustomColoring(
+                            data = config.custom,
+                            showDialog = showDialog
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -136,7 +144,7 @@ private fun ConfigurePresetColoring(
             modifier = Modifier.fillMaxWidth(),
             selected = data.theme,
             onSelected = { update(data.copy(theme = it)) },
-            horizontalArrangement = Arrangement.SpaceEvenly
+            horizontalArrangement = Arrangement.SpaceBetween
         )
         if (dynamicColorsSupported) {
             ConfigureUseDynamicColors(
@@ -144,7 +152,7 @@ private fun ConfigurePresetColoring(
                 toggleDynamicColors = { update(data.copy(useDynamicColors = it)) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = ConfigListToken.itemSpacing, start = 20.dp),
+                    .padding(top = ConfigListTokens.itemSpacing),
                 below = {
                     AnimatedContent(data.useDynamicColors) { useDynamicColors ->
                         Text(
@@ -172,7 +180,7 @@ private fun ConfigureCustomColoring(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(ConfigListToken.itemSpacing),
+        verticalArrangement = Arrangement.spacedBy(ConfigListTokens.itemSpacing),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         WidgetColor.entries.forEach { widgetColor ->
@@ -215,7 +223,7 @@ private fun CustomizationRow(
     ) {
         Text(
             text = label,
-            fontSize = ConfigListToken.FontSize.subSetting,
+            fontSize = NestedSettingsTokens.fontSize,
             modifier = Modifier.weight(1f)
         )
         ColorIndicator(color)

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -28,11 +29,13 @@ fun SliderWithLabel(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Slider(
-            value = value,
+            state = rememberSliderState(
+                value = value,
+                steps = steps,
+                trackRange = valueRange
+            ),
             onValueChange = onValueChanged,
-            modifier = Modifier.contentDescription(contentDescription),
-            steps = steps,
-            valueRange = valueRange
+            modifier = Modifier.contentDescription(contentDescription)
         )
     }
 }

@@ -1,14 +1,22 @@
 package com.w2sv.wifiwidget.ui.screen.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -16,47 +24,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.w2sv.androidutils.content.openUrl
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
-import com.w2sv.composed.ui.rememberMovableContentOf
+import com.w2sv.composed.ui.thenIf
 import com.w2sv.core.resources.R
-import com.w2sv.wifiwidget.ui.AppUrl
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
+import com.w2sv.wifiwidget.ui.designsystem.IconHeadline
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.components.navdrawer.NavDrawer
 import com.w2sv.wifiwidget.ui.screen.home.components.navdrawer.NavDrawerTopBar
-import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetCard
-import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiStatusCard
+import com.w2sv.wifiwidget.ui.screen.home.components.widget.WidgetActionsSection
+import com.w2sv.wifiwidget.ui.screen.home.components.wifistatus.WifiInformationList
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
-import com.w2sv.wifiwidget.ui.util.ModifierReceivingComposable
-import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.ScreenPreviews
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
-import java.util.Calendar
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
-
-@ScreenPreviews
-@Composable
-private fun Prev() {
-    PreviewOf {
-        HomeScreen(
-            themeController = ThemeController.Default,
-            wifiState = WifiState.Disabled,
-            pinWidget = {},
-            toWidgetConfiguration = {},
-            snackbarBuilderFlow = emptyFlow()
-        )
-    }
-}
 
 @Composable
 fun HomeScreen(
@@ -68,99 +53,111 @@ fun HomeScreen(
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
-
     NavDrawer(state = drawerState, themeController = themeController) {
         Scaffold(
             topBar = {
                 NavDrawerTopBar(
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.app_name),
-                            maxLines = 1
-                        )
-                    },
+                    title = { Text(stringResource(id = R.string.app_name)) },
                     onNavigationIconClick = { scope.launch { drawerState.open() } }
                 )
             },
-            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) }
+            snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) },
+            contentWindowInsets = WindowInsets()
         ) { paddingValues ->
-            val wifiStatusCard = rememberMovableContentOf { modifier: Modifier ->
-                WifiStatusCard(wifiState = wifiState, modifier = modifier)
-            }
-            val widgetCard = rememberMovableContentOf { modifier: Modifier ->
-                WidgetCard(
-                    pinWidget = pinWidget,
-                    toWidgetConfiguration = toWidgetConfiguration,
-                    modifier = modifier
-                )
-            }
-
+            val modifier = Modifier.padding(paddingValues)
             if (isLandscapeModeActive) {
-                LandscapeMode(
-                    paddingValues = paddingValues,
-                    wifiStatusCard = wifiStatusCard,
-                    widgetCard = widgetCard
-                )
+                LandscapeHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
             } else {
-                PortraitMode(
-                    paddingValues = paddingValues,
-                    wifiStatusCard = wifiStatusCard,
-                    widgetCard = widgetCard
-                )
+                PortraitHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
             }
         }
     }
 }
 
 @Composable
-private fun LandscapeMode(
-    paddingValues: PaddingValues,
-    wifiStatusCard: ModifierReceivingComposable,
-    widgetCard: ModifierReceivingComposable
-) {
-    Row(
-        modifier = Modifier
-            .padding(paddingValues)
-            .padding(vertical = 16.dp)
-            .fillMaxSize(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        wifiStatusCard(Modifier.fillMaxWidth(0.4f))
-        widgetCard(Modifier.fillMaxWidth(0.7f))
-    }
-}
-
-@Composable
-private fun PortraitMode(
-    paddingValues: PaddingValues,
-    wifiStatusCard: ModifierReceivingComposable,
-    widgetCard: ModifierReceivingComposable
+private fun PortraitHomeContent(
+    wifiState: WifiState,
+    pinWidget: () -> Unit,
+    toWidgetConfiguration: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .padding(bottom = 10.dp),
-        verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .padding(horizontal = HomeScreenTokens.screenHorizontalPadding)
+            .padding(top = HomeScreenTokens.screenTopPadding)
     ) {
-        Spacer(Modifier.weight(0.15f))
-        wifiStatusCard(Modifier.fillMaxWidth(0.8f))
-        Spacer(Modifier.weight(0.15f))
-        widgetCard(Modifier.fillMaxWidth(0.84f))
-        Spacer(Modifier.weight(0.15f))
-        CopyrightText()
+        WidgetActionsSection(pinWidget = pinWidget, toWidgetConfiguration = toWidgetConfiguration)
+        Spacer(Modifier.height(22.dp))
+        WifiInformationSection(wifiState = wifiState, modifier = Modifier.weight(1f))
     }
 }
 
 @Composable
-private fun CopyrightText(modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    Text(
-        text = remember { "© 2022 - ${Calendar.getInstance().get(Calendar.YEAR)} | W2SV" },
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        fontSize = 16.sp,
-        modifier = modifier.clickable { context.openUrl(AppUrl.LICENSE) }
-    )
+private fun LandscapeHomeContent(
+    wifiState: WifiState,
+    pinWidget: () -> Unit,
+    toWidgetConfiguration: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val hasProperties = wifiState.asConnectedOrNull?.propertyPresentations.orEmpty().isNotEmpty()
+
+    Row(
+        modifier = modifier
+            .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            .padding(horizontal = HomeScreenTokens.screenHorizontalPadding)
+            .padding(top = HomeScreenTokens.screenTopPadding),
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .weight(2f)
+                .fillMaxHeight()
+                .padding(bottom = HomeScreenTokens.scrollContentBottomPadding),
+            contentAlignment = Alignment.Center
+        ) {
+            WidgetActionsSection(
+                pinWidget = pinWidget,
+                toWidgetConfiguration = toWidgetConfiguration,
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            )
+        }
+        Box(
+            modifier = Modifier
+                .weight(3f)
+                .fillMaxHeight()
+                .padding(bottom = if (hasProperties) 0.dp else HomeScreenTokens.scrollContentBottomPadding),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            WifiInformationSection(
+                wifiState = wifiState,
+                modifier = Modifier.thenIf(hasProperties, onTrue = { fillMaxSize() }, onFalse = { fillMaxWidth() }),
+                fillAvailableHeight = hasProperties
+            )
+        }
+    }
+}
+
+@Composable
+private fun WifiInformationSection(
+    wifiState: WifiState,
+    modifier: Modifier = Modifier,
+    fillAvailableHeight: Boolean = true
+) {
+    Column(modifier = modifier) {
+        IconHeadline(stringRes = R.string.wifi_status, modifier = Modifier.fillMaxWidth())
+        Text(
+            text = stringResource(R.string.live_wifi_connection_details),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        Spacer(Modifier.height(12.dp))
+        WifiInformationList(
+            wifiState = wifiState,
+            modifier = Modifier.thenIf(fillAvailableHeight) { weight(1f) },
+            fillAvailableHeight = fillAvailableHeight
+        )
+    }
 }

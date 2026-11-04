@@ -2,7 +2,12 @@ package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material.icons.outlined.Warning
@@ -99,7 +104,12 @@ fun AppSnackbarHost(modifier: Modifier = Modifier, snackbarBuilderFlow: Snackbar
         controller.replaceCurrentWith { builder() }
     }
 
-    SnackbarHost(snackbarHostState, modifier = modifier) { snackbarData ->
+    SnackbarHost(
+        snackbarHostState,
+        modifier = modifier.windowInsetsPadding(
+            WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom)
+        )
+    ) { snackbarData ->
         val visuals = snackbarData.visuals as AppSnackbarVisuals
         UpdateSnackbarVisibility(kind = visuals.kind, snackbarHostState = snackbarHostState)
         AppSnackbar(visuals = visuals)

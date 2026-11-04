@@ -1,5 +1,7 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,51 +10,43 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
-// defaultElevation = 1.dp by default
+// defaultElevation = 1.dp
 private val cardElevation
     @Composable
-    get() = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+    get() = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
 
 @Composable
-fun ElevatedIconHeaderCard(
-    iconHeader: IconHeader,
+fun ElevatedCardWithHeader(
+    @DrawableRes iconRes: Int,
+    @StringRes stringRes: Int,
     modifier: Modifier = Modifier,
     colors: CardColors = CardDefaults.elevatedCardColors(),
     elevation: CardElevation = cardElevation,
     innerPadding: PaddingValues = PaddingValues(18.dp),
-    headerPadding: PaddingValues = PaddingValues(bottom = 16.dp),
+    headerPadding: PaddingValues = PaddingValues(bottom = IconHeadlineTokens.bottomSpacing),
     content: @Composable ColumnScope.() -> Unit
 ) {
-    ElevatedCard(
-        colors = colors,
-        elevation = elevation,
-        modifier = modifier
-    ) {
-        Column(
-            modifier = Modifier.padding(innerPadding),
-            horizontalAlignment = Alignment.CenterHorizontally
+    Column(modifier = modifier) {
+        IconHeadline(
+            iconRes = iconRes,
+            stringRes = stringRes,
+            modifier = Modifier.padding(headerPadding)
+        )
+
+        ElevatedCard(
+            colors = colors,
+            elevation = elevation
         ) {
-            IconHeader(
-                properties = iconHeader,
-                modifier = Modifier.padding(headerPadding)
+            Column(
+                modifier = Modifier.padding(innerPadding),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                content = content
             )
-            content()
         }
     }
-}
-
-@Composable
-fun SecondLevelElevatedCard(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
-    ElevatedCard(
-        elevation = cardElevation,
-        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
-        modifier = modifier,
-        content = content
-    )
 }

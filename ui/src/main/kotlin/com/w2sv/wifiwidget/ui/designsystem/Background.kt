@@ -2,7 +2,6 @@ package com.w2sv.wifiwidget.ui.designsystem
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
@@ -13,8 +12,8 @@ import androidx.compose.ui.graphics.Shape
 @Composable
 @ReadOnlyComposable
 fun Modifier.nestedContentBackground(
-    color: Color = MaterialTheme.colorScheme.surface,
-    shape: Shape = MaterialTheme.shapes.medium
+    color: Color = NestedSettingsTokens.containerColor,
+    shape: Shape = NestedSettingsTokens.shape
 ): Modifier =
     this then Modifier
         .background(
