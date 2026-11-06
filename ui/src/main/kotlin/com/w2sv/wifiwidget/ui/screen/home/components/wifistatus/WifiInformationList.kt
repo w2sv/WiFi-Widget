@@ -19,6 +19,7 @@ import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -127,8 +129,6 @@ private fun LazyItemScope.WifiPropertySegment(
     index: Int,
     segmentCount: Int
 ) {
-    val onClickScope = rememberPropertyOnClickScope()
-    val scope = rememberCoroutineScope()
     val renderedLabel = remember(presentation.label) { presentation.label.toAnnotatedString(12.sp) }
     val actionLabel = when (presentation.resolutionError) {
         null -> stringResource(R.string.copy_value_to_clipboard_cd)
@@ -136,36 +136,50 @@ private fun LazyItemScope.WifiPropertySegment(
         WifiPropertyResolutionError.GpsDisabled -> stringResource(R.string.open_location_settings_cd)
         WifiPropertyResolutionError.BatterySaverRestricted -> null
     }
-    SegmentedListItem(
-        onClick = {
-            if (presentation.resolutionError == WifiPropertyResolutionError.BatterySaverRestricted) {
-                return@SegmentedListItem
-            }
-            onClickScope.run {
-                onPropertyClick(
-                    scope = scope,
-                    label = renderedLabel,
-                    value = presentation.value,
-                    resolutionError = presentation.resolutionError
-                )
-            }
-        },
-        shapes = ListItemDefaults.segmentedShapes(index = index + 1, count = segmentCount),
-        colors = SegmentedListTokens.colors(),
-        elevation = ListItemDefaults.elevation(SegmentedListTokens.defaultElevation),
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateItem()
-            .semantics {
-                if (actionLabel != null) {
-                    onClick(label = actionLabel, action = null)
+    val shapes = ListItemDefaults.segmentedShapes(index = index + 1, count = segmentCount)
+    val colors = SegmentedListTokens.colors()
+    val elevation = ListItemDefaults.elevation(SegmentedListTokens.defaultElevation)
+    val itemModifier = Modifier.fillMaxWidth().animateItem()
+    // Preserve the value animation when the row switches between clickable and non-clickable overloads.
+    val propertyContent = remember {
+        movableContentOf<WifiPropertyPresentation, AnnotatedString> { currentPresentation, currentLabel ->
+            PropertyDisplay(
+                presentation = currentPresentation,
+                label = currentLabel,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+
+    if (actionLabel == null) {
+        SegmentedListItem(
+            shapes = shapes,
+            colors = colors,
+            elevation = elevation,
+            modifier = itemModifier
+        ) {
+            propertyContent(presentation, renderedLabel)
+        }
+    } else {
+        val onClickScope = rememberPropertyOnClickScope()
+        val scope = rememberCoroutineScope()
+        SegmentedListItem(
+            onClick = {
+                onClickScope.run {
+                    onPropertyClick(
+                        scope = scope,
+                        label = renderedLabel,
+                        value = presentation.value,
+                        resolutionError = presentation.resolutionError
+                    )
                 }
-            }
-    ) {
-        PropertyDisplay(
-            presentation = presentation,
-            label = renderedLabel,
-            modifier = Modifier.fillMaxWidth()
-        )
+            },
+            shapes = shapes,
+            colors = colors,
+            elevation = elevation,
+            modifier = itemModifier.semantics { onClick(label = actionLabel, action = null) }
+        ) {
+            propertyContent(presentation, renderedLabel)
+        }
     }
 }

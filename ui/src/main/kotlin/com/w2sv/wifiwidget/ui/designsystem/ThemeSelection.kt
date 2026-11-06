@@ -34,6 +34,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -124,21 +128,21 @@ private fun ThemeIndicator(
     buttonModifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val label = stringResource(id = properties.labelRes)
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = properties.labelRes),
+            text = label,
             fontSize = 12.sp,
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(8.dp))
         ThemeButton(
             buttonColor = properties.color,
-            contentDescription = stringResource(id = R.string.theme_button_cd).format(
-                stringResource(id = properties.labelRes)
-            ),
+            themeLabel = label,
+            actionDescription = stringResource(R.string.theme_button_cd, label),
             onClick = onClick,
             isSelected = isSelected,
             modifier = buttonModifier
@@ -149,13 +153,15 @@ private fun ThemeIndicator(
 @Composable
 private fun ThemeButton(
     buttonColor: ButtonColor,
-    contentDescription: String,
+    themeLabel: String,
+    actionDescription: String,
     onClick: () -> Unit,
     isSelected: () -> Boolean,
     modifier: Modifier = Modifier,
     size: Dp = 48.dp
 ) {
-    val border = animatedThemeButtonBorder(isSelected())
+    val selected = isSelected()
+    val border = animatedThemeButtonBorder(selected)
 
     Box(
         modifier = modifier
@@ -168,7 +174,11 @@ private fun ThemeButton(
                 }
             }
             .border(border, CircleShape)
-            .clickable(onClick = onClick, onClickLabel = contentDescription)
+            .semantics {
+                contentDescription = themeLabel
+                this.selected = selected
+            }
+            .clickable(onClick = onClick, onClickLabel = actionDescription, role = Role.RadioButton)
     )
 }
 

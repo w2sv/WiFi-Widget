@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.w2sv.androidutils.os.dynamicColorsSupported
@@ -186,10 +188,13 @@ private fun ConfigureCustomColoring(
         WidgetColor.entries.forEach { widgetColor ->
             val value = data[widgetColor]
             val label = stringResource(id = widgetColor.labelRes)
+            val colorHex = "#${value.toUInt().toString(16).padStart(8, '0').uppercase()}"
+            val colorDescription = stringResource(R.string.current_color_cd, colorHex)
             CustomizationRow(
                 label = label,
                 color = Color(value),
                 modifier = Modifier
+                    .semantics { stateDescription = colorDescription }
                     .clickable(
                         onClickLabel = stringResource(
                             id = R.string.color_picker_button_cd,

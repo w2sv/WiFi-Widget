@@ -23,14 +23,13 @@
     <string name="theme">Motív</string>
     <string name="wifi_properties">Vlastnosti Wi-Fi</string>
     <string name="refreshing">Obnovovanie</string>
-    <string name="opacity_slider_cd">Zmeniť nepriehľadnosť pozadia.</string>
-    <string name="font_size_slider_cd">Zmeniť veľkosť písma.</string>
     <string name="theme_button_cd">Nastaviť motív: %s.</string>
     <string name="learn_more">Zistiť viac</string>
-    <string name="enable_arg">Zapnúť %s.</string>
-    <string name="disable_arg">Vypnúť %s.</string>
     <string name="info_icon_cd">Otvoriť informácie o položke %s.</string>
+    <string name="expand_settings_cd">Rozbaliť nastavenia pre %s.</string>
+    <string name="collapse_settings_cd">Zbaliť nastavenia pre %s.</string>
     <string name="color_picker_button_cd">Otvoriť výber farby pre položku %s.</string>
+    <string name="current_color_cd">Aktuálna farba: %s.</string>
     <string name="you_re_not_signed_into_the_play_store">Nie ste prihlásení do Obchodu Play</string>
     <string name="version">Verzia: %s</string>
     <string name="share_action_text">Vyskúšajte WiFi Widget!\n%s</string>

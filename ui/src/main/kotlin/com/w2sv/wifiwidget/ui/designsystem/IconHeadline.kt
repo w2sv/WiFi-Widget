@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.w2sv.composed.material3.WithLocalContentColor
@@ -25,9 +27,9 @@ object IconHeadlineTokens {
 
 @Composable
 fun IconHeadline(
-    @DrawableRes iconRes: Int? = null,
     @StringRes stringRes: Int,
     modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int? = null,
     contentColor: Color = MaterialTheme.colorScheme.secondary,
     trailingContent: (@Composable () -> Unit)? = null
 ) {
@@ -47,7 +49,8 @@ fun IconHeadline(
             }
             Text(
                 text = stringResource(id = stringRes),
-                style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp)
+                style = MaterialTheme.typography.headlineSmall.copy(fontSize = 22.sp),
+                modifier = Modifier.semantics { heading() }
             )
         }
         trailingContent?.run {

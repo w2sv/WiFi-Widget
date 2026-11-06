@@ -10,6 +10,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.nestedContentBackground
 import kotlinx.collections.immutable.ImmutableList
@@ -17,14 +21,19 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun ExpandCollapseButton(
     expand: Boolean,
+    propertyLabel: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true
 ) {
+    val actionDescription = stringResource(
+        if (expand) R.string.collapse_settings_cd else R.string.expand_settings_cd,
+        propertyLabel
+    )
     IconButton(
         onClick = onClick,
         enabled = isEnabled,
-        modifier = modifier
+        modifier = modifier.semantics { contentDescription = actionDescription }
     ) {
         Icon(
             imageVector = if (expand) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,

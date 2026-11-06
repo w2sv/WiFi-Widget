@@ -130,7 +130,7 @@ private fun FontSizeSliderRow(
             steps = FontSize.entries.size - 2,
             makeLabel = { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) },
             onValueChanged = { setFontSize(enumEntryByOrdinal(it.roundToInt())) },
-            contentDescription = stringResource(id = R.string.font_size_slider_cd),
+            contentDescription = stringResource(id = R.string.font_size),
             valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
         )
     }
@@ -151,7 +151,7 @@ private fun BackgroundOpacitySliderRow(
             steps = 9,
             makeLabel = { "${(it * 100).roundToInt()}%" },
             onValueChanged = setOpacity,
-            contentDescription = stringResource(id = R.string.opacity_slider_cd)
+            contentDescription = stringResource(id = R.string.background_opacity)
         )
     }
 }

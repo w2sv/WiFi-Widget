@@ -10,7 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.w2sv.wifiwidget.ui.util.contentDescription
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 
 @Composable
 fun SliderWithLabel(
@@ -22,9 +24,11 @@ fun SliderWithLabel(
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f
 ) {
+    val displayedValue = remember(value, makeLabel) { makeLabel(value) }
+
     Column(modifier = modifier) {
         Text(
-            text = remember(value, makeLabel) { makeLabel(value) },
+            text = displayedValue,
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
@@ -35,7 +39,10 @@ fun SliderWithLabel(
                 trackRange = valueRange
             ),
             onValueChange = onValueChanged,
-            modifier = Modifier.contentDescription(contentDescription)
+            modifier = Modifier.semantics {
+                this.contentDescription = contentDescription
+                stateDescription = displayedValue
+            }
         )
     }
 }

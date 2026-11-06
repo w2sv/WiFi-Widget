@@ -16,6 +16,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.TextUnit
 import com.w2sv.composed.animation.ShakeController
 import com.w2sv.composed.animation.shakenBy
@@ -30,7 +32,6 @@ import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.SupportingText
 import com.w2sv.wifiwidget.ui.designsystem.TLayout
 import com.w2sv.wifiwidget.ui.util.VerticalAnimatedVisibility
-import com.w2sv.wifiwidget.ui.util.contentDescription
 import com.w2sv.wifiwidget.ui.util.orAlphaDecreasedIf
 import kotlinx.coroutines.launch
 
@@ -97,6 +98,7 @@ fun ConfigItemLayout(
                 if (allowCollapsing) {
                     ExpandCollapseButton(
                         expand = isExpanded,
+                        propertyLabel = stringResource(item.property.labelRes),
                         onClick = ::toggle,
                         isEnabled = item.isChecked(),
                         modifier = expandButtonModifier
@@ -131,12 +133,7 @@ private fun RowScope.CheckableTrailingContent(item: ConfigItem, shake: () -> Uni
     Checkbox(
         checked = item.isChecked(),
         onCheckedChange = { if (!item.trySetChecked(it)) shake() },
-        modifier = Modifier.contentDescription(
-            stringResource(
-                id = if (item.isChecked()) R.string.disable_arg else R.string.enable_arg,
-                label
-            )
-        )
+        modifier = Modifier.semantics { contentDescription = label }
     )
 }
 
