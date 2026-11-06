@@ -41,6 +41,15 @@ fun WifiPropertiesConfigHeader(
         IconHeadline(iconRes = R.drawable.ic_wifi_24, stringRes = R.string.wifi_properties, modifier = Modifier.fillMaxWidth()) {
             MoreIconButtonWithDropdownMenu {
                 DropdownMenuItem(
+                    text = { Text(text = stringResource(R.string.move_disabled_properties_to_bottom)) },
+                    onClick = {
+                        updateConfig { withDisabledPropertiesAtEnd() }
+                        collapseMenu()
+                    },
+                    enabled = !config.areDisabledPropertiesAtEnd,
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_move_down_24), null) }
+                )
+                DropdownMenuItem(
                     text = { Text(text = stringResource(R.string.restore_default_order)) },
                     onClick = {
                         updateConfig { withDefaultPropertyOrder() }

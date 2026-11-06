@@ -85,6 +85,7 @@
     <string name="report_a_bug_explanation">Help make the app better!</string>
     <string name="go_back_on_unsaved_changes_warning">Press Back again to discard your unsaved changes.</string>
     <string name="restore_default_order">Restore default order</string>
+    <string name="move_disabled_properties_to_bottom">Move disabled properties to bottom</string>
     <string name="show_dropdown_menu">Show dropdown menu</string>
     <string name="value_alignment">Value alignment</string>
     <string name="color_scheme">Color scheme</string>

@@ -28,6 +28,9 @@ data class WidgetConfig(
     val arePropertiesInDefaultOrder: Boolean
         get() = propertyOrder == WifiProperty.entries
 
+    val areDisabledPropertiesAtEnd: Boolean
+        get() = supportedProperties.dropWhile { isEnabled(it) }.none { isEnabled(it) }
+
     val isAnyLocationAccessRequiringPropertyEnabled: Boolean
         get() = WifiProperty.locationAccessRequiring.any { property -> isEnabled(property) }
 
@@ -47,6 +50,17 @@ data class WidgetConfig(
         val fromIndex = supported.indexOf(from).also { check(it >= 0) }
         val toIndex = supported.indexOf(to).also { check(it >= 0) }
         supported.add(toIndex, supported.removeAt(fromIndex))
+        return withSupportedPropertyOrder(supported)
+    }
+
+    /** Stably groups visible properties by enablement without moving unsupported properties. */
+    fun withDisabledPropertiesAtEnd(): WidgetConfig {
+        if (areDisabledPropertiesAtEnd) return this
+        val (enabled, disabled) = supportedProperties.partition(::isEnabled)
+        return withSupportedPropertyOrder(enabled + disabled)
+    }
+
+    private fun withSupportedPropertyOrder(supported: List<WifiProperty>): WidgetConfig {
         val reordered = supported.iterator()
         return copy(propertyOrder = propertyOrder.map { if (it.isSupported) reordered.next() else it })
     }

@@ -85,6 +85,7 @@
     <string name="report_a_bug_explanation">Pomôžte zlepšiť aplikáciu!</string>
     <string name="go_back_on_unsaved_changes_warning">Opätovným stlačením Späť zahodíte neuložené zmeny.</string>
     <string name="restore_default_order">Obnoviť predvolené poradie</string>
+    <string name="move_disabled_properties_to_bottom">Presunúť vypnuté vlastnosti na koniec</string>
     <string name="show_dropdown_menu">Zobraziť rozbaľovaciu ponuku</string>
     <string name="value_alignment">Zarovnanie hodnôt</string>
     <string name="color_scheme">Farebná schéma</string>
