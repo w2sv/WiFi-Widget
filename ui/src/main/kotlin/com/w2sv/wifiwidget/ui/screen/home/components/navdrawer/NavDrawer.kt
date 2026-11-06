@@ -9,7 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -41,9 +41,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
 import androidx.compose.ui.tooling.preview.Preview
@@ -161,7 +165,7 @@ private fun Header(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primary)
-                .bouncyClickable()
+                .bouncyTap()
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -187,15 +191,13 @@ private fun CopyrightText(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Modifier.bouncyClickable(
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+private fun Modifier.bouncyTap(
     pressedScale: Float = 0.75f,
     pressAnimation: AnimationSpec<Float> = tween(70),
     releaseAnimation: AnimationSpec<Float> = spring(
         dampingRatio = Spring.DampingRatioHighBouncy,
         stiffness = Spring.StiffnessMedium
-    ),
-    onClick: () -> Unit = {}
+    )
 ): Modifier {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
@@ -206,12 +208,12 @@ fun Modifier.bouncyClickable(
             scaleY = scale.value
         }
         .then(this)
-        .clickable(interactionSource = interactionSource) {
-            onClick()
-
-            scope.launch {
-                scale.animateTo(pressedScale, pressAnimation)
-                scale.animateTo(1f, releaseAnimation)
+        .pointerInput(pressedScale, pressAnimation, releaseAnimation) {
+            detectTapGestures {
+                scope.launch {
+                    scale.animateTo(pressedScale, pressAnimation)
+                    scale.animateTo(1f, releaseAnimation)
+                }
             }
         }
 }
@@ -242,7 +244,7 @@ private fun NavDrawerElement(element: DrawerElement, actionScope: DrawerActionSc
 private fun GroupHeader(@StringRes titleRes: Int, modifier: Modifier = Modifier) {
     Text(
         text = stringResource(id = titleRes),
-        modifier = modifier,
+        modifier = modifier.semantics { heading() },
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold
     )
@@ -255,6 +257,7 @@ private fun Action(
     modifier: Modifier = Modifier
 ) {
     val clickable = action.type.asClickableOrNull
+    val label = stringResource(action.labelRes)
 
     TLayout(
         modifier = modifier
@@ -272,7 +275,7 @@ private fun Action(
         },
         central = {
             Text(
-                text = stringResource(action.labelRes),
+                text = label,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium,
                 maxLines = 1
@@ -291,7 +294,8 @@ private fun Action(
                 is DrawerElement.Action.Custom -> type.content(scope)
                 is DrawerElement.Action.Switch -> Switch(
                     checked = type.checked(scope),
-                    onCheckedChange = { type.onCheckedChange(scope, it) }
+                    onCheckedChange = { type.onCheckedChange(scope, it) },
+                    modifier = Modifier.semantics { contentDescription = label }
                 )
 
                 else -> Unit
