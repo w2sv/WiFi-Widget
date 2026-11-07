@@ -5,6 +5,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
+import androidx.test.uiautomator.Until
+import com.w2sv.wifiwidget.util.dumpWindowHierarchy
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -26,6 +28,7 @@ class CriticalUserJourneyBaselineProfile {
 }
 
 private fun UiDevice.criticalUserJourney() {
+    waitForIdle()
     closeLocationAccessPermissionRationalAndRequestDialogIfOpen()
 
     goToWidgetConfigurationScreen()
@@ -44,5 +47,7 @@ private fun UiDevice.closeLocationAccessPermissionRationalAndRequestDialogIfOpen
 }
 
 private fun UiDevice.goToWidgetConfigurationScreen() {
-    findObject(By.text("Configure")).click()
+    val configureButton = wait(Until.findObject(By.text("Configure")), 5_000)
+        ?: error("Configure button not found:\n${dumpWindowHierarchy()}")
+    configureButton.click()
 }

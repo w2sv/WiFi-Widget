@@ -1,4 +1,4 @@
-- Wi-Fi details stay visible in widgets during Battery Saver when the connected Wi-Fi network can be identified. Unavailable values are shown clearly and refresh when the connection returns.
-- Configure widgets from your launcher when adding or reconfiguring them. The widget's redundant configuration button has been removed.
-- Removed the low-battery refresh setting; Android manages power restrictions.
-- Added an animated splash icon and updated screen transitions.
+- Refreshed the app with Material 3 Expressive, including a clearer Wi-Fi status screen and redesigned widget settings.
+- Drag and drop Wi-Fi properties to reorder them, or move disabled properties to the bottom from the menu.
+- Improved screen reader labels and settings control states.
+- Improved Wi-Fi status updates when networks or the Wi-Fi adapter change.
