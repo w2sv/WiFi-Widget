@@ -25,3 +25,10 @@ dependencies {
 
     testImplementation(libs.bundles.unitTest)
 }
+
+tasks.withType<Test>().configureEach {
+    // Robolectric's API 36 sandbox accesses jdk.internal.access.SharedSecrets while
+    // creating Android's ApplicationSharedMemory. Export the package to the test JVM;
+    // otherwise setup fails before tests run with a FileDescriptor internals error.
+    jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED")
+}

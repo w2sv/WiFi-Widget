@@ -11,10 +11,22 @@
 - Keep shallow sealed hierarchies nested when that improves discovery and call-site naming.
 - Put derived properties and behavior on the data class, enum, sealed type, or other type that owns them. Use file-level extensions only when a strong visibility, dependency, or responsibility boundary makes ownership by the type inappropriate.
 - Prefer a flat when to nested conditionals for mutually exclusive cases.
+- Avoid deeply nested control flow. Prefer early returns, guard clauses, and early continues to handle exceptional or irrelevant cases upfront, keeping the main execution path flat and easy to follow.
 - When control flow establishes an invariant, enforce it directly with a cast, check, or checkNotNull. Do not add fallback UI, silent no-ops, or recovery behavior for states that should be impossible unless the product explicitly requires recovery.
 - Represent genuinely unavailable or indeterminate network properties explicitly. Do not conflate missing information with disconnected, disabled, or unsupported states.
 - Respect Android API-level differences and permission requirements when modeling platform capabilities. Do not assume that APIs expose identical information across supported Android versions.
 - Remove obsolete parameters, extension points, and state when their use case disappears.
+
+## Keep implementations modular and cohesive
+
+- Break complex implementations into small, focused, cohesive functions and components, each with a clearly defined responsibility.
+- Keep high-level functions focused on orchestration. Extract distinct responsibilities such as initialization, registration, cleanup, transformation, and event handling into appropriately named helpers.
+- Prefer code that communicates its structure and intent at a glance. A reader should be able to understand the overall flow without having to work through extensive inline implementation details.
+- Extract code when doing so improves readability, separation of concerns, reuse, or testability—not merely to reduce line count.
+- Keep closely related logic together. Avoid excessive fragmentation, trivial wrappers, and abstractions that introduce more indirection than clarity.
+- Prefer private functions and local helpers over introducing new classes or interfaces when the responsibility does not warrant a separate abstraction.
+- Apply the same principles to lambdas, flow builders, callbacks, and property initializers. Avoid embedding multiple substantial responsibilities inside a single expression or block.
+- Preserve locality and readability: straightforward logic should remain inline, while independently understandable operations should be named and extracted.
 
 ## Packages and files
 

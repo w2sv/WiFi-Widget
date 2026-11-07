@@ -131,6 +131,19 @@ class RemoteDataWidgetObserverTest {
             assertEquals(RemoteNetworkData.empty, data.value)
         }
 
+    @Test fun `disabling disconnected Wi-Fi renders the new widget status`() =
+        runTest {
+            wifiIdentity = null
+            observer().initialize()
+            wifiEvents.emit(WifiStatus.NotConnected)
+            runCurrent()
+            verify(exactly = 0) { actions.render() }
+
+            wifiEvents.emit(WifiStatus.Disabled)
+            runCurrent()
+            verify(exactly = 1) { actions.render() }
+        }
+
     @Test fun `two inactive Wi-Fi connections with different identities trigger a render`() =
         runTest {
             observer().initialize()

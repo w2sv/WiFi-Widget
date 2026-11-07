@@ -20,7 +20,7 @@ internal fun platformWifiStateReceiver(onState: (PlatformWifiState) -> Unit): Br
             WifiManager.WIFI_STATE_UNKNOWN
         )
         val state = PlatformWifiState[stateInt]
-        d { "Received WifiState $state" }
+        d { "Wi-Fi adapter state observed: $state" }
 
         onState(state)
     }

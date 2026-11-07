@@ -8,7 +8,8 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.net.wifi.WifiManager
-import com.w2sv.common.logging.log
+import android.os.Build
+import androidx.core.content.ContextCompat
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.networking.connectivity.hasInternetCapability
@@ -39,41 +40,57 @@ internal class WifiStatusSourceImpl @Inject constructor(
 
     override val status: Flow<WifiStatus> = callbackFlow {
         // Queue the initial status through the same dispatcher path as callback signals.
-        trySend(StatusEvent.Refresh)
+        trySend(Unit)
 
-        val networkCallback = wifiStatusNetworkCallback(emit = ::trySend)
-        val platformWifiStateReceiver = platformWifiStateReceiver { state ->
-            when (state) {
-                Disabling, Disabled -> trySend(StatusEvent.Disabled)
-                Enabling, Enabled -> {
-                    if (!connectivityManager.isAnyWifiConnected()) {
-                        trySend(StatusEvent.NotConnected)
-                    }
-                }
-
-                else -> Unit
-            }
-        }
-
+        val networkCallback = wifiStatusNetworkCallback { trySend(Unit) }
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-        context.registerReceiver(platformWifiStateReceiver, IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION))
+
+        val unregisterAdapterStateObservation = try {
+            registerAdapterStateObservation { trySend(Unit) }
+        } catch (registrationFailure: Exception) {
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } catch (cleanupFailure: Throwable) {
+                if (cleanupFailure !== registrationFailure) registrationFailure.addSuppressed(cleanupFailure)
+            }
+            throw registrationFailure
+        }
 
         awaitClose {
-            connectivityManager.unregisterNetworkCallback(networkCallback)
-            context.unregisterReceiver(platformWifiStateReceiver)
-        }
-    }.map { event ->
-        // A resumed collector can run on Android's callback stack. Switch dispatchers before
-        // querying connectivity.
-        withContext(Dispatchers.Default) {
-            when (event) {
-                StatusEvent.Refresh -> snapshot()
-                StatusEvent.Disabled -> WifiStatus.Disabled
-                StatusEvent.NotConnected -> WifiStatus.NotConnected
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } finally {
+                unregisterAdapterStateObservation()
             }
         }
+    }.map {
+        // A resumed collector can run on Android's callback stack. Switch dispatchers before
+        // querying connectivity.
+        withContext(Dispatchers.Default) { snapshot() }
     }
         .conflate()
+
+    private fun registerAdapterStateObservation(onChanged: () -> Unit): () -> Unit {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            val listener = WifiManager.WifiStateChangedListener {
+                d { "Wi-Fi adapter state observed: ${PlatformWifiState[wifiManager.wifiState]}" }
+                onChanged()
+            }
+            wifiManager.addWifiStateChangedListener(context.mainExecutor, listener)
+            return { wifiManager.removeWifiStateChangedListener(listener) }
+        }
+
+        val receiver = platformWifiStateReceiver { state ->
+            if (state != Unknown) onChanged()
+        }
+        ContextCompat.registerReceiver(
+            context,
+            receiver,
+            IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION),
+            ContextCompat.RECEIVER_EXPORTED
+        )
+        return { context.unregisterReceiver(receiver) }
+    }
 
     override val defaultEgressChanges: Flow<Unit> = callbackFlow {
         // Android sends onAvailable before capabilities, including for the initial network.
@@ -88,22 +105,22 @@ internal class WifiStatusSourceImpl @Inject constructor(
     }.conflate()
 
     override fun snapshot(): WifiStatus {
-        if (!wifiManager.isWifiEnabled) {
-            return WifiStatus.Disabled
-        }
+        val status = if (!wifiManager.isWifiEnabled) {
+            WifiStatus.Disabled
+        } else {
+            val activeNetwork = connectivityManager.activeNetwork
+            val activeCapabilities = activeNetwork?.let(connectivityManager::getNetworkCapabilities)
+            val activeHasWifiTransport = activeCapabilities?.hasWifiTransport == true
 
-        val activeNetwork = connectivityManager.activeNetwork
-        val activeCapabilities = activeNetwork?.let(connectivityManager::getNetworkCapabilities)
-        val activeHasWifiTransport = activeCapabilities?.hasWifiTransport == true
-
-        return when {
-            activeHasWifiTransport && activeCapabilities.isInternetValidated -> WifiStatus.Connected
-            activeHasWifiTransport -> WifiStatus.ConnectedNoInternet
-            connectivityManager.isAnyWifiConnected(activeNetwork) -> WifiStatus.ConnectedInactive
-            else -> WifiStatus.NotConnected
-        }.log {
-            "WifiStatus=$it | activeNetwork=$activeNetwork | capabilities=$activeCapabilities"
+            when {
+                activeHasWifiTransport && activeCapabilities.isInternetValidated -> WifiStatus.Connected
+                activeHasWifiTransport -> WifiStatus.ConnectedNoInternet
+                connectivityManager.isAnyWifiConnected(activeNetwork) -> WifiStatus.ConnectedInactive
+                else -> WifiStatus.NotConnected
+            }
         }
+        d { "Wi-Fi status: adapter=${PlatformWifiState[wifiManager.wifiState]}, status=$status" }
+        return status
     }
 
     /** Uses the same direct Wi-Fi selection as local property resolution and widget cache reads. */
@@ -118,32 +135,27 @@ internal class WifiStatusSourceImpl @Inject constructor(
     }
 }
 
-private enum class StatusEvent {
-    Refresh,
-    Disabled,
-    NotConnected
-}
-
-private fun wifiStatusNetworkCallback(emit: (StatusEvent) -> Unit): ConnectivityManager.NetworkCallback =
+private fun wifiStatusNetworkCallback(onChanged: () -> Unit): ConnectivityManager.NetworkCallback =
     object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            emit(StatusEvent.Refresh)
+            onChanged()
         }
 
         override fun onCapabilitiesChanged(network: Network, capabilities: NetworkCapabilities) {
             if (capabilities.hasWifiTransport) {
-                emit(StatusEvent.Refresh)
+                onChanged()
             }
         }
 
         override fun onLinkPropertiesChanged(network: Network, linkProperties: LinkProperties) {
-            emit(StatusEvent.Refresh)
+            onChanged()
         }
 
         override fun onLost(network: Network) {
+            d { "Wi-Fi network lost: $network" }
             // Another Wi-Fi network may already have replaced this one. Re-evaluate current
             // status after the callback instead of reporting an unconditional disconnect.
-            emit(StatusEvent.Refresh)
+            onChanged()
         }
     }
 

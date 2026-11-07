@@ -10,6 +10,7 @@ import android.net.LinkProperties
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import androidx.core.content.ContextCompat
 import app.cash.turbine.test
 import com.w2sv.domain.networking.WifiStatus
 import io.mockk.every
@@ -49,6 +50,9 @@ class WifiStatusSourceImplTest {
 
     init {
         every { wifiManager.isWifiEnabled } answers { enabled }
+        every { wifiManager.wifiState } answers {
+            if (enabled) WifiManager.WIFI_STATE_ENABLED else WifiManager.WIFI_STATE_DISABLED
+        }
         every { connectivity.activeNetwork } answers { active }
         every { connectivity.allNetworks } answers { networks }
         every { connectivity.getNetworkCapabilities(any()) } answers {
@@ -65,7 +69,7 @@ class WifiStatusSourceImplTest {
             defaultCallback = firstArg()
         }
         every { connectivity.unregisterNetworkCallback(any<ConnectivityManager.NetworkCallback>()) } just runs
-        every { context.registerReceiver(any(), any<IntentFilter>()) } answers {
+        every { context.registerReceiver(any(), any<IntentFilter>(), null, null, any<Int>()) } answers {
             receiver = firstArg()
             null
         }
@@ -94,7 +98,7 @@ class WifiStatusSourceImplTest {
         assertEquals(WifiStatus.NotConnected, source.snapshot())
         verify(exactly = 0) { connectivity.registerNetworkCallback(any(), any<ConnectivityManager.NetworkCallback>()) }
         verify(exactly = 0) { connectivity.registerDefaultNetworkCallback(any()) }
-        verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>()) }
+        verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>(), null, null, any<Int>()) }
     }
 
     @Test fun `connected Wi-Fi identity changes while both connections are inactive`() {
@@ -135,14 +139,140 @@ class WifiStatusSourceImplTest {
             verify(exactly = 1) { context.unregisterReceiver(receiver) }
         }
 
-    @Test fun `Wi-Fi broadcasts emit disabled and not connected states`() =
+    @Test fun `API 35 registers exported receiver and removes it after collection`() =
         runTest {
             source().status.test {
-                awaitItem()
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+                verify(exactly = 1) {
+                    context.registerReceiver(receiver, any<IntentFilter>(), null, null, ContextCompat.RECEIVER_EXPORTED)
+                }
+            }
+            verify(exactly = 1) { context.unregisterReceiver(receiver) }
+        }
+
+    @Test
+    @Config(sdk = [32])
+    fun `API 32 receiver refreshes status and is removed after collection`() =
+        runTest {
+            source().status.test {
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+                verify(exactly = 1) { context.registerReceiver(receiver, any<IntentFilter>(), null, null, 0) }
+
+                enabled = false
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLED))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+            }
+            verify(exactly = 1) { context.unregisterReceiver(receiver) }
+        }
+
+    @Test fun `receiver registration failure cleans up network callback and propagates error`() =
+        runTest {
+            val registrationFailure = IllegalStateException("receiver registration failed")
+            every { context.registerReceiver(any(), any<IntentFilter>(), null, null, any<Int>()) } answers { throw registrationFailure }
+
+            source().status.test {
+                val error = awaitError()
+                assertEquals(registrationFailure::class, error::class)
+                assertEquals(registrationFailure.message, error.message)
+            }
+
+            verify(exactly = 1) { connectivity.registerNetworkCallback(any(), wifiCallback) }
+            verify(exactly = 1) { connectivity.unregisterNetworkCallback(wifiCallback) }
+            verify(exactly = 0) { context.unregisterReceiver(any<BroadcastReceiver>()) }
+        }
+
+    @Test fun `Wi-Fi broadcasts follow the current enabled state without a connection`() =
+        runTest {
+            source().status.test {
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+                enabled = false
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLING))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLED))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                enabled = true
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_ENABLING))
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_ENABLED))
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+            }
+        }
+
+    @Test fun `late enabled broadcast still reports disabled Wi-Fi`() =
+        runTest {
+            source().status.test {
+                assertEquals(WifiStatus.NotConnected, awaitItem())
+                enabled = false
                 receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLED))
                 assertEquals(WifiStatus.Disabled, awaitItem())
                 receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_ENABLED))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+            }
+        }
+
+    @Test fun `late network loss still reports disabled Wi-Fi`() =
+        runTest {
+            active = first
+            networks = arrayOf(first)
+            firstCapabilities = wifiWithInternet
+            source().status.test {
+                assertEquals(WifiStatus.Connected, awaitItem())
+                enabled = false
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLED))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                active = null
+                networks = emptyArray()
+                wifiCallback.onLost(first)
+                assertEquals(WifiStatus.Disabled, awaitItem())
+            }
+        }
+
+    @Test fun `disabling connected Wi-Fi stays disabled through network loss and broadcasts`() =
+        runTest {
+            active = first
+            networks = arrayOf(first)
+            firstCapabilities = wifiWithInternet
+            source().status.test {
+                assertEquals(WifiStatus.Connected, awaitItem())
+                enabled = false
+                active = null
+                networks = emptyArray()
+                wifiCallback.onLost(first)
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLING))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_DISABLED))
+                assertEquals(WifiStatus.Disabled, awaitItem())
+            }
+        }
+
+    @Test fun `network loss while Wi-Fi remains enabled reports not connected`() =
+        runTest {
+            active = first
+            networks = arrayOf(first)
+            firstCapabilities = wifiWithInternet
+            source().status.test {
+                assertEquals(WifiStatus.Connected, awaitItem())
+                active = null
+                networks = emptyArray()
+                wifiCallback.onLost(first)
                 assertEquals(WifiStatus.NotConnected, awaitItem())
+            }
+        }
+
+    @Test fun `re-enabling Wi-Fi with an available connection reports connected`() =
+        runTest {
+            enabled = false
+            source().status.test {
+                assertEquals(WifiStatus.Disabled, awaitItem())
+                enabled = true
+                active = first
+                networks = arrayOf(first)
+                firstCapabilities = wifiWithInternet
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_ENABLING))
+                assertEquals(WifiStatus.Connected, awaitItem())
+                receiver.onReceive(context, wifiStateIntent(WifiManager.WIFI_STATE_ENABLED))
+                assertEquals(WifiStatus.Connected, awaitItem())
             }
         }
 
@@ -239,7 +369,7 @@ class WifiStatusSourceImplTest {
                 awaitItem()
             }
             verify(exactly = 1) { connectivity.unregisterNetworkCallback(defaultCallback) }
-            verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>()) }
+            verify(exactly = 0) { context.registerReceiver(any(), any<IntentFilter>(), null, null, any<Int>()) }
         }
 
     private fun wifiStateIntent(state: Int) =
