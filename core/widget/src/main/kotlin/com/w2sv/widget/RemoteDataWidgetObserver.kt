@@ -74,6 +74,18 @@ class RemoteDataWidgetObserver @Inject internal constructor(
         }
         if (widgetStatus.hasInstalledWidgets) {
             startNetworkObservation()
+            // A recreated process need not receive APPWIDGET_UPDATE or a new default-route callback.
+            // Reconcile the baseline once. Recovery uses unique KEEP work if onUpdate also runs.
+            // Render-only Glance updates never schedule recovery.
+            scope.launch {
+                try {
+                    scheduleRecoveryAfterWifiChange()
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (exception: Exception) {
+                    e { "Failed scheduling widget recovery after process recreation: error=$exception" }
+                }
+            }
         }
     }
 

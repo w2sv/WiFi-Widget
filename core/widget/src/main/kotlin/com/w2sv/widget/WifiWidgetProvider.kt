@@ -3,56 +3,37 @@ package com.w2sv.widget
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import com.w2sv.androidutils.appwidget.appWidgetIds
+import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import com.w2sv.androidutils.content.intent
-import com.w2sv.core.widget.R
 import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
-import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
-import com.w2sv.widget.ui.container.WidgetRenderer
-import com.w2sv.widget.ui.resolve
-import com.w2sv.widget.utils.logging.LoggingAppWidgetProvider
-import com.w2sv.widget.utils.remoteViews
+import com.w2sv.widget.ui.WifiGlanceWidget
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import slimber.log.i
 
+/** Keeps the installed provider component and its recovery lifecycle while Glance owns updates. */
 @AndroidEntryPoint
-internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
+internal class WifiWidgetProvider : GlanceAppWidgetReceiver() {
+    override val glanceAppWidget = WifiGlanceWidget()
 
-    @Inject
-    lateinit var refreshManager: WifiWidgetWorkScheduler
+    @Inject lateinit var refreshManager: WifiWidgetWorkScheduler
 
-    @Inject
-    lateinit var widgetRenderer: WidgetRenderer
+    @Inject lateinit var widgetConfigSource: WidgetConfigSource
 
-    @Inject
-    lateinit var appWidgetManager: AppWidgetManager
+    @Inject lateinit var remoteNetworkDataRepository: RemoteNetworkDataRepository
 
-    @Inject
-    lateinit var widgetConfigSource: WidgetConfigSource
+    @Inject lateinit var networkAvailabilitySource: NetworkAvailabilitySource
 
-    @Inject
-    lateinit var remoteNetworkDataRepository: RemoteNetworkDataRepository
+    @Inject lateinit var remoteDataWidgetObserver: RemoteDataWidgetObserver
 
-    @Inject
-    lateinit var networkAvailabilitySource: NetworkAvailabilitySource
-
-    @Inject
-    lateinit var remoteDataWidgetObserver: RemoteDataWidgetObserver
-
-    /** Applies periodic refresh settings when the first widget is added. */
     override fun onEnabled(context: Context) {
         super.onEnabled(context)
-
-        val refreshing = widgetConfigSource.blockingSnapshot().refreshing
-        refreshManager.applyRefreshingPolicy(refreshing)
+        refreshManager.applyRefreshingPolicy(widgetConfigSource.blockingSnapshot().refreshing)
         remoteDataWidgetObserver.onWidgetsAvailable()
     }
 
-    /** Cancels periodic and recovery work when the last widget is removed. */
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         refreshManager.cancelPeriodicWork()
@@ -60,83 +41,36 @@ internal class WifiWidgetProvider : LoggingAppWidgetProvider() {
         remoteDataWidgetObserver.onLastWidgetRemoved()
     }
 
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-
-        when (intent.action) {
-            ACTION_REFRESH -> refreshManager.enqueueImmediateRefresh()
-            // ACTION_RENDER must not re-enter onUpdate: a finished recovery work item can be
-            // enqueued again despite WorkManager KEEP, creating a render/recovery loop.
-            ACTION_RENDER -> renderWidgets(
-                context = context,
-                appWidgetManager = appWidgetManager,
-                appWidgetIds = appWidgetManager.appWidgetIds<WifiWidgetProvider>(context),
-                config = widgetConfigSource.blockingSnapshot()
-            )
-        }
-    }
-
-    /**
-     * Called when Android requests a widget update via [AppWidgetManager.ACTION_APPWIDGET_UPDATE], typically when
-     * a widget is added, after device reboot or restoration. It is not automatically called when the app process restarts.
-     * Periodic system updates are disabled (`updatePeriodMillis = 0`);
-     * Those are triggered via the WifiWidgetRefreshWorker, as are manual refresh actions.
-     *
-     * Renders the affected widget instances. When a direct Wi-Fi or VPN default route is usable, it
-     * schedules recovery of missing remote data, including after process recreation when the
-     * application observer has no prior emission to trigger a render. Recovery publication later
-     * arrives through the observer's render path.
-     */
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        // Glance owns the asynchronous update and its broadcast lifecycle.
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-
-        if (appWidgetIds.isNotEmpty()) remoteDataWidgetObserver.onWidgetsAvailable()
-
-        val config = widgetConfigSource.blockingSnapshot()
-        // Reconcile even on another transport so verified default-route publication stays current.
-        val needsRecovery = remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig)
-        if (needsRecovery && networkAvailabilitySource().canRefreshWidgetRemoteData) {
-            refreshManager.enqueueRecovery()
-        }
-        renderWidgets(context, appWidgetManager, appWidgetIds, config)
+        reconcileUpdate(appWidgetIds)
     }
 
-    internal fun renderWidgets(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetIds: IntArray,
-        config: WidgetConfig
-    ) {
-        val colors = config.appearance.coloring.resolve(context)
-
-        appWidgetIds.forEach { id ->
-            i { "updateWidget | appWidgetId=$id" }
-
-            appWidgetManager.updateAppWidget(
-                id,
-                widgetRenderer(
-                    widget = remoteViews(context, R.layout.widget),
-                    widgetId = id,
-                    config = config,
-                    colors = colors
-                )
-            )
+    internal fun reconcileUpdate(appWidgetIds: IntArray) {
+        if (appWidgetIds.isEmpty()) return
+        remoteDataWidgetObserver.onWidgetsAvailable()
+        val config = widgetConfigSource.blockingSnapshot()
+        if (remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig) &&
+            networkAvailabilitySource().canRefreshWidgetRemoteData
+        ) {
+            refreshManager.enqueueRecovery()
         }
+    }
+
+    override fun onReceive(context: Context, intent: Intent) {
+        super.onReceive(context, intent)
+        if (intent.action == ACTION_REFRESH) refreshManager.enqueueImmediateRefresh()
     }
 
     companion object {
-        internal fun renderIntent(context: Context): Intent =
-            intent<WifiWidgetProvider>(context)
-                .setAction(ACTION_RENDER)
-
         internal fun refreshIntent(context: Context): Intent =
             intent<WifiWidgetProvider>(context).setAction(ACTION_REFRESH)
 
-        private const val ACTION_RENDER = "com.w2sv.wifiwidget.action.RENDER"
         private const val ACTION_REFRESH = "com.w2sv.wifiwidget.action.REFRESH_DATA"
     }
 }

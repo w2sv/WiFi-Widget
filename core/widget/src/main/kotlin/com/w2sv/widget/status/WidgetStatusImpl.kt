@@ -5,7 +5,7 @@ import android.content.Context
 import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.widget.WifiWidgetProvider
-import com.w2sv.widget.actions.WidgetPinSuccess
+import com.w2sv.widget.management.WidgetPinSuccess
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow

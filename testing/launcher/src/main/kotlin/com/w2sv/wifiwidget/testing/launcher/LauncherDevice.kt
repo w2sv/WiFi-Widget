@@ -15,6 +15,7 @@ import androidx.test.uiautomator.UiObject2
 import java.io.ByteArrayOutputStream
 
 const val LAUNCHER_PACKAGE = "com.android.launcher3"
+const val LAUNCHER_WIDGET_HOST_CLASS = "com.android.launcher3.widget.LauncherAppWidgetHostView"
 const val SYSTEM_UI_PACKAGE = "com.android.systemui"
 const val SYSTEM_TIMEOUT_MS = 30_000L
 const val UI_TIMEOUT_MS = 20_000L
@@ -91,19 +92,22 @@ class LauncherDevice(
 
     /** Avoids assuming that Home returns to the page where a widget was pinned. */
     fun findWidgetOnPages(): UiObject2? {
-        ui.findObject(By.res(appPackage, "widget_layout"))?.let { return it }
+        visibleWidgetHost()?.let { return it }
         repeat(MAX_PAGE_MOVES) {
             val workspace = ui.findObject(By.res(LAUNCHER_PACKAGE, "workspace")) ?: return null
             workspace.scroll(Direction.LEFT, 0.9f)
-            ui.findObject(By.res(appPackage, "widget_layout"))?.let { return it }
+            visibleWidgetHost()?.let { return it }
         }
         repeat(MAX_PAGE_MOVES * 2) {
             val workspace = ui.findObject(By.res(LAUNCHER_PACKAGE, "workspace")) ?: return null
             workspace.scroll(Direction.RIGHT, 0.9f)
-            ui.findObject(By.res(appPackage, "widget_layout"))?.let { return it }
+            visibleWidgetHost()?.let { return it }
         }
         return null
     }
+
+    fun visibleWidgetHost(): UiObject2? =
+        ui.findObject(By.clazz(LAUNCHER_WIDGET_HOST_CLASS))
 
     /** Screenshot setup needs a quiet launcher; behavioral tests can use [showLauncher]. */
     fun waitForLauncherToSettle(requireHotseat: Boolean = false) {

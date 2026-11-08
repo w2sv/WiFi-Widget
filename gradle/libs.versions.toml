@@ -5,6 +5,7 @@ androidx-baselineprofile = "1.5.0"
 androidx-compose-material3 = "1.5.0-rc01"
 androidx-compose-ui = "1.12.1"
 androidx-datastore = "1.3.0"
+androidx-glance = "1.2.0"
 androidx-hilt = "1.4.0"
 androidx-lifecycle = "2.11.0"
 androidx-navigation3 = "1.2.1"
@@ -28,6 +29,7 @@ moduleGraph = "2.9.1"
 profileinstaller = "1.4.1"
 protobuf = "4.36.2"
 protobuf-plugin = "0.10.1"
+paparazzi = "2.0.0-alpha05.1"
 squareup-okhttp3 = "5.5.1"
 triplet-play = "4.1.1"
 versionCatalogUpdate = "1.1.2"
@@ -55,6 +57,11 @@ androidx-constraintlayout-compose = "androidx.constraintlayout:constraintlayout-
 androidx-core-ktx = "androidx.core:core-ktx:1.19.1"
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "androidx-glance" }
+androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "androidx-glance" }
+androidx-glance-appwidget-testing = { module = "androidx.glance:glance-appwidget-testing", version.ref = "androidx-glance" }
+androidx-glance-preview = { module = "androidx.glance:glance-preview", version.ref = "androidx-glance" }
+androidx-glance-testing = { module = "androidx.glance:glance-testing", version.ref = "androidx-glance" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt" }
@@ -93,6 +100,7 @@ kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1
 # @keep
 ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "google-ksp" }
 reorderable = "sh.calvin.reorderable:reorderable:3.1.0"
+paparazzi = { module = "app.cash.paparazzi:paparazzi", version.ref = "paparazzi" }
 robolectric = "org.robolectric:robolectric:4.17"
 slack-lint-compose-lint-checks = { module = " com.slack.lint.compose:compose-lint-checks", version.ref = "compose-lint-checks" }
 slimber = "com.github.PaulWoitaschek:Slimber:2.0.0"
@@ -142,6 +150,7 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "moduleGraph" }

@@ -11,7 +11,6 @@ import androidx.test.uiautomator.Until
 class LauncherWorkspace(private val launcher: LauncherDevice, private val formFactor: LauncherFormFactor) {
     private val instrumentation = launcher.instrumentation
     private val device = launcher.ui
-    private val appPackage = launcher.appPackage
 
     fun prepare() {
         launcher.waitForLauncherToSettle(requireHotseat = formFactor == LauncherFormFactor.LargeTablet)
@@ -55,7 +54,7 @@ class LauncherWorkspace(private val launcher: LauncherDevice, private val formFa
             try {
                 removeWidget(widget)
             } catch (exception: StaleObjectException) {
-                // The collection host can be replaced between discovery and the accessibility action.
+                // Glance can replace the widget host between discovery and the accessibility action.
                 lastStaleWidget = exception
                 staleAttempts++
                 val diagnostics = removalDiagnostics()
@@ -85,9 +84,6 @@ class LauncherWorkspace(private val launcher: LauncherDevice, private val formFa
         }
         check(launcher.widgetIds().isEmpty()) {
             "WifiWidgetProvider IDs remain after launcher cleanup. ${launcher.hierarchy()}"
-        }
-        launcher.await("old widget view to disappear after its IDs were removed") {
-            !device.hasObject(By.res(appPackage, "widget_layout"))
         }
     }
 
@@ -143,7 +139,7 @@ class LauncherWorkspace(private val launcher: LauncherDevice, private val formFa
     }
 
     private fun findWidgetHost(node: AccessibilityNodeInfo, widgetBounds: Rect): AccessibilityNodeInfo? {
-        if (node.className?.toString() == WIDGET_HOST_CLASS) {
+        if (node.className?.toString() == LAUNCHER_WIDGET_HOST_CLASS) {
             val hostBounds = Rect()
             node.getBoundsInScreen(hostBounds)
             if (hostBounds.contains(widgetBounds.centerX(), widgetBounds.centerY())) return node
@@ -179,7 +175,7 @@ class LauncherWorkspace(private val launcher: LauncherDevice, private val formFa
     }
 
     private fun collectWidgetHosts(node: AccessibilityNodeInfo, hosts: MutableList<AccessibilityNodeInfo>) {
-        if (node.className?.toString() == WIDGET_HOST_CLASS) hosts.add(node)
+        if (node.className?.toString() == LAUNCHER_WIDGET_HOST_CLASS) hosts.add(node)
         for (index in 0 until node.childCount) {
             node.getChild(index)?.let { collectWidgetHosts(it, hosts) }
         }
@@ -209,6 +205,5 @@ class LauncherWorkspace(private val launcher: LauncherDevice, private val formFa
         const val MAX_TRANSIENT_MODE_EXITS = 2
         const val WIDGET_REMOVAL_TIMEOUT_MS = 5_000L
         const val REMOVE_TARGET_TIMEOUT_MS = 5_000L
-        const val WIDGET_HOST_CLASS = "com.android.launcher3.widget.LauncherAppWidgetHostView"
     }
 }

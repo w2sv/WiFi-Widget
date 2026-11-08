@@ -51,8 +51,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun pinWidget() {
-        widgetActions.pin {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            if (!widgetActions.pin()) {
                 _snackbarBuilder.emit {
                     AppSnackbarVisuals(
                         msg = getString(R.string.widget_pinning_failed),

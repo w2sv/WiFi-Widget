@@ -29,7 +29,6 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     val configSource get() = dependencies.widgetConfigSource()
     val actions get() = dependencies.widgetActions()
     val repository get() = dependencies.remoteNetworkDataRepository()
-    val newRemoteViewsFactory get() = dependencies.wifiPropertyRemoteViewsFactory()
 
     fun start() {
         grantLocationPermissions()

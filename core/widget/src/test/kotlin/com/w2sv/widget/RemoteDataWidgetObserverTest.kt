@@ -83,6 +83,16 @@ class RemoteDataWidgetObserverTest {
             verify(exactly = 0) { actions.render() }
         }
 
+    @Test fun `process recreation recovers missing data without a network callback`() =
+        runTest {
+            recoveryNeeded = true
+            observer().initialize()
+            runCurrent()
+
+            verify(exactly = 1) { scheduler.enqueueRecovery() }
+            verify(exactly = 0) { actions.render() }
+        }
+
     @Test fun `changed data renders while equal data does not`() =
         runTest {
             observer().initialize()
@@ -196,6 +206,7 @@ class RemoteDataWidgetObserverTest {
     @Test fun `VPN default over connected Wi-Fi reconciles and schedules recovery`() =
         runTest {
             observer().initialize()
+            runCurrent()
             recoveryNeeded = true
             availability = availability.copy(
                 defaultNetworkIdentity = 2L,
@@ -205,7 +216,7 @@ class RemoteDataWidgetObserverTest {
             defaultEgressEvents.emit(Unit)
             runCurrent()
 
-            verify(exactly = 1) { repository.needsRecovery(any()) }
+            verify(exactly = 2) { repository.needsRecovery(any()) }
             verify(exactly = 1) { scheduler.enqueueRecovery() }
             verify(exactly = 1) { actions.render() }
 
@@ -279,24 +290,35 @@ class RemoteDataWidgetObserverTest {
     @Test fun `repeated default observations reconcile and schedule only once`() =
         runTest {
             observer().initialize()
+            runCurrent()
             recoveryNeeded = true
             defaultEgressEvents.emit(Unit)
             runCurrent()
             defaultEgressEvents.emit(Unit)
             runCurrent()
 
-            verify(exactly = 1) { repository.needsRecovery(any()) }
+            verify(exactly = 2) { repository.needsRecovery(any()) }
             verify(exactly = 1) { scheduler.enqueueRecovery() }
             verify(exactly = 1) { actions.render() }
         }
 
     @Test fun `repository publication supplies the render after default reconciliation`() =
         runTest {
+            widgetsInstalled = false
+            var stillMissing = true
             every { repository.needsRecovery(any()) } answers {
-                data.value = published("restored Wi-Fi")
-                true
+                if (stillMissing) {
+                    stillMissing = false
+                    data.value = published("restored Wi-Fi")
+                    true
+                } else {
+                    false
+                }
             }
-            observer().initialize()
+            val observer = observer()
+            observer.initialize()
+            widgetsInstalled = true
+            observer.onWidgetsAvailable()
             defaultEgressEvents.emit(Unit)
             runCurrent()
 

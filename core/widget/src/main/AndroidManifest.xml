@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <queries>
+        <intent>
+            <action android:name="android.settings.WIFI_SETTINGS" />
+        </intent>
+    </queries>
+
     <application>
 
         <!--Receivers-->
@@ -17,16 +23,11 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <receiver android:name="com.w2sv.widget.actions.WidgetPinSuccessBroadcastReceiver" />
-
-        <!--Services-->
-        <service
-            android:name="com.w2sv.widget.ui.properties.WifiPropertyViewsService"
-            android:permission="android.permission.BIND_REMOTEVIEWS" />
+        <receiver android:name="com.w2sv.widget.management.WidgetPinSuccessBroadcastReceiver" />
 
         <!--Activities-->
         <activity
-            android:name="com.w2sv.widget.ui.properties.CopyPropertyToClipboardActivity"
+            android:name="com.w2sv.widget.ui.actions.CopyPropertyToClipboardActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="com.w2sv.wifiwidget.taskaffinity.CopyPropertyToClipboard"

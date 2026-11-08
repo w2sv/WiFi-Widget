@@ -30,7 +30,6 @@ object ScreenshotScenarios {
             resolved(WifiProperty.SiteLocalIp, "192.168.1.42", "/24", "255.255.255.0"),
             resolved(WifiProperty.PublicIp, "203.0.113.42"),
             resolved(WifiProperty.Frequency, "5180 MHz"),
-            resolved(WifiProperty.Channel, "36"),
             resolved(WifiProperty.LinkSpeed, "1201 Mbps"),
             resolved(WifiProperty.SignalStrength, "Excellent")
         ),
@@ -59,6 +58,7 @@ object ScreenshotScenarios {
             resolved(WifiProperty.Standard, "802.11ax"),
             resolved(WifiProperty.Security, "WPA3-Personal"),
             resolved(WifiProperty.RSSI, "-49 dBm"),
+            resolved(WifiProperty.LinkSpeed, "1201 Mbps"),
             resolved(WifiProperty.Gateway, "192.168.1.1"),
             resolved(WifiProperty.DNS, "1.1.1.1"),
             // Illustrative IP-derived geolocation, never the device's actual GPS position.
@@ -88,9 +88,12 @@ object ScreenshotScenarios {
         properties = listOf(
             resolved(WifiProperty.SSID, "Walter White-Fi"),
             resolved(WifiProperty.SiteLocalIp, "192.168.1.42", "/24", "255.255.255.0"),
+            resolved(WifiProperty.Gateway, "192.168.1.1"),
             resolved(WifiProperty.PublicIp, "203.0.113.42"),
+            resolved(WifiProperty.Frequency, "5180 MHz"),
             resolved(WifiProperty.ULA, "fd12:3456:789a::42", "/64"),
-            resolved(WifiProperty.GUA, "2001:db8:1::42")
+            resolved(WifiProperty.GUA, "2001:db8:1::42"),
+            resolved(WifiProperty.SignalStrength, "Excellent")
         ),
         appearance = WidgetAppearance(
             coloring = WidgetColoring(
