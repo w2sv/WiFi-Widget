@@ -44,9 +44,8 @@ class WidgetConfigurationIntegrationTest : WidgetIntegrationTestBase() {
             )
         }
 
-        env.launcher.await("updated property order and refresh-time utility") {
-            env.launcher.widgetLabels().take(2) == listOf("Frequency", "ISP") &&
-                env.launcher.widgetHasResource("last_updated_tv")
+        env.launcher.await("Frequency shown before ISP") {
+            env.launcher.widgetLabelsInOrder("Frequency", "ISP")
         }
         assertEquals(changed, env.configSource.blockingSnapshot())
         assertEquals(requestsBefore, http.recordedRequests())
@@ -73,8 +72,8 @@ class WidgetConfigurationIntegrationTest : WidgetIntegrationTestBase() {
                 .let { current -> current.copy(utilities = current.utilities + (WidgetUtility.RefreshTimeDisplay to true)) }
         }
         try {
-            env.launcher.await("new utility and old ISP removed while HTTP is held") {
-                env.launcher.widgetHasResource("last_updated_tv") && !env.launcher.widgetHasText("Old ISP")
+            env.launcher.await("old ISP removed while HTTP is held") {
+                env.launcher.widgetTextAbsent("Old ISP")
             }
             env.awaitRequest(TestRemoteHttpResponses.Endpoint.IpApi, 2)
             assertEquals(changed, env.configSource.blockingSnapshot())

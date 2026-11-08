@@ -38,8 +38,9 @@ flowchart TB
     subgraph Widget[Launcher widget]
         Observer[RemoteDataWidgetObserver]
         Work[WorkManager / WifiWidgetRefreshWorker]
-        Render[WifiWidgetProvider / WidgetRenderer]
-        Factory[WifiPropertyRemoteViewsFactory]
+        Provider[WifiWidgetProvider]
+        Render[WidgetRenderCoordinator / WifiGlanceWidget]
+        State[WidgetPresentationStateProvider]
     end
 
     Repo[RemoteNetworkDataRepositoryImpl]
@@ -55,10 +56,12 @@ flowchart TB
     Observer -->|request render| Render
     Work -->|widget HTTP| Repo
     Work -->|request render| Render
-    Render -->|notify collection| Factory
-    Factory -->|widget-safe snapshot| Repo
+    Provider -->|widget updates and recovery| Work
+    Provider -->|Glance update| Render
+    Render -->|prepare snapshot| State
+    State -->|widget-safe snapshot| Repo
     Home --> Properties
-    Factory --> Properties
+    State --> Properties
 ```
 
 The diagram highlights the main data and control paths rather than every Android callback. A widget render can update local property rows without fetching remote data. Remote-data publication can independently initiate a new widget render.
@@ -74,7 +77,7 @@ The diagram highlights the main data and control paths rather than every Android
 | Background work          | `WifiWidgetWorkScheduler`, `WifiWidgetRefreshWorker`                             | Schedule and execute immediate, periodic, and recovery refreshes.                             |
 | Shared data              | `RemoteNetworkDataRepositoryImpl`                                                | Plan HTTP requests, validate their network context, maintain caches, and publish remote data. |
 | Property presentation    | `WifiPropertyResolverImpl`, `WifiPropertyPresentationProvider`                   | Resolve local and remote values and turn them into ordered display rows.                      |
-| Widget presentation      | `WifiWidgetProvider`, `WidgetRenderer`, `WifiPropertyRemoteViewsFactory`         | Handle widget events, render the outer `RemoteViews`, and rebuild collection rows.            |
+| Widget presentation      | `WifiWidgetProvider`, `WidgetRenderCoordinator`, `WidgetPresentationStateProvider`, `WifiGlanceWidget` | Handle lifecycle events, request Glance updates, and render a coherent presentation snapshot. |
 
 ## Foreground home screen
 
@@ -114,14 +117,13 @@ This fast path exists only while the app process is alive. Android may terminate
 
 | Trigger                        | Behavior                                                                                                                                                              |
 |--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Widget refresh button          | `WidgetActionsImpl` broadcasts a refresh request; `WifiWidgetProvider` schedules immediate WorkManager work.                                                          |
+| Widget refresh button          | `RefreshWidgetAction` directly enqueues immediate WorkManager work through `WifiWidgetWorkScheduler`.                                                                    |
 | Applied configuration          | Persist first, request a render, update periodic scheduling if refresh settings changed, and request an immediate refresh only when remote-data requirements changed. |
 | Periodic interval              | WorkManager schedules a new opportunity to refresh; it is not an exact timer.                                                                                         |
 | Android widget update callback | `WifiWidgetProvider.onUpdate()` reconciles remote data, may schedule recovery, and renders the affected widget instances.                                             |
-| Collection-factory creation    | `WifiPropertyRemoteViewsFactory.onCreate()` independently reconciles and may schedule recovery before rebuilding its rows.                                            |
 | Published remote-data change   | The application-scoped observer requests a widget render while widgets are installed.                                                                                 |
 
-`onUpdate()` may be called when a widget is added, after a reboot, or upon restoration. **An app process restart alone does not invoke `onUpdate()`.** The collection factory has its own recovery check because Android can recreate the collection without recreating the outer widget.
+`onUpdate()` may be called when a widget is added, after a reboot, or upon restoration. **An app process restart alone does not invoke `onUpdate()`.** The application-scoped observer checks for incomplete remote data at startup when widgets are installed. Recovery uses unique WorkManager work with `KEEP`, so a concurrent provider update does not start a second recovery worker.
 
 Android's `updatePeriodMillis` is set to `0`: periodic refreshes use WorkManager, not the platform widget-update timer.
 
@@ -143,11 +145,11 @@ Recovery work renders if it changed published remote data, including on completi
 
 ### Rendering the widget
 
-`WidgetActionsImpl` distinguishes refresh requests from render-only requests. `WifiWidgetProvider` handles a render request directly rather than routing it through `onUpdate()`, which could re-enqueue recovery unnecessarily.
+`WidgetActionsImpl.refresh()` sends application-driven refresh requests through the provider broadcast; `render()` requests only a Glance update. The application-scoped `WidgetRenderCoordinator` coalesces repeated render requests and calls Glance's `updateAll()` sequentially. Active Glance compositions observe the same request revision to prepare a new snapshot. This path never schedules remote-data recovery; `WifiWidgetProvider.onUpdate()` and the network observer own recovery checks.
 
-`WidgetRenderer` reads the current Wi-Fi status, constructs the outer `RemoteViews`, and notifies the connected property collection when its data needs rebuilding. `WifiPropertyRemoteViewsFactory` obtains its rows from `WifiPropertyRenderDataProvider`, using current local information and `RemoteNetworkDataRepositoryImpl.widgetSnapshot()` for eligible cached remote data. Neither rendering nor collection-factory callbacks make HTTP requests.
+`WidgetPresentationStateProvider` reads widget configuration, Wi-Fi status, route availability, and `RemoteNetworkDataRepositoryImpl.widgetSnapshot()` once per pass, then uses the shared property-presentation provider. `WifiGlanceWidget` renders that state. Native `RemoteViews` is used only for labels requiring Android text-subscript spans. Neither state preparation nor rendering makes HTTP requests.
 
-**The widget's displayed update time is the time its outer view was rendered, not the time of the last successful HTTP refresh.** It may advance even if remote data was not fetched or the request failed. Conversely, rebuilding collection rows alone does not necessarily update that timestamp.
+**The widget's displayed update time is the time its presentation snapshot was prepared, not the time of the last successful HTTP refresh.** It may advance even if remote data was not fetched or the request failed.
 
 ## Remote-data cache and correctness
 
@@ -201,7 +203,7 @@ The worker's `isInteractive` check is separate from Battery Saver. There is no u
 
 ### Process, network, and permission limitations
 
-Network callbacks can update a widget promptly only while the app process is alive. WorkManager can execute later after the process has been stopped, but its timing is not guaranteed. Android's [background execution restrictions](https://developer.android.com/develop/background-work/background-tasks/bg-work-restrictions) mean that every connectivity transition cannot be expected to trigger an immediate widget update. Later widget callbacks, factory recreation, work, and user actions provide further opportunities for reconciliation and refresh.
+Network callbacks can update a widget promptly only while the app process is alive. WorkManager can execute later after the process has been stopped, but its timing is not guaranteed. Android's [background execution restrictions](https://developer.android.com/develop/background-work/background-tasks/bg-work-restrictions) mean that every connectivity transition cannot be expected to trigger an immediate widget update. Later widget callbacks, process-start recovery checks, work, and user actions provide further opportunities for reconciliation and refresh.
 
 SSID and BSSID are location-sensitive on Android and may be unavailable without location permission or enabled device location; reliable background widget access may require background location permission. Wi-Fi link properties, route identity, and default-egress capabilities can also be missing or ambiguous. When values cannot be resolved safely, the app omits them or shows an applicable widget placeholder rather than attributing them to the wrong network.
 

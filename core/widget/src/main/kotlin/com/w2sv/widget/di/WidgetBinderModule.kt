@@ -2,7 +2,7 @@ package com.w2sv.widget.di
 
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetStatus
-import com.w2sv.widget.actions.WidgetActionsImpl
+import com.w2sv.widget.management.WidgetActionsImpl
 import com.w2sv.widget.status.WidgetStatusImpl
 import dagger.Binds
 import dagger.Module

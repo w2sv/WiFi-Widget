@@ -125,7 +125,7 @@ For a detailed explanation of how the home screen and widget obtain, cache, vali
 |----------------------|--------------------------------------------------------------------|
 | Language             | Kotlin                                                             |
 | In-app UI            | Jetpack Compose, Material 3                                        |
-| Widget UI            | Android `RemoteViews`                                              |
+| Widget UI            | Jetpack Glance, Android RemoteViews (subscript labels)             |
 | Navigation           | Jetpack Navigation 3                                               |
 | Dependency injection | Dagger Hilt                                                        |
 | Asynchronous work    | Kotlin coroutines, Flow, WorkManager                               |

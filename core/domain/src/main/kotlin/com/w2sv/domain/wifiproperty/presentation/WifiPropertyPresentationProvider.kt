@@ -22,6 +22,15 @@ class WifiPropertyPresentationProvider(private val resolver: WifiPropertyResolve
         remoteNetworkData: RemoteNetworkData,
         onUnresolved: (WifiProperty) -> WifiPropertyValue? = { null }
     ): List<WifiPropertyPresentation> =
+        withProperties(enabledProperties, enabledIpSettings, remoteNetworkData, onUnresolved).map { it.second }
+
+    /** Retains source identity for widget rows, including properties with multiple values. */
+    suspend fun withProperties(
+        enabledProperties: List<WifiProperty>,
+        enabledIpSettings: (WifiProperty.IpProperty) -> List<IpSetting>,
+        remoteNetworkData: RemoteNetworkData,
+        onUnresolved: (WifiProperty) -> WifiPropertyValue? = { null }
+    ): List<Pair<WifiProperty, WifiPropertyPresentation>> =
         withContext(Dispatchers.Default) {
             resolver(
                 enabledProperties = enabledProperties,
@@ -31,7 +40,7 @@ class WifiPropertyPresentationProvider(private val resolver: WifiPropertyResolve
                 resolution.property.toPresentations(
                     values = resolution.values.ifEmpty { listOfNotNull(onUnresolved(resolution.property)) },
                     resources = resources
-                )
+                ).map { resolution.property to it }
             }
         }
 }
