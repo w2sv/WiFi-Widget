@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSliderState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,13 +31,12 @@ fun SliderWithLabel(
             color = MaterialTheme.colorScheme.onSurface,
             modifier = Modifier.align(Alignment.CenterHorizontally)
         )
+        @Suppress("DEPRECATION")
         Slider(
-            state = rememberSliderState(
-                value = value,
-                steps = steps,
-                trackRange = valueRange
-            ),
+            value = value,
             onValueChange = onValueChanged,
+            steps = steps,
+            valueRange = valueRange,
             modifier = Modifier.semantics {
                 this.contentDescription = contentDescription
                 stateDescription = displayedValue
