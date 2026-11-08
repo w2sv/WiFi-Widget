@@ -67,20 +67,14 @@ build-apk:
 # ==============
 
 publish-listing:
-	@./gradlew :app:publishListing  --console verbose
+	@./gradlew :app:publishReleaseListing --console verbose
 
 publish-to-test-track:
-	@echo -e "Retrieved Version: ${VERSION}\nHit enter to continue"
-	@read
-
-	@$(MAKE) clean  # Required as 'publishBundle' publishes all .aab's in specified archive dir
-	@$(MAKE) build-aab
-
-	@echo "Publish Bundle"
-	@./gradlew :app:publishBundle --track internal
+	@echo "Build and publish release bundle to internal track"
+	@./gradlew :app:publishReleaseBundle --track internal --console verbose
 
 publish-bundle:
-	@echo "Publish Bundle"
-	@./gradlew :app:publishBundle --track production --console verbose
+	@echo "Build and publish release bundle to production"
+	@./gradlew :app:publishReleaseBundle --track production --console verbose
 
 # fdroid metadata: https://gitlab.com/fdroid/fdroiddata/-/blob/master/metadata/com.w2sv.wifiwidget.yml

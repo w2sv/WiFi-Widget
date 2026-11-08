@@ -64,7 +64,6 @@ android {
 play {
     serviceAccountCredentials.set(file("service-account-key.json"))
     defaultToAppBundles.set(true)
-    artifactDir.set(file("build/outputs/bundle/release"))
 }
 
 dependencies {
