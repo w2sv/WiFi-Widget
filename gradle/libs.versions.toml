@@ -80,7 +80,7 @@ google-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android
 google-dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "google-dagger-hilt" }
 google-protobuf-kotlin-lite = { module = "com.google.protobuf:protobuf-kotlin-lite", version.ref = "protobuf" }
 google-protobuf-protoc = { module = "com.google.protobuf:protoc", version.ref = "protobuf" }
-io-mockk = "io.mockk:mockk:1.14.11"
+io-mockk = "io.mockk:mockk:1.14.12"
 javax-inject = "javax.inject:javax.inject:1"
 junit = { module = "junit:junit", version.ref = "junit" }
 # @keep
