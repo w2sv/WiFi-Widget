@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.common.android.SettingsIntents
+import com.w2sv.composed.material3.SnackbarLauncher
 import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import com.w2sv.wifiwidget.ui.location.capability.permission.rememberLocationPermissionCapability
@@ -13,11 +14,13 @@ import com.w2sv.wifiwidget.ui.location.capability.permission.rememberLocationPer
 fun rememberLocationAccessCapability(
     isLocationEnabled: IsLocationEnabled,
     requestHistory: PermissionRequestHistory,
-    rationalHistory: LocationAccessRationalHistory
+    rationalHistory: LocationAccessRationalHistory,
+    snackbarLauncher: SnackbarLauncher
 ): LocationAccessCapability {
     val permissionCapability = rememberLocationPermissionCapability(
         requestHistory = requestHistory,
-        rationalHistory = rationalHistory
+        rationalHistory = rationalHistory,
+        snackbarLauncher = snackbarLauncher
     )
     val context = LocalContext.current
 

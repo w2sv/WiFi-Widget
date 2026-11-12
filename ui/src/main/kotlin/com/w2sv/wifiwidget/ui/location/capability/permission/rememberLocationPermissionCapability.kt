@@ -17,11 +17,9 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.augmentedpermissions.PermissionState
 import com.w2sv.augmentedpermissions.rememberPermissionState
 import com.w2sv.composed.material3.SnackbarLauncher
-import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
 import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.kotlinutils.makeIf
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
@@ -31,7 +29,7 @@ import slimber.log.d
 fun rememberLocationPermissionCapability(
     requestHistory: PermissionRequestHistory,
     rationalHistory: LocationAccessRationalHistory,
-    snackbarLauncher: SnackbarLauncher = rememberSnackbarLauncher(LocalSnackbarHostState.current)
+    snackbarLauncher: SnackbarLauncher
 ): LocationPermissionCapability {
     val foregroundPermissionState = rememberForegroundLocationPermissionState(requestHistory)
     val backgroundPermissionState = rememberBackgroundLocationPermissionState()

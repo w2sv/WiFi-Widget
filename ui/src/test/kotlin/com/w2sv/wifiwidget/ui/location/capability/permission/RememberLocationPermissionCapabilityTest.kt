@@ -4,15 +4,14 @@ import android.Manifest
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
+import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
@@ -35,6 +34,8 @@ class RememberLocationPermissionCapabilityTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
+    private val snackbarHostState = SnackbarHostState()
+
     @Test
     @Config(sdk = [35])
     fun `collected rational history updates a stable capability`() {
@@ -45,7 +46,8 @@ class RememberLocationPermissionCapabilityTest {
             recompose.value
             capability = rememberLocationPermissionCapability(
                 requestHistory = PermissionRequestHistory(MutableStateFlow(false)) {},
-                rationalHistory = LocationAccessRationalHistory(rationalWasShown) {}
+                rationalHistory = LocationAccessRationalHistory(rationalWasShown) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 
@@ -64,7 +66,8 @@ class RememberLocationPermissionCapabilityTest {
         composeRule.setContent {
             capability = rememberLocationPermissionCapability(
                 requestHistory = PermissionRequestHistory(MutableStateFlow(false)) {},
-                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 
@@ -78,7 +81,8 @@ class RememberLocationPermissionCapabilityTest {
         composeRule.setContent {
             capability = rememberLocationPermissionCapability(
                 requestHistory = PermissionRequestHistory(MutableStateFlow(false)) {},
-                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 
@@ -88,15 +92,13 @@ class RememberLocationPermissionCapabilityTest {
     @Test
     @Config(sdk = [35])
     fun `persisted foreground request history routes suppressed requests to settings snackbar`() {
-        val snackbarHostState = SnackbarHostState()
         var capability: LocationPermissionCapability? = null
         composeRule.setContent {
-            CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
-                capability = rememberLocationPermissionCapability(
-                    requestHistory = PermissionRequestHistory(MutableStateFlow(true)) {},
-                    rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
-                )
-            }
+            capability = rememberLocationPermissionCapability(
+                requestHistory = PermissionRequestHistory(MutableStateFlow(true)) {},
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
+            )
         }
 
         composeRule.runOnIdle { capability!!.requestPermission() }
@@ -124,7 +126,8 @@ class RememberLocationPermissionCapabilityTest {
         composeRule.setContent {
             capability = rememberLocationPermissionCapability(
                 requestHistory = PermissionRequestHistory(MutableStateFlow(false)) { requestRecordedCount++ },
-                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 
@@ -145,7 +148,8 @@ class RememberLocationPermissionCapabilityTest {
         composeRule.setContent {
             capability = rememberLocationPermissionCapability(
                 requestHistory = PermissionRequestHistory(MutableStateFlow(true)) {},
-                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
             LaunchedEffect(capability) {
                 capability.grantEvents.collect { events.value += it }

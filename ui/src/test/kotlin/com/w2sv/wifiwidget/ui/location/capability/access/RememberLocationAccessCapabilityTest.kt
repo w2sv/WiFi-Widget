@@ -3,9 +3,11 @@ package com.w2sv.wifiwidget.ui.location.capability.access
 import android.content.Intent
 import android.provider.Settings
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
+import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +30,8 @@ class RememberLocationAccessCapabilityTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
+    private val snackbarHostState = SnackbarHostState()
+
     @Test
     fun `provider stays live and replacing it creates a new access capability`() {
         var enabled = false
@@ -41,7 +45,8 @@ class RememberLocationAccessCapabilityTest {
             capability = rememberLocationAccessCapability(
                 isLocationEnabled = provider.value,
                 requestHistory = requestHistory,
-                rationalHistory = rationalHistory
+                rationalHistory = rationalHistory,
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 
@@ -68,7 +73,8 @@ class RememberLocationAccessCapabilityTest {
             capability = rememberLocationAccessCapability(
                 isLocationEnabled = { true },
                 requestHistory = PermissionRequestHistory(MutableStateFlow(false)) {},
-                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {}
+                rationalHistory = LocationAccessRationalHistory(MutableStateFlow(true)) {},
+                snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
             )
         }
 

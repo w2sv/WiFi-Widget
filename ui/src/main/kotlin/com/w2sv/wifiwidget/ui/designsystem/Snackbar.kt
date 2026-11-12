@@ -41,7 +41,9 @@ import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilderFlow
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 import kotlinx.coroutines.flow.emptyFlow
 
-val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
+val LocalSnackbarHostState = staticCompositionLocalOf<SnackbarHostState> {
+    error("LocalSnackbarHostState not provided")
+}
 
 @Immutable
 data class SnackbarAction(val label: String, val callback: () -> Unit)
