@@ -1,38 +1,24 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.animateColor
-import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.Transition
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -42,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.w2sv.composed.ui.then
 import com.w2sv.core.resources.R
 import com.w2sv.domain.preferences.Theme
 
@@ -62,6 +47,7 @@ fun ThemeSelectionRow(
     onSelected: (Theme) -> Unit,
     modifier: Modifier = Modifier,
     buttonSize: Dp = 44.dp,
+    badgeOutlineColor: Color = MaterialTheme.colorScheme.surface,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center
 ) {
     val indicators = remember { themeIndicators() }
@@ -73,9 +59,10 @@ fun ThemeSelectionRow(
         indicators.forEach { properties ->
             ThemeIndicator(
                 properties = properties,
-                isSelected = { properties.theme == selected },
+                isSelected = properties.theme == selected,
                 onClick = { onSelected(properties.theme) },
-                buttonModifier = Modifier.size(buttonSize)
+                buttonSize = buttonSize,
+                badgeOutlineColor = badgeOutlineColor
             )
         }
     }
@@ -86,51 +73,36 @@ private fun themeIndicators(): List<ThemeIndicator> =
         ThemeIndicator(
             theme = Theme.Light,
             labelRes = R.string.light,
-            color = ButtonColor.Uniform(Color.White)
+            brush = SolidColor(Color.White)
         ),
         ThemeIndicator(
             theme = Theme.Default,
             labelRes = R.string.default_,
-            color = ButtonColor.Gradient(
-                Brush.linearGradient(
-                    0.5f to Color.White,
-                    0.5f to Color.Black
-                )
+            brush = Brush.linearGradient(
+                0.5f to Color.White,
+                0.5f to Color.Black
             )
         ),
         ThemeIndicator(
             theme = Theme.Dark,
             labelRes = R.string.dark,
-            color = ButtonColor.Uniform(Color.Black)
+            brush = SolidColor(Color.Black)
         )
     )
 
 @Immutable
-private data class ThemeIndicator(val theme: Theme, @StringRes val labelRes: Int, val color: ButtonColor)
-
-@Immutable
-private sealed interface ButtonColor {
-
-    @Immutable
-    @JvmInline
-    value class Uniform(val containerColor: Color) : ButtonColor
-
-    @Immutable
-    @JvmInline
-    value class Gradient(val brush: Brush) : ButtonColor
-}
+private data class ThemeIndicator(val theme: Theme, @StringRes val labelRes: Int, val brush: Brush)
 
 @Composable
 private fun ThemeIndicator(
     properties: ThemeIndicator,
-    isSelected: () -> Boolean,
-    modifier: Modifier = Modifier,
-    buttonModifier: Modifier = Modifier,
+    isSelected: Boolean,
+    buttonSize: Dp,
+    badgeOutlineColor: Color,
     onClick: () -> Unit
 ) {
     val label = stringResource(id = properties.labelRes)
     Column(
-        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -139,83 +111,19 @@ private fun ThemeIndicator(
             color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(modifier = Modifier.height(8.dp))
-        ThemeButton(
-            buttonColor = properties.color,
-            themeLabel = label,
-            actionDescription = stringResource(R.string.theme_button_cd, label),
+        ColorSwatch(
+            brush = properties.brush,
+            diameter = buttonSize,
+            badgeOutlineColor = badgeOutlineColor,
+            modifier = Modifier.semantics {
+                contentDescription = label
+                selected = isSelected
+            },
+            selected = isSelected,
+            showCheckmark = true,
             onClick = onClick,
-            isSelected = isSelected,
-            modifier = buttonModifier
+            onClickLabel = stringResource(R.string.theme_button_cd, label),
+            role = Role.RadioButton
         )
     }
 }
-
-@Composable
-private fun ThemeButton(
-    buttonColor: ButtonColor,
-    themeLabel: String,
-    actionDescription: String,
-    onClick: () -> Unit,
-    isSelected: () -> Boolean,
-    modifier: Modifier = Modifier,
-    size: Dp = 48.dp
-) {
-    val selected = isSelected()
-    val border = animatedThemeButtonBorder(selected)
-
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .then {
-                when (buttonColor) {
-                    is ButtonColor.Gradient -> background(buttonColor.brush)
-                    is ButtonColor.Uniform -> background(buttonColor.containerColor)
-                }
-            }
-            .border(border, CircleShape)
-            .semantics {
-                contentDescription = themeLabel
-                this.selected = selected
-            }
-            .clickable(onClick = onClick, onClickLabel = actionDescription, role = Role.RadioButton)
-    )
-}
-
-@Composable
-private fun animatedThemeButtonBorder(isSelected: Boolean): BorderStroke {
-    val transition = updateTransition(
-        targetState = isSelected,
-        label = "ThemeButtonBorder"
-    )
-
-    val borderWidth by transition.animateDp(
-        transitionSpec = { selectionSpec() },
-        label = "borderWidth"
-    ) { if (it) 3.dp else Dp.Hairline }
-
-    val borderColor by transition.animateColor(
-        transitionSpec = { selectionSpec() },
-        label = "borderColor"
-    ) {
-        if (it) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.onSurfaceVariant
-        }
-    }
-
-    return BorderStroke(borderWidth, borderColor)
-}
-
-private fun <T> Transition.Segment<Boolean>.selectionSpec(): FiniteAnimationSpec<T> =
-    if (targetState) {
-        tween(
-            durationMillis = BORDER_ANIMATION_DURATION,
-            easing = Easing.Overshoot
-        )
-    } else {
-        tween(durationMillis = BORDER_ANIMATION_DURATION)
-    }
-
-private const val BORDER_ANIMATION_DURATION = 500

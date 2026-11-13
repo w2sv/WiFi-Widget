@@ -3,11 +3,11 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.EaseOutBack
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +30,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -38,7 +39,6 @@ import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.composed.runtime.CollectLatestFromFlow
 import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
-import com.w2sv.wifiwidget.ui.designsystem.Easing
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.kind
@@ -152,14 +152,19 @@ private fun EditingFabVisibility(
 ) {
     AnimatedVisibility(
         visible = visible,
-        enter = slideInHorizontally(
-            initialOffsetX = { it / 2 },
-            animationSpec = tween(easing = Easing.Anticipate)
-        ) + fadeIn(),
-        exit = slideOutHorizontally(
-            targetOffsetX = { it / 2 },
-            animationSpec = tween(easing = Easing.Anticipate)
-        ) + fadeOut()
+        enter = scaleIn(
+            initialScale = 0.7f,
+            transformOrigin = TransformOrigin(1f, 1f),
+            animationSpec = tween(
+                durationMillis = 250,
+                easing = EaseOutBack
+            )
+        ),
+        exit = scaleOut(
+            targetScale = 0.7f,
+            transformOrigin = TransformOrigin(1f, 1f),
+            animationSpec = tween(durationMillis = 150, easing = LinearEasing)
+        )
     ) {
         OnVisibilityStateChange(transition, onVisibilityChanged)
         content()

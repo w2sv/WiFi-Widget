@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -16,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -26,7 +29,7 @@ import com.w2sv.androidutils.os.dynamicColorsSupported
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetColoring
 import com.w2sv.domain.widget.WidgetColoringStrategy
-import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
+import com.w2sv.wifiwidget.ui.designsystem.ColorSwatch
 import com.w2sv.wifiwidget.ui.designsystem.ConfigureUseDynamicColors
 import com.w2sv.wifiwidget.ui.designsystem.NestedSettingsTokens
 import com.w2sv.wifiwidget.ui.designsystem.ThemeSelectionRow
@@ -146,6 +149,7 @@ private fun ConfigurePresetColoring(
             modifier = Modifier.fillMaxWidth(),
             selected = data.theme,
             onSelected = { update(data.copy(theme = it)) },
+            badgeOutlineColor = NestedSettingsTokens.containerColor,
             horizontalArrangement = Arrangement.SpaceBetween
         )
         if (dynamicColorsSupported) {
@@ -195,6 +199,7 @@ private fun ConfigureCustomColoring(
                 color = Color(value),
                 modifier = Modifier
                     .semantics { stateDescription = colorDescription }
+                    .clip(RoundedCornerShape(16.dp))
                     .clickable(
                         onClickLabel = stringResource(
                             id = R.string.color_picker_button_cd,
@@ -231,6 +236,6 @@ private fun CustomizationRow(
             fontSize = NestedSettingsTokens.fontSize,
             modifier = Modifier.weight(1f)
         )
-        ColorIndicator(color)
+        ColorSwatch(brush = SolidColor(color))
     }
 }

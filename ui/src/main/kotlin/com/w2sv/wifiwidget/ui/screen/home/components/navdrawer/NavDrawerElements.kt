@@ -6,6 +6,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.plus
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.dp
@@ -33,6 +34,7 @@ fun navDrawerElements(): ImmutableList<DrawerElement> =
                 ThemeSelectionRow(
                     selected = themeController.settings.theme,
                     onSelected = { theme -> themeController.updateSettings { it.copy(theme = theme) } },
+                    badgeOutlineColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     horizontalArrangement = Arrangement.spacedBy(22.dp)
                 )
             }
