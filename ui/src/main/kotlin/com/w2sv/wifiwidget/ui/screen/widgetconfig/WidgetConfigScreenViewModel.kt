@@ -5,23 +5,20 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CancellationException
+import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import slimber.log.e
-import javax.inject.Inject
-
 
 /** Manages reversible widget configuration editing and persistence. */
 @HiltViewModel
-class WidgetConfigScreenViewModel @Inject constructor(
-    dataSource: WidgetConfigDataSource,
-    private val widgetActions: WidgetActions
-) : ViewModel() {
+class WidgetConfigScreenViewModel @Inject constructor(dataSource: WidgetConfigDataSource, private val widgetActions: WidgetActions) :
+    ViewModel() {
 
     val reversibleConfig = ReversibleStateFlow(
         scope = viewModelScope,
@@ -35,13 +32,11 @@ class WidgetConfigScreenViewModel @Inject constructor(
 
             // Persistence has succeeded. Widget actions are best-effort
             // and must not cause a confirmed write to be retried.
-            try {
+            runOrHandle(onFailure = { failure -> e { "Failed applying widget configuration side effects: error=$failure" } }) {
                 widgetActions.applyConfigurationChange(
                     previous = commit.previous,
                     current = commit.current
                 )
-            } catch (failure: Exception) {
-                e { "Failed applying widget configuration side effects: error=$failure" }
             }
         }
     )
@@ -51,12 +46,8 @@ class WidgetConfigScreenViewModel @Inject constructor(
 
     fun applyChanges() {
         viewModelScope.launch {
-            try {
+            runOrHandle(onFailure = { failure -> e { "Failed committing widget configuration: error=$failure" } }) {
                 reversibleConfig.commit()
-            } catch (cancelled: CancellationException) {
-                throw cancelled
-            } catch (failure: Exception) {
-                e { "Failed committing widget configuration: error=$failure" }
             }
         }
     }

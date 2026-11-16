@@ -9,10 +9,10 @@ import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.widget.WidgetStatus
+import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
@@ -61,14 +61,12 @@ class RemoteDataWidgetObserver @Inject internal constructor(
         // UNDISPATCHED consumes StateFlow's baseline before callers can publish a new value.
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             remoteNetworkDataRepository.data.drop(1).collect {
-                try {
+                runOrHandle(onFailure = { exception ->
+                    e { "Failed requesting widget render after remote-data change: error=$exception" }
+                }) {
                     if (widgetStatus.hasInstalledWidgets) {
                         widgetActions.render()
                     }
-                } catch (exception: CancellationException) {
-                    throw exception
-                } catch (exception: Exception) {
-                    e { "Failed requesting widget render after remote-data change: error=$exception" }
                 }
             }
         }
@@ -78,12 +76,10 @@ class RemoteDataWidgetObserver @Inject internal constructor(
             // Reconcile the baseline once. Recovery uses unique KEEP work if onUpdate also runs.
             // Render-only Glance updates never schedule recovery.
             scope.launch {
-                try {
-                    scheduleRecoveryAfterWifiChange()
-                } catch (exception: CancellationException) {
-                    throw exception
-                } catch (exception: Exception) {
+                runOrHandle(onFailure = { exception ->
                     e { "Failed scheduling widget recovery after process recreation: error=$exception" }
+                }) {
+                    scheduleRecoveryAfterWifiChange()
                 }
             }
         }
@@ -124,17 +120,15 @@ class RemoteDataWidgetObserver @Inject internal constructor(
         // The first emission establishes a baseline; later callback events can represent
         // a new Network even while Wi-Fi status remains ConnectedInactive.
         wifiStatusSource.status.collect { status ->
-            try {
+            runOrHandle(onFailure = { exception ->
+                e { "Failed requesting widget render after Wi-Fi change: error=$exception" }
+            }) {
                 val current = ObservedWifiConnection(status, wifiStatusSource.connectedWifiIdentity())
                 if (previous != null && previous != current && widgetStatus.hasInstalledWidgets) {
                     if (status.isConnected) scheduleRecoveryAfterWifiChange()
                     widgetActions.render()
                 }
                 previous = current
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (exception: Exception) {
-                e { "Failed requesting widget render after Wi-Fi change: error=$exception" }
             }
         }
     }
@@ -153,7 +147,7 @@ class RemoteDataWidgetObserver @Inject internal constructor(
     private suspend fun observeDefaultEgress() {
         var previous: ObservedDefaultEgress? = null
         wifiStatusSource.defaultEgressChanges.collect {
-            try {
+            runOrHandle(onFailure = { exception -> e { "Failed reconciling widget after default-route change: error=$exception" } }) {
                 val availability = networkAvailabilitySource()
                 val current = ObservedDefaultEgress(
                     availability.defaultNetworkIdentity,
@@ -167,10 +161,6 @@ class RemoteDataWidgetObserver @Inject internal constructor(
 
                 reconcileDefaultEgress(availability)
                 previous = current
-            } catch (exception: CancellationException) {
-                throw exception
-            } catch (exception: Exception) {
-                e { "Failed reconciling widget after default-route change: error=$exception" }
             }
         }
     }

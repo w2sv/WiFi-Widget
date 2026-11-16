@@ -6,11 +6,11 @@ import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.annotation.RequiresApi
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.w2sv.common.di.qualifier.AppDefaultScope
+import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.widget.WifiWidgetProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,7 +44,7 @@ class WidgetPreviewPublisher @Inject internal constructor(
 
     @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
     private suspend fun attemptPublishIfOutdated() {
-        try {
+        runOrHandle(onFailure = { exception -> w { "Failed publishing launcher widget previews: error=$exception" } }) {
             val signature = WidgetPreviewSignature.current(context)
             if (publicationStore.signatureWasPublished(signature)) return
 
@@ -53,10 +53,6 @@ class WidgetPreviewPublisher @Inject internal constructor(
             if (result == GlanceAppWidgetManager.SET_WIDGET_PREVIEWS_RESULT_SUCCESS) {
                 publicationStore.recordPublished(signature)
             }
-        } catch (exception: CancellationException) {
-            throw exception
-        } catch (exception: Exception) {
-            w { "Failed publishing launcher widget previews: error=$exception" }
         }
     }
 }

@@ -3,11 +3,11 @@ package com.w2sv.widget.rendering
 import android.content.Context
 import androidx.glance.appwidget.updateAll
 import com.w2sv.common.di.qualifier.AppDefaultScope
+import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.widget.ui.WifiGlanceWidget
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,13 +39,11 @@ internal class WidgetRenderCoordinator @Inject constructor(
         // A StateFlow retains a request made before this collector starts and conflates bursts.
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
             revisions.filter { it > 0L }.collect {
-                try {
-                    WifiGlanceWidget().updateAll(context)
-                } catch (exception: CancellationException) {
-                    throw exception
-                } catch (exception: Exception) {
+                runOrHandle(onFailure = { exception ->
                     // An update failure must not terminate delivery of later requests.
                     e { "Widget render failed: error=$exception" }
+                }) {
+                    WifiGlanceWidget().updateAll(context)
                 }
             }
         }
