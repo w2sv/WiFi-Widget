@@ -111,7 +111,7 @@ private fun NavDrawerSheet(
         LazyColumn(
             modifier = Modifier.padding(horizontal = 24.dp),
             contentPadding =
-            WindowInsets.systemBarsIgnoringVisibility.asPaddingValues() + PaddingValues(top = NavDrawerTokens.topPadding)
+                WindowInsets.systemBarsIgnoringVisibility.asPaddingValues() + PaddingValues(top = NavDrawerTokens.topPadding)
         ) {
             item {
                 Header(
@@ -292,6 +292,7 @@ private fun Action(
         trailing = {
             when (val type = action.type) {
                 is DrawerElement.Action.Custom -> type.content(scope)
+
                 is DrawerElement.Action.Switch -> Switch(
                     checked = type.checked(scope),
                     onCheckedChange = { type.onCheckedChange(scope, it) },

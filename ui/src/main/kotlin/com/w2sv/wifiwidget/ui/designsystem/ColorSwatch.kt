@@ -57,12 +57,11 @@ fun ColorSwatch(
         label = "ColorSwatchBorderColor"
     )
 
-    Box(modifier = Modifier.size(diameter)) {
+    Box(modifier = modifier.size(diameter)) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(CircleShape)
-                .then(modifier)
                 .thenIfNotNull(onClick) {
                     clickable(
                         onClickLabel = onClickLabel,

@@ -75,7 +75,9 @@ class WifiStateProviderImpl @Inject constructor(
         .mapLatest { inputs ->
             when (inputs.status) {
                 WifiStatus.Disabled -> WifiState.Disabled
+
                 WifiStatus.NotConnected -> WifiState.Disconnected
+
                 else -> {
                     d { "Computing connected Wi-Fi state for ${inputs.status} ${inputs.remoteData} ${inputs.config}" }
                     WifiState.Connected(

@@ -346,7 +346,7 @@ private data class RemoteDataCache(
                 publicIps = config.publicIpVersions.mapNotNull(publicIps::get)
             ),
             ipApiInitializedForConfig =
-            ipApiInitializedForConfig || results.ipApi?.isSuccess == true,
+                ipApiInitializedForConfig || results.ipApi?.isSuccess == true,
             attemptedIpVersions = attemptedIpVersions + results.attemptedIpVersions
         )
     }

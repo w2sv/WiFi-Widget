@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 
 internal fun Project.applyBaseConfig(namespace: Namespace = Namespace.Auto) {
-    pluginManager.applyPlugins("ktlint", catalog = catalog)
+    pluginManager.apply("wifiwidget.code-quality")
 
     extensions.configureKotlinAndroidProject()
     extensions.configureCommon(
@@ -48,6 +48,10 @@ private fun ExtensionContainer.configureCommon(
         compileOptions.apply {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
+        }
+        lint.apply {
+            warningsAsErrors = true
+            abortOnError = true
         }
         testOptions.apply {
             unitTests {

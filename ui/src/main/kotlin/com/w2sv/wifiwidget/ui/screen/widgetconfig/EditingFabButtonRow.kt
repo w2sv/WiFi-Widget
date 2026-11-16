@@ -88,7 +88,7 @@ fun EditingFabButtonRow(configEditState: ConfigEditState, modifier: Modifier = M
 
     EditingFabVisibility(
         visible = isDirty && !snackbarBlocksFabs,
-        onVisibilityChanged = { fabButtonsVisible = it }
+        onVisibilityChange = { fabButtonsVisible = it }
     ) {
         Row(
             // Keep spacing inside AnimatedVisibility so an absent FAB leaves no Scaffold slot height.
@@ -147,7 +147,7 @@ private suspend fun suspendUntil(condition: () -> Boolean) {
 @Composable
 private fun EditingFabVisibility(
     visible: Boolean,
-    onVisibilityChanged: (Boolean) -> Unit,
+    onVisibilityChange: (Boolean) -> Unit,
     content: @Composable AnimatedVisibilityScope.() -> Unit
 ) {
     AnimatedVisibility(
@@ -166,7 +166,7 @@ private fun EditingFabVisibility(
             animationSpec = tween(durationMillis = 150, easing = LinearEasing)
         )
     ) {
-        OnVisibilityStateChange(transition, onVisibilityChanged)
+        OnVisibilityStateChange(transition, onVisibilityChange)
         content()
     }
 }

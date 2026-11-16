@@ -54,25 +54,26 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3.android)
-
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
-    debugImplementation(libs.androidx.compose.ui.tooling)
     implementation(libs.androidx.compose.activity)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.compose)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.constraintlayout.compose)
 
-    lintChecks(libs.slack.lint.compose.lint.checks)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.reorderable)
     implementation(libs.slimber)
     implementation(libs.flowExt)
 
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    ktlintRuleset(libs.compose.rules.ktlint)
+
     testImplementation(libs.bundles.unitTest)
     testImplementation(libs.androidx.compose.ui.test.junit4.android)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
