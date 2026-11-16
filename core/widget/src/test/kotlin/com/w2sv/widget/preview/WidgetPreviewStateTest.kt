@@ -16,6 +16,7 @@ import com.w2sv.widget.ui.WifiGlanceWidget
 import com.w2sv.widget.ui.actions.WidgetAction
 import com.w2sv.widget.ui.state.WidgetWifiState
 import com.w2sv.widget.ui.theme.resolve
+import com.w2sv.widget.ui.theme.toRenderColors
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -52,14 +53,17 @@ class WidgetPreviewStateTest {
         val rows = (state.wifiState as WidgetWifiState.Connected).rows
 
         assertEquals(SizeMode.Responsive(launcherPreviewSizes), widget.previewSizeMode)
-        assertEquals(WidgetConfig.default.appearance.coloring.resolve(context), state.colors)
+        assertEquals(
+            WidgetConfig.default.appearance.coloring.resolve(context).toRenderColors(WidgetConfig.default.appearance.backgroundOpacity),
+            state.colors
+        )
         assertTrue(rows.isNotEmpty())
         assertEquals(WidgetConfig.default.enabledProperties.map { it.protoId.toLong() * 1_000 }, rows.map { it.id })
         assertTrue(state.utilities.showRefreshTime)
         assertEquals(WidgetAction.entries, state.utilities.actions)
         assertEquals(WidgetConfig.default.appearance.fontSize, state.fontSize)
         assertEquals(WidgetConfig.default.appearance.propertyValueAlignment, state.valueAlignment)
-        assertEquals(255, android.graphics.Color.alpha(state.backgroundColor))
+        assertEquals(255, android.graphics.Color.alpha(state.colors.background))
         assertTrue(state.renderTime.normal.contains(state.renderTime.compact))
         assertTrue(state.renderTime.compact.isNotBlank())
     }
@@ -87,8 +91,8 @@ class WidgetPreviewStateTest {
         assertEquals(listOf(WidgetAction.Refresh), state.utilities.actions)
         assertFalse(state.utilities.showRefreshTime)
         assertTrue(rows.any { it.presentation.value == "Coffee Shop Wi-Fi" })
-        assertEquals(customColors, state.colors)
-        assertEquals(128, android.graphics.Color.alpha(state.backgroundColor))
+        assertEquals(customColors.toRenderColors(0.5f), state.colors)
+        assertEquals(128, android.graphics.Color.alpha(state.colors.background))
         assertEquals(FontSize.Large, state.fontSize)
         assertEquals(WifiPropertyValueAlignment.Left, state.valueAlignment)
     }

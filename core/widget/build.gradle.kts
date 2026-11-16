@@ -72,12 +72,12 @@ dependencies {
     implementation(projects.core.resources)
     implementation(projects.core.domain)
 
-    implementation(libs.google.android.material)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.glance.appwidget)
     implementation(libs.w2sv.androidutils.core)
     implementation(libs.w2sv.kotlinutils.core)
     implementation(libs.w2sv.kotlinutils.coroutines)
     implementation(libs.slimber)
-    implementation(libs.androidx.glance.appwidget)
 
     debugImplementation(libs.androidx.glance.appwidget.preview)
     debugImplementation(libs.androidx.glance.preview)

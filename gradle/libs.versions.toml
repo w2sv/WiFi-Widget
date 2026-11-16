@@ -82,7 +82,6 @@ androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", 
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
 flowExt = "io.github.hoc081098:FlowExt:1.0.0"
-google-android-material = "com.google.android.material:material:1.14.0"
 google-dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "google-dagger-hilt" }
 google-dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "google-dagger-hilt" }
 google-dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "google-dagger-hilt" }

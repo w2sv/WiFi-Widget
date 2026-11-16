@@ -29,12 +29,12 @@ internal fun WifiWidgetContent(state: WidgetPresentationState) {
             .appWidgetBackground()
             .thenIfApiAtLeast(SYSTEM_WIDGET_CORNER_RADIUS_SUPPORTING_API) {
                 this
-                    .background(Color(state.backgroundColor))
+                    .background(Color(state.colors.background))
                     .cornerRadius(AndroidR.dimen.system_app_widget_background_radius)
             }
     ) {
         if (!supportsSystemWidgetCornerRadius) {
-            LegacyWidgetBackground(size, state.backgroundColor)
+            LegacyWidgetBackground(size, state.colors.background)
         }
         when (val connection = state.wifiState) {
             is WidgetWifiState.Connected -> {
@@ -51,7 +51,7 @@ internal fun WifiWidgetContent(state: WidgetPresentationState) {
             }
         }
 
-        val surfaceColor = floatingSurfaceColor(state).toColorProvider()
+        val surfaceColor = state.colors.floatingSurface.toColorProvider()
         layout.timestamp?.let { timestamp ->
             Timestamp(
                 timestamp = timestamp,

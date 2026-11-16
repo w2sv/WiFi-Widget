@@ -1,7 +1,6 @@
 package com.w2sv.widget.ui.state
 
 import android.content.Context
-import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatusSource
@@ -10,7 +9,7 @@ import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.widget.rendering.WidgetRenderCoordinator
-import com.w2sv.widget.ui.theme.resolve
+import com.w2sv.widget.ui.theme.renderColors
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.Clock
 import javax.inject.Inject
@@ -50,7 +49,7 @@ internal class WidgetPresentationStateProvider @Inject constructor(
     suspend operator fun invoke(): WidgetPresentationState {
         val config = configSource.snapshot()
         val status = wifiStatusSource.snapshot()
-        val colors = config.appearance.coloring.resolve(context)
+        val colors = config.appearance.renderColors(context)
         return WidgetPresentationState(
             wifiState = if (status.isConnected) {
                 WidgetWifiState.Connected(status, propertyRows(config))
@@ -58,7 +57,6 @@ internal class WidgetPresentationStateProvider @Inject constructor(
                 WidgetWifiState.Disconnected(status)
             },
             colors = colors,
-            backgroundColor = getAlphaSetColor(colors.background, config.appearance.backgroundOpacity),
             fontSize = config.appearance.fontSize,
             valueAlignment = config.appearance.propertyValueAlignment,
             utilities = WidgetUtilities(config),

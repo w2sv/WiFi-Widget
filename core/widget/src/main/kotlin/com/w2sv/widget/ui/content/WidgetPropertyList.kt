@@ -30,7 +30,6 @@ import com.w2sv.widget.ui.layout.PropertyLayout
 import com.w2sv.widget.ui.state.WidgetPresentationState
 import com.w2sv.widget.ui.state.WidgetPropertyRow
 import com.w2sv.widget.ui.theme.WidgetDimens
-import com.w2sv.widget.ui.theme.subPropertyText
 import com.w2sv.widget.ui.theme.subscriptSize
 import com.w2sv.widget.ui.theme.textSize
 import com.w2sv.widget.ui.theme.toColorProvider

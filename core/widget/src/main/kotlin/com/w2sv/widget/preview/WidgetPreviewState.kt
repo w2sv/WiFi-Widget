@@ -3,7 +3,6 @@ package com.w2sv.widget.preview
 import android.content.Context
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.w2sv.androidutils.graphics.getAlphaSetColor
 import com.w2sv.core.resources.R as ResourcesR
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.widget.WidgetConfig
@@ -15,7 +14,7 @@ import com.w2sv.widget.ui.state.WidgetPresentationState
 import com.w2sv.widget.ui.state.WidgetPropertyRow
 import com.w2sv.widget.ui.state.WidgetUtilities
 import com.w2sv.widget.ui.state.WidgetWifiState
-import com.w2sv.widget.ui.theme.resolve
+import com.w2sv.widget.ui.theme.renderColors
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -32,7 +31,7 @@ internal fun widgetPreviewState(
     status: WifiStatus = WifiStatus.Connected
 ): WidgetPresentationState {
     val appearance = config.appearance
-    val colors = appearance.coloring.resolve(context)
+    val colors = appearance.renderColors(context)
     val wifiState = if (status.isConnected) {
         WidgetWifiState.Connected(
             status = status,
@@ -47,7 +46,6 @@ internal fun widgetPreviewState(
     return WidgetPresentationState(
         wifiState = wifiState,
         colors = colors,
-        backgroundColor = getAlphaSetColor(colors.background, appearance.backgroundOpacity),
         fontSize = appearance.fontSize,
         valueAlignment = appearance.propertyValueAlignment,
         utilities = WidgetUtilities(config),

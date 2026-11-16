@@ -1,9 +1,7 @@
 package com.w2sv.widget.ui.content
 
-import android.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
-import androidx.core.graphics.ColorUtils
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -92,13 +90,6 @@ internal fun UtilityFABs(
         }
     }
 }
-
-/** Blend opaque colors once, then apply the resolved widget background alpha once. */
-internal fun floatingSurfaceColor(state: WidgetPresentationState): Int =
-    ColorUtils.setAlphaComponent(
-        ColorUtils.blendARGB(state.colors.background or -0x1000000, state.colors.primary or -0x1000000, 0.12f),
-        Color.alpha(state.backgroundColor)
-    )
 
 @Composable
 private fun UtilityButton(

@@ -23,8 +23,10 @@ import com.w2sv.domain.wifiproperty.WifiPropertyResolver
 import com.w2sv.domain.wifiproperty.WifiPropertyValue
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.domain.wifiproperty.txt
+import com.w2sv.widget.preview.widgetPreviewState
 import com.w2sv.widget.rendering.WidgetRenderCoordinator
 import com.w2sv.widget.ui.actions.WidgetAction
+import com.w2sv.widget.ui.theme.toRenderColors
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -105,7 +107,8 @@ class WidgetPresentationStateProviderTest {
             assertEquals(config.enabledProperties.size, rows.size)
             assertEquals(rows.size, rows.map { it.id }.toSet().size)
             assertEquals(config.enabledProperties.map { it.protoId.toLong() * 1_000 }, rows.map { it.id })
-            assertEquals(colors, state.colors)
+            assertEquals(colors.toRenderColors(config.appearance.backgroundOpacity), state.colors)
+            assertEquals(widgetPreviewState(context, config).colors, state.colors)
             assertEquals(FontSize.Large, state.fontSize)
             assertEquals(WifiPropertyValueAlignment.Left, state.valueAlignment)
             assertTrue(state.utilities.showRefreshTime)
