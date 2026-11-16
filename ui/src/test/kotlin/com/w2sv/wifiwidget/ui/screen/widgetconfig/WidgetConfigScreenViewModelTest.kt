@@ -3,10 +3,8 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
-import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.wifiwidget.test.MainDispatcherRule
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -31,9 +29,6 @@ class WidgetConfigScreenViewModelTest {
             persisted.value = firstArg<(WidgetConfig) -> WidgetConfig>()(persisted.value)
         }
     }
-    private val configSource = mockk<WidgetConfigSource> {
-        coEvery { snapshot() } answers { persisted.value }
-    }
     var configurationChangeHasBeenApplied = false
     private val actions = mockk<WidgetActions>(relaxed = true) {
         every { applyConfigurationChange(any(), any()) } answers { configurationChangeHasBeenApplied = true }
@@ -41,7 +36,7 @@ class WidgetConfigScreenViewModelTest {
 
     @Test fun `successful commit calls applyConfigurationChange before emitting on changesHaveBeenCommitted`() =
         runTest {
-            val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
+            val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
             val previous = persisted.value
             val edited = previous.withUpdatedPropertyPosition(0, 1)
 
@@ -55,14 +50,13 @@ class WidgetConfigScreenViewModelTest {
             notified.join()
 
             assertEquals(edited, persisted.value)
-            coVerify(exactly = 1) { configSource.snapshot() }
             verify(exactly = 1) { actions.applyConfigurationChange(previous, edited) }
         }
 
     @Test fun `failed persistence has no widget side effects or commit notification`() =
         runTest {
             coEvery { dataSource.update(any()) } throws IllegalStateException("write failed")
-            val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
+            val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
             val notifications = mutableListOf<WidgetConfig>()
             backgroundScope.launch(mainDispatcherRule.dispatcher) {
                 viewModel.changesHaveBeenCommitted.collect { notifications += it }
@@ -78,7 +72,7 @@ class WidgetConfigScreenViewModelTest {
 
     @Test fun `external applied change updates a clean editor`() =
         runTest {
-            val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
+            val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
             val externallyApplied = WidgetConfig.default.withUpdatedPropertyPosition(0, 1)
 
             persisted.value = externallyApplied

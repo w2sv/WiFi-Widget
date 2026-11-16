@@ -37,7 +37,7 @@ w2sv-androidutils = "1.0.0"
 w2sv-composed = "0.7.0"
 w2sv-kotlinutils = "1.1.0"
 w2sv-persistedPreferences = "1.2.0"
-w2sv-reversiblestate = "1.0.0"
+w2sv-reversiblestate = "1.1.0"
 
 [libraries]
 # @keep

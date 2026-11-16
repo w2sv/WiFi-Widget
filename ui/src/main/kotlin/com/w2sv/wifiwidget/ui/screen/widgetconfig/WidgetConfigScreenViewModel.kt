@@ -5,31 +5,23 @@ import androidx.lifecycle.viewModelScope
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
-import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import slimber.log.e
+import javax.inject.Inject
 
-/** Manages reversible configuration editing and persistence; widget side effects belong to [WidgetActions]. */
+
+/** Manages reversible widget configuration editing and persistence. */
 @HiltViewModel
 class WidgetConfigScreenViewModel @Inject constructor(
     dataSource: WidgetConfigDataSource,
-    private val widgetConfigSource: WidgetConfigSource,
     private val widgetActions: WidgetActions
 ) : ViewModel() {
-    private val commitMutex = Mutex()
-
-    val changesHaveBeenCommitted: SharedFlow<WidgetConfig>
-        field = MutableSharedFlow<WidgetConfig>()
 
     val reversibleConfig = ReversibleStateFlow(
         scope = viewModelScope,
@@ -38,43 +30,34 @@ class WidgetConfigScreenViewModel @Inject constructor(
             started = SharingStarted.Eagerly,
             initialValue = WidgetConfig.default
         ),
-        commitState = { state ->
-            val previous = widgetConfigSource.snapshot()
-            dataSource.update { state }
-            widgetActions.applyConfigurationChange(previous, state)
-            changesHaveBeenCommitted.emit(state)
-        },
-        autoSyncWithAppliedState = false
-    )
+        commitState = { commit ->
+            dataSource.update { commit.current }
 
-    init {
-        viewModelScope.launch {
-            var previousApplied = reversibleConfig.appliedState.value
-            reversibleConfig.appliedState.collect { currentApplied ->
-                // A DataStore emission from an earlier Apply must not replace edits made while it was pending.
-                if (reversibleConfig.value == previousApplied) reversibleConfig.value = currentApplied
-                previousApplied = currentApplied
+            // Persistence has succeeded. Widget actions are best-effort
+            // and must not cause a confirmed write to be retried.
+            try {
+                widgetActions.applyConfigurationChange(
+                    previous = commit.previous,
+                    current = commit.current
+                )
+            } catch (failure: Exception) {
+                e { "Failed applying widget configuration side effects: error=$failure" }
             }
         }
-    }
+    )
 
-    /** Applies pending changes and their widget side effects. */
+    val changesHaveBeenCommitted =
+        reversibleConfig.commits.map { it.current }
+
     fun applyChanges() {
         viewModelScope.launch {
             try {
-                commitMutex.withLock { commitChangesIfNeeded() }
+                reversibleConfig.commit()
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (failure: Exception) {
                 e { "Failed committing widget configuration: error=$failure" }
             }
-        }
-    }
-
-    /** Commits only when the editable configuration differs from the persisted configuration. */
-    private suspend fun commitChangesIfNeeded() {
-        if (reversibleConfig.isDirty.value) {
-            reversibleConfig.commit()
         }
     }
 }

@@ -13,7 +13,6 @@ import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
-import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
@@ -52,11 +51,8 @@ class WidgetConfigRouteTest {
             if (publishUpdate) applied.value = stored
         }
     }
-    private val configSource = mockk<WidgetConfigSource> {
-        coEvery { snapshot() } answers { stored }
-    }
     private val actions = mockk<WidgetActions>(relaxed = true)
-    private val viewModel = WidgetConfigScreenViewModel(dataSource, configSource, actions)
+    private val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
     private val locationAccess = mockk<LocationAccessCapability>(relaxed = true) {
         every { grantEvents } returns emptyFlow()
         every { foregroundPermissionsGranted } returns true
@@ -162,24 +158,26 @@ class WidgetConfigRouteTest {
         coVerify(exactly = 0) { dataSource.update(any()) }
     }
 
-    @Test fun `successful Apply waits for stale dirty state before showing success snackbar`() {
+    @Test fun `successful Apply completes while applied state is stale`() {
         publishUpdate = false
         setContent(launcher = false)
         editConfig(nonDefaultConfig())
 
         composeRule.onNodeWithText(apply).performClick()
         composeRule.waitUntil { stored == nonDefaultConfig() }
-        composeRule.waitForIdle()
-        assertEquals(null, snackbarHost.currentSnackbarData)
-        composeRule.onNodeWithText(apply).assertIsDisplayed()
-
-        composeRule.runOnIdle { applied.value = stored }
         composeRule.waitUntil { !applyIsDisplayed() }
         composeRule.waitUntil { snackbarHost.currentSnackbarData != null }
+        assertEquals(WidgetConfig.default, applied.value)
+        assertEquals(false, viewModel.reversibleConfig.isDirty.value)
         assertEquals(
             composeRule.activity.getString(R.string.updated_widget_configuration),
             snackbarHost.currentSnackbarData?.visuals?.message
         )
+
+        composeRule.runOnIdle { applied.value = stored }
+        composeRule.waitForIdle()
+        assertEquals(false, viewModel.reversibleConfig.isDirty.value)
+        composeRule.onNodeWithText(apply).assertDoesNotExist()
     }
 
     @Test fun `new edit during pending Apply remains visible after first commit`() {
