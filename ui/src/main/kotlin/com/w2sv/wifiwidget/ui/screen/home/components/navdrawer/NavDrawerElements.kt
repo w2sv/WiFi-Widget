@@ -33,7 +33,7 @@ fun navDrawerElements(): ImmutableList<DrawerElement> =
             type = DrawerElement.Action.Custom {
                 ThemeSelectionRow(
                     selected = themeController.settings.theme,
-                    onSelected = { theme -> themeController.updateSettings { it.copy(theme = theme) } },
+                    onSelect = { theme -> themeController.updateSettings { it.copy(theme = theme) } },
                     badgeOutlineColor = MaterialTheme.colorScheme.surfaceContainerLow,
                     horizontalArrangement = Arrangement.spacedBy(22.dp)
                 )

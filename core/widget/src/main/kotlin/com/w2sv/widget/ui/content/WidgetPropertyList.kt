@@ -144,8 +144,8 @@ internal fun WifiPropertyPresentation.copyIntent(context: Context): Intent? {
 private fun PropertyLabel(
     row: WidgetPropertyRow,
     state: WidgetPresentationState,
-    modifier: GlanceModifier,
-    trailingPadding: Dp
+    trailingPadding: Dp,
+    modifier: GlanceModifier = GlanceModifier
 ) {
     val label = row.presentation.label
     if (label.subscript == null) {

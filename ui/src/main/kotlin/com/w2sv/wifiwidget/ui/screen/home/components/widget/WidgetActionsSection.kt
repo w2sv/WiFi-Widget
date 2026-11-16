@@ -45,7 +45,7 @@ fun WidgetActionsSection(
 }
 
 @Composable
-private fun PinWidgetButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun PinWidgetButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onClick,
         modifier = modifier

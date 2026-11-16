@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
-    <issue id="LintError" severity="warning" />
+    <!-- Debug source set doesn't specify a monochrome resource on purpose. -->
     <issue id="MonochromeLauncherIcon" severity="ignore" />
     <issue id="NotificationPermission" severity="warning" />
+    <!-- AGP updates are handled deliberately; patch release notices should not fail CI. -->
+    <issue id="AndroidGradlePluginVersion" severity="ignore" />
 </lint>

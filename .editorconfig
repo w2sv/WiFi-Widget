@@ -25,6 +25,10 @@ ktlint_standard_filename = disabled
 ktlint_function_signature_body_expression_wrapping = always
 ktlint_function_signature_rule_force_multiline_when_parameter_count_greater_or_equal_than = 3
 ktlint_standard_discouraged-comment-location = disabled
+ktlint_standard_blank-line-between-when-conditions = disabled
+
+# CompositionLocals are permitted without an explicit allowlist.
+ktlint_compose_compositionlocal-allowlist = disabled
 
 [*.md]
 max_line_length = unset

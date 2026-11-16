@@ -148,7 +148,7 @@ private fun ConfigurePresetColoring(
         ThemeSelectionRow(
             modifier = Modifier.fillMaxWidth(),
             selected = data.theme,
-            onSelected = { update(data.copy(theme = it)) },
+            onSelect = { update(data.copy(theme = it)) },
             badgeOutlineColor = NestedSettingsTokens.containerColor,
             horizontalArrangement = Arrangement.SpaceBetween
         )

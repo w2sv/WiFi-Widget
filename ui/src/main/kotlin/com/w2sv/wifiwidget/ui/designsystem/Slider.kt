@@ -18,7 +18,7 @@ fun SliderWithLabel(
     value: Float,
     @IntRange(from = 0) steps: Int,
     makeLabel: (Float) -> String,
-    onValueChanged: (Float) -> Unit,
+    onValueChange: (Float) -> Unit,
     contentDescription: String,
     modifier: Modifier = Modifier,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f
@@ -34,7 +34,7 @@ fun SliderWithLabel(
         @Suppress("DEPRECATION")
         Slider(
             value = value,
-            onValueChange = onValueChanged,
+            onValueChange = onValueChange,
             steps = steps,
             valueRange = valueRange,
             modifier = Modifier.semantics {

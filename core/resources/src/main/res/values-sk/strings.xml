@@ -53,7 +53,6 @@
     <string name="open_location_settings_cd">Otvoriť nastavenia polohy</string>
     <string name="wifi_status">Stav Wi-Fi</string>
     <string name="live_wifi_connection_details">Aktuálne údaje o pripojení Wi-Fi</string>
-    <string name="widget">Widget</string>
     <string name="updated_widget_configuration">Konfigurácia widgetu bola aktualizovaná.</string>
     <string name="ip">IP</string>
     <string name="report_a_bug_request_a_feature">Nahlásiť chybu / navrhnúť funkciu</string>

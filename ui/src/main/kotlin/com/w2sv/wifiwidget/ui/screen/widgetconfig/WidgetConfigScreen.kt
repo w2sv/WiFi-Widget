@@ -31,7 +31,7 @@ import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.WidgetConfigList
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.ScreenPreviews
+import com.w2sv.wifiwidget.ui.util.PreviewScreens
 import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
@@ -41,13 +41,14 @@ fun WidgetConfigScreen(
     configEditState: ConfigEditState,
     showDialog: (WidgetConfigDialog) -> Unit,
     onBackButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
     showCloseIcon: Boolean = false,
     state: LazyListState = rememberLazyListState()
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 title = { Text(stringResource(R.string.widget_configuration)) },
@@ -89,7 +90,7 @@ fun WidgetConfigScreen(
     }
 }
 
-@ScreenPreviews
+@PreviewScreens
 @Composable
 private fun Prev() {
     PreviewOf {

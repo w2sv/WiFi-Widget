@@ -62,8 +62,10 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         try {
             return when {
                 !remoteNetworkDataRepository.needsRecovery(config.remoteDataConfig) -> Result.success()
+
                 // A queued recovery may run after Wi-Fi disconnects or cellular takes over.
                 !networkAvailabilitySource().canRefreshWidgetRemoteData -> Result.retry()
+
                 else -> {
                     val refreshResult = remoteNetworkDataRepository.refreshForWidget(onlyIfMissing = true)
                     d { "Widget remote recovery finished: result=$refreshResult" }

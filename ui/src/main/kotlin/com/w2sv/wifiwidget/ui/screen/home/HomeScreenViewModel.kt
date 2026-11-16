@@ -66,9 +66,11 @@ class HomeScreenViewModel @Inject constructor(
     fun onLocationAccessGranted(event: OnLocationAccessGranted) {
         when (event) {
             TriggerWidgetDataRefresh -> widgetActions.refresh()
+
             EnableLocationAccessRequiringProperties -> viewModelScope.launch {
                 widgetConfigDataSource.update { it.withEnabledLocationAccessRequiringProperties() }
             }
+
             else -> Unit
         }
     }

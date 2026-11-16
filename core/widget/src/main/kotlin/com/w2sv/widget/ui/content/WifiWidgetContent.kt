@@ -15,6 +15,7 @@ import androidx.glance.layout.fillMaxSize
 import com.w2sv.widget.ui.layout.calculateWidgetLayout
 import com.w2sv.widget.ui.state.WidgetPresentationState
 import com.w2sv.widget.ui.state.WidgetWifiState
+import com.w2sv.widget.ui.theme.toColorProvider
 import com.w2sv.widget.ui.util.thenIfApiAtLeast
 
 @Composable
@@ -49,7 +50,24 @@ internal fun WifiWidgetContent(state: WidgetPresentationState) {
                 DisconnectedContent(state, layout.status)
             }
         }
-        FloatingUtilities(state, layout.actions, layout.timestamp)
+
+        val surfaceColor = floatingSurfaceColor(state).toColorProvider()
+        layout.timestamp?.let { timestamp ->
+            Timestamp(
+                timestamp = timestamp,
+                actionLayout = layout.actions,
+                surfaceColor = surfaceColor,
+                textColor = state.colors.secondary.toColorProvider()
+            )
+        }
+
+        if (state.utilities.actions.isNotEmpty()) {
+            UtilityFABs(
+                state = state,
+                actions = layout.actions,
+                surfaceColor = surfaceColor
+            )
+        }
     }
 }
 

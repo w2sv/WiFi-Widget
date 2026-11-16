@@ -111,6 +111,7 @@ private fun WifiProperty.makeTrySetChecked(
                     WifiPropertyCheckError.LocationAccessMissing
 
                 !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
+
                 else -> null
             }
         },

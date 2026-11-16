@@ -45,4 +45,4 @@ fun PreviewOf(
     showSystemUi = true
 )
 @Preview(name = "Tablet - Landscape", device = TABLET, showSystemUi = true)
-annotation class ScreenPreviews
+annotation class PreviewScreens

@@ -44,7 +44,7 @@ private fun ThemeSelectionRowPrev() {
 @Composable
 fun ThemeSelectionRow(
     selected: Theme,
-    onSelected: (Theme) -> Unit,
+    onSelect: (Theme) -> Unit,
     modifier: Modifier = Modifier,
     buttonSize: Dp = 44.dp,
     badgeOutlineColor: Color = MaterialTheme.colorScheme.surface,
@@ -60,7 +60,7 @@ fun ThemeSelectionRow(
             ThemeIndicator(
                 properties = properties,
                 isSelected = properties.theme == selected,
-                onClick = { onSelected(properties.theme) },
+                onClick = { onSelect(properties.theme) },
                 buttonSize = buttonSize,
                 badgeOutlineColor = badgeOutlineColor
             )

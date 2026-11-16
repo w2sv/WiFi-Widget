@@ -16,7 +16,7 @@ import com.w2sv.wifiwidget.ui.screen.home.HomeRoute
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 
 @Composable
-fun NavGraph(themeController: ThemeController) {
+fun NavGraph(themeController: ThemeController, modifier: Modifier = Modifier) {
     val navigator = rememberNavigator()
     val density = LocalDensity.current
 
@@ -27,7 +27,7 @@ fun NavGraph(themeController: ThemeController) {
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         transitionSpec = { xAxisEnterTransition togetherWith xAxisExitTransition(density) },

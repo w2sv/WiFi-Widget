@@ -1,9 +1,9 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    alias(libs.plugins.ktlint)
     alias(libs.plugins.android.test)
     alias(libs.plugins.androidx.baselineprofile)
+    alias(libs.plugins.wifiwidget.code.quality)
 }
 
 val mvdName = "Pixel 6 API 33"

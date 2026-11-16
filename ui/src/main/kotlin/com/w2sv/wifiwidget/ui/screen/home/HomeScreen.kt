@@ -50,10 +50,11 @@ fun HomeScreen(
     pinWidget: () -> Unit,
     toWidgetConfiguration: () -> Unit,
     snackbarBuilderFlow: SnackbarBuilderFlow,
+    modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
-    NavDrawer(state = drawerState, themeController = themeController) {
+    NavDrawer(state = drawerState, themeController = themeController, modifier = modifier) {
         Scaffold(
             topBar = {
                 NavDrawerTopBar(
@@ -64,11 +65,11 @@ fun HomeScreen(
             snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) },
             contentWindowInsets = WindowInsets()
         ) { paddingValues ->
-            val modifier = Modifier.padding(paddingValues)
+            val contentModifier = Modifier.padding(paddingValues)
             if (isLandscapeModeActive) {
-                LandscapeHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
+                LandscapeHomeContent(wifiState, pinWidget, toWidgetConfiguration, contentModifier)
             } else {
-                PortraitHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
+                PortraitHomeContent(wifiState, pinWidget, toWidgetConfiguration, contentModifier)
             }
         }
     }

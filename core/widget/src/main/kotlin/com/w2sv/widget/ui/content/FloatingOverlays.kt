@@ -1,7 +1,6 @@
 package com.w2sv.widget.ui.content
 
 import android.graphics.Color
-import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.core.graphics.ColorUtils
@@ -23,6 +22,7 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.w2sv.widget.ui.actions.WidgetAction
 import com.w2sv.widget.ui.layout.ActionLayout
 import com.w2sv.widget.ui.layout.TimestampLayout
@@ -31,57 +31,69 @@ import com.w2sv.widget.ui.theme.WidgetDimens
 import com.w2sv.widget.ui.theme.toColorProvider
 import com.w2sv.widget.ui.util.thenIfNotNull
 
-/** The timestamp and action row are separate Box children, so only buttons receive their click actions. */
 @Composable
-internal fun FloatingUtilities(
+internal fun Timestamp(
+    timestamp: TimestampLayout,
+    actionLayout: ActionLayout,
+    surfaceColor: ColorProvider,
+    textColor: ColorProvider
+) {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .padding(
+                start = actionLayout.edge,
+                end = actionLayout.edge + timestamp.endClearance,
+                bottom = actionLayout.edge
+            ),
+        contentAlignment = Alignment.BottomStart
+    ) {
+        Text(
+            text = timestamp.text,
+            modifier = GlanceModifier
+                .background(surfaceColor)
+                .cornerRadius(WidgetDimens.Timestamp.cornerRadius)
+                .padding(
+                    horizontal = timestamp.horizontalPadding,
+                    vertical = timestamp.verticalPadding
+                ),
+            style = TextStyle(color = textColor, fontSize = timestamp.fontSize),
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+internal fun UtilityFABs(
     state: WidgetPresentationState,
     actions: ActionLayout,
-    timestamp: TimestampLayout?
+    surfaceColor: ColorProvider
 ) {
-    val surface = floatingSurfaceColor(state)
-    timestamp?.let { time ->
-        Box(
-            GlanceModifier
-                .fillMaxSize()
-                .padding(start = actions.edge, end = actions.edge + time.endClearance, bottom = actions.edge),
-            contentAlignment = Alignment.BottomStart
-        ) {
-            Text(
-                text = time.text,
-                modifier = GlanceModifier
-                    .background(surface.toColorProvider())
-                    .cornerRadius(WidgetDimens.Timestamp.cornerRadius)
-                    .padding(horizontal = time.horizontalPadding, vertical = time.verticalPadding),
-                style = TextStyle(color = state.colors.secondary.toColorProvider(), fontSize = time.fontSize),
-                maxLines = 1
-            )
-        }
-    }
-    if (state.utilities.actions.isNotEmpty()) {
-        Box(
-            GlanceModifier
-                .fillMaxSize()
-                .padding(actions.edge),
-            contentAlignment = Alignment.BottomEnd
-        ) {
-            Row(verticalAlignment = Alignment.Vertical.Bottom) {
-                state.utilities.actions.forEachIndexed { index, action ->
-                    if (index > 0) Spacer(GlanceModifier.width(actions.spacing))
-                    UtilityButton(
-                        action = action,
-                        tint = state.colors.primary,
-                        surface = surface,
-                        size = actions.buttonSize,
-                        iconSize = actions.iconSize
-                    )
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .padding(actions.edge),
+        contentAlignment = Alignment.BottomEnd
+    ) {
+        Row(verticalAlignment = Alignment.Vertical.Bottom) {
+            state.utilities.actions.forEachIndexed { index, action ->
+                if (index > 0) {
+                    Spacer(GlanceModifier.width(actions.spacing))
                 }
+
+                UtilityButton(
+                    action = action,
+                    tint = state.colors.primary,
+                    surface = surfaceColor,
+                    size = actions.buttonSize,
+                    iconSize = actions.iconSize
+                )
             }
         }
     }
 }
 
 /** Blend opaque colors once, then apply the resolved widget background alpha once. */
-@VisibleForTesting
 internal fun floatingSurfaceColor(state: WidgetPresentationState): Int =
     ColorUtils.setAlphaComponent(
         ColorUtils.blendARGB(state.colors.background or -0x1000000, state.colors.primary or -0x1000000, 0.12f),
@@ -92,15 +104,16 @@ internal fun floatingSurfaceColor(state: WidgetPresentationState): Int =
 private fun UtilityButton(
     action: WidgetAction,
     tint: Int,
-    surface: Int,
+    surface: ColorProvider,
     size: Dp,
     iconSize: Dp
 ) {
     val context = LocalContext.current
+
     Box(
         modifier = GlanceModifier
             .size(size)
-            .background(surface.toColorProvider())
+            .background(surface)
             .cornerRadius(size / 2)
             .thenIfNotNull(action.createAction(context)) { clickable(it) },
         contentAlignment = Alignment.Center
