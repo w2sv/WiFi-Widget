@@ -40,6 +40,7 @@ fun LazyListScope.reorderableWifiPropertyItems(
     config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
+    onLocationAccessRequest: (WifiProperty) -> Unit,
     reorderableState: ReorderableLazyListState
 ) {
     itemsIndexed(config.supportedProperties, key = { _, property -> property.protoId }) { index, property ->
@@ -89,6 +90,7 @@ fun LazyListScope.reorderableWifiPropertyItems(
                         updateConfig = updateConfig,
                         showDialog = showDialog,
                         locationAccess = LocalLocationAccessCapability.current,
+                        onLocationAccessRequest = onLocationAccessRequest,
                         scope = scope,
                         snackbarController = snackbarController
                     ),

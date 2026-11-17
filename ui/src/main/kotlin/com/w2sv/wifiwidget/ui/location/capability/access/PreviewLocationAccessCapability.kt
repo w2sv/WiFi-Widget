@@ -1,24 +1,22 @@
 package com.w2sv.wifiwidget.ui.location.capability.access
 
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
+import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
-class PreviewLocationAccessCapability : LocationAccessCapability {
-    override val foregroundPermissionsGranted: Boolean = true
-    override val isBackgroundPermissionMissing: Boolean = true
-    override val showForegroundRational: Boolean = false
-    override val showBackgroundRational: Boolean = false
-    override val grantEvents: Flow<OnLocationAccessGranted> = emptyFlow()
+internal class PreviewLocationAccessCapability : LocationAccessCapability {
+    override val permissionLevel = LocationPermissionLevel.PreciseForeground
+    override val foregroundRequestSuppressed: Boolean = false
+    override val foregroundRequestResults: Flow<Boolean> = emptyFlow()
+    override val backgroundRequestResults: Flow<Boolean> = emptyFlow()
 
-    override val isLocationEnabled: Boolean = true
+    override val locationServicesEnabled: Boolean = true
+    override val locationServicesEnabledFlow: Flow<Boolean> = flowOf(true)
     override fun openLocationSettings() {}
+    override fun openAppSettings() {}
 
-    override fun onForegroundRationalProceed() {}
     override fun launchBackgroundPermission() {}
 
-    override fun dismissBackgroundRational() {}
-    override fun requestPermission(onGrant: OnLocationAccessGranted?) {}
-
-    override suspend fun onPermissionGranted() {}
+    override fun requestPermission() {}
 }

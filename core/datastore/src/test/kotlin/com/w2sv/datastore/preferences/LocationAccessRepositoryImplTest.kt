@@ -18,7 +18,7 @@ internal class LocationAccessRepositoryImplTest {
     val temporaryFolder = TemporaryFolder()
 
     @Test
-    fun `permission history reads existing keys and persists each event independently`() =
+    fun `permission history migrates onboarding and persists completion independently`() =
         runTest {
             val dataStore = PreferenceDataStoreFactory.create(
                 scope = backgroundScope,
@@ -29,7 +29,7 @@ internal class LocationAccessRepositoryImplTest {
             dataStore.edit { it[rationalShownKey] = true }
 
             val repository = LocationAccessRepositoryImpl(dataStore)
-            assertTrue(repository.rationalShown.first())
+            assertTrue(repository.onboardingCompleted.first())
             assertFalse(repository.permissionRequested.first())
 
             repository.recordPermissionRequested()
@@ -37,8 +37,8 @@ internal class LocationAccessRepositoryImplTest {
             assertTrue(dataStore.data.first()[rationalShownKey] == true)
 
             dataStore.edit { it[rationalShownKey] = false }
-            repository.recordRationalShown()
-            assertTrue(repository.rationalShown.first())
+            repository.completeOnboarding()
+            assertTrue(repository.onboardingCompleted.first())
             assertTrue(repository.permissionRequested.first())
         }
 }

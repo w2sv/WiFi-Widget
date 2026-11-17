@@ -23,28 +23,30 @@ import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapabilit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-data class PropertyOnClickScope(
+internal data class PropertyOnClickScope(
     val clipboard: Clipboard,
     val snackbarController: SnackbarController,
-    val locationAccessCapability: LocationAccessCapability
+    val locationAccessCapability: LocationAccessCapability,
+    val onMissingLocationAccess: () -> Unit
 )
 
 @Composable
-fun rememberPropertyOnClickScope(): PropertyOnClickScope {
+internal fun rememberPropertyOnClickScope(onMissingLocationAccess: () -> Unit): PropertyOnClickScope {
     val clipboard = LocalClipboard.current
     val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
     val locationAccessCapability = LocalLocationAccessCapability.current
 
-    return remember(clipboard, snackbarController, locationAccessCapability) {
+    return remember(clipboard, snackbarController, locationAccessCapability, onMissingLocationAccess) {
         PropertyOnClickScope(
             clipboard = clipboard,
             snackbarController = snackbarController,
-            locationAccessCapability = locationAccessCapability
+            locationAccessCapability = locationAccessCapability,
+            onMissingLocationAccess = onMissingLocationAccess
         )
     }
 }
 
-fun PropertyOnClickScope.onPropertyClick(
+internal fun PropertyOnClickScope.onPropertyClick(
     scope: CoroutineScope,
     label: CharSequence,
     value: String,
@@ -56,7 +58,7 @@ fun PropertyOnClickScope.onPropertyClick(
             snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
         }
 
-        NoLocationAccessPermission -> locationAccessCapability.requestPermission()
+        NoLocationAccessPermission -> onMissingLocationAccess()
         GpsDisabled -> locationAccessCapability.openLocationSettings()
         BatterySaverRestricted -> Unit
     }

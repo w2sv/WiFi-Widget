@@ -75,6 +75,7 @@ private fun HomeScreenPreview(wifiState: WifiState) {
             wifiState = wifiState,
             pinWidget = {},
             toWidgetConfiguration = {},
+            toLocationAccess = {},
             snackbarBuilderFlow = emptyFlow()
         )
     }

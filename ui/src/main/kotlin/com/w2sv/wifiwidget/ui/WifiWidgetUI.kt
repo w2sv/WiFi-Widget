@@ -7,12 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
-import com.w2sv.wifiwidget.ui.location.OptionalLocationAccessRationals
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
@@ -26,7 +24,7 @@ fun WifiWidgetUI(
     locationAccessDependencies: LocationAccessDependencies,
     activityViewModel: ActivityViewModel = hiltViewModel(),
     // Lets both activities share app-level UI and tests omit destination Hilt ViewModels.
-    content: @Composable (ThemeController) -> Unit = ::NavGraph
+    content: @Composable (ThemeController) -> Unit = { NavGraph(it) }
 ) {
     val themeSettings by activityViewModel.themeSettings.collectAsStateWithLifecycle()
     val themeController = remember(themeSettings, activityViewModel) {
@@ -38,9 +36,7 @@ fun WifiWidgetUI(
 
     val locationAccessCapability = rememberLocationAccessCapability(
         isLocationEnabled = locationAccessDependencies.isLocationEnabled,
-        requestHistory = locationAccessDependencies.requestHistory,
-        rationalHistory = locationAccessDependencies.rationalHistory,
-        snackbarLauncher = rememberSnackbarLauncher(snackbarHostState)
+        requestHistory = locationAccessDependencies.requestHistory
     )
 
     CompositionLocalProvider(
@@ -55,7 +51,6 @@ fun WifiWidgetUI(
             useAmoledBlackTheme = themeSettings.useAmoledBlackTheme
         ) {
             content(themeController)
-            OptionalLocationAccessRationals()
         }
     }
 }

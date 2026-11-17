@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.integration.environment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
@@ -31,7 +29,6 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     val repository get() = dependencies.remoteNetworkDataRepository()
 
     fun start() {
-        grantLocationPermissions()
         dependencies = EntryPointAccessors.fromApplication(context, WidgetIntegrationDependencies::class.java)
         http.reset()
         setConfig(widgetConfig())
@@ -154,21 +151,6 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
                 network != null &&
                 capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
                 capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        }
-    }
-
-    private fun grantLocationPermissions() {
-        // Android 12+ precise access requires both foreground location permissions.
-        listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION).forEach { permission ->
-            try {
-                instrumentation.uiAutomation.grantRuntimePermission(context.packageName, permission)
-            } catch (failure: Exception) {
-                throw AssertionError("Could not grant $permission to ${context.packageName} before integration-test UI setup.", failure)
-            }
-            check(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-                "Integration-test setup could not verify $permission for ${context.packageName}; " +
-                    "check the merged app manifest and instrumentation permission grant."
-            }
         }
     }
 

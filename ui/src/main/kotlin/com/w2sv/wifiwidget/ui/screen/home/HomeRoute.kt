@@ -17,8 +17,8 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarAction
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.drop
 import slimber.log.i
@@ -27,14 +27,19 @@ import slimber.log.i
 fun HomeRoute(
     themeController: ThemeController,
     toWidgetConfiguration: () -> Unit,
+    toLocationAccess: (LocationAccessScreenScenario) -> Unit,
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    BindLocationAccessToViewModel()
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) { viewModel.onForeground() }
+    ObserveLocationAccessChanges(onAccessChange = viewModel::onLocationAccessChanged)
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.onForeground()
+        viewModel.onLocationAccessChanged()
+    }
 
     ShowSnackbarOnWidgetPin(
         widgetPinSuccessFlow = viewModel.widgetPinSuccessFlow,
-        anyLocationAccessRequiringPropertyEnabled = { viewModel.isAnyLocationAccessRequiringPropertyEnabled }
+        anyLocationAccessRequiringPropertyEnabled = { viewModel.isAnyLocationAccessRequiringPropertyEnabled },
+        toLocationAccess = toLocationAccess
     )
 
     val wifiState by viewModel.wifiState.collectAsStateWithLifecycle()
@@ -44,38 +49,39 @@ fun HomeRoute(
         wifiState = wifiState,
         pinWidget = viewModel::pinWidget,
         toWidgetConfiguration = toWidgetConfiguration,
+        toLocationAccess = { toLocationAccess(ManagePermissions) },
         snackbarBuilderFlow = viewModel.snackbarBuilder
     )
 }
 
 @Composable
-private fun BindLocationAccessToViewModel(viewModel: HomeScreenViewModel = hiltViewModel()) {
+private fun ObserveLocationAccessChanges(onAccessChange: () -> Unit) {
     val locationAccessCapability = LocalLocationAccessCapability.current
 
     val locationAccessStatusChanges = remember(locationAccessCapability) {
-        snapshotFlow { locationAccessCapability.foregroundPermissionsGranted }.drop(1)
+        snapshotFlow { locationAccessCapability.permissionLevel.hasPreciseAccess }.drop(1)
     }
 
-    // Call viewModel.onLocationAccessChanged on locationAccessStatusChanges emissions
     CollectFromFlow(locationAccessStatusChanges) {
         i { "Calling onLocationAccessChanged on new location access status $it" }
-        viewModel.onLocationAccessChanged()
+        onAccessChange()
     }
-
-    // Consume OnLocationAccessGranted events relevant for the screen
-    CollectFromFlow(locationAccessCapability.grantEvents, collector = viewModel::onLocationAccessGranted)
 }
 
 @Composable
-private fun ShowSnackbarOnWidgetPin(widgetPinSuccessFlow: Flow<Unit>, anyLocationAccessRequiringPropertyEnabled: () -> Boolean) {
+private fun ShowSnackbarOnWidgetPin(
+    widgetPinSuccessFlow: Flow<Unit>,
+    anyLocationAccessRequiringPropertyEnabled: () -> Boolean,
+    toLocationAccess: (LocationAccessScreenScenario) -> Unit
+) {
     val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
     val locationAccess = LocalLocationAccessCapability.current
 
     CollectLatestFromFlow(widgetPinSuccessFlow) {
         snackbarController.replaceCurrentWith {
             when {
-                // Warn about (B)SSID not being displayed if device GPS is disabled
-                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.isLocationEnabled -> AppSnackbarVisuals(
+                // Warn when system location services are disabled.
+                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.locationServicesEnabled -> AppSnackbarVisuals(
                     msg = getString(R.string.on_pin_widget_wo_gps_enabled),
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(
@@ -84,22 +90,23 @@ private fun ShowSnackbarOnWidgetPin(widgetPinSuccessFlow: Flow<Unit>, anyLocatio
                     )
                 )
 
-                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.foregroundPermissionsGranted -> AppSnackbarVisuals(
+                anyLocationAccessRequiringPropertyEnabled() && !locationAccess.permissionLevel.hasPreciseAccess -> AppSnackbarVisuals(
                     msg = getString(R.string.on_pin_widget_wo_location_access_permission),
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(
                         label = getString(R.string.grant),
-                        callback = { locationAccess.requestPermission(onGrant = TriggerWidgetDataRefresh) }
+                        callback = { toLocationAccess(RefreshWidget) }
                     )
                 )
 
                 // Warn about (B)SSID not being reliably displayed if background location access not granted
-                anyLocationAccessRequiringPropertyEnabled() && locationAccess.isBackgroundPermissionMissing -> AppSnackbarVisuals(
+                anyLocationAccessRequiringPropertyEnabled() &&
+                    locationAccess.permissionLevel.isPreciseForeground -> AppSnackbarVisuals(
                     msg = getString(R.string.on_pin_widget_wo_background_location_access_permission),
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(
                         label = getString(R.string.grant),
-                        callback = locationAccess::launchBackgroundPermission
+                        callback = { toLocationAccess(RefreshWidget) }
                     )
                 )
 

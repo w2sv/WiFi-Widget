@@ -8,9 +8,6 @@ import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
@@ -25,7 +22,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val widgetConfigDataSource: WidgetConfigDataSource,
+    widgetConfigDataSource: WidgetConfigDataSource,
     private val widgetActions: WidgetActions,
     widgetStatus: WidgetStatus,
     private val remoteDataSynchronizer: RemoteDataSynchronizer,
@@ -60,18 +57,6 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 }
             }
-        }
-    }
-
-    fun onLocationAccessGranted(event: OnLocationAccessGranted) {
-        when (event) {
-            TriggerWidgetDataRefresh -> widgetActions.refresh()
-
-            EnableLocationAccessRequiringProperties -> viewModelScope.launch {
-                widgetConfigDataSource.update { it.withEnabledLocationAccessRequiringProperties() }
-            }
-
-            else -> Unit
         }
     }
 }

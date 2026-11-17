@@ -1,6 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import app.cash.turbine.test
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
@@ -11,7 +12,6 @@ import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.ReconciledWifiInputs
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import io.mockk.coEvery
@@ -43,7 +43,7 @@ class WifiStateProviderImplTest {
     private val repository = mockk<RemoteNetworkDataRepository> { every { data } returns remoteData }
     private val configSource = mockk<WidgetConfigSource> { every { flow } returns config }
     private val propertyProvider = mockk<WifiPropertyPresentationProvider>(relaxed = true)
-    private val locationProvider = mockk<LocationEnabledProvider> { every { isEnabled } returns locationEnabled }
+    private val locationProvider = mockk<IsLocationEnabled> { every { flow } returns locationEnabled }
 
     private fun TestScope.provider() =
         WifiStateProviderImpl(

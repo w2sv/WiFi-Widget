@@ -233,36 +233,42 @@ sealed class WifiProperty(
     )
 
     companion object {
-        val entries = listOf(
-            SSID,
-            BSSID,
-            LoopbackIp,
-            SiteLocalIp,
-            LinkLocalIp,
-            ULA,
-            MulticastIp,
-            GUA,
-            PublicIp,
-            Frequency,
-            Channel,
-            LinkSpeed,
-            RSSI,
-            SignalStrength,
-            Standard,
-            Generation,
-            Security,
-            Gateway,
-            DNS,
-            DHCP,
-            NAT64Prefix,
-            Location,
-            IpCoordinates,
-            ISP,
-            ASN
-        )
+        // Defer singleton access until initialization of an individual property has completed.
+        val entries: List<WifiProperty> by lazy {
+            listOf(
+                SSID,
+                BSSID,
+                LoopbackIp,
+                SiteLocalIp,
+                LinkLocalIp,
+                ULA,
+                MulticastIp,
+                GUA,
+                PublicIp,
+                Frequency,
+                Channel,
+                LinkSpeed,
+                RSSI,
+                SignalStrength,
+                Standard,
+                Generation,
+                Security,
+                Gateway,
+                DNS,
+                DHCP,
+                NAT64Prefix,
+                Location,
+                IpCoordinates,
+                ISP,
+                ASN
+            )
+        }
 
         val locationAccessRequiring: List<WifiProperty> by lazy {
             entries.filter { it.requiresLocationAccess }
         }
+
+        fun fromProtoId(protoId: Int): WifiProperty? =
+            entries.firstOrNull { it.protoId == protoId }
     }
 }

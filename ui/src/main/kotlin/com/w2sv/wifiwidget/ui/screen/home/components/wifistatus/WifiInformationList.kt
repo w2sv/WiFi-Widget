@@ -46,6 +46,7 @@ import com.w2sv.wifiwidget.ui.util.toAnnotatedString
 @Composable
 fun WifiInformationList(
     wifiState: WifiState,
+    onMissingLocationAccess: () -> Unit,
     modifier: Modifier = Modifier,
     fillAvailableHeight: Boolean = true
 ) {
@@ -60,6 +61,7 @@ fun WifiInformationList(
             WifiPropertyList(
                 presentations = presentations,
                 segmentCount = segmentCount,
+                onMissingLocationAccess = onMissingLocationAccess,
                 modifier = Modifier
                     .fillMaxWidth()
                     .thenIf(fillAvailableHeight) { weight(1f) }
@@ -107,6 +109,7 @@ private fun WifiStatusSegment(status: WifiStatus, segmentCount: Int) {
 private fun WifiPropertyList(
     presentations: List<WifiPropertyPresentation>,
     segmentCount: Int,
+    onMissingLocationAccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -118,7 +121,12 @@ private fun WifiPropertyList(
             items = presentations,
             key = { _, presentation -> "${presentation.label.text}:${presentation.label.subscript.orEmpty()}" }
         ) { index, presentation ->
-            WifiPropertySegment(presentation = presentation, index = index, segmentCount = segmentCount)
+            WifiPropertySegment(
+                presentation = presentation,
+                index = index,
+                segmentCount = segmentCount,
+                onMissingLocationAccess = onMissingLocationAccess
+            )
         }
     }
 }
@@ -127,7 +135,8 @@ private fun WifiPropertyList(
 private fun LazyItemScope.WifiPropertySegment(
     presentation: WifiPropertyPresentation,
     index: Int,
-    segmentCount: Int
+    segmentCount: Int,
+    onMissingLocationAccess: () -> Unit
 ) {
     val renderedLabel = remember(presentation.label) { presentation.label.toAnnotatedString(12.sp) }
     val actionLabel = when (presentation.resolutionError) {
@@ -161,7 +170,7 @@ private fun LazyItemScope.WifiPropertySegment(
             propertyContent(presentation, renderedLabel)
         }
     } else {
-        val onClickScope = rememberPropertyOnClickScope()
+        val onClickScope = rememberPropertyOnClickScope(onMissingLocationAccess)
         val scope = rememberCoroutineScope()
         SegmentedListItem(
             onClick = {

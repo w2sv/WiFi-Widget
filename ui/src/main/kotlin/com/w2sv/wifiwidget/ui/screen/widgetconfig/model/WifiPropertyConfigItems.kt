@@ -13,7 +13,6 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeTrySetChecked
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
@@ -23,12 +22,13 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun wifiPropertyConfigItem(
+internal fun wifiPropertyConfigItem(
     property: WifiProperty,
     config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
     locationAccess: LocationAccessCapability,
+    onLocationAccessRequest: (WifiProperty) -> Unit,
     scope: CoroutineScope,
     snackbarController: SnackbarController
 ): ConfigItem =
@@ -36,6 +36,7 @@ fun wifiPropertyConfigItem(
         config = { config.propertyConfig(property) },
         update = { propertyConfig -> updateConfig { withUpdatedPropertyConfig(property) { propertyConfig } } },
         locationAccess = locationAccess,
+        onLocationAccessRequest = onLocationAccessRequest,
         isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
         showDialog = showDialog,
         showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } }
@@ -45,6 +46,7 @@ private fun WifiProperty.configItem(
     config: () -> WifiPropertyConfig<WifiPropertySetting>,
     update: (WifiPropertyConfig<WifiPropertySetting>) -> Unit,
     locationAccess: LocationAccessCapability,
+    onLocationAccessRequest: (WifiProperty) -> Unit,
     isMoreThanOnePropertyEnabled: () -> Boolean,
     showDialog: (WidgetConfigDialog) -> Unit,
     showSnackbar: (SnackbarBuilder) -> Unit
@@ -55,6 +57,7 @@ private fun WifiProperty.configItem(
         trySetChecked = makeTrySetChecked(
             updateIsEnabled = { update(config().copy(isEnabled = it)) },
             locationAccess = locationAccess,
+            onLocationAccessRequest = { onLocationAccessRequest(this) },
             isMoreThanOnePropertyEnabled = isMoreThanOnePropertyEnabled,
             onUncheckingLastEnabledProperty = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } }
         ),
@@ -101,13 +104,14 @@ enum class WifiPropertyCheckError {
 private fun WifiProperty.makeTrySetChecked(
     updateIsEnabled: (Boolean) -> Unit,
     locationAccess: LocationAccessCapability,
+    onLocationAccessRequest: () -> Unit,
     isMoreThanOnePropertyEnabled: () -> Boolean,
     onUncheckingLastEnabledProperty: () -> Unit
 ) =
     makeTrySetChecked(
         updateVetoReason = { isCheckedNew ->
             when {
-                requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted ->
+                requiresLocationAccess && isCheckedNew && !locationAccess.permissionLevel.hasPreciseAccess ->
                     WifiPropertyCheckError.LocationAccessMissing
 
                 !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
@@ -117,9 +121,7 @@ private fun WifiProperty.makeTrySetChecked(
         },
         onVeto = { checkError ->
             when (checkError) {
-                WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(
-                    OnLocationAccessGranted.EnableProperty(this)
-                )
+                WifiPropertyCheckError.LocationAccessMissing -> onLocationAccessRequest()
 
                 WifiPropertyCheckError.UncheckingLastEnabledProperty -> onUncheckingLastEnabledProperty()
             }
