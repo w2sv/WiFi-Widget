@@ -10,7 +10,8 @@ import androidx.core.view.WindowCompat
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
-import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
+import com.w2sv.wifiwidget.ui.navigation.NavGraph
+import com.w2sv.wifiwidget.ui.navigation.Screen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -31,10 +32,15 @@ class WidgetConfigActivity : ComponentActivity() {
         val widgetId = initializeWidgetConfiguration() ?: return
 
         setContent {
-            WifiWidgetUI(versionName = BuildConfig.VERSION_NAME, locationAccessDependencies = locationAccessDependencies) {
-                WidgetConfigRoute(
-                    navigateBack = ::finish,
-                    completeConfiguration = { completeWidgetConfiguration(widgetId) }
+            WifiWidgetUI(
+                versionName = BuildConfig.VERSION_NAME,
+                locationAccessDependencies = locationAccessDependencies
+            ) { themeController ->
+                NavGraph(
+                    themeController = themeController,
+                    initialScreen = Screen.WidgetConfiguration,
+                    cancelWidgetConfiguration = ::finish,
+                    completeWidgetConfiguration = { completeWidgetConfiguration(widgetId) }
                 )
             }
         }

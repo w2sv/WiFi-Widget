@@ -1,35 +1,44 @@
 # WiFi Widget Privacy Policy
 
-WiFi Widget is an open source Android app developed by me, Janek Zangenberg, alias w2sv (W2SV). The
-code is
-available on [GitHub](https://github.com/w2sv/WiFi-Widget) - the very webpage you are currently at -
-under the [GPL-3.0 license](https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE).
+**Last updated: November 19, 2026**
 
-WiFi Widget does not collect, let alone share, data of whichever kind.
-In-app configurations made by you are stored locally on your device, and will thus
-remain entirely private. The entirety of your sensible network information, which is
-displayed on the widget, is not getting stored, let alone shared, either. Instead, it is retrieved,
-displayed and thereupon discarded.
+WiFi Widget is an open-source Android application developed by Janek Zangenberg (w2sv). Its source code is publicly available on [GitHub](https://github.com/w2sv/WiFi-Widget) under the [GNU General Public License v3.0](https://github.com/w2sv/WiFi-Widget/blob/main/LICENSE).
 
-WiFi Widget requires location access permission if you want your SSID to be displayed amongst the
-widget WiFi properties. This is due to the fact, that knowing your SSID enables tracking your
-devices approximate location by means of SSID fingerprinting. By the same token, the "Location:
-Allow all the time" permission is required, if you want your SSID to be reliably updated from the
-widget and without opening the app itself, since that means, that the SSID will have to be
-retrieved from a background process.
-If granted, the location access permission is exclusively used for the retrieval of the SSID.
-Neither are records of your device's position created, nor stored, nor shared.
-Furthermore, the display of the SSID may simply be disabled if you don't need it to be displayed on
-the
-widget, or don't feel comfortable with granting location access permission. In that case, location
-access
-becomes completely pointless for the functionality of the app, and it'll work perfectly fine without
-it.
+## Data collection and storage
 
-Should you have any doubts or general inquiries regarding the above stated privacy policy, feel free
-to reach out to me @ zangenbergjanek@googlemail.com.
+WiFi Widget does not collect personal information or operate servers that store user data.
 
-Sincerely,\
-Janek Zangenberg\
-Berlin, Germany\
-20.04.2023
+The app retrieves information about your Wi-Fi connection directly from Android and processes it locally on your device. Network information is retrieved as needed, and certain values may be temporarily cached in memory. WiFi Widget does not maintain a history of your connected networks.
+
+Your app preferences and widget configuration are stored locally on your device.
+
+Some optional features retrieve additional network information from third-party services, as explained below.
+
+## Third-party services
+
+WiFi Widget uses external services to retrieve certain network properties:
+
+- **ipify** provides your public IP address.
+- **ip-api.com** provides IP-based location information, ISP details, and other network information.
+
+These requests are made only when the corresponding properties are enabled. The services receive your network's public IP address as part of the connection and may process it according to their own privacy policies.
+
+Requests to ip-api.com currently use HTTP, meaning the transmitted information is not encrypted in transit.
+
+WiFi Widget does not transmit your Wi-Fi network name (SSID), access point identifier (BSSID), or GPS coordinates to these services.
+
+## Location permissions
+
+Android requires precise location permission to access Wi-Fi network identifiers such as the SSID and BSSID. This restriction exists because these identifiers can potentially be used to determine a device's approximate location.
+
+WiFi Widget uses this permission exclusively to retrieve and display Wi-Fi network information. It does not use Android's location permission to determine or track your physical location.
+
+**Background location access is optional.** Granting it allows WiFi Widget to keep your network identifiers updated on the home screen widget even when the app isn't open. Without background access, these updates may be limited.
+
+You can use WiFi Widget without granting location permissions. However, network properties that require these permissions will remain unavailable.
+
+## Contact
+
+If you have any questions or concerns about this privacy policy, you can contact the developer at:
+
+**zangenbergjanek@googlemail.com**

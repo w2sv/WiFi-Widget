@@ -9,12 +9,21 @@ import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.result.LocalResultEventBus
+import androidx.navigation3.runtime.result.ResultEventBus
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
+import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
+import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.navigation.Navigator
+import com.w2sv.wifiwidget.ui.navigation.Screen
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.EnableWidgetProperty
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 import io.mockk.coEvery
@@ -24,7 +33,6 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -54,14 +62,58 @@ class WidgetConfigRouteTest {
     private val actions = mockk<WidgetActions>(relaxed = true)
     private val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
     private val locationAccess = mockk<LocationAccessCapability>(relaxed = true) {
-        every { grantEvents } returns emptyFlow()
-        every { foregroundPermissionsGranted } returns true
-        every { isLocationEnabled } returns true
+        every { permissionLevel } returns LocationPermissionLevel.PreciseBackground
+        every { locationServicesEnabled } returns true
     }
     private val snackbarHost = SnackbarHostState()
     private val snackbarVisibility = SnackbarVisibility()
     private var closeCount = 0
     private var backCount = 0
+    private val resultEventBus = ResultEventBus()
+
+    @Test fun `precise foreground grant enables the requested property and preserves other edits`() {
+        every { locationAccess.permissionLevel } returns LocationPermissionLevel.PreciseForeground
+        setContent(launcher = false)
+        val edited = nonDefaultConfig()
+            .withUpdatedPropertyEnablement(WifiProperty.SSID, false)
+            .withUpdatedPropertyEnablement(WifiProperty.BSSID, false)
+        editConfig(edited)
+
+        returnFromLocationAccess(WifiProperty.SSID)
+
+        composeRule.waitUntil { viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID) }
+        assertEquals(edited.withUpdatedPropertyEnablement(WifiProperty.SSID, true), viewModel.reversibleConfig.value)
+        coVerify(exactly = 0) { dataSource.update(any()) }
+    }
+
+    @Test fun `returning without precise access consumes the result without enabling the property`() {
+        every { locationAccess.permissionLevel } returns LocationPermissionLevel.None
+        setContent(launcher = false)
+        val edited = nonDefaultConfig().withUpdatedPropertyEnablement(WifiProperty.SSID, false)
+        editConfig(edited)
+
+        returnFromLocationAccess(WifiProperty.SSID)
+        composeRule.waitForIdle()
+        assertEquals(edited, viewModel.reversibleConfig.value)
+
+        every { locationAccess.permissionLevel } returns LocationPermissionLevel.PreciseForeground
+        editConfig(edited.copy(appearance = edited.appearance.copy(backgroundOpacity = 0.6f)))
+        composeRule.waitForIdle()
+        assertEquals(false, viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID))
+    }
+
+    @Test fun `a consumed property result is not applied again after recomposition`() {
+        setContent(launcher = false)
+        val edited = nonDefaultConfig().withUpdatedPropertyEnablement(WifiProperty.SSID, false)
+        editConfig(edited)
+
+        returnFromLocationAccess(WifiProperty.SSID)
+        composeRule.waitUntil { viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID) }
+        editConfig(edited)
+        composeRule.waitForIdle()
+
+        assertEquals(edited, viewModel.reversibleConfig.value)
+    }
 
     @Test fun `in app screen has Back arrow without Close or Done`() {
         setContent(launcher = false)
@@ -231,17 +283,30 @@ class WidgetConfigRouteTest {
         composeRule.setContent {
             CompositionLocalProvider(
                 LocalSnackbarHostState provides snackbarHost,
-                LocalSnackbarVisibility provides snackbarVisibility
+                LocalSnackbarVisibility provides snackbarVisibility,
+                LocalLocationAccessCapability provides locationAccess,
+                LocalResultEventBus provides resultEventBus
             ) {
                 WidgetConfigRoute(
                     navigateBack = { backCount++ },
                     completeConfiguration = if (launcher) ({ closeCount++ }) else null,
-                    locationAccessCapability = locationAccess,
+                    toLocationAccess = {},
                     viewModel = viewModel
                 )
             }
         }
         composeRule.waitForIdle()
+    }
+
+    private fun returnFromLocationAccess(property: WifiProperty) {
+        composeRule.runOnIdle {
+            val backStack = NavBackStack(
+                Screen.WidgetConfiguration,
+                Screen.LocationAccess(EnableWidgetProperty(property.protoId))
+            )
+            Navigator(backStack, resultEventBus).popLocationAccess()
+            assertEquals(listOf(Screen.WidgetConfiguration), backStack.toList())
+        }
     }
 
     private fun editConfig(config: WidgetConfig) {

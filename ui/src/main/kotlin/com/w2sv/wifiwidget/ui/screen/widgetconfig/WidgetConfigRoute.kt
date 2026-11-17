@@ -10,27 +10,29 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.result.LocalResultEventBus
+import androidx.navigation3.runtime.result.ResultEffect
 import com.w2sv.androidutils.backpress.BackPressHandler
 import com.w2sv.composed.material3.rememberSnackbarLauncher
 import com.w2sv.composed.material3.replaceCurrentWith
-import com.w2sv.composed.runtime.CollectFromFlow
 import com.w2sv.core.resources.R
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
-const val NAVIGATE_BACK_CONFIRMATION_WINDOW = 2500L
+private const val NAVIGATE_BACK_CONFIRMATION_WINDOW = 2500L
 
 @Composable
-fun WidgetConfigRoute(
+internal fun WidgetConfigRoute(
     navigateBack: () -> Unit,
+    toLocationAccess: (WifiProperty) -> Unit,
     completeConfiguration: (() -> Unit)? = null,
-    locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
     viewModel: WidgetConfigScreenViewModel = hiltViewModel()
 ) {
     val onBack = rememberWidgetConfigBackHandler(
@@ -44,18 +46,6 @@ fun WidgetConfigRoute(
 
     var dialog by rememberSaveable { mutableStateOf<WidgetConfigDialog?>(null) }
 
-    // Perform pending property update if required location access has been granted
-    CollectFromFlow(locationAccessCapability.grantEvents) { event ->
-        event.asEnablePropertyOrNull?.run {
-            viewModel.reversibleConfig.update {
-                it.withUpdatedPropertyEnablement(
-                    property = property,
-                    isEnabled = true
-                )
-            }
-        }
-    }
-
     dialog?.let {
         WidgetConfigDialog(
             dialog = it,
@@ -65,14 +55,33 @@ fun WidgetConfigRoute(
         )
     }
 
+    HandleLocationAccessResult { property ->
+        viewModel.reversibleConfig.update { it.withUpdatedPropertyEnablement(property, true) }
+    }
+
     WidgetConfigScreen(
         config = config,
         updateConfig = viewModel.reversibleConfig::update,
         configEditState = configEditState,
         showDialog = { dialog = it },
+        onLocationAccessRequest = toLocationAccess,
         onBackButtonClick = onBack,
         showCloseIcon = completeConfiguration != null
     )
+}
+
+@Composable
+private fun HandleLocationAccessResult(
+    locationAccessCapability: LocationAccessCapability = LocalLocationAccessCapability.current,
+    onLocationAccessGrant: (WifiProperty) -> Unit
+) {
+    val resultEventBus = LocalResultEventBus.current
+    ResultEffect<LocationAccessScreenScenario.EnableWidgetProperty>(resultEventBus) { result ->
+        if (locationAccessCapability.permissionLevel.hasPreciseAccess) {
+            WifiProperty.fromProtoId(result.propertyId)?.let(onLocationAccessGrant)
+        }
+        resultEventBus.removeResult<LocationAccessScreenScenario.EnableWidgetProperty>()
+    }
 }
 
 /**

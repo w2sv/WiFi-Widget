@@ -78,6 +78,7 @@ private object NavDrawerTokens {
 fun NavDrawer(
     state: DrawerState,
     themeController: ThemeController,
+    onLocationAccessClick: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -86,7 +87,8 @@ fun NavDrawer(
         drawerContent = {
             NavDrawerSheet(
                 drawerState = state,
-                themeController = themeController
+                themeController = themeController,
+                onLocationAccessClick = onLocationAccessClick
             )
         },
         drawerState = state,
@@ -98,6 +100,7 @@ fun NavDrawer(
 private fun NavDrawerSheet(
     drawerState: DrawerState,
     themeController: ThemeController,
+    onLocationAccessClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     ModalDrawerSheet(
@@ -106,7 +109,7 @@ private fun NavDrawerSheet(
         windowInsets = WindowInsets()
     ) {
         val elements = remember { navDrawerElements() }
-        val actionScope = rememberDrawerActionScope(themeController)
+        val actionScope = rememberDrawerActionScope(themeController, onLocationAccessClick)
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 24.dp),
@@ -149,7 +152,8 @@ private fun Prev() {
     PreviewOf {
         NavDrawerSheet(
             drawerState = rememberDrawerState(DrawerValue.Open),
-            themeController = ThemeController.Default
+            themeController = ThemeController.Default,
+            onLocationAccessClick = {}
         )
     }
 }

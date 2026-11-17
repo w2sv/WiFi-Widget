@@ -9,16 +9,26 @@ import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
 
 @Stable
-class DrawerActionScope(val context: Context, val themeController: ThemeController, val useDarkTheme: Boolean)
+class DrawerActionScope(
+    val context: Context,
+    val themeController: ThemeController,
+    val useDarkTheme: Boolean,
+    val openLocationAccess: () -> Unit
+)
 
 @Composable
-fun rememberDrawerActionScope(themeController: ThemeController, context: Context = LocalContext.current): DrawerActionScope {
+fun rememberDrawerActionScope(
+    themeController: ThemeController,
+    openLocationAccess: () -> Unit,
+    context: Context = LocalContext.current
+): DrawerActionScope {
     val useDarkTheme = useDarkTheme(themeController.settings.theme)
-    return remember(context, useDarkTheme, themeController) {
+    return remember(context, useDarkTheme, themeController, openLocationAccess) {
         DrawerActionScope(
             context = context,
             themeController = themeController,
-            useDarkTheme = useDarkTheme
+            useDarkTheme = useDarkTheme,
+            openLocationAccess = openLocationAccess
         )
     }
 }

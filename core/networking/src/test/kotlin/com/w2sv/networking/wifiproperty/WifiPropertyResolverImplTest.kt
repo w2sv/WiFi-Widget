@@ -9,6 +9,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiInfo
 import android.net.wifi.WifiManager
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.wifiproperty.ResolvedWifiProperty
 import com.w2sv.domain.wifiproperty.Text
@@ -38,19 +39,21 @@ class WifiPropertyResolverImplTest {
     private val dhcpInfo = DhcpInfo()
     private val connectivityManager = mockk<ConnectivityManager>()
     private var locationEnabled = true
+    private val locationEnabledProvider = mockk<IsLocationEnabled>()
 
     init {
         every { wifiManager.connectionInfo } returns connectionInfo
         every { wifiManager.dhcpInfo } returns dhcpInfo
         every { wifiManager.isWifiEnabled } returns false
         every { connectivityManager.activeNetwork } returns null
+        every { locationEnabledProvider.invoke() } answers { locationEnabled }
     }
 
     private fun resolver() =
         WifiPropertyResolverImpl(
             wifiManager = wifiManager,
             connectivityManager = connectivityManager,
-            isLocationEnabled = { locationEnabled }
+            isLocationEnabled = locationEnabledProvider
         )
 
     @Test

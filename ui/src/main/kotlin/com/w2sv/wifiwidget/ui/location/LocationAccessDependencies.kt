@@ -8,19 +8,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-/** Provides location status and persisted permission histories to the UI. */
+/** Supplies system location-services observation and persisted permission-request history to the UI. */
 class LocationAccessDependencies @Inject constructor(
     val isLocationEnabled: IsLocationEnabled,
-    locationAccessRepository: LocationAccessRepository,
-    @AppIoScope scope: CoroutineScope
+    private val locationAccessRepository: LocationAccessRepository,
+    @AppIoScope private val scope: CoroutineScope
 ) {
     val requestHistory = PermissionRequestHistory(
         wasRequestLaunchedBefore = locationAccessRepository.permissionRequested,
         recordRequestLaunched = { scope.launch { locationAccessRepository.recordPermissionRequested() } }
-    )
-
-    val rationalHistory = LocationAccessRationalHistory(
-        wasShownBefore = locationAccessRepository.rationalShown,
-        recordWasShown = { scope.launch { locationAccessRepository.recordRationalShown() } }
     )
 }

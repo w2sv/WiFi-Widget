@@ -59,6 +59,12 @@ fun navDrawerElements(): ImmutableList<DrawerElement> =
                 onCheckedChange = { enabled -> themeController.updateSettings { it.copy(useDynamicColors = enabled) } }
             )
         ),
+        DrawerElement.Header(titleRes = R.string.settings),
+        DrawerElement.Action(
+            iconRes = R.drawable.ic_location_on_24,
+            labelRes = R.string.location_access,
+            type = DrawerElement.Action.Clickable { openLocationAccess() }
+        ),
         DrawerElement.Header(titleRes = R.string.legal),
         DrawerElement.Action(
             iconRes = R.drawable.ic_policy_24,

@@ -5,8 +5,6 @@ import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.wifiwidget.storescreenshots.scenario.ActiveScreenshotScenario
 import com.w2sv.wifiwidget.ui.screen.home.di.HomeScreenBinderModule
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProviderImpl
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
 import dagger.Binds
@@ -49,7 +47,4 @@ class ScreenshotWifiStateProvider @Inject constructor(
 interface ScreenshotHomeScreenModule {
     @Binds
     fun wifiStateProvider(instance: ScreenshotWifiStateProvider): WifiStateProvider
-
-    @Binds
-    fun locationEnabledProvider(instance: LocationEnabledProviderImpl): LocationEnabledProvider
 }

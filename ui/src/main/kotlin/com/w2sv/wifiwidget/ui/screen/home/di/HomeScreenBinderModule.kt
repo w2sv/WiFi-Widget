@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.ui.screen.home.di
 
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProviderImpl
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProviderImpl
 import dagger.Binds
@@ -15,7 +13,4 @@ interface HomeScreenBinderModule {
 
     @Binds
     fun wifiStateProvider(instance: WifiStateProviderImpl): WifiStateProvider
-
-    @Binds
-    fun locationEnabledProvider(instance: LocationEnabledProviderImpl): LocationEnabledProvider
 }
