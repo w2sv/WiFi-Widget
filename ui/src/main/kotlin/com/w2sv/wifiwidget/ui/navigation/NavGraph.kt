@@ -48,7 +48,7 @@ fun NavGraph(
                 HomeRoute(
                     themeController = themeController,
                     toWidgetConfiguration = navigator::toWidgetConfiguration,
-                    toLocationAccess = { scenario -> navigator.toLocationAccess(scenario) }
+                    toLocationAccess = { navigator.toLocationAccess(LocationAccessScreenScenario.ManageAccess) }
                 )
             }
             entry<Screen.WidgetConfiguration> {

@@ -11,9 +11,6 @@
     <string name="privacy_policy">Zásady ochrany osobných údajov</string>
     <string name="rate">Hodnotiť</string>
     <string name="share">Zdieľať</string>
-    <string name="on_pin_widget_wo_gps_enabled">Zobrazenie SSID a BSSID vyžaduje zapnuté služby určovania polohy v Androide.</string>
-    <string name="on_pin_widget_wo_location_access_permission">Zobrazenie SSID a BSSID vyžaduje prístup k polohe.</string>
-    <string name="on_pin_widget_wo_background_location_access_permission">Prístup k polohe na pozadí pomáha aktualizovať SSID a BSSID vo widgete.</string>
     <string name="light">Svetlý</string>
     <string name="default_">Predvolený</string>
     <string name="dark">Tmavý</string>
@@ -38,8 +35,6 @@
     <string name="dynamic_colors">Dynamické farby</string>
     <string name="appearance">Vzhľad</string>
     <string name="utilities">Nástroje</string>
-    <string name="grant">Udeliť</string>
-    <string name="enable">Zapnúť</string>
     <string name="refresh_periodically_info">Ak je táto možnosť zapnutá, systém bude dostávať požiadavku na obnovenie údajov v nastavenom intervale. Android však neumožňuje získavať údaje súvisiace s Wi-Fi, keď je zariadenie v režime spánku, takže požiadavka sa vykoná iba vtedy, keď telefón práve nie je v režime spánku.\nObnovovanie podlieha systémovým optimalizáciám batérie, a preto môže byť odložené alebo úplne zrušené.</string>
     <string name="go_to_wifi_settings_cd">Prejsť do nastavení Wi-Fi vo vašom zariadení.</string>
     <string name="copy_value_to_clipboard_cd">Skopírovať hodnotu do schránky</string>

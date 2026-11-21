@@ -269,13 +269,13 @@ class RemoteDataSynchronizerTest {
         runTest {
             val synchronizer = synchronizer()
             every { repository.needsRecovery(any()) } returns false
-            synchronizer.recoverOnForeground()
+            synchronizer.recoverOnResume()
             coVerify(exactly = 0) { repository.refresh(onlyIfMissing = true) }
             every { repository.needsRecovery(any()) } returns true
-            synchronizer.recoverOnForeground()
+            synchronizer.recoverOnResume()
             coVerify(exactly = 1) { repository.refresh(onlyIfMissing = true) }
             snapshotStatus = WifiStatus.NotConnected
-            synchronizer.recoverOnForeground()
+            synchronizer.recoverOnResume()
             coVerify(exactly = 1) { repository.refresh(onlyIfMissing = true) }
         }
 

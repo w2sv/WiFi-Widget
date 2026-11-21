@@ -32,7 +32,7 @@ class LocationAccessActivity : ComponentActivity() {
                 locationAccessDependencies = locationAccessDependencies
             ) {
                 LocationAccessRoute(
-                    scenario = LocationAccessScreenScenario.ManagePermissions,
+                    scenario = LocationAccessScreenScenario.ManageAccess,
                     onContinue = ::finishAndRemoveTask,
                     onBack = ::finishAndRemoveTask
                 )

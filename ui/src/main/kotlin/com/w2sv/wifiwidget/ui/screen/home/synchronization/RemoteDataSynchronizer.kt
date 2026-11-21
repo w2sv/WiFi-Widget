@@ -94,7 +94,7 @@ class RemoteDataSynchronizer @Inject constructor(
     }
 
     /** Bypasses worker backoff and fetches only requirements still missing after validation. */
-    suspend fun recoverOnForeground() {
+    suspend fun recoverOnResume() {
         val remoteDataConfig = widgetConfigSource.snapshot().remoteDataConfig
         val needsRecovery = remoteNetworkDataRepository.needsRecovery(remoteDataConfig)
         if (needsRecovery && wifiStatusSource.snapshot().isConnected) {

@@ -9,7 +9,7 @@ sealed interface LocationAccessScreenScenario {
     data object Onboarding : LocationAccessScreenScenario
 
     @Serializable
-    data object ManagePermissions : LocationAccessScreenScenario
+    data object ManageAccess : LocationAccessScreenScenario
 
     @Serializable
     @JvmInline

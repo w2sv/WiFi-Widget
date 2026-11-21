@@ -11,9 +11,6 @@
     <string name="privacy_policy">Privacy Policy</string>
     <string name="rate">Rate</string>
     <string name="share">Share</string>
-    <string name="on_pin_widget_wo_gps_enabled">Displaying SSID and BSSID requires Android location services to be turned on.</string>
-    <string name="on_pin_widget_wo_location_access_permission">Displaying SSID and BSSID requires location access.</string>
-    <string name="on_pin_widget_wo_background_location_access_permission">Background location access helps keep SSID and BSSID updated on the widget.</string>
     <string name="light">Light</string>
     <string name="default_">Default</string>
     <string name="dark">Dark</string>
@@ -38,8 +35,6 @@
     <string name="dynamic_colors">Dynamic colors</string>
     <string name="appearance">Appearance</string>
     <string name="utilities">Utilities</string>
-    <string name="grant">Grant</string>
-    <string name="enable">Enable</string>
     <string name="refresh_periodically_info">If set, a data refresh trigger will be emitted to the system with the configured refresh interval. Since Android forbids the retrieval of any WiFi-related data while the device is dormant, this trigger will only go through when emitted while your phone is not dormant.\nThe refreshing is subject to system-driven battery optimizations, and may therefore be postponed, or cancelled entirely.</string>
     <string name="go_to_wifi_settings_cd">Go to your device\'s WiFi settings.</string>
     <string name="copy_value_to_clipboard_cd">Copy value to clipboard</string>

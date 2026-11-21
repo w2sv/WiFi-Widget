@@ -15,7 +15,7 @@ import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.EnableWidgetProperty
-import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.ManagePermissions
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.ManageAccess
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenViewModel
 import io.mockk.Runs
 import io.mockk.every
@@ -49,7 +49,7 @@ class NavGraphTest {
     @Test
     fun `NavDisplay system Back invokes navigator onBack`() {
         val backStack = NavBackStack<Screen>(
-            Screen.LocationAccess(ManagePermissions),
+            Screen.LocationAccess(ManageAccess),
             Screen.LocationAccess(EnableWidgetProperty(WifiProperty.SSID.protoId))
         )
         mockkConstructor(Navigator::class)
