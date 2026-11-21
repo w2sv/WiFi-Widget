@@ -9,6 +9,7 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.preferences.ThemeSettings
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
+import com.w2sv.wifiwidget.ui.location.WidgetLocationRecoveryObserver
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.Flow
@@ -46,6 +47,7 @@ class WifiWidgetUITest {
         val locationAccessDependencies = mockk<LocationAccessDependencies> {
             every { isLocationEnabled } returns locationEnabled
             every { requestHistory } returns PermissionRequestHistory(flowOf(false)) {}
+            every { widgetLocationRecoveryObserver } returns WidgetLocationRecoveryObserver(mockk(relaxed = true))
         }
 
         composeRule.setContent {

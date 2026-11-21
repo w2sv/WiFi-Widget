@@ -1,5 +1,18 @@
 package com.w2sv.wifiwidget.ui.location
 
+import android.Manifest
+import android.content.Context
+import com.w2sv.androidutils.content.hasPermission
+import com.w2sv.wifiwidget.ui.util.requiresBackgroundLocationPermission
+
+/** Read current grants synchronously when lifecycle reconciliation precedes Compose state updates. */
+internal fun Context.locationPermissionLevel(): LocationPermissionLevel =
+    LocationPermissionLevel.fromGrants(
+        preciseGranted = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION),
+        approximateGranted = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION),
+        backgroundAccessAvailable = !requiresBackgroundLocationPermission || hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    )
+
 /**
  * Effective Android location permission available to WiFi Widget, independently of system-wide
  * location services. [PreciseBackground] also covers Android versions where a separate background

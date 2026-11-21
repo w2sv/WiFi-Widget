@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.location
 
 import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.location.LocationAccessRepository
+import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
@@ -37,10 +38,12 @@ class LocationAccessDependenciesTest {
                     true
                 override val flow: Flow<Boolean> = flowOf(true)
             }
-            val dependencies = LocationAccessDependencies(locationEnabled, repository, this)
+            val observer = mockk<WidgetLocationRecoveryObserver>()
+            val dependencies = LocationAccessDependencies(locationEnabled, repository, this, observer)
 
             assertSame(requested, dependencies.requestHistory.wasRequestLaunchedBefore)
             assertTrue(dependencies.isLocationEnabled())
+            assertSame(observer, dependencies.widgetLocationRecoveryObserver)
 
             dependencies.requestHistory.recordRequestLaunched()
             advanceUntilIdle()

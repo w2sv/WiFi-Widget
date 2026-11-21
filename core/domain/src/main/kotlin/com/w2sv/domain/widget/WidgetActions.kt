@@ -8,7 +8,7 @@ interface WidgetActions {
     suspend fun pin(): Boolean
 
     /**
-     * Asks the provider to enqueue immediate refresh work. Unlike [requestUpdate], this does not
+     * Asks the provider to enqueue immediate refresh work when widgets are installed. Unlike [requestUpdate], this does not
      * depend on the widget update callback finding missing remote data.
      */
     fun refresh()

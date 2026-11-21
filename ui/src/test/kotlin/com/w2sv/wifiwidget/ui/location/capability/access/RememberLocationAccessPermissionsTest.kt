@@ -8,11 +8,11 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.domain.location.IsLocationEnabled
+import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessEvent
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessFlowState
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.rememberLocationAccessAvailability
-import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessAvailability
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow

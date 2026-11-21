@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess.components
 
 import androidx.annotation.StringRes
 import com.w2sv.core.resources.R
-import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessAvailability
+import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
 
 /** Informational presentation derived from [LocationAccessAvailability], not permission-flow state. */
 internal enum class LocationAccessPresentationStatus(

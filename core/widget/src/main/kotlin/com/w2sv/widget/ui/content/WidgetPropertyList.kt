@@ -1,7 +1,5 @@
 package com.w2sv.widget.ui.content
 
-import android.content.Context
-import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -24,8 +22,7 @@ import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentWidth
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
-import com.w2sv.widget.ui.actions.CopyPropertyToClipboardActivity
+import com.w2sv.widget.ui.actions.clickIntent
 import com.w2sv.widget.ui.layout.PropertyLayout
 import com.w2sv.widget.ui.state.WidgetPresentationState
 import com.w2sv.widget.ui.state.WidgetPropertyRow
@@ -75,7 +72,7 @@ private fun PropertyRow(
     Column(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .thenIfNotNull(row.presentation.copyIntent(context)) { clickable(actionStartActivity(it)) }
+            .thenIfNotNull(rowPresentation.clickIntent(context)) { clickable(actionStartActivity(it)) }
             .padding(
                 top = WidgetDimens.Properties.rowVerticalPadding,
                 bottom = WidgetDimens.Properties.rowVerticalPadding,
@@ -127,16 +124,6 @@ private fun SubPropertyText(
             textAlign = widgetPresentation.valueAlign
         )
     )
-}
-
-internal fun WifiPropertyPresentation.copyIntent(context: Context): Intent? {
-    if (resolutionError != null || value.isBlank()) return null
-
-    val propertyLabel = label.run { subscript?.let { "$text $it" } ?: text }
-
-    return CopyPropertyToClipboardActivity.Property
-        .intent(propertyLabel, value)
-        .setClass(context, CopyPropertyToClipboardActivity::class.java)
 }
 
 @Composable

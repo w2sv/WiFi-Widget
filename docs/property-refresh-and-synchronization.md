@@ -127,6 +127,14 @@ This fast path exists only while the app process is alive. Android may terminate
 
 Android's `updatePeriodMillis` is set to `0`: periodic refreshes use WorkManager, not the platform widget-update timer.
 
+### Location-access recovery
+
+`WifiWidgetUI` installs `ObserveWidgetLocationAccessRecovery` for all three activity hosts. While a host is resumed, permission changes, location-services changes, and lifecycle resumes trigger fresh snapshots of Android permissions and system location services.
+
+The process-wide `WidgetLocationRecoveryObserver` deduplicates observations across hosts and requests a refresh when precise access becomes available, foreground access gains background access, or location services are re-enabled. Refreshes require both precise access and enabled services. The first sufficient observation also requests recovery after a process restart. `WidgetActionsImpl.refresh()` checks `WidgetStatus.hasInstalledWidgets` before broadcasting, so these requests schedule no work without installed widgets.
+
+Observation history stays in process memory, independently of Location Access screen scenarios and permission-flow state.
+
 ### Scheduling and worker execution
 
 `WifiWidgetWorkScheduler` manages three kinds of work:

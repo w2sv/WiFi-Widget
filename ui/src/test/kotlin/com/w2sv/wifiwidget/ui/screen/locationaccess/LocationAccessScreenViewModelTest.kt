@@ -2,19 +2,17 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess
 
 import androidx.lifecycle.SavedStateHandle
 import com.w2sv.domain.location.LocationAccessRepository
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.ManagePermissions
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.Onboarding
-import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.RefreshWidget
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessEvent
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessFlowState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -36,7 +34,6 @@ class LocationAccessScreenViewModelTest {
             storedConfig = firstArg<(WidgetConfig) -> WidgetConfig>()(storedConfig)
         }
     }
-    private val actions = mockk<WidgetActions>(relaxed = true)
     private val repository = mockk<LocationAccessRepository>(relaxed = true)
 
     @Test
@@ -61,7 +58,6 @@ class LocationAccessScreenViewModelTest {
 
             assertEquals(original.withEnabledLocationAccessRequiringProperties(), storedConfig)
             coVerify(exactly = 1) { repository.completeOnboarding() }
-            verify(exactly = 0) { actions.refresh() }
         }
 
     @Test
@@ -78,17 +74,16 @@ class LocationAccessScreenViewModelTest {
             assertEquals(original, storedConfig)
             coVerify(exactly = 0) { dataSource.update(any()) }
             coVerify(exactly = 1) { repository.completeOnboarding() }
-            verify(exactly = 0) { actions.refresh() }
         }
 
     @Test
-    fun `restored foreground Settings interaction retains refresh scenario and refreshes once`() {
+    fun `restored foreground Settings interaction accepts the result once without configuration side effects`() {
         val savedStateHandle = SavedStateHandle()
-        viewModel(RefreshWidget, savedStateHandle).apply {
+        viewModel(ManagePermissions, savedStateHandle).apply {
             onEvent(LocationAccessEvent.RequestForeground(true, LocationPermissionLevel.None))
             onEvent(LocationAccessEvent.LeavingForSettings)
         }
-        val restored = viewModel(RefreshWidget, savedStateHandle)
+        val restored = viewModel(ManagePermissions, savedStateHandle)
         assertEquals(
             LocationAccessFlowState.ForegroundSettings(LocationPermissionLevel.None, hasLeftApp = true),
             restored.flowState.value
@@ -98,19 +93,18 @@ class LocationAccessScreenViewModelTest {
         restored.onEvent(LocationAccessEvent.ForegroundAccessAvailable(LocationPermissionLevel.PreciseForeground))
 
         assertNull(restored.flowState.value)
-        verify(exactly = 1) { actions.refresh() }
         coVerify(exactly = 0) { dataSource.update(any()) }
     }
 
     @Test
-    fun `restored background Settings interaction retains refresh scenario and refreshes once`() {
+    fun `restored background Settings interaction accepts the result once without configuration side effects`() {
         val savedStateHandle = SavedStateHandle()
-        viewModel(RefreshWidget, savedStateHandle).apply {
+        viewModel(ManagePermissions, savedStateHandle).apply {
             onEvent(LocationAccessEvent.ShowBackgroundDisclosure(LocationPermissionLevel.PreciseForeground))
             onEvent(LocationAccessEvent.RequestBackground)
             onEvent(LocationAccessEvent.LeavingForSettings)
         }
-        val restored = viewModel(RefreshWidget, savedStateHandle)
+        val restored = viewModel(ManagePermissions, savedStateHandle)
         assertEquals(
             LocationAccessFlowState.BackgroundSettings(LocationPermissionLevel.PreciseForeground, hasLeftApp = true),
             restored.flowState.value
@@ -120,10 +114,27 @@ class LocationAccessScreenViewModelTest {
         restored.onEvent(LocationAccessEvent.BackgroundAccessAvailable)
 
         assertNull(restored.flowState.value)
-        verify(exactly = 1) { actions.refresh() }
+        coVerify(exactly = 0) { dataSource.update(any()) }
+    }
+
+    @Test
+    fun `standalone foreground and background grants keep flow open without onboarding or configuration side effects`() {
+        val viewModel = viewModel(ManagePermissions)
+        viewModel.onEvent(LocationAccessEvent.RequestForeground(false, LocationPermissionLevel.None))
+        viewModel.onEvent(LocationAccessEvent.ForegroundAccessAvailable(LocationPermissionLevel.PreciseForeground))
+
+        // Keep the route open so the existing optional background-access action remains available.
+        assertNull(viewModel.flowState.value)
+        viewModel.onEvent(LocationAccessEvent.ShowBackgroundDisclosure(LocationPermissionLevel.PreciseForeground))
+        viewModel.onEvent(LocationAccessEvent.RequestBackground)
+        viewModel.onEvent(LocationAccessEvent.LeavingForSettings)
+        viewModel.onEvent(LocationAccessEvent.BackgroundAccessAvailable)
+
+        assertNull(viewModel.flowState.value)
+        coVerify(exactly = 0) { repository.completeOnboarding() }
         coVerify(exactly = 0) { dataSource.update(any()) }
     }
 
     private fun viewModel(scenario: LocationAccessScreenScenario, savedStateHandle: SavedStateHandle = SavedStateHandle()) =
-        LocationAccessScreenViewModel(dataSource, actions, repository, savedStateHandle, scenario)
+        LocationAccessScreenViewModel(dataSource, repository, savedStateHandle, scenario)
 }

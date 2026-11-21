@@ -50,5 +50,14 @@
             </intent-filter>
         </activity>
 
+        <!-- A temporary recovery task must leave MainActivity and unsaved widget edits untouched.
+             Retain history while Android Settings is open; remove the task on explicit dismissal. -->
+        <activity
+            android:name=".ui.LocationAccessActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:taskAffinity="${applicationId}.locationaccess"
+            android:theme="@style/Theme.App.SplashScreen" />
+
     </application>
 </manifest>

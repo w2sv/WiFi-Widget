@@ -6,6 +6,7 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.test.core.app.ApplicationProvider
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.preview.pinPreviewSize
@@ -31,14 +32,42 @@ class WidgetActionsImplTest {
     private val context = mockk<Context>(relaxed = true) {
         every { packageName } returns "com.w2sv.widget"
     }
-    private val manager = mockk<AppWidgetManager> {
-        every { getAppWidgetIds(any()) } returns intArrayOf(1)
+    private val manager = mockk<AppWidgetManager>()
+    private val widgetStatus = mockk<WidgetStatus> {
+        every { hasInstalledWidgets } returns true
     }
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
     private val renderCoordinator = mockk<WidgetRenderCoordinator>(relaxed = true)
     private val configSource = mockk<WidgetConfigSource>()
-    private val actions = WidgetActionsImpl(context, manager, scheduler, renderCoordinator, configSource)
+    private val actions = WidgetActionsImpl(context, manager, scheduler, renderCoordinator, configSource, widgetStatus)
     private val previous = WidgetConfig.default
+
+    @Test fun `no installed widgets skip immediate refresh requests`() {
+        every { widgetStatus.hasInstalledWidgets } returns false
+
+        actions.refresh()
+
+        verify(exactly = 0) { context.sendBroadcast(any()) }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
+    }
+
+    @Test fun `each manual refresh with installed widgets requests immediate work`() {
+        val refreshIntent = WifiWidgetProvider.refreshIntent(context)
+
+        repeat(2) { actions.refresh() }
+
+        verify(exactly = 2) {
+            context.sendBroadcast(match { it.action == refreshIntent.action && it.component == refreshIntent.component })
+        }
+    }
+
+    @Test fun `refresh checks current widget installation after a previous empty result`() {
+        every { widgetStatus.hasInstalledWidgets } returnsMany listOf(false, true)
+
+        repeat(2) { actions.refresh() }
+
+        verify(exactly = 1) { context.sendBroadcast(any()) }
+    }
 
     @Test fun `unsupported pin request returns before reading configuration`() =
         runTest {
@@ -56,7 +85,14 @@ class WidgetActionsImplTest {
             every { manager.isRequestPinAppWidgetSupported } returns true
             coEvery { configSource.snapshot() } throws IllegalStateException("missing config")
             val actions =
-                WidgetActionsImpl(ApplicationProvider.getApplicationContext(), manager, scheduler, renderCoordinator, configSource)
+                WidgetActionsImpl(
+                    ApplicationProvider.getApplicationContext(),
+                    manager,
+                    scheduler,
+                    renderCoordinator,
+                    configSource,
+                    widgetStatus
+                )
 
             val submitted = actions.pin()
 
@@ -80,7 +116,14 @@ class WidgetActionsImplTest {
                     )
                 } returns true
                 val actions =
-                    WidgetActionsImpl(ApplicationProvider.getApplicationContext(), manager, scheduler, renderCoordinator, configSource)
+                    WidgetActionsImpl(
+                        ApplicationProvider.getApplicationContext(),
+                        manager,
+                        scheduler,
+                        renderCoordinator,
+                        configSource,
+                        widgetStatus
+                    )
 
                 assertEquals(true, actions.pin())
                 coVerify(exactly = 1) { configSource.snapshot() }
@@ -137,7 +180,7 @@ class WidgetActionsImplTest {
     }
 
     @Test fun `no installed widgets skip periodic work but still render`() {
-        every { manager.getAppWidgetIds(any()) } returns intArrayOf()
+        every { widgetStatus.hasInstalledWidgets } returns false
         val current = previous.copy(refreshing = previous.refreshing.copy(refreshPeriodically = false))
 
         actions.applyConfigurationChange(previous, current)
@@ -160,6 +203,6 @@ class WidgetActionsImplTest {
                 }
             )
         }
-        verify(exactly = 0) { manager.getAppWidgetIds(any()) }
+        verify(exactly = 0) { widgetStatus.hasInstalledWidgets }
     }
 }

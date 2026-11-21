@@ -60,7 +60,6 @@ class NavGraphTest {
             initializer {
                 LocationAccessScreenViewModel(
                     configDataSource = mockk(relaxed = true),
-                    widgetActions = mockk(relaxed = true),
                     locationAccessRepository = mockk(relaxed = true),
                     savedStateHandle = SavedStateHandle(),
                     scenario = EnableWidgetProperty(WifiProperty.SSID.protoId)

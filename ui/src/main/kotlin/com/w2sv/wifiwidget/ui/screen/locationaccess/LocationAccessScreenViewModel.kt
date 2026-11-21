@@ -3,7 +3,6 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.w2sv.domain.location.LocationAccessRepository
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
@@ -20,7 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 @HiltViewModel(assistedFactory = LocationAccessScreenViewModel.Factory::class)
 class LocationAccessScreenViewModel @AssistedInject constructor(
     private val configDataSource: WidgetConfigDataSource,
-    private val widgetActions: WidgetActions,
     private val locationAccessRepository: LocationAccessRepository,
     private val savedStateHandle: SavedStateHandle,
     @Assisted private val scenario: LocationAccessScreenScenario
@@ -107,7 +105,6 @@ class LocationAccessScreenViewModel @AssistedInject constructor(
         ) {
             return
         }
-        if (scenario == RefreshWidget) widgetActions.refresh()
         moveTo(
             when {
                 scenario != Onboarding -> null
@@ -126,7 +123,6 @@ class LocationAccessScreenViewModel @AssistedInject constructor(
 
     private fun onBackgroundAccessAvailable() {
         val displayedPermissionLevel = backgroundResultLevel() ?: return
-        if (scenario == RefreshWidget) widgetActions.refresh()
         moveTo(LocationAccessFlowState.Completing(displayedPermissionLevel).takeIf { scenario == Onboarding })
     }
 

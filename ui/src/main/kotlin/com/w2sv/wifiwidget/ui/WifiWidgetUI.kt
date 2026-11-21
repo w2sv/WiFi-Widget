@@ -11,6 +11,7 @@ import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.designsystem.theme.WifiWidgetTheme
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
+import com.w2sv.wifiwidget.ui.location.ObserveWidgetLocationAccessRecovery
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
 import com.w2sv.wifiwidget.ui.navigation.NavGraph
@@ -23,7 +24,7 @@ fun WifiWidgetUI(
     versionName: String,
     locationAccessDependencies: LocationAccessDependencies,
     activityViewModel: ActivityViewModel = hiltViewModel(),
-    // Lets both activities share app-level UI and tests omit destination Hilt ViewModels.
+    // Lets all activities share app-level UI and tests omit destination Hilt ViewModels.
     content: @Composable (ThemeController) -> Unit = { NavGraph(it) }
 ) {
     val themeSettings by activityViewModel.themeSettings.collectAsStateWithLifecycle()
@@ -37,6 +38,11 @@ fun WifiWidgetUI(
     val locationAccessCapability = rememberLocationAccessCapability(
         isLocationEnabled = locationAccessDependencies.isLocationEnabled,
         requestHistory = locationAccessDependencies.requestHistory
+    )
+    ObserveWidgetLocationAccessRecovery(
+        capability = locationAccessCapability,
+        isLocationEnabled = locationAccessDependencies.isLocationEnabled,
+        observer = locationAccessDependencies.widgetLocationRecoveryObserver
     )
 
     CompositionLocalProvider(
