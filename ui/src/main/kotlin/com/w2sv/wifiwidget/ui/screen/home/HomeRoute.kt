@@ -95,7 +95,7 @@ private fun ShowSnackbarOnWidgetPin(
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(
                         label = getString(R.string.grant),
-                        callback = { toLocationAccess(RefreshWidget) }
+                        callback = { toLocationAccess(ManagePermissions) }
                     )
                 )
 
@@ -106,7 +106,7 @@ private fun ShowSnackbarOnWidgetPin(
                     kind = SnackbarKind.Warning,
                     action = SnackbarAction(
                         label = getString(R.string.grant),
-                        callback = { toLocationAccess(RefreshWidget) }
+                        callback = { toLocationAccess(ManagePermissions) }
                     )
                 )
 

@@ -21,6 +21,7 @@ These guidelines apply to the Jetpack Glance home-screen widget in `core/widget`
 - Prefer native Glance elements and modifiers. Use `AndroidRemoteViews` only for functionality Glance cannot adequately express, currently the text-subscript spans in property labels; do not restore a RemoteViews-backed property collection.
 - Give `LazyColumn` property rows stable IDs derived from their source `WifiProperty` and occurrence index. Do not key rows by list position, displayed text, or current value.
 - Derive each displayed value and its clipboard action payload from the same presentation snapshot. Do not enable copying for unresolved or blank values.
+- Select row actions by `resolutionError`: location-access errors open the standalone Location Access activity, other errors are non-clickable, and resolved nonblank values retain clipboard copying. The app supplies the explicit destination; the widget module sets launch flags and shared intent identity.
 - Keep user interactions originating inside the widget under `ui/actions`; keep app-driven widget management separate under `management`.
 - Preserve configurable light/dark and dynamic/custom colors, background opacity, and readable foreground contrast. Account for floating action surfaces as well as the main background.
 - Follow `widget-layout.md` for responsive breakpoints, spacing tokens, scroll clearance, and realistic minimum-size priorities.

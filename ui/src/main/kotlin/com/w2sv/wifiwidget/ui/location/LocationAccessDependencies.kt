@@ -8,11 +8,12 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-/** Supplies system location-services observation and persisted permission-request history to the UI. */
+/** Supplies shared location services, widget recovery, and persisted permission-request history to the UI. */
 class LocationAccessDependencies @Inject constructor(
     val isLocationEnabled: IsLocationEnabled,
     private val locationAccessRepository: LocationAccessRepository,
-    @AppIoScope private val scope: CoroutineScope
+    @AppIoScope private val scope: CoroutineScope,
+    val widgetLocationRecoveryObserver: WidgetLocationRecoveryObserver
 ) {
     val requestHistory = PermissionRequestHistory(
         wasRequestLaunchedBefore = locationAccessRepository.permissionRequested,

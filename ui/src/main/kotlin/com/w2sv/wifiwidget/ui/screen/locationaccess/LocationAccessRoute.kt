@@ -7,6 +7,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
@@ -16,7 +17,6 @@ import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessEvent
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessFlowState
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.ObserveLocationPermissionRequests
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.rememberLocationAccessAvailability
-import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessAvailability
 import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessScreenActions
 import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessScreenState
 

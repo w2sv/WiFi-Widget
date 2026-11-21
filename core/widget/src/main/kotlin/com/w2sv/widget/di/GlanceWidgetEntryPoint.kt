@@ -2,6 +2,7 @@ package com.w2sv.widget.di
 
 import android.content.Context
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
+import com.w2sv.widget.ui.actions.LocationAccessActivityIntentProvider
 import com.w2sv.widget.ui.state.WidgetPresentationStateProvider
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -16,6 +17,7 @@ import dagger.hilt.components.SingletonComponent
 internal interface GlanceWidgetEntryPoint {
     fun stateProvider(): WidgetPresentationStateProvider
     fun workScheduler(): WifiWidgetWorkScheduler
+    fun locationAccessActivityIntentProvider(): LocationAccessActivityIntentProvider
 }
 
 internal fun glanceWidgetEntryPoint(context: Context): GlanceWidgetEntryPoint =

@@ -8,7 +8,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
-import com.w2sv.widget.ui.content.copyIntent
 import com.w2sv.widget.ui.state.WidgetPropertyRow
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

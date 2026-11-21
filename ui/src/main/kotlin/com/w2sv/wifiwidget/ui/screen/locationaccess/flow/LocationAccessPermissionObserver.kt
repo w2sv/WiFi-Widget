@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screen.locationaccess.flow
 
-import android.Manifest
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,12 +7,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.w2sv.androidutils.content.hasPermission
 import com.w2sv.composed.runtime.CollectFromFlow
+import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.util.requiresBackgroundLocationPermission
+import com.w2sv.wifiwidget.ui.location.locationPermissionLevel
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -62,15 +60,6 @@ private fun reconcileSettingsReturn(
         }
         else -> Unit
     }
-}
-
-private fun Context.locationPermissionLevel(): LocationPermissionLevel {
-    // Lifecycle reconciliation can precede Compose permission-state refresh after Settings.
-    return LocationPermissionLevel.fromGrants(
-        preciseGranted = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION),
-        approximateGranted = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION),
-        backgroundAccessAvailable = !requiresBackgroundLocationPermission || hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-    )
 }
 
 @Composable

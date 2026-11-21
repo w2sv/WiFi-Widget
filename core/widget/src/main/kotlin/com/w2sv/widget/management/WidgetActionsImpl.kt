@@ -4,12 +4,12 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetManager
-import com.w2sv.androidutils.appwidget.appWidgetIds
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.android.broadcastPendingIntent
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.preview.WifiPinPreviewWidget
 import com.w2sv.widget.preview.pinPreviewSize
@@ -26,7 +26,8 @@ internal class WidgetActionsImpl @Inject constructor(
     private val appWidgetManager: AppWidgetManager,
     private val refreshManager: WifiWidgetWorkScheduler,
     private val renderCoordinator: WidgetRenderCoordinator,
-    private val configSource: WidgetConfigSource
+    private val configSource: WidgetConfigSource,
+    private val widgetStatus: WidgetStatus
 ) : WidgetActions {
     override suspend fun pin(): Boolean =
         appWidgetManager.isRequestPinAppWidgetSupported &&
@@ -51,6 +52,7 @@ internal class WidgetActionsImpl @Inject constructor(
             }
 
     override fun refresh() {
+        if (!widgetStatus.hasInstalledWidgets) return
         context.sendBroadcast(WifiWidgetProvider.refreshIntent(context))
     }
 
@@ -67,7 +69,7 @@ internal class WidgetActionsImpl @Inject constructor(
     }
 
     override fun applyConfigurationChange(previous: WidgetConfig, current: WidgetConfig) {
-        if (previous.refreshing != current.refreshing && appWidgetManager.appWidgetIds<WifiWidgetProvider>(context).isNotEmpty()) {
+        if (previous.refreshing != current.refreshing && widgetStatus.hasInstalledWidgets) {
             refreshManager.applyRefreshingPolicy(current.refreshing)
         }
 
