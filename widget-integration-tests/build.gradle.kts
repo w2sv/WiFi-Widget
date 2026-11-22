@@ -2,17 +2,16 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     alias(libs.plugins.android.test)
+    alias(libs.plugins.wifiwidget.android.sdk)
     alias(libs.plugins.wifiwidget.code.quality)
     alias(libs.plugins.wifiwidget.hilt)
 }
 
 android {
     namespace = "com.w2sv.wifiwidget.integration"
-    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 35
-        targetSdk = libs.versions.compileSdk.get().toInt()
         testInstrumentationRunner = "com.w2sv.wifiwidget.test.runner.hilt.HiltTestApplicationRunner"
     }
 

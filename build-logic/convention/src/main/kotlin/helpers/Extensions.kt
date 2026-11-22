@@ -10,12 +10,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.getByType
 
 /**
- * @param alias The version alias that will be passed to [VersionCatalog.findVersion]
- */
-internal fun VersionCatalog.findVersionInt(alias: String): Int =
-    findVersion(alias).get().requiredVersion.toInt()
-
-/**
  * @param alias The plugin alias that will be passed to [VersionCatalog.findPlugin]
  */
 internal fun VersionCatalog.findPluginId(alias: String): String =

@@ -14,8 +14,6 @@ androidx-test-orchestrator = "1.6.1"
 androidx-test-runner = "1.7.0"
 androidx-test-uiautomator = "2.4.1"
 androidx-work = "2.12.0"
-# @keep
-compileSdk = "37"
 composeRules = "0.6.8"
 google-dagger-hilt = "2.60.1"
 google-ksp = "2.3.14"
@@ -24,8 +22,6 @@ kotlin = "2.4.21"
 kotlinxCoroutines = "1.11.0"
 ktlint = "14.2.0"
 ktlintEngine = "1.8.0"
-# @keep
-minSdk = "26"
 moduleGraph = "2.9.1"
 paparazzi = "2.0.0-alpha05.1"
 profileinstaller = "1.4.1"
@@ -157,6 +153,8 @@ module-graph = { id = "com.jraska.module.graph.assertion", version.ref = "module
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
 triplet-play = { id = "com.github.triplet.play", version.ref = "triplet-play" }
 versionCatalogUpdate = { id = "nl.littlerobots.version-catalog-update", version.ref = "versionCatalogUpdate" }
+# @keep
+wifiwidget-android-sdk = { id = "wifiwidget.android-sdk" }
 # @keep
 wifiwidget-application = { id = "wifiwidget.application" }
 # @keep

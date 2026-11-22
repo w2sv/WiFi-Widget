@@ -38,6 +38,10 @@ tasks {
 
 gradlePlugin {
     plugins {
+        register("androidSdk") {
+            id = "wifiwidget.android-sdk"
+            implementationClass = "AndroidSdkConventionPlugin"
+        }
         register("codeQuality") {
             id = "wifiwidget.code-quality"
             implementationClass = "CodeQualityConventionPlugin"

@@ -2,6 +2,7 @@ import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
     alias(libs.plugins.android.test)
+    alias(libs.plugins.wifiwidget.android.sdk)
     alias(libs.plugins.androidx.baselineprofile)
     alias(libs.plugins.wifiwidget.code.quality)
 }
@@ -10,11 +11,9 @@ val mvdName = "Pixel 6 API 33"
 
 android {
     namespace = "com.w2sv.benchmarking"
-    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         minSdk = 28
-        targetSdk = libs.versions.compileSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
