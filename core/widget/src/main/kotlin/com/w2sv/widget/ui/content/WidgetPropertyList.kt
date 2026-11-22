@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
@@ -68,42 +69,43 @@ private fun PropertyRow(
     val context = LocalContext.current
     val labelModifier = layout.labelColumnWidth?.let { GlanceModifier.width(it) } ?: GlanceModifier.wrapContentWidth()
 
-    Column(
+    Row(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .thenIfNotNull(WidgetActionFactory.property(context, rowPresentation)) { clickable(it) }
+            .thenIfNotNull(WidgetActionFactory.property(context, rowPresentation)) {
+                cornerRadius(WidgetDimens.Properties.rowCornerRadius).clickable(it)
+            }
             .padding(
                 top = WidgetDimens.Properties.rowVerticalPadding,
                 bottom = WidgetDimens.Properties.rowVerticalPadding,
                 end = WidgetDimens.Properties.scrollbarClearance
-            )
+            ),
+        verticalAlignment = Alignment.Vertical.Top
     ) {
-        Row(modifier = GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.Vertical.Top) {
-            // Glance has no max intrinsic width; compact rows cap labels to preserve value space.
-            PropertyLabel(
-                row = row,
-                state = widgetPresentation,
-                modifier = labelModifier,
-                trailingPadding = WidgetDimens.Properties.labelTrailingPadding
-            )
+        // Glance has no max intrinsic width; compact rows cap labels to preserve value space.
+        PropertyLabel(
+            row = row,
+            state = widgetPresentation,
+            modifier = labelModifier,
+            trailingPadding = WidgetDimens.Properties.labelTrailingPadding
+        )
+        Column(modifier = GlanceModifier.defaultWeight()) {
             Text(
                 text = rowPresentation.value,
-                modifier = GlanceModifier.defaultWeight(),
+                modifier = GlanceModifier.fillMaxWidth(),
                 style = TextStyle(
                     color = widgetPresentation.colors.secondary.toColorProvider(),
                     fontSize = widgetPresentation.fontSize.textSize.sp,
                     textAlign = widgetPresentation.valueAlign
                 )
             )
-        }
-        if (rowPresentation.subValues.isNotEmpty()) {
-            SubPropertyText(
-                subProperties = rowPresentation.subValues,
-                widgetPresentation = widgetPresentation,
-                modifier = GlanceModifier
-                    .fillMaxWidth()
-                    .padding(start = layout.subpropertyIndent)
-            )
+            if (rowPresentation.subValues.isNotEmpty()) {
+                SubPropertyText(
+                    subProperties = rowPresentation.subValues,
+                    widgetPresentation = widgetPresentation,
+                    modifier = GlanceModifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

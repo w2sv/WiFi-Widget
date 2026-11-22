@@ -53,6 +53,7 @@ internal object WidgetDimens {
         val listEndPadding = 4.dp
         val listContentTopPadding = 5.dp
         val rowVerticalPadding = 2.dp
+        val rowCornerRadius = 8.dp
         val scrollbarClearance = 6.dp
         val labelTrailingPadding = 6.dp
         val maxLabelWidth = 100.dp

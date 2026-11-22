@@ -113,5 +113,5 @@ private fun calculateProperties(size: DpSize, alignment: WifiPropertyValueAlignm
         size.width < WidgetDimens.Breakpoints.compactLabels -> size.width * tokens.compactLabelFraction
         else -> null
     }
-    return PropertyLayout(labelWidth, if (alignment == WifiPropertyValueAlignment.Left) alignedWidth else 0.dp)
+    return PropertyLayout(labelWidth)
 }

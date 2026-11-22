@@ -34,4 +34,4 @@ internal data class StatusLayout(
     val contentAlignment: Alignment
 )
 
-internal data class PropertyLayout(val labelColumnWidth: Dp?, val subpropertyIndent: Dp)
+internal data class PropertyLayout(val labelColumnWidth: Dp?)
