@@ -14,7 +14,6 @@ import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.location.ObserveWidgetLocationAccessRecovery
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.rememberLocationAccessCapability
-import com.w2sv.wifiwidget.ui.navigation.NavGraph
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.useDarkTheme
@@ -24,8 +23,7 @@ fun WifiWidgetUI(
     versionName: String,
     locationAccessDependencies: LocationAccessDependencies,
     activityViewModel: ActivityViewModel = hiltViewModel(),
-    // Lets all activities share app-level UI and tests omit destination Hilt ViewModels.
-    content: @Composable (ThemeController) -> Unit = { NavGraph(it) }
+    content: @Composable (ThemeController) -> Unit
 ) {
     val themeSettings by activityViewModel.themeSettings.collectAsStateWithLifecycle()
     val themeController = remember(themeSettings, activityViewModel) {

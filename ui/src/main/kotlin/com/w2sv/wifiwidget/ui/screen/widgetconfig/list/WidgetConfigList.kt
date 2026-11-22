@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import com.w2sv.domain.widget.WidgetConfig
-import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.kotlinutils.copy
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.util.PreviewOf
@@ -24,7 +23,6 @@ private fun Prev() {
             rememberLazyListState(),
             WidgetConfig.default,
             {},
-            {},
             {}
         )
     }
@@ -36,7 +34,6 @@ fun WidgetConfigList(
     config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
-    onLocationAccessRequest: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val propertyByKey = config.supportedProperties.associateBy { it.protoId }
@@ -70,7 +67,6 @@ fun WidgetConfigList(
             config = config,
             updateConfig = updateConfig,
             showDialog = showDialog,
-            onLocationAccessRequest = onLocationAccessRequest,
             reorderableState = reorderableState
         )
         item(key = "utilities") {

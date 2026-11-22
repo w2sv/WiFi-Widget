@@ -19,7 +19,6 @@ class WifiPropertyInitializationTest {
 
         assertSame(ssid, WifiProperty.entries.first())
         WifiProperty.entries.forEach { assertNotNull(it) }
-        assertSame(ssid, WifiProperty.fromProtoId(ssid.protoId))
         assertEquals(WifiProperty.entries, WidgetConfig.default.propertyOrder)
     }
 }

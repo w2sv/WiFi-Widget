@@ -267,8 +267,5 @@ sealed class WifiProperty(
         val locationAccessRequiring: List<WifiProperty> by lazy {
             entries.filter { it.requiresLocationAccess }
         }
-
-        fun fromProtoId(protoId: Int): WifiProperty? =
-            entries.firstOrNull { it.protoId == protoId }
     }
 }

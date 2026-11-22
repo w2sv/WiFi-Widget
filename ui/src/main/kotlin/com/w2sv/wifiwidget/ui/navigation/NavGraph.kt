@@ -10,32 +10,27 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
-import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.HomeRoute
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessRoute
-import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 
 @Composable
 fun NavGraph(
     themeController: ThemeController,
     modifier: Modifier = Modifier,
-    initialScreen: Screen = Screen.Home,
-    completeWidgetConfiguration: (() -> Unit)? = null,
-    cancelWidgetConfiguration: (() -> Unit)? = null
+    initialScreen: Screen = Screen.Home
 ) {
     val navigator = rememberNavigator(initialScreen)
     val density = LocalDensity.current
 
     NavDisplay(
         backStack = navigator.backStack,
-        onBack = navigator::onBack,
+        onBack = navigator::popBackStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator(),
-            rememberResultEventBusNavEntryDecorator(navigator.resultEventBus)
+            rememberViewModelStoreNavEntryDecorator()
         ),
         modifier = modifier
             .fillMaxSize()
@@ -48,23 +43,19 @@ fun NavGraph(
                 HomeRoute(
                     themeController = themeController,
                     toWidgetConfiguration = navigator::toWidgetConfiguration,
-                    toLocationAccess = { navigator.toLocationAccess(LocationAccessScreenScenario.ManageAccess) }
+                    toLocationAccess = navigator::toLocationAccess
                 )
             }
             entry<Screen.WidgetConfiguration> {
                 WidgetConfigRoute(
-                    navigateBack = cancelWidgetConfiguration ?: navigator::popBackStack,
-                    completeConfiguration = completeWidgetConfiguration,
-                    toLocationAccess = { property ->
-                        navigator.toLocationAccess(LocationAccessScreenScenario.EnableWidgetProperty(property.protoId))
-                    }
+                    onExit = navigator::popBackStack
                 )
             }
             entry<Screen.LocationAccess> { screen ->
                 LocationAccessRoute(
                     scenario = screen.scenario,
                     onContinue = navigator::launchHome,
-                    onBack = navigator::popLocationAccess
+                    onBack = navigator::popBackStack
                 )
             }
         }

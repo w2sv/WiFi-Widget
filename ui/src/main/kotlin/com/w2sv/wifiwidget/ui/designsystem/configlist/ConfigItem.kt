@@ -13,29 +13,17 @@ data class ConfigItem(
     val show: () -> Boolean = { true }
 )
 
-fun <T> makeTrySetChecked(
-    updateVetoReason: (Boolean) -> T? = { null },
-    onVeto: (T) -> Unit = {},
-    update: (Boolean) -> Unit
-): (Boolean) -> Boolean =
-    { isCheckedNew ->
-        val vetoReason = updateVetoReason(isCheckedNew)
-        if (vetoReason != null) {
-            onVeto(vetoReason)
-            false
-        } else {
-            update(isCheckedNew)
-            true
-        }
-    }
-
 fun makeTrySetChecked(
     allowUpdate: (Boolean) -> Boolean,
     onUpdateDisallowed: () -> Unit = {},
     update: (Boolean) -> Unit
 ): (Boolean) -> Boolean =
-    makeTrySetChecked(
-        updateVetoReason = { isCheckedNew -> if (allowUpdate(isCheckedNew)) null else Unit },
-        onVeto = { onUpdateDisallowed() },
-        update = update
-    )
+    { checked ->
+        if (allowUpdate(checked)) {
+            update(checked)
+            true
+        } else {
+            onUpdateDisallowed()
+            false
+        }
+    }

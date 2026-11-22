@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.w2sv.composed.ui.platform.isLandscapeModeActive
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetConfig
-import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarHost
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
@@ -42,7 +41,6 @@ fun WidgetConfigScreen(
     configEditState: ConfigEditState,
     showDialog: (WidgetConfigDialog) -> Unit,
     onBackButtonClick: () -> Unit,
-    onLocationAccessRequest: (WifiProperty) -> Unit,
     modifier: Modifier = Modifier,
     showCloseIcon: Boolean = false,
     state: LazyListState = rememberLazyListState()
@@ -85,7 +83,6 @@ fun WidgetConfigScreen(
             config = config,
             updateConfig = updateConfig,
             showDialog = showDialog,
-            onLocationAccessRequest = onLocationAccessRequest,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -108,7 +105,6 @@ private fun Prev() {
                 emptyFlow()
             ),
             showDialog = {},
-            onLocationAccessRequest = {},
             onBackButtonClick = {},
             state = LazyListState(firstVisibleItemIndex = 0)
         )

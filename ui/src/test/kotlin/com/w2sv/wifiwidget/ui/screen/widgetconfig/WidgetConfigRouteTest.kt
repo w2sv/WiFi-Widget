@@ -3,27 +3,24 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.result.LocalResultEventBus
-import androidx.navigation3.runtime.result.ResultEventBus
+import androidx.compose.ui.test.performScrollToNode
 import com.w2sv.core.resources.R
 import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
-import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
-import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.navigation.Navigator
-import com.w2sv.wifiwidget.ui.navigation.Screen
-import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.EnableWidgetProperty
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarVisibility
 import io.mockk.coEvery
@@ -61,58 +58,46 @@ class WidgetConfigRouteTest {
     }
     private val actions = mockk<WidgetActions>(relaxed = true)
     private val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
-    private val locationAccess = mockk<LocationAccessCapability>(relaxed = true) {
-        every { permissionLevel } returns LocationPermissionLevel.PreciseBackground
-        every { locationServicesEnabled } returns true
-    }
     private val snackbarHost = SnackbarHostState()
     private val snackbarVisibility = SnackbarVisibility()
     private var closeCount = 0
     private var backCount = 0
-    private val resultEventBus = ResultEventBus()
 
-    @Test fun `precise foreground grant enables the requested property and preserves other edits`() {
-        every { locationAccess.permissionLevel } returns LocationPermissionLevel.PreciseForeground
+    @Test fun `SSID and BSSID can be toggled while preserving other edits`() {
         setContent(launcher = false)
         val edited = nonDefaultConfig()
             .withUpdatedPropertyEnablement(WifiProperty.SSID, false)
             .withUpdatedPropertyEnablement(WifiProperty.BSSID, false)
         editConfig(edited)
 
-        returnFromLocationAccess(WifiProperty.SSID)
-
-        composeRule.waitUntil { viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID) }
-        assertEquals(edited.withUpdatedPropertyEnablement(WifiProperty.SSID, true), viewModel.reversibleConfig.value)
+        for (property in listOf(WifiProperty.SSID, WifiProperty.BSSID)) {
+            val checkbox = propertyCheckbox(property)
+            checkbox.assertIsOff().performClick()
+            checkbox.assertIsOn()
+            assertEquals(edited.withUpdatedPropertyEnablement(property, true), viewModel.reversibleConfig.value)
+            checkbox.performClick().assertIsOff()
+            assertEquals(edited, viewModel.reversibleConfig.value)
+        }
+        assertEquals(null, snackbarHost.currentSnackbarData)
         coVerify(exactly = 0) { dataSource.update(any()) }
     }
 
-    @Test fun `returning without precise access consumes the result without enabling the property`() {
-        every { locationAccess.permissionLevel } returns LocationPermissionLevel.None
+    @Test fun `the last enabled property still cannot be disabled`() {
         setContent(launcher = false)
-        val edited = nonDefaultConfig().withUpdatedPropertyEnablement(WifiProperty.SSID, false)
+        val edited = WifiProperty.entries.fold(nonDefaultConfig()) { config, property ->
+            config.withUpdatedPropertyEnablement(property, property == WifiProperty.SSID)
+        }
         editConfig(edited)
 
-        returnFromLocationAccess(WifiProperty.SSID)
-        composeRule.waitForIdle()
+        propertyCheckbox(WifiProperty.SSID).assertIsOn().performClick().assertIsOn()
+
+        composeRule.waitUntil { snackbarHost.currentSnackbarData != null }
         assertEquals(edited, viewModel.reversibleConfig.value)
-
-        every { locationAccess.permissionLevel } returns LocationPermissionLevel.PreciseForeground
-        editConfig(edited.copy(appearance = edited.appearance.copy(backgroundOpacity = 0.6f)))
-        composeRule.waitForIdle()
-        assertEquals(false, viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID))
-    }
-
-    @Test fun `a consumed property result is not applied again after recomposition`() {
-        setContent(launcher = false)
-        val edited = nonDefaultConfig().withUpdatedPropertyEnablement(WifiProperty.SSID, false)
-        editConfig(edited)
-
-        returnFromLocationAccess(WifiProperty.SSID)
-        composeRule.waitUntil { viewModel.reversibleConfig.value.isEnabled(WifiProperty.SSID) }
-        editConfig(edited)
-        composeRule.waitForIdle()
-
-        assertEquals(edited, viewModel.reversibleConfig.value)
+        assertEquals(
+            composeRule.activity.getString(R.string.leave_at_least_one_property_enabled),
+            snackbarHost.currentSnackbarData?.visuals?.message
+        )
+        coVerify(exactly = 0) { dataSource.update(any()) }
     }
 
     @Test fun `in app screen has Back arrow without Close or Done`() {
@@ -283,14 +268,11 @@ class WidgetConfigRouteTest {
         composeRule.setContent {
             CompositionLocalProvider(
                 LocalSnackbarHostState provides snackbarHost,
-                LocalSnackbarVisibility provides snackbarVisibility,
-                LocalLocationAccessCapability provides locationAccess,
-                LocalResultEventBus provides resultEventBus
+                LocalSnackbarVisibility provides snackbarVisibility
             ) {
                 WidgetConfigRoute(
-                    navigateBack = { backCount++ },
-                    completeConfiguration = if (launcher) ({ closeCount++ }) else null,
-                    toLocationAccess = {},
+                    onExit = { if (launcher) closeCount++ else backCount++ },
+                    isLauncherConfiguration = launcher,
                     viewModel = viewModel
                 )
             }
@@ -298,15 +280,10 @@ class WidgetConfigRouteTest {
         composeRule.waitForIdle()
     }
 
-    private fun returnFromLocationAccess(property: WifiProperty) {
-        composeRule.runOnIdle {
-            val backStack = NavBackStack(
-                Screen.WidgetConfiguration,
-                Screen.LocationAccess(EnableWidgetProperty(property.protoId))
-            )
-            Navigator(backStack, resultEventBus).popLocationAccess()
-            assertEquals(listOf(Screen.WidgetConfiguration), backStack.toList())
-        }
+    private fun propertyCheckbox(property: WifiProperty): SemanticsNodeInteraction {
+        val label = composeRule.activity.getString(property.labelRes)
+        composeRule.onNodeWithTag("widget_config_list").performScrollToNode(hasContentDescription(label))
+        return composeRule.onNodeWithContentDescription(label)
     }
 
     private fun editConfig(config: WidgetConfig) {

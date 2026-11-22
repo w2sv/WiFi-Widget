@@ -89,4 +89,5 @@ dependencies {
 
     testImplementation(libs.bundles.unitTest)
     testImplementation(libs.androidx.compose.ui.test.junit4.android)
+    testImplementation(libs.w2sv.reversiblestate)
 }

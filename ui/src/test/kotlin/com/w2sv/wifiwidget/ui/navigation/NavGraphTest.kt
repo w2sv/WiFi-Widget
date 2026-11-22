@@ -9,12 +9,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.NavBackStack
-import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.EnableWidgetProperty
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.ManageAccess
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenViewModel
 import io.mockk.Runs
@@ -47,14 +45,14 @@ class NavGraphTest {
     }
 
     @Test
-    fun `NavDisplay system Back invokes navigator onBack`() {
+    fun `NavDisplay system Back pops the navigator back stack`() {
         val backStack = NavBackStack<Screen>(
-            Screen.LocationAccess(ManageAccess),
-            Screen.LocationAccess(EnableWidgetProperty(WifiProperty.SSID.protoId))
+            Screen.Home,
+            Screen.LocationAccess(ManageAccess)
         )
         mockkConstructor(Navigator::class)
         every { anyConstructed<Navigator>().backStack } returns backStack
-        every { anyConstructed<Navigator>().onBack() } just Runs
+        every { anyConstructed<Navigator>().popBackStack() } just Runs
 
         val factory = viewModelFactory {
             initializer {
@@ -62,7 +60,7 @@ class NavGraphTest {
                     configDataSource = mockk(relaxed = true),
                     locationAccessRepository = mockk(relaxed = true),
                     savedStateHandle = SavedStateHandle(),
-                    scenario = EnableWidgetProperty(WifiProperty.SSID.protoId)
+                    scenario = ManageAccess
                 )
             }
         }
@@ -88,9 +86,7 @@ class NavGraphTest {
         composeRule.runOnUiThread { composeRule.activity.onBackPressedDispatcher.onBackPressed() }
 
         composeRule.runOnIdle {
-            verify(exactly = 1) { anyConstructed<Navigator>().onBack() }
-            verify(exactly = 0) { anyConstructed<Navigator>().popBackStack() }
-            verify(exactly = 0) { anyConstructed<Navigator>().popLocationAccess() }
+            verify(exactly = 1) { anyConstructed<Navigator>().popBackStack() }
         }
     }
 }
