@@ -1,7 +1,10 @@
 package com.w2sv.widget.ui.state
 
+import android.Manifest
+import android.app.Application
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import com.w2sv.core.resources.R
 import com.w2sv.domain.networking.NetworkAvailabilitySnapshot
 import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkData
@@ -49,6 +52,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -81,7 +85,7 @@ class WidgetPresentationStateProviderTest {
         utilities = WidgetUtility.entries.associateWith { it != WidgetUtility.GoToWifiSettingsButton }
     )
 
-    private fun provider() =
+    private fun provider(presentations: WifiPropertyPresentationProvider = this.presentations) =
         WidgetPresentationStateProvider(
             context,
             configSource,
@@ -92,6 +96,91 @@ class WidgetPresentationStateProviderTest {
             renderCoordinator,
             clock
         )
+
+    @Test fun `unresolved identifiers distinguish foreground-only access from background access`() =
+        runTest {
+            shadowOf(
+                context as Application
+            ).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+            val unresolved =
+                WifiPropertyValue(R.string.no_location_access.txt, resolutionError = WifiPropertyResolutionError.NoLocationAccessPermission)
+
+            val rows = locationRows(unresolved)
+
+            assertEquals(List(2) { "No background location access" }, rows.take(2).map { it.presentation.value })
+            assertEquals(
+                List(2) { WifiPropertyResolutionError.NoBackgroundLocationAccessPermission },
+                rows.take(2).map { it.presentation.resolutionError }
+            )
+            assertEquals("No location access", rows.last().presentation.value)
+            assertEquals(WifiPropertyResolutionError.NoLocationAccessPermission, rows.last().presentation.resolutionError)
+
+            shadowOf(context).grantPermissions(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+            assertEquals(List(2) { "No location access" }, locationRows(unresolved).take(2).map { it.presentation.value })
+        }
+
+    @Test fun `missing precise access and disabled services keep their existing errors`() =
+        runTest {
+            shadowOf(context as Application).grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+            val unresolved =
+                WifiPropertyValue(R.string.no_location_access.txt, resolutionError = WifiPropertyResolutionError.NoLocationAccessPermission)
+            val withoutPreciseAccess = locationRows(unresolved).take(2)
+            assertEquals(List(2) { "No location access" }, withoutPreciseAccess.map { it.presentation.value })
+            assertEquals(
+                List(2) {
+                    WifiPropertyResolutionError.NoLocationAccessPermission
+                },
+                withoutPreciseAccess.map { it.presentation.resolutionError }
+            )
+
+            shadowOf(context).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+            val disabled = locationRows(
+                WifiPropertyValue(R.string.gps_disabled.txt, resolutionError = WifiPropertyResolutionError.GpsDisabled)
+            ).take(2)
+            assertEquals(List(2) { "Location services turned off" }, disabled.map { it.presentation.value })
+            assertEquals(List(2) { WifiPropertyResolutionError.GpsDisabled }, disabled.map { it.presentation.resolutionError })
+        }
+
+    @Test
+    @Config(sdk = [28])
+    fun `Android without separate background permission retains the generic unresolved error`() =
+        runTest {
+            shadowOf(
+                context as Application
+            ).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+            val rows = locationRows(
+                WifiPropertyValue(R.string.no_location_access.txt, resolutionError = WifiPropertyResolutionError.NoLocationAccessPermission)
+            ).take(2)
+
+            assertEquals(List(2) { "No location access" }, rows.map { it.presentation.value })
+            assertEquals(List(2) { WifiPropertyResolutionError.NoLocationAccessPermission }, rows.map { it.presentation.resolutionError })
+        }
+
+    @Test fun `resolved values remain available without background access`() =
+        runTest {
+            shadowOf(
+                context as Application
+            ).grantPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+
+            val rows = locationRows(WifiPropertyValue("resolved value".txt))
+
+            assertEquals(List(3) { "resolved value" }, rows.map { it.presentation.value })
+            assertTrue(rows.all { it.presentation.resolutionError == null })
+        }
+
+    private suspend fun locationRows(value: WifiPropertyValue): List<WidgetPropertyRow> {
+        val locationConfig = config.copy(propertyOrder = listOf(WifiProperty.SSID, WifiProperty.BSSID, WifiProperty.Frequency))
+            .withEnabledLocationAccessRequiringProperties()
+        coEvery { configSource.snapshot() } returns locationConfig
+        every { statusSource.snapshot() } returns WifiStatus.Connected
+        every { remoteData.widgetSnapshot(locationConfig.remoteDataConfig) } returns snapshot
+        val source = WifiPropertyPresentationProvider(
+            WifiPropertyResolver { enabled, _, _ -> enabled.map { ResolvedWifiProperty(it, listOf(value)) } },
+            context.resources
+        )
+        return (provider(source)().wifiState as WidgetWifiState.Connected).rows
+    }
 
     @Test fun `connected state uses configured order appearance utilities and current widget snapshot`() =
         runTest {

@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.location
 
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 
 /**

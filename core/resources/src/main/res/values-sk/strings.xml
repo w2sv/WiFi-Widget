@@ -170,6 +170,7 @@
     <string name="refresh_button_explanation">Spustiť obnovenie údajov</string>
     <string name="go_to_wifi_settings_button_explanation">Otvoriť nastavenia Wi-Fi vo vašom zariadení</string>
     <string name="no_location_access">Bez prístupu k polohe</string>
+    <string name="no_background_location_access">Bez prístupu k polohe na pozadí</string>
     <string name="gps_disabled">Služby určovania polohy sú vypnuté</string>
     <string name="unknown">Neznáme</string>
     <string name="excellent">Vynikajúca</string>
@@ -187,7 +188,7 @@
     <string name="open_release_overview_cd">Otvoriť prehľad verzií aplikácie.</string>
     <string name="location_access">Prístup k polohe</string>
     <string name="settings">Nastavenia</string>
-    <string name="location_access_intro">Na zobrazenie názvu vašej siete a identifikátora prístupového bodu potrebuje WiFi Widget povolenie na prístup k polohe.</string>
+    <string name="location_access_intro">Na zobrazenie názvu vašej siete Wi-Fi (SSID) a identifikátora prístupového bodu (BSSID) potrebuje WiFi Widget prístup k polohe.</string>
     <string name="location_wifi_identification">Prečo je to potrebné?</string>
     <string name="location_wifi_identification_explanation">Názvy sietí Wi-Fi a identifikátory prístupových bodov môžu odhaliť približnú polohu zariadenia. Preto Android chráni prístup k týmto informáciám.</string>
     <string name="location_background_updates">Aktualizácie na pozadí</string>

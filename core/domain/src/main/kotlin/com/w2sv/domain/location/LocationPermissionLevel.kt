@@ -1,16 +1,20 @@
-package com.w2sv.wifiwidget.ui.location
+package com.w2sv.domain.location
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import com.w2sv.androidutils.content.hasPermission
-import com.w2sv.wifiwidget.ui.util.requiresBackgroundLocationPermission
+import com.w2sv.common.android.location.requiresBackgroundLocationPermission
 
 /** Read current grants synchronously when lifecycle reconciliation precedes Compose state updates. */
-internal fun Context.locationPermissionLevel(): LocationPermissionLevel =
+// Lint misses the annotated common-module getter; the short-circuit guard still excludes pre-Q devices.
+@SuppressLint("InlinedApi")
+fun Context.locationPermissionLevel(): LocationPermissionLevel =
     LocationPermissionLevel.fromGrants(
         preciseGranted = hasPermission(Manifest.permission.ACCESS_FINE_LOCATION),
         approximateGranted = hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION),
-        backgroundAccessAvailable = !requiresBackgroundLocationPermission || hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        backgroundAccessAvailable =
+            !requiresBackgroundLocationPermission || hasPermission(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
     )
 
 /**
@@ -18,7 +22,7 @@ internal fun Context.locationPermissionLevel(): LocationPermissionLevel =
  * location services. [PreciseBackground] also covers Android versions where a separate background
  * permission grant is unnecessary.
  */
-internal enum class LocationPermissionLevel {
+enum class LocationPermissionLevel {
     None,
     ApproximateOnly,
     PreciseForeground,
@@ -31,7 +35,7 @@ internal enum class LocationPermissionLevel {
         get() = this == PreciseForeground || this == PreciseBackground
 
     companion object {
-        internal fun fromGrants(
+        fun fromGrants(
             preciseGranted: Boolean,
             approximateGranted: Boolean,
             backgroundAccessAvailable: Boolean

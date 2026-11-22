@@ -141,7 +141,8 @@ private fun LazyItemScope.WifiPropertySegment(
     val renderedLabel = remember(presentation.label) { presentation.label.toAnnotatedString(12.sp) }
     val actionLabel = when (presentation.resolutionError) {
         null -> stringResource(R.string.copy_value_to_clipboard_cd)
-        WifiPropertyResolutionError.NoLocationAccessPermission -> stringResource(R.string.request_location_access_cd)
+        WifiPropertyResolutionError.NoLocationAccessPermission,
+        WifiPropertyResolutionError.NoBackgroundLocationAccessPermission -> stringResource(R.string.request_location_access_cd)
         WifiPropertyResolutionError.GpsDisabled -> stringResource(R.string.open_location_settings_cd)
         WifiPropertyResolutionError.BatterySaverRestricted -> null
     }

@@ -1,5 +1,6 @@
 package com.w2sv.wifiwidget.ui.location
 
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.domain.widget.WidgetManager
 import javax.inject.Inject
 import javax.inject.Singleton

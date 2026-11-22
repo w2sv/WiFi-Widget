@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import app.cash.turbine.test
 import com.w2sv.augmentedpermissions.PermissionState
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
+import com.w2sv.domain.location.LocationPermissionLevel
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.test.runTest

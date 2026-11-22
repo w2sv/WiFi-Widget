@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.w2sv.domain.location.IsLocationEnabled
+import com.w2sv.domain.location.locationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge

@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.locationaccess.state
 
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 
 /**
  * Inputs for Location Access presentation. [LocationAccessAvailability.permissionLevel] reflects

@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.screen.locationaccess.flow
 
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
+import com.w2sv.domain.location.LocationPermissionLevel
 
 /**
  * Temporary state for a pending location-permission interaction, not authoritative Android access. [displayedPermissionLevel] retains the action level

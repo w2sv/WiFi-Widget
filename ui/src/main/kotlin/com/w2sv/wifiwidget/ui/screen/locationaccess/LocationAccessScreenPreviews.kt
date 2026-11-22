@@ -2,8 +2,8 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessScreenActions
 import com.w2sv.wifiwidget.ui.screen.locationaccess.state.LocationAccessScreenState
 import com.w2sv.wifiwidget.ui.util.PreviewOf

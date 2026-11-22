@@ -1,12 +1,16 @@
 package com.w2sv.widget.ui.state
 
 import android.content.Context
+import com.w2sv.core.resources.R
+import com.w2sv.domain.location.LocationPermissionLevel
+import com.w2sv.domain.location.locationPermissionLevel
 import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatusSource
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.widget.rendering.WidgetRenderCoordinator
 import com.w2sv.widget.ui.theme.renderColors
@@ -67,6 +71,7 @@ internal class WidgetPresentationStateProvider @Inject constructor(
     private suspend fun propertyRows(config: WidgetConfig): List<WidgetPropertyRow> {
         val availability = availabilitySource()
         val remoteSnapshot = remoteData.widgetSnapshot(config.remoteDataConfig)
+        val missingBackgroundAccess = context.locationPermissionLevel() == LocationPermissionLevel.PreciseForeground
         val nextRowIndex = mutableMapOf<WifiProperty, Int>()
         return presentations.withProperties(
             enabledProperties = config.enabledProperties,
@@ -76,7 +81,20 @@ internal class WidgetPresentationStateProvider @Inject constructor(
         ).map { (property, presentation) ->
             val index = nextRowIndex[property] ?: 0
             nextRowIndex[property] = index + 1
-            WidgetPropertyRow(property = property, presentation = presentation, propertyIndex = index)
+            // The shared resolver already distinguishes disabled services and preserves resolved values.
+            val widgetPresentation = if (
+                missingBackgroundAccess &&
+                (property == WifiProperty.SSID || property == WifiProperty.BSSID) &&
+                presentation.resolutionError == WifiPropertyResolutionError.NoLocationAccessPermission
+            ) {
+                presentation.copy(
+                    value = context.getString(R.string.no_background_location_access),
+                    resolutionError = WifiPropertyResolutionError.NoBackgroundLocationAccessPermission
+                )
+            } else {
+                presentation
+            }
+            WidgetPropertyRow(property = property, presentation = widgetPresentation, propertyIndex = index)
         }
     }
 }

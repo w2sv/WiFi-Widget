@@ -1,7 +1,7 @@
 package com.w2sv.wifiwidget.ui.screen.locationaccess.flow
 
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
-import com.w2sv.wifiwidget.ui.util.backgroundLocationRequiresSettings
+import com.w2sv.common.android.location.backgroundLocationRequiresSettings
+import com.w2sv.domain.location.LocationPermissionLevel
 
 /** An occurrence that may advance the current [LocationAccessFlowState]. Stale results are ignored. */
 internal sealed interface LocationAccessEvent {

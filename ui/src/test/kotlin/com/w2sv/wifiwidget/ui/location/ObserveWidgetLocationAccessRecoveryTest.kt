@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.w2sv.domain.location.IsLocationEnabled
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import io.mockk.every

@@ -40,7 +40,11 @@ class WidgetActionFactoryTest {
     private val entryPoint = mockk<GlanceWidgetEntryPoint> {
         every { locationAccessActivityIntentProvider() } returns LocationAccessActivityIntentProvider { Intent().setComponent(destination) }
     }
-    private val locationErrors = listOf(WifiPropertyResolutionError.NoLocationAccessPermission, WifiPropertyResolutionError.GpsDisabled)
+    private val locationErrors = listOf(
+        WifiPropertyResolutionError.NoLocationAccessPermission,
+        WifiPropertyResolutionError.NoBackgroundLocationAccessPermission,
+        WifiPropertyResolutionError.GpsDisabled
+    )
 
     @Before
     fun setUp() {
@@ -62,7 +66,7 @@ class WidgetActionFactoryTest {
         assertEquals(destination, intent.component)
         assertEquals(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP, intent.flags)
         assertEquals("wifiwidget://${context.packageName}/location-access", intent.dataString)
-        assertTrue(intent.filterEquals(intents.last()))
+        assertTrue(intents.all(intent::filterEquals))
     }
 
     @Test

@@ -9,8 +9,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation3.runtime.NavBackStack
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenScenario.ManageAccess

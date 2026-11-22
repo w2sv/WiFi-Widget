@@ -58,7 +58,8 @@ internal fun PropertyOnClickScope.onPropertyClick(
             snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
         }
 
-        NoLocationAccessPermission -> onMissingLocationAccess()
+        NoLocationAccessPermission,
+        NoBackgroundLocationAccessPermission -> onMissingLocationAccess()
         GpsDisabled -> locationAccessCapability.openLocationSettings()
         BatterySaverRestricted -> Unit
     }

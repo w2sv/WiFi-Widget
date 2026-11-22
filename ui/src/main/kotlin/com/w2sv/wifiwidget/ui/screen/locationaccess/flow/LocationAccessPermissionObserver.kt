@@ -8,10 +8,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.w2sv.composed.runtime.CollectFromFlow
+import com.w2sv.domain.location.LocationPermissionLevel
+import com.w2sv.domain.location.locationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
-import com.w2sv.wifiwidget.ui.location.locationPermissionLevel
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable

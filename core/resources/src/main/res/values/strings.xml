@@ -175,10 +175,11 @@
     <string name="refresh_button_explanation">Trigger a data refresh</string>
     <string name="go_to_wifi_settings_button_explanation">Open your device\'s wifi settings</string>
     <string name="no_location_access">No location access</string>
+    <string name="no_background_location_access">No background location access</string>
     <string name="gps_disabled">Location services turned off</string>
     <string name="location_access">Location access</string>
     <string name="settings">Settings</string>
-    <string name="location_access_intro">To display your network name and access point identifier, WiFi Widget requires location access permission.</string>
+    <string name="location_access_intro">To display your Wi-Fi network name (SSID) and access point identifier (BSSID), WiFi Widget requires location access.</string>
     <string name="location_wifi_identification">Why is it necessary?</string>
     <string name="location_wifi_identification_explanation">Wi-Fi network names and access point identifiers can reveal a device\'s approximate location. That\'s why Android protects access to this information.</string>
     <string name="location_background_updates">Background updates</string>

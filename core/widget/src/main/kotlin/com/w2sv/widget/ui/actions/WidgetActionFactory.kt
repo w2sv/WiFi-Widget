@@ -24,6 +24,7 @@ internal object WidgetActionFactory {
     fun property(context: Context, presentation: WifiPropertyPresentation): Action? {
         when (presentation.resolutionError) {
             WifiPropertyResolutionError.NoLocationAccessPermission,
+            WifiPropertyResolutionError.NoBackgroundLocationAccessPermission,
             WifiPropertyResolutionError.GpsDisabled -> return actionStartActivity(locationAccessActivityIntent(context))
             null -> Unit
             else -> return null

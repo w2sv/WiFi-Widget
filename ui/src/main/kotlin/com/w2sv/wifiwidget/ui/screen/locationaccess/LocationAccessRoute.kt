@@ -7,8 +7,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.locationaccess.components.BackgroundLocationDisclosure

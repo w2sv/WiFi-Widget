@@ -4,7 +4,7 @@ import android.Manifest
 import androidx.compose.runtime.Stable
 import com.w2sv.augmentedpermissions.PermissionState
 import com.w2sv.domain.location.IsLocationEnabled
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
+import com.w2sv.domain.location.LocationPermissionLevel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 

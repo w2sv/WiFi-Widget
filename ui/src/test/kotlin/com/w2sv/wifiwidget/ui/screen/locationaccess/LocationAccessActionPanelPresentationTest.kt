@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui.screen.locationaccess
 
 import com.w2sv.core.resources.R
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.location.LocationAccessAvailability
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.screen.locationaccess.components.LocationAccessActionPanelPresentation
 import com.w2sv.wifiwidget.ui.screen.locationaccess.components.LocationAccessActionPanelPresentation.Action
 import com.w2sv.wifiwidget.ui.screen.locationaccess.components.LocationAccessActionPanelPresentation.ActionKind

@@ -3,9 +3,9 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.w2sv.domain.location.LocationAccessRepository
+import com.w2sv.domain.location.LocationPermissionLevel
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.wifiproperty.WifiProperty
-import com.w2sv.wifiwidget.ui.location.LocationPermissionLevel
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessEffect
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessEvent
 import com.w2sv.wifiwidget.ui.screen.locationaccess.flow.LocationAccessFlowState
