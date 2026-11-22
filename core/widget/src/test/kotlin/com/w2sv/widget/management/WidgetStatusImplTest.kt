@@ -1,8 +1,7 @@
-package com.w2sv.widget.status
+package com.w2sv.widget.management
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import com.w2sv.widget.management.WidgetPinSuccess
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

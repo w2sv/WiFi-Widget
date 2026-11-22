@@ -1,6 +1,7 @@
 package com.w2sv.domain.widget
 
-interface WidgetActions {
+/** App-driven widget pinning, updates, rendering, and configuration side effects. */
+interface WidgetManager {
     /**
      * Requests launcher pinning with a preview. Returns whether the platform accepted the request;
      * the user may still dismiss the confirmation.

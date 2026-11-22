@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui.actions
+package com.w2sv.widget.ui.actions.clipboard
 
 import android.widget.Toast
 import androidx.annotation.UiThread

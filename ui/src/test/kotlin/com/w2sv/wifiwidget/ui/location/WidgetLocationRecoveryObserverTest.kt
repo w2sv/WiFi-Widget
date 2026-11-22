@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.location
 
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import io.mockk.mockk
 import io.mockk.verify
 import java.util.concurrent.CountDownLatch
@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 import org.junit.Test
 
 class WidgetLocationRecoveryObserverTest {
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private val observer = WidgetLocationRecoveryObserver(actions)
 
     @Test

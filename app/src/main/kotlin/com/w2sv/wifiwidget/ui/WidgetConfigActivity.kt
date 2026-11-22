@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.wifiwidget.BuildConfig
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
@@ -21,7 +21,7 @@ class WidgetConfigActivity : ComponentActivity() {
     lateinit var locationAccessDependencies: LocationAccessDependencies
 
     @Inject
-    lateinit var widgetActions: WidgetActions
+    lateinit var widgetManager: WidgetManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -56,7 +56,7 @@ class WidgetConfigActivity : ComponentActivity() {
 
     /** Requests the provider update lifecycle because the host may omit its initial update. */
     private fun completeWidgetConfiguration(widgetId: Int) {
-        widgetActions.requestUpdate(widgetId)
+        widgetManager.requestUpdate(widgetId)
         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
         finish()
     }

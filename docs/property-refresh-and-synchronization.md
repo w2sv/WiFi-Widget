@@ -70,7 +70,7 @@ The diagram highlights the main data and control paths rather than every Android
 
 | Area                     | Main components                                                                  | Responsibility                                                                                |
 |--------------------------|----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| Configuration            | `WidgetConfigScreenViewModel`, `WidgetConfigDataSourceImpl`, `WidgetActionsImpl` | Persist configuration, then apply widget scheduling and rendering side effects.               |
+| Configuration            | `WidgetConfigScreenViewModel`, `WidgetConfigDataSourceImpl`, `WidgetManagerImpl` | Persist configuration, then apply widget scheduling and rendering side effects.               |
 | Platform observations    | `WifiStatusSourceImpl`                                                           | Expose Wi-Fi status and default-egress observations, plus one-time status snapshots.          |
 | Foreground orchestration | `RemoteDataSynchronizer`, `WifiStateProviderImpl`                                | Reconcile and refresh remote data, then produce home-screen state.                            |
 | Widget observation       | `RemoteDataWidgetObserver`                                                       | React to network and published-data changes while the process is alive.                       |
@@ -131,7 +131,7 @@ Android's `updatePeriodMillis` is set to `0`: periodic refreshes use WorkManager
 
 `WifiWidgetUI` installs `ObserveWidgetLocationAccessRecovery` for all three activity hosts. While a host is resumed, permission changes, location-services changes, and lifecycle resumes trigger fresh snapshots of Android permissions and system location services.
 
-The process-wide `WidgetLocationRecoveryObserver` deduplicates observations across hosts and requests a refresh when precise access becomes available, foreground access gains background access, or location services are re-enabled. Refreshes require both precise access and enabled services. The first sufficient observation also requests recovery after a process restart. `WidgetActionsImpl.refresh()` checks `WidgetStatus.hasInstalledWidgets` before broadcasting, so these requests schedule no work without installed widgets.
+The process-wide `WidgetLocationRecoveryObserver` deduplicates observations across hosts and requests a refresh when precise access becomes available, foreground access gains background access, or location services are re-enabled. Refreshes require both precise access and enabled services. The first sufficient observation also requests recovery after a process restart. `WidgetManagerImpl.refresh()` checks `WidgetStatus.hasInstalledWidgets` before broadcasting, so these requests schedule no work without installed widgets.
 
 Observation history stays in process memory, independently of Location Access screen scenarios and permission-flow state.
 
@@ -153,7 +153,7 @@ Recovery work renders if it changed published remote data, including on completi
 
 ### Rendering the widget
 
-`WidgetActionsImpl.refresh()` sends application-driven refresh requests through the provider broadcast; `render()` requests only a Glance update. The application-scoped `WidgetRenderCoordinator` coalesces repeated render requests and calls Glance's `updateAll()` sequentially. Active Glance compositions observe the same request revision to prepare a new snapshot. This path never schedules remote-data recovery; `WifiWidgetProvider.onUpdate()` and the network observer own recovery checks.
+`WidgetManagerImpl.refresh()` sends application-driven refresh requests through the provider broadcast; `render()` requests only a Glance update. The application-scoped `WidgetRenderCoordinator` coalesces repeated render requests and calls Glance's `updateAll()` sequentially. Active Glance compositions observe the same request revision to prepare a new snapshot. This path never schedules remote-data recovery; `WifiWidgetProvider.onUpdate()` and the network observer own recovery checks.
 
 `WidgetPresentationStateProvider` reads widget configuration, Wi-Fi status, route availability, and `RemoteNetworkDataRepositoryImpl.widgetSnapshot()` once per pass, then uses the shared property-presentation provider. `WifiGlanceWidget` renders that state. Native `RemoteViews` is used only for labels requiring Android text-subscript spans. Neither state preparation nor rendering makes HTTP requests.
 

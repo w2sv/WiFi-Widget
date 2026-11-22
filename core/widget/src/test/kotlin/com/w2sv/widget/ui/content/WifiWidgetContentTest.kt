@@ -10,6 +10,7 @@ import androidx.glance.testing.unit.hasTextEqualTo
 import androidx.test.core.app.ApplicationProvider
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.wifiproperty.WifiProperty
+import com.w2sv.domain.wifiproperty.WifiPropertyResolutionError
 import com.w2sv.domain.wifiproperty.presentation.SubscriptableText
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.widget.preview.widgetPreviewState
@@ -46,6 +47,33 @@ class WifiWidgetContentTest {
             onNode(hasTextEqualTo("SSID")).assertExists()
             onNode(hasTextEqualTo("BSSID")).assertExists()
             onAllNodes(hasClickAction()).assertCountEquals(2)
+        }
+
+    @Test
+    fun `blank and unresolved properties without recovery remain non-clickable`() =
+        runGlanceAppWidgetUnitTest(timeout = 10.seconds) {
+            val rows = listOf(
+                WidgetPropertyRow(WifiProperty.SSID, WifiPropertyPresentation(SubscriptableText("SSID"), "Home")),
+                WidgetPropertyRow(WifiProperty.BSSID, WifiPropertyPresentation(SubscriptableText("BSSID"), " \t")),
+                WidgetPropertyRow(
+                    WifiProperty.RSSI,
+                    WifiPropertyPresentation(
+                        SubscriptableText("RSSI"),
+                        "Unavailable",
+                        resolutionError = WifiPropertyResolutionError.BatterySaverRestricted
+                    )
+                )
+            )
+            val state = widgetPreviewState(context).copy(
+                wifiState = WidgetWifiState.Connected(WifiStatus.Connected, rows),
+                utilities = WidgetUtilities(showRefreshTime = false, actions = emptyList())
+            )
+            setContext(context)
+            provideComposable { WifiWidgetContent(state) }
+
+            onNode(hasTextEqualTo("BSSID")).assertExists()
+            onNode(hasTextEqualTo("Unavailable")).assertExists()
+            onAllNodes(hasClickAction()).assertCountEquals(1)
         }
 
     @Test

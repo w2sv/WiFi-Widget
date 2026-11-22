@@ -11,7 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.w2sv.domain.location.IsLocationEnabled
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import io.mockk.every
 import io.mockk.mockk
@@ -31,7 +31,7 @@ class ObserveWidgetLocationAccessRecoveryTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private val observer = WidgetLocationRecoveryObserver(actions)
     private val permissionLevel = mutableStateOf(LocationPermissionLevel.None)
     private val servicesFlow = MutableStateFlow(false)

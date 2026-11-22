@@ -2,9 +2,9 @@ package com.w2sv.wifiwidget.ui.screen.widgetconfig
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.reversiblestate.ReversibleStateFlow
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,7 @@ import slimber.log.e
 
 /** Manages reversible widget configuration editing and persistence. */
 @HiltViewModel
-class WidgetConfigScreenViewModel @Inject constructor(dataSource: WidgetConfigDataSource, private val widgetActions: WidgetActions) :
+class WidgetConfigScreenViewModel @Inject constructor(dataSource: WidgetConfigDataSource, private val widgetManager: WidgetManager) :
     ViewModel() {
 
     val reversibleConfig = ReversibleStateFlow(
@@ -30,10 +30,10 @@ class WidgetConfigScreenViewModel @Inject constructor(dataSource: WidgetConfigDa
         commitState = { commit ->
             dataSource.update { commit.current }
 
-            // Persistence has succeeded. Widget actions are best-effort
+            // Persistence has succeeded. Widget management side effects are best-effort
             // and must not cause a confirmed write to be retried.
             runOrHandle(onFailure = { failure -> e { "Failed applying widget configuration side effects: error=$failure" } }) {
-                widgetActions.applyConfigurationChange(
+                widgetManager.applyConfigurationChange(
                     previous = commit.previous,
                     current = commit.current
                 )

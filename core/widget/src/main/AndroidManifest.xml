@@ -27,7 +27,7 @@
 
         <!--Activities-->
         <activity
-            android:name="com.w2sv.widget.ui.actions.CopyPropertyToClipboardActivity"
+            android:name="com.w2sv.widget.ui.actions.clipboard.CopyToClipboardActivity"
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:taskAffinity="com.w2sv.wifiwidget.taskaffinity.CopyPropertyToClipboard"

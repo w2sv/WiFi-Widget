@@ -2,6 +2,10 @@
 
 `:core:widget` owns the Android home-screen widget, including its Jetpack Glance UI, interactions, presentation state, lifecycle handling, and background refresh integration.
 
+App-driven operations use the domain `WidgetManager` contract, implemented by `management/WidgetManagerImpl`. `WidgetStatus` remains a separate contract for installed widget IDs and pin-success events, implemented by `management/WidgetStatusImpl`.
+
+Interactions from the rendered widget live in `ui/actions`. `WidgetButtonAction` defines the configurable buttons and their metadata; `WidgetActionFactory` constructs Glance actions for those buttons and property rows. `RefreshWidgetAction` and `clipboard/CopyToClipboardActivity` execute refresh and clipboard behavior, while `LocationAccessActivityIntent` retains the app-provided destination and widget-specific launch configuration.
+
 See the [rendering guidelines](../../docs/guidelines/widget-rendering.md), [responsive layout guidelines](../../docs/guidelines/widget-layout.md), and [property refresh and synchronization guide](../../docs/property-refresh-and-synchronization.md) for implementation details.
 
 ## Glance previews

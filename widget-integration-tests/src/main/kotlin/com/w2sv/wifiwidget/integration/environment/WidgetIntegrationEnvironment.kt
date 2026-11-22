@@ -25,7 +25,7 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     private lateinit var dependencies: WidgetIntegrationDependencies
 
     val configSource get() = dependencies.widgetConfigSource()
-    val actions get() = dependencies.widgetActions()
+    val widgetManager get() = dependencies.widgetManager()
     val repository get() = dependencies.remoteNetworkDataRepository()
 
     fun start() {
@@ -101,7 +101,7 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
         val previous = configSource.blockingSnapshot()
         val current = transform(previous)
         setConfig(current)
-        actions.applyConfigurationChange(previous, current)
+        widgetManager.applyConfigurationChange(previous, current)
         return current
     }
 

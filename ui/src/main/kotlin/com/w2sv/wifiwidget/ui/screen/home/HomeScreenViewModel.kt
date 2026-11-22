@@ -3,7 +3,7 @@ package com.w2sv.wifiwidget.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.core.resources.R
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val widgetActions: WidgetActions,
+    private val widgetManager: WidgetManager,
     widgetStatus: WidgetStatus,
     private val remoteDataSynchronizer: RemoteDataSynchronizer,
     wifiStateProvider: WifiStateProvider
@@ -34,7 +34,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun pinWidget() {
         viewModelScope.launch {
-            val successfullyPinned = widgetActions.pin()
+            val successfullyPinned = widgetManager.pin()
             if (!successfullyPinned) {
                 snackbarBuilder.emit {
                     AppSnackbarVisuals(

@@ -6,9 +6,9 @@ import android.content.Context
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import com.w2sv.androidutils.content.intent
 import com.w2sv.common.android.broadcastPendingIntent
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.widget.WifiWidgetProvider
 import com.w2sv.widget.preview.WifiPinPreviewWidget
@@ -21,14 +21,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import slimber.log.w
 
-internal class WidgetActionsImpl @Inject constructor(
+internal class WidgetManagerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val appWidgetManager: AppWidgetManager,
     private val refreshManager: WifiWidgetWorkScheduler,
     private val renderCoordinator: WidgetRenderCoordinator,
     private val configSource: WidgetConfigSource,
     private val widgetStatus: WidgetStatus
-) : WidgetActions {
+) : WidgetManager {
     override suspend fun pin(): Boolean =
         appWidgetManager.isRequestPinAppWidgetSupported &&
             try {

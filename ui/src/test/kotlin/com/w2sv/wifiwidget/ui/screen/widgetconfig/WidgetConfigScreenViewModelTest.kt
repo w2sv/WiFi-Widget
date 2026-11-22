@@ -1,8 +1,8 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig
 
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.wifiwidget.test.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.every
@@ -30,7 +30,7 @@ class WidgetConfigScreenViewModelTest {
         }
     }
     var configurationChangeHasBeenApplied = false
-    private val actions = mockk<WidgetActions>(relaxed = true) {
+    private val actions = mockk<WidgetManager>(relaxed = true) {
         every { applyConfigurationChange(any(), any()) } answers { configurationChangeHasBeenApplied = true }
     }
 

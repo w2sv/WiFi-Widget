@@ -21,7 +21,7 @@ import androidx.glance.layout.width
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.w2sv.widget.ui.actions.WidgetAction
+import com.w2sv.widget.ui.actions.WidgetButtonAction
 import com.w2sv.widget.ui.layout.ActionLayout
 import com.w2sv.widget.ui.layout.TimestampLayout
 import com.w2sv.widget.ui.state.WidgetPresentationState
@@ -93,7 +93,7 @@ internal fun UtilityFABs(
 
 @Composable
 private fun UtilityButton(
-    action: WidgetAction,
+    action: WidgetButtonAction,
     tint: Int,
     surface: ColorProvider,
     size: Dp,

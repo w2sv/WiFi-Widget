@@ -16,9 +16,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import com.w2sv.core.resources.R
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.wifiwidget.ui.designsystem.LocalSnackbarHostState
 import com.w2sv.wifiwidget.ui.util.snackbar.LocalSnackbarVisibility
@@ -56,7 +56,7 @@ class WidgetConfigRouteTest {
             if (publishUpdate) applied.value = stored
         }
     }
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private val viewModel = WidgetConfigScreenViewModel(dataSource, actions)
     private val snackbarHost = SnackbarHostState()
     private val snackbarVisibility = SnackbarVisibility()

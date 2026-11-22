@@ -25,7 +25,7 @@ import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvide
 import com.w2sv.domain.wifiproperty.txt
 import com.w2sv.widget.preview.widgetPreviewState
 import com.w2sv.widget.rendering.WidgetRenderCoordinator
-import com.w2sv.widget.ui.actions.WidgetAction
+import com.w2sv.widget.ui.actions.WidgetButtonAction
 import com.w2sv.widget.ui.theme.toRenderColors
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -112,7 +112,7 @@ class WidgetPresentationStateProviderTest {
             assertEquals(FontSize.Large, state.fontSize)
             assertEquals(WifiPropertyValueAlignment.Left, state.valueAlignment)
             assertTrue(state.utilities.showRefreshTime)
-            assertEquals(listOf(WidgetAction.Refresh), state.utilities.actions)
+            assertEquals(listOf(WidgetButtonAction.Refresh), state.utilities.actions)
             assertTrue(state.renderTime.normal.isNotBlank())
             verify(exactly = 1) { remoteData.widgetSnapshot(config.remoteDataConfig) }
             coVerify(exactly = 0) { remoteData.refresh(any()) }

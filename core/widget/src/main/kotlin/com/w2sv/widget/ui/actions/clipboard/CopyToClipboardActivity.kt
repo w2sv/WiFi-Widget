@@ -1,4 +1,4 @@
-package com.w2sv.widget.ui.actions
+package com.w2sv.widget.ui.actions.clipboard
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -20,7 +20,7 @@ import slimber.log.i
 
 /** Copies the Glance row's immutable payload and exits even when its arguments are invalid. */
 @AndroidEntryPoint
-internal class CopyPropertyToClipboardActivity : ComponentActivity() {
+internal class CopyToClipboardActivity : ComponentActivity() {
 
     @Inject
     lateinit var toastManager: ToastManager
@@ -33,7 +33,7 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
 
         i { "onCreate | intent=${intent.toDebugString()}" }
 
-        copyPropertyFromIntent(intent, clipboardManager) { label ->
+        copyToClipboardFromIntent(intent, clipboardManager) { label ->
             toastManager.cancelPreviousAndShow(
                 applicationContext.makeToast(
                     resources.getHtmlFormattedText(R.string.copied_to_clipboard, label),
@@ -47,21 +47,22 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
 
     /** Row-specific clipboard payload; each Glance action has its own identity. */
     @Parcelize
-    data class Property(val label: String, val value: String) : Parcelable {
+    data class Payload(val label: String, val value: String) : Parcelable {
 
         companion object {
             fun intent(propertyLabel: String, propertyValue: String): Intent =
                 Intent().putExtra(
                     EXTRA,
-                    Property(
+                    Payload(
                         label = propertyLabel,
                         value = propertyValue
                     )
                 )
 
-            fun fromIntent(intent: Intent): Property? =
-                intent.getParcelableCompat<Property>(EXTRA)
+            fun fromIntent(intent: Intent): Payload? =
+                intent.getParcelableCompat<Payload>(EXTRA)
 
+            // Preserve the established extra key for clipboard payloads.
             private const val EXTRA = "com.w2sv.wifiwidget.extra.CopyPropertyToClipboardBroadcastReceiverArgs"
         }
     }
@@ -69,15 +70,15 @@ internal class CopyPropertyToClipboardActivity : ComponentActivity() {
 
 /** Copies the property supplied by the intent and reports its label on success. */
 @VisibleForTesting
-fun copyPropertyFromIntent(
+fun copyToClipboardFromIntent(
     intent: Intent,
     clipboardManager: ClipboardManager,
     onCopied: (String) -> Unit
 ) {
-    val property = CopyPropertyToClipboardActivity.Property.fromIntent(intent) ?: return
-    if (property.label.isBlank() || property.value.isBlank()) return
+    val payload = CopyToClipboardActivity.Payload.fromIntent(intent) ?: return
+    if (payload.label.isBlank() || payload.value.isBlank()) return
 
     @Suppress("UsePropertyAccessSyntax")
-    clipboardManager.setPrimaryClip(ClipData.newPlainText(property.label, property.value))
-    onCopied(property.label)
+    clipboardManager.setPrimaryClip(ClipData.newPlainText(payload.label, payload.value))
+    onCopied(payload.label)
 }

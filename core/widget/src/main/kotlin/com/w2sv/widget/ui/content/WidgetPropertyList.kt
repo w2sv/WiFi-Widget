@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.action.actionStartActivity
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.lazy.items
 import androidx.glance.layout.Alignment
@@ -22,7 +21,7 @@ import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentWidth
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import com.w2sv.widget.ui.actions.clickIntent
+import com.w2sv.widget.ui.actions.WidgetActionFactory
 import com.w2sv.widget.ui.layout.PropertyLayout
 import com.w2sv.widget.ui.state.WidgetPresentationState
 import com.w2sv.widget.ui.state.WidgetPropertyRow
@@ -72,7 +71,7 @@ private fun PropertyRow(
     Column(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .thenIfNotNull(rowPresentation.clickIntent(context)) { clickable(actionStartActivity(it)) }
+            .thenIfNotNull(WidgetActionFactory.property(context, rowPresentation)) { clickable(it) }
             .padding(
                 top = WidgetDimens.Properties.rowVerticalPadding,
                 bottom = WidgetDimens.Properties.rowVerticalPadding,

@@ -8,8 +8,8 @@ import androidx.work.WorkerParameters
 import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import slimber.log.d
@@ -35,7 +35,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
     private val powerManager: PowerManager,
     private val remoteNetworkDataRepository: RemoteNetworkDataRepository,
     private val networkAvailabilitySource: NetworkAvailabilitySource,
-    private val widgetActions: WidgetActions,
+    private val widgetManager: WidgetManager,
     private val widgetConfigSource: WidgetConfigSource
 ) : CoroutineWorker(context, params) {
 
@@ -77,7 +77,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
             // Ensure recovery-triggered changes are rendered before the worker completes,
             // independently of the application-scoped observer.
             if (remoteNetworkDataRepository.data.value != before) {
-                widgetActions.render()
+                widgetManager.render()
             }
         }
     }
@@ -91,7 +91,7 @@ internal class WifiWidgetRefreshWorker @AssistedInject constructor(
         } else {
             d { "Widget remote refresh skipped: no eligible Wi-Fi or VPN default route" }
         }
-        widgetActions.render()
+        widgetManager.render()
         return Result.success()
     }
 }

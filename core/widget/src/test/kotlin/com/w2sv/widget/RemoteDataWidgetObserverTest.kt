@@ -7,9 +7,9 @@ import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import io.mockk.coEvery
@@ -54,7 +54,7 @@ class RemoteDataWidgetObserverTest {
         coEvery { snapshot() } returns WidgetConfig.default
     }
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private var widgetsInstalled = true
     private val widgetStatus = mockk<WidgetStatus> {
         every { hasInstalledWidgets } answers { widgetsInstalled }

@@ -12,9 +12,9 @@ import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult.Complete
 import com.w2sv.domain.networking.RemoteRefreshResult.Incomplete
 import com.w2sv.domain.networking.RemoteRefreshResult.NetworkUnavailable
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -38,7 +38,7 @@ class WifiWidgetRefreshWorkerTest {
     private var availability = NetworkAvailabilitySnapshot(false, true, true, true, 1L, true)
     private val availabilitySource = NetworkAvailabilitySource { availability }
     private val remoteData = MutableStateFlow(RemoteNetworkData.empty)
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private val configSource = mockk<WidgetConfigSource> {
         coEvery { snapshot() } returns WidgetConfig.default
     }

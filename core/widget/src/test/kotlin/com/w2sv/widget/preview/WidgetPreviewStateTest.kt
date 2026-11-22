@@ -13,7 +13,7 @@ import com.w2sv.domain.widget.WidgetUtility
 import com.w2sv.domain.widget.WifiPropertyValueAlignment
 import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.widget.ui.WifiGlanceWidget
-import com.w2sv.widget.ui.actions.WidgetAction
+import com.w2sv.widget.ui.actions.WidgetButtonAction
 import com.w2sv.widget.ui.state.WidgetWifiState
 import com.w2sv.widget.ui.theme.resolve
 import com.w2sv.widget.ui.theme.toRenderColors
@@ -60,7 +60,7 @@ class WidgetPreviewStateTest {
         assertTrue(rows.isNotEmpty())
         assertEquals(WidgetConfig.default.enabledProperties.map { it.protoId.toLong() * 1_000 }, rows.map { it.id })
         assertTrue(state.utilities.showRefreshTime)
-        assertEquals(WidgetAction.entries, state.utilities.actions)
+        assertEquals(WidgetButtonAction.entries, state.utilities.actions)
         assertEquals(WidgetConfig.default.appearance.fontSize, state.fontSize)
         assertEquals(WidgetConfig.default.appearance.propertyValueAlignment, state.valueAlignment)
         assertEquals(255, android.graphics.Color.alpha(state.colors.background))
@@ -88,7 +88,7 @@ class WidgetPreviewStateTest {
         val rows = (state.wifiState as WidgetWifiState.Connected).rows
 
         assertEquals(config.enabledProperties.map { it.protoId.toLong() * 1_000 }, rows.map { it.id })
-        assertEquals(listOf(WidgetAction.Refresh), state.utilities.actions)
+        assertEquals(listOf(WidgetButtonAction.Refresh), state.utilities.actions)
         assertFalse(state.utilities.showRefreshTime)
         assertTrue(rows.any { it.presentation.value == "Coffee Shop Wi-Fi" })
         assertEquals(customColors.toRenderColors(0.5f), state.colors)

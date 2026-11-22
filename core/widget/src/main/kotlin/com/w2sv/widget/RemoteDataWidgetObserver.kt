@@ -6,8 +6,8 @@ import com.w2sv.domain.networking.NetworkAvailabilitySource
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.kotlinutils.coroutines.runOrHandle
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
@@ -45,7 +45,7 @@ class RemoteDataWidgetObserver @Inject internal constructor(
     private val networkAvailabilitySource: NetworkAvailabilitySource,
     private val widgetConfigSource: WidgetConfigSource,
     private val workScheduler: WifiWidgetWorkScheduler,
-    private val widgetActions: WidgetActions,
+    private val widgetManager: WidgetManager,
     private val widgetStatus: WidgetStatus,
     @AppDefaultScope private val scope: CoroutineScope
 ) {
@@ -65,7 +65,7 @@ class RemoteDataWidgetObserver @Inject internal constructor(
                     e { "Failed requesting widget render after remote-data change: error=$exception" }
                 }) {
                     if (widgetStatus.hasInstalledWidgets) {
-                        widgetActions.render()
+                        widgetManager.render()
                     }
                 }
             }
@@ -126,7 +126,7 @@ class RemoteDataWidgetObserver @Inject internal constructor(
                 val current = ObservedWifiConnection(status, wifiStatusSource.connectedWifiIdentity())
                 if (previous != null && previous != current && widgetStatus.hasInstalledWidgets) {
                     if (status.isConnected) scheduleRecoveryAfterWifiChange()
-                    widgetActions.render()
+                    widgetManager.render()
                 }
                 previous = current
             }
@@ -176,7 +176,7 @@ class RemoteDataWidgetObserver @Inject internal constructor(
         // Publication already requests a render through the data collector. When it stays equal,
         // availability or local routing may still change rows.
         if (before == remoteNetworkDataRepository.data.value) {
-            widgetActions.render()
+            widgetManager.render()
         }
     }
 }

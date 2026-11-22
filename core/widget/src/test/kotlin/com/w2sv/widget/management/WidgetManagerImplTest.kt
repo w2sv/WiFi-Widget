@@ -28,7 +28,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [35])
-class WidgetActionsImplTest {
+class WidgetManagerImplTest {
     private val context = mockk<Context>(relaxed = true) {
         every { packageName } returns "com.w2sv.widget"
     }
@@ -39,7 +39,7 @@ class WidgetActionsImplTest {
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
     private val renderCoordinator = mockk<WidgetRenderCoordinator>(relaxed = true)
     private val configSource = mockk<WidgetConfigSource>()
-    private val actions = WidgetActionsImpl(context, manager, scheduler, renderCoordinator, configSource, widgetStatus)
+    private val actions = WidgetManagerImpl(context, manager, scheduler, renderCoordinator, configSource, widgetStatus)
     private val previous = WidgetConfig.default
 
     @Test fun `no installed widgets skip immediate refresh requests`() {
@@ -85,7 +85,7 @@ class WidgetActionsImplTest {
             every { manager.isRequestPinAppWidgetSupported } returns true
             coEvery { configSource.snapshot() } throws IllegalStateException("missing config")
             val actions =
-                WidgetActionsImpl(
+                WidgetManagerImpl(
                     ApplicationProvider.getApplicationContext(),
                     manager,
                     scheduler,
@@ -116,7 +116,7 @@ class WidgetActionsImplTest {
                     )
                 } returns true
                 val actions =
-                    WidgetActionsImpl(
+                    WidgetManagerImpl(
                         ApplicationProvider.getApplicationContext(),
                         manager,
                         scheduler,

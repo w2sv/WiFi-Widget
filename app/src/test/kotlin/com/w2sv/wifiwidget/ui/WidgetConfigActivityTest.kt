@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import com.w2sv.core.resources.R
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigScreenViewModel
 import io.mockk.mockk
 import io.mockk.verify
@@ -110,10 +110,10 @@ class WidgetConfigActivityTest {
         val intent = widgetIntent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
         ActivityScenario.launch<WidgetConfigActivity>(intent).use { scenario ->
             lateinit var activity: WidgetConfigActivity
-            val actions = mockk<WidgetActions>(relaxed = true)
+            val actions = mockk<WidgetManager>(relaxed = true)
             scenario.onActivity {
                 activity = it
-                it.widgetActions = actions
+                it.widgetManager = actions
             }
             val close = composeRule.onNodeWithContentDescription(activity.getString(R.string.close))
             close.assertIsDisplayed()

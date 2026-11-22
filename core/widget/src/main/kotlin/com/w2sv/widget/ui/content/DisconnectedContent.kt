@@ -25,7 +25,7 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import com.w2sv.core.resources.R as ResourcesR
 import com.w2sv.domain.networking.WifiStatus
-import com.w2sv.widget.ui.actions.wifiSettingsAction
+import com.w2sv.widget.ui.actions.WidgetActionFactory
 import com.w2sv.widget.ui.layout.StatusLayout
 import com.w2sv.widget.ui.layout.StatusPresentation
 import com.w2sv.widget.ui.state.WidgetPresentationState
@@ -51,7 +51,7 @@ internal fun DisconnectedContent(state: WidgetPresentationState, layout: StatusL
         modifier = GlanceModifier
             .fillMaxSize()
             .padding(start = layout.startPadding, end = layout.endPadding, bottom = layout.bottomPadding)
-            .thenIfNotNull(wifiSettingsAction(context)) { clickable(it) },
+            .thenIfNotNull(WidgetActionFactory.wifiSettings(context)) { clickable(it) },
         contentAlignment = layout.contentAlignment
     ) {
         when (layout.presentation) {
