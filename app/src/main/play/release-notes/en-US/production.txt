@@ -1,4 +1,6 @@
-- Refreshed the app with Material 3 Expressive, including a clearer Wi-Fi status screen and redesigned widget settings.
-- Drag and drop Wi-Fi properties to reorder them, or move disabled properties to the bottom from the menu.
-- Improved screen reader labels and settings control states.
-- Improved Wi-Fi status updates when networks or the Wi-Fi adapter change.
+- Redesigned widgets with scrolling, floating controls, and improved layouts across sizes.
+- Local widget updates don't wait for remote data; fewer network requests.
+- New Location Access screen guides permission setup; you can skip it and configure widgets first.
+- Tap widget permission errors to restore access, with automatic refresh afterward.
+- Refreshed navigation drawer, theme swatches, and animations.
+- Fixed missing Apply/Reset buttons and duplicate copy confirmations on Android 13+.
