@@ -3,6 +3,7 @@ package com.w2sv.wifiwidget.ui.designsystem.animation
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.MotionDurationScale
+import androidx.compose.ui.test.ComposeUiTestConfig
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import org.junit.Assert.assertEquals
@@ -24,7 +25,7 @@ class EntranceTest {
     }
 
     @get:Rule
-    val composeRule = createAndroidComposeRule<ComponentActivity>(effectContext = durationScale)
+    val composeRule = createAndroidComposeRule<ComponentActivity>(ComposeUiTestConfig(durationScale))
 
     @Test
     fun `recomposition preserves the shared animation and it completes`() {

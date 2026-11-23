@@ -1,6 +1,10 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.CapturedAnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -92,7 +96,11 @@ fun RefreshIntervalConfigurationDialog(
                 minuteWheelPickerState = minutePickerState,
                 modifier = Modifier.fillMaxWidth()
             )
-            AnimatedVisibility(visible = isInvalidSelection) {
+            CapturedAnimatedVisibility(
+                visible = isInvalidSelection,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly,

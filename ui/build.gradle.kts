@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3.android)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.animation)
     implementation(libs.androidx.compose.material.icons.core)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling.preview)
@@ -73,7 +74,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    ktlintRuleset(libs.compose.rules.ktlint)
+    ktlintRuleset(libs.nlopez.compose.rules.ktlint)
 
     testImplementation(libs.bundles.unitTest)
     testImplementation(libs.androidx.compose.ui.test.junit4.android)

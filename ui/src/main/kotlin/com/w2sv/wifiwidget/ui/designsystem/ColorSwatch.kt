@@ -1,6 +1,6 @@
 package com.w2sv.wifiwidget.ui.designsystem
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -74,7 +74,7 @@ fun ColorSwatch(
                 .background(brush, CircleShape)
         )
 
-        AnimatedVisibility(
+        CapturedAnimatedVisibility(
             visible = selected && showCheckmark,
             modifier = Modifier
                 .align(Alignment.BottomEnd)

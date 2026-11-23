@@ -82,7 +82,7 @@ dependencies {
     debugImplementation(libs.androidx.glance.appwidget.preview)
     debugImplementation(libs.androidx.glance.preview)
 
-    ktlintRuleset(libs.compose.rules.ktlint)
+    ktlintRuleset(libs.nlopez.compose.rules.ktlint)
 
     testImplementation(libs.bundles.unitTest)
     testImplementation(libs.androidx.glance.appwidget.testing)

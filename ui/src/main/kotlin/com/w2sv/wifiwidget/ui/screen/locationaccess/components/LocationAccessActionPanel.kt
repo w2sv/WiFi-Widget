@@ -2,7 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.locationaccess.components
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.expandVertically
@@ -231,7 +231,7 @@ private fun AppSettingsLocationAccessActionButton(
     actionsEnabled: Boolean,
     actions: LocationAccessScreenActions
 ) {
-    AnimatedVisibility(
+    CapturedAnimatedVisibility(
         visible = visible,
         enter = fadeIn(tween(180)) + expandVertically(tween(180)),
         exit = fadeOut(tween(120)) + shrinkVertically(tween(120))

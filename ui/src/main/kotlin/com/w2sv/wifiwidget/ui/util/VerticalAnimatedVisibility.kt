@@ -1,7 +1,6 @@
 package com.w2sv.wifiwidget.ui.util
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.CapturedAnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,9 +12,9 @@ import androidx.compose.ui.Modifier
 fun VerticalAnimatedVisibility(
     visible: Boolean,
     modifier: Modifier = Modifier,
-    content: @Composable AnimatedVisibilityScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
-    AnimatedVisibility(
+    CapturedAnimatedVisibility(
         visible = visible,
         modifier = modifier,
         enter = fadeIn() + expandVertically(),
