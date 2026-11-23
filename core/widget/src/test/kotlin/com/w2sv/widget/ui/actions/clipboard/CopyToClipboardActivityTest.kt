@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.os.Build
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -15,12 +16,12 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28, 35])
+@Config(sdk = [28, 32, 33, 35])
 class CopyToClipboardActivityTest {
     private val application = ApplicationProvider.getApplicationContext<Application>()
     private val clipboard = application.getSystemService(ClipboardManager::class.java)
 
-    @Test fun `copy processing uses current row value and confirms every successful copy`() {
+    @Test fun `copy processing uses current row value and confirms only before Android 13`() {
         val copiedLabels = mutableListOf<String>()
         copyToClipboardFromIntent(
             CopyToClipboardActivity.Payload.intent(
@@ -37,7 +38,8 @@ class CopyToClipboardActivityTest {
         ) { copiedLabels += it }
         assertEquals("Home", clipboard.primaryClip?.getItemAt(0)?.text.toString())
         assertEquals("SSID", clipboard.primaryClip?.description?.label)
-        assertEquals(listOf("IP Public", "SSID"), copiedLabels)
+        val expectedConfirmations = if (Build.VERSION.SDK_INT < 33) listOf("IP Public", "SSID") else emptyList()
+        assertEquals(expectedConfirmations, copiedLabels)
     }
 
     @Test fun `missing and malformed arguments leave clipboard and toast untouched`() {

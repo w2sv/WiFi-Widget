@@ -12,6 +12,7 @@ import com.w2sv.androidutils.content.getParcelableCompat
 import com.w2sv.androidutils.content.toDebugString
 import com.w2sv.androidutils.res.getHtmlFormattedText
 import com.w2sv.androidutils.widget.makeToast
+import com.w2sv.common.android.requiresCustomClipboardConfirmation
 import com.w2sv.core.resources.R
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -68,7 +69,7 @@ internal class CopyToClipboardActivity : ComponentActivity() {
     }
 }
 
-/** Copies the property supplied by the intent and reports its label on success. */
+/** Copies the property supplied by the intent and requests custom confirmation before Android 13. */
 @VisibleForTesting
 fun copyToClipboardFromIntent(
     intent: Intent,
@@ -80,5 +81,7 @@ fun copyToClipboardFromIntent(
 
     @Suppress("UsePropertyAccessSyntax")
     clipboardManager.setPrimaryClip(ClipData.newPlainText(payload.label, payload.value))
-    onCopied(payload.label)
+    if (requiresCustomClipboardConfirmation) {
+        onCopied(payload.label)
+    }
 }

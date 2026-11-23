@@ -1,4 +1,4 @@
-package com.w2sv.common.android.location
+package com.w2sv.common.android
 
 import android.os.Build
 import androidx.annotation.ChecksSdkIntAtLeast

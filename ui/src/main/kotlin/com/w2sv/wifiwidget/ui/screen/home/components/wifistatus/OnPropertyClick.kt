@@ -11,6 +11,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import com.w2sv.common.android.requiresCustomClipboardConfirmation
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.resources.R
@@ -55,7 +56,9 @@ internal fun PropertyOnClickScope.onPropertyClick(
     when (resolutionError) {
         null -> scope.launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
-            snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
+            if (requiresCustomClipboardConfirmation) {
+                snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
+            }
         }
 
         NoLocationAccessPermission,

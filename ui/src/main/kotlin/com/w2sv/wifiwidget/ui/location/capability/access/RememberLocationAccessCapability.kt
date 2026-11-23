@@ -12,7 +12,7 @@ import com.w2sv.augmentedpermissions.PermissionRequestHistory
 import com.w2sv.augmentedpermissions.PermissionState
 import com.w2sv.augmentedpermissions.rememberPermissionState
 import com.w2sv.common.android.SettingsIntents
-import com.w2sv.common.android.location.requiresBackgroundLocationPermission
+import com.w2sv.common.android.requiresBackgroundLocationPermission
 import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.kotlinutils.makeIf
 import slimber.log.d

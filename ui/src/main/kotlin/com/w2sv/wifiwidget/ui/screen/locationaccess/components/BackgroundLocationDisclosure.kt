@@ -9,7 +9,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.w2sv.common.android.location.backgroundLocationRequiresSettings
+import com.w2sv.common.android.backgroundLocationRequiresSettings
 import com.w2sv.core.resources.R
 import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessScreenTokens

@@ -4,7 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import com.w2sv.androidutils.content.hasPermission
-import com.w2sv.common.android.location.requiresBackgroundLocationPermission
+import com.w2sv.common.android.requiresBackgroundLocationPermission
 
 /** Read current grants synchronously when lifecycle reconciliation precedes Compose state updates. */
 // Lint misses the annotated common-module getter; the short-circuit guard still excludes pre-Q devices.
