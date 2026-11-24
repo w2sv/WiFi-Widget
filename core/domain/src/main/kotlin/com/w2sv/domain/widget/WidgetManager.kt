@@ -9,7 +9,7 @@ interface WidgetManager {
     suspend fun pin(): Boolean
 
     /**
-     * Asks the provider to enqueue immediate refresh work when widgets are installed. Unlike [requestUpdate], this does not
+     * Requests a render first, then enqueues immediate refresh work when widgets are installed. Unlike [requestUpdate], this does not
      * depend on the widget update callback finding missing remote data.
      */
     fun refresh()

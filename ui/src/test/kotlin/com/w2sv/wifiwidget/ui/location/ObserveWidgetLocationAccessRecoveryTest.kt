@@ -18,6 +18,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -34,6 +35,7 @@ class ObserveWidgetLocationAccessRecoveryTest {
 
     private val actions = mockk<WidgetManager>(relaxed = true)
     private val observer = WidgetLocationRecoveryObserver(actions)
+
     private val permissionLevel = mutableStateOf(LocationPermissionLevel.None)
     private val servicesFlow = MutableStateFlow(false)
     private var servicesEnabled = false
@@ -47,6 +49,10 @@ class ObserveWidgetLocationAccessRecoveryTest {
         every { locationServicesEnabledFlow } returns servicesFlow
     }
 
+    @After fun `location access observation never requests remote refresh`() {
+        verify(exactly = 0) { actions.refresh() }
+    }
+
     @Test
     fun `reactive permission and services triggers always reread authoritative Android state`() {
         composeRule.setContent { ObserveWidgetLocationAccessRecovery(capability, locationEnabled, observer) }
@@ -56,25 +62,25 @@ class ObserveWidgetLocationAccessRecoveryTest {
             servicesEnabled = true
             servicesFlow.value = true
         }
-        composeRule.runOnIdle { verify(exactly = 0) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 0) { actions.render() } }
 
         composeRule.runOnIdle {
             servicesEnabled = false
             grant(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
             permissionLevel.value = LocationPermissionLevel.ApproximateOnly
         }
-        composeRule.runOnIdle { verify(exactly = 0) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 0) { actions.render() } }
         composeRule.runOnIdle {
             servicesEnabled = true
             servicesFlow.value = false
         }
-        composeRule.runOnIdle { verify(exactly = 1) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 1) { actions.render() } }
 
         composeRule.runOnIdle {
             grant(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
             permissionLevel.value = LocationPermissionLevel.PreciseBackground
         }
-        composeRule.runOnIdle { verify(exactly = 2) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 2) { actions.render() } }
         verify(exactly = 0) { capability.requestPermission() }
         verify(exactly = 0) { capability.openAppSettings() }
         verify(exactly = 0) { capability.openLocationSettings() }
@@ -95,16 +101,16 @@ class ObserveWidgetLocationAccessRecoveryTest {
             grant(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
             servicesEnabled = true
         }
-        composeRule.runOnIdle { verify(exactly = 0) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 0) { actions.render() } }
         composeRule.runOnIdle { host.lifecycle.currentState = Lifecycle.State.RESUMED }
-        composeRule.runOnIdle { verify(exactly = 1) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 1) { actions.render() } }
         composeRule.runOnIdle { host.lifecycle.currentState = Lifecycle.State.CREATED }
         composeRule.runOnIdle { host.lifecycle.currentState = Lifecycle.State.RESUMED }
-        composeRule.runOnIdle { verify(exactly = 1) { actions.refresh() } }
+        composeRule.runOnIdle { verify(exactly = 1) { actions.render() } }
     }
 
     @Test
-    fun `multiple hosts and configuration recreation retain process history and deduplicate initial recovery`() {
+    fun `multiple hosts and configuration recreation deduplicate the initial local render`() {
         grant(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -121,13 +127,17 @@ class ObserveWidgetLocationAccessRecoveryTest {
                 }
             }
         }
-        composeRule.runOnIdle { verify(exactly = 1) { actions.refresh() } }
+        composeRule.runOnIdle {
+            verify(exactly = 1) { actions.render() }
+        }
         composeRule.runOnIdle {
             hosts.value.first().lifecycle.currentState = Lifecycle.State.DESTROYED
             hosts.value = listOf(Host(), hosts.value.last())
             hosts.value.first().lifecycle.currentState = Lifecycle.State.RESUMED
         }
-        composeRule.runOnIdle { verify(exactly = 1) { actions.refresh() } }
+        composeRule.runOnIdle {
+            verify(exactly = 1) { actions.render() }
+        }
     }
 
     private fun grant(vararg permissions: String) {

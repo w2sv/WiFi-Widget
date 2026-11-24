@@ -8,24 +8,22 @@ import com.w2sv.widget.ui.WifiGlanceWidget
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.TimeSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import slimber.log.d
 import slimber.log.e
 
 /**
- * Coordinates render-only updates without triggering remote-data recovery.
- *
- * Glance's [WifiGlanceWidget] does not necessarily restart `provideGlance()` when
- * `updateAll()` is called on an active session. Therefore, render requests both
- * notify active compositions through [revisions] and call `updateAll()` to ensure
- * inactive widget sessions are updated.
- *
- * Requests are conflated, since only the latest presentation state matters.
+ * Owns presentation revisions and conflated Glance dispatch, without fetching or scheduling recovery.
+ * Active compositions observe [revisions]; updateAll also starts inactive Glance sessions.
  */
 @Singleton
 internal class WidgetRenderCoordinator @Inject constructor(
@@ -35,22 +33,79 @@ internal class WidgetRenderCoordinator @Inject constructor(
     val revisions: StateFlow<Long>
         field = MutableStateFlow(0L)
 
+    private val dispatchRequests = MutableStateFlow(0L)
+    private val dispatchMutex = Mutex()
+    private var dispatchedRevision = 0L
+    private val initializationLock = Any()
+
+    private val initializations = mutableSetOf<PresentationInitialization>()
+
     init {
-        // A StateFlow retains a request made before this collector starts and conflates bursts.
         scope.launch(start = CoroutineStart.UNDISPATCHED) {
-            revisions.filter { it > 0L }.collect {
+            dispatchRequests.filter { it > 0L }.collect {
                 runOrHandle(onFailure = { exception ->
-                    // An update failure must not terminate delivery of later requests.
+                    // Failed dispatch must not terminate delivery of later requests.
                     e { "Widget render failed: error=$exception" }
-                }) {
-                    WifiGlanceWidget().updateAll(context)
-                }
+                }) { dispatchPending() }
             }
         }
     }
 
-    /** Signals that installed widgets should render their latest available data. */
+    /** Invalidates data and signals both active and inactive widget sessions. */
     fun requestRender() {
-        revisions.update { it + 1L }
+        val revision = revisions.updateAndGet { it + 1L }
+        dispatchRequests.updateAndGet { maxOf(it, revision) }
+        d { "Widget render requested: revision=$revision" }
     }
+
+    /** System callbacks already own Glance dispatch; notify active compositions without another updateAll. */
+    fun invalidatePresentation(): Long =
+        revisions.updateAndGet { it + 1L }.also { revision ->
+            d { "Widget presentation invalidated: revision=$revision" }
+        }
+
+    /**
+     * Only overlapping initial preparations can establish that sharing is fresh. Once preparation
+     * finishes, a separately initialized session needs a new baseline, even if other compositions
+     * remain active or a newer revision was computed while this session was absent.
+     * This invalidates presentation only; it neither dispatches updateAll nor schedules recovery.
+     */
+    suspend fun <T> withPresentationInitialization(block: suspend () -> T): T {
+        val initialization = synchronized(initializationLock) {
+            if (initializations.none { it.revision == revisions.value }) {
+                val revision = revisions.updateAndGet { it + 1L }
+                d { "Widget presentation session baseline invalidated: revision=$revision" }
+            }
+            PresentationInitialization(revisions.value).also(initializations::add)
+        }
+        try {
+            return block()
+        } finally {
+            synchronized(initializationLock) {
+                // Identity-based removal cannot remove a replacement's initialization.
+                initializations.remove(initialization)
+            }
+        }
+    }
+
+    private class PresentationInitialization(val revision: Long)
+
+    /**
+     * Awaits serialized Glance dispatch, skipping revisions already dispatched. Failures leave
+     * revisions pending. Completion neither confirms launcher display nor guarantees delivery
+     * across process death.
+     */
+    suspend fun dispatchPending() =
+        dispatchMutex.withLock {
+            val revision = dispatchRequests.value
+            if (revision <= dispatchedRevision) return@withLock
+            val started = TimeSource.Monotonic.markNow()
+            d { "Widget updateAll started: revision=$revision" }
+            try {
+                WifiGlanceWidget().updateAll(context)
+                dispatchedRevision = revision
+            } finally {
+                d { "Widget updateAll finished: revision=$revision, duration=${started.elapsedNow()}" }
+            }
+        }
 }

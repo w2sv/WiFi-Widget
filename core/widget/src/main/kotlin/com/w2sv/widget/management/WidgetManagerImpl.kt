@@ -53,7 +53,8 @@ internal class WidgetManagerImpl @Inject constructor(
 
     override fun refresh() {
         if (!widgetStatus.hasInstalledWidgets) return
-        context.sendBroadcast(WifiWidgetProvider.refreshIntent(context))
+        render()
+        refreshManager.enqueueImmediateRefresh()
     }
 
     override fun render() {
@@ -73,11 +74,10 @@ internal class WidgetManagerImpl @Inject constructor(
             refreshManager.applyRefreshingPolicy(current.refreshing)
         }
 
-        // Trigger an immediate render unblocked by remote data refresh
-        render()
-
-        if (previous.remoteDataConfig != current.remoteDataConfig) {
+        if (previous.remoteDataConfig != current.remoteDataConfig && widgetStatus.hasInstalledWidgets) {
             refresh()
+        } else {
+            render()
         }
     }
 }

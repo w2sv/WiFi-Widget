@@ -29,8 +29,8 @@ import slimber.log.e
  *
  * The initial StateFlow emission is skipped because it represents the current baseline rather
  * than a new change. Android widget callbacks and recovery workers provide additional
- * opportunities to restore data and rendering after process recreation; recovery workers also
- * render their own published changes before work completes.
+ * opportunities to restore data after process recreation. Workers also request rendering for
+ * observed data changes and await Glance dispatch before normal completion.
  *
  * The Wi-Fi and default-route subscriptions run only while this process has installed widgets;
  * the widget provider starts or stops them as widgets are added or removed. A killed process cannot receive
@@ -125,8 +125,9 @@ class RemoteDataWidgetObserver @Inject internal constructor(
             }) {
                 val current = ObservedWifiConnection(status, wifiStatusSource.connectedWifiIdentity())
                 if (previous != null && previous != current && widgetStatus.hasInstalledWidgets) {
-                    if (status.isConnected) scheduleRecoveryAfterWifiChange()
+                    // Presentation reconciles its own route before exposing remote rows.
                     widgetManager.render()
+                    if (status.isConnected) scheduleRecoveryAfterWifiChange()
                 }
                 previous = current
             }
@@ -170,13 +171,13 @@ class RemoteDataWidgetObserver @Inject internal constructor(
         val config = widgetConfigSource.snapshot().remoteDataConfig
         val before = remoteNetworkDataRepository.data.value
         val needsRecovery = remoteNetworkDataRepository.needsRecovery(config)
-        if (availability.canRefreshWidgetRemoteData && needsRecovery) {
-            workScheduler.enqueueRecovery()
-        }
         // Publication already requests a render through the data collector. When it stays equal,
         // availability or local routing may still change rows.
         if (before == remoteNetworkDataRepository.data.value) {
             widgetManager.render()
+        }
+        if (availability.canRefreshWidgetRemoteData && needsRecovery) {
+            workScheduler.enqueueRecovery()
         }
     }
 }

@@ -16,7 +16,9 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlin.test.Test
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -91,6 +93,32 @@ class RemoteDataWidgetObserverTest {
 
             verify(exactly = 1) { scheduler.enqueueRecovery() }
             verify(exactly = 0) { actions.render() }
+        }
+
+    @Test fun `Wi-Fi render does not wait for recovery configuration or scheduling`() =
+        runTest {
+            observer().initialize()
+            wifiEvents.emit(WifiStatus.ConnectedInactive)
+            runCurrent()
+            val reading = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
+            coEvery { configSource.snapshot() } coAnswers {
+                reading.complete(Unit)
+                release.await()
+                WidgetConfig.default
+            }
+            recoveryNeeded = true
+            wifiIdentity = 2L
+            wifiEvents.emit(WifiStatus.ConnectedInactive)
+            reading.await()
+            verify(exactly = 1) { actions.render() }
+            verify(exactly = 0) { scheduler.enqueueRecovery() }
+            release.complete(Unit)
+            runCurrent()
+            verifyOrder {
+                actions.render()
+                scheduler.enqueueRecovery()
+            }
         }
 
     @Test fun `changed data renders while equal data does not`() =

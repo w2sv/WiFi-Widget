@@ -10,7 +10,7 @@ import javax.inject.Singleton
 class WidgetLocationRecoveryObserver @Inject constructor(private val widgetManager: WidgetManager) {
     private var lastAvailability: LocationAccessAvailability? = null
 
-    /** Serialize both the comparison and refresh request so overlapping hosts cannot refresh twice. */
+    /** Serialize the comparison and render request so overlapping hosts cannot render twice. */
     @Synchronized
     internal fun observe(availability: LocationAccessAvailability) {
         val previous = lastAvailability
@@ -20,6 +20,6 @@ class WidgetLocationRecoveryObserver @Inject constructor(private val widgetManag
         val recovered = previous == null || !previous.locationServicesEnabled || !previous.permissionLevel.hasPreciseAccess
         val backgroundUpgraded = previous?.permissionLevel == LocationPermissionLevel.PreciseForeground &&
             availability.permissionLevel == LocationPermissionLevel.PreciseBackground
-        if (recovered || backgroundUpgraded) widgetManager.refresh()
+        if (recovered || backgroundUpgraded) widgetManager.render()
     }
 }

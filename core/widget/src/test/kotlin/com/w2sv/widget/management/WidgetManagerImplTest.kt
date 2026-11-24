@@ -19,6 +19,7 @@ import io.mockk.mockk
 import io.mockk.mockkConstructor
 import io.mockk.unmockkConstructor
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -49,15 +50,17 @@ class WidgetManagerImplTest {
 
         verify(exactly = 0) { context.sendBroadcast(any()) }
         verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
+        verify(exactly = 0) { renderCoordinator.requestRender() }
     }
 
     @Test fun `each manual refresh with installed widgets requests immediate work`() {
-        val refreshIntent = WifiWidgetProvider.refreshIntent(context)
-
         repeat(2) { actions.refresh() }
 
-        verify(exactly = 2) {
-            context.sendBroadcast(match { it.action == refreshIntent.action && it.component == refreshIntent.component })
+        verifyOrder {
+            renderCoordinator.requestRender()
+            scheduler.enqueueImmediateRefresh()
+            renderCoordinator.requestRender()
+            scheduler.enqueueImmediateRefresh()
         }
     }
 
@@ -66,7 +69,7 @@ class WidgetManagerImplTest {
 
         repeat(2) { actions.refresh() }
 
-        verify(exactly = 1) { context.sendBroadcast(any()) }
+        verify(exactly = 1) { scheduler.enqueueImmediateRefresh() }
     }
 
     @Test fun `unsupported pin request returns before reading configuration`() =
@@ -146,9 +149,8 @@ class WidgetManagerImplTest {
 
         actions.applyConfigurationChange(previous, current)
 
-        val refreshAction = WifiWidgetProvider.refreshIntent(context).action
         verify(exactly = 1) { scheduler.applyRefreshingPolicy(current.refreshing) }
-        verify(exactly = 0) { context.sendBroadcast(match { it.action == refreshAction }) }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
         verify(exactly = 1) { renderCoordinator.requestRender() }
     }
 
@@ -157,9 +159,8 @@ class WidgetManagerImplTest {
 
         actions.applyConfigurationChange(previous, current)
 
-        val refreshAction = WifiWidgetProvider.refreshIntent(context).action
         verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
-        verify(exactly = 1) { context.sendBroadcast(match { it.action == refreshAction }) }
+        verify(exactly = 1) { scheduler.enqueueImmediateRefresh() }
         verify(exactly = 1) { renderCoordinator.requestRender() }
     }
 
@@ -173,9 +174,8 @@ class WidgetManagerImplTest {
 
         changes.forEach { actions.applyConfigurationChange(previous, it) }
 
-        val refreshAction = WifiWidgetProvider.refreshIntent(context).action
         verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
-        verify(exactly = 0) { context.sendBroadcast(match { it.action == refreshAction }) }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
         verify(exactly = changes.size) { renderCoordinator.requestRender() }
     }
 
@@ -185,10 +185,17 @@ class WidgetManagerImplTest {
 
         actions.applyConfigurationChange(previous, current)
 
-        val refreshAction = WifiWidgetProvider.refreshIntent(context).action
         verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
-        verify(exactly = 0) { context.sendBroadcast(match { it.action == refreshAction }) }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
         verify(exactly = 1) { renderCoordinator.requestRender() }
+    }
+
+    @Test fun `remote requirements still render once when no widgets are installed`() {
+        every { widgetStatus.hasInstalledWidgets } returns false
+        val current = previous.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+        actions.applyConfigurationChange(previous, current)
+        verify(exactly = 1) { renderCoordinator.requestRender() }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
     }
 
     @Test fun `initial update targets the provider with the supplied widget ID`() {

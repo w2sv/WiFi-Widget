@@ -14,6 +14,9 @@ These guidelines apply to the Jetpack Glance home-screen widget in `core/widget`
 
 - Preserve the revision-based update path: active Glance compositions observe render revisions, while `updateAll()` also updates inactive widget sessions. Do not assume `updateAll()` alone restarts an active `provideGlance()` session.
 - Preserve the initial-snapshot/subscription handoff so render requests occurring during initial preparation are not lost.
+- Share the latest successful presentation by coordinator revision across instances and compositions. Keep computation lazy and mutex-coordinated; never relabel an in-flight computation with a later revision, cache failures, or include dimensions in the data cache.
+- Invalidate data for system updates before Glance starts preparation; recovery preparation follows Glance's update handling. Active-session options changes affect layout only. Share initial presentation only across overlapping preparations; independently recreated sessions need a fresh baseline even if a newer revision exists or another widget remains active. Track initialization activity with identity tokens, without per-widget history or recursive dispatch.
+- Immediate and periodic workers request rendering before HTTP, since persisted work outlives process-local render requests. Recovery requests rendering only for changed presentation data. Await pending Glance dispatch before normal completion without retrying HTTP solely on dispatch failure. On cancellation retain the changed-data signal without non-cancellable waits. Dispatch completion neither acknowledges launcher visibility nor guarantees durable delivery across process death.
 - Keep lifecycle and process-recreation behavior in the provider, observer, and worker layers. Do not depend on an app-process restart causing an `APPWIDGET_UPDATE` callback.
 
 ## Content and Interactions

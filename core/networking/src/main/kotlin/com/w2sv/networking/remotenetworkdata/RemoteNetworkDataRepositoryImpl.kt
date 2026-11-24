@@ -20,6 +20,7 @@ import com.w2sv.networking.remotenetworkdata.ipapi.IpApiDataFetcher
 import com.w2sv.networking.remotenetworkdata.publicip.PublicIpFetcher
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.TimeSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -179,8 +180,10 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
 
     /** Applies widget route eligibility under the same lock that creates the HTTP fetch plan. */
     private suspend fun refresh(onlyIfMissing: Boolean, forWidget: Boolean): RemoteRefreshResult {
-        d { "Remote data refresh started: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget" }
+        val requested = TimeSource.Monotonic.markNow()
+        d { "Remote data refresh requested: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget" }
         return refreshMutex.withLock {
+            d { "Remote data refresh lock acquired: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, wait=${requested.elapsedNow()}" }
             val config = widgetConfigSource.snapshot().remoteDataConfig
             val (network, fetchPlan) = synchronized(stateLock) {
                 val defaultNetwork = connectivityManager.activeNetwork
@@ -208,7 +211,12 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
                 d { "Remote data refresh skipped: enabled data already complete for network=$network" }
                 return@withLock RemoteRefreshResult.Complete
             }
-            val results = fetchPlan.execute(config)
+            val fetching = TimeSource.Monotonic.markNow()
+            val results = try {
+                fetchPlan.execute(config)
+            } finally {
+                d { "Remote fetch plan finished: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, duration=${fetching.elapsedNow()}" }
+            }
             val latestConfig = widgetConfigSource.snapshot().remoteDataConfig
             applyFetchResults(network, config, results, latestConfig)
         }
