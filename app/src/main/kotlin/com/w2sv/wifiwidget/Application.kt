@@ -32,12 +32,13 @@ class Application :
     override fun onCreate() {
         super.onCreate()
 
-        remoteDataWidgetObserver.initialize()
-        widgetPreviewPublisher.publishIfOutdated()
-
-        if (BuildConfig.DEBUG) {
+        @Suppress("SimplifyBooleanWithConstants")
+        if (BuildConfig.DEBUG || BuildConfig.ENABLE_DIAGNOSTIC_LOGGING) {
             Timber.plant(Timber.DebugTree())
         }
+
+        remoteDataWidgetObserver.initialize()
+        widgetPreviewPublisher.publishIfOutdated()
     }
 
     override fun onConfigurationChanged(newConfig: AndroidConfiguration) {
