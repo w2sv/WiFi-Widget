@@ -93,7 +93,9 @@ The diagram highlights the main data and control paths rather than every Android
 
 Keeping HTTP in a separate, cancellable job prevents slow requests from blocking later reconciliation. A changed connected status, a default-egress event, or a relevant configuration change can initiate a refresh. Repeated observations with an unchanged Wi-Fi status can still recompute local properties **without repeating HTTP solely because of the duplicate status**. Disconnecting cancels the outstanding foreground refresh job.
 
-The initial status observation owns the full startup refresh, even with a partially populated cache. `recoverOnResume()` defers retrieval until that observation establishes status, so startup behavior does not depend on resume ordering. After initialization, resume validates the current route and requirements and either shares the applicable active refresh or fetches only missing data. A subsequent connection, Wi-Fi identity, default-egress, or remote-configuration change replaces the request with a full refresh. Applicability uses connection and default-route identity, status, and requirements, without a cooldown or separate resume history. Failures and cancellation leave missing data recoverable on a later resume; disconnection cancels the job and clears its ownership metadata. HTTP never holds the ownership mutex or blocks reconciled input publication.
+The initial status observation owns the full startup refresh, even with a partially populated cache. `recoverOnResume()` defers retrieval until that observation establishes status, so startup behavior does not depend on resume ordering. After initialization, resume validates the current route and requirements and either shares the applicable active refresh or fetches only missing data. Connection, Wi-Fi identity, and default-egress events request full refreshes; remote-configuration changes request missing-data recovery, retaining applicable values and fetching only unsatisfied groups.
+
+Resume and synchronization events share one refresh ownership decision. An active request is reusable only when its Wi-Fi identity, status, remote requirements, default-network identity, default-route usability, and direct-Wi-Fi/VPN classification match. Full retrievals satisfy either full or missing-data requests; missing-data retrievals satisfy only missing-data requests. Equivalent overlapping status and egress events therefore share HTTP, while every event still reconciles the cache and publishes inputs. Context changes cancel obsolete requests, and a full request replaces an active missing-data request. Completed or cancelled jobs are never reused as active requests: independent full-refresh events still retrieve again. There is no cooldown, debounce, separate resume history, or additional coordination mechanism. Failures and cancellation leave missing data recoverable on a later resume; disconnection cancels the job and clears its ownership metadata. HTTP never holds the ownership mutex or blocks reconciled input publication.
 
 The foreground repository refresh validates the current default HTTP route. Unlike widget-specific refreshes, it does not require the widget's stricter route-eligibility policy.
 
@@ -118,7 +120,7 @@ This fast path exists only while the app process is alive. Android may terminate
 | Trigger                        | Behavior                                                                                                                                                              |
 |--------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Widget refresh button          | `RefreshWidgetAction` calls `WidgetManager.refresh()`: request a render immediately, then enqueue immediate WorkManager work. |
-| Applied configuration          | Persist first, request a render, update periodic scheduling if refresh settings changed, and request an immediate refresh only when remote-data requirements changed. |
+| Applied configuration          | Persist first, request a render, update periodic scheduling if refresh settings changed, and schedule existing recovery work when remote-data requirements changed, widgets are installed, and remote requirements remain enabled. |
 | Periodic interval              | WorkManager schedules a new opportunity to refresh; it is not an exact timer.                                                                                         |
 | Android widget update callback | Invalidate presentation, delegate to Glance, then reconcile and schedule eligible recovery. |
 | Published remote-data change   | The application-scoped observer requests a widget render while widgets are installed.                                                                                 |
@@ -130,10 +132,15 @@ Android's `updatePeriodMillis` is set to `0`: periodic refreshes use WorkManager
 ### Location-access recovery
 
 `WifiWidgetUI` installs `ObserveWidgetLocationAccessRecovery` for all three activity hosts. While a host is resumed, permission changes, location-services changes, and lifecycle resumes trigger fresh snapshots of Android permissions and system location services.
-
 The process-wide `WidgetLocationRecoveryObserver` deduplicates observations across hosts and requests a local render when precise access becomes available, foreground access gains background access, or location services are re-enabled. Rendering requires both precise access and enabled services. The first sufficient observation also requests rendering. These transitions affect local Wi-Fi properties and never initiate remote refresh work; foreground and widget recovery independently own missing remote data.
-
 Observation history stays in process memory, independently of Location Access screen scenarios and permission-flow state.
+
+### Location access deterioration
+
+Previously resolved SSID and BSSID values remain visible until the next
+widget update, since losing location access does not invalidate them.
+Access restoration and background permission upgrades proactively trigger
+rendering to expose newly accessible values. This asymmetry is intentional.
 
 ### Scheduling and worker execution
 
@@ -147,13 +154,15 @@ Observation history stays in process memory, independently of Location Access sc
 
 WorkManager's [minimum periodic interval is 15 minutes](https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started/define-work), but actual execution can be delayed by system scheduling and power-management policies. The recovery work's `CONNECTED` constraint does **not** prove that Wi-Fi is connected or that the default HTTP route is suitable; the worker and repository check those separately.
 
+Configuration changes retain recovery's `KEEP` policy and exponential backoff. Pending work carries the recovery reason, not a configuration snapshot: each attempt reads current requirements, and the repository reads them again after acquiring its refresh mutex. Newly enabled requirements are therefore included when work executes; removed requirements are excluded from its fetch plan. Foreground configuration recovery invokes the repository directly and does not wait for WorkManager backoff. If the foreground satisfies the requirements first, pending widget recovery rechecks completeness and skips HTTP. Backoff can delay widget-only recovery but does not permanently omit new requirements.
+
 `WifiWidgetRefreshWorker` also checks `PowerManager.isInteractive`. When the device is noninteractive, immediate and periodic workers complete without fetching or requesting a worker-side render; recovery work instead requests a retry. The immediate caller's render is independent of this gate. Immediate and periodic local updates do not wait for route eligibility, the repository mutex, or HTTP completion.
 
 Workers compare published data before and after retrieval, including cancellation. This can include publication by another refresh while recovery waits for the repository mutex. Changed data requests rendering as a safety net alongside the observer. Before normal completion, interactive workers await pending Glance dispatch. Dispatch failures are logged without changing HTTP results or recovery's incomplete/unavailable-data retry policy. Cancellation retains the changed-data render signal but does not wait non-cancellably on dispatch. Neither signaling a revision nor awaiting `updateAll()` guarantees launcher display or durable delivery across process death. Unchanged data produces no post-fetch revision. The scheduler applies the periodic policy when the first widget is added or relevant settings change, and cancels periodic and recovery work when the last widget is removed.
 
 ### Rendering the widget
 
-`WidgetManagerImpl.refresh()` is the common immediate entry point for app and widget actions. It requests rendering before enqueueing HTTP work. Each configuration commit requests one render through either this path or `render()` alone; immediate workers also request rendering when they start, to cover loss of the caller's process-local signal. The provider retains only compatibility handling for the old `com.w2sv.wifiwidget.action.REFRESH_DATA` PendingIntent, delegating to the manager; new code creates no such intents.
+`WidgetManagerImpl.refresh()` is the common immediate entry point for app and widget actions. It requests rendering before enqueueing HTTP work. Each configuration commit requests one render directly and independently schedules missing-data recovery when required; immediate workers also request rendering when they start, to cover loss of the caller's process-local signal. The provider retains only compatibility handling for the old `com.w2sv.wifiwidget.action.REFRESH_DATA` PendingIntent, delegating to the manager; new code creates no such intents.
 
 The application-scoped `WidgetRenderCoordinator` owns presentation revisions and coalesces `updateAll()` dispatch. Workers and the application collector share its dispatch mutex; already dispatched revisions are inexpensive to await. Active compositions observe revisions, independently of Glance session startup. Data invalidation and dispatch are separate: Android's `onUpdate()` invalidates before delegating to Glance, then initializes observers, reads configuration, checks completeness, and schedules eligible recovery. Rendering never schedules recovery; provider callbacks and the network observer own recovery checks.
 
@@ -165,9 +174,21 @@ System `onUpdate()` events, including installation, restoration, and explicit co
 
 **The widget's displayed update time is the time its presentation snapshot was prepared, not the time of the last successful HTTP refresh.** It may advance even if remote data was not fetched or the request failed.
 
+### Concurrent remote retrievals
+
+The repository mutex serializes retrievals. Missing-data callers recheck cache completeness after acquiring it, so foreground configuration recovery and widget recovery may independently request the same data without repeating satisfied fetches. Failed or incomplete groups remain recoverable.
+
+Full-refresh callers capture an in-memory completed-refresh generation at repository invocation. After acquiring the mutex, they reconcile requirements and validate their own route eligibility. They reuse a newer qualifying completion only when its verified default route (including direct Wi-Fi/VPN classification), configuration, and reconciled cache still apply. A qualifying completion requires an executed full plan whose actual new results satisfy every enabled group; previously cached values cannot qualify failed HTTP. Public IP still allows an unavailable family once every enabled family was attempted and another enabled family succeeded.
+
+Observed route or requirement transitions invalidate completion metadata permanently, even if they later return to an earlier value. Restored Wi-Fi cache values do not restore a completion. Missing-data requests never advance the generation. Independently initiated, non-overlapping full refreshes each execute HTTP; there is no time-based freshness window or cross-layer scheduling coordination. Rendering and publication retain their existing independent paths.
+
+A separate in-memory reconciliation revision tracks observed default-network identity, verified transport classification, and remote-requirement changes under the cache lock, including before the first retrieval completes. Each fetch plan captures that revision under the same lock. After reconciling at completion, a full retrieval can advance the completed-refresh generation only if the revision is unchanged and its actual results satisfy the existing success criteria. An observed A → B → A transition during HTTP therefore prevents completion reuse even when the final identities match. Repeated unchanged observations, temporary loss of route identity or capabilities, ordinary publication, and successful retrieval do not advance the revision. A known different default network still counts as a transition even if its capabilities are not yet available.
+
+The revision guard only controls deduplication eligibility: fetch-result acceptance and publication retain their existing boundary checks. A revision mismatch can still publish accepted values, but a waiting full-refresh caller executes its own plan. Transitions never observed by repository reconciliation remain outside this guarantee.
+
 ### Latency diagnostics and evaluation
 
-Debug logs identify manual action receipt, work enqueue/start/completion (correlated by WorkManager ID), repository mutex wait, fetch-plan execution, requested render revisions, Glance dispatch and duration, session initialization, presentation mutex wait, and presentation computation/reuse. Durations use a monotonic clock. Revision gaps are not reported as a conflation count because presentation-only invalidations also advance revisions. Composition-level revision logging remains during the on-device investigation and can be removed afterward. Logs contain revision/Glance identifiers and operation metadata, never complete configurations, property values, or presentation states. A completed `updateAll()` or prepared presentation is **not confirmation that the launcher displayed it**.
+Debug logs identify manual action receipt, work enqueue/start/completion (correlated by WorkManager ID), repository mutex wait, full versus missing-data fetch-plan execution, completeness skips and overlapping full-refresh reuse (including generation metadata), requested render revisions, Glance dispatch and duration, session initialization, presentation mutex wait, and presentation computation/reuse. Durations use a monotonic clock. Revision gaps are not reported as a conflation count because presentation-only invalidations also advance revisions. Composition-level revision logging remains during the on-device investigation and can be removed afterward. A completed `updateAll()` or prepared presentation is **not confirmation that the launcher displayed it**.
 
 A deterministic pre-cache test established four presentation computations for two reads at one revision and two collectors of the next revision. The shared-cache equivalent requires two computations total, one per revision; overlapping session initializations also share a single computation. Independently initialized sessions request fresh baselines. These are computation-count checks, not device latency measurements.
 
@@ -200,7 +221,7 @@ A normal refresh attempts all enabled remote groups. Recovery creates a narrower
 
 **Recovery completion does not mean every individual property has a value.** Its criteria are group-based:
 
-- **ip-api:** A successful response initializes that data group for the relevant configuration; individual requested fields may still be absent.
+- **ip-api:** A successful response initializes that data group for the relevant configuration; individual requested fields may still be absent. Narrowing to a nonempty subset of those properties preserves initialization, provided Location, if still required, uses unchanged parameters. Removing Location makes its parameters irrelevant to the remaining properties. Removed values are still discarded. New properties, changed parameters for enabled Location, and confirmed route changes require initialization again; narrowing an uninitialized group never marks it initialized. Removing all IP-API requirements clears initialization, so enabling one later requires retrieval. These rules leave public-IP recovery independent and do not change explicit full refreshes.
 - **Public IP:** At least one enabled IP version must have a cached successful result, and every enabled version must have been attempted. For example, IPv4 can succeed and IPv6 can fail without requiring recovery to retry IPv6 indefinitely. If all enabled public-IP requests fail, recovery remains incomplete.
 
 A regular refresh can still try all enabled versions again. Recovery retries are intended to restore usable data, not to guarantee that every configured field is available.
@@ -236,3 +257,11 @@ Remote services and network conditions can fail independently. A render remains 
 Public IP addresses are retrieved from `api.ipify.org` / `api6.ipify.org` over HTTPS. IP-based location, ISP, ASN, and coordinates are retrieved from `ip-api.com`, which the current implementation contacts **over HTTP**. These lookups expose the requesting network's public IP to the service; the HTTP-based ip-api request and response are not protected by transport encryption. External lookups occur only when enabled properties require them.
 
 For platform background-work and Wi-Fi behavior, see the [WorkManager documentation](https://developer.android.com/develop/background-work/background-tasks/persistent/getting-started/define-work), [background-task restrictions](https://developer.android.com/develop/background-work/background-tasks/bg-work-restrictions), and [Wi-Fi connection information rules](https://developer.android.com/about/versions/pie/android-9.0-changes-all).
+
+## Intentional design decisions
+
+### Diagnostic logging
+
+Comprehensive logging, including configurations and network data, is
+intentional. Logging is restricted to debug and explicitly opted-in
+diagnostic builds; sensitive values in these logs are not a concern.

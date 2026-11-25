@@ -7,6 +7,7 @@ import androidx.work.WorkerParameters
 import com.w2sv.domain.networking.IpApiData
 import com.w2sv.domain.networking.NetworkAvailabilitySnapshot
 import com.w2sv.domain.networking.NetworkAvailabilitySource
+import com.w2sv.domain.networking.RemoteDataConfig
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult.Complete
@@ -15,6 +16,7 @@ import com.w2sv.domain.networking.RemoteRefreshResult.NetworkUnavailable
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.widget.WidgetManager
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.widget.rendering.WidgetRenderCoordinator
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -307,6 +309,49 @@ class WifiWidgetRefreshWorkerTest {
             coEvery { repository.refreshForWidget(onlyIfMissing = true) } returns Incomplete
             assertEquals(ListenableWorker.Result.retry(), worker(Recovery).doWork())
             verify(exactly = 0) { actions.render() }
+        }
+
+    @Test fun `pending recovery retry evaluates newly enabled requirements at execution`() =
+        runTest {
+            every { power.isInteractive } returns true
+            var config = WidgetConfig.default.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+            val initial = config.remoteDataConfig
+            coEvery { configSource.snapshot() } answers { config }
+            every { repository.needsRecovery(any()) } returns true
+            coEvery { repository.refreshForWidget(true) } returns Complete
+            availability = availability.copy(hasUsableDefaultNetwork = false)
+            assertEquals(ListenableWorker.Result.retry(), worker(Recovery).doWork())
+            val pending = worker(Recovery, attempts = 1)
+
+            config = config.withUpdatedPropertyEnablement(WifiProperty.PublicIp, true)
+            availability = availability.copy(hasUsableDefaultNetwork = true)
+            assertEquals(ListenableWorker.Result.success(), pending.doWork())
+
+            verify(exactly = 1) { repository.needsRecovery(initial) }
+            verify(exactly = 1) { repository.needsRecovery(config.remoteDataConfig) }
+            coVerify(exactly = 1) { repository.refreshForWidget(true) }
+            coVerify(exactly = 0) { repository.refreshForWidget(false) }
+        }
+
+    @Test fun `pending recovery retry skips retrieval after all remote requirements are removed`() =
+        runTest {
+            every { power.isInteractive } returns true
+            var config = WidgetConfig.default
+            coEvery { configSource.snapshot() } answers { config }
+            every { repository.needsRecovery(any()) } answers {
+                val requirements = firstArg<RemoteDataConfig>()
+                requirements.requiresIpApi || requirements.requiresPublicIp
+            }
+            availability = availability.copy(hasUsableDefaultNetwork = false)
+            assertEquals(ListenableWorker.Result.retry(), worker(Recovery).doWork())
+            val pending = worker(Recovery, attempts = 1)
+
+            config = listOf(WifiProperty.PublicIp, WifiProperty.ISP, WifiProperty.ASN, WifiProperty.Location, WifiProperty.IpCoordinates)
+                .fold(config) { current, property -> current.withUpdatedPropertyEnablement(property, false) }
+            assertEquals(ListenableWorker.Result.success(), pending.doWork())
+
+            verify(exactly = 1) { repository.needsRecovery(config.remoteDataConfig) }
+            coVerify(exactly = 0) { repository.refreshForWidget(any()) }
         }
 
     @Test fun `queued recovery does not fetch through cellular or unavailable default`() =

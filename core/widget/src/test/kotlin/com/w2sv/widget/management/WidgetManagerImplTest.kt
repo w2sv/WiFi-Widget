@@ -154,14 +154,42 @@ class WidgetManagerImplTest {
         verify(exactly = 1) { renderCoordinator.requestRender() }
     }
 
-    @Test fun `remote data requirement changes render and request immediate refresh`() {
+    @Test fun `remote data requirement changes render before scheduling recovery`() {
         val current = previous.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
 
         actions.applyConfigurationChange(previous, current)
 
         verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
-        verify(exactly = 1) { scheduler.enqueueImmediateRefresh() }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
+        verifyOrder {
+            renderCoordinator.requestRender()
+            scheduler.enqueueRecovery()
+        }
+    }
+
+    @Test fun `removing all remote requirements renders without scheduling recovery`() {
+        val current = listOf(WifiProperty.PublicIp, WifiProperty.ISP, WifiProperty.ASN, WifiProperty.Location, WifiProperty.IpCoordinates)
+            .fold(previous) { config, property -> config.withUpdatedPropertyEnablement(property, false) }
+
+        actions.applyConfigurationChange(previous, current)
+
         verify(exactly = 1) { renderCoordinator.requestRender() }
+        verify(exactly = 0) { scheduler.enqueueRecovery() }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
+    }
+
+    @Test fun `enabling remote requirements preserves periodic policy changes and immediate rendering`() {
+        val initial = previous.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+        val current = previous.copy(refreshing = previous.refreshing.copy(refreshPeriodically = false))
+
+        actions.applyConfigurationChange(initial, current)
+
+        verifyOrder {
+            scheduler.applyRefreshingPolicy(current.refreshing)
+            renderCoordinator.requestRender()
+            scheduler.enqueueRecovery()
+        }
+        verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
     }
 
     @Test fun `presentation and local property changes render without refresh`() {
@@ -177,6 +205,7 @@ class WidgetManagerImplTest {
         verify(exactly = 0) { scheduler.applyRefreshingPolicy(any()) }
         verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
         verify(exactly = changes.size) { renderCoordinator.requestRender() }
+        verify(exactly = 0) { scheduler.enqueueRecovery() }
     }
 
     @Test fun `no installed widgets skip periodic work but still render`() {
@@ -195,6 +224,7 @@ class WidgetManagerImplTest {
         val current = previous.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
         actions.applyConfigurationChange(previous, current)
         verify(exactly = 1) { renderCoordinator.requestRender() }
+        verify(exactly = 0) { scheduler.enqueueRecovery() }
         verify(exactly = 0) { scheduler.enqueueImmediateRefresh() }
     }
 

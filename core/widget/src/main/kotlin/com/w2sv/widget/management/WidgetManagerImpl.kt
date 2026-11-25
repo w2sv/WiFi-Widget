@@ -74,10 +74,13 @@ internal class WidgetManagerImpl @Inject constructor(
             refreshManager.applyRefreshingPolicy(current.refreshing)
         }
 
-        if (previous.remoteDataConfig != current.remoteDataConfig && widgetStatus.hasInstalledWidgets) {
-            refresh()
-        } else {
-            render()
+        render()
+        val requirements = current.remoteDataConfig
+        if (previous.remoteDataConfig != requirements &&
+            (requirements.requiresIpApi || requirements.requiresPublicIp) &&
+            widgetStatus.hasInstalledWidgets
+        ) {
+            refreshManager.enqueueRecovery()
         }
     }
 }

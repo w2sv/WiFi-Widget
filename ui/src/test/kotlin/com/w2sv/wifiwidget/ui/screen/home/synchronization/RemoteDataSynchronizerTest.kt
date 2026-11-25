@@ -31,6 +31,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -47,6 +48,9 @@ class RemoteDataSynchronizerTest {
     private var snapshotStatus: WifiStatus = WifiStatus.Connected
     private var defaultIdentity = 1L
     private var wifiIdentity = 1L
+    private var hasUsableDefaultNetwork = true
+    private var isDirectWifiDefaultNetwork = true
+    private var isVpnDefaultNetwork = false
     private val wifiStatusSource = mockk<WifiStatusSource> {
         every { this@mockk.status } returns this@RemoteDataSynchronizerTest.status
         every { defaultEgressChanges } returns egress
@@ -66,7 +70,17 @@ class RemoteDataSynchronizerTest {
             wifiStatusSource,
             source,
             repository,
-            NetworkAvailabilitySource { NetworkAvailabilitySnapshot(false, true, true, true, defaultIdentity, true) },
+            NetworkAvailabilitySource {
+                NetworkAvailabilitySnapshot(
+                    false,
+                    hasUsableDefaultNetwork,
+                    true,
+                    true,
+                    defaultIdentity,
+                    isDirectWifiDefaultNetwork,
+                    isVpnDefaultNetwork
+                )
+            },
             CoroutineScope(backgroundScope.coroutineContext + UnconfinedTestDispatcher(testScheduler))
         )
 
@@ -184,10 +198,12 @@ class RemoteDataSynchronizerTest {
             runCurrent()
             val recovery = async { synchronizer.recoverOnResume() }
             entered.await()
+            coEvery { repository.refresh(true) } returns Complete
             config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
             cancelled.await()
             recovery.await()
-            coVerify(exactly = 2) { repository.refresh(false) }
+            coVerify(exactly = 1) { repository.refresh(false) }
+            coVerify(exactly = 2) { repository.refresh(true) }
             assertEquals(config.value.remoteDataConfig, synchronizer.inputs.replayCache.last().remoteDataConfig)
         }
 
@@ -273,7 +289,8 @@ class RemoteDataSynchronizerTest {
                 coVerify(exactly = 1) { repository.refresh() }
                 config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
                 awaitItem()
-                coVerify(exactly = 2) { repository.refresh() }
+                coVerify(exactly = 1) { repository.refresh(false) }
+                coVerify(exactly = 1) { repository.refresh(true) }
                 val firstEnabled = config.value.enabledProperties.first()
                 val lastEnabled = config.value.enabledProperties.last()
                 val snapshotsBeforeReorder = snapshots
@@ -283,11 +300,35 @@ class RemoteDataSynchronizerTest {
                 )
                 expectNoEvents()
                 assertEquals(snapshotsBeforeReorder, snapshots)
-                coVerify(exactly = 2) { repository.refresh() }
+                coVerify(exactly = 1) { repository.refresh(false) }
+                coVerify(exactly = 1) { repository.refresh(true) }
                 config.value = config.value.copy(refreshing = config.value.refreshing.copy(refreshPeriodically = false))
                 expectNoEvents()
-                coVerify(exactly = 2) { repository.refresh() }
+                coVerify(exactly = 1) { repository.refresh(false) }
+                coVerify(exactly = 1) { repository.refresh(true) }
             }
+        }
+
+    @Test fun `enabling remote requirements reconciles before publishing and requests missing data`() =
+        runTest {
+            config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+            val synchronizer = synchronizer()
+            status.emit(WifiStatus.Connected)
+            runCurrent()
+            var reconciled = config.value.remoteDataConfig
+            every { repository.reconciledSnapshot(any()) } answers {
+                reconciled = firstArg()
+                data.value
+            }
+            synchronizer.inputs.test {
+                awaitItem()
+                config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, true)
+                val input = awaitItem()
+                assertEquals(config.value.remoteDataConfig, input.remoteDataConfig)
+                assertEquals(input.remoteDataConfig, reconciled)
+            }
+            coVerify(exactly = 1) { repository.refresh(false) }
+            coVerify(exactly = 1) { repository.refresh(true) }
         }
 
     @Test fun `default egress refreshes independently of status only while connected`() =
@@ -327,7 +368,8 @@ class RemoteDataSynchronizerTest {
                 snapshotStatus = WifiStatus.Connected
                 egress.emit(Unit)
                 assertEquals(WifiStatus.Connected, awaitItem().status)
-                coVerify(exactly = 4) { repository.refresh() }
+                coVerify(exactly = 3) { repository.refresh(false) }
+                coVerify(exactly = 1) { repository.refresh(true) }
             }
             verify(exactly = 2) { wifiStatusSource.snapshot() }
         }
@@ -347,19 +389,18 @@ class RemoteDataSynchronizerTest {
             }
         }
 
-    @Test fun `egress replaces active HTTP without blocking event publication`() =
+    @Test fun `equivalent status and egress events share active full HTTP and still reconcile and publish`() =
         runTest {
             val started = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
             val cancelled = CompletableDeferred<Unit>()
-            var calls = 0
-            coEvery { repository.refresh() } coAnswers {
-                if (++calls == 1) {
-                    started.complete(Unit)
-                    try {
-                        awaitCancellation()
-                    } finally {
-                        cancelled.complete(Unit)
-                    }
+            coEvery { repository.refresh(false) } coAnswers {
+                started.complete(Unit)
+                try {
+                    release.await()
+                } catch (failure: CancellationException) {
+                    cancelled.complete(Unit)
+                    throw failure
                 }
                 Complete
             }
@@ -368,12 +409,188 @@ class RemoteDataSynchronizerTest {
                 this@RemoteDataSynchronizerTest.status.emit(WifiStatus.Connected)
                 awaitItem()
                 started.await()
+                var reconciled = false
+                every { repository.reconciledSnapshot(any()) } answers {
+                    reconciled = true
+                    data.value
+                }
                 egress.emit(Unit)
                 assertEquals(WifiStatus.Connected, awaitItem().status)
-                cancelled.await()
-                coVerify(exactly = 2) { repository.refresh() }
+                assertTrue(reconciled)
+                runCurrent()
+                assertFalse(cancelled.isCompleted)
+                coVerify(exactly = 1) { repository.refresh(false) }
+                release.complete(Unit)
+                runCurrent()
+                egress.emit(Unit)
+                awaitItem()
+                runCurrent()
+                coVerify(exactly = 2) { repository.refresh(false) }
             }
         }
+
+    @Test fun `active full retrieval satisfies resume missing-data request even with a complete cache`() =
+        runTest {
+            val started = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
+            coEvery { repository.refresh(false) } coAnswers {
+                started.complete(Unit)
+                release.await()
+                Complete
+            }
+            every { repository.needsRecovery(any()) } returns false
+            val synchronizer = synchronizer()
+            status.emit(WifiStatus.Connected)
+            started.await()
+            val resume = async { synchronizer.recoverOnResume() }
+            runCurrent()
+            assertFalse(resume.isCompleted)
+            coVerify(exactly = 1) { repository.refresh(false) }
+            coVerify(exactly = 0) { repository.refresh(true) }
+            release.complete(Unit)
+            resume.await()
+        }
+
+    @Test fun `overlapping resume recoveries share an active missing-data retrieval`() =
+        runTest {
+            val synchronizer = synchronizer()
+            status.emit(WifiStatus.Connected)
+            runCurrent()
+            every { repository.needsRecovery(any()) } returns true
+            val started = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
+            coEvery { repository.refresh(true) } coAnswers {
+                started.complete(Unit)
+                release.await()
+                Complete
+            }
+            val first = async { synchronizer.recoverOnResume() }
+            started.await()
+            val second = async { synchronizer.recoverOnResume() }
+            runCurrent()
+            coVerify(exactly = 1) { repository.refresh(true) }
+            assertFalse(first.isCompleted)
+            assertFalse(second.isCompleted)
+            release.complete(Unit)
+            first.await()
+            second.await()
+        }
+
+    @Test fun `active missing-data retrieval is replaced by an equivalent full egress request`() =
+        runTest {
+            val synchronizer = synchronizer()
+            status.emit(WifiStatus.Connected)
+            runCurrent()
+            every { repository.needsRecovery(any()) } returns true
+            val started = CompletableDeferred<Unit>()
+            val cancelled = CompletableDeferred<Unit>()
+            coEvery { repository.refresh(true) } coAnswers {
+                started.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    cancelled.complete(Unit)
+                }
+            }
+            val recovery = async { synchronizer.recoverOnResume() }
+            started.await()
+            egress.emit(Unit)
+            cancelled.await()
+            recovery.await()
+            coVerify(exactly = 2) { repository.refresh(false) }
+            coVerify(exactly = 1) { repository.refresh(true) }
+        }
+
+    @Test fun `changed default identity replaces active HTTP without blocking event publication`() =
+        runTest {
+            assertActiveFullRefreshReplaced {
+                defaultIdentity = 2L
+                egress.emit(Unit)
+            }
+        }
+
+    @Test fun `changed Wi-Fi identity replaces active HTTP`() =
+        runTest {
+            assertActiveFullRefreshReplaced {
+                wifiIdentity = 2L
+                status.emit(WifiStatus.Connected)
+            }
+        }
+
+    @Test fun `changed direct Wi-Fi classification replaces active HTTP on the same network`() =
+        runTest {
+            assertActiveFullRefreshReplaced {
+                isDirectWifiDefaultNetwork = false
+                egress.emit(Unit)
+            }
+        }
+
+    @Test fun `changed VPN classification replaces active HTTP on the same network`() =
+        runTest {
+            isDirectWifiDefaultNetwork = false
+            assertActiveFullRefreshReplaced {
+                isVpnDefaultNetwork = true
+                egress.emit(Unit)
+            }
+        }
+
+    @Test fun `changed default route usability replaces active HTTP on the same network`() =
+        runTest {
+            assertActiveFullRefreshReplaced {
+                hasUsableDefaultNetwork = false
+                egress.emit(Unit)
+            }
+        }
+
+    @Test fun `changed requirements replace active full HTTP with missing-data recovery`() =
+        runTest {
+            val started = CompletableDeferred<Unit>()
+            val cancelled = CompletableDeferred<Unit>()
+            coEvery { repository.refresh(false) } coAnswers {
+                started.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    cancelled.complete(Unit)
+                }
+            }
+            val synchronizer = synchronizer()
+            status.emit(WifiStatus.Connected)
+            started.await()
+            config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
+            cancelled.await()
+            runCurrent()
+            coVerify(exactly = 1) { repository.refresh(false) }
+            coVerify(exactly = 1) { repository.refresh(true) }
+            assertEquals(config.value.remoteDataConfig, synchronizer.inputs.replayCache.last().remoteDataConfig)
+        }
+
+    private suspend fun TestScope.assertActiveFullRefreshReplaced(changeContext: suspend () -> Unit) {
+        val started = CompletableDeferred<Unit>()
+        val cancelled = CompletableDeferred<Unit>()
+        var calls = 0
+        coEvery { repository.refresh() } coAnswers {
+            if (++calls == 1) {
+                started.complete(Unit)
+                try {
+                    awaitCancellation()
+                } finally {
+                    cancelled.complete(Unit)
+                }
+            }
+            Complete
+        }
+        val synchronizer = synchronizer()
+        synchronizer.inputs.test {
+            this@RemoteDataSynchronizerTest.status.emit(WifiStatus.Connected)
+            awaitItem()
+            started.await()
+            changeContext()
+            assertEquals(WifiStatus.Connected, awaitItem().status)
+            cancelled.await()
+            coVerify(exactly = 2) { repository.refresh() }
+        }
+    }
 
     @Test fun `disconnection cancels HTTP and reconnection fetches again`() =
         runTest {
@@ -476,8 +693,8 @@ class RemoteDataSynchronizerTest {
             runCurrent()
             config.value = config.value.withUpdatedPropertyEnablement(WifiProperty.PublicIp, false)
             runCurrent()
-            coVerify(exactly = 2) { repository.refresh(true) }
-            coVerify(exactly = 4) { repository.refresh(false) }
+            coVerify(exactly = 3) { repository.refresh(true) }
+            coVerify(exactly = 3) { repository.refresh(false) }
         }
 
     @Test fun `resume observed disconnection cannot suppress the next connected refresh`() =

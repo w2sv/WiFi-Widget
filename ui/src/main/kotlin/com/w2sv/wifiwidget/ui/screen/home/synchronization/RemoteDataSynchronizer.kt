@@ -47,8 +47,7 @@ class RemoteDataSynchronizer @Inject constructor(
 
     // Only ownership and reconciliation use this mutex; HTTP always runs outside it.
     private val ownershipMutex = Mutex()
-    private var refreshJob: Job? = null
-    private var refreshKey: RefreshKey? = null
+    private var activeRefresh: ActiveRefresh? = null
     private var lastWifiStatus: WifiStatus? = null
     private var lastWifiIdentity: Long? = null
     private val configEvents = widgetConfigSource.flow
@@ -100,7 +99,7 @@ class RemoteDataSynchronizer @Inject constructor(
             if (!refresh || status == null) return@withLock
 
             val key = refreshKey(status, remoteDataConfig, wifiIdentity)
-            startRefresh(key, onlyIfMissing = false)
+            ensureRefresh(key, onlyIfMissing = event == SynchronizationEvent.Configuration)
         }
 
     /**
@@ -125,38 +124,35 @@ class RemoteDataSynchronizer @Inject constructor(
                 lastWifiIdentity = key.wifiIdentity
                 return@withLock null
             }
-            recover(key, missing)
+            ensureRefresh(key, onlyIfMissing = true, needed = missing)
         }
         job?.join()
     }
 
-    /** Reuses only a request for the same route, connection, status, and requirements. */
-    private fun recover(key: RefreshKey, missing: Boolean): Job? {
-        if (refreshKey == key && refreshJob?.isActive == true) return refreshJob
-        if (refreshKey != key) {
-            cancelRefresh()
-        }
-        if (!missing) return null
-        return startRefresh(key, onlyIfMissing = true)
-    }
-
     private fun cancelRefresh() {
-        refreshJob?.cancel()
-        refreshJob = null
-        refreshKey = null
+        activeRefresh?.job?.cancel()
+        activeRefresh = null
     }
 
-    /** Called under ownershipMutex; LAZY assigns ownership before the coroutine can finish. */
-    private fun startRefresh(key: RefreshKey, onlyIfMissing: Boolean): Job {
-        refreshJob?.cancel()
+    /**
+     * Called under ownershipMutex; LAZY assigns ownership before the coroutine can finish.
+     * Resume may join an applicable request even if cached data already satisfies recovery.
+     */
+    private fun ensureRefresh(
+        key: RefreshKey,
+        onlyIfMissing: Boolean,
+        needed: Boolean = true
+    ): Job? {
+        activeRefresh?.takeIf { it.satisfies(key, onlyIfMissing) }?.let { return it.job }
+        cancelRefresh()
+        if (!needed) return null
         val job = scope.launch(start = CoroutineStart.LAZY) {
             runOrHandle(onFailure = { exception -> e { "Foreground remote refresh failed: error=$exception" } }) {
                 d { "Foreground remote refresh started: onlyIfMissing=$onlyIfMissing" }
                 remoteNetworkDataRepository.refresh(onlyIfMissing)
             }
         }
-        refreshKey = key
-        refreshJob = job
+        activeRefresh = ActiveRefresh(key, onlyIfMissing, job)
         job.start()
         return job
     }
@@ -165,15 +161,33 @@ class RemoteDataSynchronizer @Inject constructor(
         status: WifiStatus,
         config: RemoteDataConfig,
         wifiIdentity: Long? = wifiStatusSource.connectedWifiIdentity()
-    ): RefreshKey =
-        RefreshKey(
+    ): RefreshKey {
+        val availability = networkAvailabilitySource()
+        return RefreshKey(
             config,
             status,
             wifiIdentity,
-            networkAvailabilitySource().defaultNetworkIdentity
+            availability.defaultNetworkIdentity,
+            availability.hasUsableDefaultNetwork,
+            availability.isDirectWifiDefaultNetwork,
+            availability.isVpnDefaultNetwork
         )
+    }
 
-    private data class RefreshKey(val config: RemoteDataConfig, val status: WifiStatus, val wifiIdentity: Long?, val defaultIdentity: Long?)
+    private data class RefreshKey(
+        val config: RemoteDataConfig,
+        val status: WifiStatus,
+        val wifiIdentity: Long?,
+        val defaultIdentity: Long?,
+        val hasUsableDefaultNetwork: Boolean,
+        val isDirectWifiDefaultNetwork: Boolean,
+        val isVpnDefaultNetwork: Boolean
+    )
+
+    private data class ActiveRefresh(val key: RefreshKey, val onlyIfMissing: Boolean, val job: Job) {
+        fun satisfies(key: RefreshKey, onlyIfMissing: Boolean): Boolean =
+            job.isActive && this.key == key && (onlyIfMissing || !this.onlyIfMissing)
+    }
 }
 
 /**

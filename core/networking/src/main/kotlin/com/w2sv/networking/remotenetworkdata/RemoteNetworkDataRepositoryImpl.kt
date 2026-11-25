@@ -12,6 +12,7 @@ import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.RemoteRefreshResult
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.wifiproperty.WifiProperty
 import com.w2sv.kotlinutils.makeIf
 import com.w2sv.networking.connectivity.hasInternetCapability
 import com.w2sv.networking.connectivity.isDirectWifiEgress
@@ -23,6 +24,8 @@ import javax.inject.Singleton
 import kotlin.time.TimeSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -48,6 +51,16 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
     /** Protects synchronous access to shared cache state, including calls from widget rendering. */
     private val stateLock = Any()
     private var cache = RemoteDataCache()
+
+    // Read before waiting for refreshMutex; all access is protected by stateLock. Invalidating
+    // the completion never rewinds the generation, including observed A -> B -> A transitions.
+    private var completedRefreshGeneration = 0L
+    private var completedFullRefresh: CompletedFullRefresh? = null
+
+    // Independent of fetch completion: observed transitions during the first retrieval also
+    // prevent it from qualifying for deduplication. Missing route details retain the last identity.
+    private var reconciliationRevision = 0L
+    private var lastVerifiedNetwork: VerifiedDefaultNetwork? = null
 
     // This copy survives default-egress changes; it is visible only while its exact Network is
     // still the uniquely identified direct Wi-Fi connection.
@@ -97,8 +110,26 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
         defaultNetwork: Network? = connectivityManager.activeNetwork,
         capabilities: NetworkCapabilities? = defaultNetwork?.let(connectivityManager::getNetworkCapabilities)
     ): VerifiedDefaultNetwork? {
+        val previousNetwork = cache.network
+        val previousConfig = cache.config
         val verified = reconcileNetwork(defaultNetwork, capabilities)
+        val classificationChanged = verified != null &&
+            lastVerifiedNetwork?.let { it.network == verified.network && it != verified } == true
+        if ((defaultNetwork != null && defaultNetwork != previousNetwork) ||
+            config != previousConfig || classificationChanged
+        ) {
+            reconciliationRevision++
+        }
+        if (verified != null) lastVerifiedNetwork = verified
         reconcileConfig(config)
+        completedFullRefresh?.let { completion ->
+            if ((verified != null && completion.network != verified) || completion.config != config ||
+                cache.fetchOrigin != completion.network || !cache.isRecoverySatisfied(config)
+            ) {
+                completedFullRefresh = null
+                d { "Full remote retrieval completion invalidated: generation=${completion.generation}" }
+            }
+        }
         publishData(verified?.network)
         return verified
     }
@@ -180,12 +211,13 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
 
     /** Applies widget route eligibility under the same lock that creates the HTTP fetch plan. */
     private suspend fun refresh(onlyIfMissing: Boolean, forWidget: Boolean): RemoteRefreshResult {
+        val generationAtRequest = synchronized(stateLock) { completedRefreshGeneration }
         val requested = TimeSource.Monotonic.markNow()
-        d { "Remote data refresh requested: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget" }
+        d { "Remote data refresh requested: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, generation=$generationAtRequest" }
         return refreshMutex.withLock {
             d { "Remote data refresh lock acquired: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, wait=${requested.elapsedNow()}" }
             val config = widgetConfigSource.snapshot().remoteDataConfig
-            val (network, fetchPlan) = synchronized(stateLock) {
+            val (network, fetchPlan, reusableCompletion, revisionAtFetch) = synchronized(stateLock) {
                 val defaultNetwork = connectivityManager.activeNetwork
                 val capabilities = defaultNetwork?.let(connectivityManager::getNetworkCapabilities)
                 val current = reconcile(config, defaultNetwork, capabilities)
@@ -200,16 +232,35 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
                             ).isConnected
                         )
                 val target = current?.takeIf { eligible }
-                target to target?.let { cache.fetchPlan(config, onlyIfMissing) }
+                RefreshPreparation(
+                    target,
+                    target?.let { cache.fetchPlan(config, onlyIfMissing) },
+                    completedFullRefresh?.takeIf {
+                        !onlyIfMissing && target != null && it.generation > generationAtRequest
+                    },
+                    reconciliationRevision
+                )
             }
             if (network == null) {
                 d { "Remote data refresh aborted: no eligible default network" }
                 return@withLock RemoteRefreshResult.NetworkUnavailable
             }
+            if (reusableCompletion != null) {
+                d {
+                    "Remote data refresh skipped: compatible full retrieval completed while waiting; " +
+                        "requestedGeneration=$generationAtRequest, completedGeneration=${reusableCompletion.generation}, forWidget=$forWidget"
+                }
+                return@withLock RemoteRefreshResult.Complete
+            }
             checkNotNull(fetchPlan)
             if (fetchPlan.isEmpty) {
-                d { "Remote data refresh skipped: enabled data already complete for network=$network" }
+                d {
+                    "Remote data refresh skipped: ${if (onlyIfMissing) "missing-data requirements already satisfied" else "no enabled remote requirements"}; network=$network"
+                }
                 return@withLock RemoteRefreshResult.Complete
+            }
+            d {
+                "Remote data retrieval executed: mode=${if (onlyIfMissing) "missing-data" else "full"}, forWidget=$forWidget, generation=$generationAtRequest"
             }
             val fetching = TimeSource.Monotonic.markNow()
             val results = try {
@@ -218,7 +269,8 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
                 d { "Remote fetch plan finished: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, duration=${fetching.elapsedNow()}" }
             }
             val latestConfig = widgetConfigSource.snapshot().remoteDataConfig
-            applyFetchResults(network, config, results, latestConfig)
+            currentCoroutineContext().ensureActive()
+            applyFetchResults(network, config, results, latestConfig, onlyIfMissing, revisionAtFetch)
         }
             .log { result -> "Remote data refresh finished: onlyIfMissing=$onlyIfMissing, forWidget=$forWidget, result=$result" }
     }
@@ -239,11 +291,13 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
         network: VerifiedDefaultNetwork,
         config: RemoteDataConfig,
         results: FetchResults,
-        latestConfig: RemoteDataConfig
+        latestConfig: RemoteDataConfig,
+        onlyIfMissing: Boolean,
+        revisionAtFetch: Long
     ): RemoteRefreshResult =
         synchronized(stateLock) {
-            // The system routes HTTP on its default egress. Rechecking here rejects observed
-            // changes, though it cannot identify an A -> B -> A transition between checks.
+            // Preserve boundary-based result acceptance. Observed intermediate transitions
+            // affect completion eligibility below without independently rejecting these results.
             val current = reconcile(latestConfig)
             if (current == null || current != network) {
                 d { "Remote data refresh discarded: network changed or became unavailable; start=$network, end=$current" }
@@ -262,6 +316,15 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
             }
 
             publishData(current.network)
+            // Cached values can make recovery Complete after failed HTTP. Qualify using only
+            // this retrieval's results, retaining the public-IP family availability semantics.
+            if (!onlyIfMissing && revisionAtFetch == reconciliationRevision &&
+                RemoteDataCache().withFetchResults(config, results).isRecoverySatisfied(config)
+            ) {
+                completedRefreshGeneration++
+                completedFullRefresh = CompletedFullRefresh(completedRefreshGeneration, current, config)
+                d { "Full remote retrieval completed: generation=$completedRefreshGeneration" }
+            }
             cache.recoveryResult(config)
         }
 
@@ -272,6 +335,17 @@ internal class RemoteNetworkDataRepositoryImpl @Inject constructor(
 
 /** A default HTTP route whose identity and INTERNET capability were checked for this read. */
 private data class VerifiedDefaultNetwork(val network: Network, val isDirectWifi: Boolean, val isVpn: Boolean)
+
+/** Null completion metadata means reconciliation invalidated its applicability; cached Wi-Fi may survive. */
+private data class CompletedFullRefresh(val generation: Long, val network: VerifiedDefaultNetwork, val config: RemoteDataConfig)
+
+/** Route, plan, and reconciliation revision captured together under the repository state lock. */
+private data class RefreshPreparation(
+    val network: VerifiedDefaultNetwork?,
+    val fetchPlan: RemoteFetchPlan?,
+    val reusableCompletion: CompletedFullRefresh?,
+    val reconciliationRevision: Long
+)
 
 /**
  * Values and initialization originate from one confirmed default-egress network and config.
@@ -295,15 +369,23 @@ private data class RemoteDataCache(
     fun reconciledFor(config: RemoteDataConfig): RemoteDataCache {
         val previous = this.config
         if (previous == config) return this
-        val sameIpApiRequirements = previous != null &&
-            previous.ipApiProperties == config.ipApiProperties &&
-            previous.locationParameters == config.locationParameters
+
         return copy(
             config = config,
             data = config.retainApplicable(data, previous),
-            ipApiInitializedForConfig = ipApiInitializedForConfig && sameIpApiRequirements,
+            ipApiInitializedForConfig = canRetainIpApiInitialization(config),
             attemptedIpVersions = attemptedIpVersions.intersect(config.publicIpVersions)
         )
+    }
+
+    private fun canRetainIpApiInitialization(config: RemoteDataConfig): Boolean {
+        val previous = this.config ?: return false
+
+        if (!ipApiInitializedForConfig || !config.requiresIpApi) return false
+        if (!previous.ipApiProperties.containsAll(config.ipApiProperties)) return false
+
+        return WifiProperty.Location !in config.ipApiProperties ||
+            previous.locationParameters == config.locationParameters
     }
 
     // A public-IP value from any enabled family is useful once every enabled family has
