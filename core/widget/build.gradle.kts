@@ -12,7 +12,10 @@ plugins {
     alias(libs.plugins.paparazzi)
 }
 
-android { buildFeatures { compose = true } }
+android {
+    buildFeatures { compose = true }
+    defaultConfig { consumerProguardFiles("consumer-proguard-rules.pro") }
+}
 
 val previewTestClass = "WifiGlancePaparazziPreviewTest"
 val clearGlancePreviewReport = tasks.register<Delete>("clearGlancePreviewReport") {
