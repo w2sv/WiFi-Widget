@@ -31,13 +31,12 @@ internal class WifiWidgetWorkScheduler @Inject constructor(private val workManag
     // ------------- Enqueuing
 
     fun enqueueImmediateRefresh() {
-        i { "Enqueueing immediate refresh" }
-
         val request = buildOneTimeWorkRequest<WifiWidgetRefreshWorker> { builder ->
             builder
                 .setInputData(RefreshWork.Immediate.toWorkData())
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
         }
+        i { "Enqueueing widget refresh: reason=${RefreshWork.Immediate}, workId=${request.id}" }
 
         workManager.enqueueUniqueWork(
             RefreshWork.Immediate.uniqueWorkName,
@@ -48,8 +47,6 @@ internal class WifiWidgetWorkScheduler @Inject constructor(private val workManag
 
     /** KEEP deduplicates pending work; cache completeness prevents re-enqueue after work finishes. */
     fun enqueueRecovery() {
-        i { "Enqueueing recovery" }
-
         // CONNECTED gates retries but may mean VPN/cellular; the worker and repository check
         // Wi-Fi status and the actual default egress context before fetching. Exponential backoff
         // keeps standby and temporarily unavailable networks from causing rapid repeated work.
@@ -59,17 +56,17 @@ internal class WifiWidgetWorkScheduler @Inject constructor(private val workManag
                 .setConstraints(Constraints(requiredNetworkType = NetworkType.CONNECTED))
                 .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, Duration.ofMinutes(10))
         }
+        i { "Enqueueing widget refresh: reason=${RefreshWork.Recovery}, workId=${request.id}" }
         workManager.enqueueUniqueWork(RefreshWork.Recovery.uniqueWorkName, ExistingWorkPolicy.KEEP, request)
     }
 
     private fun enqueuePeriodicWork(interval: Duration) {
-        i { "Enqueuing periodic work with interval=$interval" }
-
         val request = buildPeriodicWorkRequest<WifiWidgetRefreshWorker>(interval) { builder ->
             builder
                 .setInputData(RefreshWork.Periodic.toWorkData())
                 .setInitialDelay(interval)
         }
+        i { "Enqueueing widget refresh: reason=${RefreshWork.Periodic}, workId=${request.id}, interval=$interval" }
         workManager.enqueueUniquePeriodicWork(
             RefreshWork.Periodic.uniqueWorkName,
             ExistingPeriodicWorkPolicy.UPDATE,

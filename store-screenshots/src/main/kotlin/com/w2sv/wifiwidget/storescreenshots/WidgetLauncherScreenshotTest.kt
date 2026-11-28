@@ -9,7 +9,7 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.w2sv.domain.widget.WidgetConfigDataSource
 import com.w2sv.domain.widget.WidgetConfigSource
-import com.w2sv.domain.widget.WidgetUtility
+import com.w2sv.domain.wifiproperty.Text
 import com.w2sv.wifiwidget.storescreenshots.device.LAUNCHER_PACKAGE
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDevice
 import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotDeviceSetup
@@ -18,6 +18,7 @@ import com.w2sv.wifiwidget.storescreenshots.device.ScreenshotWallpaper
 import com.w2sv.wifiwidget.storescreenshots.scenario.ActiveScreenshotScenario
 import com.w2sv.wifiwidget.storescreenshots.scenario.ScreenshotScenario
 import com.w2sv.wifiwidget.storescreenshots.scenario.ScreenshotScenarios
+import com.w2sv.wifiwidget.testing.launcher.LAUNCHER_WIDGET_HOST_CLASS
 import com.w2sv.wifiwidget.testing.launcher.LauncherWidgetController
 import com.w2sv.wifiwidget.testing.launcher.LauncherWorkspace
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -99,21 +100,16 @@ class WidgetLauncherScreenshotTest {
         check(widgetManager.getAppWidgetIds(widgetProvider).toSet() == setOf(widgetId)) {
             "Expected exactly one widget for ${scenario.name}, ID $widgetId. ${screenshotDevice.hierarchy()}"
         }
-        check(device.findObjects(By.res(appPackage, "widget_layout")).size == 1) {
+        check(device.findObjects(By.clazz(LAUNCHER_WIDGET_HOST_CLASS)).size == 1) {
             "Expected exactly one launcher-visible widget for ${scenario.name}. ${screenshotDevice.hierarchy()}"
         }
         launcher.checkDockEmpty()
         check(!device.hasObject(By.pkg(LAUNCHER_PACKAGE).text("ADD TO HOME SCREEN"))) {
             "Launcher pin dialog is still visible. ${screenshotDevice.hierarchy()}"
         }
-        check(!device.hasObject(By.res(appPackage, "loading_tv"))) {
-            "The widget is still showing its loading view. ${screenshotDevice.hierarchy()}"
-        }
-        check(
-            device.hasObject(By.res(appPackage, "last_updated_tv")) ==
-                (WidgetUtility.RefreshTimeDisplay in scenario.enabledUtilities)
-        ) {
-            "Unexpected refresh timestamp visibility for ${scenario.name}. ${screenshotDevice.hierarchy()}"
+        val expectedValue = (scenario.properties.first().values.first().value as Text.Raw).value
+        screenshotDevice.launcher.await("Glance widget content for ${scenario.name}") {
+            screenshotDevice.launcher.visibleWidgetHost()?.findObject(By.text(expectedValue)) != null
         }
 
         val systemUi = ScreenshotSystemUi(screenshotDevice)

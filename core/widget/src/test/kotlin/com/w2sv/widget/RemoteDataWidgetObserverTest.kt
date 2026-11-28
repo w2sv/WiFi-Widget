@@ -7,16 +7,18 @@ import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
 import com.w2sv.domain.networking.WifiStatusSource
-import com.w2sv.domain.widget.WidgetActions
 import com.w2sv.domain.widget.WidgetConfig
 import com.w2sv.domain.widget.WidgetConfigSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.widget.refreshing.WifiWidgetWorkScheduler
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import io.mockk.verifyOrder
 import kotlin.test.Test
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,7 +56,7 @@ class RemoteDataWidgetObserverTest {
         coEvery { snapshot() } returns WidgetConfig.default
     }
     private val scheduler = mockk<WifiWidgetWorkScheduler>(relaxed = true)
-    private val actions = mockk<WidgetActions>(relaxed = true)
+    private val actions = mockk<WidgetManager>(relaxed = true)
     private var widgetsInstalled = true
     private val widgetStatus = mockk<WidgetStatus> {
         every { hasInstalledWidgets } answers { widgetsInstalled }
@@ -81,6 +83,42 @@ class RemoteDataWidgetObserverTest {
             observer().initialize()
             runCurrent()
             verify(exactly = 0) { actions.render() }
+        }
+
+    @Test fun `process recreation recovers missing data without a network callback`() =
+        runTest {
+            recoveryNeeded = true
+            observer().initialize()
+            runCurrent()
+
+            verify(exactly = 1) { scheduler.enqueueRecovery() }
+            verify(exactly = 0) { actions.render() }
+        }
+
+    @Test fun `Wi-Fi render does not wait for recovery configuration or scheduling`() =
+        runTest {
+            observer().initialize()
+            wifiEvents.emit(WifiStatus.ConnectedInactive)
+            runCurrent()
+            val reading = CompletableDeferred<Unit>()
+            val release = CompletableDeferred<Unit>()
+            coEvery { configSource.snapshot() } coAnswers {
+                reading.complete(Unit)
+                release.await()
+                WidgetConfig.default
+            }
+            recoveryNeeded = true
+            wifiIdentity = 2L
+            wifiEvents.emit(WifiStatus.ConnectedInactive)
+            reading.await()
+            verify(exactly = 1) { actions.render() }
+            verify(exactly = 0) { scheduler.enqueueRecovery() }
+            release.complete(Unit)
+            runCurrent()
+            verifyOrder {
+                actions.render()
+                scheduler.enqueueRecovery()
+            }
         }
 
     @Test fun `changed data renders while equal data does not`() =
@@ -196,6 +234,7 @@ class RemoteDataWidgetObserverTest {
     @Test fun `VPN default over connected Wi-Fi reconciles and schedules recovery`() =
         runTest {
             observer().initialize()
+            runCurrent()
             recoveryNeeded = true
             availability = availability.copy(
                 defaultNetworkIdentity = 2L,
@@ -205,7 +244,7 @@ class RemoteDataWidgetObserverTest {
             defaultEgressEvents.emit(Unit)
             runCurrent()
 
-            verify(exactly = 1) { repository.needsRecovery(any()) }
+            verify(exactly = 2) { repository.needsRecovery(any()) }
             verify(exactly = 1) { scheduler.enqueueRecovery() }
             verify(exactly = 1) { actions.render() }
 
@@ -279,24 +318,35 @@ class RemoteDataWidgetObserverTest {
     @Test fun `repeated default observations reconcile and schedule only once`() =
         runTest {
             observer().initialize()
+            runCurrent()
             recoveryNeeded = true
             defaultEgressEvents.emit(Unit)
             runCurrent()
             defaultEgressEvents.emit(Unit)
             runCurrent()
 
-            verify(exactly = 1) { repository.needsRecovery(any()) }
+            verify(exactly = 2) { repository.needsRecovery(any()) }
             verify(exactly = 1) { scheduler.enqueueRecovery() }
             verify(exactly = 1) { actions.render() }
         }
 
     @Test fun `repository publication supplies the render after default reconciliation`() =
         runTest {
+            widgetsInstalled = false
+            var stillMissing = true
             every { repository.needsRecovery(any()) } answers {
-                data.value = published("restored Wi-Fi")
-                true
+                if (stillMissing) {
+                    stillMissing = false
+                    data.value = published("restored Wi-Fi")
+                    true
+                } else {
+                    false
+                }
             }
-            observer().initialize()
+            val observer = observer()
+            observer.initialize()
+            widgetsInstalled = true
+            observer.onWidgetsAvailable()
             defaultEgressEvents.emit(Unit)
             runCurrent()
 

@@ -8,7 +8,7 @@ import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentation
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiState
 import com.w2sv.wifiwidget.ui.util.PreviewOf
-import com.w2sv.wifiwidget.ui.util.ScreenPreviews
+import com.w2sv.wifiwidget.ui.util.PreviewScreens
 import kotlinx.coroutines.flow.emptyFlow
 
 @Preview
@@ -39,7 +39,7 @@ private fun LandscapeConnectedWithoutPropertiesPrev() {
     HomeScreenPreview(WifiState.Connected(WifiStatus.Connected, emptyList()))
 }
 
-@ScreenPreviews
+@PreviewScreens
 @Composable
 private fun ConnectedPrev() {
     HomeScreenPreview(previewConnectedState)
@@ -75,6 +75,7 @@ private fun HomeScreenPreview(wifiState: WifiState) {
             wifiState = wifiState,
             pinWidget = {},
             toWidgetConfiguration = {},
+            toLocationAccess = {},
             snackbarBuilderFlow = emptyFlow()
         )
     }

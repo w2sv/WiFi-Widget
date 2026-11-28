@@ -30,7 +30,7 @@ class RemoteDataWidgetIntegrationTest : WidgetIntegrationTestBase() {
         env.launcher.awaitWidgetText("First Integration ISP")
 
         http.respondWithIpApi("Second Integration ISP")
-        env.actions.refresh()
+        env.widgetManager.refresh()
         env.work.awaitWork(WidgetWorkEnvironment.IMMEDIATE_WORK, WorkInfo.State.SUCCEEDED)
         env.awaitRepositoryIsp("Second Integration ISP")
         env.launcher.awaitWidgetText("Second Integration ISP")

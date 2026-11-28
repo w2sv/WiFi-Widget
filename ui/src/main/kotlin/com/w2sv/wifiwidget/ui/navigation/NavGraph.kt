@@ -13,11 +13,16 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.w2sv.wifiwidget.ui.designsystem.theme.ThemeController
 import com.w2sv.wifiwidget.ui.screen.home.HomeRoute
+import com.w2sv.wifiwidget.ui.screen.locationaccess.LocationAccessRoute
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.WidgetConfigRoute
 
 @Composable
-fun NavGraph(themeController: ThemeController) {
-    val navigator = rememberNavigator()
+fun NavGraph(
+    themeController: ThemeController,
+    modifier: Modifier = Modifier,
+    initialScreen: Screen = Screen.Home
+) {
+    val navigator = rememberNavigator(initialScreen)
     val density = LocalDensity.current
 
     NavDisplay(
@@ -27,7 +32,7 @@ fun NavGraph(themeController: ThemeController) {
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator()
         ),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
         transitionSpec = { xAxisEnterTransition togetherWith xAxisExitTransition(density) },
@@ -37,10 +42,22 @@ fun NavGraph(themeController: ThemeController) {
             entry<Screen.Home> {
                 HomeRoute(
                     themeController = themeController,
-                    toWidgetConfiguration = navigator::toWidgetConfiguration
+                    toWidgetConfiguration = navigator::toWidgetConfiguration,
+                    toLocationAccess = navigator::toLocationAccess
                 )
             }
-            entry<Screen.WidgetConfiguration> { WidgetConfigRoute(navigateBack = navigator::popBackStack) }
+            entry<Screen.WidgetConfiguration> {
+                WidgetConfigRoute(
+                    onExit = navigator::popBackStack
+                )
+            }
+            entry<Screen.LocationAccess> { screen ->
+                LocationAccessRoute(
+                    scenario = screen.scenario,
+                    onContinue = navigator::launchHome,
+                    onBack = navigator::popBackStack
+                )
+            }
         }
     )
 }

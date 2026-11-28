@@ -93,16 +93,12 @@ class InAppScreenshotTest {
     }
 
     private fun prepareAppState() {
+        runBlocking { locationAccessRepository.completeOnboarding() }
         listOf(
             Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
         ).forEach { permission ->
             screenshotDevice.executeShellCommand("pm grant ${screenshotDevice.appPackage} $permission")
-        }
-        runBlocking {
-            locationAccessRepository.recordRationalShown()
-            locationAccessRepository.rationalShown.first { it }
         }
     }
 

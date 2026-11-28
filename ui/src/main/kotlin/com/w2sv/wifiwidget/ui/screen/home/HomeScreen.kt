@@ -49,11 +49,23 @@ fun HomeScreen(
     wifiState: WifiState,
     pinWidget: () -> Unit,
     toWidgetConfiguration: () -> Unit,
+    toLocationAccess: () -> Unit,
     snackbarBuilderFlow: SnackbarBuilderFlow,
+    modifier: Modifier = Modifier,
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 ) {
     val scope = rememberCoroutineScope()
-    NavDrawer(state = drawerState, themeController = themeController) {
+    NavDrawer(
+        state = drawerState,
+        themeController = themeController,
+        onLocationAccessClick = {
+            scope.launch {
+                drawerState.close()
+                toLocationAccess()
+            }
+        },
+        modifier = modifier
+    ) {
         Scaffold(
             topBar = {
                 NavDrawerTopBar(
@@ -64,11 +76,11 @@ fun HomeScreen(
             snackbarHost = { AppSnackbarHost(snackbarBuilderFlow = snackbarBuilderFlow) },
             contentWindowInsets = WindowInsets()
         ) { paddingValues ->
-            val modifier = Modifier.padding(paddingValues)
+            val contentModifier = Modifier.padding(paddingValues)
             if (isLandscapeModeActive) {
-                LandscapeHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
+                LandscapeHomeContent(wifiState, pinWidget, toWidgetConfiguration, toLocationAccess, contentModifier)
             } else {
-                PortraitHomeContent(wifiState, pinWidget, toWidgetConfiguration, modifier)
+                PortraitHomeContent(wifiState, pinWidget, toWidgetConfiguration, toLocationAccess, contentModifier)
             }
         }
     }
@@ -79,6 +91,7 @@ private fun PortraitHomeContent(
     wifiState: WifiState,
     pinWidget: () -> Unit,
     toWidgetConfiguration: () -> Unit,
+    toLocationAccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -90,7 +103,7 @@ private fun PortraitHomeContent(
     ) {
         WidgetActionsSection(pinWidget = pinWidget, toWidgetConfiguration = toWidgetConfiguration)
         Spacer(Modifier.height(22.dp))
-        WifiInformationSection(wifiState = wifiState, modifier = Modifier.weight(1f))
+        WifiInformationSection(wifiState = wifiState, onMissingLocationAccess = toLocationAccess, modifier = Modifier.weight(1f))
     }
 }
 
@@ -99,6 +112,7 @@ private fun LandscapeHomeContent(
     wifiState: WifiState,
     pinWidget: () -> Unit,
     toWidgetConfiguration: () -> Unit,
+    toLocationAccess: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val hasProperties = wifiState.asConnectedOrNull?.propertyPresentations.orEmpty().isNotEmpty()
@@ -133,6 +147,7 @@ private fun LandscapeHomeContent(
         ) {
             WifiInformationSection(
                 wifiState = wifiState,
+                onMissingLocationAccess = toLocationAccess,
                 modifier = Modifier.thenIf(hasProperties, onTrue = { fillMaxSize() }, onFalse = { fillMaxWidth() }),
                 fillAvailableHeight = hasProperties
             )
@@ -143,6 +158,7 @@ private fun LandscapeHomeContent(
 @Composable
 private fun WifiInformationSection(
     wifiState: WifiState,
+    onMissingLocationAccess: () -> Unit,
     modifier: Modifier = Modifier,
     fillAvailableHeight: Boolean = true
 ) {
@@ -156,6 +172,7 @@ private fun WifiInformationSection(
         Spacer(Modifier.height(12.dp))
         WifiInformationList(
             wifiState = wifiState,
+            onMissingLocationAccess = onMissingLocationAccess,
             modifier = Modifier.thenIf(fillAvailableHeight) { weight(1f) },
             fillAvailableHeight = fillAvailableHeight
         )

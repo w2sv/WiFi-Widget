@@ -13,8 +13,6 @@ import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItem
 import com.w2sv.wifiwidget.ui.designsystem.configlist.makeTrySetChecked
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.list.UpdateWidgetConfig
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
@@ -23,19 +21,17 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-fun wifiPropertyConfigItem(
+internal fun wifiPropertyConfigItem(
     property: WifiProperty,
     config: WidgetConfig,
     updateConfig: UpdateWidgetConfig,
     showDialog: (WidgetConfigDialog) -> Unit,
-    locationAccess: LocationAccessCapability,
     scope: CoroutineScope,
     snackbarController: SnackbarController
 ): ConfigItem =
     property.configItem(
         config = { config.propertyConfig(property) },
         update = { propertyConfig -> updateConfig { withUpdatedPropertyConfig(property) { propertyConfig } } },
-        locationAccess = locationAccess,
         isMoreThanOnePropertyEnabled = { config.enabledProperties.size > 1 },
         showDialog = showDialog,
         showSnackbar = { builder -> scope.launch { snackbarController.replaceCurrentWith { builder() } } }
@@ -44,7 +40,6 @@ fun wifiPropertyConfigItem(
 private fun WifiProperty.configItem(
     config: () -> WifiPropertyConfig<WifiPropertySetting>,
     update: (WifiPropertyConfig<WifiPropertySetting>) -> Unit,
-    locationAccess: LocationAccessCapability,
     isMoreThanOnePropertyEnabled: () -> Boolean,
     showDialog: (WidgetConfigDialog) -> Unit,
     showSnackbar: (SnackbarBuilder) -> Unit
@@ -53,10 +48,9 @@ private fun WifiProperty.configItem(
         property = this,
         isChecked = { config().isEnabled },
         trySetChecked = makeTrySetChecked(
-            updateIsEnabled = { update(config().copy(isEnabled = it)) },
-            locationAccess = locationAccess,
-            isMoreThanOnePropertyEnabled = isMoreThanOnePropertyEnabled,
-            onUncheckingLastEnabledProperty = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } }
+            allowUpdate = { newValue -> newValue || isMoreThanOnePropertyEnabled() },
+            onUpdateDisallowed = { showSnackbar { leaveAtLeastOnePropertyEnabledSnackbar() } },
+            update = { update(config().copy(isEnabled = it)) }
         ),
         showInfoDialog = { showDialog(infoDialogData()) }
     )
@@ -92,39 +86,6 @@ fun wifiPropertySubSettingItems(
         else -> null
     }
 }
-
-enum class WifiPropertyCheckError {
-    LocationAccessMissing,
-    UncheckingLastEnabledProperty
-}
-
-private fun WifiProperty.makeTrySetChecked(
-    updateIsEnabled: (Boolean) -> Unit,
-    locationAccess: LocationAccessCapability,
-    isMoreThanOnePropertyEnabled: () -> Boolean,
-    onUncheckingLastEnabledProperty: () -> Unit
-) =
-    makeTrySetChecked(
-        updateVetoReason = { isCheckedNew ->
-            when {
-                requiresLocationAccess && isCheckedNew && !locationAccess.foregroundPermissionsGranted ->
-                    WifiPropertyCheckError.LocationAccessMissing
-
-                !isCheckedNew && !isMoreThanOnePropertyEnabled() -> WifiPropertyCheckError.UncheckingLastEnabledProperty
-                else -> null
-            }
-        },
-        onVeto = { checkError ->
-            when (checkError) {
-                WifiPropertyCheckError.LocationAccessMissing -> locationAccess.requestPermission(
-                    OnLocationAccessGranted.EnableProperty(this)
-                )
-
-                WifiPropertyCheckError.UncheckingLastEnabledProperty -> onUncheckingLastEnabledProperty()
-            }
-        },
-        update = updateIsEnabled
-    )
 
 private fun Context.leaveAtLeastOnePropertyEnabledSnackbar() =
     AppSnackbarVisuals(

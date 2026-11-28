@@ -2,7 +2,7 @@
 
 The `integration` package contains the behavior tests and their environment. Its `http` package contains the controlled HTTP fixture and Hilt client binding.
 
-Run the seven behavior tests independently of store screenshot generation:
+Run the six behavior tests independently of store screenshot generation:
 
 ```bash
 ./gradlew :widget-integration-tests:widgetPixel6Api35DebugAndroidTest --quiet --console=plain --warning-mode=summary
@@ -12,4 +12,4 @@ The module targets `:app` with a Hilt test application and Android Test Orchestr
 
 Each test initializes WorkManager with the real `HiltWorkerFactory` and `work-testing` driver, persists a minimal widget configuration with periodic refreshing disabled, pins through Launcher3, and removes the widget and work during cleanup. The observer is explicitly initialized because `HiltTestApplication` does not execute the production `Application.onCreate()`.
 
-Recovery tests control WorkManager constraints and retry advancement. Launcher rendering and broadcasts use bounded real-time polling. Factory recreation is verified by invoking `onCreate()` on a fresh Hilt-created production factory; Android's choice of when to recreate the collection service is outside deterministic test control. Test WorkManager scheduling is deterministic and does not exercise JobScheduler timing or device idle policies.
+Recovery tests control WorkManager constraints and retry advancement. The launcher checks Glance-rendered text inside Launcher3's widget host, and rendering and broadcasts use bounded real-time polling. Widget-update recovery remains covered here; process-recreation recovery is covered by `RemoteDataWidgetObserverTest`. Test WorkManager scheduling is deterministic and does not exercise JobScheduler timing or device idle policies.

@@ -11,6 +11,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import com.w2sv.common.android.requiresCustomClipboardConfirmation
 import com.w2sv.composed.material3.SnackbarController
 import com.w2sv.composed.material3.rememberSnackbarController
 import com.w2sv.core.resources.R
@@ -23,28 +24,30 @@ import com.w2sv.wifiwidget.ui.location.capability.access.LocationAccessCapabilit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-data class PropertyOnClickScope(
+internal data class PropertyOnClickScope(
     val clipboard: Clipboard,
     val snackbarController: SnackbarController,
-    val locationAccessCapability: LocationAccessCapability
+    val locationAccessCapability: LocationAccessCapability,
+    val onMissingLocationAccess: () -> Unit
 )
 
 @Composable
-fun rememberPropertyOnClickScope(): PropertyOnClickScope {
+internal fun rememberPropertyOnClickScope(onMissingLocationAccess: () -> Unit): PropertyOnClickScope {
     val clipboard = LocalClipboard.current
     val snackbarController = rememberSnackbarController(LocalSnackbarHostState.current)
     val locationAccessCapability = LocalLocationAccessCapability.current
 
-    return remember(clipboard, snackbarController, locationAccessCapability) {
+    return remember(clipboard, snackbarController, locationAccessCapability, onMissingLocationAccess) {
         PropertyOnClickScope(
             clipboard = clipboard,
             snackbarController = snackbarController,
-            locationAccessCapability = locationAccessCapability
+            locationAccessCapability = locationAccessCapability,
+            onMissingLocationAccess = onMissingLocationAccess
         )
     }
 }
 
-fun PropertyOnClickScope.onPropertyClick(
+internal fun PropertyOnClickScope.onPropertyClick(
     scope: CoroutineScope,
     label: CharSequence,
     value: String,
@@ -53,10 +56,13 @@ fun PropertyOnClickScope.onPropertyClick(
     when (resolutionError) {
         null -> scope.launch {
             clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
-            snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
+            if (requiresCustomClipboardConfirmation) {
+                snackbarController.replaceCurrentWith { copiedToClipboardSnackbar(label) }
+            }
         }
 
-        NoLocationAccessPermission -> locationAccessCapability.requestPermission()
+        NoLocationAccessPermission,
+        NoBackgroundLocationAccessPermission -> onMissingLocationAccess()
         GpsDisabled -> locationAccessCapability.openLocationSettings()
         BatterySaverRestricted -> Unit
     }

@@ -1,6 +1,5 @@
 package com.w2sv.wifiwidget.ui.screen.widgetconfig.list
 
-import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -124,12 +123,12 @@ private fun FontSizeSliderRow(
         label = stringResource(id = R.string.font_size),
         modifier = modifier
     ) {
-        val context: Context = LocalContext.current
+        val resources = LocalResources.current
         SliderWithLabel(
             value = fontSize.ordinal.toFloat(),
             steps = FontSize.entries.size - 2,
-            makeLabel = { context.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) },
-            onValueChanged = { setFontSize(enumEntryByOrdinal(it.roundToInt())) },
+            makeLabel = { resources.getString(enumEntryByOrdinal<FontSize>(it.roundToInt()).labelRes) },
+            onValueChange = { setFontSize(enumEntryByOrdinal(it.roundToInt())) },
             contentDescription = stringResource(id = R.string.font_size),
             valueRange = remember { 0f.rangeTo((FontSize.entries.size - 1).toFloat()) }
         )
@@ -150,7 +149,7 @@ private fun BackgroundOpacitySliderRow(
             value = opacity,
             steps = 9,
             makeLabel = { "${(it * 100).roundToInt()}%" },
-            onValueChanged = setOpacity,
+            onValueChange = setOpacity,
             contentDescription = stringResource(id = R.string.background_opacity)
         )
     }

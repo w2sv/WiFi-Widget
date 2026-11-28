@@ -2,6 +2,7 @@ package com.w2sv.wifiwidget.ui.screen.home.model.wifistate
 
 import com.hoc081098.flowext.withLatestFrom
 import com.w2sv.common.logging.logOnCancellation
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.networking.RemoteNetworkData
 import com.w2sv.domain.networking.RemoteNetworkDataRepository
 import com.w2sv.domain.networking.WifiStatus
@@ -10,7 +11,6 @@ import com.w2sv.domain.widget.WidgetConfigSource
 import com.w2sv.domain.wifiproperty.presentation.WifiPropertyPresentationProvider
 import com.w2sv.kotlinutils.coroutines.flow.collectOn
 import com.w2sv.kotlinutils.makeIf
-import com.w2sv.wifiwidget.ui.screen.home.model.gpsstatus.LocationEnabledProvider
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
@@ -42,11 +42,11 @@ class WifiStateProviderImpl @Inject constructor(
     widgetConfigSource: WidgetConfigSource,
     wifiPropertyPresentationProvider: WifiPropertyPresentationProvider,
     remoteNetworkDataRepository: RemoteNetworkDataRepository,
-    locationEnabledProvider: LocationEnabledProvider,
+    isLocationEnabled: IsLocationEnabled,
     private val scope: CoroutineScope
 ) : WifiStateProvider {
     private val locationAccessChanged = MutableSharedFlow<Unit>().apply {
-        locationEnabledProvider.isEnabled
+        isLocationEnabled.flow
             .distinctUntilChanged()
             .collectOn(scope) { emit(Unit) }
     }
@@ -75,7 +75,9 @@ class WifiStateProviderImpl @Inject constructor(
         .mapLatest { inputs ->
             when (inputs.status) {
                 WifiStatus.Disabled -> WifiState.Disabled
+
                 WifiStatus.NotConnected -> WifiState.Disconnected
+
                 else -> {
                     d { "Computing connected Wi-Fi state for ${inputs.status} ${inputs.remoteData} ${inputs.config}" }
                     WifiState.Connected(

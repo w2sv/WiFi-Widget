@@ -42,30 +42,4 @@ class WidgetRecoveryIntegrationTest : WidgetIntegrationTestBase() {
         env.launcher.awaitBroadcastIdle()
         assertEquals(workIds, env.work.infos(WidgetWorkEnvironment.RECOVERY_WORK).map { it.id }.toSet())
     }
-
-    /**
-     * Creating a fresh collection factory with missing remote data should schedule recovery and
-     * update the widget. This covers Launcher3 recreating the RemoteViews service independently
-     * of a provider update callback.
-     */
-    @Test
-    fun `fresh RemoteViews factory creation schedules missing data recovery`() {
-        env.setConfig(widgetConfig(WifiProperty.Frequency))
-        env.launcher.pinWidget()
-        assertTrue(env.work.infos(WidgetWorkEnvironment.RECOVERY_WORK).isEmpty())
-        env.setConfig(widgetConfig(WifiProperty.ISP))
-        http.respondWithIpApi("Recovered From Factory ISP")
-
-        val factory = env.newRemoteViewsFactory
-        factory.onCreate()
-        try {
-            val recovery = env.work.awaitWork(WidgetWorkEnvironment.RECOVERY_WORK, WorkInfo.State.ENQUEUED)
-            env.work.satisfyConstraints(recovery)
-            env.work.awaitWork(recovery.id, WorkInfo.State.SUCCEEDED)
-            env.awaitRepositoryIsp("Recovered From Factory ISP")
-            env.launcher.awaitWidgetText("Recovered From Factory ISP")
-        } finally {
-            factory.onDestroy()
-        }
-    }
 }

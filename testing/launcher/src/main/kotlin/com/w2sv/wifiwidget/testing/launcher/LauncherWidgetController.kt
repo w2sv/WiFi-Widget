@@ -39,7 +39,7 @@ class LauncherWidgetController(private val launcher: LauncherDevice, private val
         check(device.wait(Until.gone(confirmationButton), UI_TIMEOUT_MS)) {
             "Launcher3 pin confirmation did not close.".withHierarchy()
         }
-        check(device.wait(Until.hasObject(By.res(appPackage, "widget_layout")), UI_TIMEOUT_MS)) {
+        check(device.wait(Until.hasObject(By.clazz(LAUNCHER_WIDGET_HOST_CLASS)), UI_TIMEOUT_MS)) {
             "Pinned widget $newWidgetId is not visible on the current launcher page.".withHierarchy()
         }
         check(launcher.widgetIds() == setOf(newWidgetId)) {
@@ -53,7 +53,7 @@ class LauncherWidgetController(private val launcher: LauncherDevice, private val
         require(targetSize.columns in 1..sizing.grid.columns)
         require(targetSize.rows in 1..sizing.grid.rows)
 
-        val widget = checkNotNull(device.findObject(By.res(appPackage, "widget_layout"))) {
+        val widget = checkNotNull(launcher.visibleWidgetHost()) {
             "The newly pinned widget is unavailable for resizing.".withHierarchy()
         }
         val original = Rect(widget.visibleBounds)
@@ -95,7 +95,7 @@ class LauncherWidgetController(private val launcher: LauncherDevice, private val
         check(waitForWidgetBounds(original, expectedWidth, expectedHeight, widthChanged, heightChanged)) {
             (
                 "Launcher3 did not resize the widget to ${targetSize.columns}x${targetSize.rows} cells; before=$original, " +
-                    "after=${device.findObject(By.res(appPackage, "widget_layout"))?.visibleBounds}."
+                    "after=${launcher.visibleWidgetHost()?.visibleBounds}."
                 ).withHierarchy()
         }
         device.pressBack()
@@ -103,9 +103,6 @@ class LauncherWidgetController(private val launcher: LauncherDevice, private val
             "Launcher3 did not dismiss widget resize mode.".withHierarchy()
         }
         launcher.waitForLauncherToSettle(requireHotseat = sizing.formFactor == LauncherFormFactor.LargeTablet)
-        check(device.wait(Until.gone(By.res(appPackage, "loading_tv")), UI_TIMEOUT_MS)) {
-            "The resized widget is still loading.".withHierarchy()
-        }
         check(waitForWidgetBounds(original, expectedWidth, expectedHeight, widthChanged, heightChanged)) {
             "The widget bounds changed after leaving resize mode.".withHierarchy()
         }
@@ -150,7 +147,7 @@ class LauncherWidgetController(private val launcher: LauncherDevice, private val
         val gridSnapTolerance = sizing.resizeTolerancePx
         val deadline = SystemClock.elapsedRealtime() + UI_TIMEOUT_MS
         while (SystemClock.elapsedRealtime() < deadline) {
-            val current = device.findObject(By.res(appPackage, "widget_layout"))?.visibleBounds
+            val current = launcher.visibleWidgetHost()?.visibleBounds
             if (current != null &&
                 abs(current.left - original.left) <= UNCHANGED_BOUNDS_TOLERANCE_PX &&
                 abs(current.top - original.top) <= UNCHANGED_BOUNDS_TOLERANCE_PX &&

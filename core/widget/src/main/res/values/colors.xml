@@ -1,5 +1,6 @@
 <resources>
     <color name="default_label">@color/blue_chill</color>
+    <color name="label_light">#0C6F78</color>
     <color name="foreground_light">@android:color/black</color>
     <color name="background_light">@android:color/white</color>
     <color name="foreground_dark">@android:color/white</color>

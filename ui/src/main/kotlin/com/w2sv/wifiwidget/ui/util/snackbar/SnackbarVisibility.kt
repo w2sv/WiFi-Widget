@@ -7,7 +7,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
 
-val LocalSnackbarVisibility = staticCompositionLocalOf { SnackbarVisibility() }
+val LocalSnackbarVisibility = staticCompositionLocalOf<SnackbarVisibility> {
+    error("LocalSnackbarVisibility not provided")
+}
 
 /**
  * Tracks actual snackbar visibility and kind through its exit animation. [set] belongs to the snackbar host.

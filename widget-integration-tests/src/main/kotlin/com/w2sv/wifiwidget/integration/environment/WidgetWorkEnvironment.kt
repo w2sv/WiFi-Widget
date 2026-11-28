@@ -57,7 +57,12 @@ class WidgetWorkEnvironment(
     }
 
     fun shutdown() {
-        executor.shutdownNow()
+        // Cancellation and HTTP idleness do not join WorkManager's internal coroutine tasks.
+        if (isInitialized) WorkManagerTestInitHelper.closeWorkDatabase()
+        executor.shutdown()
+        check(executor.awaitTermination(10, TimeUnit.SECONDS)) {
+            "WorkManager executor did not terminate after closing the test instance"
+        }
     }
 
     fun infos(name: String): List<WorkInfo> =

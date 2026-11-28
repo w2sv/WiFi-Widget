@@ -29,7 +29,6 @@ import com.w2sv.wifiwidget.ui.designsystem.SegmentedListTokens
 import com.w2sv.wifiwidget.ui.designsystem.configlist.ConfigItemLayout
 import com.w2sv.wifiwidget.ui.designsystem.configlist.SegmentedConfigListTokens
 import com.w2sv.wifiwidget.ui.designsystem.configlist.SubSettings
-import com.w2sv.wifiwidget.ui.location.capability.access.LocalLocationAccessCapability
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.dialog.WidgetConfigDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.wifiPropertyConfigItem
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.wifiPropertySubSettingItems
@@ -88,7 +87,6 @@ fun LazyListScope.reorderableWifiPropertyItems(
                         config = config,
                         updateConfig = updateConfig,
                         showDialog = showDialog,
-                        locationAccess = LocalLocationAccessCapability.current,
                         scope = scope,
                         snackbarController = snackbarController
                     ),

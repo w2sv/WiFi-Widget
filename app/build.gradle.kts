@@ -11,11 +11,21 @@ plugins {
     alias(libs.plugins.kotlin.plugin.compose)
 }
 
+val enableDiagnosticLogging = providers
+    .gradleProperty("enableDiagnosticLogging")
+    .map { it.toBooleanStrict() }
+    .orElse(false)
+
 android {
     defaultConfig {
         applicationId = namespace
         versionCode = project.property("versionCode").toString().toInt()
         versionName = version.toString()
+        buildConfigField(
+            "boolean",
+            "ENABLE_DIAGNOSTIC_LOGGING",
+            enableDiagnosticLogging.get().toString()
+        )
     }
 
     fun releaseSigningConfigOrNull(): ApkSigningConfig? {
@@ -88,4 +98,6 @@ dependencies {
     implementation(libs.androidx.compose.activity)
 
     testImplementation(libs.bundles.unitTest)
+    testImplementation(libs.androidx.compose.ui.test.junit4.android)
+    testImplementation(libs.w2sv.reversiblestate)
 }

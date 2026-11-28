@@ -29,7 +29,7 @@ class CriticalUserJourneyBaselineProfile {
 
 private fun UiDevice.criticalUserJourney() {
     waitForIdle()
-    closeLocationAccessPermissionRationalAndRequestDialogIfOpen()
+    skipLocationOnboardingIfOpen()
 
     goToWidgetConfigurationScreen()
     waitForIdle()
@@ -37,12 +37,11 @@ private fun UiDevice.criticalUserJourney() {
     pressBack()
 }
 
-private fun UiDevice.closeLocationAccessPermissionRationalAndRequestDialogIfOpen() {
-    // 'Understood' button is part of the location access rational dialog
-    findObject(By.text("Understood"))?.let {
-        it.click() // Closes the rational dialog
-        waitForIdle() // Wait until location access permission request dialog appears
-        pressBack() // Closes location access permission request dialog
+private fun UiDevice.skipLocationOnboardingIfOpen() {
+    if (findObject(By.text("Configure")) != null) return
+    wait(Until.findObject(By.text("Continue without location access")), 5_000)?.let {
+        it.click()
+        waitForIdle()
     }
 }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -14,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.smarttoolfactory.colorpicker.model.ColorModel
 import com.smarttoolfactory.colorpicker.picker.ColorPickerRingHSL
 import com.smarttoolfactory.colorpicker.selector.SelectorRingProperties
-import com.w2sv.wifiwidget.ui.designsystem.ColorIndicator
+import com.w2sv.wifiwidget.ui.designsystem.ColorSwatch
 import com.w2sv.wifiwidget.ui.designsystem.ConfigurationDialog
 import com.w2sv.wifiwidget.ui.screen.widgetconfig.model.WidgetColor
 import com.w2sv.wifiwidget.ui.util.PreviewOf
@@ -36,7 +37,7 @@ fun ColorPickerDialog(
         },
         modifier = modifier,
         columnModifier = Modifier.verticalScroll(rememberScrollState()),
-        icon = { ColorIndicator(color = color, size = 42.dp) },
+        icon = { ColorSwatch(brush = SolidColor(color)) },
         title = stringResource(id = data.widgetColor.labelRes),
         applyButtonEnabled = data.hasBeenConfigured
     ) {

@@ -12,16 +12,17 @@ import javax.inject.Singleton
 internal class LocationAccessRepositoryImpl @Inject constructor(dataStore: DataStore<Preferences>) :
     PersistedPreferencesAccessor(dataStore),
     LocationAccessRepository {
-    private val rationalShownPreference = persistedPreference(booleanPreferencesKey("locationPermissionDialogAnswered")) { false }
     private val requestedPreference = persistedPreference(booleanPreferencesKey("locationAccessPermissionRequestedAtLeastOnce")) { false }
+    private val onboardingCompletedPreference = persistedPreference(booleanPreferencesKey("locationPermissionDialogAnswered")) { false }
 
-    override val rationalShown = rationalShownPreference.flow
     override val permissionRequested = requestedPreference.flow
+    override val onboardingCompleted = onboardingCompletedPreference.flow
 
-    override suspend fun recordRationalShown() {
-        rationalShownPreference.save(true)
-    }
     override suspend fun recordPermissionRequested() {
         requestedPreference.save(true)
+    }
+
+    override suspend fun completeOnboarding() {
+        onboardingCompletedPreference.save(true)
     }
 }

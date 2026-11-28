@@ -3,73 +3,46 @@ package com.w2sv.wifiwidget.ui.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.w2sv.core.resources.R
-import com.w2sv.domain.widget.WidgetActions
-import com.w2sv.domain.widget.WidgetConfigDataSource
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
 import com.w2sv.wifiwidget.ui.designsystem.AppSnackbarVisuals
 import com.w2sv.wifiwidget.ui.designsystem.SnackbarKind
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.EnableLocationAccessRequiringProperties
-import com.w2sv.wifiwidget.ui.location.OnLocationAccessGranted.TriggerWidgetDataRefresh
 import com.w2sv.wifiwidget.ui.screen.home.model.wifistate.WifiStateProvider
 import com.w2sv.wifiwidget.ui.screen.home.synchronization.RemoteDataSynchronizer
 import com.w2sv.wifiwidget.ui.util.snackbar.SnackbarBuilder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val widgetConfigDataSource: WidgetConfigDataSource,
-    private val widgetActions: WidgetActions,
+    private val widgetManager: WidgetManager,
     widgetStatus: WidgetStatus,
     private val remoteDataSynchronizer: RemoteDataSynchronizer,
     wifiStateProvider: WifiStateProvider
 ) : ViewModel(),
     WifiStateProvider by wifiStateProvider {
-
-    private val _snackbarBuilder = MutableSharedFlow<SnackbarBuilder>()
-    val snackbarBuilder = _snackbarBuilder.asSharedFlow()
+    val snackbarBuilder: SharedFlow<SnackbarBuilder>
+        field = MutableSharedFlow<SnackbarBuilder>()
     val widgetPinSuccessFlow = widgetStatus.pinSuccess
 
-    private val _isAnyLocationAccessRequiringPropertyEnabled = widgetConfigDataSource.config
-        .map { it.isAnyLocationAccessRequiringPropertyEnabled }
-        .stateIn(
-            viewModelScope,
-            SharingStarted.Eagerly,
-            false
-        )
-    val isAnyLocationAccessRequiringPropertyEnabled: Boolean get() = _isAnyLocationAccessRequiringPropertyEnabled.value
-
-    fun onForeground() {
-        viewModelScope.launch { remoteDataSynchronizer.recoverOnForeground() }
+    fun onResume() {
+        viewModelScope.launch { remoteDataSynchronizer.recoverOnResume() }
     }
 
     fun pinWidget() {
-        widgetActions.pin {
-            viewModelScope.launch {
-                _snackbarBuilder.emit {
+        viewModelScope.launch {
+            val successfullyPinned = widgetManager.pin()
+            if (!successfullyPinned) {
+                snackbarBuilder.emit {
                     AppSnackbarVisuals(
                         msg = getString(R.string.widget_pinning_failed),
                         kind = SnackbarKind.Warning
                     )
                 }
             }
-        }
-    }
-
-    fun onLocationAccessGranted(event: OnLocationAccessGranted) {
-        when (event) {
-            TriggerWidgetDataRefresh -> widgetActions.refresh()
-            EnableLocationAccessRequiringProperties -> viewModelScope.launch {
-                widgetConfigDataSource.update { it.withEnabledLocationAccessRequiringProperties() }
-            }
-            else -> Unit
         }
     }
 }

@@ -1,11 +1,14 @@
 package com.w2sv.wifiwidget.ui.location
 
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.location.LocationAccessRepository
+import io.mockk.mockk
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
@@ -13,35 +16,38 @@ import org.junit.Test
 class LocationAccessDependenciesTest {
 
     @Test
-    fun `histories expose repository flows and persist callbacks`() =
+    fun `request history exposes repository state and records requests`() =
         runTest {
             val requested = MutableStateFlow(false)
-            val rationalShown = MutableStateFlow(false)
+            val onboardingCompleted = MutableStateFlow(false)
             val requestedWrites = mutableListOf<Boolean>()
-            val rationalWrites = mutableListOf<Boolean>()
             val repository = object : LocationAccessRepository {
                 override val permissionRequested: Flow<Boolean> = requested
-                override val rationalShown: Flow<Boolean> = rationalShown
+                override val onboardingCompleted: Flow<Boolean> = onboardingCompleted
 
                 override suspend fun recordPermissionRequested() {
                     requestedWrites += true
                 }
 
-                override suspend fun recordRationalShown() {
-                    rationalWrites += true
+                override suspend fun completeOnboarding() {
+                    onboardingCompleted.value = true
                 }
             }
-            val dependencies = LocationAccessDependencies({ true }, repository, this)
+            val locationEnabled = object : IsLocationEnabled {
+                override fun invoke(): Boolean =
+                    true
+                override val flow: Flow<Boolean> = flowOf(true)
+            }
+            val observer = mockk<WidgetLocationRecoveryObserver>()
+            val dependencies = LocationAccessDependencies(locationEnabled, repository, this, observer)
 
             assertSame(requested, dependencies.requestHistory.wasRequestLaunchedBefore)
-            assertSame(rationalShown, dependencies.rationalHistory.wasShownBefore)
             assertTrue(dependencies.isLocationEnabled())
+            assertSame(observer, dependencies.widgetLocationRecoveryObserver)
 
             dependencies.requestHistory.recordRequestLaunched()
-            dependencies.rationalHistory.recordWasShown()
             advanceUntilIdle()
 
             assertEquals(listOf(true), requestedWrites)
-            assertEquals(listOf(true), rationalWrites)
         }
 }

@@ -13,10 +13,17 @@ java {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_17
+        allWarningsAsErrors = true
+        extraWarnings = true
     }
 }
 
+ktlint {
+    version.set(libs.versions.ktlintEngine)
+}
+
 dependencies {
+    implementation(libs.ktlint.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.ksp.gradlePlugin)
@@ -31,6 +38,14 @@ tasks {
 
 gradlePlugin {
     plugins {
+        register("androidSdk") {
+            id = "wifiwidget.android-sdk"
+            implementationClass = "AndroidSdkConventionPlugin"
+        }
+        register("codeQuality") {
+            id = "wifiwidget.code-quality"
+            implementationClass = "CodeQualityConventionPlugin"
+        }
         register("library") {
             id = "wifiwidget.library"
             implementationClass = "LibraryConventionPlugin"

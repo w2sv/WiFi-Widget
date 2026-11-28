@@ -1,16 +1,18 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.Text
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.w2sv.augmentedpermissions.PermissionRequestHistory
-import com.w2sv.core.resources.R
+import com.w2sv.domain.location.IsLocationEnabled
 import com.w2sv.domain.preferences.ThemeSettings
 import com.w2sv.wifiwidget.ui.location.LocationAccessDependencies
-import com.w2sv.wifiwidget.ui.location.LocationAccessRationalHistory
+import com.w2sv.wifiwidget.ui.location.WidgetLocationRecoveryObserver
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Rule
@@ -27,31 +29,25 @@ class WifiWidgetUITest {
     val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun `shows location access permission rational when it has not been shown before`() {
-        setContent(rationalShown = false)
+    fun `renders app content without an automatic permission dialog`() {
+        setContent()
 
-        composeRule.onNodeWithText(
-            composeRule.activity.getString(R.string.location_access_permission_rational)
-        ).assertIsDisplayed()
+        composeRule.onNodeWithText("Content").assertIsDisplayed()
     }
 
-    @Test
-    fun `does not show location access permission rational when it has been shown before`() {
-        setContent(rationalShown = true)
-
-        composeRule.onNodeWithText(
-            composeRule.activity.getString(R.string.location_access_permission_rational)
-        ).assertDoesNotExist()
-    }
-
-    private fun setContent(rationalShown: Boolean) {
+    private fun setContent() {
         val activityViewModel = mockk<ActivityViewModel> {
             every { themeSettings } returns MutableStateFlow(ThemeSettings.Default)
         }
+        val locationEnabled = object : IsLocationEnabled {
+            override fun invoke(): Boolean =
+                true
+            override val flow: Flow<Boolean> = flowOf(true)
+        }
         val locationAccessDependencies = mockk<LocationAccessDependencies> {
-            every { isLocationEnabled } returns { true }
+            every { isLocationEnabled } returns locationEnabled
             every { requestHistory } returns PermissionRequestHistory(flowOf(false)) {}
-            every { rationalHistory } returns LocationAccessRationalHistory(flowOf(rationalShown)) {}
+            every { widgetLocationRecoveryObserver } returns WidgetLocationRecoveryObserver(mockk(relaxed = true))
         }
 
         composeRule.setContent {
@@ -59,7 +55,7 @@ class WifiWidgetUITest {
                 versionName = "Test",
                 locationAccessDependencies = locationAccessDependencies,
                 activityViewModel = activityViewModel,
-                content = {}
+                content = { Text("Content") }
             )
         }
     }

@@ -1,7 +1,5 @@
 package com.w2sv.wifiwidget.integration.environment
 
-import android.Manifest
-import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
@@ -27,12 +25,10 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
     private lateinit var dependencies: WidgetIntegrationDependencies
 
     val configSource get() = dependencies.widgetConfigSource()
-    val actions get() = dependencies.widgetActions()
+    val widgetManager get() = dependencies.widgetManager()
     val repository get() = dependencies.remoteNetworkDataRepository()
-    val newRemoteViewsFactory get() = dependencies.wifiPropertyRemoteViewsFactory()
 
     fun start() {
-        grantLocationPermissions()
         dependencies = EntryPointAccessors.fromApplication(context, WidgetIntegrationDependencies::class.java)
         http.reset()
         setConfig(widgetConfig())
@@ -60,36 +56,39 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
             }
         }
 
-        val cancellations = mutableListOf<Operation>()
-        try {
-            // A queued widget broadcast can enqueue work after cancellation if it has not run yet.
-            val broadcastsDrained = attempt { launcher.awaitBroadcastIdle() }
-            var cancellationsCompleted = true
+        fun cancelWork() {
+            val cancellations = mutableListOf<Operation>()
             if (work.isInitialized) {
                 WidgetWorkEnvironment.UNIQUE_WORK_NAMES.forEach { name ->
-                    if (!attempt { cancellations.add(work.cancel(name)) }) cancellationsCompleted = false
+                    attempt { cancellations.add(work.cancel(name)) }
                 }
             }
             // Do not wait for work cancellation while an HTTP interceptor is still gated.
-            val gatesReleased = attempt { http.releaseGates() }
+            attempt { http.releaseGates() }
             cancellations.forEach { operation ->
-                if (!attempt { work.awaitCancellation(operation) }) cancellationsCompleted = false
+                attempt { work.awaitCancellation(operation) }
             }
             // Cancellation signals the coroutine but does not wait for an interceptor blocked in HTTP.
-            val httpIdle = attempt { http.awaitIdle() }
-            attempt { launcher.clearExistingWidgets() }
-            if (::dependencies.isInitialized) attempt { setConfig(widgetConfig()) }
-            if (work.isInitialized) attempt { work.prune() }
-            val cleanupDiagnostics = if (failures.isEmpty()) null else runCatching { diagnostics() }.getOrNull()
-            if (broadcastsDrained && cancellationsCompleted && gatesReleased && httpIdle) attempt { http.reset() }
-            if (failures.isNotEmpty()) {
-                val primary = failures.first()
-                failures.drop(1).forEach(primary::addSuppressed)
-                cleanupDiagnostics?.let { primary.addSuppressed(AssertionError("Cleanup state: $it")) }
-                throw primary
-            }
-        } finally {
-            work.shutdown()
+            attempt { http.awaitIdle() }
+        }
+
+        // A queued widget broadcast can enqueue work after cancellation if it has not run yet.
+        attempt { launcher.awaitBroadcastIdle() }
+        cancelWork()
+        attempt { launcher.clearExistingWidgets() }
+        if (::dependencies.isInitialized) attempt { setConfig(widgetConfig()) }
+        // Removing the last widget invokes provider callbacks that can cancel or enqueue work.
+        attempt { launcher.awaitBroadcastIdle() }
+        cancelWork()
+        if (work.isInitialized) attempt { work.prune() }
+        val cleanupDiagnostics = if (failures.isEmpty()) null else runCatching { diagnostics() }.getOrNull()
+        attempt { work.shutdown() }
+        if (failures.isEmpty()) attempt { http.reset() }
+        if (failures.isNotEmpty()) {
+            val primary = failures.first()
+            failures.drop(1).forEach(primary::addSuppressed)
+            cleanupDiagnostics?.let { primary.addSuppressed(AssertionError("Cleanup state: $it")) }
+            throw primary
         }
     }
 
@@ -105,7 +104,7 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
         val previous = configSource.blockingSnapshot()
         val current = transform(previous)
         setConfig(current)
-        actions.applyConfigurationChange(previous, current)
+        widgetManager.applyConfigurationChange(previous, current)
         return current
     }
 
@@ -155,21 +154,6 @@ class WidgetIntegrationEnvironment(workerFactory: HiltWorkerFactory, val http: T
                 network != null &&
                 capabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true &&
                 capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        }
-    }
-
-    private fun grantLocationPermissions() {
-        // Android 12+ precise access requires both foreground location permissions.
-        listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION).forEach { permission ->
-            try {
-                instrumentation.uiAutomation.grantRuntimePermission(context.packageName, permission)
-            } catch (failure: Exception) {
-                throw AssertionError("Could not grant $permission to ${context.packageName} before integration-test UI setup.", failure)
-            }
-            check(context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-                "Integration-test setup could not verify $permission for ${context.packageName}; " +
-                    "check the merged app manifest and instrumentation permission grant."
-            }
         }
     }
 

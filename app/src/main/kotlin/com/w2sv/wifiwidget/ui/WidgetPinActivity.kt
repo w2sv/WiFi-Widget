@@ -1,9 +1,11 @@
 package com.w2sv.wifiwidget.ui
 
 import androidx.activity.ComponentActivity
-import com.w2sv.domain.widget.WidgetActions
+import androidx.lifecycle.lifecycleScope
+import com.w2sv.domain.widget.WidgetManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 import slimber.log.w
 
 /** Used exclusively by screenshot generation tasks to request widget pinning. */
@@ -11,7 +13,7 @@ import slimber.log.w
 class WidgetPinActivity : ComponentActivity() {
 
     @Inject
-    lateinit var widgetActions: WidgetActions
+    lateinit var widgetManager: WidgetManager
 
     private var pinRequested = false
 
@@ -20,10 +22,12 @@ class WidgetPinActivity : ComponentActivity() {
         if (pinRequested) return
         pinRequested = true
 
-        try {
-            widgetActions.pin { w { "Widget pin request was unsupported or rejected" } }
-        } finally {
-            finish()
+        lifecycleScope.launch {
+            try {
+                if (!widgetManager.pin()) w { "Widget pin request was unsupported or rejected" }
+            } finally {
+                finish()
+            }
         }
     }
 }

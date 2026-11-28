@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.ParcelFileDescriptor
 import androidx.test.uiautomator.By
+import androidx.test.uiautomator.UiObject2
 import com.w2sv.wifiwidget.testing.launcher.GridCells
 import com.w2sv.wifiwidget.testing.launcher.LauncherDevice
 import com.w2sv.wifiwidget.testing.launcher.LauncherFormFactor
@@ -20,8 +21,6 @@ class WidgetLauncherEnvironment(
     private val diagnostics: () -> String
 ) {
     private val launcher = LauncherDevice(instrumentation, context)
-    private val device = launcher.ui
-    private val appPackage = launcher.appPackage
     private val workspace = LauncherWorkspace(launcher, LauncherFormFactor.Phone)
     private val widgetController = LauncherWidgetController(
         launcher,
@@ -54,24 +53,32 @@ class WidgetLauncherEnvironment(
     fun awaitWidgetText(value: String) {
         showPinnedWidget()
         await("launcher widget text '$value'") {
-            device.hasObject(By.res(appPackage, "widget_layout")) &&
-                device.hasObject(By.res(appPackage, "property_value_tv").text(value))
+            widgetHasText(value)
         }
     }
 
     fun widgetHasText(value: String): Boolean =
-        device.hasObject(By.res(appPackage, "property_value_tv").text(value))
+        pinnedWidgetHost()?.findObject(By.text(value)) != null
+
+    fun widgetTextAbsent(value: String): Boolean {
+        val host = pinnedWidgetHost() ?: return false
+        return host.findObject(By.text(value)) == null
+    }
 
     fun widgetHasLabel(value: String): Boolean =
-        device.hasObject(By.res(appPackage, "property_label_tv").text(value))
+        pinnedWidgetHost()?.findObject(By.text(value)) != null
 
-    fun widgetLabels(): List<String> =
-        device.findObjects(By.res(appPackage, "property_label_tv"))
-            .sortedBy { it.visibleBounds.top }
-            .mapNotNull { it.text }
+    fun widgetLabelsInOrder(first: String, second: String): Boolean {
+        val host = pinnedWidgetHost() ?: return false
+        val firstLabel = host.findObject(By.text(first)) ?: return false
+        val secondLabel = host.findObject(By.text(second)) ?: return false
+        return firstLabel.visibleBounds.top < secondLabel.visibleBounds.top
+    }
 
-    fun widgetHasResource(resource: String): Boolean =
-        device.hasObject(By.res(appPackage, resource))
+    private fun pinnedWidgetHost(): UiObject2? {
+        val id = pinnedWidgetId ?: return null
+        return if (id in launcher.widgetIds()) launcher.visibleWidgetHost() else null
+    }
 
     fun triggerWidgetUpdate(id: Int) {
         context.sendBroadcast(

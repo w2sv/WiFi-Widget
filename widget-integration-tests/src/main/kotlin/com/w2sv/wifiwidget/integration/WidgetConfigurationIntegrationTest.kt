@@ -13,7 +13,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
@@ -44,9 +43,8 @@ class WidgetConfigurationIntegrationTest : WidgetIntegrationTestBase() {
             )
         }
 
-        env.launcher.await("updated property order and refresh-time utility") {
-            env.launcher.widgetLabels().take(2) == listOf("Frequency", "ISP") &&
-                env.launcher.widgetHasResource("last_updated_tv")
+        env.launcher.await("Frequency shown before ISP") {
+            env.launcher.widgetLabelsInOrder("Frequency", "ISP")
         }
         assertEquals(changed, env.configSource.blockingSnapshot())
         assertEquals(requestsBefore, http.recordedRequests())
@@ -64,27 +62,29 @@ class WidgetConfigurationIntegrationTest : WidgetIntegrationTestBase() {
         assertEquals(RemoteRefreshResult.Complete, runBlocking { env.repository.refresh() })
         env.launcher.pinWidget()
         env.launcher.awaitWidgetText("Old ISP")
-        val gate = http.respondWithDelayedIpApi("New ISP")
-
+        val recoveryWorkBefore = env.work.infos(WidgetWorkEnvironment.RECOVERY_WORK).map { it.id }.toSet()
         val immediateWorkBefore = env.work.infos(WidgetWorkEnvironment.IMMEDIATE_WORK).map { it.id }.toSet()
-        val changed = env.changeConfig {
-            it.withUpdatedPropertyEnablement(WifiProperty.ISP, false)
-                .withUpdatedPropertyEnablement(WifiProperty.ASN, true)
-                .let { current -> current.copy(utilities = current.utilities + (WidgetUtility.RefreshTimeDisplay to true)) }
-        }
-        try {
-            env.launcher.await("new utility and old ISP removed while HTTP is held") {
-                env.launcher.widgetHasResource("last_updated_tv") && !env.launcher.widgetHasText("Old ISP")
+        val gate = http.respondWithDelayedIpApi("New ISP")
+        val recovery = try {
+            val changed = env.changeConfig {
+                it.withUpdatedPropertyEnablement(WifiProperty.ISP, false)
+                    .withUpdatedPropertyEnablement(WifiProperty.ASN, true)
+                    .let { current -> current.copy(utilities = current.utilities + (WidgetUtility.RefreshTimeDisplay to true)) }
             }
+            val recovery = env.work.awaitNewWork(WidgetWorkEnvironment.RECOVERY_WORK, recoveryWorkBefore)
+            env.work.satisfyConstraints(recovery)
             env.awaitRequest(TestRemoteHttpResponses.Endpoint.IpApi, 2)
+            env.launcher.await("old ISP removed while HTTP is held") {
+                env.launcher.widgetTextAbsent("Old ISP")
+            }
             assertEquals(changed, env.configSource.blockingSnapshot())
             assertFalse(env.repository.data.value.ipApiData?.isp == "Old ISP")
-            assertTrue(env.work.awaitNewWork(WidgetWorkEnvironment.IMMEDIATE_WORK, immediateWorkBefore).id !in immediateWorkBefore)
+            assertEquals(immediateWorkBefore, env.work.infos(WidgetWorkEnvironment.IMMEDIATE_WORK).map { it.id }.toSet())
+            recovery
         } finally {
             gate.countDown()
         }
-        val immediate = env.work.awaitNewWork(WidgetWorkEnvironment.IMMEDIATE_WORK, immediateWorkBefore)
-        env.work.awaitWork(immediate.id, WorkInfo.State.SUCCEEDED)
+        env.work.awaitWork(recovery.id, WorkInfo.State.SUCCEEDED)
         env.launcher.await("new ASN shown") { env.launcher.widgetHasText("AS424242") }
     }
 }

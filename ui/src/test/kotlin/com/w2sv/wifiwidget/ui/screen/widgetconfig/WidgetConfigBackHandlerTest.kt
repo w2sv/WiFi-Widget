@@ -134,7 +134,7 @@ class WidgetConfigBackHandlerTest {
                 }
                 val onBack = rememberWidgetConfigBackHandler(
                     configIsDirty = isDirty,
-                    navigateBack = navigateBack,
+                    onExit = navigateBack,
                     interceptCleanBack = launcherConfiguration
                 )
                 Button(onClick = onBack) { Text("Toolbar back") }

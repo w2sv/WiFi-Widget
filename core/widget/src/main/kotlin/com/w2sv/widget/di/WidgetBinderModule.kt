@@ -1,9 +1,9 @@
 package com.w2sv.widget.di
 
-import com.w2sv.domain.widget.WidgetActions
+import com.w2sv.domain.widget.WidgetManager
 import com.w2sv.domain.widget.WidgetStatus
-import com.w2sv.widget.actions.WidgetActionsImpl
-import com.w2sv.widget.status.WidgetStatusImpl
+import com.w2sv.widget.management.WidgetManagerImpl
+import com.w2sv.widget.management.WidgetStatusImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,7 +14,7 @@ import dagger.hilt.components.SingletonComponent
 internal interface WidgetBinderModule {
 
     @Binds
-    fun widgetActions(instance: WidgetActionsImpl): WidgetActions
+    fun widgetManager(instance: WidgetManagerImpl): WidgetManager
 
     @Binds
     fun widgetStatus(instance: WidgetStatusImpl): WidgetStatus
