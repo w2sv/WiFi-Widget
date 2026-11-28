@@ -213,7 +213,7 @@
     <string name="no_wifi_connection">Žiadne pripojenie k Wi-Fi</string>
     <string name="wifi_disabled">WiFi je vypnuté</string>
     <string name="loading">Načítava sa…</string>
-    <string name="copied_to_clipboard"><![CDATA[Skopírované <b>%1$s</b> do schránky]]</string>
+    <string name="copied_to_clipboard"><![CDATA[Skopírované <b>%1$s</b> do schránky]]></string>
     <string name="connected_no_internet">Pripojené, bez internetu</string>
     <string name="open_release_overview_cd">Otvoriť prehľad verzií aplikácie.</string>
 </resources>
